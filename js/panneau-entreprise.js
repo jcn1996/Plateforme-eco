@@ -4,7 +4,7 @@
    ========================================================================== */
 
 import { el, nombre, AGENTS } from './outils.js';
-import { enteteFiche, grilleIndicateurs, titreSection, carteAgent } from './panneau-pays.js';
+import { enteteFiche, listeIndicateurs, titreSection, carteAgent } from './panneau-pays.js';
 
 /** Ordre d'affichage des onglets. */
 const ORDRE_AGENTS = ['entreprises', 'macro', 'sentiment', 'risque', 'donnees_alternatives'];
@@ -25,19 +25,14 @@ export function ficheEntreprise(d, e) {
   return [
     enteteFiche({
       note: e.note,
-      surtitre: `${e.ticker} · ${secteur?.nom ?? ''} · ${pays?.nom ?? ''}`,
+      surtitre: `${e.ticker} · ${secteur?.nom ?? ''} · ${pays?.nom ?? ''} · ${nombre(e.capitalisation_md)} Md€`,
       titre: e.nom,
-      verdict: `Capitalisation : ${nombre(e.capitalisation_md)} Md€`,
+      verdict: e.verdict, // verdict de l'agent entreprises, tout en haut
     }),
 
     el('section', {},
       titreSection('Indicateurs clés'),
-      grilleIndicateurs(e.indicateurs),
-    ),
-
-    el('section', {},
-      titreSection("Verdict de l'agent"),
-      carteAgent('entreprises', e.agents?.entreprises ?? { note: e.note, texte: e.verdict }),
+      listeIndicateurs(e.indicateurs),
     ),
 
     el('section', {},

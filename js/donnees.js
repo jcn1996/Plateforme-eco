@@ -17,6 +17,9 @@ const FICHIERS = {
   marches: 'data/marches.json',
 };
 
+/** Frontières des pays (Natural Earth 1:110m via world-atlas, domaine public). */
+const FICHIER_FRONTIERES = 'data/countries-110m.json';
+
 /** Charge un fichier JSON et vérifie qu'il respecte l'enveloppe attendue. */
 async function chargerFichier(nom, chemin) {
   const reponse = await fetch(chemin, { cache: 'no-cache' });
@@ -34,8 +37,13 @@ async function chargerFichier(nom, chemin) {
  */
 export async function chargerDonnees() {
   const noms = Object.keys(FICHIERS);
+  const promesseFrontieres = fetch(FICHIER_FRONTIERES).then((r) => (r.ok ? r.json() : null)).catch(() => null);
   const resultats = await Promise.all(noms.map((nom) => chargerFichier(nom, FICHIERS[nom])));
   const brut = Object.fromEntries(noms.map((nom, i) => [nom, resultats[i]]));
+
+  // Frontières des pays (TopoJSON Natural Earth 1:110m, fichier tiers sans enveloppe)
+  // Chargées en parallèle des autres, mais leur absence n'empêche pas l'appli de fonctionner.
+  const frontieres = await promesseFrontieres;
 
   const pays = brut.pays.donnees;
   const secteurs = brut.secteurs.donnees;
@@ -56,6 +64,7 @@ export async function chargerDonnees() {
   return {
     meta: Object.fromEntries(noms.map((nom) => [nom, brut[nom].meta])),
     fictif,
+    frontieres,
     pays,
     secteurs,
     entreprises,

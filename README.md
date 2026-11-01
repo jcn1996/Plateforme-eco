@@ -5,19 +5,30 @@ Prototype d'une application personnelle de suivi économique mondial, pensée d'
 
 ## Ce que fait le prototype
 
-- Un globe 3D plein écran, qu'on fait tourner au doigt (avec inertie). Il tourne tout seul au repos.
-- 16 pays, chacun avec une colonne lumineuse : sa hauteur et sa couleur suivent la note sur 100.
-  - vert : 65 et plus, attractif
-  - orange : de 50 à 64, neutre
-  - rouge : moins de 50, défavorable
-- Des arcs animés qui représentent les flux de capitaux entre pays.
-- Un bandeau défilant des marchés, une horloge et la légende des couleurs.
-- Les alertes du jour : toucher une alerte ouvre le pays concerné.
-- Une fiche pays avec 5 indicateurs, les secteurs en bulles et la lecture des agents.
-- Une fiche secteur qui liste ses entreprises, et une fiche entreprise avec onglets par agent et étude complète.
-- Un portefeuille démo de 100 000 €, en structure cœur-satellite, comparé au MSCI World.
-- Un mode léger (bouton ⚡) qui économise la batterie.
-- L'appli s'installe sur l'écran d'accueil (PWA) et fonctionne hors ligne une fois chargée.
+- **Globe 3D** avec la vraie carte des pays (frontières Natural Earth au 1:110m, stockées dans le dépôt).
+  - Les 31 pays suivis sont colorés selon leur note sur 100 :
+    - vert : 65 et plus, attractif
+    - orange : de 50 à 64, neutre
+    - rouge : moins de 50, défavorable
+  - Les autres pays restent gris bleu foncé, avec des frontières fines cyan.
+  - Chaque pays suivi porte une fine colonne lumineuse, un anneau qui pulse et une étiquette.
+  - Des arcs animés représentent les flux de capitaux.
+- **Gestes** :
+  - tourner au doigt (avec inertie) ; le globe tourne seul au repos ;
+  - zoomer par pincement, molette ou double-tap ;
+  - toucher un pays ouvre sa fiche.
+
+  Les étiquettes des petits pays n'apparaissent qu'en zoomant.
+- **En-tête compact sur une ligne** : titre, horloge, légende (bouton « ? »), mode léger (⚡), Classement, Portefeuille démo.
+- **Alertes du jour** : toucher une alerte ouvre le pays concerné.
+- **Panneau des fiches**, à trois hauteurs (réduit, normal, plein écran) réglables avec la poignée.
+  - Fiche pays et fiche entreprise : le verdict est tout en haut, suivi des 5 indicateurs en liste compacte.
+  - Fiche pays : secteurs en bulles et lecture des agents.
+  - Fiche entreprise : onglets par agent et étude complète.
+- **Classement** : les pays triés par note, et les 20 meilleures entreprises tous pays confondus.
+- **Portefeuille démo** : 100 000 € en structure cœur-satellite, comparés au MSCI World.
+- **Mode léger** : texture plus petite, pas d'animation des flux, 30 images/s.
+- **PWA** : l'appli s'installe sur l'écran d'accueil et fonctionne hors ligne une fois chargée.
 
 ## Structure
 
@@ -27,13 +38,15 @@ manifest.json, sw.js  PWA (installation, cache hors ligne)
 css/style.css         thème « salle de contrôle »
 js/app.js             démarrage, navigation, fil d'Ariane
 js/donnees.js         chargement des JSON (seul fichier à modifier si les chemins changent)
-js/globe.js           globe 3D (Three.js r160 via cdnjs)
+js/globe.js           globe 3D (Three.js r160 via cdnjs), carte, gestes, zoom
 js/interface.js       horloge, bandeau des marchés, alertes, mode léger
 js/panneau-pays.js    fiches pays et secteur
 js/panneau-entreprise.js  fiche entreprise
 js/portefeuille.js    écran portefeuille
+js/classement.js      écran classement
 js/outils.js          couleurs des notes, formats français
 data/*.json           données fictives
+data/countries-110m.json  frontières des pays (voir data/LICENCE-countries-110m.txt)
 outils/generer_donnees_fictives.py  régénère les données fictives
 ```
 
@@ -62,10 +75,18 @@ Les fichiers sont reliés par des identifiants :
 | `marches.json` | macro | indices, taux, devises, matières premières |
 | `portefeuille.json` | trader | valeur, statistiques, allocation, positions, historique, dernière décision |
 
+Chaque pays a aussi un champ `iso_num` : son code ISO numérique, qui le relie à sa forme dans `countries-110m.json`.
+Singapour, trop petit pour l'échelle 1:110m, est dessiné comme un disque.
+
 Chaque indicateur porte **sa propre note sur 100**, et c'est elle qui fixe la couleur affichée.
 Un agent peut donc juger lui-même si une valeur est bonne ou mauvaise.
 
 Quand **tous** les fichiers portent `"fictif": false` dans `meta`, la mention « Données fictives » disparaît d'elle-même.
+
+## Sources
+
+Les frontières (`data/countries-110m.json`) viennent de [world-atlas](https://github.com/topojson/world-atlas) 2.0.2, dérivé de Natural Earth (domaine public).
+La licence ISC de world-atlas est reproduite dans `data/LICENCE-countries-110m.txt`.
 
 ## Tester en local
 
