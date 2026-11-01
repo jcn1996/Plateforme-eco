@@ -1,13 +1,16 @@
 /* ==========================================================================
-   Service worker : rend l'application utilisable hors ligne.
-   - Fichiers de l'application : servis depuis le cache (mise à jour en fond)
-   - Données (data/*.json) : réseau d'abord, pour toujours afficher les
-     dernières sorties des agents ; cache en secours si pas de réseau
-   - Ressources externes (Three.js, polices) : cache dès le premier chargement
-   Pour forcer une mise à jour chez tous les utilisateurs, changer VERSION.
+   Service worker : mise à jour automatique + usage hors ligne.
+   - Page, JavaScript, CSS et données (même origine) : RÉSEAU D'ABORD.
+     L'appli affiche donc toujours la dernière version dès l'ouverture ;
+     le cache ne sert qu'en l'absence de réseau.
+   - Images de la Terre et icônes : cache d'abord (fichiers lourds qui
+     changent rarement ; une nouvelle VERSION les renouvelle).
+   - Ressources externes (Three.js, polices) : cache dès le premier
+     chargement, mis à jour en arrière-plan.
+   Changer VERSION vide les anciens caches chez tous les utilisateurs.
    ========================================================================== */
 
-const VERSION = 'salle-controle-v2';
+const VERSION = 'salle-controle-v3';
 
 const FICHIERS_APPLI = [
   './',
@@ -23,9 +26,13 @@ const FICHIERS_APPLI = [
   'js/panneau-entreprise.js',
   'js/portefeuille.js',
   'js/classement.js',
+  'js/comparateur.js',
+  'js/mes-alertes.js',
   'assets/icone.svg',
   'assets/icone-192.png',
   'assets/icone-512.png',
+  'assets/terre-2048.jpg',
+  'assets/terre-1024.jpg',
   'data/pays.json',
   'data/secteurs.json',
   'data/entreprises.json',
@@ -41,7 +48,7 @@ self.addEventListener('install', (evenement) => {
   );
 });
 
-// Suppression des anciens caches lors d'une nouvelle version
+// Suppression des anciens caches, puis prise de contrôle immédiate des pages ouvertes
 self.addEventListener('activate', (evenement) => {
   evenement.waitUntil(
     caches.keys()
@@ -55,23 +62,39 @@ self.addEventListener('fetch', (evenement) => {
   if (requete.method !== 'GET') return;
   const url = new URL(requete.url);
 
-  if (url.origin === location.origin && url.pathname.includes('/data/')) {
-    evenement.respondWith(reseauDAbord(requete));
-  } else {
+  if (url.origin !== location.origin) {
     evenement.respondWith(cacheEtMiseAJour(evenement, requete));
+  } else if (/\/assets\/.+\.(jpg|png|svg)$/.test(url.pathname)) {
+    evenement.respondWith(cacheDAbord(requete));
+  } else {
+    evenement.respondWith(reseauDAbord(requete));
   }
 });
 
-/** Réseau d'abord, cache en secours. */
+/** Réseau d'abord (sans cache HTTP intermédiaire), cache en secours hors ligne. */
 async function reseauDAbord(requete) {
   const cache = await caches.open(VERSION);
   try {
-    const reponse = await fetch(requete);
+    const reponse = await fetch(requete, { cache: 'no-cache' });
     if (reponse.ok) cache.put(requete, reponse.clone());
     return reponse;
   } catch {
-    return (await cache.match(requete, { ignoreSearch: true })) ?? Response.error();
+    const enCache = await cache.match(requete, { ignoreSearch: true });
+    if (enCache) return enCache;
+    // Navigation hors ligne vers une adresse inconnue : on sert la page principale
+    if (requete.mode === 'navigate') return (await cache.match('index.html')) ?? Response.error();
+    return Response.error();
   }
+}
+
+/** Cache d'abord, réseau si absent. */
+async function cacheDAbord(requete) {
+  const cache = await caches.open(VERSION);
+  const enCache = await cache.match(requete, { ignoreSearch: true });
+  if (enCache) return enCache;
+  const reponse = await fetch(requete);
+  if (reponse.ok) cache.put(requete, reponse.clone());
+  return reponse;
 }
 
 /** Cache d'abord (réponse immédiate), puis mise à jour du cache en arrière-plan. */
@@ -80,7 +103,6 @@ async function cacheEtMiseAJour(evenement, requete) {
   const enCache = await cache.match(requete, { ignoreSearch: true });
   const telechargement = fetch(requete)
     .then((reponse) => {
-      // On met en cache les réponses valides, y compris celles des CDN (« opaque »)
       if (reponse.ok || reponse.type === 'opaque') cache.put(requete, reponse.clone());
       return reponse;
     })

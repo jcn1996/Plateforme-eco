@@ -5,30 +5,33 @@ Prototype d'une application personnelle de suivi économique mondial, pensée d'
 
 ## Ce que fait le prototype
 
-- **Globe 3D** avec la vraie carte des pays (frontières Natural Earth au 1:110m, stockées dans le dépôt).
-  - Les 31 pays suivis sont colorés selon leur note sur 100 :
-    - vert : 65 et plus, attractif
-    - orange : de 50 à 64, neutre
-    - rouge : moins de 50, défavorable
-  - Les autres pays restent gris bleu foncé, avec des frontières fines cyan.
-  - Chaque pays suivi porte une fine colonne lumineuse, un anneau qui pulse et une étiquette.
-  - Des arcs animés représentent les flux de capitaux.
+- **Globe 3D réaliste**
+  - Vraie texture de la Terre : NASA Blue Marble assombrie, avec les lumières des villes de la Black Marble.
+  - Les pays suivis reçoivent une teinte translucide (vert émeraude, ambre, rouge corail) qui laisse voir le relief.
+  - Les frontières sont jaune clair et lumineuses ; le pays sélectionné s'illumine.
+- **Flux de capitaux (fictifs)**
+  - Épaisseur et vitesse selon le montant.
+  - Couleur selon le sens : vert pour les entrées vers un pays bien noté, rouge pour les sorties d'un pays mal noté.
+  - Toucher un arc affiche une bulle, par exemple « États-Unis → Brésil : 4,2 Md$ sur 1 mois ».
+  - Quand un pays est sélectionné, seuls ses flux restent visibles.
+  - Bouton « Flux » pour les masquer ou les afficher.
+- **Filtres du globe** (puces en bas de l'écran) : note globale, croissance du PIB, inflation, valorisation (PER), devise sur 3 mois, flux étrangers, momentum boursier.
+  - Le globe se recolore en fondu, et les étiquettes affichent la valeur choisie.
+  - Le choix est mémorisé sur l'appareil.
 - **Gestes** :
-  - tourner au doigt (avec inertie) ; le globe tourne seul au repos ;
-  - zoomer par pincement, molette ou double-tap ;
+  - rotation au doigt avec inertie ; le globe tourne seul au repos ;
+  - zoom par pincement, molette ou double-tap ;
   - toucher un pays ouvre sa fiche.
-
-  Les étiquettes des petits pays n'apparaissent qu'en zoomant.
-- **En-tête compact sur une ligne** : titre, horloge, légende (bouton « ? »), mode léger (⚡), Classement, Portefeuille démo.
-- **Alertes du jour** : toucher une alerte ouvre le pays concerné.
-- **Panneau des fiches**, à trois hauteurs (réduit, normal, plein écran) réglables avec la poignée.
-  - Fiche pays et fiche entreprise : le verdict est tout en haut, suivi des 5 indicateurs en liste compacte.
-  - Fiche pays : secteurs en bulles et lecture des agents.
-  - Fiche entreprise : onglets par agent et étude complète.
-- **Classement** : les pays triés par note, et les 20 meilleures entreprises tous pays confondus.
-- **Portefeuille démo** : 100 000 € en structure cœur-satellite, comparés au MSCI World.
-- **Mode léger** : texture plus petite, pas d'animation des flux, 30 images/s.
-- **PWA** : l'appli s'installe sur l'écran d'accueil et fonctionne hors ligne une fois chargée.
+- **Fiches** pays, secteur et entreprise, dans un panneau à trois hauteurs (réduit, normal, plein écran).
+- **Comparateur** : le bouton « + Comparer » des fiches permet de sélectionner 2 ou 3 pays, ou 2 ou 3 entreprises.
+  - Une barre flottante montre la sélection, avec le bouton « Voir la comparaison ».
+  - L'écran de comparaison place les éléments côte à côte ; la meilleure valeur de chaque ligne est mise en évidence.
+- **Mes alertes**, accessible depuis le bandeau des alertes : règles personnelles vérifiées à chaque chargement des données.
+  - Les alertes déclenchées apparaissent en tête du bandeau, avec le badge « Mon alerte ».
+- **Classement** des pays et des 20 meilleures entreprises.
+- **Portefeuille démo** de 100 000 €.
+- **Mode léger** (⚡) : textures de 1024 px, sans halo ni animation des flux, 30 images/s.
+- **PWA** : l'appli s'installe sur l'écran d'accueil. Le service worker charge l'appli « réseau d'abord », donc la dernière version s'affiche dès l'ouverture ; elle reste utilisable hors ligne.
 
 ## Structure
 
@@ -44,10 +47,14 @@ js/panneau-pays.js    fiches pays et secteur
 js/panneau-entreprise.js  fiche entreprise
 js/portefeuille.js    écran portefeuille
 js/classement.js      écran classement
+js/comparateur.js     comparateur (sélection, barre flottante, écran)
+js/mes-alertes.js     règles d'alertes personnelles
 js/outils.js          couleurs des notes, formats français
 data/*.json           données fictives
 data/countries-110m.json  frontières des pays (voir data/LICENCE-countries-110m.txt)
 outils/generer_donnees_fictives.py  régénère les données fictives
+outils/composer_texture_terre.py    compose la texture de la Terre (images NASA)
+assets/terre-2048.jpg, terre-1024.jpg  texture de la Terre (voir assets/CREDITS.txt)
 ```
 
 ## Format des données (pour les futurs agents)
@@ -75,6 +82,9 @@ Les fichiers sont reliés par des identifiants :
 | `marches.json` | macro | indices, taux, devises, matières premières |
 | `portefeuille.json` | trader | valeur, statistiques, allocation, positions, historique, dernière décision |
 
+Chaque flux de `pays.json` indique son montant, sa devise et sa période (`montant_md`, `devise`, `periode`).
+Le champ `momentum_boursier` d'un pays alimente le filtre « Momentum boursier ».
+
 Chaque pays a aussi un champ `iso_num` : son code ISO numérique, qui le relie à sa forme dans `countries-110m.json`.
 Singapour, trop petit pour l'échelle 1:110m, est dessiné comme un disque.
 
@@ -83,10 +93,42 @@ Un agent peut donc juger lui-même si une valeur est bonne ou mauvaise.
 
 Quand **tous** les fichiers portent `"fictif": false` dans `meta`, la mention « Données fictives » disparaît d'elle-même.
 
+## Format des règles « Mes alertes »
+
+Les règles sont stockées sur l'appareil (`localStorage`, clé `salle-controle:mes-alertes`).
+Le serveur des agents pourra les relire telles quelles :
+
+```json
+{
+  "version": 1,
+  "regles": [
+    {
+      "id": "r-mvydfjboiw6",
+      "active": true,
+      "cree_le": "2026-11-01T21:57:52.404Z",
+      "cible": { "type": "pays", "id": "BR" },
+      "indicateur": "inflation",
+      "condition": "passe_sous",
+      "seuil": 4,
+      "derniere_verification": "2026-11-01T21:57:58.292Z",
+      "declenchee": true,
+      "elements_declenches": ["BR"]
+    }
+  ]
+}
+```
+
+- `cible.type` vaut `pays` ou `entreprise`. `cible.id` est le code pays ou le ticker, ou `null` pour « tous ».
+- `indicateur` vaut `note`, ou la clé d'un indicateur (`croissance_pib`, `inflation`, `per`, `devise_3m`, `flux_etrangers`, `momentum` ; pour une entreprise : `croissance_ca`, `benefice`, `marge`, `dette_ebitda`, `per_vs_secteur`).
+- `condition` vaut `depasse` (valeur > seuil) ou `passe_sous` (valeur < seuil).
+- « Une entreprise passe au rouge » s'écrit : note `passe_sous` 50.
+
 ## Sources
 
 Les frontières (`data/countries-110m.json`) viennent de [world-atlas](https://github.com/topojson/world-atlas) 2.0.2, dérivé de Natural Earth (domaine public).
 La licence ISC de world-atlas est reproduite dans `data/LICENCE-countries-110m.txt`.
+
+La texture de la Terre est composée à partir d'images de la NASA (domaine public) : Blue Marble Next Generation et Black Marble 2012. Les détails sont dans `assets/CREDITS.txt`.
 
 ## Tester en local
 

@@ -204,9 +204,9 @@ for code, nom, lat, lon, note, verdict, (pib, infl, per, dev, flux) in PAYS:
             "risque": lecture(rnd(12), ta[2]),
             "donnees_alternatives": lecture(rnd(8), ta[3]),
         },
-        "flux": [{"vers": b, "montant_md": m} for a, b, m in FLUX if a == code],
+        # Flux de capitaux sortants (montant en milliards de dollars sur la période)
+        "flux": [{"vers": b, "montant_md": m, "devise": "USD", "periode": "1 mois"} for a, b, m in FLUX if a == code],
     })
-ecrire("pays.json", "fictif (futur : agent-pays + agent-macro)", pays)
 
 # ---------------------------------------------------------------- SECTEURS & ENTREPRISES
 # Pour chaque pays : 3 secteurs (nom, capitalisation Md€, momentum 3 mois %) et noms inventés.
@@ -385,6 +385,13 @@ for code, liste in SECT.items():
                          "momentum_3m": mom, "note": note_s, "niveau": niveau(note_s), "entreprises": ents})
 
 ecrire("secteurs.json", "fictif (futur : agent-pays)", secteurs)
+
+# Momentum boursier du pays : moyenne des momentums sectoriels pondérée par la capitalisation
+for p in pays:
+    sp = [x for x in secteurs if x["pays"] == p["code"]]
+    mom = round(sum(x["capitalisation_md"] * x["momentum_3m"] for x in sp) / sum(x["capitalisation_md"] for x in sp), 1)
+    p["momentum_boursier"] = {"libelle": "Momentum boursier 3 mois", "valeur": mom, "unite": "%", "note": clamp(round(55 + mom * 4))}
+ecrire("pays.json", "fictif (futur : agent-pays + agent-macro)", pays)
 ecrire("entreprises.json", "fictif (futur : agent-entreprises)", entreprises)
 
 # ---------------------------------------------------------------- ALERTES

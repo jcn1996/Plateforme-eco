@@ -9,8 +9,10 @@
    ========================================================================== */
 
 import { chargerDonnees } from './donnees.js';
-import { el } from './outils.js';
-import { demarrerHorloge, remplirBandeau, initialiserAlertes, lireModeLeger, memoriserModeLeger } from './interface.js';
+import { el, nombre, lireMetrique, METRIQUES_PAYS } from './outils.js';
+import { demarrerHorloge, remplirBandeau, initialiserAlertes, initialiserFiltres, lireModeLeger, memoriserModeLeger } from './interface.js';
+import { initialiserComparateur, boutonComparer, majBarre, ecranComparaison } from './comparateur.js';
+import { evaluerRegles, ecranMesAlertes } from './mes-alertes.js';
 import { fichePays, ficheSecteur } from './panneau-pays.js';
 import { ficheEntreprise } from './panneau-entreprise.js';
 import { ecranPortefeuille } from './portefeuille.js';
@@ -26,6 +28,8 @@ const dom = {
   ecranClassement: $('#ecran-classement'),
   classementContenu: $('#classement-contenu'),
   btnLegende: $('#btn-legende'),
+  filtres: $('#filtres'),
+  barreComparaison: $('#barre-comparaison'),
   legende: $('#legende'),
   entete: $('.entete'),
   alertes: $('#alertes'),
@@ -72,8 +76,22 @@ async function demarrer() {
   remplirBandeau($('#bandeau-piste'), d.marches);
   alertes = initialiserAlertes(
     { bouton: $('#alertes-bascule'), liste: $('#alertes-liste'), compte: $('#alertes-compte'), apercu: $('#alertes-apercu') },
-    d.alertes, d.paysParCode, (code) => naviguer({ type: 'pays', id: code }),
+    d.paysParCode, naviguer,
   );
+  majAlertes(); // alertes des agents + mes alertes (règles vérifiées à chaque chargement)
+  initialiserComparateur(d, { barre: dom.barreComparaison, ouvrir: () => naviguer({ type: 'comparaison' }) });
+
+  // Filtres : ce que représentent les couleurs du globe (choix mémorisé)
+  let metriqueInitiale = 'note', fluxInitiaux = true;
+  initialiserFiltres({ puces: $('#filtres-puces'), boutonFlux: $('#btn-flux') }, METRIQUES_PAYS, {
+    surMetrique: (cle, initial) => {
+      $('#legende-metrique').textContent = METRIQUES_PAYS.find((m) => m.cle === cle).libelle;
+      if (initial) metriqueInitiale = cle; else globe?.definirMetrique(objetMetrique(cle));
+    },
+    surFlux: (visibles, initial) => {
+      if (initial) fluxInitiaux = visibles; else globe?.definirAffichageFlux(visibles);
+    },
+  });
 
   // Mode léger
   let leger = lireModeLeger();
@@ -100,17 +118,32 @@ async function demarrer() {
       pays: d.pays,
       frontieres: d.frontieres,
       leger,
+      metrique: objetMetrique(metriqueInitiale),
+      afficherFlux: fluxInitiaux,
+      formaterFlux: (f) => `${f.de.nom} → ${f.vers.nom} : ${nombre(f.montant, 1)} Md${f.devise === 'USD' ? '$' : '€'} sur ${f.periode}`,
       surSelection: (code) => naviguer({ type: 'pays', id: code }),
     });
   } catch (erreur) {
     console.error(erreur);
     afficherSecours();
   }
+  // Accès au globe pour les tests automatiques uniquement (adresse avec ?test)
+  if (new URLSearchParams(location.search).has('test')) window.__globe = globe;
 
   addEventListener('resize', () => { appliquerEtatPanneau(); majCadrage(); });
   addEventListener('hashchange', surChangementAdresse);
   pile = [location.hash || '#/'];
   afficher(lireAdresse());
+}
+
+/** Métrique au format attendu par le globe : note et texte de chaque pays. */
+function objetMetrique(cle) {
+  return { cle, lire: (p) => lireMetrique(p, cle) };
+}
+
+/** Bandeau des alertes : mes alertes déclenchées en tête, puis celles des agents. */
+function majAlertes() {
+  alertes.afficher(d.alertes, evaluerRegles(d));
 }
 
 function appliquerModeLeger(actif) {
@@ -202,6 +235,8 @@ function filAriane(route) {
     }
     case 'portefeuille': return [racine, { libelle: 'Portefeuille démo', route }];
     case 'classement': return [racine, { libelle: 'Classement', route }];
+    case 'comparaison': return [racine, { libelle: 'Comparaison', route }];
+    case 'mes-alertes': return [racine, { libelle: 'Mes alertes', route }];
     default: return [racine];
   }
 }
@@ -220,7 +255,7 @@ function majAriane(route) {
 /** Vérifie qu'une route désigne bien un élément existant. */
 function routeValide(route) {
   switch (route.type) {
-    case 'globe': case 'portefeuille': case 'classement': return true;
+    case 'globe': case 'portefeuille': case 'classement': case 'comparaison': case 'mes-alertes': return true;
     case 'pays': return d.paysParCode.has(route.id);
     case 'secteur': return d.secteurParId.has(route.id);
     case 'entreprise': return d.entrepriseParTicker.has(route.id);
@@ -241,6 +276,7 @@ function afficher(route) {
     ouvrirPays: (code) => naviguer({ type: 'pays', id: code }),
     ouvrirSecteur: (id) => naviguer({ type: 'secteur', id }),
     ouvrirEntreprise: (ticker) => naviguer({ type: 'entreprise', id: ticker }),
+    boutonComparer,
   };
 
   // Contenu du panneau montant
@@ -253,7 +289,7 @@ function afficher(route) {
     contenu = ficheSecteur(d, s, navigateurPanneau); codePays = s.pays; titre = `${s.nom} — Salle de contrôle`;
   } else if (route.type === 'entreprise') {
     const e = d.entrepriseParTicker.get(route.id);
-    contenu = ficheEntreprise(d, e); codePays = e.pays; titre = `${e.nom} — Salle de contrôle`;
+    contenu = ficheEntreprise(d, e, navigateurPanneau); codePays = e.pays; titre = `${e.nom} — Salle de contrôle`;
   }
 
   const panneauOuvert = Boolean(contenu);
@@ -270,23 +306,24 @@ function afficher(route) {
   if (panneauOuvert) { alertes?.replier(); fermerLegende(); }
   appliquerEtatPanneau();
 
-  // Écran portefeuille
-  const portefeuille = route.type === 'portefeuille';
-  if (portefeuille) {
-    dom.portefeuilleContenu.replaceChildren(...ecranPortefeuille(d, navigateurPanneau));
-    dom.portefeuilleContenu.scrollTop = 0;
-    titre = 'Portefeuille démo — Salle de contrôle';
+  // Écrans plein écran (portefeuille, classement, comparaison, mes alertes)
+  const ECRANS = {
+    portefeuille: { section: '#ecran-portefeuille', contenu: '#portefeuille-contenu', titre: 'Portefeuille démo', rendu: () => ecranPortefeuille(d, navigateurPanneau) },
+    classement: { section: '#ecran-classement', contenu: '#classement-contenu', titre: 'Classement', rendu: () => ecranClassement(d, navigateurPanneau) },
+    comparaison: { section: '#ecran-comparaison', contenu: '#comparaison-contenu', titre: 'Comparaison', rendu: () => ecranComparaison(d, navigateurPanneau) },
+    'mes-alertes': { section: '#ecran-mes-alertes', contenu: '#mes-alertes-contenu', titre: 'Mes alertes', rendu: () => ecranMesAlertes(d, { surChangement: majAlertes, ouvrir: naviguer }) },
+  };
+  for (const [type, ecran] of Object.entries(ECRANS)) {
+    const visible = route.type === type;
+    if (visible) {
+      $(ecran.contenu).replaceChildren(...ecran.rendu());
+      $(ecran.contenu).scrollTop = 0;
+      titre = `${ecran.titre} — Salle de contrôle`;
+    }
+    $(ecran.section).hidden = !visible;
   }
-  dom.ecranPortefeuille.hidden = !portefeuille;
-
-  // Écran classement
-  const classement = route.type === 'classement';
-  if (classement) {
-    dom.classementContenu.replaceChildren(...ecranClassement(d, navigateurPanneau));
-    dom.classementContenu.scrollTop = 0;
-    titre = 'Classement — Salle de contrôle';
-  }
-  dom.ecranClassement.hidden = !classement;
+  majBarre(route.type === 'comparaison');
+  document.body.classList.toggle('ecran-ouvert', route.type in ECRANS);
 
   // Globe : pivot vers le pays concerné, pause quand il est masqué
   if (globe) {
@@ -302,7 +339,7 @@ function afficher(route) {
 
 /** Le globe ne se dessine que s'il est visible (économie de batterie). */
 function majActiviteGlobe() {
-  const masque = ['portefeuille', 'classement'].includes(routeActuelle.type)
+  const masque = ['portefeuille', 'classement', 'comparaison', 'mes-alertes'].includes(routeActuelle.type)
     || (dom.panneau.classList.contains('est-ouvert') && etatPanneau === 'plein' && !estLarge());
   globe?.definirActif(!masque);
 }
@@ -349,7 +386,8 @@ function majCadrage() {
   const haut = dom.entete.getBoundingClientRect().bottom;
   const large = estLarge();
   const ouvert = dom.panneau.classList.contains('est-ouvert');
-  let bas = H - dom.alertes.querySelector('.alertes-bascule').offsetHeight - 14;
+  // Bas de la zone libre : au-dessus des filtres (eux-mêmes au-dessus des alertes)
+  let bas = dom.filtres.getBoundingClientRect().top - 4;
   let droite = L;
   const facteur = 0.94; // le globe occupe presque toute la zone libre (les colonnes sont courtes)
 
@@ -367,6 +405,7 @@ function majCadrage() {
     cy: haut + hauteurZone / 2,
     rayon: (Math.min(largeurZone, hauteurZone) / 2) * facteur,
     hautLibre: haut,
+    basLibre: bas,
   });
 }
 
@@ -437,11 +476,21 @@ function afficherSecours() {
 
 /* ---------- PWA : service worker (mise en cache pour un usage hors ligne) ---------- */
 function enregistrerServiceWorker() {
-  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
-    addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js').catch((e) => console.warn('Service worker non enregistré', e));
-    });
-  }
+  if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
+  // Quand une nouvelle version du service worker prend le relais, on recharge une fois
+  // pour afficher immédiatement la dernière version de l'appli.
+  const avaitUnControleur = Boolean(navigator.serviceWorker.controller);
+  let recharge = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!avaitUnControleur || recharge) return;
+    recharge = true;
+    location.reload();
+  });
+  addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js')
+      .then((inscription) => inscription?.update())
+      .catch((e) => console.warn('Service worker non enregistré', e));
+  });
 }
 
 demarrer();

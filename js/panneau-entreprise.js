@@ -18,7 +18,7 @@ const ONGLETS = {
   donnees_alternatives: 'Données alt.',
 };
 
-export function ficheEntreprise(d, e) {
+export function ficheEntreprise(d, e, nav = {}) {
   const secteur = d.secteurParId.get(e.secteur);
   const pays = d.paysParCode.get(e.pays);
 
@@ -28,6 +28,7 @@ export function ficheEntreprise(d, e) {
       surtitre: `${e.ticker} · ${secteur?.nom ?? ''} · ${pays?.nom ?? ''} · ${nombre(e.capitalisation_md)} Md€`,
       titre: e.nom,
       verdict: e.verdict, // verdict de l'agent entreprises, tout en haut
+      action: nav.boutonComparer?.('entreprise', e.ticker),
     }),
 
     el('section', {},
