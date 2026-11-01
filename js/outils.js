@@ -109,7 +109,10 @@ export function el(balise, attributs = {}, ...enfants) {
     if (cle.startsWith('on') && typeof valeur === 'function') {
       noeud.addEventListener(cle.slice(2), valeur);
     } else if (cle === 'style' && typeof valeur === 'object') {
-      Object.assign(noeud.style, valeur);
+      for (const [prop, v] of Object.entries(valeur)) {
+        if (prop.startsWith('--')) noeud.style.setProperty(prop, v); // variable CSS
+        else noeud.style[prop] = v;
+      }
     } else if (valeur === true) {
       noeud.setAttribute(cle, '');
     } else {
@@ -135,4 +138,51 @@ export function svg(balise, attributs = {}, ...enfants) {
   }
   ajouterEnfants(noeud, enfants);
   return noeud;
+}
+
+/* ---------- Métriques (filtres du globe, comparateur, alertes personnalisées) ---------- */
+
+/**
+ * Ce que peuvent représenter les couleurs du globe.
+ * « source » indique où lire la valeur dans un pays :
+ *   - 'note' : la note globale
+ *   - 'indicateur' : p.indicateurs[cle]
+ *   - 'momentum' : p.momentum_boursier
+ */
+export const METRIQUES_PAYS = [
+  { cle: 'note', libelle: 'Note globale', court: 'Note', source: 'note' },
+  { cle: 'croissance_pib', libelle: 'Croissance PIB', court: 'PIB', source: 'indicateur' },
+  { cle: 'inflation', libelle: 'Inflation', court: 'Inflation', source: 'indicateur' },
+  { cle: 'per', libelle: 'Valorisation (PER)', court: 'PER', source: 'indicateur' },
+  { cle: 'devise_3m', libelle: 'Devise 3 mois', court: 'Devise', source: 'indicateur' },
+  { cle: 'flux_etrangers', libelle: 'Flux étrangers', court: 'Flux', source: 'indicateur' },
+  { cle: 'momentum', libelle: 'Momentum boursier', court: 'Momentum', source: 'momentum' },
+];
+
+/** Indicateurs disponibles pour une entreprise (note globale + 5 indicateurs). */
+export const METRIQUES_ENTREPRISE = [
+  { cle: 'note', libelle: 'Note globale', source: 'note' },
+  { cle: 'croissance_ca', libelle: 'Croissance du CA', source: 'indicateur' },
+  { cle: 'benefice', libelle: 'Bénéfice (évol. 1 an)', source: 'indicateur' },
+  { cle: 'marge', libelle: 'Marge opérationnelle', source: 'indicateur' },
+  { cle: 'dette_ebitda', libelle: 'Dette nette / EBITDA', source: 'indicateur' },
+  { cle: 'per_vs_secteur', libelle: 'PER vs secteur', source: 'indicateur' },
+];
+
+export function metrique(type, cle) {
+  return (type === 'entreprise' ? METRIQUES_ENTREPRISE : METRIQUES_PAYS).find((m) => m.cle === cle);
+}
+
+/**
+ * Lit une métrique sur un pays ou une entreprise.
+ * Renvoie { valeur, note, texte, unite } ou null si absente.
+ */
+export function lireMetrique(element, cle) {
+  if (cle === 'note') return { valeur: element.note, note: element.note, texte: nombre(element.note), unite: '/100' };
+  if (cle === 'momentum') {
+    const m = element.momentum_boursier;
+    return m ? { valeur: m.valeur, note: m.note, texte: variation(m.valeur, 1), unite: '%' } : null;
+  }
+  const ind = element.indicateurs?.[cle];
+  return ind ? { valeur: ind.valeur, note: ind.note, texte: valeurIndicateur(cle, ind), unite: ind.unite } : null;
 }

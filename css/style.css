@@ -607,3 +607,190 @@ body.mode-leger .barre span, body.mode-leger .jauge-valeur, body.mode-leger .bul
   .navigation { padding-top: 12px; }
   .kpis { grid-template-columns: repeat(4, 1fr); }
 }
+
+/* ==========================================================================
+   Filtres du globe, flux, comparateur, mes alertes
+   ========================================================================== */
+
+/* ---------- Légende : titres et traits des flux ---------- */
+.legende-titre { margin: 0 0 6px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--texte-3); }
+.legende-titre strong { color: var(--cyan); font-weight: 600; text-transform: none; letter-spacing: 0; font-size: 12.5px; }
+.legende + .legende-titre { margin-top: 12px; }
+.trait-flux { display: inline-block; flex: none; width: 18px; height: 3px; border-radius: 2px; }
+.trait-flux--entree { background: #34e3a4; box-shadow: 0 0 6px #34e3a4; }
+.trait-flux--sortie { background: #ff6b5b; box-shadow: 0 0 6px #ff6b5b; }
+.trait-flux--autre { background: #7fe8ff; box-shadow: 0 0 6px #7fe8ff; }
+
+/* ---------- Puces (filtres, exemples) ---------- */
+.filtres {
+  position: fixed; left: 0; right: 0; bottom: calc(var(--bas-sur) + 66px);
+  z-index: 9;
+  display: flex; align-items: center; gap: 6px;
+  padding: 0 10px;
+  transition: opacity 0.3s, transform 0.3s;
+}
+body.panneau-ouvert .filtres { opacity: 0; transform: translateY(30px); pointer-events: none; }
+.filtres-puces {
+  flex: 1; min-width: 0;
+  display: flex; gap: 6px;
+  overflow-x: auto; scrollbar-width: none;
+  mask-image: linear-gradient(to right, #000 88%, transparent);
+  padding: 2px 0;
+}
+.filtres-puces::-webkit-scrollbar { display: none; }
+.puce {
+  flex: none;
+  display: inline-flex; align-items: center; gap: 5px;
+  min-height: 32px; padding: 0 12px;
+  border: 1px solid var(--ligne-forte); border-radius: 999px;
+  background: rgba(5, 11, 24, 0.82);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  color: var(--texte-2);
+  font-size: 12.5px; white-space: nowrap; cursor: pointer;
+}
+.puce[aria-checked="true"] { border-color: var(--cyan); background: rgba(0, 229, 255, 0.18); color: #eafcff; box-shadow: 0 0 10px rgba(0, 229, 255, 0.25); }
+.puce--flux svg { width: 16px; height: 16px; }
+.puce--flux[aria-pressed="true"] { border-color: #34e3a4; color: #c9fbe8; }
+.puce--flux[aria-pressed="false"] { opacity: 0.7; text-decoration: line-through; }
+body.mode-leger .puce { backdrop-filter: none; -webkit-backdrop-filter: none; }
+
+/* ---------- Bulle d'un flux de capitaux ---------- */
+.bulle-flux {
+  position: absolute; left: 0; top: 0; z-index: 3;
+  max-width: calc(100vw - 16px);
+  padding: 8px 12px;
+  border: 1px solid var(--c-flux, var(--cyan)); border-radius: 10px;
+  background: rgba(5, 11, 24, 0.94);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--c-flux, var(--cyan)) 40%, transparent);
+  font-size: 13px; font-weight: 500; white-space: nowrap;
+  pointer-events: none;
+  animation: apparition 0.2s ease;
+}
+.bulle-flux--entree { --c-flux: #34e3a4; }
+.bulle-flux--sortie { --c-flux: #ff6b5b; }
+.bulle-flux--autre { --c-flux: #7fe8ff; }
+
+/* ---------- Boutons supplémentaires ---------- */
+.bouton--petit { min-height: 30px; padding: 0 10px; font-size: 12px; }
+.bouton--petit[aria-pressed="true"] { background: rgba(0, 229, 255, 0.18); border-color: var(--cyan); color: #eafcff; }
+.bouton--danger { border-color: rgba(255, 77, 106, 0.5); background: rgba(255, 77, 106, 0.08); font-size: 15px; }
+.bouton:disabled { opacity: 0.45; cursor: not-allowed; }
+.fiche-actions { margin-top: 8px; }
+
+/* ---------- Barre flottante du comparateur ---------- */
+.barre-comparaison {
+  position: fixed; left: 10px; right: 10px; bottom: calc(var(--bas-sur) + 108px);
+  z-index: 25;
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 8px 8px 10px;
+  border: 1px solid var(--cyan); border-radius: 12px;
+  background: #06101f;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5), 0 0 14px rgba(0, 229, 255, 0.2);
+}
+body.panneau-ouvert .barre-comparaison, body.ecran-ouvert .barre-comparaison { bottom: calc(var(--bas-sur) + 10px); }
+body.ecran-ouvert .barre-comparaison { z-index: 35; }
+body.comparaison-active .ecran-contenu,
+body.comparaison-active .panneau-contenu { padding-bottom: calc(var(--bas-sur) + 90px); }
+.barre-comparaison-elements { flex: 1; min-width: 0; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; align-items: center; }
+.barre-comparaison-elements::-webkit-scrollbar { display: none; }
+.puce-selection {
+  flex: none; display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 4px 3px 8px; border: 1px solid var(--ligne-forte); border-radius: 999px;
+  font-size: 12px; white-space: nowrap;
+}
+.puce-selection .pastille { width: 7px; height: 7px; background: var(--c-note); }
+.puce-retirer { width: 22px; height: 22px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.08); cursor: pointer; line-height: 1; }
+.barre-comparaison-aide { font-size: 11.5px; color: var(--texte-3); white-space: nowrap; }
+.barre-comparaison .bouton { flex: none; min-height: 34px; padding: 0 10px; font-size: 12px; }
+
+/* ---------- Notification ---------- */
+.notification {
+  position: fixed; left: 50%; top: calc(var(--haut-sur) + 56px); z-index: 60;
+  transform: translateX(-50%);
+  width: max-content; max-width: calc(100vw - 32px);
+  padding: 8px 14px; border: 1px solid var(--orange); border-radius: 10px;
+  background: rgba(5, 11, 24, 0.96); font-size: 13px;
+  animation: apparition 0.2s ease;
+}
+
+/* ---------- Écran de comparaison ---------- */
+.comparaison-grille { display: grid; grid-template-columns: repeat(var(--n, 2), minmax(0, 1fr)); gap: 6px; }
+.comparaison-tete {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+  min-width: 0; padding: 10px;
+  border: 1px solid var(--ligne); border-top: 3px solid var(--c-note); border-radius: 10px;
+  background: var(--fond-2); text-align: left; cursor: pointer;
+}
+.comparaison-nom { font-family: var(--police-titre); font-weight: 600; font-size: 14px; line-height: 1.2; overflow-wrap: anywhere; }
+.comparaison-sous-titre { font-size: 11px; color: var(--texte-3); }
+.comparaison-note { margin-top: 4px; font-family: var(--police-mono); font-size: 24px; color: var(--c-note); line-height: 1; }
+.comparaison-note small { font-size: 11px; color: var(--texte-3); }
+.comparaison-etoile { font-size: 10.5px; color: var(--cyan); }
+.comparaison-verdict { padding: 8px; border-radius: 8px; background: var(--fond-2); font-size: 12.5px; color: var(--texte-2); line-height: 1.35; }
+.comparaison-ligne + .comparaison-ligne { margin-top: 10px; }
+.comparaison-libelle { margin-bottom: 4px; font-size: 12px; color: var(--texte-2); }
+.comparaison-cellule {
+  display: flex; flex-direction: column; gap: 1px;
+  min-width: 0; padding: 7px 9px;
+  border: 1px solid var(--ligne); border-left: 3px solid var(--c-note, var(--ligne)); border-radius: 8px;
+  background: var(--fond-2);
+}
+.comparaison-valeur { font-family: var(--police-mono); font-size: 14.5px; color: var(--texte); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.comparaison-note-ind { font-family: var(--police-mono); font-size: 11px; color: var(--c-note); }
+.est-meilleur { border-color: var(--cyan); background: linear-gradient(135deg, rgba(0, 229, 255, 0.14), var(--fond-2)); box-shadow: 0 0 10px rgba(0, 229, 255, 0.2); }
+.comparaison-cellule.est-meilleur { border-left-color: var(--c-note); }
+
+/* ---------- Mes alertes ---------- */
+.alertes-outils .bouton { min-height: 40px; background: var(--fond-2); }
+body.alertes-ouvertes .barre-comparaison { display: none; }
+.alerte--perso { border-color: rgba(0, 229, 255, 0.45); }
+.badge-mon-alerte {
+  padding: 1px 6px; border-radius: 4px;
+  background: var(--cyan); color: var(--fond);
+  font-weight: 700; letter-spacing: 0.04em;
+}
+.mes-alertes > * + * { margin-top: 18px; }
+.formulaire-regle .champs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.champ { display: flex; flex-direction: column; gap: 4px; min-width: 0; font-size: 11.5px; color: var(--texte-3); }
+.champ select, .champ input {
+  width: 100%; min-height: 40px; padding: 0 10px;
+  border: 1px solid var(--ligne-forte); border-radius: 8px;
+  background: var(--fond); color: var(--texte);
+  font: inherit; font-size: 14px;
+}
+.champ-seuil { display: flex; align-items: center; gap: 6px; }
+.champ-unite { flex: none; font-family: var(--police-mono); color: var(--texte-2); font-size: 13px; }
+.exemples { display: flex; flex-wrap: wrap; gap: 6px; }
+.liste-regles { display: grid; gap: 6px; }
+.regle {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 10px 10px 12px;
+  border: 1px solid var(--ligne); border-left: 3px solid var(--texte-3); border-radius: 10px;
+  background: var(--fond-2);
+}
+.regle--declenchee { border-left-color: var(--cyan); }
+.regle--inactive { opacity: 0.6; }
+.regle-textes { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.regle-libelle { font-size: 13.5px; font-weight: 500; }
+.regle-etat { font-size: 11.5px; color: var(--texte-3); }
+.regle--declenchee .regle-etat { color: var(--cyan); }
+/* Interrupteur (case à cocher stylée) */
+.interrupteur { position: relative; flex: none; width: 40px; height: 24px; cursor: pointer; }
+.interrupteur input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.interrupteur span { position: absolute; inset: 0; border-radius: 999px; background: rgba(255, 255, 255, 0.12); transition: background 0.2s; pointer-events: none; }
+.interrupteur span::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--texte-2); transition: transform 0.2s, background 0.2s; }
+.interrupteur input:checked + span { background: rgba(0, 229, 255, 0.35); }
+.interrupteur input:checked + span::after { transform: translateX(16px); background: var(--cyan); }
+.interrupteur input:focus-visible + span { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.format-json summary { cursor: pointer; font-size: 12.5px; color: var(--texte-2); }
+.format-json pre {
+  max-height: 260px; overflow: auto; margin: 8px 0 0; padding: 10px;
+  border: 1px solid var(--ligne); border-radius: 8px; background: var(--fond);
+  font-family: var(--police-mono); font-size: 11px; color: var(--texte-2);
+}
+
+@media (min-width: 960px) {
+  .filtres { right: 500px; bottom: 22px; }
+  .barre-comparaison { left: auto; right: 500px; width: 480px; bottom: 74px; }
+  body.panneau-ouvert .barre-comparaison { right: 470px; }
+}

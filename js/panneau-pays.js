@@ -28,13 +28,14 @@ export function jauge(note) {
 }
 
 /** En-tête de fiche : jauge + surtitre + titre + verdict. */
-export function enteteFiche({ note, surtitre, titre, verdict }) {
+export function enteteFiche({ note, surtitre, titre, verdict, action }) {
   return el('header', { class: 'fiche-entete' },
     jauge(note),
     el('div', { class: 'fiche-titres' },
       el('div', { class: 'fiche-surtitre' }, surtitre),
       el('h2', { class: 'fiche-titre' }, titre),
       verdict ? el('p', { class: 'fiche-verdict' }, verdict) : null,
+      action ? el('div', { class: 'fiche-actions' }, action) : null,
     ),
   );
 }
@@ -102,7 +103,10 @@ export function niveauMomentum(momentum) {
 export function fichePays(d, p, nav) {
   const secteurs = d.secteursDuPays(p.code);
   return [
-    enteteFiche({ note: p.note, surtitre: `Pays · ${libelleNiveau(niveauNote(p.note))}`, titre: p.nom, verdict: p.verdict }),
+    enteteFiche({
+      note: p.note, surtitre: `Pays · ${libelleNiveau(niveauNote(p.note))}`, titre: p.nom, verdict: p.verdict,
+      action: nav.boutonComparer?.('pays', p.code),
+    }),
 
     el('section', {},
       titreSection('Indicateurs clés'),

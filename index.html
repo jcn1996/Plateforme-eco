@@ -68,14 +68,30 @@
 
     <!-- Légende repliée derrière le bouton « ? » -->
     <div id="legende" class="legende-bulle" hidden>
+      <p class="legende-titre">Couleurs : <strong id="legende-metrique">Note globale</strong></p>
       <ul class="legende" aria-label="Légende des notes">
         <li><span class="pastille pastille--vert"></span>≥ 65 : attractif</li>
         <li><span class="pastille pastille--orange"></span>50 à 64 : neutre</li>
         <li><span class="pastille pastille--rouge"></span>&lt; 50 : défavorable</li>
       </ul>
-      <p class="legende-aide">Couleur des pays et des colonnes = note sur 100. Pincez ou double-touchez pour zoomer.</p>
+      <p class="legende-titre">Flux de capitaux (fictifs)</p>
+      <ul class="legende legende--flux" aria-label="Légende des flux">
+        <li><span class="trait-flux trait-flux--entree"></span>entrées vers un pays bien noté</li>
+        <li><span class="trait-flux trait-flux--sortie"></span>sorties d'un pays mal noté</li>
+        <li><span class="trait-flux trait-flux--autre"></span>autres flux · épaisseur = montant</li>
+      </ul>
+      <p class="legende-aide">Pour un indicateur, la couleur suit sa note sur 100 attribuée par les agents. Touchez un arc pour le détail d'un flux. Pincez ou double-touchez pour zoomer.</p>
     </div>
   </header>
+
+  <!-- ===================== FILTRES DU GLOBE ===================== -->
+  <nav id="filtres" class="filtres" aria-label="Ce que représentent les couleurs">
+    <div id="filtres-puces" class="filtres-puces" role="radiogroup" aria-label="Couleurs des pays"></div>
+    <button id="btn-flux" class="puce puce--flux" type="button" aria-pressed="true" title="Afficher ou masquer les flux de capitaux">
+      <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 15c3-9 11-9 14 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="10" cy="8.3" r="1.8" fill="currentColor"/></svg>
+      <span>Flux</span>
+    </button>
+  </nav>
 
   <!-- ===================== ALERTES DU JOUR ===================== -->
   <section id="alertes" class="alertes" aria-label="Alertes du jour">
@@ -119,6 +135,32 @@
     </nav>
     <div id="classement-contenu" class="ecran-contenu"></div>
   </section>
+
+  <!-- ===================== ÉCRAN COMPARAISON ===================== -->
+  <section id="ecran-comparaison" class="ecran" hidden aria-label="Comparaison">
+    <nav class="navigation navigation--ecran" aria-label="Fil d'Ariane">
+      <button class="bouton bouton--icone js-retour" type="button" title="Retour"><span aria-hidden="true">‹</span><span class="visuellement-cache">Retour</span></button>
+      <ol class="ariane js-ariane"></ol>
+      <span class="badge-fictif">Données fictives</span>
+    </nav>
+    <div id="comparaison-contenu" class="ecran-contenu"></div>
+  </section>
+
+  <!-- ===================== ÉCRAN MES ALERTES ===================== -->
+  <section id="ecran-mes-alertes" class="ecran" hidden aria-label="Mes alertes">
+    <nav class="navigation navigation--ecran" aria-label="Fil d'Ariane">
+      <button class="bouton bouton--icone js-retour" type="button" title="Retour"><span aria-hidden="true">‹</span><span class="visuellement-cache">Retour</span></button>
+      <ol class="ariane js-ariane"></ol>
+      <span class="badge-fictif">Données fictives</span>
+    </nav>
+    <div id="mes-alertes-contenu" class="ecran-contenu"></div>
+  </section>
+
+  <!-- Barre flottante du comparateur (sélection en cours) -->
+  <div id="barre-comparaison" class="barre-comparaison" hidden></div>
+
+  <!-- Petit message temporaire -->
+  <div id="notification" class="notification" role="status" aria-live="polite" hidden></div>
 
   <!-- Message d'erreur (chargement impossible, WebGL absent…) -->
   <div id="message" class="message" hidden></div>
