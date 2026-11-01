@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Salle de contrôle</title>
+  <meta name="description" content="Plateforme personnelle de suivi économique mondial (prototype, données fictives).">
+  <meta name="theme-color" content="#050b18">
+
+  <!-- PWA : installation sur l'écran d'accueil -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="assets/icone.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/icone-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Salle de contrôle">
+
+  <!-- Polices : Chakra Petch (titres), IBM Plex Sans (texte), IBM Plex Mono (chiffres) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+  <!-- Préchargement de Three.js (version fixée) pour gagner du temps au démarrage -->
+  <link rel="modulepreload" href="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.module.min.js" crossorigin>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Globe 3D (rendu par Three.js) -->
+  <canvas id="globe" aria-label="Globe interactif des pays suivis"></canvas>
+  <!-- Étiquettes des pays, positionnées au-dessus du globe -->
+  <div id="etiquettes" class="etiquettes"></div>
+
+  <!-- ===================== EN-TÊTE ===================== -->
+  <header class="entete">
+    <div class="entete-ligne">
+      <div class="marque">
+        <span class="marque-logo" aria-hidden="true"></span>
+        <h1>Salle de contrôle</h1>
+      </div>
+      <time id="horloge" class="horloge mono">--:--:--</time>
+    </div>
+
+    <!-- Bandeau défilant des marchés -->
+    <div class="bandeau-marches" aria-label="Marchés">
+      <div id="bandeau-piste" class="bandeau-piste"></div>
+    </div>
+
+    <div class="entete-ligne entete-ligne--outils">
+      <span class="badge-fictif" title="Toutes les données affichées sont inventées">Données fictives</span>
+      <div class="entete-actions">
+        <button id="btn-leger" class="bouton bouton--icone" type="button" aria-pressed="false" title="Mode léger (économie de batterie)">
+          <span aria-hidden="true">⚡</span><span class="visuellement-cache">Mode léger</span>
+        </button>
+        <button id="btn-portefeuille" class="bouton bouton--accent" type="button">Portefeuille démo</button>
+      </div>
+    </div>
+
+    <ul class="legende" aria-label="Légende des notes">
+      <li><span class="pastille pastille--vert"></span>≥ 65 attractif</li>
+      <li><span class="pastille pastille--orange"></span>50–64 neutre</li>
+      <li><span class="pastille pastille--rouge"></span>&lt; 50 défavorable</li>
+    </ul>
+  </header>
+
+  <!-- ===================== ALERTES DU JOUR ===================== -->
+  <section id="alertes" class="alertes" aria-label="Alertes du jour">
+    <button id="alertes-bascule" class="alertes-bascule" type="button" aria-expanded="false" aria-controls="alertes-liste">
+      <span class="alertes-voyant" aria-hidden="true"></span>
+      <span class="alertes-titre">Alertes du jour</span>
+      <span id="alertes-compte" class="alertes-compte mono">0</span>
+      <span id="alertes-apercu" class="alertes-apercu"></span>
+      <span class="chevron" aria-hidden="true"></span>
+    </button>
+    <ul id="alertes-liste" class="alertes-liste" hidden></ul>
+  </section>
+
+  <!-- ===================== PANNEAU (pays, secteur, entreprise) ===================== -->
+  <section id="panneau" class="panneau" aria-hidden="true" aria-label="Détail">
+    <div id="panneau-poignee" class="panneau-poignee" aria-hidden="true"><span></span></div>
+    <nav class="navigation" aria-label="Fil d'Ariane">
+      <button class="bouton bouton--icone js-retour" type="button" title="Retour"><span aria-hidden="true">‹</span><span class="visuellement-cache">Retour</span></button>
+      <ol class="ariane js-ariane"></ol>
+      <button class="bouton bouton--icone js-fermer" type="button" title="Fermer"><span aria-hidden="true">✕</span><span class="visuellement-cache">Fermer</span></button>
+    </nav>
+    <div id="panneau-contenu" class="panneau-contenu"></div>
+  </section>
+
+  <!-- ===================== ÉCRAN PORTEFEUILLE ===================== -->
+  <section id="ecran-portefeuille" class="ecran" hidden aria-label="Portefeuille démo">
+    <nav class="navigation navigation--ecran" aria-label="Fil d'Ariane">
+      <button class="bouton bouton--icone js-retour" type="button" title="Retour"><span aria-hidden="true">‹</span><span class="visuellement-cache">Retour</span></button>
+      <ol class="ariane js-ariane"></ol>
+      <span class="badge-fictif">Données fictives</span>
+    </nav>
+    <div id="portefeuille-contenu" class="ecran-contenu"></div>
+  </section>
+
+  <!-- Message d'erreur (chargement impossible, WebGL absent…) -->
+  <div id="message" class="message" hidden></div>
+
+  <noscript><p class="message">Cette application nécessite JavaScript.</p></noscript>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,536 @@
+/* ==========================================================================
+   Salle de contrôle — feuille de style
+   Approche « mobile d'abord » : les règles de base visent le téléphone,
+   les écrans plus larges sont traités en fin de fichier.
+   ========================================================================== */
+
+/* ---------- Variables du thème ---------- */
+:root {
+  --fond: #050b18;            /* bleu nuit très sombre */
+  --fond-2: #0a1428;          /* surfaces légèrement plus claires */
+  --fond-3: #0f1d38;
+  --verre: rgba(8, 18, 38, 0.82);
+  --ligne: rgba(0, 229, 255, 0.16);
+  --ligne-forte: rgba(0, 229, 255, 0.4);
+  --cyan: #00e5ff;
+  --cyan-doux: rgba(0, 229, 255, 0.12);
+  --texte: #d8ecf5;
+  --texte-2: #8aa6ba;
+  --texte-3: #5d7a90;
+
+  /* Couleurs des notes */
+  --vert: #2ee59d;
+  --orange: #ffb547;
+  --rouge: #ff4d6a;
+
+  /* Couleurs du graphique du portefeuille (validées pour le daltonisme) */
+  --serie-portefeuille: #0097b2;
+  --serie-indice: #9a78ee;
+
+  --police-titre: "Chakra Petch", system-ui, sans-serif;
+  --police-texte: "IBM Plex Sans", system-ui, sans-serif;
+  --police-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --rayon: 12px;
+  --marge: 16px;
+  --haut-sur: env(safe-area-inset-top, 0px);
+  --bas-sur: env(safe-area-inset-bottom, 0px);
+  --hauteur-panneau: 62dvh;
+
+  color-scheme: dark;
+}
+
+/* ---------- Base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;              /* l'appli occupe tout l'écran, comme une appli native */
+  background: var(--fond);
+  color: var(--texte);
+  font-family: var(--police-texte);
+  font-size: 15px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+body {
+  background:
+    radial-gradient(120% 70% at 50% 45%, #0b1d3d 0%, var(--fond) 62%) fixed,
+    var(--fond);
+}
+
+h1, h2, h3, h4 { font-family: var(--police-titre); font-weight: 600; margin: 0; letter-spacing: 0.02em; }
+p { margin: 0; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+button { font: inherit; color: inherit; }
+[hidden] { display: none !important; }
+.mono { font-family: var(--police-mono); font-variant-numeric: tabular-nums; }
+.visuellement-cache {
+  position: absolute !important; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+/* Couleurs de note réutilisables */
+.note--attractif { --c-note: var(--vert); }
+.note--neutre { --c-note: var(--orange); }
+.note--defavorable { --c-note: var(--rouge); }
+
+/* ---------- Globe ---------- */
+#globe {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;           /* on gère nous-mêmes les gestes */
+  cursor: grab;
+}
+#globe:active { cursor: grabbing; }
+
+/* Étiquettes des pays (positionnées en JavaScript) */
+.etiquettes { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+.etiquette {
+  position: absolute;
+  left: 0; top: 0;
+  display: flex; align-items: center; gap: 6px;
+  padding: 3px 8px 3px 6px;
+  border: 1px solid color-mix(in srgb, var(--c-note) 55%, transparent);
+  border-radius: 999px;
+  background: rgba(5, 11, 24, 0.72);
+  font-size: 11px;
+  white-space: nowrap;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: opacity 0.25s;
+  will-change: transform;
+}
+.etiquette::before {
+  content: ""; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--c-note); box-shadow: 0 0 6px var(--c-note);
+}
+.etiquette .mono { color: var(--c-note); font-weight: 600; }
+.etiquette.est-cachee, .etiquette.est-masquee { opacity: 0; pointer-events: none; }
+.etiquette.est-active { border-color: var(--cyan); box-shadow: 0 0 12px rgba(0, 229, 255, 0.45); z-index: 2; }
+
+/* ---------- Boutons ---------- */
+.bouton {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 36px; padding: 0 12px;
+  border: 1px solid var(--ligne-forte);
+  border-radius: 8px;
+  background: rgba(0, 229, 255, 0.06);
+  color: var(--texte);
+  font-family: var(--police-titre);
+  font-size: 13px; font-weight: 600; letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.bouton:hover { background: rgba(0, 229, 255, 0.14); }
+.bouton--icone { width: 36px; padding: 0; font-size: 18px; }
+.bouton--accent { background: rgba(0, 229, 255, 0.16); border-color: var(--cyan); color: #e9fbff; }
+.bouton[aria-pressed="true"] { background: var(--cyan); color: var(--fond); border-color: var(--cyan); }
+.bouton--plein { width: 100%; min-height: 44px; }
+
+.badge-fictif {
+  display: inline-block;
+  padding: 2px 6px;
+  border: 1px solid rgba(255, 181, 71, 0.6);
+  border-radius: 4px;
+  color: var(--orange);
+  font-family: var(--police-mono);
+  font-size: 9.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ---------- En-tête ---------- */
+.entete {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 10;
+  padding: calc(var(--haut-sur) + 8px) var(--marge) 6px;
+  background: linear-gradient(to bottom, rgba(5, 11, 24, 0.96) 70%, rgba(5, 11, 24, 0));
+  pointer-events: none;
+}
+.entete > * { pointer-events: auto; }
+.entete-ligne { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.entete-ligne--outils { margin-top: 6px; }
+.marque { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.marque h1 { font-size: 17px; text-transform: uppercase; letter-spacing: 0.1em; color: #eafcff; white-space: nowrap; }
+.marque-logo {
+  flex: none; width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid var(--cyan);
+  box-shadow: 0 0 10px var(--cyan), inset 0 0 6px var(--cyan);
+}
+.horloge { font-size: 14px; color: var(--cyan); text-shadow: 0 0 8px rgba(0, 229, 255, 0.5); }
+
+/* Bandeau défilant des marchés */
+.bandeau-marches {
+  margin: 8px calc(var(--marge) * -1) 0;
+  border-top: 1px solid var(--ligne);
+  border-bottom: 1px solid var(--ligne);
+  background: rgba(0, 229, 255, 0.04);
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+}
+.bandeau-piste {
+  display: flex; width: max-content;
+  animation: defilement 70s linear infinite;
+}
+.bandeau-marches:hover .bandeau-piste { animation-play-state: paused; }
+@keyframes defilement { to { transform: translateX(-50%); } }
+.cotation {
+  display: flex; align-items: baseline; gap: 6px;
+  padding: 5px 14px;
+  border-right: 1px solid var(--ligne);
+  font-size: 12px; white-space: nowrap;
+}
+.cotation-cat { color: var(--texte-3); font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.08em; }
+.cotation-nom { color: var(--texte-2); }
+.cotation-valeur { color: var(--texte); }
+.hausse { color: var(--vert); }
+.baisse { color: var(--rouge); }
+
+/* Légende des couleurs */
+.legende { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 6px; font-size: 11px; color: var(--texte-2); }
+.legende li { display: flex; align-items: center; gap: 5px; }
+.pastille { display: inline-block; flex: none; width: 9px; height: 9px; border-radius: 50%; }
+.pastille--vert { background: var(--vert); box-shadow: 0 0 6px var(--vert); }
+.pastille--orange { background: var(--orange); box-shadow: 0 0 6px var(--orange); }
+.pastille--rouge { background: var(--rouge); box-shadow: 0 0 6px var(--rouge); }
+.entete-actions { display: flex; gap: 8px; flex: none; }
+
+/* ---------- Alertes du jour ---------- */
+.alertes {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  z-index: 11;
+  padding: 0 10px calc(var(--bas-sur) + 10px);
+  transition: transform 0.35s ease, opacity 0.35s;
+}
+body.panneau-ouvert .alertes { transform: translateY(110%); opacity: 0; pointer-events: none; }
+.alertes-bascule {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; min-height: 48px; padding: 8px 14px;
+  border: 1px solid var(--ligne-forte); border-radius: var(--rayon);
+  background: var(--verre);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  text-align: left; cursor: pointer;
+}
+.alertes-voyant {
+  flex: none; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--rouge); box-shadow: 0 0 8px var(--rouge);
+  animation: clignote 1.6s ease-in-out infinite;
+}
+@keyframes clignote { 50% { opacity: 0.3; } }
+.alertes-titre { font-family: var(--police-titre); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; font-size: 13px; white-space: nowrap; }
+.alertes-compte {
+  padding: 0 6px; border-radius: 4px; background: var(--cyan-doux); color: var(--cyan); font-size: 12px;
+}
+.alertes-apercu { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--texte-2); font-size: 12px; }
+.chevron {
+  flex: none; width: 9px; height: 9px;
+  border-right: 2px solid var(--cyan); border-top: 2px solid var(--cyan);
+  transform: rotate(-45deg); transition: transform 0.25s;
+}
+.alertes-bascule[aria-expanded="true"] .chevron { transform: rotate(135deg); }
+.alertes-liste {
+  display: grid; gap: 6px;
+  max-height: 46dvh; overflow-y: auto;
+  margin-top: 6px;
+}
+.alerte {
+  display: grid; grid-template-columns: auto 1fr; gap: 2px 10px;
+  width: 100%; padding: 10px 12px;
+  border: 1px solid var(--ligne);
+  border-left: 3px solid var(--c-note);
+  border-radius: 10px;
+  background: var(--verre);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  text-align: left; cursor: pointer;
+}
+.alerte:hover { border-color: var(--ligne-forte); border-left-color: var(--c-note); }
+.alerte-heure { grid-row: span 2; color: var(--cyan); font-size: 13px; padding-top: 1px; }
+.alerte-entete { display: flex; flex-wrap: wrap; gap: 4px 8px; font-size: 11px; color: var(--texte-2); text-transform: uppercase; letter-spacing: 0.06em; }
+.alerte-titre { font-weight: 600; font-size: 14px; }
+.alerte-texte { grid-column: 2; font-size: 13px; color: var(--texte-2); }
+
+/* ---------- Panneau montant ---------- */
+.panneau {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  z-index: 20;
+  height: var(--hauteur-panneau);
+  display: flex; flex-direction: column;
+  border: 1px solid var(--ligne-forte); border-bottom: 0;
+  border-radius: 18px 18px 0 0;
+  background: rgba(6, 14, 30, 0.94);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5), 0 -1px 18px rgba(0, 229, 255, 0.12);
+  transform: translateY(105%);
+  transition: transform 0.38s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.panneau.est-ouvert { transform: translateY(0); }
+.panneau.est-glisse { transition: none; }
+.panneau-poignee { display: flex; justify-content: center; padding: 8px 0 2px; cursor: grab; touch-action: none; }
+.panneau-poignee span { width: 42px; height: 4px; border-radius: 2px; background: var(--ligne-forte); }
+
+/* Barre de navigation : retour + fil d'Ariane */
+.navigation {
+  display: flex; align-items: center; gap: 8px;
+  padding: 4px 12px 8px;
+  border-bottom: 1px solid var(--ligne);
+  touch-action: none;
+}
+.ariane { flex: 1; display: flex; align-items: center; min-width: 0; overflow: hidden; font-size: 12.5px; }
+.ariane li { display: flex; align-items: center; min-width: 0; color: var(--texte-2); }
+.ariane li + li::before { content: "›"; padding: 0 6px; color: var(--texte-3); }
+.ariane li:last-child { color: var(--texte); font-weight: 600; flex-shrink: 1; }
+.ariane li:not(:last-child) { flex-shrink: 2; }
+.ariane button, .ariane span {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  border: 0; background: none; padding: 4px 0; cursor: pointer;
+}
+.ariane button { color: var(--cyan); text-decoration: underline; text-decoration-color: rgba(0, 229, 255, 0.35); text-underline-offset: 3px; }
+
+.panneau-contenu {
+  flex: 1; overflow-y: auto; overscroll-behavior: contain;
+  padding: 14px var(--marge) calc(var(--bas-sur) + 24px);
+  -webkit-overflow-scrolling: touch;
+}
+.panneau-contenu > * + * { margin-top: 18px; }
+
+/* En-tête d'une fiche (pays, secteur, entreprise) */
+.fiche-entete { display: flex; align-items: center; gap: 14px; }
+.fiche-titres { flex: 1; min-width: 0; }
+.fiche-surtitre { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--texte-3); }
+.fiche-titre { font-size: 22px; line-height: 1.15; }
+.fiche-verdict { margin-top: 4px; color: var(--texte-2); font-size: 14px; }
+
+/* Jauge circulaire de la note /100 */
+.jauge { position: relative; flex: none; width: 74px; height: 74px; }
+.jauge svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.jauge-fond { stroke: rgba(255, 255, 255, 0.08); }
+.jauge-valeur { stroke: var(--c-note); filter: drop-shadow(0 0 4px var(--c-note)); transition: stroke-dashoffset 0.8s ease; }
+.jauge-texte { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; line-height: 1; }
+.jauge-texte strong { font-family: var(--police-mono); font-size: 24px; color: var(--c-note); }
+.jauge-texte small { font-family: var(--police-mono); font-size: 10px; color: var(--texte-3); }
+
+/* Titre de section */
+.section-titre {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 8px;
+  margin-bottom: 8px;
+  font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--cyan);
+}
+.section-titre small { font-family: var(--police-texte); font-size: 11px; text-transform: none; letter-spacing: 0; color: var(--texte-3); }
+
+/* Grille des 5 indicateurs */
+.indicateurs { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+.indicateur {
+  padding: 9px 10px 10px;
+  border: 1px solid var(--ligne);
+  border-radius: 10px;
+  background: var(--fond-2);
+}
+.indicateur-libelle { font-size: 11.5px; color: var(--texte-2); }
+.indicateur-ligne { display: flex; align-items: baseline; justify-content: space-between; gap: 6px; margin-top: 2px; }
+.indicateur-valeur { font-family: var(--police-mono); font-size: 18px; font-weight: 500; color: var(--texte); }
+.indicateur-note { font-family: var(--police-mono); font-size: 11px; color: var(--c-note); }
+.barre { height: 4px; margin-top: 7px; border-radius: 2px; background: rgba(255, 255, 255, 0.07); overflow: hidden; }
+.barre span { display: block; height: 100%; border-radius: 2px; background: var(--c-note); box-shadow: 0 0 6px var(--c-note); }
+
+/* Bulles des secteurs */
+.bulles { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; padding: 6px 0; }
+.bulle {
+  display: grid; place-content: center; text-align: center;
+  aspect-ratio: 1;
+  padding: 6px;
+  border: 1.5px solid var(--c-note);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--c-note) 30%, transparent), color-mix(in srgb, var(--c-note) 8%, transparent) 70%);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--c-note) 30%, transparent);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.bulle:hover, .bulle:focus-visible { transform: scale(1.05); }
+.bulle-nom { font-family: var(--police-titre); font-weight: 600; font-size: 12.5px; line-height: 1.1; }
+.bulle-mom { font-family: var(--police-mono); font-size: 11px; color: var(--c-note); margin-top: 2px; }
+.bulle-cap { font-family: var(--police-mono); font-size: 10px; color: var(--texte-3); }
+.legende-bulles { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 12px; font-size: 11px; color: var(--texte-3); }
+.legende-bulles span { display: inline-flex; align-items: center; gap: 4px; }
+
+/* Lecture des agents */
+.agents { display: grid; gap: 8px; }
+.agent {
+  display: grid; grid-template-columns: 1fr auto; gap: 4px 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--ligne);
+  border-left: 3px solid var(--c-note);
+  border-radius: 10px;
+  background: var(--fond-2);
+}
+.agent-nom { font-family: var(--police-titre); font-weight: 600; font-size: 13px; letter-spacing: 0.04em; }
+.agent-note { font-family: var(--police-mono); font-size: 13px; color: var(--c-note); }
+.agent-texte { grid-column: 1 / -1; font-size: 13.5px; color: var(--texte-2); }
+
+/* Liste des entreprises d'un secteur */
+.liste-entreprises { display: grid; gap: 6px; }
+.ligne-entreprise {
+  display: flex; align-items: center; gap: 12px;
+  width: 100%; min-height: 56px; padding: 8px 12px;
+  border: 1px solid var(--ligne); border-radius: 10px;
+  background: var(--fond-2);
+  text-align: left; cursor: pointer;
+}
+.ligne-entreprise:hover { border-color: var(--ligne-forte); }
+.ligne-entreprise .pastille { width: 12px; height: 12px; background: var(--c-note); box-shadow: 0 0 8px var(--c-note); }
+.ligne-entreprise-textes { flex: 1; min-width: 0; }
+.ligne-entreprise-nom { font-weight: 600; }
+.ligne-entreprise-info { font-size: 12px; color: var(--texte-3); }
+.ligne-entreprise-note { font-family: var(--police-mono); font-size: 16px; color: var(--c-note); }
+.ligne-entreprise::after { content: "›"; color: var(--texte-3); font-size: 20px; }
+
+/* Résumé de secteur */
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.stat { padding: 9px 10px; border: 1px solid var(--ligne); border-radius: 10px; background: var(--fond-2); }
+.stat-libelle { font-size: 11px; color: var(--texte-3); }
+.stat-valeur { font-family: var(--police-mono); font-size: 17px; margin-top: 2px; }
+
+/* Onglets des agents (fiche entreprise) */
+.onglets { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+.onglets::-webkit-scrollbar { display: none; }
+.onglet {
+  flex: none;
+  min-height: 34px; padding: 0 12px;
+  border: 1px solid var(--ligne); border-radius: 999px;
+  background: transparent; color: var(--texte-2);
+  font-size: 12.5px; cursor: pointer;
+}
+.onglet[aria-selected="true"] { border-color: var(--cyan); background: var(--cyan-doux); color: #eafcff; }
+.onglet-panneau { margin-top: 8px; }
+
+/* Étude complète dépliable */
+.etude { border: 1px solid var(--ligne); border-radius: 10px; background: var(--fond-2); overflow: hidden; }
+.etude-corps { padding: 4px 14px 14px; }
+.etude-corps h4 { margin-top: 12px; font-size: 13.5px; color: var(--cyan); }
+.etude-corps p { margin-top: 4px; font-size: 14px; color: var(--texte-2); }
+.mention-legale { font-size: 11.5px; color: var(--texte-3); text-align: center; }
+
+/* ---------- Écran portefeuille ---------- */
+.ecran {
+  position: fixed; inset: 0; z-index: 30;
+  display: flex; flex-direction: column;
+  padding-top: var(--haut-sur);
+  background: radial-gradient(100% 60% at 50% 0%, #0b1d3d 0%, var(--fond) 70%), var(--fond);
+  animation: apparition 0.3s ease;
+}
+.ecran[hidden] { display: none; }
+@keyframes apparition { from { opacity: 0; transform: translateY(16px); } }
+.navigation--ecran { padding-top: 10px; }
+.ecran-contenu {
+  flex: 1; overflow-y: auto; overscroll-behavior: contain;
+  width: 100%; max-width: 860px; margin: 0 auto;
+  padding: 14px var(--marge) calc(var(--bas-sur) + 28px);
+}
+.ecran-contenu > * + * { margin-top: 20px; }
+.carte { padding: 12px; border: 1px solid var(--ligne); border-radius: var(--rayon); background: var(--fond-2); }
+.valeur-heros { font-family: var(--police-mono); font-size: 34px; font-weight: 500; color: #eafcff; line-height: 1.1; }
+.sous-heros { margin-top: 4px; font-size: 13px; color: var(--texte-2); }
+.kpis { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.kpi-comparaison { font-size: 11.5px; color: var(--texte-3); margin-top: 2px; }
+
+/* Graphique */
+.graphique { position: relative; }
+.graphique svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: pan-y; }
+.graphique .grille line { stroke: rgba(255, 255, 255, 0.06); }
+.graphique .axe text { fill: var(--texte-3); font-family: var(--police-mono); font-size: 10px; }
+.graphique .serie { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.graphique .etiquette-serie { font-family: var(--police-texte); font-size: 11px; fill: var(--texte-2); }
+.graphique .curseur line { stroke: var(--texte-3); stroke-dasharray: 3 3; }
+.graphique .curseur circle { stroke: var(--fond-2); stroke-width: 2; }
+.infobulle {
+  position: absolute; top: 0; z-index: 2;
+  min-width: 150px; padding: 8px 10px;
+  border: 1px solid var(--ligne-forte); border-radius: 8px;
+  background: rgba(5, 11, 24, 0.95);
+  font-size: 12px; pointer-events: none;
+}
+.infobulle-date { color: var(--texte-3); margin-bottom: 4px; }
+.infobulle-ligne { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.infobulle-ligne span:first-child { display: inline-flex; align-items: center; gap: 6px; color: var(--texte-2); }
+.trait { display: inline-block; width: 14px; height: 2px; border-radius: 1px; }
+.legende-graphique { display: flex; gap: 14px; font-size: 12px; color: var(--texte-2); margin-bottom: 6px; }
+.legende-graphique span { display: inline-flex; align-items: center; gap: 6px; }
+
+/* Allocation cœur-satellite */
+.allocation { display: flex; height: 14px; gap: 2px; border-radius: 4px; overflow: hidden; }
+.allocation span { display: block; height: 100%; }
+.allocation-coeur { background: var(--serie-portefeuille); }
+.allocation-satellite { background: var(--serie-indice); }
+.allocation-legende { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 8px; font-size: 12.5px; color: var(--texte-2); }
+.allocation-legende > span { display: inline-flex; align-items: center; gap: 6px; }
+.carre { display: inline-block; width: 10px; height: 10px; border-radius: 2px; }
+
+/* Tableau des positions */
+.tableau { width: 100%; border-collapse: collapse; font-size: 13px; }
+.tableau th { padding: 6px 4px; text-align: left; font-weight: 500; font-size: 11px; color: var(--texte-3); text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid var(--ligne); }
+.tableau td { padding: 9px 4px; border-bottom: 1px solid rgba(0, 229, 255, 0.07); }
+.tableau .nombre { text-align: right; font-family: var(--police-mono); white-space: nowrap; }
+.tableau tr.cliquable { cursor: pointer; }
+.tableau tr.cliquable td:first-child { color: var(--cyan); }
+.poche { display: inline-block; margin-top: 1px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--texte-3); }
+
+/* Décision de l'agent trader */
+.decision { border-color: var(--ligne-forte); background: linear-gradient(135deg, rgba(0, 229, 255, 0.08), var(--fond-2)); }
+.decision-entete { display: flex; justify-content: space-between; gap: 8px; font-size: 11px; color: var(--texte-3); text-transform: uppercase; letter-spacing: 0.06em; }
+.decision-titre { margin: 6px 0 4px; font-size: 16px; }
+.decision p { color: var(--texte-2); font-size: 14px; }
+
+/* ---------- Message ---------- */
+.message {
+  position: fixed; left: 50%; top: 50%; z-index: 50;
+  width: min(90vw, 420px); transform: translate(-50%, -50%);
+  padding: 18px; border: 1px solid var(--rouge); border-radius: var(--rayon);
+  background: var(--fond-2); text-align: center;
+}
+
+/* ---------- Mode léger : moins d'effets coûteux ---------- */
+body.mode-leger .alertes-bascule,
+body.mode-leger .alerte,
+body.mode-leger .panneau { backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--fond-2); }
+body.mode-leger .bandeau-piste { animation-duration: 140s; }
+body.mode-leger .alertes-voyant { animation: none; }
+body.mode-leger .barre span, body.mode-leger .jauge-valeur, body.mode-leger .bulle { box-shadow: none; filter: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .bandeau-piste { animation: none; }
+  .alertes-voyant { animation: none; }
+  .panneau, .alertes { transition: none; }
+}
+
+/* ---------- Petits téléphones ---------- */
+@media (max-width: 370px) {
+  .marque h1 { font-size: 15px; }
+  .marque-logo { display: none; }
+  .legende { font-size: 10px; gap: 3px 8px; }
+  .bouton--accent { padding: 0 9px; font-size: 12px; }
+}
+
+/* ---------- Écrans larges (tablette, ordinateur) ---------- */
+@media (min-width: 960px) {
+  :root { --marge: 22px; }
+  .marque h1 { font-size: 20px; }
+  .etiquette { font-size: 12px; }
+  .alertes { left: auto; right: 22px; bottom: 18px; width: 460px; padding: 0; }
+  body.panneau-ouvert .alertes { transform: translateX(120%); }
+  .panneau {
+    left: auto; top: 128px; right: 16px; bottom: 16px;
+    width: 440px; height: auto;
+    border: 1px solid var(--ligne-forte); border-radius: 16px;
+    transform: translateX(calc(100% + 30px));
+  }
+  .panneau-poignee { display: none; }
+  .navigation { padding-top: 12px; }
+  .kpis { grid-template-columns: repeat(4, 1fr); }
+}
