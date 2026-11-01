@@ -4,94 +4,24 @@
    Couches, de bas en haut :
    1. La Terre : texture NASA (Blue Marble + lumières de la Black Marble),
       2048 px, ou 1024 px en mode léger (assets/terre-*.jpg)
-   2. Le « voile » : teintes translucides des pays suivis (émeraude, ambre,
-      corail) + légère lueur des frontières, dessinés sur un canvas.
-      Deux canvas alternent pour passer d'une coloration à l'autre en fondu.
-   3. Les frontières : fines lignes jaune clair (géométrie 3D, nettes à tous
-      les zooms), plus marquées autour du pays sélectionné
-   4. Colonnes, anneaux et étiquettes des pays ; arcs des flux de capitaux
-   5. Liseré et halo atmosphérique
+   2. La carte vectorielle (js/carte-vecteur.js) : teintes des pays suivis en
+      polygones 3D, frontières jaune clair en lignes d'épaisseur constante,
+      contour renforcé du pays sélectionné. Nette à tous les zooms ;
+      Natural Earth 1:110m, puis 1:50m quand on zoome de près.
+   3. Colonnes, anneaux et étiquettes des pays ; arcs des flux de capitaux
+   4. Liseré et halo atmosphérique
 
    Gestes : rotation avec inertie, rotation automatique au repos, pincement,
    molette, double-tap ; toucher un pays ouvre sa fiche, toucher un arc
    affiche le détail du flux.
    ========================================================================== */
 
-// Three.js r160, version fixée, servie par le CDN cdnjs.
-import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.module.min.js';
+// Three.js r160, version fixée. « three » et « three/addons/ » sont définis par
+// l'import map de index.html (cdnjs pour le cœur, jsDelivr pour les lignes épaisses).
+import * as THREE from 'three';
+import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
+import { NiveauCarte, ligneEpaisse, versVecteur, materiauTeintes } from './carte-vecteur.js';
 import { COULEURS, niveauNote, el, nombre } from './outils.js';
-
-/* ---------------------------------------------------------------------------
-   Lecture du fichier TopoJSON (format compact des frontières)
-   --------------------------------------------------------------------------- */
-function decoderTopoJSON(topo, nomObjet = 'countries') {
-  const { scale: [sx, sy], translate: [tx, ty] } = topo.transform;
-  const arcs = topo.arcs.map((arc) => {
-    let x = 0, y = 0;
-    return arc.map(([dx, dy]) => { x += dx; y += dy; return [x * sx + tx, y * sy + ty]; });
-  });
-  const anneau = (indices) => {
-    const points = [];
-    for (const i of indices) {
-      const arc = i >= 0 ? arcs[i] : arcs[~i].slice().reverse();
-      points.push(...(points.length ? arc.slice(1) : arc)); // le 1er point répète le dernier de l'arc précédent
-    }
-    return points;
-  };
-  const pays = new Map();
-  for (const g of topo.objects[nomObjet].geometries) {
-    const polygones = g.type === 'Polygon' ? [g.arcs] : g.type === 'MultiPolygon' ? g.arcs : [];
-    const anneaux = polygones.flatMap((poly) => poly.map(anneau));
-    pays.set(g.id, { id: g.id, nom: g.properties?.name, anneaux, boite: boiteEnglobante(anneaux), aire: aireApprochee(anneaux) });
-  }
-  return { pays, arcs };
-}
-
-function boiteEnglobante(anneaux) {
-  let g = 180, d = -180, b = 90, h = -90;
-  for (const a of anneaux) for (const [lon, lat] of a) {
-    g = Math.min(g, lon); d = Math.max(d, lon); b = Math.min(b, lat); h = Math.max(h, lat);
-  }
-  return { g, d, b, h };
-}
-
-/** Surface approximative (en « degrés carrés » corrigés de la latitude), pour classer les pays par taille. */
-function aireApprochee(anneaux) {
-  let total = 0;
-  for (const a of anneaux) {
-    let s = 0, latMoy = 0;
-    for (let i = 0, j = a.length - 1; i < a.length; j = i++) {
-      s += (a[j][0] - a[i][0]) * (a[j][1] + a[i][1]);
-      latMoy += a[i][1];
-    }
-    total += Math.abs(s / 2) * Math.cos(THREE.MathUtils.degToRad(latMoy / a.length));
-  }
-  return total;
-}
-
-/** Test « point dans polygone » (règle pair/impair, gère trous et îles). */
-function dansPays(lon, lat, pays) {
-  const b = pays.boite;
-  if (lon < b.g || lon > b.d || lat < b.b || lat > b.h) return false;
-  let dedans = false;
-  for (const a of pays.anneaux) {
-    for (let i = 0, j = a.length - 1; i < a.length; j = i++) {
-      const [xi, yi] = a[i], [xj, yj] = a[j];
-      if ((yi > lat) !== (yj > lat) && lon < ((xj - xi) * (lat - yi)) / (yj - yi) + xi) dedans = !dedans;
-    }
-  }
-  return dedans;
-}
-
-/**
- * Convertit latitude/longitude (en degrés) en position 3D.
- * Convention : longitude 0 et latitude 0 face à la caméra (axe +Z), nord vers +Y.
- */
-function versVecteur(lat, lon, rayon = 1) {
-  const la = THREE.MathUtils.degToRad(lat);
-  const lo = THREE.MathUtils.degToRad(lon);
-  return new THREE.Vector3(rayon * Math.cos(la) * Math.sin(lo), rayon * Math.sin(la), rayon * Math.cos(la) * Math.cos(lo));
-}
 
 /** Petite texture ronde et floue, utilisée pour les points lumineux. */
 function texturePoint() {
@@ -110,21 +40,17 @@ function texturePoint() {
   return texture;
 }
 
-/* Teintes translucides des pays (tons naturels) et frontières */
+/* Teintes des pays suivis : remplissage translucide et contour franc, saturé */
 const TEINTES = {
-  attractif: [16, 185, 129],   // vert émeraude
-  neutre: [245, 166, 35],      // ambre
-  defavorable: [255, 107, 91], // rouge corail
+  attractif: { remplissage: 0x10c88a, contour: 0x3dffb8 },   // vert émeraude
+  neutre: { remplissage: 0xf5a623, contour: 0xffc94a },      // ambre
+  defavorable: { remplissage: 0xff5a4e, contour: 0xff7b6e }, // rouge corail
 };
-const FRONTIERE = 0xffe9a8;    // jaune clair
-const LUEUR_FRONTIERE = 'rgba(255, 233, 168, 0.13)';
+const FRONTIERE = 0xffe9a8; // jaune clair
 
-/** Opacité de la teinte : 30 à 40 % environ, plus soutenue pour les notes extrêmes. */
+/** Opacité du remplissage : 45 à 55 %, plus soutenue pour les notes marquées. */
 function opaciteTeinte(note) {
-  const niveau = niveauNote(note);
-  if (niveau === 'attractif') return 0.3 + Math.min(1, (note - 65) / 30) * 0.12;
-  if (niveau === 'defavorable') return 0.3 + Math.min(1, (50 - note) / 30) * 0.12;
-  return 0.32;
+  return 0.45 + Math.min(1, Math.abs(note - 57) / 40) * 0.1;
 }
 
 /* Couleurs des flux selon leur sens */
@@ -143,7 +69,7 @@ const INCLINAISON_REPOS = 0.3;  // inclinaison par défaut
 const ZOOM_MIN = 0.8;
 const ZOOM_MAX = 4.5;
 const DELAI_DOUBLE_TAP = 280;   // ms
-const DUREE_FONDU = 0.6;        // secondes, changement de coloration
+const ZOOM_DETAIL = 1.6;        // à partir de ce zoom, carte 1:50m (retour au 1:110m sous 1,4)
 const SEUILS_ETIQUETTES = [1, 1.45, 2.1]; // grands pays, moyens, petits
 const AIRE_GRAND = 120, AIRE_MOYEN = 25;
 
@@ -171,11 +97,10 @@ export class Globe {
     this.actif = true;
     this.selection = null;
 
-    // Frontières : décodage puis association avec les pays suivis (code ISO numérique)
-    const topo = frontieres ? decoderTopoJSON(frontieres) : { pays: new Map(), arcs: [] };
-    this.formes = topo.pays;
-    this.arcsFrontieres = topo.arcs;
-    this.formeDuPays = new Map(pays.map((p) => [p.code, this.formes.get(p.iso_num)]));
+    // Carte vectorielle : 1:110m tout de suite, 1:50m chargée à la demande
+    this.topo110 = frontieres;
+    this.niveaux = {};
+    this.niveauActif = null;
 
     // Rotation (lacet = gauche/droite, tangage = haut/bas) et zoom
     this.lacet = -THREE.MathUtils.degToRad(15);
@@ -193,7 +118,7 @@ export class Globe {
     this.hautLibre = 0;
 
     // Moteur de rendu (peut échouer si WebGL n'est pas disponible)
-    this.rendu = new THREE.WebGLRenderer({ canvas: toile, antialias: !leger, alpha: true, powerPreference: 'low-power' });
+    this.rendu = new THREE.WebGLRenderer({ canvas: toile, antialias: true, alpha: true, powerPreference: 'low-power' });
     this.rendu.setClearColor(0x000000, 0);
 
     this.scene = new THREE.Scene();
@@ -205,8 +130,7 @@ export class Globe {
     this.texturePoint = texturePoint();
 
     this.#creerTerre();
-    this.#creerVoile();
-    this.#creerFrontieres();
+    this.#creerCarte();
     this.#creerHalo();
     this.#creerPays();
     this.#creerFlux();
@@ -267,178 +191,75 @@ export class Globe {
     });
   }
 
-  /**
-   * Voile des teintes : sphère juste au-dessus de la Terre, dont la texture
-   * mélange deux canvas (A et B) pour les transitions en fondu.
-   */
-  #creerVoile() {
-    const creerCanvas = () => {
-      const L = this.leger ? 1024 : 2048;
-      const toile = document.createElement('canvas');
-      toile.width = L; toile.height = L / 2;
-      const texture = new THREE.CanvasTexture(toile);
-      texture.colorSpace = THREE.SRGBColorSpace;
-      texture.wrapS = THREE.RepeatWrapping;
-      return { toile, texture };
+  /** Matériaux partagés par les deux niveaux de détail, puis carte 1:110m. */
+  #creerCarte() {
+    this.materiauxLignes = [];
+    const ligne = (params) => {
+      const m = new LineMaterial({ transparent: true, depthWrite: false, ...params });
+      this.materiauxLignes.push(m);
+      return m;
     };
-    this.calques = [creerCanvas(), creerCanvas()];
-    this.calqueActif = 0;
-    this.fondu = null; // { de, vers, t }
-    this.materiauVoile = new THREE.ShaderMaterial({
-      uniforms: {
-        texA: { value: this.calques[0].texture },
-        texB: { value: this.calques[1].texture },
-        melange: { value: 0 },
-      },
-      vertexShader: `
-        varying vec2 vUv;
-        void main() {
-          vUv = vec2(uv.x + 0.25, uv.y); // même décalage que la texture de la Terre
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }`,
-      fragmentShader: `
-        uniform sampler2D texA;
-        uniform sampler2D texB;
-        uniform float melange;
-        varying vec2 vUv;
-        void main() {
-          gl_FragColor = mix(texture2D(texA, vUv), texture2D(texB, vUv), melange);
-          #include <colorspace_fragment>
-        }`,
-      transparent: true, depthWrite: false,
-    });
-    this.voile = new THREE.Mesh(new THREE.SphereGeometry(1.001, 96, 64), this.materiauVoile);
-    this.groupe.add(this.voile);
-    this.#dessinerVoile(this.calques[0]);
-    this.calques[0].texture.needsUpdate = true;
-  }
-
-  /** Dessine teintes, lueur des frontières et mise en évidence du pays sélectionné. */
-  #dessinerVoile({ toile }) {
-    const L = toile.width, H = toile.height;
-    const ctx = toile.getContext('2d');
-    const px = (lon) => ((lon + 180) / 360) * L;
-    const py = (lat) => ((90 - lat) / 180) * H;
-    const echelle = L / 2048;
-    const tracer = (forme) => {
-      ctx.beginPath();
-      for (const anneau of forme.anneaux) {
-        let decalage = 0, precedent = anneau[0][0];
-        anneau.forEach(([lon, lat], i) => {
-          if (i && Math.abs(lon - precedent) > 180) decalage += lon < precedent ? 360 : -360;
-          precedent = lon;
-          const x = px(lon + decalage), y = py(lat);
-          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-        });
-        ctx.closePath();
-      }
+    // État courant des couleurs de chaque pays (indice = position dans this.pays) ;
+    // elles glissent vers leurs cibles à chaque image (fondu des filtres)
+    this.couleursTeintes = this.pays.map(() => new THREE.Color(0x000000));
+    this.opacitesTeintes = this.pays.map(() => 0);
+    this.couleursContours = this.pays.map(() => new THREE.Color(0x000000));
+    this.materiaux = {
+      lueur: ligne({ color: FRONTIERE, linewidth: 4, opacity: 0.16 }),     // légère lueur
+      frontiere: ligne({ color: FRONTIERE, linewidth: 1.1, opacity: 0.9 }), // trait fin net
+      contour: ligne({ color: 0xffffff, vertexColors: true, linewidth: 2, opacity: 0.95 }), // couleur franche par pays
+      teintes: materiauTeintes(this.couleursTeintes, this.opacitesTeintes),
     };
-    ctx.clearRect(0, 0, L, H);
-    ctx.lineJoin = 'round';
-
-    // 1) Légère lueur jaune sous toutes les frontières
-    ctx.strokeStyle = LUEUR_FRONTIERE;
-    ctx.lineWidth = 4 * echelle;
-    for (const forme of this.formes.values()) { tracer(forme); ctx.stroke(); }
-
-    // 2) Teintes translucides des pays suivis (selon la métrique choisie)
-    for (const p of this.pays) {
-      const m = this.metrique.lire(p);
-      if (!m) continue;
-      const [r, v, b] = TEINTES[niveauNote(m.note)];
-      const choisi = p.code === this.selection;
-      const alpha = opaciteTeinte(m.note) + (choisi ? 0.22 : 0);
-      const forme = this.formeDuPays.get(p.code);
-      if (forme) {
-        tracer(forme);
-        ctx.fillStyle = `rgba(${r}, ${v}, ${b}, ${alpha.toFixed(3)})`;
-        ctx.fill('evenodd');
-        if (choisi) {
-          // Le pays sélectionné « s'illumine » : halo coloré + contour jaune plus large
-          ctx.strokeStyle = `rgba(${r}, ${v}, ${b}, 0.55)`;
-          ctx.lineWidth = 10 * echelle;
-          ctx.stroke();
-          ctx.strokeStyle = 'rgba(255, 233, 168, 0.55)';
-          ctx.lineWidth = 3.5 * echelle;
-          ctx.stroke();
-        }
-      } else {
-        // Pays trop petit pour l'échelle 1:110m (Singapour…) : disque teinté
-        ctx.beginPath();
-        ctx.arc(px(p.lon), py(p.lat), 5 * echelle, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${r}, ${v}, ${b}, ${Math.min(0.9, alpha + 0.3).toFixed(3)})`;
-        ctx.fill();
-      }
-    }
+    this.materiauSelection = ligne({ color: 0xfff4d1, linewidth: 3.2, opacity: 1 });
+    this.materiaux.lueur.visible = !this.leger;
+    this.contourSelection = null;
+    if (this.topo110) this.#ajouterNiveau('110m', new NiveauCarte(this.topo110, this.pays, this.materiaux));
   }
 
-  /**
-   * Redessine le voile dans le canvas inactif puis lance un fondu.
-   * En mode léger, le changement est immédiat (un seul dessin, pas de fondu).
-   */
-  #actualiserVoile(duree = DUREE_FONDU) {
-    if (this.fondu) this.#terminerFondu();
-    const cible = this.leger ? this.calqueActif : 1 - this.calqueActif;
-    this.#dessinerVoile(this.calques[cible]);
-    this.calques[cible].texture.needsUpdate = true;
-    if (cible === this.calqueActif || duree === 0) {
-      this.calqueActif = cible;
-      this.materiauVoile.uniforms.melange.value = cible;
-      return;
-    }
-    this.fondu = { vers: cible, t: 0, duree };
+  #ajouterNiveau(nom, niveau) {
+    this.niveaux[nom] = niveau;
+    niveau.groupe.visible = false;
+    this.groupe.add(niveau.groupe);
+    if (!this.niveauActif) this.#activerNiveau(nom);
   }
 
-  #terminerFondu() {
-    this.calqueActif = this.fondu.vers;
-    this.materiauVoile.uniforms.melange.value = this.fondu.vers;
-    this.fondu = null;
+  #activerNiveau(nom) {
+    for (const [cle, niveau] of Object.entries(this.niveaux)) niveau.groupe.visible = cle === nom;
+    this.niveauActif = nom;
+    this.#majContourSelection();
   }
 
-  /** Frontières : chaque arc TopoJSON est tracé une seule fois (frontières partagées). */
-  #creerFrontieres() {
-    const positions = [];
-    const r = 1.0015;
-    for (const arc of this.arcsFrontieres) {
-      for (let i = 1; i < arc.length; i++) {
-        const [lon1, lat1] = arc[i - 1], [lon2, lat2] = arc[i];
-        if (Math.abs(lon2 - lon1) > 180) continue; // passage de la ligne de changement de date
-        const a = versVecteur(lat1, lon1, r), b = versVecteur(lat2, lon2, r);
-        positions.push(a.x, a.y, a.z, b.x, b.y, b.z);
-      }
-    }
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-    this.frontieres = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({
-      color: FRONTIERE, transparent: true, opacity: 0.5, depthWrite: false,
-    }));
-    this.groupe.add(this.frontieres);
-    this.contourSelection = null; // contour renforcé du pays sélectionné
+  /** Niveau de détail selon le zoom (avec une marge pour éviter les allers-retours). */
+  #majNiveauCarte() {
+    if (!this.niveaux['110m']) return;
+    const detail = this.zoom >= (this.niveauActif === '50m' ? 1.4 : ZOOM_DETAIL);
+    if (detail && !this.niveaux['50m']) { this.#chargerDetail(); return; }
+    const nom = detail ? '50m' : '110m';
+    if (nom !== this.niveauActif) this.#activerNiveau(nom);
   }
 
-  /** Contour jaune plus marqué autour du pays sélectionné. */
+  /** Charge la carte 1:50m (une seule fois, à la première demande). */
+  #chargerDetail() {
+    if (this.chargementDetail) return;
+    this.chargementDetail = fetch('data/countries-50m.json')
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`carte 1:50m : ${r.status}`))))
+      .then((topo) => {
+        this.#ajouterNiveau('50m', new NiveauCarte(topo, this.pays, this.materiaux, 30));
+        this.niveaux['50m'].majCouleursContours(this.couleursContours);
+      })
+      .catch((e) => console.warn('Carte détaillée indisponible, on garde le 1:110m', e));
+  }
+
+  /** Contour jaune plus épais autour du pays sélectionné. */
   #majContourSelection() {
     if (this.contourSelection) {
       this.groupe.remove(this.contourSelection);
       this.contourSelection.geometry.dispose();
       this.contourSelection = null;
     }
-    const forme = this.selection && this.formeDuPays.get(this.selection);
-    if (!forme) return;
-    const positions = [];
-    for (const anneau of forme.anneaux) {
-      for (let i = 1; i < anneau.length; i++) {
-        const [lon1, lat1] = anneau[i - 1], [lon2, lat2] = anneau[i];
-        if (Math.abs(lon2 - lon1) > 180) continue;
-        const a = versVecteur(lat1, lon1, 1.002), b = versVecteur(lat2, lon2, 1.002);
-        positions.push(a.x, a.y, a.z, b.x, b.y, b.z);
-      }
-    }
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-    this.contourSelection = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({
-      color: 0xfff4d1, transparent: true, opacity: 1, depthWrite: false,
-    }));
+    const positions = this.selection && this.niveaux[this.niveauActif]?.contourDe(this.selection);
+    if (!positions?.length) return;
+    this.contourSelection = ligneEpaisse(positions, this.materiauSelection, 5);
     this.groupe.add(this.contourSelection);
   }
 
@@ -509,11 +330,11 @@ export class Globe {
       }, p.nom, ' ', valeur);
       this.calque.append(etiquette);
 
-      const aire = this.formeDuPays.get(p.code)?.aire ?? 0;
+      const aire = this.niveaux['110m']?.formeDuPays.get(p.code)?.aire ?? 0;
       const rang = aire > AIRE_GRAND ? 0 : aire > AIRE_MOYEN ? 1 : 2;
 
       this.objetsPays.push({
-        code: p.code, normale, colonne, sommet, anneau, etiquette, valeur,
+        code: p.code, indice: index, normale, colonne, sommet, anneau, etiquette, valeur,
         couleurCible: couleur.clone(),
         hauteur: 0, hauteurCible: 0,
         zoomEtiquette: SEUILS_ETIQUETTES[rang],
@@ -532,12 +353,19 @@ export class Globe {
       const m = this.metrique.lire(p) ?? { note: 50, texte: '–' };
       const niveau = niveauNote(m.note);
       o.couleurCible.set(COULEURS[niveau]);
+      o.teinteCible = new THREE.Color(TEINTES[niveau].remplissage);
+      o.contourCible = new THREE.Color(TEINTES[niveau].contour);
+      o.opaciteCible = opaciteTeinte(m.note);
       o.hauteurCible = 0.02 + (m.note / 100) * 0.1;
       o.valeur.textContent = m.texte;
       o.etiquette.className = `etiquette note--${niveau}${o.visible ? '' : ' est-cachee'}${o.masquee ? ' est-masquee' : ''}${o.code === this.selection ? ' est-active' : ''}`;
       o.etiquette.setAttribute('aria-label', `${p.nom}, ${m.texte}`);
       o.largeurEtiquette = 0; // à remesurer (le texte a changé)
       if (immediat) {
+        this.couleursTeintes[o.indice].copy(o.teinteCible);
+        this.opacitesTeintes[o.indice] = o.opaciteCible;
+        this.couleursContours[o.indice].copy(o.contourCible);
+        this.contoursAJour = false;
         o.colonne.material.color.copy(o.couleurCible);
         o.sommet.material.color.copy(o.couleurCible);
         o.anneau.material.color.copy(o.couleurCible);
@@ -778,10 +606,8 @@ export class Globe {
   #paysTouche(x, y, impactTerre) {
     if (impactTerre) {
       const point = this.#latLon(impactTerre);
-      for (const p of this.pays) {
-        const forme = this.formeDuPays.get(p.code);
-        if (forme ? dansPays(point.lon, point.lat, forme) : Math.hypot(point.lon - p.lon, point.lat - p.lat) < 1.5) return p.code;
-      }
+      const code = this.niveaux[this.niveauActif]?.paysEn(point.lat, point.lon);
+      if (code) return code;
     }
     return this.#colonneProche(x, y);
   }
@@ -827,8 +653,7 @@ export class Globe {
   /** Change ce que représentent les couleurs (note globale, inflation…), avec un fondu. */
   definirMetrique(metrique) {
     this.metrique = metrique;
-    this.#appliquerMetriqueAuxPays();
-    this.#actualiserVoile();
+    this.#appliquerMetriqueAuxPays(); // les couleurs glissent en douceur dans #majPays
   }
 
   /** Affiche ou masque les flux de capitaux. */
@@ -863,7 +688,6 @@ export class Globe {
     this.#masquerBulleFlux();
     this.#majContourSelection();
     this.#majVisibiliteFlux();
-    this.#actualiserVoile(0.3);
   }
 
   definirCadrage({ cx, cy, rayon, hautLibre = 0, basLibre = innerHeight }) {
@@ -872,19 +696,15 @@ export class Globe {
     this.basLibre = basLibre;
   }
 
-  /** Mode léger : texture 1024 px, voile 1024 px sans fondu, pas de halo ni de points animés. */
+  /** Mode léger : texture 1024 px, densité de pixels 2, pas de halo ni de points animés. */
   definirLeger(leger) {
     if (leger === this.leger) return;
     this.leger = leger;
     this.#chargerTextureTerre();
-    // Nouveaux canvas du voile à la bonne taille
-    for (const c of this.calques) c.texture.dispose();
-    this.groupe.remove(this.voile);
-    this.voile.geometry.dispose();
-    this.#creerVoile();
     this.pointsFlux.visible = !leger;
     this.lisere.visible = !leger;
     this.halo.visible = !leger;
+    this.materiaux.lueur.visible = !leger; // pas de lueur des frontières en mode léger
     this.redimensionner();
   }
 
@@ -896,8 +716,11 @@ export class Globe {
   redimensionner() {
     this.largeur = innerWidth;
     this.hauteur = innerHeight;
-    this.rendu.setPixelRatio(Math.min(devicePixelRatio || 1, this.leger ? 1 : 2));
+    // Netteté : jusqu'à 3 pixels physiques par pixel sur les écrans haute résolution (2 en mode léger)
+    this.rendu.setPixelRatio(Math.min(devicePixelRatio || 1, this.leger ? 2 : 3));
     this.rendu.setSize(this.largeur, this.hauteur, false);
+    // Les lignes épaisses ont besoin de la taille de l'écran pour garder leur épaisseur en pixels
+    for (const m of this.materiauxLignes ?? []) m.resolution.set(this.largeur, this.hauteur);
     this.camera.aspect = this.largeur / this.hauteur;
     this.#appliquerCadrage();
   }
@@ -914,23 +737,18 @@ export class Globe {
     const temps = (maintenant - this.debut) / 1000;
     this.#majRotation(dt, maintenant);
     this.#majCadrage(dt);
-    this.#majFondu(dt);
+    this.#majNiveauCarte();
     this.#majPays(temps, dt);
     if (!this.leger && this.afficherFlux) this.#placerPointsFlux(temps);
 
     this.groupe.rotation.set(this.tangage, this.lacet, 0);
     this.groupe.updateMatrixWorld();
+    // Seuls les morceaux de carte face à la caméra sont dessinés
+    this.versCamera ??= new THREE.Vector3();
+    this.niveaux[this.niveauActif]?.majVisibilite(this.groupe.quaternion, this.versCamera.copy(this.camera.position).normalize());
     this.#majEtiquettes();
     this.rendu.render(this.scene, this.camera);
     if (!this.premierRendu) { this.premierRendu = true; performance.mark('globe-premier-rendu'); }
-  }
-
-  #majFondu(dt) {
-    if (!this.fondu) return;
-    this.fondu.t = Math.min(1, this.fondu.t + dt / this.fondu.duree);
-    const f = this.fondu.t * this.fondu.t * (3 - 2 * this.fondu.t); // départ et arrivée en douceur
-    this.materiauVoile.uniforms.melange.value = this.fondu.vers === 1 ? f : 1 - f;
-    if (this.fondu.t >= 1) this.#terminerFondu();
   }
 
   #majRotation(dt, maintenant) {
@@ -986,6 +804,15 @@ export class Globe {
       const attenue = this.selection && !choisi;
       o.hauteur += (o.hauteurCible - o.hauteur) * lissage;
       for (const m of [o.colonne.material, o.sommet.material, o.anneau.material]) m.color.lerp(o.couleurCible, lissage);
+      // Fondu des teintes de la carte (changement de filtre ou de sélection)
+      const i = o.indice;
+      this.couleursTeintes[i].lerp(o.teinteCible, lissage);
+      this.opacitesTeintes[i] += ((choisi ? Math.min(0.62, o.opaciteCible + 0.1) : o.opaciteCible) - this.opacitesTeintes[i]) * lissage;
+      const contour = this.couleursContours[i];
+      if (Math.abs(contour.r - o.contourCible.r) + Math.abs(contour.g - o.contourCible.g) + Math.abs(contour.b - o.contourCible.b) > 0.002) {
+        contour.lerp(o.contourCible, lissage);
+        this.contoursAJour = false;
+      }
       const h = Math.max(0.001, o.hauteur * croissance);
       o.colonne.scale.set(choisi ? 1.6 : 1, h, choisi ? 1.6 : 1);
       o.colonne.material.opacity = attenue ? 0.35 : 0.9;
@@ -1000,6 +827,11 @@ export class Globe {
         o.anneau.scale.setScalar((1 + cycle * (choisi ? 2.6 : 1.8)) * echelleZoom);
         o.anneau.material.opacity = (1 - cycle) * (attenue ? 0.35 : 0.9);
       }
+    }
+    // Contours colorés : recopiés seulement pendant un fondu
+    if (!this.contoursAJour) {
+      for (const niveau of Object.values(this.niveaux)) niveau.majCouleursContours(this.couleursContours);
+      this.contoursAJour = true;
     }
   }
 

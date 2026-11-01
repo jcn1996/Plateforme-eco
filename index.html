@@ -21,6 +21,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 
+  <!-- Three.js r160 (version fixée) : le cœur depuis cdnjs, les lignes épaisses
+       (examples/jsm/lines) depuis jsDelivr, qui importent « three » via cette table -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.module.min.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
   <!-- Préchargement de Three.js (version fixée) pour gagner du temps au démarrage -->
   <link rel="modulepreload" href="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.module.min.js" crossorigin>
 

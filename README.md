@@ -7,8 +7,10 @@ Prototype d'une application personnelle de suivi économique mondial, pensée d'
 
 - **Globe 3D réaliste**
   - Vraie texture de la Terre : NASA Blue Marble assombrie, avec les lumières des villes de la Black Marble.
-  - Les pays suivis reçoivent une teinte translucide (vert émeraude, ambre, rouge corail) qui laisse voir le relief.
-  - Les frontières sont jaune clair et lumineuses ; le pays sélectionné s'illumine.
+  - Carte **vectorielle**, nette à tous les niveaux de zoom.
+    - Les pays suivis sont des polygones 3D translucides (45 à 55 %), en vert émeraude, ambre ou rouge corail, avec un contour franc ; le relief reste visible.
+    - Les frontières sont jaune clair, d'épaisseur constante à l'écran, avec une légère lueur ; celle du pays sélectionné est plus épaisse.
+  - Côtes et frontières détaillées : Natural Earth au 1:110m au démarrage, puis au 1:50m quand on zoome de près (chargé à la demande).
 - **Flux de capitaux (fictifs)**
   - Épaisseur et vitesse selon le montant.
   - Couleur selon le sens : vert pour les entrées vers un pays bien noté, rouge pour les sorties d'un pays mal noté.
@@ -30,7 +32,8 @@ Prototype d'une application personnelle de suivi économique mondial, pensée d'
   - Les alertes déclenchées apparaissent en tête du bandeau, avec le badge « Mon alerte ».
 - **Classement** des pays et des 20 meilleures entreprises.
 - **Portefeuille démo** de 100 000 €.
-- **Mode léger** (⚡) : textures de 1024 px, sans halo ni animation des flux, 30 images/s.
+- **Netteté** : antialiasing, densité de pixels jusqu'à 3 sur les écrans haute résolution.
+- **Mode léger** (⚡) : texture de 1024 px, densité de pixels limitée à 2, sans halo, sans lueur des frontières, sans animation des flux, 30 images/s.
 - **PWA** : l'appli s'installe sur l'écran d'accueil. Le service worker charge l'appli « réseau d'abord », donc la dernière version s'affiche dès l'ouverture ; elle reste utilisable hors ligne.
 
 ## Structure
@@ -41,7 +44,8 @@ manifest.json, sw.js  PWA (installation, cache hors ligne)
 css/style.css         thème « salle de contrôle »
 js/app.js             démarrage, navigation, fil d'Ariane
 js/donnees.js         chargement des JSON (seul fichier à modifier si les chemins changent)
-js/globe.js           globe 3D (Three.js r160 via cdnjs), carte, gestes, zoom
+js/globe.js           globe 3D (Three.js r160), gestes, zoom, flux, étiquettes
+js/carte-vecteur.js   carte vectorielle : teintes triangulées, frontières en lignes épaisses, niveaux 110m / 50m
 js/interface.js       horloge, bandeau des marchés, alertes, mode léger
 js/panneau-pays.js    fiches pays et secteur
 js/panneau-entreprise.js  fiche entreprise
@@ -51,7 +55,7 @@ js/comparateur.js     comparateur (sélection, barre flottante, écran)
 js/mes-alertes.js     règles d'alertes personnelles
 js/outils.js          couleurs des notes, formats français
 data/*.json           données fictives
-data/countries-110m.json  frontières des pays (voir data/LICENCE-countries-110m.txt)
+data/countries-110m.json, countries-50m.json  frontières des pays (voir data/LICENCE-countries-110m.txt)
 outils/generer_donnees_fictives.py  régénère les données fictives
 outils/composer_texture_terre.py    compose la texture de la Terre (images NASA)
 assets/terre-2048.jpg, terre-1024.jpg  texture de la Terre (voir assets/CREDITS.txt)
@@ -125,7 +129,8 @@ Le serveur des agents pourra les relire telles quelles :
 
 ## Sources
 
-Les frontières (`data/countries-110m.json`) viennent de [world-atlas](https://github.com/topojson/world-atlas) 2.0.2, dérivé de Natural Earth (domaine public).
+Les frontières (`data/countries-110m.json` et `data/countries-50m.json`) viennent de [world-atlas](https://github.com/topojson/world-atlas) 2.0.2, dérivé de Natural Earth (domaine public).
+Three.js r160 est chargé depuis cdnjs ; ses modules de lignes épaisses (`examples/jsm/lines`) viennent de jsDelivr, dans la même version, via l'import map de `index.html`.
 La licence ISC de world-atlas est reproduite dans `data/LICENCE-countries-110m.txt`.
 
 La texture de la Terre est composée à partir d'images de la NASA (domaine public) : Blue Marble Next Generation et Black Marble 2012. Les détails sont dans `assets/CREDITS.txt`.
