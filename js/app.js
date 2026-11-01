@@ -3,7 +3,7 @@
    --------------------------------------------------------------------------
    - charge les données (data/*.json)
    - démarre le globe, l'horloge, le bandeau des marchés et les alertes
-   - gère la navigation : Globe › Pays › Secteur › Entreprise, et Portefeuille
+   - gère la navigation : Globe › Pays › Secteur › Entreprise, Portefeuille et Classement
      L'adresse de la page reflète l'écran affiché (#/pays/FR…), ce qui fait
      fonctionner le bouton « retour » du téléphone.
    ========================================================================== */
@@ -14,6 +14,7 @@ import { demarrerHorloge, remplirBandeau, initialiserAlertes, lireModeLeger, mem
 import { fichePays, ficheSecteur } from './panneau-pays.js';
 import { ficheEntreprise } from './panneau-entreprise.js';
 import { ecranPortefeuille } from './portefeuille.js';
+import { ecranClassement } from './classement.js';
 
 const $ = (sel) => document.querySelector(sel);
 const dom = {
@@ -22,6 +23,10 @@ const dom = {
   poignee: $('#panneau-poignee'),
   ecranPortefeuille: $('#ecran-portefeuille'),
   portefeuilleContenu: $('#portefeuille-contenu'),
+  ecranClassement: $('#ecran-classement'),
+  classementContenu: $('#classement-contenu'),
+  btnLegende: $('#btn-legende'),
+  legende: $('#legende'),
   entete: $('.entete'),
   alertes: $('#alertes'),
   message: $('#message'),
@@ -32,6 +37,21 @@ let d = null;      // données chargées
 let globe = null;  // instance du globe 3D (null si WebGL indisponible)
 let alertes = null;
 let routeActuelle = { type: 'globe' };
+
+/*
+ * Hauteurs du panneau sur téléphone (fractions de la hauteur d'écran).
+ * La poignée permet de passer de l'une à l'autre.
+ */
+const ETATS_PANNEAU = ['reduit', 'normal', 'plein'];
+const HAUTEURS_PANNEAU = { reduit: 0.34, normal: 0.58, plein: 1 };
+let etatPanneau = 'normal';
+
+function hauteurPanneau(etat = etatPanneau) {
+  return etat === 'plein' ? innerHeight - 6 : Math.round(innerHeight * HAUTEURS_PANNEAU[etat]);
+}
+function estLarge() {
+  return matchMedia('(min-width: 960px)').matches;
+}
 
 /* ============================== Démarrage ============================== */
 
@@ -65,6 +85,8 @@ async function demarrer() {
   });
 
   $('#btn-portefeuille').addEventListener('click', () => naviguer({ type: 'portefeuille' }));
+  $('#btn-classement').addEventListener('click', () => naviguer({ type: 'classement' }));
+  brancherLegende();
   document.querySelectorAll('.js-retour').forEach((b) => b.addEventListener('click', retour));
   document.querySelectorAll('.js-fermer').forEach((b) => b.addEventListener('click', () => allerVers({ type: 'globe' })));
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && routeActuelle.type !== 'globe') retour(); });
@@ -76,6 +98,7 @@ async function demarrer() {
     const { Globe } = await import('./globe.js');
     globe = new Globe($('#globe'), $('#etiquettes'), {
       pays: d.pays,
+      frontieres: d.frontieres,
       leger,
       surSelection: (code) => naviguer({ type: 'pays', id: code }),
     });
@@ -84,7 +107,7 @@ async function demarrer() {
     afficherSecours();
   }
 
-  addEventListener('resize', majCadrage);
+  addEventListener('resize', () => { appliquerEtatPanneau(); majCadrage(); });
   addEventListener('hashchange', surChangementAdresse);
   pile = [location.hash || '#/'];
   afficher(lireAdresse());
@@ -178,6 +201,7 @@ function filAriane(route) {
       return [racine, niveauPays(e.pays), niveauSecteur(s), { libelle: e.nom, route }];
     }
     case 'portefeuille': return [racine, { libelle: 'Portefeuille démo', route }];
+    case 'classement': return [racine, { libelle: 'Classement', route }];
     default: return [racine];
   }
 }
@@ -196,7 +220,7 @@ function majAriane(route) {
 /** Vérifie qu'une route désigne bien un élément existant. */
 function routeValide(route) {
   switch (route.type) {
-    case 'globe': case 'portefeuille': return true;
+    case 'globe': case 'portefeuille': case 'classement': return true;
     case 'pays': return d.paysParCode.has(route.id);
     case 'secteur': return d.secteurParId.has(route.id);
     case 'entreprise': return d.entrepriseParTicker.has(route.id);
@@ -214,6 +238,7 @@ function afficher(route) {
   }
   routeActuelle = route;
   const navigateurPanneau = {
+    ouvrirPays: (code) => naviguer({ type: 'pays', id: code }),
     ouvrirSecteur: (id) => naviguer({ type: 'secteur', id }),
     ouvrirEntreprise: (ticker) => naviguer({ type: 'entreprise', id: ticker }),
   };
@@ -232,6 +257,8 @@ function afficher(route) {
   }
 
   const panneauOuvert = Boolean(contenu);
+  // À l'ouverture, le panneau part de sa hauteur normale ; ensuite il garde la hauteur choisie
+  if (panneauOuvert && !dom.panneau.classList.contains('est-ouvert')) etatPanneau = 'normal';
   if (contenu) {
     dom.panneauContenu.replaceChildren(...contenu);
     dom.panneauContenu.scrollTop = 0;
@@ -240,7 +267,8 @@ function afficher(route) {
   dom.panneau.setAttribute('aria-hidden', String(!panneauOuvert));
   dom.panneau.inert = !panneauOuvert;
   document.body.classList.toggle('panneau-ouvert', panneauOuvert);
-  if (panneauOuvert) alertes?.replier();
+  if (panneauOuvert) { alertes?.replier(); fermerLegende(); }
+  appliquerEtatPanneau();
 
   // Écran portefeuille
   const portefeuille = route.type === 'portefeuille';
@@ -251,9 +279,18 @@ function afficher(route) {
   }
   dom.ecranPortefeuille.hidden = !portefeuille;
 
+  // Écran classement
+  const classement = route.type === 'classement';
+  if (classement) {
+    dom.classementContenu.replaceChildren(...ecranClassement(d, navigateurPanneau));
+    dom.classementContenu.scrollTop = 0;
+    titre = 'Classement — Salle de contrôle';
+  }
+  dom.ecranClassement.hidden = !classement;
+
   // Globe : pivot vers le pays concerné, pause quand il est masqué
   if (globe) {
-    globe.definirActif(!portefeuille);
+    majActiviteGlobe();
     if (codePays) globe.focaliser(codePays);
     else if (route.type === 'globe') globe.deselectionner();
   }
@@ -261,6 +298,45 @@ function afficher(route) {
   majAriane(route);
   document.title = titre;
   majCadrage();
+}
+
+/** Le globe ne se dessine que s'il est visible (économie de batterie). */
+function majActiviteGlobe() {
+  const masque = ['portefeuille', 'classement'].includes(routeActuelle.type)
+    || (dom.panneau.classList.contains('est-ouvert') && etatPanneau === 'plein' && !estLarge());
+  globe?.definirActif(!masque);
+}
+
+/** Applique la hauteur du panneau (réduit, normal ou plein écran). */
+function appliquerEtatPanneau() {
+  if (estLarge()) { dom.panneau.style.height = ''; return; }
+  dom.panneau.style.height = `${hauteurPanneau()}px`;
+  dom.panneau.classList.toggle('est-plein', etatPanneau === 'plein');
+}
+
+function changerEtatPanneau(etat) {
+  etatPanneau = etat;
+  appliquerEtatPanneau();
+  majActiviteGlobe();
+  majCadrage();
+}
+
+/* ---------- Légende repliée derrière le bouton « ? » ---------- */
+function brancherLegende() {
+  dom.btnLegende.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const ouvrir = dom.legende.hidden;
+    dom.legende.hidden = !ouvrir;
+    dom.btnLegende.setAttribute('aria-expanded', String(ouvrir));
+  });
+  // Un toucher ailleurs referme la légende
+  document.addEventListener('pointerdown', (e) => {
+    if (!dom.legende.hidden && !dom.legende.contains(e.target) && e.target !== dom.btnLegende && !dom.btnLegende.contains(e.target)) fermerLegende();
+  });
+}
+function fermerLegende() {
+  dom.legende.hidden = true;
+  dom.btnLegende.setAttribute('aria-expanded', 'false');
 }
 
 /**
@@ -271,18 +347,18 @@ function majCadrage() {
   if (!globe) return;
   const L = innerWidth, H = innerHeight;
   const haut = dom.entete.getBoundingClientRect().bottom;
-  const large = matchMedia('(min-width: 960px)').matches;
+  const large = estLarge();
   const ouvert = dom.panneau.classList.contains('est-ouvert');
-  let bas = H - dom.alertes.querySelector('.alertes-bascule').offsetHeight - 16;
+  let bas = H - dom.alertes.querySelector('.alertes-bascule').offsetHeight - 14;
   let droite = L;
-  let facteur = 0.74; // marge pour les colonnes et les étiquettes
+  const facteur = 0.94; // le globe occupe presque toute la zone libre (les colonnes sont courtes)
 
   if (ouvert && large) {
     droite = L - dom.panneau.offsetWidth - 32;
     bas = H;
   } else if (ouvert) {
-    bas = H - dom.panneau.offsetHeight;
-    facteur = 0.9; // sur téléphone, on accepte que le globe passe un peu sous le panneau
+    // Hauteur visée (et non la hauteur en cours d'animation)
+    bas = H - Math.min(hauteurPanneau(), H - haut - 120);
   }
   const largeurZone = Math.max(100, droite);
   const hauteurZone = Math.max(100, bas - haut);
@@ -294,28 +370,49 @@ function majCadrage() {
   });
 }
 
-/* ---------- Glisser le panneau vers le bas pour le fermer ---------- */
+/* ---------- Poignée du panneau : tirer vers le haut (plein écran) ou vers le bas (réduit, puis fermé) ---------- */
 function brancherGlissementPanneau() {
-  let depart = null, decalage = 0, id = null;
+  let depart = null, hauteurDepart = 0, id = null, dernier = null, vitesse = 0;
   const zones = [dom.poignee, dom.panneau.querySelector('.navigation')];
   for (const zone of zones) {
     zone.addEventListener('pointerdown', (e) => {
-      if (e.target.closest('button') || matchMedia('(min-width: 960px)').matches) return;
-      id = e.pointerId; depart = e.clientY; decalage = 0;
+      if (e.target.closest('button') || estLarge()) return;
+      id = e.pointerId; depart = e.clientY; hauteurDepart = dom.panneau.offsetHeight;
+      dernier = { y: e.clientY, t: performance.now() }; vitesse = 0;
       zone.setPointerCapture(id);
       dom.panneau.classList.add('est-glisse');
     });
     zone.addEventListener('pointermove', (e) => {
       if (e.pointerId !== id) return;
-      decalage = Math.max(0, e.clientY - depart);
-      dom.panneau.style.transform = `translateY(${decalage}px)`;
+      const h = Math.min(innerHeight - 6, Math.max(60, hauteurDepart - (e.clientY - depart)));
+      dom.panneau.style.height = `${h}px`;
+      const t = performance.now();
+      vitesse = (e.clientY - dernier.y) / Math.max(1, t - dernier.t); // px/ms, positif vers le bas
+      dernier = { y: e.clientY, t };
     });
     const fin = (e) => {
       if (e.pointerId !== id) return;
       id = null;
       dom.panneau.classList.remove('est-glisse');
-      dom.panneau.style.transform = '';
-      if (decalage > 90) allerVers({ type: 'globe' });
+      const deplacement = e.clientY - depart;
+      if (performance.now() - dernier.t > 120) vitesse = 0; // doigt arrêté avant le lâcher : pas d'élan
+      const h = dom.panneau.offsetHeight;
+      const rang = ETATS_PANNEAU.indexOf(etatPanneau);
+      if (Math.abs(deplacement) < 6) {
+        // Simple toucher sur la poignée : bascule normal ↔ plein écran
+        changerEtatPanneau(etatPanneau === 'plein' ? 'normal' : 'plein');
+      } else if (vitesse > 0.6) {
+        // Geste rapide vers le bas : un cran plus bas, ou fermeture
+        if (rang === 0) allerVers({ type: 'globe' }); else changerEtatPanneau(ETATS_PANNEAU[rang - 1]);
+      } else if (vitesse < -0.6) {
+        changerEtatPanneau(ETATS_PANNEAU[Math.min(2, rang + 1)]);
+      } else if (h < hauteurPanneau('reduit') * 0.6) {
+        allerVers({ type: 'globe' });
+      } else {
+        // Sinon : la hauteur la plus proche
+        const plusProche = ETATS_PANNEAU.reduce((a, b) => (Math.abs(hauteurPanneau(b) - h) < Math.abs(hauteurPanneau(a) - h) ? b : a));
+        changerEtatPanneau(plusProche);
+      }
     };
     zone.addEventListener('pointerup', fin);
     zone.addEventListener('pointercancel', fin);

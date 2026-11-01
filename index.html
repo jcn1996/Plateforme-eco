@@ -34,34 +34,47 @@
 
   <!-- ===================== EN-TÊTE ===================== -->
   <header class="entete">
+    <!-- Ligne unique : titre, horloge, boutons -->
     <div class="entete-ligne">
       <div class="marque">
         <span class="marque-logo" aria-hidden="true"></span>
         <h1>Salle de contrôle</h1>
       </div>
-      <time id="horloge" class="horloge mono">--:--:--</time>
+      <time id="horloge" class="horloge mono">--:--</time>
+      <div class="entete-actions">
+        <button id="btn-legende" class="bouton bouton--icone" type="button" aria-expanded="false" aria-controls="legende" title="Légende des couleurs">
+          <span aria-hidden="true">?</span><span class="visuellement-cache">Légende des couleurs</span>
+        </button>
+        <button id="btn-leger" class="bouton bouton--icone" type="button" aria-pressed="false" title="Mode léger (économie de batterie)">
+          <span aria-hidden="true">⚡</span><span class="visuellement-cache">Mode léger</span>
+        </button>
+        <button id="btn-classement" class="bouton bouton--icone-texte" type="button" title="Classement">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2 17h16M4 17v-5h4v5M8 17V5h4v12M12 17V9h4v8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+          <span class="bouton-libelle">Classement</span>
+        </button>
+        <button id="btn-portefeuille" class="bouton bouton--icone-texte bouton--accent" type="button" title="Portefeuille démo">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6.5h13.5v10H3zM3 6.5l10-3v3M12.5 11.5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+          <span class="bouton-libelle">Portefeuille démo</span>
+        </button>
+      </div>
     </div>
 
-    <!-- Bandeau défilant des marchés -->
+    <!-- Bandeau défilant des marchés (masqué quand un panneau est ouvert) -->
     <div class="bandeau-marches" aria-label="Marchés">
       <div id="bandeau-piste" class="bandeau-piste"></div>
     </div>
 
-    <div class="entete-ligne entete-ligne--outils">
-      <span class="badge-fictif" title="Toutes les données affichées sont inventées">Données fictives</span>
-      <div class="entete-actions">
-        <button id="btn-leger" class="bouton bouton--icone" type="button" aria-pressed="false" title="Mode léger (économie de batterie)">
-          <span aria-hidden="true">⚡</span><span class="visuellement-cache">Mode léger</span>
-        </button>
-        <button id="btn-portefeuille" class="bouton bouton--accent" type="button">Portefeuille démo</button>
-      </div>
-    </div>
+    <span class="badge-fictif badge-fictif--discret" title="Toutes les données affichées sont inventées">Données fictives</span>
 
-    <ul class="legende" aria-label="Légende des notes">
-      <li><span class="pastille pastille--vert"></span>≥ 65 attractif</li>
-      <li><span class="pastille pastille--orange"></span>50–64 neutre</li>
-      <li><span class="pastille pastille--rouge"></span>&lt; 50 défavorable</li>
-    </ul>
+    <!-- Légende repliée derrière le bouton « ? » -->
+    <div id="legende" class="legende-bulle" hidden>
+      <ul class="legende" aria-label="Légende des notes">
+        <li><span class="pastille pastille--vert"></span>≥ 65 : attractif</li>
+        <li><span class="pastille pastille--orange"></span>50 à 64 : neutre</li>
+        <li><span class="pastille pastille--rouge"></span>&lt; 50 : défavorable</li>
+      </ul>
+      <p class="legende-aide">Couleur des pays et des colonnes = note sur 100. Pincez ou double-touchez pour zoomer.</p>
+    </div>
   </header>
 
   <!-- ===================== ALERTES DU JOUR ===================== -->
@@ -95,6 +108,16 @@
       <span class="badge-fictif">Données fictives</span>
     </nav>
     <div id="portefeuille-contenu" class="ecran-contenu"></div>
+  </section>
+
+  <!-- ===================== ÉCRAN CLASSEMENT ===================== -->
+  <section id="ecran-classement" class="ecran" hidden aria-label="Classement">
+    <nav class="navigation navigation--ecran" aria-label="Fil d'Ariane">
+      <button class="bouton bouton--icone js-retour" type="button" title="Retour"><span aria-hidden="true">‹</span><span class="visuellement-cache">Retour</span></button>
+      <ol class="ariane js-ariane"></ol>
+      <span class="badge-fictif">Données fictives</span>
+    </nav>
+    <div id="classement-contenu" class="ecran-contenu"></div>
   </section>
 
   <!-- Message d'erreur (chargement impossible, WebGL absent…) -->

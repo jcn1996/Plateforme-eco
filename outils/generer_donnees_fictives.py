@@ -2,7 +2,6 @@
 # Usage : python3 outils/generer_donnees_fictives.py data
 # Régénère les 6 fichiers JSON fictifs du dossier data/ (graine fixe : résultat identique à chaque fois).
 # Ce script ne sert qu'au prototype : plus tard, les agents IA écriront ces fichiers eux-mêmes.
-# Générateur des données fictives du prototype (hors dépôt).
 import json, random, math, datetime, os, sys
 
 random.seed(42)
@@ -30,10 +29,10 @@ def niveau(n):
 # ---------------------------------------------------------------- PAYS
 # code, nom, lat, lon, note, verdict, (pib, inflation, per, devise3m, flux Md€)
 PAYS = [
- ("US","États-Unis",39.8,-98.6,71,"Croissance robuste et bénéfices solides, mais valorisations tendues.",(2.4,2.9,21.5,1.8,42.0)),
+ ("US","États-Unis",39.8,-98.6,70,"Croissance robuste et bénéfices solides, mais valorisations tendues.",(2.4,2.9,21.5,1.8,42.0)),
  ("CA","Canada",56.1,-106.3,63,"Économie stable portée par l'énergie, consommation qui s'essouffle.",(1.6,2.4,15.2,-0.6,6.1)),
  ("MX","Mexique",23.6,-102.5,59,"Gagnant de la relocalisation industrielle, risque politique à surveiller.",(2.0,4.1,12.8,0.9,7.4)),
- ("BR","Brésil",-14.2,-51.9,54,"Actions bon marché, mais taux réels très élevés qui pèsent sur la demande.",(1.9,4.6,8.4,-2.1,3.2)),
+ ("BR","Brésil",-14.2,-51.9,73,"Actions décotées et baisse des taux engagée : le marché profite du cycle des matières premières.",(2.6,3.9,8.4,2.4,6.8)),
  ("AR","Argentine",-38.4,-63.6,41,"Réformes courageuses, mais inflation et devise encore très fragiles.",(1.2,38.0,9.5,-9.8,-1.4)),
  ("GB","Royaume-Uni",54.0,-2.5,57,"Marché décoté et dividendes généreux, croissance faible.",(0.9,3.2,11.9,0.4,2.8)),
  ("FR","France",46.6,2.4,58,"Croissance molle mais valorisations raisonnables et champions mondiaux.",(1.1,2.1,13.8,-0.3,3.4)),
@@ -41,11 +40,27 @@ PAYS = [
  ("CH","Suisse",46.8,8.2,66,"Valeur refuge de qualité, franc fort qui rogne les marges des exportateurs.",(1.3,0.7,17.4,1.2,4.9)),
  ("SA","Arabie saoudite",23.9,45.1,56,"Diversification ambitieuse, dépendance au prix du pétrole encore forte.",(3.1,1.9,16.2,0.0,5.5)),
  ("ZA","Afrique du Sud",-30.6,22.9,44,"Mines attractives, mais réseau électrique et croissance défaillants.",(0.8,4.9,10.3,-3.4,-2.2)),
- ("IN","Inde",20.6,79.0,74,"Moteur de croissance mondial, valorisations élevées mais justifiées.",(6.6,4.0,22.8,-0.8,18.6)),
- ("CN","Chine",35.9,104.2,47,"Actions très décotées, immobilier et déflation freinent la reprise.",(4.3,0.2,10.6,-1.5,-12.3)),
- ("KR","Corée du Sud",35.9,127.8,61,"Cycle des semi-conducteurs favorable, réforme de gouvernance en cours.",(2.1,2.0,11.4,0.7,6.9)),
- ("JP","Japon",36.2,138.3,68,"Réformes des entreprises et retour de l'inflation : un marché qui se réveille.",(1.0,2.2,15.6,2.4,11.8)),
+ ("IN","Inde",20.6,79.0,76,"Moteur de croissance mondial, valorisations élevées mais justifiées.",(6.6,4.0,22.8,-0.8,18.6)),
+ ("CN","Chine",35.9,104.2,36,"Déflation, crise immobilière et défiance des investisseurs : prudence maximale.",(3.6,-0.4,10.6,-2.5,-18.0)),
+ ("KR","Corée du Sud",35.9,127.8,73,"Cycle des semi-conducteurs très favorable et réforme de la gouvernance en cours.",(2.4,2.0,11.4,1.6,9.8)),
+ ("JP","Japon",36.2,138.3,72,"Réformes des entreprises et retour de l'inflation : un marché qui se réveille.",(1.2,2.2,15.6,2.4,13.8)),
  ("AU","Australie",-25.3,133.8,62,"Économie résiliente, dépendante de la demande chinoise en matières premières.",(1.7,3.0,17.0,-1.1,2.6)),
+ ("IT","Italie",41.9,12.6,55,"Banques revigorées et dette publique lourde : un marché à dividendes.",(0.7,1.8,11.2,-0.3,2.1)),
+ ("ES","Espagne",40.4,-3.7,63,"Croissance parmi les plus fortes d'Europe, portée par le tourisme et les renouvelables.",(2.6,2.6,11.8,-0.3,5.6)),
+ ("NL","Pays-Bas",52.1,5.3,64,"Champions technologiques mondiaux dans une économie ouverte et solide.",(1.2,2.9,15.4,-0.3,4.8)),
+ ("SE","Suède",60.1,18.6,62,"Industrie de qualité, immobilier encore convalescent.",(1.4,1.6,16.8,1.9,2.4)),
+ ("PL","Pologne",51.9,19.1,66,"Rattrapage économique rapide, soutenu par les fonds européens.",(3.2,3.8,9.6,1.4,6.2)),
+ ("TW","Taïwan",23.7,121.0,82,"Cœur mondial des semi-conducteurs, porté par la demande liée à l'IA.",(4.8,1.9,18.5,2.1,22.4)),
+ ("ID","Indonésie",-2.5,118.0,67,"Démographie porteuse et nickel stratégique pour les batteries.",(5.0,2.4,13.9,-1.0,7.2)),
+ ("VN","Vietnam",14.1,108.3,69,"Atelier du monde en plein essor, marché encore peu accessible.",(6.4,3.1,12.6,-0.6,9.1)),
+ ("SG","Singapour",1.35,103.8,71,"Place financière de référence en Asie, stabilité exemplaire.",(2.8,2.2,13.2,1.1,8.8)),
+ ("TH","Thaïlande",15.9,101.0,52,"Tourisme en reprise, mais consommation et politique fragiles.",(2.0,0.8,14.6,-0.9,-1.5)),
+ ("CL","Chili",-35.7,-71.5,58,"Cuivre et lithium en vedette, croissance modeste.",(2.1,3.9,11.4,-1.2,1.9)),
+ ("CO","Colombie",4.6,-74.3,48,"Valorisations très basses, incertitudes politiques et budgétaires.",(1.5,5.4,7.6,-2.4,-0.9)),
+ ("AE","Émirats arabes unis",23.4,53.8,68,"Hub mondial du commerce et de la finance, diversification réussie.",(3.9,2.1,12.9,0.0,9.6)),
+ ("TR","Turquie",39.0,35.2,42,"Désinflation en cours, mais livre fragile et taux très élevés.",(3.0,35.0,6.8,-6.5,1.2)),
+ ("EG","Égypte",26.8,30.8,38,"Financements internationaux salutaires, inflation et dette pesantes.",(3.4,24.0,7.2,-5.8,-0.4)),
+
 ]
 
 def notes_indic(pib, infl, per, dev, flux, code):
@@ -69,9 +84,9 @@ TEXTES_AGENTS = {
         "Presse financière plutôt positive sur la relocalisation.",
         "Incertitudes sur la réforme judiciaire et les relations commerciales.",
         "Consommation électrique industrielle en hausse de 7 % : les usines tournent."),
- "BR": ("Taux directeur très élevé, l'inflation reflue lentement.",
-        "Investisseurs étrangers méfiants, flux encore timides.",
-        "Dérapage budgétaire possible avant les élections.",
+ "BR": ("La banque centrale amorce la baisse des taux, l'inflation reflue.",
+        "Retour marqué des investisseurs étrangers sur des actions décotées.",
+        "Risque budgétaire présent mais contenu.",
         "Récoltes record de soja : soutien aux exportations."),
  "AR": ("Inflation en forte baisse mais encore à deux chiffres élevés.",
         "Regain d'intérêt des fonds spécialisés, sentiment très volatil.",
@@ -121,15 +136,52 @@ TEXTES_AGENTS = {
         "Sentiment neutre.",
         "Dépendance à la demande chinoise de minerai de fer.",
         "Prix du minerai de fer au port : stables sur un mois."),
+ "IT": ("Croissance faible, mais emploi au plus haut historique.", "Sentiment stable, banques plébiscitées.",
+        "Dette publique supérieure à 135 % du PIB.", "Fréquentation touristique record cet été."),
+ "ES": ("Emploi dynamique et investissements européens en hausse.", "Sentiment positif des investisseurs étrangers.",
+        "Chômage des jeunes encore élevé.", "Arrivées de touristes : +8 % sur un an."),
+ "NL": ("Économie solide, inflation un peu au-dessus de la moyenne européenne.", "Intérêt marqué pour les valeurs technologiques.",
+        "Exposition aux restrictions d'exportation de technologies.", "Trafic du port de Rotterdam stable sur trois mois."),
+ "SE": ("Baisse des taux engagée, immobilier qui se stabilise.", "Sentiment neutre.",
+        "Endettement immobilier des ménages élevé.", "Commandes industrielles en hausse de 4 %."),
+ "PL": ("Croissance robuste soutenue par la consommation et les fonds européens.", "Investisseurs étrangers de retour.",
+        "Proximité du conflit en Ukraine.", "Ventes au détail en hausse de 6 % sur un an."),
+ "TW": ("Exportations en hausse de 20 % grâce aux puces destinées à l'IA.", "Enthousiasme très fort autour des fondeurs.",
+        "Tensions dans le détroit : risque extrême mais jugé peu probable.", "Commandes de serveurs IA : carnets pleins sur 12 mois."),
+ "ID": ("Croissance stable autour de 5 %, inflation maîtrisée.", "Sentiment prudent après la volatilité de la roupie.",
+        "Interventionnisme de l'État dans certains secteurs.", "Production de nickel en hausse de 12 %."),
+ "VN": ("Investissements étrangers records dans l'électronique.", "Enthousiasme des épargnants locaux.",
+        "Marché classé « frontière », liquidité limitée.", "Exportations d'électronique : +18 % sur un an."),
+ "SG": ("Croissance régulière, rôle de hub régional renforcé.", "Valeur refuge régionale.",
+        "Exposition au ralentissement chinois.", "Trafic portuaire record de conteneurs."),
+ "TH": ("Croissance molle, légère déflation.", "Sentiment négatif, sorties de capitaux.",
+        "Instabilité politique récurrente.", "Arrivées de touristes chinois encore inférieures à 2019."),
+ "CL": ("Banque centrale en phase de baisse des taux.", "Sentiment neutre, suspendu au prix du cuivre.",
+        "Dépendance aux matières premières.", "Production de lithium en hausse de 15 %."),
+ "CO": ("Croissance faible et déficit budgétaire en hausse.", "Pessimisme des investisseurs.",
+        "Incertitudes politiques et sécuritaires.", "Ventes de ciment en recul de 5 %."),
+ "AE": ("Activité non pétrolière en forte croissance.", "Afflux de capitaux et d'entrepreneurs étrangers.",
+        "Exposition aux tensions régionales.", "Transactions immobilières à Dubaï : +20 %."),
+ "TR": ("Inflation en reflux mais toujours au-dessus de 30 %.", "Retour prudent de quelques fonds étrangers.",
+        "Livre turque fragile : risque de change élevé.", "Prix alimentaires en ligne : +3 % sur un mois."),
+ "EG": ("Programme du FMI et investissements du Golfe en soutien.", "Sentiment très prudent.",
+        "Dette extérieure et besoins de financement élevés.", "Revenus du canal de Suez encore en baisse de 40 %."),
 }
 
 FLUX = [("US","IN",18.4),("US","JP",12.1),("US","MX",8.6),("CN","SA",6.2),("CN","BR",4.8),
         ("CH","US",9.3),("GB","IN",5.1),("JP","US",7.7),("DE","CN",-3.0),("SA","IN",4.0),
         ("FR","US",4.4),("KR","US",5.6),("AU","CN",3.1),("CA","US",6.8),("ZA","GB",2.2),
-        ("US","AR",1.6)]
+        ("US","AR",1.6),("TW","US",9.8),("US","TW",6.4),("SG","ID",3.8),("AE","IN",4.6),
+        ("NL","US",3.9),("JP","VN",4.2),("KR","VN",3.1),("SA","EG",2.6),("ES","CO",1.2),("DE","PL",3.3)]
 
 def lecture(n, t):
     return {"note": n, "texte": t}
+
+# Code ISO 3166 numérique : identifiant du pays dans data/countries-110m.json
+ISO_NUM = {"US":"840","CA":"124","MX":"484","BR":"076","AR":"032","GB":"826","FR":"250","DE":"276","CH":"756",
+           "SA":"682","ZA":"710","IN":"356","CN":"156","KR":"410","JP":"392","AU":"036","IT":"380","ES":"724",
+           "NL":"528","SE":"752","PL":"616","TW":"158","ID":"360","VN":"704","SG":"702","TH":"764","CL":"152",
+           "CO":"170","AE":"784","TR":"792","EG":"818"}
 
 pays = []
 for code, nom, lat, lon, note, verdict, (pib, infl, per, dev, flux) in PAYS:
@@ -137,7 +189,7 @@ for code, nom, lat, lon, note, verdict, (pib, infl, per, dev, flux) in PAYS:
     ta = TEXTES_AGENTS[code]
     rnd = lambda d: clamp(note + random.randint(-d, d))
     pays.append({
-        "code": code, "nom": nom, "lat": lat, "lon": lon, "note": note,
+        "code": code, "iso_num": ISO_NUM[code], "nom": nom, "lat": lat, "lon": lon, "note": note,
         "niveau": niveau(note), "verdict": verdict,
         "indicateurs": {
             "croissance_pib": {"libelle": "Croissance du PIB", "valeur": pib, "unite": "%", "note": n[0]},
@@ -168,9 +220,9 @@ SECT = {
  "MX": [("Industrie",95,5.6,["Grupo Rivera Industrial","Monterrey Aceros"]),
         ("Consommation",120,-0.8,["Alimentos Sol","Tiendas Paloma"]),
         ("Banques",88,2.3,["Banco Azteca Norte","Finanzas del Valle"])],
- "BR": [("Matières premières",160,1.8,["Vale Verde Minério","Ferro Paulista"]),
-        ("Banques",140,-2.6,["Banco Ipê","Itaú Cerrado"]),
-        ("Énergie",110,0.4,["Petro Atlântico","Energia Tropical"])],
+ "BR": [("Matières premières",160,4.6,["Vale Verde Minério","Ferro Paulista"]),
+        ("Banques",140,2.1,["Banco Ipê","Itaú Cerrado"]),
+        ("Énergie",110,3.2,["Petro Atlântico","Energia Tropical"])],
  "AR": [("Énergie",28,9.4,["Vaca Muerta Energía","Andes Petróleo"]),
         ("Banques",19,-4.2,["Banco Pampa","Crédito del Plata"]),
         ("Agroalimentaire",14,-1.9,["Agro Patagonia","Granos del Sur"])],
@@ -195,18 +247,63 @@ SECT = {
  "IN": [("Technologie",520,3.9,["Infonova Services","Deccan Digital","Ganga Soft"]),
         ("Banques",610,4.7,["Bharat Prime Bank","Kaveri Finance"]),
         ("Consommation",380,2.2,["Saffron Brands","Monsoon Motors"])],
- "CN": [("Technologie",1900,-2.8,["Longhua Tech","Pearl River Digital"]),
+ "CN": [("Technologie",1900,-6.2,["Longhua Tech","Pearl River Digital"]),
         ("Immobilier",210,-11.5,["Jade Tower Properties","Huaxin Habitat"]),
-        ("Véhicules électriques",480,4.4,["Dragon Volt","Sino E-Drive"])],
- "KR": [("Semi-conducteurs",620,9.8,["Hanbit Semicon","Seoul Memory"]),
-        ("Automobile",130,1.3,["Daehan Motors","Busan Mobility"]),
-        ("Chimie & batteries",150,-3.9,["Korea Cell","Hwasan Chemical"])],
+        ("Véhicules électriques",480,-1.2,["Dragon Volt","Sino E-Drive"])],
+ "KR": [("Semi-conducteurs",620,11.2,["Hanbit Semicon","Seoul Memory"]),
+        ("Automobile",130,3.1,["Daehan Motors","Busan Mobility"]),
+        ("Chimie & batteries",150,-1.2,["Korea Cell","Hwasan Chemical"])],
  "JP": [("Industrie",880,5.9,["Kanto Robotics","Shinkai Heavy"]),
         ("Automobile",520,2.7,["Sakura Motors","Hokuto Auto"]),
         ("Banques",360,7.2,["Mizuki Financial","Edo Trust Bank"])],
  "AU": [("Mines",410,-0.4,["Pilbara Iron","Outback Lithium"]),
         ("Banques",480,1.9,["Southern Cross Bank","Harbour Finance"]),
         ("Santé",150,3.3,["Coral Health","Eucalyptus Bio"])],
+ "IT": [("Banques",210,5.2,["Banca Tevere","Credito Lombardo"]),
+        ("Énergie",140,0.8,["Adriatica Energia","Sole Rinnovabili"]),
+        ("Luxe",120,2.6,["Casa Veronelli","Moda Arno"])],
+ "ES": [("Banques",190,4.1,["Banco Meseta","Caja Levante"]),
+        ("Renouvelables",110,3.0,["Viento Ibérico","Sol de Castilla"]),
+        ("Tourisme",60,6.2,["Hoteles Costa Brava","Viajes Alhambra"])],
+ "NL": [("Semi-conducteurs",420,3.6,["Lithovia","Polder Photonics"]),
+        ("Consommation",150,-1.0,["Tulipa Foods","Delta Brands"]),
+        ("Paiements",70,2.1,["Grachten Pay","Oranje Ledger"])],
+ "SE": [("Industrie",260,3.2,["Nordkraft Verktyg","Vasa Maskin"]),
+        ("Banques",120,1.1,["Svea Nordbank","Gotland Finans"]),
+        ("Immobilier",40,-3.1,["Mälar Fastigheter","Norrhus"])],
+ "PL": [("Banques",75,5.8,["Bank Wisła","Kredyt Mazowsze"]),
+        ("Commerce en ligne",30,7.4,["Bursztyn Market","Polska Paczka"]),
+        ("Énergie",25,-0.6,["Wisła Nowa Energia","Tatra Power"])],
+ "TW": [("Semi-conducteurs",1350,12.4,["Formosa Silicon","Hsinchu Wafer Works","Jade Mountain Chips"]),
+        ("Électronique",260,6.1,["Taipei Assembly","Keelung Circuits"]),
+        ("Banques",110,1.8,["Formosa Trust","Pacific Harbour Bank"])],
+ "ID": [("Banques",180,-1.5,["Bank Nusantara","Jakarta Raya Finance"]),
+        ("Mines & nickel",60,4.8,["Sulawesi Nickel","Borneo Mining"]),
+        ("Consommation",70,0.6,["Garuda Foods","Batik Retail"])],
+ "VN": [("Électronique",35,9.1,["Saigon Electronics","Mekong Devices"]),
+        ("Banques",55,4.0,["Hanoi Commercial Bank","Lotus Bank"]),
+        ("Immobilier",25,-2.5,["Ha Long Land","Red River Homes"])],
+ "SG": [("Banques",220,3.4,["Merlion Bank","Straits Capital"]),
+        ("Immobilier",60,0.4,["Marina Reit","Orchard Properties"]),
+        ("Logistique",40,2.9,["Lion City Logistics","Sentosa Shipping"])],
+ "TH": [("Tourisme",30,2.4,["Siam Resorts","Andaman Hotels"]),
+        ("Banques",45,-1.8,["Bank of Chao Phraya","Krung Finance"]),
+        ("Énergie",40,-2.6,["Thai Gulf Energy","Isan Power"])],
+ "CL": [("Mines",70,4.6,["Atacama Cobre","Andes Litio"]),
+        ("Banques",35,1.2,["Banco Pacífico Sur","Valparaíso Crédito"]),
+        ("Distribution",20,-1.4,["Mercado Austral","Tiendas Maipo"])],
+ "CO": [("Énergie",45,-3.6,["Petro Andina","Llanos Energía"]),
+        ("Banques",30,-1.0,["Banco Cafetero","Bogotá Capital"]),
+        ("Ciment",8,-4.8,["Cementos Magdalena","Concreto Caribe"])],
+ "AE": [("Immobilier",90,8.4,["Dune Estates","Marina Crest"]),
+        ("Banques",160,3.0,["Emirates Pearl Bank","Abu Dhabi Horizon"]),
+        ("Logistique",50,4.2,["Falcon Logistics","Gulf Gateway"])],
+ "TR": [("Banques",35,6.5,["Bosphorus Bank","Anatolia Kredi"]),
+        ("Industrie",30,-2.0,["Ege Sanayi","Kapadokya Makina"]),
+        ("Distribution",20,1.0,["Bazaar Market","Istanbul Retail"])],
+ "EG": [("Banques",18,2.2,["Nile Commercial Bank","Delta Finance"]),
+        ("Immobilier",9,-3.0,["Giza Developments","Alexandria Homes"]),
+        ("Télécoms",6,-1.2,["Sphinx Telecom","Pharaon Mobile"])],
 }
 
 def tick(nom, pris):
@@ -294,7 +391,7 @@ ecrire("entreprises.json", "fictif (futur : agent-entreprises)", entreprises)
 alertes = [
  {"id": "a1", "heure": "06:15", "agent": "macro", "pays": "IN", "niveau": "attractif",
   "titre": "Inde : PIB trimestriel au-dessus des attentes",
-  "texte": "Croissance de 6,6 % sur un an, portée par l'investissement public. Note pays relevée à 74/100."},
+  "texte": "Croissance de 6,6 % sur un an, portée par l'investissement public. Note pays relevée à 76/100."},
  {"id": "a2", "heure": "07:42", "agent": "risque", "pays": "CN", "niveau": "defavorable",
   "titre": "Chine : nouveau défaut d'un promoteur immobilier",
   "texte": "Le secteur immobilier chute de 11,5 % sur 3 mois. Exposition à réduire sur les valeurs liées."},

@@ -7,10 +7,15 @@ import { el, nombre, variation, classeNote, AGENTS } from './outils.js';
 
 /** Horloge en haut à droite, mise à jour chaque seconde. */
 export function demarrerHorloge(noeud) {
-  const format = new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  // Sur les petits écrans, on n'affiche pas les secondes pour gagner de la place
+  const avecSecondes = matchMedia('(min-width: 400px)');
+  const formats = {
+    long: new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+    court: new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+  };
   const maj = () => {
     const d = new Date();
-    noeud.textContent = format.format(d);
+    noeud.textContent = (avecSecondes.matches ? formats.long : formats.court).format(d);
     noeud.dateTime = d.toISOString();
   };
   maj();

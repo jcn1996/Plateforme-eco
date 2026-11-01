@@ -44,7 +44,25 @@ export function titreSection(texte, complement) {
   return el('h3', { class: 'section-titre' }, texte, complement ? el('small', {}, complement) : null);
 }
 
-/** Grille d'indicateurs colorés selon leur note. */
+/**
+ * Liste compacte d'indicateurs : une ligne par indicateur
+ * (pastille de couleur, libellé, valeur, note). Les 5 tiennent sur un écran.
+ */
+export function listeIndicateurs(indicateurs) {
+  return el('ul', { class: 'liste-indicateurs' },
+    Object.entries(indicateurs).map(([cle, ind]) => el('li', {
+      class: `ligne-indicateur ${classeNote(ind.note)}`,
+      title: libelleNiveau(niveauNote(ind.note)),
+    },
+      el('span', { class: 'pastille', 'aria-hidden': 'true' }),
+      el('span', { class: 'ligne-indicateur-libelle' }, ind.libelle),
+      el('span', { class: 'ligne-indicateur-valeur' }, valeurIndicateur(cle, ind)),
+      el('span', { class: 'ligne-indicateur-note' }, String(ind.note), el('small', {}, '/100')),
+    )),
+  );
+}
+
+/** Grille d'indicateurs colorés selon leur note (tuiles, conservée pour d'autres usages). */
 export function grilleIndicateurs(indicateurs) {
   return el('div', { class: 'indicateurs' },
     Object.entries(indicateurs).map(([cle, ind]) => el('div', { class: `indicateur ${classeNote(ind.note)}` },
@@ -88,7 +106,7 @@ export function fichePays(d, p, nav) {
 
     el('section', {},
       titreSection('Indicateurs clés'),
-      grilleIndicateurs(p.indicateurs),
+      listeIndicateurs(p.indicateurs),
     ),
 
     el('section', {},

@@ -7,7 +7,7 @@
    Pour forcer une mise à jour chez tous les utilisateurs, changer VERSION.
    ========================================================================== */
 
-const VERSION = 'salle-controle-v1';
+const VERSION = 'salle-controle-v2';
 
 const FICHIERS_APPLI = [
   './',
@@ -22,6 +22,7 @@ const FICHIERS_APPLI = [
   'js/panneau-pays.js',
   'js/panneau-entreprise.js',
   'js/portefeuille.js',
+  'js/classement.js',
   'assets/icone.svg',
   'assets/icone-192.png',
   'assets/icone-512.png',
@@ -31,6 +32,7 @@ const FICHIERS_APPLI = [
   'data/alertes.json',
   'data/portefeuille.json',
   'data/marches.json',
+  'data/countries-110m.json',
 ];
 
 self.addEventListener('install', (evenement) => {

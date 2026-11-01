@@ -156,20 +156,22 @@ button { font: inherit; color: inherit; }
   pointer-events: none;
 }
 .entete > * { pointer-events: auto; }
-.entete-ligne { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.entete-ligne--outils { margin-top: 6px; }
-.marque { display: flex; align-items: center; gap: 8px; min-width: 0; }
-.marque h1 { font-size: 17px; text-transform: uppercase; letter-spacing: 0.1em; color: #eafcff; white-space: nowrap; }
+.entete-ligne { display: flex; align-items: center; gap: 8px; }
+.marque { flex: 1; display: flex; align-items: center; gap: 7px; min-width: 0; }
+.marque h1 {
+  overflow: hidden; text-overflow: ellipsis;
+  font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; color: #eafcff; white-space: nowrap;
+}
 .marque-logo {
-  flex: none; width: 18px; height: 18px; border-radius: 50%;
+  flex: none; width: 14px; height: 14px; border-radius: 50%;
   border: 2px solid var(--cyan);
   box-shadow: 0 0 10px var(--cyan), inset 0 0 6px var(--cyan);
 }
-.horloge { font-size: 14px; color: var(--cyan); text-shadow: 0 0 8px rgba(0, 229, 255, 0.5); }
+.horloge { flex: none; font-size: 12.5px; color: var(--cyan); text-shadow: 0 0 8px rgba(0, 229, 255, 0.5); }
 
 /* Bandeau défilant des marchés */
 .bandeau-marches {
-  margin: 8px calc(var(--marge) * -1) 0;
+  margin: 7px calc(var(--marge) * -1) 0;
   border-top: 1px solid var(--ligne);
   border-bottom: 1px solid var(--ligne);
   background: rgba(0, 229, 255, 0.04);
@@ -195,13 +197,41 @@ button { font: inherit; color: inherit; }
 .baisse { color: var(--rouge); }
 
 /* Légende des couleurs */
-.legende { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 6px; font-size: 11px; color: var(--texte-2); }
+.legende { display: grid; gap: 6px; font-size: 12.5px; color: var(--texte); }
+/* Bulle de légende, dépliée par le bouton « ? » */
+.legende-bulle {
+  position: absolute; top: calc(100% - 4px); right: var(--marge);
+  width: min(260px, calc(100vw - 2 * var(--marge)));
+  padding: 12px 14px;
+  border: 1px solid var(--ligne-forte); border-radius: 10px;
+  background: rgba(5, 11, 24, 0.96);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+.legende-aide { margin-top: 8px; font-size: 11.5px; color: var(--texte-3); }
+/* Mention « Données fictives » discrète, sous le bandeau */
+.badge-fictif--discret {
+  position: absolute; top: 100%; left: var(--marge);
+  margin-top: -2px; opacity: 0.6;
+  font-size: 8.5px; padding: 1px 5px; border-color: rgba(255, 181, 71, 0.4);
+  pointer-events: none;
+}
+/* Panneau ouvert : on libère de la place pour le globe */
+body.panneau-ouvert .bandeau-marches,
+body.panneau-ouvert .legende-bulle,
+body.panneau-ouvert .badge-fictif--discret { display: none; }
 .legende li { display: flex; align-items: center; gap: 5px; }
 .pastille { display: inline-block; flex: none; width: 9px; height: 9px; border-radius: 50%; }
 .pastille--vert { background: var(--vert); box-shadow: 0 0 6px var(--vert); }
 .pastille--orange { background: var(--orange); box-shadow: 0 0 6px var(--orange); }
 .pastille--rouge { background: var(--rouge); box-shadow: 0 0 6px var(--rouge); }
-.entete-actions { display: flex; gap: 8px; flex: none; }
+.entete-actions { display: flex; gap: 6px; flex: none; }
+.entete .bouton { min-height: 34px; }
+.entete .bouton { min-height: 32px; }
+.entete .bouton--icone { width: 32px; font-size: 15px; }
+.bouton--icone-texte { min-width: 32px; padding: 0 7px; }
+.bouton--icone-texte svg { flex: none; width: 18px; height: 18px; }
+.bouton-libelle { display: none; }
+#btn-legende[aria-expanded="true"] { border-color: var(--cyan); background: var(--cyan-doux); }
 
 /* ---------- Alertes du jour ---------- */
 .alertes {
@@ -261,7 +291,8 @@ body.panneau-ouvert .alertes { transform: translateY(110%); opacity: 0; pointer-
 .panneau {
   position: fixed; left: 0; right: 0; bottom: 0;
   z-index: 20;
-  height: var(--hauteur-panneau);
+  height: var(--hauteur-panneau); /* ajustée en JavaScript : réduit, normal, plein écran */
+  max-height: 100dvh;
   display: flex; flex-direction: column;
   border: 1px solid var(--ligne-forte); border-bottom: 0;
   border-radius: 18px 18px 0 0;
@@ -269,11 +300,12 @@ body.panneau-ouvert .alertes { transform: translateY(110%); opacity: 0; pointer-
   backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
   box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5), 0 -1px 18px rgba(0, 229, 255, 0.12);
   transform: translateY(105%);
-  transition: transform 0.38s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: transform 0.38s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
+.panneau.est-plein { border-radius: 0; }
 .panneau.est-ouvert { transform: translateY(0); }
 .panneau.est-glisse { transition: none; }
-.panneau-poignee { display: flex; justify-content: center; padding: 8px 0 2px; cursor: grab; touch-action: none; }
+.panneau-poignee { display: flex; justify-content: center; padding: 10px 0 6px; cursor: grab; touch-action: none; }
 .panneau-poignee span { width: 42px; height: 4px; border-radius: 2px; background: var(--ligne-forte); }
 
 /* Barre de navigation : retour + fil d'Ariane */
@@ -299,22 +331,22 @@ body.panneau-ouvert .alertes { transform: translateY(110%); opacity: 0; pointer-
   padding: 14px var(--marge) calc(var(--bas-sur) + 24px);
   -webkit-overflow-scrolling: touch;
 }
-.panneau-contenu > * + * { margin-top: 18px; }
+.panneau-contenu > * + * { margin-top: 16px; }
 
 /* En-tête d'une fiche (pays, secteur, entreprise) */
-.fiche-entete { display: flex; align-items: center; gap: 14px; }
+.fiche-entete { display: flex; align-items: flex-start; gap: 12px; }
 .fiche-titres { flex: 1; min-width: 0; }
 .fiche-surtitre { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--texte-3); }
-.fiche-titre { font-size: 22px; line-height: 1.15; }
-.fiche-verdict { margin-top: 4px; color: var(--texte-2); font-size: 14px; }
+.fiche-titre { font-size: 20px; line-height: 1.15; }
+.fiche-verdict { margin-top: 4px; color: var(--texte); font-size: 14px; line-height: 1.35; }
 
 /* Jauge circulaire de la note /100 */
-.jauge { position: relative; flex: none; width: 74px; height: 74px; }
+.jauge { position: relative; flex: none; width: 60px; height: 60px; }
 .jauge svg { width: 100%; height: 100%; transform: rotate(-90deg); }
 .jauge-fond { stroke: rgba(255, 255, 255, 0.08); }
 .jauge-valeur { stroke: var(--c-note); filter: drop-shadow(0 0 4px var(--c-note)); transition: stroke-dashoffset 0.8s ease; }
 .jauge-texte { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; line-height: 1; }
-.jauge-texte strong { font-family: var(--police-mono); font-size: 24px; color: var(--c-note); }
+.jauge-texte strong { font-family: var(--police-mono); font-size: 20px; color: var(--c-note); }
 .jauge-texte small { font-family: var(--police-mono); font-size: 10px; color: var(--texte-3); }
 
 /* Titre de section */
@@ -326,6 +358,20 @@ body.panneau-ouvert .alertes { transform: translateY(110%); opacity: 0; pointer-
 .section-titre small { font-family: var(--police-texte); font-size: 11px; text-transform: none; letter-spacing: 0; color: var(--texte-3); }
 
 /* Grille des 5 indicateurs */
+/* Liste compacte des indicateurs : une ligne par indicateur */
+.liste-indicateurs { border: 1px solid var(--ligne); border-radius: 10px; background: var(--fond-2); }
+.ligne-indicateur {
+  display: grid; grid-template-columns: auto 1fr auto 52px; align-items: center; gap: 10px;
+  min-height: 36px; padding: 5px 12px;
+  font-size: 13.5px;
+}
+.ligne-indicateur + .ligne-indicateur { border-top: 1px solid rgba(0, 229, 255, 0.08); }
+.ligne-indicateur .pastille { background: var(--c-note); box-shadow: 0 0 6px var(--c-note); }
+.ligne-indicateur-libelle { color: var(--texte-2); min-width: 0; }
+.ligne-indicateur-valeur { font-family: var(--police-mono); color: var(--texte); white-space: nowrap; }
+.ligne-indicateur-note { font-family: var(--police-mono); font-size: 12px; color: var(--c-note); text-align: right; white-space: nowrap; }
+.ligne-indicateur-note small { color: var(--texte-3); font-size: 10px; }
+
 .indicateurs { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
 .indicateur {
   padding: 9px 10px 10px;
@@ -416,6 +462,23 @@ body.panneau-ouvert .alertes { transform: translateY(110%); opacity: 0; pointer-
 .etude-corps h4 { margin-top: 12px; font-size: 13.5px; color: var(--cyan); }
 .etude-corps p { margin-top: 4px; font-size: 14px; color: var(--texte-2); }
 .mention-legale { font-size: 11.5px; color: var(--texte-3); text-align: center; }
+
+/* ---------- Classement ---------- */
+.classement { display: grid; gap: 4px; margin-top: 12px; }
+.ligne-classement {
+  display: grid; grid-template-columns: 28px auto 1fr auto; align-items: center; gap: 10px;
+  width: 100%; min-height: 52px; padding: 6px 12px;
+  border: 1px solid var(--ligne); border-radius: 10px;
+  background: var(--fond-2);
+  text-align: left; cursor: pointer;
+}
+.ligne-classement:hover { border-color: var(--ligne-forte); }
+.ligne-classement .pastille { background: var(--c-note); box-shadow: 0 0 6px var(--c-note); }
+.ligne-classement-rang { font-family: var(--police-mono); color: var(--texte-3); text-align: right; }
+.ligne-classement-textes { min-width: 0; }
+.ligne-classement-nom { display: block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ligne-classement-info { display: block; font-size: 12px; color: var(--texte-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ligne-classement-note { font-family: var(--police-mono); font-size: 17px; color: var(--c-note); }
 
 /* ---------- Écran portefeuille ---------- */
 .ecran {
@@ -511,22 +574,32 @@ body.mode-leger .barre span, body.mode-leger .jauge-valeur, body.mode-leger .bul
 
 /* ---------- Petits téléphones ---------- */
 @media (max-width: 370px) {
-  .marque h1 { font-size: 15px; }
+  .marque h1 { font-size: 12.5px; letter-spacing: 0.04em; }
   .marque-logo { display: none; }
-  .legende { font-size: 10px; gap: 3px 8px; }
-  .bouton--accent { padding: 0 9px; font-size: 12px; }
+  .entete-actions { gap: 4px; }
+}
+
+@media (max-width: 419px) {
+  .marque-logo { display: none; }
+}
+
+/* ---------- Téléphones larges et tablettes : libellés des boutons visibles ---------- */
+@media (min-width: 600px) {
+  .bouton-libelle { display: inline; }
+  .marque h1 { font-size: 16px; }
+  .horloge { font-size: 14px; }
 }
 
 /* ---------- Écrans larges (tablette, ordinateur) ---------- */
 @media (min-width: 960px) {
   :root { --marge: 22px; }
-  .marque h1 { font-size: 20px; }
+  .marque h1 { font-size: 19px; }
   .etiquette { font-size: 12px; }
   .alertes { left: auto; right: 22px; bottom: 18px; width: 460px; padding: 0; }
   body.panneau-ouvert .alertes { transform: translateX(120%); }
   .panneau {
-    left: auto; top: 128px; right: 16px; bottom: 16px;
-    width: 440px; height: auto;
+    left: auto; top: calc(var(--haut-sur) + 62px); right: 16px; bottom: 16px;
+    width: 440px; height: auto !important; max-height: none;
     border: 1px solid var(--ligne-forte); border-radius: 16px;
     transform: translateX(calc(100% + 30px));
   }
