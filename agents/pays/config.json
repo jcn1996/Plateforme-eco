@@ -517,5 +517,223 @@
       },
       "cible_inflation": 7.0
     }
+  },
+  "tolerances_divergence": {
+    "_commentaire": "Écart au-delà duquel deux sources comparables sont jugées divergentes (en points).",
+    "croissance_pib": 0.5,
+    "inflation": 0.5,
+    "taux_directeur": 0.25,
+    "solde_courant": 1.0,
+    "devise_3m": 1.0,
+    "momentum": 3.0
+  },
+  "bornes_aberrantes": {
+    "_commentaire": "Valeurs rejetées d'office (impossibles ou erreurs de saisie). Différent des seuils « à vérifier ».",
+    "croissance_pib": [
+      -30,
+      30
+    ],
+    "inflation": [
+      -15,
+      300
+    ],
+    "indicateur_avance": [
+      80,
+      120
+    ],
+    "taux_directeur": [
+      -2,
+      150
+    ],
+    "momentum": [
+      -90,
+      400
+    ],
+    "devise_3m": [
+      -60,
+      150
+    ],
+    "solde_courant": [
+      -40,
+      40
+    ],
+    "per": [
+      0,
+      200
+    ]
+  },
+  "couverture": {
+    "_commentaire": "Pays couverts en principe par chaque source (sert à compter les sources en échec par pays).",
+    "ocde": [
+      "US",
+      "CA",
+      "MX",
+      "GB",
+      "FR",
+      "DE",
+      "CH",
+      "JP",
+      "KR",
+      "AU",
+      "IT",
+      "ES",
+      "NL",
+      "SE",
+      "PL",
+      "CL",
+      "CO",
+      "TR",
+      "BR",
+      "IN",
+      "CN",
+      "ID",
+      "ZA",
+      "SA",
+      "AR"
+    ],
+    "ocde_eo": [
+      "US",
+      "CA",
+      "MX",
+      "GB",
+      "FR",
+      "DE",
+      "CH",
+      "JP",
+      "KR",
+      "AU",
+      "IT",
+      "ES",
+      "NL",
+      "SE",
+      "PL",
+      "CL",
+      "CO",
+      "TR",
+      "BR",
+      "IN",
+      "CN",
+      "ID",
+      "ZA",
+      "SA",
+      "AR"
+    ],
+    "eurostat": {
+      "FR": "FR",
+      "DE": "DE",
+      "IT": "IT",
+      "ES": "ES",
+      "NL": "NL",
+      "SE": "SE",
+      "PL": "PL",
+      "CH": "CH",
+      "TR": "TR"
+    },
+    "zone_euro": [
+      "FR",
+      "DE",
+      "IT",
+      "ES",
+      "NL"
+    ],
+    "banque_mondiale_absents": [
+      "TW"
+    ]
+  },
+  "devises_bce": [
+    "USD",
+    "JPY",
+    "GBP",
+    "CHF",
+    "SEK",
+    "PLN",
+    "TRY",
+    "AUD",
+    "BRL",
+    "CAD",
+    "CNY",
+    "INR",
+    "KRW",
+    "MXN",
+    "ZAR",
+    "IDR",
+    "THB",
+    "SGD"
+  ],
+  "sources_nationales": {
+    "_commentaire": "Sources nationales officielles (prioritaires). transformation : « direct » (déjà en %) ou « glissement » (indice → glissement annuel).",
+    "US": [
+      {
+        "indicateur": "inflation",
+        "fournisseur": "fred",
+        "serie": "CPIAUCSL",
+        "transformation": "glissement",
+        "nom": "BLS via FRED, indice CPI-U (clé FRED_API_KEY)"
+      },
+      {
+        "indicateur": "inflation",
+        "fournisseur": "dbnomics",
+        "serie": "BLS/cu/CUUR0000SA0",
+        "transformation": "glissement",
+        "nom": "BLS via DBnomics, indice CPI-U"
+      },
+      {
+        "indicateur": "taux_directeur",
+        "fournisseur": "fred",
+        "serie": "DFEDTARU",
+        "transformation": "mensuel",
+        "nom": "Réserve fédérale via FRED, borne haute de l'objectif (clé FRED_API_KEY)"
+      }
+    ],
+    "GB": [
+      {
+        "indicateur": "inflation",
+        "fournisseur": "dbnomics",
+        "serie": "ONS/MM23/D7G7.M",
+        "transformation": "direct",
+        "nom": "ONS via DBnomics, CPI glissement annuel"
+      }
+    ],
+    "JP": [
+      {
+        "indicateur": "inflation",
+        "fournisseur": "dbnomics",
+        "serie": "STATJP/CPIm/001",
+        "transformation": "glissement",
+        "nom": "Statistics Bureau of Japan via DBnomics, IPC ensemble"
+      }
+    ],
+    "BR": [
+      {
+        "indicateur": "inflation",
+        "fournisseur": "bcb",
+        "serie": 13522,
+        "transformation": "direct",
+        "nom": "IBGE, IPCA sur 12 mois (via Banco Central do Brasil, SGS 13522)"
+      },
+      {
+        "indicateur": "taux_directeur",
+        "fournisseur": "bcb",
+        "serie": 432,
+        "transformation": "mensuel",
+        "nom": "Banco Central do Brasil, Selic cible (SGS 432)"
+      }
+    ],
+    "CA": [
+      {
+        "indicateur": "inflation",
+        "fournisseur": "boc",
+        "serie": "STATIC_TOTALCPICHANGE",
+        "transformation": "direct",
+        "nom": "Statistique Canada via la Banque du Canada, IPC glissement annuel"
+      },
+      {
+        "indicateur": "taux_directeur",
+        "fournisseur": "boc",
+        "serie": "V39079",
+        "transformation": "mensuel",
+        "nom": "Banque du Canada, taux cible du financement à un jour"
+      }
+    ]
   }
 }
