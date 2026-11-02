@@ -72,6 +72,11 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add .github/maintien.txt
           git commit -m "Maintien : activité du dépôt ($(date -u +%d/%m/%Y))"
-          git pull --rebase origin main
-          git push origin HEAD:main
+          envoye=0
+          for essai in 1 2 3; do
+            if git pull --rebase origin main && git push origin HEAD:main; then envoye=1; break; fi
+            git rebase --abort 2>/dev/null || true
+            sleep $((essai * 5))
+          done
+          [ "$envoye" = 1 ] || exit 1
           echo "Aucun commit depuis ${jours} jours : commit de maintien envoyé." >> "$GITHUB_STEP_SUMMARY"

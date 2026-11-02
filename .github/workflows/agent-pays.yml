@@ -2,13 +2,14 @@
 # (instituts nationaux, banques centrales, FMI, OCDE, BRI, Banque mondiale, Eurostat,
 # BCE, Yahoo Finance), avec vérification croisée, puis commite le résultat sur main
 # (données, journal des sources et récapitulatif du jour).
-# - automatiquement chaque jour à 6 h UTC ;
+# - automatiquement chaque jour à 6 h 11 UTC (minute décalée : GitHub retarde ou saute
+#   souvent les tâches aux minutes rondes ; le workflow « Rattrapage » relance si besoin) ;
 # - à la main : onglet Actions → « Agent pays » → « Run workflow ».
 name: Agent pays
 
 on:
   schedule:
-    - cron: "0 6 * * *"
+    - cron: "11 6 * * *"
   workflow_dispatch:
 
 permissions:
@@ -62,6 +63,10 @@ jobs:
             exit 0
           fi
           git commit -m "Agent pays : mise à jour du $(date -u +%d/%m/%Y)"
-          # main a pu bouger pendant l'exécution : on se remet à jour avant d'envoyer
-          git pull --rebase origin main
-          git push origin HEAD:main
+          # main a pu bouger entre-temps : nouvelle tentative en cas de conflit
+          for essai in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            git rebase --abort 2>/dev/null || true
+            sleep $((essai * 5))
+          done
+          exit 1

@@ -611,7 +611,7 @@ def journaliser(chemin: Path, genere_le: str, etats: dict, echecs: list, donnees
     meta = {**journal_existant.get("meta", {}),  # conserve le bloc « sante »
             "genere_le": genere_le, "source": "agent-pays", "version_agent": VERSION_AGENT,
             "description": "Sources en échec et valeurs rejetées, à chaque exécution où elles changent"}
-    ecrire_json(chemin, {"meta": meta, "donnees": entrees})
+    ecrire_json(chemin, {**journal_existant, "meta": meta, "donnees": entrees})  # garde le premier niveau
     return True
 
 

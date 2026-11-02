@@ -5,15 +5,20 @@
    les agents). Pour chaque agent : dernière exécution réussie, statut,
    sources qui répondent, sources en échec ou périmées.
 
-   Statut (calculé ici, car il dépend de l'heure) :
-   - « en panne »  : dernière exécution réussie plus ancienne que 2 × l'intervalle prévu
-                     (ou journal illisible) ;
+   Statut (calculé ici, car il dépend de l'heure), d'après le planning cron (UTC) que
+   chaque agent déclare dans son journal (voir js/planning.js) :
+   - « en panne »  : la première exécution prévue après la dernière exécution réussie
+                     manque depuis plus de 2 h (agent à 15 min) ou 26 h (agent quotidien),
+                     ou journal illisible ;
+   - « en retard » : elle manque depuis plus de 45 min (agent à 15 min) ou 2 h (quotidien) ;
    - « dégradé »   : un indicateur a perdu une source qu'il devrait avoir (champ `degrade`
                      calculé par l'agent ; voir agents/commun/sante.py) ;
+   - « en pause »  : hors des heures prévues (nuit), rien ne manque ;
    - « OK »        : sinon.
    ========================================================================== */
 
 import { el } from './outils.js';
+import { situationPlanning, heureParis } from './planning.js';
 
 const INDEX = 'data/journal/index.json';
 const ETATS_PROBLEME = new Set(['secours', 'partielle', 'échec', 'périmée']);
@@ -22,6 +27,8 @@ const LIBELLES_ETAT = {
 };
 export const STATUTS = {
   ok: { libelle: 'OK', classe: 'sante--ok' },
+  pause: { libelle: 'En pause', classe: 'sante--pause' },
+  retard: { libelle: 'En retard', classe: 'sante--retard' },
   degrade: { libelle: 'Dégradé', classe: 'sante--degrade' },
   panne: { libelle: 'En panne', classe: 'sante--panne' },
 };
@@ -30,6 +37,20 @@ async function lireJson(chemin) {
   const r = await fetch(chemin, { cache: 'no-cache' });
   if (!r.ok) throw new Error(`${chemin} : ${r.status}`);
   return r.json();
+}
+
+const CHAMPS_PREMIER_NIVEAU = ['derniere_execution', 'prochaine_prevue', 'intervalle_min', 'planning'];
+
+/** Bloc meta.sante complété par les champs du premier niveau du journal (prioritaires s'ils sont renseignés). */
+export function fusionnerSante(journal) {
+  const sante = journal?.meta?.sante;
+  if (!sante) return null;
+  const fusion = { ...sante };
+  CHAMPS_PREMIER_NIVEAU.forEach((c) => { if (journal[c] != null) fusion[c] = journal[c]; });
+  // Par prudence, la plus récente des deux dates d'exécution
+  const enMeta = Date.parse(sante.derniere_execution ?? '');
+  if (enMeta > (Date.parse(fusion.derniere_execution ?? '') || 0)) fusion.derniere_execution = sante.derniere_execution;
+  return fusion;
 }
 
 /** Charge l'index puis chaque journal. Ne lève jamais : un journal illisible donne un agent « en panne ». */
@@ -43,7 +64,7 @@ export async function chargerSante() {
   return Promise.all(index.map(async (entree) => {
     try {
       const journal = await lireJson(`data/journal/${entree.fichier}`);
-      return { ...entree, sante: journal.meta?.sante ?? null };
+      return { ...entree, sante: fusionnerSante(journal) };
     } catch {
       return { ...entree, sante: null };
     }
@@ -54,12 +75,12 @@ export async function chargerSante() {
 export function statutAgent(agent, maintenant = Date.now()) {
   const s = agent.sante;
   if (!s?.derniere_execution) return 'panne';
-  const age = maintenant - Date.parse(s.derniere_execution);
-  if (s.intervalle_min && age > 2 * s.intervalle_min * 60_000) return 'panne';
+  const { etat } = situationPlanning(s, maintenant);
+  if (etat === 'panne' || etat === 'retard') return etat;
   // Règle de l'agent (sources attendues par indicateur) ; à défaut, toute source en difficulté
   const degrade = typeof s.degrade === 'boolean' ? s.degrade : (s.sources ?? []).some((src) => ETATS_PROBLEME.has(src.etat));
   if (degrade) return 'degrade';
-  return 'ok';
+  return etat === 'pause' ? 'pause' : 'ok';
 }
 
 /** Date du jour (AAAA-MM-JJ, heure locale). */
@@ -80,9 +101,9 @@ export function echeances(agent, maintenant = Date.now()) {
   });
 }
 
-/** Vrai si au moins un agent n'est pas « OK » ou si un calendrier n'a plus de date future (pastille rouge). */
+/** Vrai si au moins un agent n'est ni « OK » ni « En pause » ou si un calendrier n'a plus de date future (pastille rouge). */
 export function problemeDetecte(agents, maintenant = Date.now()) {
-  return agents.some((a) => statutAgent(a, maintenant) !== 'ok' || echeances(a, maintenant).some((e) => e.etat === 'expiree'));
+  return agents.some((a) => !['ok', 'pause'].includes(statutAgent(a, maintenant)) || echeances(a, maintenant).some((e) => e.etat === 'expiree'));
 }
 
 /** « 02/11 17:34 » (heure locale), ou une période brute (« 2025-01 ») si ce n'est pas une date complète. */
@@ -115,6 +136,7 @@ function carteAgent(agent, maintenant) {
       el('p', { class: 'sante-ligne' }, 'Journal introuvable ou illisible : aucune exécution réussie connue.'));
   }
   const age = (maintenant - Date.parse(s.derniere_execution)) / 60_000;
+  const plan = situationPlanning(s, maintenant);
   const problemes = (s.sources ?? []).filter((src) => ETATS_PROBLEME.has(src.etat));
   const alertes = echeances(agent, maintenant).filter((e) => e.etat !== 'ok');
   return el('article', { class: `carte sante-carte ${classe}` },
@@ -124,11 +146,18 @@ function carteAgent(agent, maintenant) {
       el('dd', {}, `${dateLisible(s.derniere_execution)} (il y a ${duree(age)})`),
       el('dt', {}, 'Sources qui répondent'),
       el('dd', { class: 'mono' }, `${s.sources_ok ?? '?'} / ${s.sources_total ?? '?'}`),
+      el('dt', {}, 'Prochaine mise à jour'),
+      el('dd', {}, plan.prochaine != null ? `${heureParis(plan.prochaine)} (heure de Paris)` : 'inconnue'),
       el('dt', {}, 'Intervalle prévu'),
-      el('dd', {}, s.intervalle_min ? `${duree(s.intervalle_min)} (panne au-delà de ${duree(2 * s.intervalle_min)})` : 'inconnu'),
+      el('dd', {}, plan.base ? `${duree(plan.base)} (retard au-delà de ${duree(plan.seuils.retard)}, panne au-delà de ${duree(plan.seuils.panne)})` : 'inconnu'),
     ),
-    statut === 'panne'
-      ? el('p', { class: 'sante-alerte' }, `Aucune exécution réussie depuis plus de 2 fois l’intervalle prévu. Vérifier l’onglet Actions (workflow ${s.workflow ?? ''}).`)
+    statut === 'pause'
+      ? el('p', { class: 'sante-ligne' }, `Hors des heures prévues. Prochaine mise à jour : ${heureParis(plan.prochaine)}.`)
+      : null,
+    plan.manquante != null && plan.etat !== 'ok'
+      ? el('p', { class: plan.etat === 'panne' ? 'sante-alerte' : 'sante-alerte sante-alerte--retard' },
+        `Exécution prévue ${heureParis(plan.manquante)} (heure de Paris) manquante depuis ${duree(plan.retardMin)}. `
+        + `Le workflow « Rattrapage » la relance après 1 h ; sinon, vérifier l’onglet Actions (workflow ${s.workflow ?? ''}).`)
       : null,
     alertes.length
       ? el('div', {},
@@ -165,7 +194,7 @@ function carteAgent(agent, maintenant) {
 
 export function ecranSante(agents) {
   const maintenant = Date.now();
-  const nb = { ok: 0, degrade: 0, panne: 0 };
+  const nb = { ok: 0, pause: 0, retard: 0, degrade: 0, panne: 0 };
   agents.forEach((a) => { nb[statutAgent(a, maintenant)] += 1; });
   return [
     el('header', {},
@@ -173,9 +202,10 @@ export function ecranSante(agents) {
       el('h2', { class: 'fiche-titre' }, 'Santé des agents'),
     ),
     agents.length
-      ? el('p', { class: 'sante-resume' }, `${nb.ok} OK · ${nb.degrade} dégradé${nb.degrade > 1 ? 's' : ''} · ${nb.panne} en panne`)
+      ? el('p', { class: 'sante-resume' }, [`${nb.ok} OK`, nb.pause ? `${nb.pause} en pause` : null, nb.retard ? `${nb.retard} en retard` : null,
+        `${nb.degrade} dégradé${nb.degrade > 1 ? 's' : ''}`, `${nb.panne} en panne`].filter(Boolean).join(' · '))
       : el('p', { class: 'sante-ligne' }, 'Aucun journal d’agent disponible (data/journal/index.json introuvable).'),
     ...agents.map((a) => carteAgent(a, maintenant)),
-    el('p', { class: 'mention-legale' }, 'Lu dans data/journal/*.json. « En panne » : dernière exécution réussie plus ancienne que 2 fois l’intervalle prévu par le workflow.'),
+    el('p', { class: 'mention-legale' }, 'Lu dans data/journal/*.json (planning cron en UTC déclaré par chaque agent). « En retard » : exécution prévue manquante depuis plus de 45 min (agent à 15 min) ou 2 h (agent quotidien) ; « En panne » : depuis plus de 2 h ou 26 h ; « En pause » : hors des heures prévues.'),
   ];
 }
