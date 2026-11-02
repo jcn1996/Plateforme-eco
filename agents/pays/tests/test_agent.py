@@ -57,6 +57,17 @@ class TestTextes(unittest.TestCase):
         self.assertTrue(textes.ton_conforme("Croissance de 2,1 % selon le FMI."))
 
 
+class TestSourcesOcde(unittest.TestCase):
+    def test_fusion_plus_recente(self):
+        from agents.pays.sources import fusionner_plus_recent
+        c2018 = {"FRA": [("2026-08", 3.0), ("2026-09", 3.1)], "CHE": [("2026-09", 1.0)]}
+        ancien = {"FRA": [("2025-12", 2.0)], "USA": [("2026-09", 3.7)], "CHE": [("2026-09", 0.9)]}
+        r = fusionner_plus_recent([c2018, ancien])
+        self.assertEqual(r["FRA"][-1], ("2026-09", 3.1))
+        self.assertEqual(r["USA"][-1], ("2026-09", 3.7))   # pays resté dans l'ancien jeu
+        self.assertEqual(r["CHE"][-1], ("2026-09", 1.0))   # égalité : le jeu COICOP 2018 l'emporte
+
+
 class TestSante(unittest.TestCase):
     def test_sources_sante(self):
         etats = {"fmi": "ok", "bis": "erreur : HTTP 503", "fred": "erreur : clé FRED_API_KEY absente : source ignorée",

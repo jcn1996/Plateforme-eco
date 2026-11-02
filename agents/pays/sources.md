@@ -33,7 +33,9 @@ Règles de choix :
 | Valorisation relative | Yahoo Finance (PER de l'ETF pays) | — |
 
 Accès techniques :
-- **DBnomics** (`api.db.nomics.world`) pour les instituts nationaux. Exemples : `INSEE/IPC-2025/…`, `DESTATIS/61111BM001/DG.PREIS1`, `ONS/MM23/D7G7.M`, `STATJP/CPIm/001`, `BLS/cu/CUUR0000SA0`.
+- **BLS** (`api.bls.gov`, version 1 sans clé, série `CUUR0000SA0`, CPI-U) pour l'inflation américaine, en plus de FRED (`CPIAUCSL`, si `FRED_API_KEY` existe). La version 1 est limitée à 25 requêtes par jour et par adresse IP ; avec le secret facultatif `BLS_API_KEY`, l'agent passe à la version 2. La série BLS de DBnomics a été retirée : elle n'est plus mise à jour depuis 2025-01.
+- **OCDE, IPC** : l'OCDE publie l'IPC des pays passés à la nomenclature COICOP 2018 (Suisse, Espagne, France, Italie, Pays-Bas, Pologne, Suède, Turquie…) dans un nouveau jeu, `DSD_PRICES_COICOP2018@DF_PRICES_C2018_ALL` ; les autres pays (États-Unis, Royaume-Uni, Allemagne, Corée…) restent à jour dans `DSD_PRICES@DF_PRICES_ALL`. L'agent interroge les deux et garde, pour chaque pays, la série la plus récente.
+- **DBnomics** (`api.db.nomics.world`) pour les instituts nationaux. Exemples : `INSEE/IPC-2025/…`, `DESTATIS/61111BM001/DG.PREIS1`, `ONS/MM23/D7G7.M`, `STATJP/CPIm/001`.
 - **Banque mondiale** : API v2, `api.worldbank.org`.
 - **Eurostat** : jeu `prc_hicp_minr`.
 - **BCE** : Data Portal, `data-api.ecb.europa.eu`, séries `FM` et `EXR`.

@@ -80,6 +80,8 @@ L'agent pays se trouve dans `agents/`, en Python 3.12.
 
 **Textes** : par défaut, ils sont rédigés par des règles. Si le secret GitHub `GEMINI_API_KEY` est créé (Settings → Secrets and variables → Actions), l'API gratuite Gemini les rédige, sous les mêmes contraintes. Un texte non conforme est remplacé par la version par règles.
 
+**BLS (facultatif)** : l'inflation américaine vient aussi de l'API publique du BLS (version 1, sans clé, limitée à 25 requêtes par jour et par adresse IP). Avec le secret GitHub `BLS_API_KEY` (clé gratuite sur data.bls.gov), l'agent utilise la version 2, plus généreuse.
+
 **FRED (facultatif)** : avec le secret GitHub `FRED_API_KEY` (clé gratuite sur fred.stlouisfed.org), l'agent ajoute l'inflation et le taux de la Réserve fédérale publiés par FRED. Sans ce secret, il s'en passe.
 
 Pour lancer l'agent sur un ordinateur :
@@ -111,8 +113,8 @@ L'icône en forme de pouls, dans l'en-tête, ouvre l'écran **Santé des agents*
 Pour chaque agent (pays, marchés, puis les suivants), l'écran affiche :
 - la date et l'heure de la dernière exécution réussie ;
 - le statut :
-  - **en panne** si cette exécution date de plus de 2 fois l'intervalle prévu par le workflow (calculé à partir de ses lignes `cron`) ;
-  - **dégradé** si une source est en échec, de secours, partielle ou périmée ;
+  - **en panne** si cette exécution date de plus de 2 fois l'intervalle prévu par le workflow. L'intervalle est l'écart entre deux exécutions planifiées (lignes `cron`) : 24 h pour l'agent pays, 15 min pour l'agent marchés en semaine ;
+  - **dégradé** si un indicateur a perdu une source qu'il devrait avoir, c'est-à-dire qu'il a moins de sources valides que lors de la dernière exécution saine (par exemple, deux sources puis une seule). Une source retirée de la configuration n'est plus attendue ; une source périmée remplacée par une source à jour ne compte pas ;
   - **OK** sinon ;
 - le nombre de sources qui répondent sur le total ;
 - les sources en échec ou périmées, avec la date de leur dernière donnée valide.
