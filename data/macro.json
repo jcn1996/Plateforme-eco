@@ -1,11 +1,11 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-02T21:05:31Z",
+    "genere_le": "2026-11-02T21:47:37Z",
     "source": "agent-macro",
     "fictif": false,
     "version_agent": "1.0",
-    "mise_a_jour_precedente": null,
+    "mise_a_jour_precedente": "2026-11-02T21:05:31Z",
     "etat_des_sources": {
       "FRED, écart 10 ans − 2 ans (T10Y2Y)": "ok",
       "FRED, écart 10 ans − 3 mois (T10Y3M)": "ok",
@@ -735,7 +735,7 @@
           "duree_inversion": 0,
           "niveau": "vert",
           "texte": "positive ; dernière inversion terminée le 06/09/2024",
-          "source": "FRED, écart 10 ans − 2 ans (T10Y2Y), CSV public",
+          "source": "FRED, écart 10 ans − 2 ans (T10Y2Y), API",
           "verification": "source_unique"
         },
         {
@@ -748,7 +748,7 @@
           "duree_inversion": 0,
           "niveau": "vert",
           "texte": "positive ; dernière inversion terminée le 17/10/2025",
-          "source": "FRED, écart 10 ans − 3 mois (T10Y3M), CSV public",
+          "source": "FRED, écart 10 ans − 3 mois (T10Y3M), API",
           "verification": "concordant",
           "note_verification": "Yahoo Finance (^TNX − ^IRX) : +0,96 pt"
         },
@@ -774,7 +774,7 @@
           "niveau": "vert",
           "chomage": 4.2,
           "texte": "règle de Sahm à 0,00 pt (septembre 2026), seuil de déclenchement à 0,5 ; chômage à 4,2 % (septembre 2026), −0,2 pt sur 12 mois",
-          "source": "FRED, règle de Sahm en temps réel (SAHMREALTIME), CSV public ; FRED, taux de chômage (UNRATE), CSV public",
+          "source": "FRED, règle de Sahm en temps réel (SAHMREALTIME), API ; FRED, taux de chômage (UNRATE), API",
           "verification": "concordant",
           "note_verification": "recalculée à partir du chômage (UNRATE) : 0,00 pt"
         },
@@ -1930,47 +1930,47 @@
         "T10Y2Y": "10 ans − 2 ans",
         "T10Y3M": "10 ans − 3 mois"
       },
-      "source": "FRED (T10Y2Y, T10Y3M), CSV public ; dernier point de chaque semaine"
+      "source": "FRED (T10Y2Y, T10Y3M), API ; dernier point de chaque semaine"
     },
     "marches": [
       {
         "symbole": "HG=F",
         "nom": "Cuivre",
         "unite": "$/livre",
-        "valeur": 6.5425,
+        "valeur": 6.537,
         "date": "2026-11-02",
-        "variation_3m": 0.44,
-        "variation_12m": 29.16,
+        "variation_3m": 0.35,
+        "variation_12m": 29.05,
         "source": "Yahoo Finance via yfinance, clôture quotidienne"
       },
       {
         "symbole": "CL=F",
         "nom": "Pétrole WTI",
         "unite": "$/baril",
-        "valeur": 95.73,
+        "valeur": 96.43,
         "date": "2026-11-02",
-        "variation_3m": 19.16,
-        "variation_12m": 56.99,
+        "variation_3m": 20.03,
+        "variation_12m": 58.13,
         "source": "Yahoo Finance via yfinance, clôture quotidienne"
       },
       {
         "symbole": "DX-Y.NYB",
         "nom": "Indice dollar (DXY)",
         "unite": "pts",
-        "valeur": 101.742,
+        "valeur": 101.774,
         "date": "2026-11-02",
-        "variation_3m": 1.78,
-        "variation_12m": 1.95,
+        "variation_3m": 1.81,
+        "variation_12m": 1.98,
         "source": "Yahoo Finance via yfinance, clôture quotidienne"
       },
       {
         "symbole": "GC=F",
         "nom": "Or",
         "unite": "$/once",
-        "valeur": 3957.1001,
+        "valeur": 3955.1001,
         "date": "2026-11-02",
-        "variation_3m": -3.26,
-        "variation_12m": -0.99,
+        "variation_3m": -3.31,
+        "variation_12m": -1.04,
         "source": "Yahoo Finance via yfinance, clôture quotidienne"
       }
     ],
