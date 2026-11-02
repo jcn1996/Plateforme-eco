@@ -884,3 +884,46 @@ body.alertes-ouvertes .barre-comparaison { display: none; }
 .comparaison-cellule .tendance { margin-left: 0; }
 /* Une seule croix de fermeture dans la recherche (on masque celle du navigateur) */
 .recherche-barre input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; display: none; }
+
+/* ==========================================================================
+   Agent pays : confiance, signalements, contre-scénario, sources
+   ========================================================================== */
+/* Fiche pays avec des données réelles : pas de badge « Données fictives » */
+body.fiche-donnees-reelles .badge-fictif--discret { display: none; }
+
+.confiance {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 8px 12px;
+  border: 1px solid var(--ligne); border-left: 3px solid var(--c-confiance, var(--texte-3)); border-radius: 10px;
+  background: var(--fond-2);
+}
+.confiance--eleve { --c-confiance: var(--vert); }
+.confiance--moyen { --c-confiance: var(--orange); }
+.confiance--faible { --c-confiance: var(--rouge); }
+.confiance-titre { font-size: 12.5px; color: var(--texte-2); }
+.confiance-titre strong { color: var(--c-confiance); text-transform: uppercase; letter-spacing: 0.05em; font-size: 12px; }
+.confiance-raisons { font-size: 11.5px; color: var(--texte-3); }
+
+.drapeau {
+  display: inline-block; margin-left: 6px; padding: 0 5px;
+  border-radius: 4px; vertical-align: 1px;
+  font-size: 9.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+}
+.drapeau--ancienne { background: rgba(255, 181, 71, 0.15); color: var(--orange); }
+.drapeau--verifier { background: rgba(255, 77, 106, 0.15); color: var(--rouge); }
+.ligne-indicateur--absente .pastille { background: var(--texte-3); box-shadow: none; }
+.ligne-indicateur--absente .ligne-indicateur-valeur { color: var(--texte-3); font-family: var(--police-texte); font-size: 12.5px; }
+.ligne-indicateur--absente .ligne-indicateur-note { color: var(--texte-3); }
+
+.contre-scenario { display: grid; gap: 6px; }
+.contre-scenario li {
+  position: relative; padding: 8px 10px 8px 26px;
+  border: 1px solid var(--ligne); border-radius: 8px; background: var(--fond-2);
+  font-size: 13.5px; color: var(--texte-2);
+}
+.contre-scenario li::before { content: "↺"; position: absolute; left: 9px; top: 8px; color: var(--orange); }
+.lecture p { font-size: 13.5px; color: var(--texte-2); }
+.lecture p + p { margin-top: 6px; }
+.lecture strong { color: var(--texte); font-weight: 600; }
+.sources .liste-sources { display: grid; gap: 6px; padding: 8px 12px 12px; border-top: 1px solid var(--ligne); font-size: 11.5px; color: var(--texte-3); }
+.sources .liste-sources strong { color: var(--texte-2); font-weight: 600; }

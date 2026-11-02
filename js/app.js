@@ -334,6 +334,8 @@ function afficher(route) {
     $(ecran.section).hidden = !visible;
   }
   majBarre(route.type === 'comparaison');
+  // Les pays sont produits par l'agent pays (données réelles) : pas de badge « Données fictives » sur leur fiche
+  document.body.classList.toggle('fiche-donnees-reelles', route.type === 'pays' && d.fictifPar?.pays === false);
   document.body.classList.toggle('ecran-ouvert', route.type in ECRANS);
 
   // Globe : pivot vers le pays concerné, pause quand il est masqué

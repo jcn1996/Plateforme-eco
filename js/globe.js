@@ -342,15 +342,16 @@ export class Globe {
   #appliquerMetriqueAuxPays(immediat = false) {
     for (const o of this.objetsPays) {
       const p = this.parCode.get(o.code);
-      const m = this.metrique.lire(p) ?? { note: 50, texte: '–' };
-      const niveau = niveauNote(m.note);
-      o.couleurCible.set(COULEURS[niveau]);
-      o.teinteCible = new THREE.Color(TEINTES[niveau]);
+      const m = this.metrique.lire(p);
+      const absente = !m || m.note === null || m.note === undefined; // donnée non disponible pour ce pays
+      const niveau = absente ? 'neutre' : niveauNote(m.note);
+      o.couleurCible.set(absente ? NON_SUIVI : COULEURS[niveau]);
+      o.teinteCible = new THREE.Color(absente ? NON_SUIVI : TEINTES[niveau]);
       o.teinteEclaircie = o.teinteCible.clone().lerp(BLANC, ECLAIRCISSEMENT);
-      o.hauteurCible = 0.02 + (m.note / 100) * 0.1;
-      o.valeur.textContent = m.texte;
+      o.hauteurCible = absente ? 0.01 : 0.02 + (m.note / 100) * 0.1;
+      o.valeur.textContent = absente ? 'n.d.' : m.texte;
       o.etiquette.className = `etiquette note--${niveau}${o.visible ? '' : ' est-cachee'}${o.masquee ? ' est-masquee' : ''}${o.code === this.selection ? ' est-active' : ''}`;
-      o.etiquette.setAttribute('aria-label', `${p.nom}, ${m.texte}`);
+      o.etiquette.setAttribute('aria-label', `${p.nom}, ${absente ? 'donnée non disponible' : m.texte}`);
       o.largeurEtiquette = 0; // à remesurer (le texte a changé)
       if (immediat) {
         this.couleursPays[o.indice].copy(o.teinteCible);

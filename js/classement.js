@@ -43,7 +43,9 @@ export function ecranClassement(d, nav) {
       el('h2', { class: 'fiche-titre' }, 'Classement'),
     ),
     conteneur,
-    el('p', { class: 'mention-legale' }, 'Notes fictives — démonstration uniquement.'),
+    el('p', { class: 'mention-legale' }, d.fictifPar?.pays === false
+      ? 'Pays : données réelles analysées par l’agent pays · entreprises : notes fictives (démonstration).'
+      : 'Notes fictives — démonstration uniquement.'),
   ];
 }
 
