@@ -1021,3 +1021,75 @@ body.alertes-ouvertes .barre-comparaison { display: none; }
 .sante-etat--echec { color: var(--rouge); }
 .sante-etat--autre { color: var(--orange); }
 .sante-source-info { margin-top: 2px; font-size: 11.5px; color: var(--texte-3); overflow-wrap: anywhere; }
+
+/* ==========================================================================
+   Vue macro (agent macro)
+   ========================================================================== */
+.macro-resume { font-size: 14px; color: var(--texte-2); }
+.macro-resume strong { color: var(--texte); }
+.macro-texte { font-size: 13px; line-height: 1.5; color: var(--texte); }
+.macro-source { margin-top: 8px; font-size: 11px; line-height: 1.45; color: var(--texte-3); }
+
+/* Schéma en 4 quadrants */
+.graphique--quadrants { margin-bottom: 10px; }
+.quadrant { opacity: 0.5; }
+.quadrant--surchauffe { fill: rgba(255, 181, 71, 0.07); }
+.quadrant--reprise { fill: rgba(46, 229, 157, 0.06); }
+.quadrant--ralentissement { fill: rgba(255, 77, 106, 0.07); }
+.quadrant--expansion { fill: rgba(0, 229, 255, 0.05); }
+.axe-zero { stroke: var(--ligne-forte); stroke-width: 1; }
+.quadrant-nom text { fill: var(--texte-3); font-family: var(--police-texte); font-size: 10.5px; }
+.quadrant-axe text { fill: var(--texte-3); font-family: var(--police-mono); font-size: 9.5px; }
+.fleche { stroke: var(--texte-3); stroke-width: 1.5; }
+.fleche-pointe { fill: var(--texte-3); }
+.point-zone { fill: var(--texte); stroke: var(--fond-2); stroke-width: 2; }
+.point-zone--monde { fill: var(--cyan); }
+.etiquette-zone { fill: var(--texte-2); font-family: var(--police-texte); font-size: 11px; paint-order: stroke; stroke: var(--fond); stroke-width: 3px; }
+.etiquette-zone--monde { fill: var(--texte); font-weight: 600; }
+.graphique--quadrants .cible { cursor: pointer; }
+.graphique .grille line.ligne-zero { stroke: var(--ligne-forte); }
+
+.macro-zones { display: grid; gap: 8px; list-style: none; margin: 0; padding: 0; }
+.macro-zones li { padding-top: 8px; border-top: 1px solid var(--ligne); }
+.macro-zone-ligne { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.macro-zone-nom { font-size: 13px; }
+.macro-zone-info { margin-top: 2px; font-size: 11.5px; color: var(--texte-3); }
+.macro-phase { flex: none; font-size: 11px; padding: 1px 8px; border-radius: 999px; border: 1px solid currentColor; }
+.macro-phase--reprise { color: var(--vert); }
+.macro-phase--surchauffe { color: var(--orange); }
+.macro-phase--ralentissement { color: var(--rouge); }
+.macro-phase--expansion { color: var(--cyan); }
+
+/* Signaux de récession */
+.macro-signaux { display: grid; gap: 10px; list-style: none; margin: 10px 0 0; padding: 0; }
+.macro-signaux li { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; padding-top: 10px; border-top: 1px solid var(--ligne); }
+.macro-signaux .pastille { margin-top: 4px; }
+.macro-signal-ligne { display: flex; justify-content: space-between; gap: 10px; }
+.macro-signal-nom { font-size: 13px; }
+.macro-signal-valeur { font-size: 13px; color: var(--texte); }
+.macro-signal-texte { margin-top: 2px; font-size: 12px; color: var(--texte-2); }
+.macro-niveau { text-transform: uppercase; font-size: 10px; letter-spacing: 0.06em; font-weight: 600; }
+.macro-niveau--vert { color: var(--vert); }
+.macro-niveau--orange { color: var(--orange); }
+.macro-niveau--rouge { color: var(--rouge); }
+
+/* Banques centrales */
+.macro-banques { display: grid; font-size: 12.5px; }
+.macro-banque { display: grid; grid-template-columns: 1fr 1.15fr 1fr 1fr; gap: 8px; padding: 8px 0; border-top: 1px solid var(--ligne); align-items: start; }
+.macro-banque > span { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.macro-banque small { font-family: var(--police-texte); font-size: 10.5px; color: var(--texte-3); }
+.macro-banque .mono { font-size: 12px; }
+.macro-banque--entete { border-top: 0; padding-top: 0; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--texte-3); }
+.macro-bientot { color: var(--orange) !important; }
+
+/* Marchés du cycle */
+.macro-marches { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+@media (min-width: 640px) { .macro-marches { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.macro-marche { display: grid; gap: 3px; }
+.macro-marche-nom { font-size: 12px; color: var(--texte-2); }
+.macro-marche-valeur { font-size: 16px; color: var(--texte); }
+.macro-marche-var { display: flex; justify-content: space-between; font-size: 12px; color: var(--texte-3); }
+.macro-marche .macro-source { margin-top: 2px; }
+.point-zone--non-confirme { fill: var(--fond-2); stroke: var(--texte); stroke-width: 1.5; }
+.point-zone--monde.point-zone--non-confirme { stroke: var(--cyan); }
+.infobulle-note { margin-top: 6px; max-width: 210px; font-size: 11px; color: var(--texte-3); }

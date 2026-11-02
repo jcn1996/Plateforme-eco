@@ -1,0 +1,161 @@
+"""Tests de l'agent macro, sans réseau : python -m unittest discover -s agents -t .
+Les données de test (agents/macro/tests/donnees) sont des captures réelles du 02/11/2026."""
+import json
+import shutil
+import tempfile
+import unittest
+from datetime import date
+from pathlib import Path
+
+from agents.commun.sortie import lire_json
+from agents.macro import analyse as A
+from agents.macro.agent import main
+
+CFG = json.loads((Path(__file__).resolve().parents[1] / "config.json").read_text(encoding="utf-8"))
+JOUR = date(2026, 11, 2)
+
+
+def serie_mensuelle(valeurs, debut=(2025, 1)):
+    a, m = debut
+    res = []
+    for v in valeurs:
+        res.append((f"{a}-{m:02d}", v))
+        m += 1
+        if m > 12:
+            a, m = a + 1, 1
+    return res
+
+
+class TestPhase(unittest.TestCase):
+    def test_quadrants(self):
+        hausse = serie_mensuelle([99 + 0.1 * k for k in range(10)])
+        baisse = serie_mensuelle([101 - 0.1 * k for k in range(10)])
+        inf_hausse = serie_mensuelle([2 + 0.2 * k for k in range(10)])
+        inf_baisse = serie_mensuelle([4 - 0.2 * k for k in range(10)])
+        s = CFG["seuils"]
+        self.assertEqual(A.phase_zone(hausse, inf_baisse, (3, 3.2), (3, 2.5), s)["phase"], "Reprise")
+        self.assertEqual(A.phase_zone(hausse, inf_hausse, (3, 3.2), (2, 2.5), s)["phase"], "Surchauffe")
+        self.assertEqual(A.phase_zone(baisse, inf_hausse, (3, 2.5), (2, 2.5), s)["phase"], "Ralentissement inflationniste")
+        self.assertEqual(A.phase_zone(baisse, inf_baisse, (3, 2.5), (3, 2.5), s)["phase"], "Expansion sans inflation")
+
+    def test_deux_signaux_concordants_pour_changer(self):
+        # La croissance accélère longtemps, puis un seul mois de baisse : la phase ne change pas
+        cli = serie_mensuelle([99 + 0.1 * k for k in range(10)] + [99.6])
+        inf = serie_mensuelle([4 - 0.2 * k for k in range(11)])
+        z = A.phase_zone(cli, inf, (3, 3.2), (3, 2.5), CFG["seuils"])
+        self.assertEqual(z["phase"], "Reprise")
+        # Deux mois de baisse et un FMI en baisse : changement annoncé, avec la phase précédente et sa date
+        cli = serie_mensuelle([99 + 0.1 * k for k in range(10)] + [99.6, 99.2])
+        inf = serie_mensuelle([4 - 0.2 * k for k in range(12)])
+        z = A.phase_zone(cli, inf, (3.2, 3.0), (3, 2.5), CFG["seuils"])
+        self.assertEqual(z["phase"], "Expansion sans inflation")
+        self.assertEqual(z["phase_precedente"], "Reprise")
+        self.assertEqual(z["depuis"], "2025-11")  # baisse sur 3 mois + FMI : deux signaux concordants
+
+    def test_donnees_insuffisantes(self):
+        self.assertIsNone(A.phase_zone(serie_mensuelle([100, 101]), serie_mensuelle([2, 3]), None, None, CFG["seuils"]))
+
+
+class TestRecession(unittest.TestCase):
+    cfg = CFG["recession"]
+
+    def test_courbe_inversee(self):
+        s = [("2026-10-01", 0.2), ("2026-10-02", -0.1), ("2026-10-12", -0.2)]
+        e = A.etat_courbe(s, self.cfg, JOUR)
+        self.assertEqual((e["niveau"], e["depuis"], e["jours"]), ("rouge", "2026-10-02", 10))
+
+    def test_desinversion_recente_puis_ancienne(self):
+        s = [("2026-01-01", -0.3), ("2026-06-01", -0.1), ("2026-07-01", 0.6)]
+        self.assertEqual(A.etat_courbe(s, self.cfg, JOUR)["niveau"], "orange")
+        s = [("2023-01-01", -0.3), ("2023-07-01", 0.6), ("2026-10-01", 0.8)]
+        self.assertEqual(A.etat_courbe(s, self.cfg, JOUR)["niveau"], "vert")
+
+    def test_sahm(self):
+        chomage = serie_mensuelle([3.5] * 14 + [3.8, 4.1, 4.4])
+        self.assertAlmostEqual(dict(A.sahm_calculee(chomage))["2026-05"], 0.6, places=2)
+        self.assertEqual(A.niveau_sahm(0.6, self.cfg), "rouge")
+        self.assertEqual(A.niveau_sahm(0.35, self.cfg), "orange")
+
+    def test_cli(self):
+        self.assertEqual(A.niveau_cli(99.5, -0.2), "rouge")
+        self.assertEqual(A.niveau_cli(100.5, -0.2), "orange")
+        self.assertEqual(A.niveau_cli(100.5, 0.2), "vert")
+
+
+class TestBanques(unittest.TestCase):
+    def test_mouvement_tendance_et_verification(self):
+        bis = [("2025-10-01", 2.0), ("2026-06-01", 2.0), ("2026-09-16", 2.25), ("2026-10-26", 2.25)]
+        nat = [("2025-10-01", 2.0), ("2026-09-16", 2.25), ("2026-10-29", 2.5)]
+        cal = {"dates": ["2026-10-28", "2026-12-09"]}
+        b = A.banque_centrale("boc", {"nom": "BoC", "pays": "Canada"}, bis, nat, "nationale", cal, JOUR)
+        self.assertEqual(b["taux"], 2.5)
+        self.assertEqual(b["dernier_mouvement"]["date"], "2026-10-29")
+        self.assertEqual(b["tendance_12m"], {"variation_pts": 0.5, "sens": "hausse"})
+        self.assertEqual(b["prochaine_reunion"], {"date": "2026-12-09", "jours": 37})
+        self.assertEqual(b["verification"], "non comparable")  # la BRI n'a pas encore le dernier mouvement
+
+    def test_sans_calendrier(self):
+        self.assertIsNone(A.prochaine_reunion({"sans_calendrier": True, "note": "x"}, JOUR)["date"])
+        self.assertEqual(A.prochaine_reunion({"dates": ["2026-01-01"]}, JOUR)["note"], "aucune date future dans le calendrier")
+
+
+class TestCalendrier(unittest.TestCase):
+    def test_structure(self):
+        cal = json.loads((Path(__file__).resolve().parents[1] / "calendrier_banques_centrales.json").read_text(encoding="utf-8"))
+        self.assertEqual(set(cal["banques"]), set(CFG["banques_centrales"]))
+        for cle, b in cal["banques"].items():
+            self.assertTrue(b["source"].startswith("http"), cle)
+            self.assertEqual(b["dates"], sorted(b["dates"]), cle)
+            for d in b["dates"]:
+                date.fromisoformat(d)
+            if not b.get("sans_calendrier"):
+                self.assertTrue(b["dates"], cle)
+
+
+class TestAgent(unittest.TestCase):
+    def setUp(self):
+        self.dossier = Path(tempfile.mkdtemp())
+
+    def tearDown(self):
+        shutil.rmtree(self.dossier)
+
+    def test_execution_complete(self):
+        self.assertEqual(main(["--test", "--data", str(self.dossier), "--date", "2026-11-02"]), 0)
+        d = lire_json(self.dossier / "macro.json")
+        self.assertFalse(d["meta"]["fictif"])
+        donnees = d["donnees"]
+        self.assertEqual([z["cle"] for z in donnees["cycle"]["zones"]],
+                         ["monde", "etats_unis", "zone_euro", "chine", "japon", "emergents"])
+        for z in donnees["cycle"]["zones"]:
+            self.assertIn(z["phase"], A.PHASES.values())
+            self.assertIn(z["confiance"], ("faible", "moyen", "élevé"))
+            self.assertTrue(z["contre_scenario"])
+        self.assertEqual(len(donnees["banques_centrales"]), 11)
+        self.assertEqual(len(donnees["recession"]["signaux"]), 6)
+        self.assertEqual(len(donnees["lectures_pays"]), 31)
+        # Ton froid : aucun superlatif, et deux phrases par pays
+        for l in donnees["lectures_pays"].values():
+            self.assertTrue(A.ton_conforme(l["texte"]))
+            self.assertEqual(l["texte"].count(". ") + 1, 2, l["texte"])
+        self.assertTrue((self.dossier / "historique" / "macro" / "2026-11-02.json").exists())
+        self.assertTrue((self.dossier / "recap" / "macro-2026-11-02.md").exists())
+        self.assertIsNotNone(lire_json(self.dossier / "signaux" / "macro.json"))
+        journal = lire_json(self.dossier / "journal" / "agent-macro.json")
+        self.assertEqual(journal["meta"]["sante"]["intervalle_min"], 1440)
+        self.assertTrue(journal["meta"]["sante"]["echeances"])
+        index = lire_json(self.dossier / "journal" / "index.json")["donnees"]
+        self.assertIn("agent-macro.json", [e["fichier"] for e in index])
+
+    def test_signal_de_changement_de_phase(self):
+        main(["--test", "--data", str(self.dossier), "--date", "2026-11-02"])
+        chemin = self.dossier / "macro.json"
+        d = lire_json(chemin)
+        d["donnees"]["cycle"]["zones"][0]["phase"] = "Surchauffe"  # état précédent différent
+        chemin.write_text(json.dumps(d, ensure_ascii=False), encoding="utf-8")
+        main(["--test", "--data", str(self.dossier), "--date", "2026-11-02"])
+        types = [s["type"] for s in lire_json(self.dossier / "signaux" / "macro.json")["donnees"]]
+        self.assertIn("changement_de_phase", types)
+
+
+if __name__ == "__main__":
+    unittest.main()

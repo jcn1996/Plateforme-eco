@@ -12,7 +12,8 @@ Santé des agents : bloc « sante » écrit dans data/journal/<agent>.json et lu
       "sources_total": 8, "sources_ok": 8,
       "sources": [ {"nom", "etat", "derniere_donnee_valide", "detail"} ],
       "degrade": false, "raisons": [],
-      "references": { "<indicateur>": ["<source>", …] }   # sources valides attendues par indicateur
+      "references": { "<indicateur>": ["<source>", …] },  # sources valides attendues par indicateur
+      "echeances": [ {"libelle", "jusqua"} ]   # facultatif : l'appli alerte quand « jusqua » est passé
     }
 
 États d'une source : « ok », « secours » (la source principale a échoué, une autre a répondu),

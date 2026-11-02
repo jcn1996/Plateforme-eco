@@ -1,0 +1,57 @@
+{
+  "_commentaire": "Configuration de l'agent macro. Zones du cycle, banques centrales suivies, seuils des signaux de récession et marchés du cycle.",
+  "zones": {
+    "monde": {"nom": "Monde", "cli": ["G20"], "cli_libelle": "G20", "inflation": {"ocde": ["G20", "OECD"]}, "fmi": "WEOWORLD"},
+    "etats_unis": {"nom": "États-Unis", "cli": ["USA"], "cli_libelle": "États-Unis", "inflation": {"ocde": ["USA"]}, "fmi": "USA"},
+    "zone_euro": {"nom": "Zone euro", "cli": ["DEU", "FRA", "ITA", "ESP"], "cli_libelle": "moyenne Allemagne, France, Italie, Espagne", "inflation": {"eurostat": "EA"}, "fmi": "EURO"},
+    "chine": {"nom": "Chine", "cli": ["CHN"], "cli_libelle": "Chine", "inflation": {"ocde": ["CHN"]}, "fmi": "CHN"},
+    "japon": {"nom": "Japon", "cli": ["JPN"], "cli_libelle": "Japon", "inflation": {"ocde": ["JPN"]}, "fmi": "JPN"},
+    "emergents": {"nom": "Émergents", "cli": ["BRA", "IND", "IDN", "MEX", "ZAF", "TUR"], "cli_libelle": "moyenne Brésil, Inde, Indonésie, Mexique, Afrique du Sud, Turquie", "inflation": {"ocde": ["BRA", "IND", "IDN", "MEX", "ZAF", "TUR"], "agregat": "mediane"}, "fmi": "OEMDC"}
+  },
+  "cli_suivis": ["G20", "G7", "USA", "CHN", "IND", "BRA", "JPN", "DEU", "FRA", "ITA", "ESP", "IDN", "MEX", "ZAF", "TUR", "GBR", "CAN", "AUS", "KOR"],
+  "seuils": {
+    "_commentaire": "Changement sur 3 mois en deçà duquel une direction est jugée « stable » (pas de vote).",
+    "cli_pts": 0.05,
+    "inflation_pts": 0.1,
+    "fmi_croissance_pts": 0.1,
+    "fmi_inflation_pts": 0.1
+  },
+  "banques_centrales": {
+    "fed": {"nom": "Fed", "pays": "États-Unis", "bis": "US", "nationale": {"fournisseur": "fred_milieu", "series": ["DFEDTARL", "DFEDTARU"], "nom": "Réserve fédérale via FRED, milieu de la fourchette cible (DFEDTARL, DFEDTARU)"}},
+    "bce": {"nom": "BCE", "pays": "Zone euro", "bis": "XM", "nationale": {"fournisseur": "bce_taux", "nom": "BCE, taux de la facilité de dépôt (Data Portal)"}},
+    "boj": {"nom": "BoJ", "pays": "Japon", "bis": "JP"},
+    "boe": {"nom": "BoE", "pays": "Royaume-Uni", "bis": "GB"},
+    "bns": {"nom": "BNS", "pays": "Suisse", "bis": "CH"},
+    "boc": {"nom": "Banque du Canada", "pays": "Canada", "bis": "CA", "nationale": {"fournisseur": "boc", "serie": "V39079", "nom": "Banque du Canada, taux cible du financement à un jour (Valet V39079)"}},
+    "rba": {"nom": "RBA", "pays": "Australie", "bis": "AU"},
+    "bcb": {"nom": "BCB", "pays": "Brésil", "bis": "BR", "nationale": {"fournisseur": "bcb", "serie": 432, "nom": "Banco Central do Brasil, Selic cible (SGS 432)"}},
+    "rbi": {"nom": "RBI", "pays": "Inde", "bis": "IN"},
+    "pboc": {"nom": "PBoC", "pays": "Chine", "bis": "CN"},
+    "cbrt": {"nom": "CBRT", "pays": "Turquie", "bis": "TR"}
+  },
+  "banque_par_bis": {"US": "fed", "XM": "bce", "JP": "boj", "GB": "boe", "CH": "bns", "CA": "boc", "AU": "rba", "BR": "bcb", "IN": "rbi", "CN": "pboc", "TR": "cbrt"},
+  "zone_euro_pays": ["FR", "DE", "IT", "ES", "NL"],
+  "zone_par_pays": {
+    "US": "etats_unis", "FR": "zone_euro", "DE": "zone_euro", "IT": "zone_euro", "ES": "zone_euro", "NL": "zone_euro",
+    "CN": "chine", "JP": "japon",
+    "MX": "emergents", "BR": "emergents", "AR": "emergents", "ZA": "emergents", "IN": "emergents", "ID": "emergents",
+    "TR": "emergents", "VN": "emergents", "TH": "emergents", "CL": "emergents", "CO": "emergents", "EG": "emergents",
+    "SA": "emergents", "AE": "emergents"
+  },
+  "marches": [
+    {"symbole": "HG=F", "nom": "Cuivre", "unite": "$/livre"},
+    {"symbole": "CL=F", "nom": "Pétrole WTI", "unite": "$/baril"},
+    {"symbole": "DX-Y.NYB", "nom": "Indice dollar (DXY)", "unite": "pts"},
+    {"symbole": "GC=F", "nom": "Or", "unite": "$/once"}
+  ],
+  "recession": {
+    "_commentaire": "Courbe : rouge si inversée ; orange si l'écart est sous orange_sous ou si l'inversion a pris fin depuis moins de desinversion_jours jours. Sahm : orange à partir de 0,3, rouge à partir de 0,5.",
+    "courbe_orange_sous": 0.25,
+    "desinversion_jours": 365,
+    "sahm_orange": 0.3,
+    "sahm_rouge": 0.5,
+    "tolerance_courbe_us": 0.3,
+    "tolerance_courbe_de": 0.4,
+    "tolerance_sahm": 0.1
+  }
+}
