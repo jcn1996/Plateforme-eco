@@ -154,7 +154,7 @@ function listeSources(p) {
           ),
           disponible && (ind.verification || ind.confiance) ? el('div', { class: `source-verif source-verif--${ind.verification ?? 'inconnue'}` },
             VERIFICATIONS[ind.verification] ?? '',
-            ind.confiance ? ` · confiance ${ind.confiance}` : '',
+            ind.confiance ? ` · confiance : ${ind.confiance}` : '',
             ind.ancienne ? ` · ${ind.raison_ancienne}` : '',
           ) : null,
           ind.sources?.length

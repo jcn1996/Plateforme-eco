@@ -151,6 +151,7 @@ class TestAgent(unittest.TestCase):
         self.assertEqual(pib["sources"][0]["source"], "fmi")                  # source prioritaire retenue
         self.assertIn("diverge", [s["statut"] for s in pib["sources"]])
         self.assertTrue(any("sources divergentes" in r for r in fr["confiance"]["raisons"]))
+        self.assertNotEqual(fr["confiance"]["niveau"], "élevé")              # la divergence fait baisser la confiance
         self.assertTrue(any("divergent" in c for c in fr["contre_scenario"]))
         recap = next((self.dossier / "recap").glob("*.md")).read_text(encoding="utf-8")
         self.assertIn("France, croissance du PIB", recap)

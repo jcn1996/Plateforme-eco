@@ -123,9 +123,9 @@ def confiance(indicateurs: dict, ponderations: dict, couverture: float) -> dict:
     - fraîcheur : chaque valeur « ancienne » (source en panne) retire 0,1 ;
     - concordance : si les notes des indicateurs divergent fortement
       (écart-type > 22), on retire 0,15 ; chaque valeur « à vérifier » retire 0,1 ;
-    - vérification croisée : chaque indicateur aux sources divergentes retire 0,1 ;
-      si plus de la moitié des indicateurs disponibles reposent sur une seule source,
-      le niveau est plafonné à « moyen ».
+    - vérification croisée : chaque indicateur aux sources divergentes retire 0,1 et
+      plafonne le niveau à « moyen » ; de même si plus de la moitié des indicateurs
+      disponibles reposent sur une seule source.
     Score ≥ 0,8 → élevé ; ≥ 0,55 → moyen ; sinon faible.
     """
     principaux = {k: v for k, v in indicateurs.items() if k in ponderations}
@@ -155,9 +155,12 @@ def confiance(indicateurs: dict, ponderations: dict, couverture: float) -> dict:
     # Plafond : si la majorité des indicateurs disponibles ne repose que sur une seule source
     disponibles = [v for v in principaux.values() if v.get("note") is not None]
     uniques = [v["libelle"] for v in disponibles if v.get("verification") == "source_unique"]
-    plafond = bool(disponibles) and len(uniques) * 2 > len(disponibles)
-    if plafond and score >= 0.8:
+    plafond_unique = bool(disponibles) and len(uniques) * 2 > len(disponibles)
+    plafond = plafond_unique or bool(divergents)
+    if plafond_unique and score >= 0.8:
         raisons.append("confiance plafonnée à « moyen » : une seule source pour " + ", ".join(map(minuscule, uniques)))
+    elif divergents and score >= 0.8:
+        raisons.append("confiance plafonnée à « moyen » tant que les sources divergent")
     if not raisons:
         raisons.append("données complètes, récentes et confirmées par plusieurs sources")
     score = max(0.0, round(score, 2))

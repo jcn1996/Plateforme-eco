@@ -55,7 +55,7 @@ Pour chaque indicateur, l'agent récupère la valeur auprès de chaque source di
 | Cas | Statut publié | Effet |
 |---|---|---|
 | Écart inférieur ou égal à la tolérance | `concordant` | on garde la source prioritaire ; confiance de l'indicateur **élevée** |
-| Écart supérieur à la tolérance | `divergent`, affiché « sources divergentes » | confiance de l'indicateur **faible** ; −0,1 sur le score de confiance du pays ; mention dans « Ce qui pourrait me donner tort » |
+| Écart supérieur à la tolérance | `divergent`, affiché « sources divergentes » | confiance de l'indicateur **faible** ; −0,1 sur le score de confiance du pays, dont le niveau est plafonné à « moyen » ; mention dans « Ce qui pourrait me donner tort » |
 | Une seule source valable | `source_unique` | confiance de l'indicateur plafonnée à **moyen** |
 
 Tolérances (`tolerances_divergence`, en points) :

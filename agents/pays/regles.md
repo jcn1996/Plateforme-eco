@@ -76,7 +76,9 @@ Le niveau est ensuite fixé ainsi :
 - score ≥ 0,55 : **moyen** ;
 - en dessous : **faible**.
 
-Si plus de la moitié des indicateurs disponibles ne reposent que sur une seule source, le niveau est **plafonné à « moyen »**.
+Le niveau est **plafonné à « moyen »** dans deux cas :
+- un indicateur principal a des sources divergentes ;
+- plus de la moitié des indicateurs disponibles ne reposent que sur une seule source.
 
 Chaque indicateur a aussi son propre niveau :
 - **élevé** si ses sources concordent ;
