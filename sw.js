@@ -33,6 +33,7 @@ const FICHIERS_APPLI = [
   'js/mes-alertes.js',
   'js/recherche.js',
   'js/sante.js',
+  'js/planning.js',
   'js/macro.js',
   'js/pepites.js',
   'assets/icone.svg',

@@ -70,7 +70,7 @@ L'agent pays se trouve dans `agents/`, en Python 3.12.
 - Il écrit des textes factuels et met à jour `data/pays.json`.
 - Les règles de notation et de conduite sont décrites dans [`agents/pays/regles.md`](agents/pays/regles.md). Les pondérations se modifient dans `agents/pays/config.json`.
 
-**Exécution** : le workflow `.github/workflows/agent-pays.yml` lance l'agent chaque jour à 6 h UTC ; on peut aussi le lancer à la main.
+**Exécution** : le workflow `.github/workflows/agent-pays.yml` lance l'agent chaque jour à 6 h 11 UTC ; on peut aussi le lancer à la main.
 - Il commite sur `main` avec le message « Agent pays : mise à jour du JJ/MM/AAAA ». Même quand les données n'ont pas changé, la date de dernière exécution est enregistrée dans son journal (pour l'écran « Santé des agents »).
 - Chaque jour, il garde ses notes dans `data/historique/pays/AAAA-MM-JJ.json`.
 - Il écrit un récapitulatif factuel dans `data/recap/pays-AAAA-MM-JJ.md` : ce qui a changé, les divergences entre sources, les données manquantes et les mouvements de notes.
@@ -101,7 +101,7 @@ L'agent marchés se trouve dans `agents/marches/`, en Python 3.12. Il met à jou
 - Sources : Yahoo Finance (via yfinance) ; Stooq (CSV gratuit) en secours ; sinon la dernière valeur est conservée avec son heure et marquée « ancienne ».
 - Le fichier n'est réécrit que si les valeurs ont changé.
 
-**Exécution** : le workflow `.github/workflows/agent-marches.yml` tourne toutes les 15 minutes du lundi au vendredi de 7 h à 22 h UTC, et toutes les heures le week-end (pour le Bitcoin). Il ne commite que si les valeurs ont changé, avec le message « Marchés : HH:MM » (heure de Paris). On peut aussi le lancer à la main : onglet **Actions** → **Agent marchés** → **Run workflow**.
+**Exécution** : le workflow `.github/workflows/agent-marches.yml` tourne toutes les 15 minutes du lundi au vendredi de 7 h 07 à 22 h 07 UTC (minutes 7, 22, 37, 52), et toutes les heures (minute 7) le week-end (pour le Bitcoin). Il ne commite que si les valeurs ont changé, avec le message « Marchés : HH:MM » (heure de Paris). On peut aussi le lancer à la main : onglet **Actions** → **Agent marchés** → **Run workflow**.
 
 ```
 python -m agents.marches
@@ -136,7 +136,7 @@ Les règles sont détaillées dans [`agents/macro/regles.md`](agents/macro/regle
 - `data/recap/macro-AAAA-MM-JJ.md` ;
 - `data/journal/agent-macro.json`.
 
-**Exécution** : le workflow `.github/workflows/agent-macro.yml` tourne chaque jour à 6 h 30 UTC. On peut aussi le lancer à la main : onglet **Actions** → **Agent macro** → **Run workflow**.
+**Exécution** : le workflow `.github/workflows/agent-macro.yml` tourne chaque jour à 6 h 41 UTC. On peut aussi le lancer à la main : onglet **Actions** → **Agent macro** → **Run workflow**.
 
 ```
 python -m agents.macro             # vraies sources
@@ -203,13 +203,26 @@ L'icône en forme de pouls, dans l'en-tête, ouvre l'écran **Santé des agents*
 Pour chaque agent (pays, marchés, puis les suivants), l'écran affiche :
 - la date et l'heure de la dernière exécution réussie ;
 - le statut :
-  - **en panne** si cette exécution date de plus de 2 fois l'intervalle prévu par le workflow. L'intervalle est l'écart entre deux exécutions planifiées (lignes `cron`) : 24 h pour l'agent pays, 15 min pour l'agent marchés en semaine ;
+  - calculé à partir du **planning** que chaque agent déclare dans son journal (champ `planning` : expressions `cron`, fuseau UTC) : l'appli en déduit la première exécution prévue après la dernière exécution réussie ;
+  - **en panne** (rouge) si cette exécution prévue manque depuis plus de 2 h pour un agent à 15 min (marchés), ou 26 h pour un agent quotidien (pays, macro) ;
+  - **en retard** (orange) si elle manque depuis plus de 45 min (agent à 15 min) ou 2 h (agent quotidien) ;
+  - **en pause** (gris) hors des heures prévues, par exemple la nuit pour l'agent marchés (après 22 h 07 UTC en semaine), avec l'heure de la prochaine mise à jour, en heure de Paris (« Prochaine mise à jour : lun. 8 h 07 ») ;
   - **dégradé** si un indicateur a perdu une source qu'il devrait avoir, c'est-à-dire qu'il a moins de sources valides que lors de la dernière exécution saine (par exemple, deux sources puis une seule). Une source retirée de la configuration n'est plus attendue ; une source périmée remplacée par une source à jour ne compte pas ;
   - **OK** sinon ;
 - le nombre de sources qui répondent sur le total ;
 - les sources en échec ou périmées, avec la date de leur dernière donnée valide.
 
-Les données viennent de `data/journal/*.json` (bloc `meta.sante`, écrit par `agents/commun/sante.py`). `data/journal/index.json` liste les journaux à lire. Un nouvel agent n'a qu'à appeler `sante.bloc_sante(...)` puis `sante.enregistrer_sante(...)` pour apparaître dans l'écran.
+Les données viennent de `data/journal/*.json` (bloc `meta.sante` ; `derniere_execution`, `prochaine_prevue`, `intervalle_min` et `planning` sont aussi recopiés au premier niveau du journal, écrit par `agents/commun/sante.py`). `data/journal/index.json` liste les journaux à lire. Un nouvel agent n'a qu'à appeler `sante.bloc_sante(...)` puis `sante.enregistrer_sante(...)` pour apparaître dans l'écran.
+
+Tests de la logique du planning (nuit, week-end, journée, avec des dates simulées) : `node --test js/tests/*.test.mjs`.
+
+## Fiabilité des exécutions planifiées
+
+GitHub retarde, voire saute, souvent les tâches planifiées aux minutes rondes. Les agents tournent donc à des minutes décalées : marchés à 7, 22, 37 et 52 (de 7 h 07 à 22 h 07 UTC en semaine, à la minute 7 de chaque heure le week-end), pays à 6 h 11 UTC, macro à 6 h 41 UTC.
+
+Le workflow `.github/workflows/rattrapage.yml` tourne toutes les heures (minute 29). Il lit `data/journal/*.json` et relance (`gh workflow run`, déclencheur `workflow_dispatch`) chaque agent dont une exécution prévue manque depuis plus d'une heure, au plus une fois par agent et par heure, et jamais si une exécution est déjà en cours ou en attente. Chaque relance est tracée dans `data/journal/rattrapage.json`.
+
+Chaque workflow a un groupe `concurrency` (jamais deux exécutions simultanées du même agent) et refait jusqu'à 3 tentatives de `git pull --rebase` + `git push` en cas de conflit de commit.
 
 ## Maintien
 
@@ -229,6 +242,7 @@ js/globe.js           globe 3D (Three.js r160), gestes, zoom, flux, étiquettes
 js/carte-vecteur.js   carte vectorielle : pays triangulés, trait de frontière, niveaux 110m / 50m
 js/interface.js       horloge, bandeau des marchés, alertes, mode léger
 js/sante.js           écran « Santé des agents »
+js/planning.js        planning cron des agents : statut (OK, en pause, en retard, en panne)
 js/macro.js           écran « Vue macro » et rubrique « Agent macro » de la fiche pays
 js/pepites.js         écran « Pépites »
 js/panneau-pays.js    fiches pays et secteur
@@ -245,7 +259,7 @@ data/recap/           récapitulatif de chaque exécution de l'agent pays
 data/journal/         journal des sources en échec
 data/flux.json        flux de capitaux entre pays (fictifs)
 data/*.json           autres données (fictives pour l'instant)
-agents/               agents Python (agents/commun : téléchargement, cache, journal, écriture ; agents/pays : agent pays ; agents/marches : agent marchés ; agents/macro : agent macro)
+agents/               agents Python (agents/commun : téléchargement, cache, journal, écriture ; agents/pays : agent pays ; agents/marches : agent marchés ; agents/macro : agent macro ; agents/rattrapage : relance des exécutions manquées)
 .github/workflows/    exécution planifiée des agents (GitHub Actions)
 data/countries-110m.json, countries-50m.json  frontières des pays (voir data/LICENCE-countries-110m.txt)
 outils/generer_donnees_fictives.py  régénère les données fictives
