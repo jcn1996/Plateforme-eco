@@ -105,6 +105,9 @@ def collecter(fournisseur, config: dict, aujourdhui: date) -> tuple[dict, dict]:
             resultats[nom] = appel()
             vide = not resultats[nom]
             etats[nom] = "vide" if vide else "ok"
+            attendus = {"yahoo_per": len(etfs), "yahoo_cours": len(etfs) + len(devises)}.get(nom)
+            if attendus and not vide and len(resultats[nom]) < attendus:
+                etats[nom] = f"partiel ({len(resultats[nom])}/{attendus})"
             (LOG.warning if vide else LOG.info)("Source %s : %s", nom, "aucune donnée" if vide else f"{len(resultats[nom])} séries")
         except Exception as e:  # une source en panne : on continue avec les autres
             resultats[nom] = {}
