@@ -15,7 +15,7 @@ import { initialiserComparateur, boutonComparer, majBarre, ecranComparaison } fr
 import { evaluerRegles, ecranMesAlertes } from './mes-alertes.js';
 import { initialiserRecherche } from './recherche.js';
 import { fichePays, ficheSecteur } from './panneau-pays.js';
-import { ficheEntreprise } from './panneau-entreprise.js';
+import { ficheEntreprise, chargerFiche } from './panneau-entreprise.js';
 import { ecranPortefeuille } from './portefeuille.js';
 import { ecranClassement } from './classement.js';
 import { chargerSante, ecranSante, problemeDetecte } from './sante.js';
@@ -360,13 +360,23 @@ function afficher(route) {
   } else if (route.type === 'entreprise') {
     const e = d.entrepriseParTicker.get(route.id);
     contenu = ficheEntreprise(d, e, navigateurPanneau); codePays = e.pays; titre = `${e.nom} — Salle de contrôle`;
+    // Le détail (F-score, montants, revue critique, sources…) est dans une fiche séparée, chargée à la demande
+    if (e.fiche && !e.detailCharge) {
+      chargerFiche(e).then((ok) => {
+        if (ok && routeActuelle.type === 'entreprise' && routeActuelle.id === e.ticker) {
+          const defilement = dom.panneauContenu.scrollTop;
+          dom.panneauContenu.replaceChildren(...ficheEntreprise(d, e, navigateurPanneau).filter(Boolean));
+          dom.panneauContenu.scrollTop = defilement;
+        }
+      });
+    }
   }
 
   const panneauOuvert = Boolean(contenu);
   // À l'ouverture, le panneau part de sa hauteur normale ; ensuite il garde la hauteur choisie
   if (panneauOuvert && !dom.panneau.classList.contains('est-ouvert')) etatPanneau = 'normal';
   if (contenu) {
-    dom.panneauContenu.replaceChildren(...contenu);
+    dom.panneauContenu.replaceChildren(...contenu.filter(Boolean));
     dom.panneauContenu.scrollTop = 0;
   }
   dom.panneau.classList.toggle('est-ouvert', panneauOuvert);
@@ -389,7 +399,7 @@ function afficher(route) {
   for (const [type, ecran] of Object.entries(ECRANS)) {
     const visible = route.type === type;
     if (visible) {
-      $(ecran.contenu).replaceChildren(...ecran.rendu());
+      $(ecran.contenu).replaceChildren(...ecran.rendu().filter(Boolean));
       $(ecran.contenu).scrollTop = 0;
       titre = `${ecran.titre} — Salle de contrôle`;
     }

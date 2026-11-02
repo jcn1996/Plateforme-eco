@@ -170,7 +170,8 @@ def mesures(s: dict) -> dict:
     m["dette_nette"] = dn
     eb = a0.get("ebitda")
     m["dette_ebitda"] = (dn / eb) if dn is not None and eb and eb > 0 else (None if dn is None or eb is None else 99.0 if dn > 0 else -1.0)
-    m["couverture_interets"] = ratio(a0.get("ebit"), a0.get("interets")) if a0.get("interets") else (None if a0.get("ebit") is None else 100.0)
+    # Charge d'intérêts absente des données : indicateur non disponible (on ne suppose pas qu'elle est nulle)
+    m["couverture_interets"] = ratio(a0.get("ebit"), a0.get("interets")) if a0.get("interets") else None
     t = a0.get("taux_impot")
     t = 0.25 if t is None or not 0 <= t <= 0.5 else t
     m["roic"] = (a0["ebit"] * (1 - t) / a0["capital_investi"] * 100) if a0.get("ebit") is not None and (a0.get("capital_investi") or 0) > 0 else None

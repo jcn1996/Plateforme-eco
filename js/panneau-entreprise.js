@@ -29,6 +29,19 @@ function dateFr(d) {
   return `${s.slice(8, 10)}/${s.slice(5, 7)}/${s.slice(0, 4)}`;
 }
 
+/** Charge la fiche détaillée d'une société (data/entreprises/fiches/<ticker>.json) et la fusionne. */
+export async function chargerFiche(e) {
+  try {
+    const r = await fetch(e.fiche, { cache: 'no-cache' });
+    if (!r.ok) return false;
+    const j = await r.json();
+    Object.assign(e, j.donnees ?? {}, { detailCharge: true });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export function ficheEntreprise(d, e, nav = {}) {
   const secteur = d.secteurParId.get(e.secteur);
   const pays = d.paysParCode.get(e.pays);
@@ -49,6 +62,7 @@ export function ficheEntreprise(d, e, nav = {}) {
       tendance: tendanceNote(e),
     }),
 
+    e.fiche && !e.detailCharge ? el('p', { class: 'fiche-verdict' }, 'Chargement du détail…') : null,
     e.pepite ? el('p', { class: 'pepite-bandeau' }, el('strong', {}, 'Pépite candidate'), ' · tous les critères sont remplis ; revue critique ci-dessous') : null,
     blocConfiance(e.confiance),
     blocContexte(e.contexte),
