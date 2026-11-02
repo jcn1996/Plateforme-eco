@@ -2,12 +2,12 @@
    Globe 3D (Three.js)
    --------------------------------------------------------------------------
    Couches, de bas en haut :
-   1. La Terre : texture NASA (Blue Marble + lumières de la Black Marble),
-      2048 px, ou 1024 px en mode léger (assets/terre-*.jpg)
-   2. La carte vectorielle (js/carte-vecteur.js) : teintes des pays suivis en
-      polygones 3D, frontières jaune clair en lignes d'épaisseur constante,
-      contour renforcé du pays sélectionné. Nette à tous les zooms ;
-      Natural Earth 1:110m, puis 1:50m quand on zoome de près.
+   Globe 100 % vectoriel, aucune image :
+   1. L'océan : sphère de couleur unie bleu nuit
+   2. La carte (js/carte-vecteur.js) : tous les pays en polygones 3D opaques
+      (pays suivis colorés selon leur note, autres pays gris bleu), un seul
+      trait de frontière jaune clair très fin, plus épais autour du pays
+      sélectionné. Natural Earth 1:110m, puis 1:50m quand on zoome de près.
    3. Colonnes, anneaux et étiquettes des pays ; arcs des flux de capitaux
    4. Liseré et halo atmosphérique
 
@@ -20,7 +20,7 @@
 // l'import map de index.html (cdnjs pour le cœur, jsDelivr pour les lignes épaisses).
 import * as THREE from 'three';
 import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
-import { NiveauCarte, ligneEpaisse, versVecteur, materiauTeintes } from './carte-vecteur.js';
+import { NiveauCarte, ligneEpaisse, versVecteur, materiauPays } from './carte-vecteur.js';
 import { COULEURS, niveauNote, el, nombre } from './outils.js';
 
 /** Petite texture ronde et floue, utilisée pour les points lumineux. */
@@ -40,18 +40,17 @@ function texturePoint() {
   return texture;
 }
 
-/* Teintes des pays suivis : remplissage translucide et contour franc, saturé */
+/* Couleurs de la carte (pleines et opaques, sans dégradé) */
+const OCEAN = 0x0a1a2f;      // bleu nuit
+const NON_SUIVI = 0x1e3048;  // gris bleu
 const TEINTES = {
-  attractif: { remplissage: 0x10c88a, contour: 0x3dffb8 },   // vert émeraude
-  neutre: { remplissage: 0xf5a623, contour: 0xffc94a },      // ambre
-  defavorable: { remplissage: 0xff5a4e, contour: 0xff7b6e }, // rouge corail
+  attractif: 0x1fbf7a,       // vert émeraude
+  neutre: 0xf2a93b,          // ambre
+  defavorable: 0xf0564a,     // rouge corail
 };
-const FRONTIERE = 0xffe9a8; // jaune clair
-
-/** Opacité du remplissage : 45 à 55 %, plus soutenue pour les notes marquées. */
-function opaciteTeinte(note) {
-  return 0.45 + Math.min(1, Math.abs(note - 57) / 40) * 0.1;
-}
+const ECLAIRCISSEMENT = 0.3; // pays sélectionné : couleur mélangée à 30 % de blanc
+const FRONTIERE = 0xffe9a8;  // jaune clair
+const BLANC = new THREE.Color(0xffffff);
 
 /* Couleurs des flux selon leur sens */
 const COULEURS_FLUX = {
@@ -148,12 +147,12 @@ export class Globe {
 
   /* ======================= Construction de la scène ======================= */
 
-  /** Sphère terrestre avec la texture NASA (chargée en arrière-plan). */
+  /** L'océan : sphère unie bleu nuit, légèrement repoussée en profondeur (pas de scintillement). */
   #creerTerre() {
-    this.materiauTerre = new THREE.MeshBasicMaterial({ color: 0x0a1a38 });
-    this.terre = new THREE.Mesh(new THREE.SphereGeometry(1, 96, 64), this.materiauTerre);
+    this.terre = new THREE.Mesh(new THREE.SphereGeometry(1, 96, 64), new THREE.MeshBasicMaterial({
+      color: OCEAN, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 2,
+    }));
     this.groupe.add(this.terre);
-    this.#chargerTextureTerre();
 
     // Liseré lumineux sur le bord du globe (effet « écran de contrôle »)
     this.lisere = new THREE.Mesh(new THREE.SphereGeometry(1.004, 64, 48), new THREE.ShaderMaterial({
@@ -175,49 +174,35 @@ export class Globe {
     this.scene.add(this.lisere); // ne tourne pas : il suit le bord vu par la caméra
   }
 
-  #chargerTextureTerre() {
-    const fichier = this.leger ? 'assets/terre-1024.jpg' : 'assets/terre-2048.jpg';
-    new THREE.TextureLoader().load(fichier, (texture) => {
-      texture.colorSpace = THREE.SRGBColorSpace;
-      // La sphère de Three.js commence sa texture à -90° de longitude dans notre convention :
-      // décalage d'un quart de tour pour aligner la carte sur les positions des pays.
-      texture.wrapS = THREE.RepeatWrapping;
-      texture.offset.x = 0.25;
-      texture.anisotropy = Math.min(this.leger ? 1 : 4, this.rendu.capabilities.getMaxAnisotropy());
-      this.materiauTerre.map?.dispose();
-      this.materiauTerre.map = texture;
-      this.materiauTerre.color.set(0xffffff);
-      this.materiauTerre.needsUpdate = true;
-    });
-  }
-
   /** Matériaux partagés par les deux niveaux de détail, puis carte 1:110m. */
   #creerCarte() {
     this.materiauxLignes = [];
     const ligne = (params) => {
-      const m = new LineMaterial({ transparent: true, depthWrite: false, ...params });
+      // Décalage de profondeur : les traits passent toujours devant les pays
+      const m = new LineMaterial({ transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -4, ...params });
+      m.resolution.set(innerWidth, innerHeight);
       this.materiauxLignes.push(m);
       return m;
     };
-    // État courant des couleurs de chaque pays (indice = position dans this.pays) ;
-    // elles glissent vers leurs cibles à chaque image (fondu des filtres)
-    this.couleursTeintes = this.pays.map(() => new THREE.Color(0x000000));
-    this.opacitesTeintes = this.pays.map(() => 0);
-    this.couleursContours = this.pays.map(() => new THREE.Color(0x000000));
+    // Couleur courante de chaque pays suivi (indice = position dans this.pays), puis celle
+    // des pays non suivis en dernier ; elles glissent vers leurs cibles (fondu des filtres)
+    this.couleursPays = [...this.pays.map(() => new THREE.Color(NON_SUIVI)), new THREE.Color(NON_SUIVI)];
     this.materiaux = {
-      lueur: ligne({ color: FRONTIERE, linewidth: 4, opacity: 0.16 }),     // légère lueur
-      frontiere: ligne({ color: FRONTIERE, linewidth: 1.1, opacity: 0.9 }), // trait fin net
-      contour: ligne({ color: 0xffffff, vertexColors: true, linewidth: 2, opacity: 0.95 }), // couleur franche par pays
-      teintes: materiauTeintes(this.couleursTeintes, this.opacitesTeintes),
+      pays: materiauPays(this.couleursPays),
+      frontiere: ligne({ color: FRONTIERE, linewidth: 0.7, opacity: 0.85 }), // un seul trait, très fin
     };
-    this.materiauSelection = ligne({ color: 0xfff4d1, linewidth: 3.2, opacity: 1 });
-    this.materiaux.lueur.visible = !this.leger;
+    this.materiauSelection = ligne({ color: FRONTIERE, linewidth: 1.5, opacity: 1 });
     this.contourSelection = null;
-    if (this.topo110) this.#ajouterNiveau('110m', new NiveauCarte(this.topo110, this.pays, this.materiaux));
+    if (this.topo110) {
+      NiveauCarte.construire(this.topo110, this.pays, this.materiaux)
+        .then((niveau) => this.#ajouterNiveau('110m', niveau))
+        .catch((e) => console.error('Carte 1:110m', e));
+    }
   }
 
   #ajouterNiveau(nom, niveau) {
     this.niveaux[nom] = niveau;
+    if (nom === '110m') this.#majRangsEtiquettes(niveau);
     niveau.groupe.visible = false;
     this.groupe.add(niveau.groupe);
     if (!this.niveauActif) this.#activerNiveau(nom);
@@ -244,9 +229,10 @@ export class Globe {
     this.chargementDetail = fetch('data/countries-50m.json')
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`carte 1:50m : ${r.status}`))))
       .then((topo) => {
-        this.#ajouterNiveau('50m', new NiveauCarte(topo, this.pays, this.materiaux, 30));
-        this.niveaux['50m'].majCouleursContours(this.couleursContours);
+        // Construit par petites étapes : l'écran reste fluide pendant la préparation
+        return NiveauCarte.construire(topo, this.pays, this.materiaux, { pasCases: 30, etapes: true });
       })
+      .then((niveau) => this.#ajouterNiveau('50m', niveau))
       .catch((e) => console.warn('Carte détaillée indisponible, on garde le 1:110m', e));
   }
 
@@ -330,20 +316,26 @@ export class Globe {
       }, p.nom, ' ', valeur);
       this.calque.append(etiquette);
 
-      const aire = this.niveaux['110m']?.formeDuPays.get(p.code)?.aire ?? 0;
-      const rang = aire > AIRE_GRAND ? 0 : aire > AIRE_MOYEN ? 1 : 2;
 
       this.objetsPays.push({
         code: p.code, indice: index, normale, colonne, sommet, anneau, etiquette, valeur,
         couleurCible: couleur.clone(),
         hauteur: 0, hauteurCible: 0,
-        zoomEtiquette: SEUILS_ETIQUETTES[rang],
+        zoomEtiquette: SEUILS_ETIQUETTES[0], // ajusté selon la taille du pays quand la carte est prête
         phase: index * 0.137,
         haut: normale.clone(),
         visible: false, x: 0, y: 0,
       });
     });
     this.#appliquerMetriqueAuxPays(true);
+  }
+
+  /** Les étiquettes des petits pays n'apparaissent qu'en zoomant (taille lue sur la carte 1:110m). */
+  #majRangsEtiquettes(niveau) {
+    for (const o of this.objetsPays ?? []) {
+      const aire = niveau.formeDuPays.get(o.code)?.aire ?? 0;
+      o.zoomEtiquette = SEUILS_ETIQUETTES[aire > AIRE_GRAND ? 0 : aire > AIRE_MOYEN ? 1 : 2];
+    }
   }
 
   /** Met à jour couleurs cibles, hauteurs cibles et textes des étiquettes selon la métrique. */
@@ -353,19 +345,15 @@ export class Globe {
       const m = this.metrique.lire(p) ?? { note: 50, texte: '–' };
       const niveau = niveauNote(m.note);
       o.couleurCible.set(COULEURS[niveau]);
-      o.teinteCible = new THREE.Color(TEINTES[niveau].remplissage);
-      o.contourCible = new THREE.Color(TEINTES[niveau].contour);
-      o.opaciteCible = opaciteTeinte(m.note);
+      o.teinteCible = new THREE.Color(TEINTES[niveau]);
+      o.teinteEclaircie = o.teinteCible.clone().lerp(BLANC, ECLAIRCISSEMENT);
       o.hauteurCible = 0.02 + (m.note / 100) * 0.1;
       o.valeur.textContent = m.texte;
       o.etiquette.className = `etiquette note--${niveau}${o.visible ? '' : ' est-cachee'}${o.masquee ? ' est-masquee' : ''}${o.code === this.selection ? ' est-active' : ''}`;
       o.etiquette.setAttribute('aria-label', `${p.nom}, ${m.texte}`);
       o.largeurEtiquette = 0; // à remesurer (le texte a changé)
       if (immediat) {
-        this.couleursTeintes[o.indice].copy(o.teinteCible);
-        this.opacitesTeintes[o.indice] = o.opaciteCible;
-        this.couleursContours[o.indice].copy(o.contourCible);
-        this.contoursAJour = false;
+        this.couleursPays[o.indice].copy(o.teinteCible);
         o.colonne.material.color.copy(o.couleurCible);
         o.sommet.material.color.copy(o.couleurCible);
         o.anneau.material.color.copy(o.couleurCible);
@@ -700,11 +688,9 @@ export class Globe {
   definirLeger(leger) {
     if (leger === this.leger) return;
     this.leger = leger;
-    this.#chargerTextureTerre();
     this.pointsFlux.visible = !leger;
     this.lisere.visible = !leger;
     this.halo.visible = !leger;
-    this.materiaux.lueur.visible = !leger; // pas de lueur des frontières en mode léger
     this.redimensionner();
   }
 
@@ -804,15 +790,8 @@ export class Globe {
       const attenue = this.selection && !choisi;
       o.hauteur += (o.hauteurCible - o.hauteur) * lissage;
       for (const m of [o.colonne.material, o.sommet.material, o.anneau.material]) m.color.lerp(o.couleurCible, lissage);
-      // Fondu des teintes de la carte (changement de filtre ou de sélection)
-      const i = o.indice;
-      this.couleursTeintes[i].lerp(o.teinteCible, lissage);
-      this.opacitesTeintes[i] += ((choisi ? Math.min(0.62, o.opaciteCible + 0.1) : o.opaciteCible) - this.opacitesTeintes[i]) * lissage;
-      const contour = this.couleursContours[i];
-      if (Math.abs(contour.r - o.contourCible.r) + Math.abs(contour.g - o.contourCible.g) + Math.abs(contour.b - o.contourCible.b) > 0.002) {
-        contour.lerp(o.contourCible, lissage);
-        this.contoursAJour = false;
-      }
+      // Fondu des couleurs de la carte (changement de filtre ou de sélection)
+      this.couleursPays[o.indice].lerp(choisi ? o.teinteEclaircie : o.teinteCible, lissage);
       const h = Math.max(0.001, o.hauteur * croissance);
       o.colonne.scale.set(choisi ? 1.6 : 1, h, choisi ? 1.6 : 1);
       o.colonne.material.opacity = attenue ? 0.35 : 0.9;
@@ -827,11 +806,6 @@ export class Globe {
         o.anneau.scale.setScalar((1 + cycle * (choisi ? 2.6 : 1.8)) * echelleZoom);
         o.anneau.material.opacity = (1 - cycle) * (attenue ? 0.35 : 0.9);
       }
-    }
-    // Contours colorés : recopiés seulement pendant un fondu
-    if (!this.contoursAJour) {
-      for (const niveau of Object.values(this.niveaux)) niveau.majCouleursContours(this.couleursContours);
-      this.contoursAJour = true;
     }
   }
 

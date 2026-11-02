@@ -1,24 +1,25 @@
 /* ==========================================================================
-   Carte vectorielle du globe
+   Carte vectorielle du globe (aucune image : tout est géométrie)
    --------------------------------------------------------------------------
-   Tout est en géométrie 3D, donc net à tous les niveaux de zoom :
-   - teintes des pays suivis : polygones découpés en cases de 3°, triangulés
-     (earcut, intégré à Three.js via ShapeUtils) puis projetés juste au-dessus
-     de la sphère, ce qui épouse la courbure de la Terre ;
-   - frontières : lignes d'épaisseur constante à l'écran (Line2 / LineMaterial
-     de Three.js), avec une lueur ;
-   - contour coloré des pays suivis, contour renforcé du pays sélectionné.
-   Deux niveaux de détail : Natural Earth 1:110m au démarrage, 1:50m quand on
-   zoome de près (chargé à la demande).
+   - Tous les pays (suivis ou non) sont des polygones 3D : chaque polygone est
+     découpé le long de toutes les lignes d'une grille de 3°, chaque morceau est
+     triangulé (earcut, intégré à Three.js via ShapeUtils) puis projeté
+     juste au-dessus de la sphère de l'océan. Les petits triangles épousent
+     la courbure de la Terre.
+   - Un seul trait de frontière, jaune clair, d'épaisseur constante à l'écran
+     (Line2 / LineMaterial de Three.js).
+   - Deux niveaux de détail : Natural Earth 1:110m au démarrage, 1:50m quand
+     on zoome de près (construit par petites étapes pour ne pas figer l'écran).
    ========================================================================== */
 
 import * as THREE from 'three';
 import { LineSegments2 } from 'three/addons/lines/LineSegments2.js';
 import { LineSegmentsGeometry } from 'three/addons/lines/LineSegmentsGeometry.js';
 
-/* Rayons des couches (la Terre a un rayon de 1) */
-export const RAYON_TEINTES = 1.0012;
+/* Rayons des couches (océan = 1) */
+export const RAYON_PAYS = 1.0012;
 export const RAYON_LIGNES = 1.0022;
+const PAS_GRILLE = 3; // degrés
 
 /** Latitude/longitude (degrés) → position 3D. Longitude 0 face à la caméra (+Z), nord vers +Y. */
 export function versVecteur(lat, lon, rayon = 1, cible = new THREE.Vector3()) {
@@ -48,7 +49,7 @@ export function decoderTopoJSON(topo, nomObjet = 'countries') {
   for (const g of topo.objects[nomObjet].geometries) {
     const brut = g.type === 'Polygon' ? [g.arcs] : g.type === 'MultiPolygon' ? g.arcs : [];
     const polygones = brut.map((poly) => poly.map(anneau)); // [ [extérieur, trou, trou…], … ]
-    pays.set(g.id, creerForme(g.id, g.properties?.name, polygones));
+    pays.set(g.id ?? g.properties?.name, creerForme(g.id, g.properties?.name, polygones));
   }
   return { pays, arcs };
 }
@@ -105,92 +106,104 @@ export function dansPays(lon, lat, forme) {
 }
 
 /* ---------------------------------------------------------------------------
-   Géométries
+   Triangulation des pays
    --------------------------------------------------------------------------- */
 
 /** Rend un anneau continu en longitude (pas de saut de 360° à la ligne de changement de date). */
 function deroulerAnneau(anneau, reference) {
   let decalage = reference !== undefined ? Math.round((reference - anneau[0][0]) / 360) * 360 : 0;
   let precedent = anneau[0][0];
-  return anneau.map(([lon, lat], i) => {
+  const points = anneau.map(([lon, lat], i) => {
     if (i && Math.abs(lon - precedent) > 180) decalage += lon < precedent ? 360 : -360;
     precedent = lon;
     return new THREE.Vector2(lon + decalage, lat);
   });
+  if (points.length > 1 && points[0].equals(points[points.length - 1])) points.pop(); // earcut n'attend pas le point de fermeture
+  return points;
 }
 
 /**
- * Découpe un anneau par un rectangle [g, d] × [b, h] (algorithme de Sutherland-Hodgman).
- * Deux cases voisines calculent exactement les mêmes points sur leur bord commun :
- * le maillage final n'a donc ni trou ni recouvrement (pas de liseré parasite).
+ * Coupe un anneau par une droite verticale (axe 'x', longitude) ou horizontale
+ * (axe 'y', latitude) et garde la partie inférieure ou supérieure
+ * (algorithme de Sutherland-Hodgman, une seule arête de coupe).
  */
-function decouperAnneau(anneau, g, d, b, h) {
-  const plans = [
-    (p) => p.x >= g, (p) => p.x <= d, (p) => p.y >= b, (p) => p.y <= h,
-  ];
-  const coupes = [
-    (p, q) => new THREE.Vector2(g, p.y + ((q.y - p.y) * (g - p.x)) / (q.x - p.x)),
-    (p, q) => new THREE.Vector2(d, p.y + ((q.y - p.y) * (d - p.x)) / (q.x - p.x)),
-    (p, q) => new THREE.Vector2(p.x + ((q.x - p.x) * (b - p.y)) / (q.y - p.y), b),
-    (p, q) => new THREE.Vector2(p.x + ((q.x - p.x) * (h - p.y)) / (q.y - p.y), h),
-  ];
-  let sortie = anneau;
-  for (let k = 0; k < 4 && sortie.length; k++) {
-    const entree = sortie;
-    sortie = [];
-    for (let i = 0; i < entree.length; i++) {
-      const p = entree[(i + entree.length - 1) % entree.length], q = entree[i];
-      const pDedans = plans[k](p), qDedans = plans[k](q);
-      if (qDedans) {
-        if (!pDedans) sortie.push(coupes[k](p, q));
-        sortie.push(q);
-      } else if (pDedans) {
-        sortie.push(coupes[k](p, q));
-      }
+function couperAnneau(anneau, axe, valeur, garderInferieur) {
+  const dedans = (p) => (garderInferieur ? p[axe] <= valeur : p[axe] >= valeur);
+  const intersection = (p, q) => {
+    const t = (valeur - p[axe]) / (q[axe] - p[axe]);
+    return axe === 'x' ? new THREE.Vector2(valeur, p.y + (q.y - p.y) * t) : new THREE.Vector2(p.x + (q.x - p.x) * t, valeur);
+  };
+  const sortie = [];
+  for (let i = 0; i < anneau.length; i++) {
+    const p = anneau[(i + anneau.length - 1) % anneau.length], q = anneau[i];
+    const pIn = dedans(p), qIn = dedans(q);
+    if (qIn) {
+      if (!pIn) sortie.push(intersection(p, q));
+      sortie.push(q);
+    } else if (pIn) {
+      sortie.push(intersection(p, q));
     }
   }
   return sortie;
 }
 
+function boite2D(anneau) {
+  let g = Infinity, d = -Infinity, b = Infinity, h = -Infinity;
+  for (const p of anneau) { g = Math.min(g, p.x); d = Math.max(d, p.x); b = Math.min(b, p.y); h = Math.max(h, p.y); }
+  return { g, d, b, h };
+}
+
+/** Ligne de la grille strictement à l'intérieur de [min, max] (la plus centrale), ou null. */
+function ligneGrilleInterieure(min, max) {
+  const premiere = Math.floor(min / PAS_GRILLE) + 1;
+  const derniere = Math.ceil(max / PAS_GRILLE) - 1;
+  if (premiere > derniere) return null;
+  return Math.round((premiere + derniere) / 2) * PAS_GRILLE;
+}
+
 /**
- * Teinte d'un pays : chaque polygone (avec ses trous) est découpé en cases de
- * « pas » degrés, chaque case est triangulée (earcut via ShapeUtils), puis les
- * sommets sont projetés sur la sphère. Les petits triangles épousent la courbure.
+ * Découpe un polygone (extérieur + trous) le long de TOUTES les lignes d'une
+ * grille mondiale de PAS_GRILLE degrés qu'il traverse : d'abord les
+ * longitudes, puis les latitudes. Règle stricte, identique pour tous les
+ * morceaux et tous les pays : de part et d'autre d'une ligne de coupe, les
+ * deux morceaux ont exactement les mêmes sommets. Le maillage est donc
+ * étanche (aucune fissure, aucun liseré parasite), y compris entre deux pays
+ * voisins. Chaque découpe ne traite que le morceau concerné (rapide).
  */
-export function geometrieRemplissage(forme, pas = 3) {
+function trianguler(exterieur, trous, sortie, versPosition) {
+  if (exterieur.length < 3) return;
+  const { g, d, b, h } = boite2D(exterieur);
+  let axe = 'x', coupe = ligneGrilleInterieure(g, d);
+  if (coupe === null) { axe = 'y'; coupe = ligneGrilleInterieure(b, h); }
+  if (coupe !== null) {
+    for (const inferieur of [true, false]) {
+      const ext = couperAnneau(exterieur, axe, coupe, inferieur);
+      if (ext.length < 3) continue;
+      const tr = trous.map((t) => couperAnneau(t, axe, coupe, inferieur)).filter((t) => t.length >= 3);
+      trianguler(ext, tr, sortie, versPosition);
+    }
+    return;
+  }
+  const sommets = [...exterieur, ...trous.flat()];
+  for (const triangle of THREE.ShapeUtils.triangulateShape(exterieur, trous)) {
+    for (const k of triangle) versPosition(sommets[k], sortie);
+  }
+}
+
+/** Positions des triangles d'un pays, projetées sur la sphère. */
+export function trianglesPays(forme) {
   const positions = [];
   const v = new THREE.Vector3();
-  for (const polygone of forme.polygones) {
-    const [exterieur, ...trous] = polygone;
-    const contour = deroulerAnneau(exterieur);
-    const lonRef = contour[0].x;
-    const trousV = trous.map((t) => deroulerAnneau(t, lonRef));
-    for (const anneau of [contour, ...trousV]) {
-      if (anneau.length > 1 && anneau[0].equals(anneau[anneau.length - 1])) anneau.pop();
-    }
-    if (contour.length < 3) continue;
-    let g = Infinity, d = -Infinity, b = Infinity, h = -Infinity;
-    for (const p of contour) { g = Math.min(g, p.x); d = Math.max(d, p.x); b = Math.min(b, p.y); h = Math.max(h, p.y); }
-
-    for (let i = Math.floor(g / pas); i * pas < d; i++) {
-      for (let j = Math.floor(b / pas); j * pas < h; j++) {
-        const [cg, cd, cb, ch] = [i * pas, (i + 1) * pas, j * pas, (j + 1) * pas];
-        const ext = decouperAnneau(contour, cg, cd, cb, ch);
-        if (ext.length < 3) continue;
-        const tr = trousV.map((t) => decouperAnneau(t, cg, cd, cb, ch)).filter((t) => t.length >= 3);
-        const sommets = [...ext, ...tr.flat()];
-        for (const triangle of THREE.ShapeUtils.triangulateShape(ext, tr)) {
-          for (const k of triangle) {
-            versVecteur(sommets[k].y, sommets[k].x, RAYON_TEINTES, v);
-            positions.push(v.x, v.y, v.z);
-          }
-        }
-      }
-    }
+  const versPosition = (p, sortie) => {
+    versVecteur(p.y, p.x, RAYON_PAYS, v);
+    sortie.push(v.x, v.y, v.z);
+  };
+  for (const [exterieur, ...trous] of forme.polygones) {
+    const ext = deroulerAnneau(exterieur);
+    if (ext.length < 3) continue;
+    trianguler(ext, trous.map((t) => deroulerAnneau(t, ext[0].x)), positions, versPosition);
   }
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-  return geo;
+  return positions;
 }
 
 /** Segments [x1,y1,z1,x2,y2,z2,…] d'une liste de polylignes [[lon, lat], …]. */
@@ -221,7 +234,7 @@ export function ligneEpaisse(positions, materiau, ordre, geometrie = null) {
   return ligne;
 }
 
-/** Centre (direction unitaire) et rayon angulaire approché d'un nuage de points sur la sphère. */
+/** Centre (direction unitaire) et rayon approché d'un nuage de points sur la sphère. */
 function etendue(positions) {
   const centre = new THREE.Vector3();
   for (let i = 0; i < positions.length; i += 3) centre.x += positions[i], centre.y += positions[i + 1], centre.z += positions[i + 2];
@@ -251,112 +264,92 @@ function segmentsParCase(polylignes, pas) {
 }
 
 /* ---------------------------------------------------------------------------
-   Matériau des teintes : un seul maillage pour tous les pays suivis.
-   Chaque sommet porte l'indice de son pays ; la couleur et l'opacité de
-   chaque pays sont des tableaux de « uniforms » mis à jour à chaque image
-   (fondu des filtres, sélection) sans reconstruire la géométrie.
+   Matériau des pays : un seul maillage pour TOUS les pays, opaque.
+   Chaque sommet porte l'indice de son pays ; la couleur de chaque pays est un
+   tableau de « uniforms » mis à jour à chaque image (fondu des filtres,
+   sélection) sans reconstruire la géométrie. Le dernier indice sert à tous
+   les pays non suivis.
    --------------------------------------------------------------------------- */
-export function materiauTeintes(couleurs, opacites) {
+export function materiauPays(couleurs) {
   return new THREE.ShaderMaterial({
-    uniforms: { couleurs: { value: couleurs }, opacites: { value: opacites } },
-    defines: { NB_PAYS: couleurs.length },
+    uniforms: { couleurs: { value: couleurs } },
+    defines: { NB_COULEURS: couleurs.length },
     vertexShader: `
       attribute float indice;
-      uniform vec3 couleurs[NB_PAYS];
-      uniform float opacites[NB_PAYS];
-      varying vec4 vCouleur;
+      uniform vec3 couleurs[NB_COULEURS];
+      varying vec3 vCouleur;
       void main() {
-        int i = int(indice + 0.5);
-        vCouleur = vec4(couleurs[i], opacites[i]);
+        vCouleur = couleurs[int(indice + 0.5)];
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
       }`,
     fragmentShader: `
-      varying vec4 vCouleur;
+      varying vec3 vCouleur;
       void main() {
-        gl_FragColor = vCouleur;
+        gl_FragColor = vec4(vCouleur, 1.0);
         #include <colorspace_fragment>
       }`,
-    transparent: true, depthWrite: false, side: THREE.DoubleSide,
+    // Décalage de profondeur : les pays passent toujours devant l'océan, sans scintillement
+    polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -2,
   });
 }
 
 /* ---------------------------------------------------------------------------
    Un niveau de détail complet de la carte (110m ou 50m)
-   Peu d'objets à dessiner : 1 maillage pour toutes les teintes, 1 ligne pour
-   tous les contours colorés, et les frontières découpées en cases
-   géographiques (seules celles face à la caméra sont dessinées).
    --------------------------------------------------------------------------- */
 export class NiveauCarte {
   /**
+   * Construit un niveau. Le travail est découpé en petites étapes (« await »)
+   * pour que l'écran reste fluide pendant la construction du 1:50m.
    * @param {object} topo  TopoJSON des pays
    * @param {Array} pays  pays suivis ({ code, iso_num, lat, lon }), dans l'ordre des indices
-   * @param {object} materiaux  { lueur, frontiere, contour, teintes }
-   * @param {number} pasCases  taille des cases de découpage des frontières (degrés) ; 0 = une seule case
+   * @param {object} materiaux  { pays, frontiere }
+   * @param {object} options  { pasCases : découpage des frontières (degrés, 0 = aucun), etapes : true pour céder la main }
    */
-  constructor(topo, pays, materiaux, pasCases = 0) {
+  static async construire(topo, pays, materiaux, { pasCases = 0, etapes = false } = {}) {
+    const niveau = new NiveauCarte();
     const { pays: formes, arcs } = decoderTopoJSON(topo);
-    this.formes = formes;
-    this.formeDuPays = new Map(pays.map((p) => [p.code, formes.get(p.iso_num) ?? formeCercle(p.iso_num, p.lat, p.lon)]));
-    this.groupe = new THREE.Group();
-    this.morceaux = []; // { objets, centre, rayon } : frontières masquables quand elles sont derrière la Terre
+    niveau.formes = formes;
+    niveau.formeDuPays = new Map(pays.map((p) => [p.code, formes.get(p.iso_num) ?? formeCercle(p.iso_num, p.lat, p.lon)]));
+    niveau.groupe = new THREE.Group();
+    niveau.morceaux = [];
+    const pause = () => new Promise((ok) => setTimeout(ok, 0));
 
-    // 1) Teintes : un seul maillage, attribut « indice » = numéro du pays
+    // 1) Tous les pays : un seul maillage, attribut « indice » = numéro du pays (dernier = non suivi)
+    const indiceNonSuivi = pays.length;
+    const indiceParIso = new Map(pays.map((p, i) => [p.iso_num, i]));
     const positions = [], indices = [];
-    pays.forEach((p, i) => {
-      const geo = geometrieRemplissage(this.formeDuPays.get(p.code));
-      const pos = geo.attributes.position.array;
+    const ajouter = (forme, indice) => {
+      const pos = trianglesPays(forme);
       for (let k = 0; k < pos.length; k++) positions.push(pos[k]);
-      for (let k = 0; k < pos.length / 3; k++) indices.push(i);
-      geo.dispose();
-    });
-    const geoTeintes = new THREE.BufferGeometry();
-    geoTeintes.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-    geoTeintes.setAttribute('indice', new THREE.Float32BufferAttribute(indices, 1));
-    const teintes = new THREE.Mesh(geoTeintes, materiaux.teintes);
-    teintes.renderOrder = 1;
-    this.groupe.add(teintes);
-
-    // 2) Contours colorés des pays suivis : une seule ligne, couleur par segment
-    const segments = [];
-    this.plagesContours = []; // [début, fin) en nombre de segments, par pays
-    for (const p of pays) {
-      const pos = segmentsLignes(this.formeDuPays.get(p.code).anneaux, RAYON_LIGNES - 0.0002);
-      const debut = segments.length / 6;
-      for (let k = 0; k < pos.length; k++) segments.push(pos[k]);
-      this.plagesContours.push([debut, segments.length / 6]);
+      for (let k = 0; k < pos.length / 3; k++) indices.push(indice);
+    };
+    let debut = performance.now();
+    for (const forme of formes.values()) {
+      ajouter(forme, indiceParIso.get(forme.id) ?? indiceNonSuivi);
+      if (etapes && performance.now() - debut > 12) { await pause(); debut = performance.now(); }
     }
-    const geoContours = new LineSegmentsGeometry();
-    geoContours.setPositions(new Float32Array(segments));
-    this.couleursContours = new Float32Array(segments.length); // r,g,b de début et de fin de chaque segment
-    geoContours.setColors(this.couleursContours);
-    this.geoContours = geoContours;
-    this.groupe.add(ligneEpaisse(null, materiaux.contour, 3, geoContours));
+    // Pays suivis absents de la carte (Singapour au 1:110m) : disque
+    pays.forEach((p, i) => { if (!formes.has(p.iso_num)) ajouter(niveau.formeDuPays.get(p.code), i); });
 
-    // 3) Frontières de tous les pays (chaque arc une seule fois) : lueur + trait fin, même géométrie
+    const geoPays = new THREE.BufferGeometry();
+    geoPays.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geoPays.setAttribute('indice', new THREE.Float32BufferAttribute(indices, 1));
+    const maillage = new THREE.Mesh(geoPays, materiaux.pays);
+    maillage.renderOrder = 1;
+    niveau.groupe.add(maillage);
+    if (etapes) await pause();
+
+    // 2) Frontières : un seul trait fin, chaque arc tracé une seule fois.
+    //    Au 1:50m, découpe en cases : seules celles face à la caméra sont dessinées.
     const cases = pasCases ? segmentsParCase(arcs, pasCases) : [arcs];
     for (const lignes of cases) {
       const pos = segmentsLignes(lignes);
       if (!pos.length) continue;
-      const geo = new LineSegmentsGeometry();
-      geo.setPositions(pos);
-      const lueur = ligneEpaisse(null, materiaux.lueur, 2, geo);
-      const trait = ligneEpaisse(null, materiaux.frontiere, 4, geo);
-      this.groupe.add(lueur, trait);
-      if (pasCases) this.morceaux.push({ objets: [lueur, trait], ...etendue(pos) });
+      const trait = ligneEpaisse(pos, materiaux.frontiere, 3);
+      niveau.groupe.add(trait);
+      if (pasCases) niveau.morceaux.push({ objets: [trait], ...etendue(pos) });
     }
-  }
-
-  /** Recopie les couleurs actuelles des contours (pendant un fondu seulement). */
-  majCouleursContours(couleurs) {
-    const c = this.couleursContours;
-    this.plagesContours.forEach(([debut, fin], i) => {
-      const { r, g, b } = couleurs[i];
-      for (let s = debut; s < fin; s++) {
-        const k = s * 6;
-        c[k] = c[k + 3] = r; c[k + 1] = c[k + 4] = g; c[k + 2] = c[k + 5] = b;
-      }
-    });
-    this.geoContours.attributes.instanceColorStart.data.needsUpdate = true;
+    return niveau;
   }
 
   /**
@@ -373,10 +366,10 @@ export class NiveauCarte {
     }
   }
 
-  /** Segments du contour d'un pays (pour le contour renforcé de la sélection). */
+  /** Segments du contour d'un pays (pour le trait renforcé de la sélection). */
   contourDe(code) {
     const forme = this.formeDuPays.get(code);
-    return forme ? segmentsLignes(forme.anneaux, RAYON_LIGNES + 0.0004) : null;
+    return forme ? segmentsLignes(forme.anneaux, RAYON_LIGNES + 0.0003) : null;
   }
 
   /** Pays suivi qui contient le point (lat, lon), ou null. */
