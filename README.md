@@ -2,7 +2,8 @@
 
 Prototype d'une application personnelle de suivi économique mondial, pensée d'abord pour le téléphone.
 **Les données des pays sont réelles** : elles sont produites chaque jour par l'**agent pays** (instituts statistiques nationaux, banques centrales, FMI, OCDE, BRI, Banque mondiale, Eurostat, BCE, Yahoo Finance, avec vérification croisée), qui tourne gratuitement avec GitHub Actions.
-Le reste (secteurs, entreprises, alertes, flux de capitaux, portefeuille, marchés) est encore **fictif**, en attendant les autres agents.
+**Les cours du bandeau des marchés sont réels** : l'**agent marchés** (sans IA) les met à jour toutes les 15 minutes en semaine.
+Le reste (secteurs, entreprises, alertes, flux de capitaux, portefeuille) est encore **fictif**, en attendant les autres agents.
 
 ## Ce que fait le prototype
 
@@ -20,9 +21,10 @@ Le reste (secteurs, entreprises, alertes, flux de capitaux, portefeuille, march�
   - Toucher un arc affiche une bulle, par exemple « États-Unis → Brésil : 4,2 Md$ sur 1 mois ».
   - Quand un pays est sélectionné, seuls ses flux restent visibles.
   - Bouton « Flux » pour les masquer ou les afficher.
-- **Bandeau des marchés** : Nasdaq 100, S&P 500, Or, Pétrole WTI, Bitcoin, EUR/USD, CAC 40, MSCI World.
+- **Bandeau des marchés** (cours réels, différés d'environ 15 min) : Nasdaq 100, S&P 500, Or, Pétrole WTI, Bitcoin, EUR/USD, CAC 40, MSCI World (ETF URTH).
+  - Chaque cotation porte une pastille « ouvert » ou « fermé ».
   - Il défile tout seul, se glisse au doigt ou à la souris avec inertie, et se met en pause au toucher (reprise 4 s après le relâchement) ou au survol.
-  - Toucher une cotation affiche sa valeur, sa variation du jour et sa variation sur 1 an.
+  - Toucher une cotation affiche son cours, sa variation du jour, sa variation sur 1 an, l'heure du cours et la source.
 - **Indicateurs des pays** (6, données réelles) :
   - croissance du PIB (FMI) ;
   - indicateur avancé (OCDE, au-dessus de 100 = accélération) ;
@@ -89,6 +91,20 @@ python -m agents.pays --test     # données de test, sans réseau
 python -m unittest discover -s agents -t .   # tests
 ```
 
+## Agent marchés (cours réels, sans IA)
+
+L'agent marchés se trouve dans `agents/marches/`, en Python 3.12. Il met à jour `data/marches.json`.
+- Actifs, dans l'ordre : Nasdaq 100 (`^NDX`), S&P 500 (`^GSPC`), Or (`GC=F`, $/once), Pétrole WTI (`CL=F`, $/baril), Bitcoin (`BTC-USD`), EUR/USD (`EURUSD=X`), CAC 40 (`^FCHI`), MSCI World (ETF `URTH`).
+- Pour chacun : dernier cours, variation du jour (%), variation sur 1 an (%), heure du cours, statut « ouvert » ou « fermé ».
+- Sources : Yahoo Finance (via yfinance) ; Stooq (CSV gratuit) en secours ; sinon la dernière valeur est conservée avec son heure et marquée « ancienne ».
+- Le fichier n'est réécrit que si les valeurs ont changé.
+
+**Exécution** : le workflow `.github/workflows/agent-marches.yml` tourne toutes les 15 minutes du lundi au vendredi de 7 h à 22 h UTC, et toutes les heures le week-end (pour le Bitcoin). Il ne commite que si les valeurs ont changé, avec le message « Marchés : HH:MM » (heure de Paris). On peut aussi le lancer à la main : onglet **Actions** → **Agent marchés** → **Run workflow**.
+
+```
+python -m agents.marches
+```
+
 ## Structure
 
 ```
@@ -114,7 +130,7 @@ data/recap/           récapitulatif de chaque exécution de l'agent pays
 data/journal/         journal des sources en échec
 data/flux.json        flux de capitaux entre pays (fictifs)
 data/*.json           autres données (fictives pour l'instant)
-agents/               agents Python (agents/commun : téléchargement, cache, journal, écriture ; agents/pays : agent pays)
+agents/               agents Python (agents/commun : téléchargement, cache, journal, écriture ; agents/pays : agent pays ; agents/marches : agent marchés)
 .github/workflows/    exécution planifiée des agents (GitHub Actions)
 data/countries-110m.json, countries-50m.json  frontières des pays (voir data/LICENCE-countries-110m.txt)
 outils/generer_donnees_fictives.py  régénère les données fictives
@@ -142,7 +158,7 @@ Les fichiers sont reliés par des identifiants :
 | `secteurs.json` | pays | capitalisation, momentum 3 mois, note, entreprises |
 | `entreprises.json` | entreprises | 5 indicateurs, verdict, lecture de chaque agent, étude complète |
 | `alertes.json` | chef d'orchestre | heure, agent, pays, niveau, titre, texte |
-| `marches.json` | macro | indices, taux, devises, matières premières |
+| `marches.json` | agent marchés | cours réels : indices, devises, matières premières, Bitcoin |
 | `portefeuille.json` | trader | valeur, statistiques, allocation, positions, historique, dernière décision |
 
 Le bloc `meta` de chaque fichier contient :
@@ -172,7 +188,7 @@ Chaque pays porte aussi :
 - `contre_scenario` (« Ce qui pourrait me donner tort ») ;
 - `lecture`.
 
-Le bloc `detail` contient `devise_3m`, `solde_courant` et `flux_etrangers`. `marches.json` donne pour chaque cotation `variation` (jour, en %) et `variation_1an`.
+Le bloc `detail` contient `devise_3m`, `solde_courant` et `flux_etrangers`. `marches.json` donne pour chaque cotation `symbole`, `valeur`, `variation` (jour, en %), `variation_1an`, `heure` (UTC), `statut` (« ouvert » ou « fermé »), `source` et `ancienne`.
 
 Les flux de capitaux (fictifs) sont dans `data/flux.json` (`de`, `vers`, `montant_md`, `devise`, `periode`).
 
