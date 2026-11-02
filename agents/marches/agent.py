@@ -19,6 +19,7 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+from agents.commun import sante
 from agents.commun.journal import journal
 from agents.commun.sortie import enveloppe, ecrire_json, lire_json
 from agents.commun.telechargement import ErreurSource, Telechargeur
@@ -179,6 +180,51 @@ def collecter(maintenant: datetime, precedentes: dict, yahoo=via_yahoo, stooq=vi
     return resultat
 
 
+# Au-delà de cet âge, le cours d'un actif est signalé « périmé » dans la santé des agents
+# (marchés fermés le week-end et les jours fériés : jusqu'à 4 jours sans cotation)
+PEREMPTION = timedelta(days=4)
+PEREMPTION_CONTINU = timedelta(hours=3)
+JOURNAL = RACINE / "data" / "journal" / "agent-marches.json"
+
+
+def etat_des_sources(donnees: list[dict], maintenant: datetime) -> list[dict]:
+    """Une « source » par actif : ok (Yahoo), secours (Stooq), échec (valeur ancienne ou absente), périmée."""
+    par_nom = {d["nom"]: d for d in donnees}
+    etats = []
+    for a in ACTIFS:
+        d = par_nom.get(a["nom"])
+        nom = f"{a['nom']} ({a['symbole']})"
+        if d is None:
+            etats.append({"nom": nom, "etat": "échec", "detail": "Yahoo Finance et Stooq indisponibles, aucune valeur connue"})
+            continue
+        heure = d.get("heure")
+        if d.get("ancienne"):
+            etats.append({"nom": nom, "etat": "échec", "derniere_donnee_valide": heure,
+                          "detail": "Yahoo Finance et Stooq indisponibles : dernière valeur conservée"})
+            continue
+        t = datetime.fromisoformat(heure.replace("Z", "+00:00")) if heure else None
+        limite = PEREMPTION_CONTINU if a.get("continu") else PEREMPTION
+        if t and maintenant - t > limite:
+            etats.append({"nom": nom, "etat": "périmée", "derniere_donnee_valide": heure,
+                          "detail": f"dernier cours fourni par {d.get('source')} trop ancien"})
+        elif d.get("source") == "Stooq":
+            etats.append({"nom": nom, "etat": "secours", "derniere_donnee_valide": heure,
+                          "detail": "Yahoo Finance indisponible : cours de Stooq"})
+        else:
+            etats.append({"nom": nom, "etat": "ok", "derniere_donnee_valide": heure})
+    return etats
+
+
+def enregistrer_sante(donnees: list[dict], maintenant: datetime, change: bool) -> None:
+    precedent = ((lire_json(JOURNAL) or {}).get("meta") or {}).get("sante")
+    bloc = sante.bloc_sante("marches", "Agent marchés", 2, "agent-marches.yml",
+                            etat_des_sources(donnees, maintenant), maintenant, precedent)
+    # Battement d'une heure : si les cours ne bougent pas, on ne commite pas plus d'une fois par heure
+    if sante.enregistrer_sante(JOURNAL, bloc, forcer=change, battement=timedelta(hours=1),
+                               description="Santé de l'agent marchés (dernière exécution réussie, état des sources)"):
+        LOG.info("Journal de santé mis à jour : %d/%d sources répondent.", bloc["sources_ok"], bloc["sources_total"])
+
+
 def main() -> int:
     maintenant = datetime.now(timezone.utc)
     precedent = lire_json(FICHIER, {}) or {}
@@ -188,11 +234,13 @@ def main() -> int:
     if not donnees:
         LOG.error("Aucun cours récupéré : fichier inchangé.")
         return 1
-    if donnees == precedent.get("donnees"):
+    change = donnees != precedent.get("donnees")
+    if change:
+        sources = sorted({d["source"] for d in donnees})
+        ecrire_json(FICHIER, enveloppe(donnees, source=" + ".join(sources), fictif=False,
+                                       producteur="agent-marches", differe_min=15))
+        LOG.info("data/marches.json mis à jour (%d actifs).", len(donnees))
+    else:
         LOG.info("Valeurs inchangées : fichier non réécrit.")
-        return 0
-    sources = sorted({d["source"] for d in donnees})
-    ecrire_json(FICHIER, enveloppe(donnees, source=" + ".join(sources), fictif=False,
-                                   producteur="agent-marches", differe_min=15))
-    LOG.info("data/marches.json mis à jour (%d actifs).", len(donnees))
+    enregistrer_sante(donnees, maintenant, change)
     return 0

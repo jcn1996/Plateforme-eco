@@ -979,3 +979,45 @@ body.alertes-ouvertes .barre-comparaison { display: none; }
   display: inline-block; padding: 0 6px; border-radius: 4px;
   background: rgba(255, 77, 106, 0.15); color: var(--rouge); font-weight: 600;
 }
+
+/* ==========================================================================
+   Santé des agents : bouton de l'en-tête et écran
+   ========================================================================== */
+.bouton-sante { position: relative; }
+.bouton-sante svg { width: 18px; height: 18px; }
+.pastille-probleme {
+  display: none; position: absolute; top: -3px; right: -3px;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--rouge); box-shadow: 0 0 6px var(--rouge); border: 1.5px solid var(--fond);
+}
+.bouton-sante.a-un-probleme .pastille-probleme { display: block; }
+.bouton-sante.a-un-probleme { color: var(--rouge); }
+
+.sante-resume { font-size: 13px; color: var(--texte-2); }
+.sante-carte { display: grid; gap: 10px; border-left-width: 3px; }
+.sante-carte.sante--ok { border-left-color: var(--vert); }
+.sante-carte.sante--degrade { border-left-color: var(--orange); }
+.sante-carte.sante--panne { border-left-color: var(--rouge); }
+.sante-entete { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.sante-nom { font-family: var(--police-titre); font-size: 15px; }
+.sante-statut {
+  flex: none; padding: 2px 8px; border-radius: 999px; border: 1px solid currentColor;
+  font-family: var(--police-mono); font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+}
+.sante-statut.sante--ok { color: var(--vert); }
+.sante-statut.sante--degrade { color: var(--orange); }
+.sante-statut.sante--panne { color: var(--rouge); }
+.sante-details { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 12.5px; }
+.sante-details dt { color: var(--texte-3); }
+.sante-details dd { margin: 0; color: var(--texte); text-align: right; }
+.sante-alerte { font-size: 12.5px; color: var(--rouge); }
+.sante-ligne { font-size: 12.5px; color: var(--texte-2); }
+.sante-sous-titre { margin-bottom: 6px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--texte-3); font-weight: 600; }
+.sante-sources { display: grid; gap: 8px; list-style: none; padding: 0; margin: 0; }
+.sante-sources li { padding-top: 8px; border-top: 1px solid var(--ligne); }
+.sante-source-ligne { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.sante-source-nom { font-size: 12.5px; color: var(--texte); overflow-wrap: anywhere; }
+.sante-source-etat { flex: none; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; }
+.sante-etat--echec { color: var(--rouge); }
+.sante-etat--autre { color: var(--orange); }
+.sante-source-info { margin-top: 2px; font-size: 11.5px; color: var(--texte-3); overflow-wrap: anywhere; }

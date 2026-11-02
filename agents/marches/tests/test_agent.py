@@ -79,5 +79,24 @@ class TestSecours(unittest.TestCase):
         self.assertEqual(par_nom["Bitcoin"]["statut"], "fermé")
 
 
+class TestSante(unittest.TestCase):
+    def test_etat_des_sources(self):
+        maintenant = datetime(2026, 11, 2, 16, 0, tzinfo=UTC)
+        donnees = [
+            {"nom": "Nasdaq 100", "source": "Yahoo Finance", "heure": "2026-11-02T15:45:00Z"},
+            {"nom": "S&P 500", "source": "Stooq", "heure": "2026-11-02T15:45:00Z"},
+            {"nom": "Bitcoin", "source": "Yahoo Finance", "heure": "2026-11-02T10:00:00Z"},  # > 3 h : périmé
+            {"nom": "CAC 40", "source": "Yahoo Finance", "heure": "2026-10-30T16:30:00Z", "ancienne": True},
+        ]
+        etats = {e["nom"].split(" (")[0]: e for e in agent.etat_des_sources(donnees, maintenant)}
+        self.assertEqual(etats["Nasdaq 100"]["etat"], "ok")
+        self.assertEqual(etats["S&P 500"]["etat"], "secours")
+        self.assertEqual(etats["Bitcoin"]["etat"], "périmée")
+        self.assertEqual(etats["CAC 40"]["etat"], "échec")
+        self.assertEqual(etats["CAC 40"]["derniere_donnee_valide"], "2026-10-30T16:30:00Z")
+        self.assertEqual(etats["Or"]["etat"], "échec")  # absent des données
+        self.assertEqual(len(etats), len(agent.ACTIFS))
+
+
 if __name__ == "__main__":
     unittest.main()

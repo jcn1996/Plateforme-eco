@@ -1,0 +1,77 @@
+# Maintien : chaque semaine,
+# 1. vérifie que les workflows planifiés (agents) sont actifs, et réactive ceux que GitHub
+#    a mis en pause pour inactivité (un workflow désactivé à la main est seulement signalé) ;
+# 2. si le dépôt n'a eu aucun commit depuis 30 jours, fait un commit léger
+#    (.github/maintien.txt) : GitHub met en pause les workflows planifiés
+#    d'un dépôt public sans activité pendant 60 jours.
+# Lancement manuel possible : onglet Actions → « Maintien » → « Run workflow ».
+name: Maintien
+
+on:
+  schedule:
+    - cron: "41 4 * * 1"   # le lundi à 4 h 41 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write   # commit léger
+  actions: write    # réactivation des workflows
+
+concurrency:
+  group: maintien
+  cancel-in-progress: false
+
+jobs:
+  maintien:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Récupérer le dépôt (branche main)
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Vérifier que les workflows planifiés sont actifs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "## Workflows planifiés" >> "$GITHUB_STEP_SUMMARY"
+          probleme=0
+          for fichier in .github/workflows/*.yml; do
+            grep -q "^\s*schedule:" "$fichier" || continue
+            nom=$(basename "$fichier")
+            etat=$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/${nom}" --jq .state 2>/dev/null || echo "introuvable")
+            case "$etat" in
+              active)
+                echo "- ✅ \`${nom}\` : actif" >> "$GITHUB_STEP_SUMMARY" ;;
+              disabled_inactivity)
+                gh api -X PUT "repos/${GITHUB_REPOSITORY}/actions/workflows/${nom}/enable"
+                echo "::warning::${nom} était en pause pour inactivité : réactivé."
+                echo "- 🔁 \`${nom}\` : en pause pour inactivité, réactivé" >> "$GITHUB_STEP_SUMMARY" ;;
+              *)
+                probleme=1
+                echo "::warning::${nom} : état « ${etat} » (non réactivé automatiquement)."
+                echo "- ⚠️ \`${nom}\` : ${etat}" >> "$GITHUB_STEP_SUMMARY" ;;
+            esac
+          done
+          if [ "$probleme" = 1 ]; then
+            echo "Un workflow planifié est désactivé à la main ou introuvable : à vérifier dans l'onglet Actions." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Commit léger si aucune activité depuis 30 jours
+        run: |
+          dernier=$(git log -1 --format=%ct)
+          jours=$(( ( $(date +%s) - dernier ) / 86400 ))
+          echo "Dernier commit sur main : il y a ${jours} jour(s)."
+          echo "## Activité du dépôt" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$jours" -lt 30 ]; then
+            echo "Dernier commit il y a ${jours} jour(s) : pas de commit de maintien." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          printf 'Dernier passage du workflow « Maintien » : %s\n' "$(date -u +%Y-%m-%dT%H:%MZ)" > .github/maintien.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/maintien.txt
+          git commit -m "Maintien : activité du dépôt ($(date -u +%d/%m/%Y))"
+          git pull --rebase origin main
+          git push origin HEAD:main
+          echo "Aucun commit depuis ${jours} jours : commit de maintien envoyé." >> "$GITHUB_STEP_SUMMARY"

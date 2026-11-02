@@ -18,6 +18,7 @@ import { fichePays, ficheSecteur } from './panneau-pays.js';
 import { ficheEntreprise } from './panneau-entreprise.js';
 import { ecranPortefeuille } from './portefeuille.js';
 import { ecranClassement } from './classement.js';
+import { chargerSante, ecranSante, problemeDetecte } from './sante.js';
 
 const $ = (sel) => document.querySelector(sel);
 const dom = {
@@ -57,6 +58,21 @@ function hauteurPanneau(etat = etatPanneau) {
 }
 function estLarge() {
   return matchMedia('(min-width: 960px)').matches;
+}
+
+/* ========================== Santé des agents ========================== */
+
+let agentsSante = [];
+
+/** Recharge les journaux des agents, met à jour la pastille de l'en-tête et l'écran s'il est ouvert. */
+async function majSante() {
+  agentsSante = await chargerSante();
+  const probleme = problemeDetecte(agentsSante);
+  const bouton = $('#btn-sante');
+  bouton.classList.toggle('a-un-probleme', probleme);
+  bouton.title = probleme ? 'Santé des agents : problème détecté' : 'Santé des agents';
+  $('#btn-sante .visuellement-cache').textContent = bouton.title;
+  if (routeActuelle?.type === 'sante') $('#sante-contenu').replaceChildren(...ecranSante(agentsSante));
 }
 
 /* ============================== Démarrage ============================== */
@@ -106,6 +122,11 @@ async function demarrer() {
 
   $('#btn-portefeuille').addEventListener('click', () => naviguer({ type: 'portefeuille' }));
   $('#btn-classement').addEventListener('click', () => naviguer({ type: 'classement' }));
+  $('#btn-sante').addEventListener('click', () => naviguer({ type: 'sante' }));
+  // Santé des agents : chargée à part (un journal manquant ne bloque pas l'appli),
+  // puis recalculée chaque minute, car le statut « en panne » dépend de l'heure
+  majSante();
+  setInterval(majSante, 60_000);
   // Recherche : toucher un résultat ouvre la fiche (le globe se centre sur le pays)
   recherche = initialiserRecherche(d, {
     bouton: $('#btn-recherche'), panneau: $('#recherche'), champ: $('#recherche-champ'),
@@ -257,6 +278,7 @@ function filAriane(route) {
     case 'classement': return [racine, { libelle: 'Classement', route }];
     case 'comparaison': return [racine, { libelle: 'Comparaison', route }];
     case 'mes-alertes': return [racine, { libelle: 'Mes alertes', route }];
+    case 'sante': return [racine, { libelle: 'Santé des agents', route }];
     default: return [racine];
   }
 }
@@ -275,7 +297,7 @@ function majAriane(route) {
 /** Vérifie qu'une route désigne bien un élément existant. */
 function routeValide(route) {
   switch (route.type) {
-    case 'globe': case 'portefeuille': case 'classement': case 'comparaison': case 'mes-alertes': return true;
+    case 'globe': case 'portefeuille': case 'classement': case 'comparaison': case 'mes-alertes': case 'sante': return true;
     case 'pays': return d.paysParCode.has(route.id);
     case 'secteur': return d.secteurParId.has(route.id);
     case 'entreprise': return d.entrepriseParTicker.has(route.id);
@@ -332,6 +354,7 @@ function afficher(route) {
     classement: { section: '#ecran-classement', contenu: '#classement-contenu', titre: 'Classement', rendu: () => ecranClassement(d, navigateurPanneau) },
     comparaison: { section: '#ecran-comparaison', contenu: '#comparaison-contenu', titre: 'Comparaison', rendu: () => ecranComparaison(d, navigateurPanneau) },
     'mes-alertes': { section: '#ecran-mes-alertes', contenu: '#mes-alertes-contenu', titre: 'Mes alertes', rendu: () => ecranMesAlertes(d, { surChangement: majAlertes, ouvrir: naviguer }) },
+    sante: { section: '#ecran-sante', contenu: '#sante-contenu', titre: 'Santé des agents', rendu: () => ecranSante(agentsSante) },
   };
   for (const [type, ecran] of Object.entries(ECRANS)) {
     const visible = route.type === type;
@@ -361,7 +384,7 @@ function afficher(route) {
 
 /** Le globe ne se dessine que s'il est visible (économie de batterie). */
 function majActiviteGlobe() {
-  const masque = ['portefeuille', 'classement', 'comparaison', 'mes-alertes'].includes(routeActuelle.type)
+  const masque = ['portefeuille', 'classement', 'comparaison', 'mes-alertes', 'sante'].includes(routeActuelle.type)
     || (dom.panneau.classList.contains('est-ouvert') && etatPanneau === 'plein' && !estLarge());
   globe?.definirActif(!masque);
 }
