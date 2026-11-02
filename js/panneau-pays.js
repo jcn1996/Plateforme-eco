@@ -3,7 +3,10 @@
    + composants réutilisés par la fiche entreprise (jauge, indicateurs, agents).
    ========================================================================== */
 
-import { el, svg, nombre, variation, classeNote, niveauNote, libelleNiveau, valeurIndicateur, AGENTS } from './outils.js';
+import {
+  el, svg, nombre, variation, classeNote, niveauNote, libelleNiveau, valeurIndicateur, AGENTS,
+  complementIndicateur, badgeTendance, tendanceIndicateur, tendanceNote, texteFraicheur,
+} from './outils.js';
 
 /* ------------------------------ Composants ------------------------------ */
 
@@ -28,9 +31,13 @@ export function jauge(note) {
 }
 
 /** En-tête de fiche : jauge + surtitre + titre + verdict. */
-export function enteteFiche({ note, surtitre, titre, verdict, action }) {
+export function enteteFiche({ note, surtitre, titre, verdict, action, tendance }) {
   return el('header', { class: 'fiche-entete' },
-    jauge(note),
+    el('div', { class: 'fiche-note' },
+      jauge(note),
+      // Évolution de la note depuis la mise à jour précédente
+      badgeTendance(tendance, 'depuis la mise à jour précédente'),
+    ),
     el('div', { class: 'fiche-titres' },
       el('div', { class: 'fiche-surtitre' }, surtitre),
       el('h2', { class: 'fiche-titre' }, titre),
@@ -56,11 +63,33 @@ export function listeIndicateurs(indicateurs) {
       title: libelleNiveau(niveauNote(ind.note)),
     },
       el('span', { class: 'pastille', 'aria-hidden': 'true' }),
-      el('span', { class: 'ligne-indicateur-libelle' }, ind.libelle),
-      el('span', { class: 'ligne-indicateur-valeur' }, valeurIndicateur(cle, ind)),
+      el('span', { class: 'ligne-indicateur-libelle' },
+        ind.libelle,
+        // Petit complément : cible d'inflation, direction de la banque centrale…
+        complementIndicateur(cle, ind) ? el('small', {}, complementIndicateur(cle, ind)) : null,
+      ),
+      el('span', { class: 'ligne-indicateur-valeur' },
+        valeurIndicateur(cle, ind),
+        badgeTendance(tendanceIndicateur(cle, ind)),
+      ),
       el('span', { class: 'ligne-indicateur-note' }, String(ind.note), el('small', {}, '/100')),
     )),
   );
+}
+
+/** Section repliable « Détail » (indicateurs secondaires). */
+export function detailRepliable(indicateurs, titre = 'Détail') {
+  if (!indicateurs || !Object.keys(indicateurs).length) return null;
+  return el('details', { class: 'detail-repliable' },
+    el('summary', {}, titre, el('small', {}, Object.values(indicateurs).map((i) => i.libelle.toLowerCase()).join(' · '))),
+    listeIndicateurs(indicateurs),
+  );
+}
+
+/** Pied de fiche : fraîcheur des données (date de mise à jour et source). */
+export function piedFraicheur(meta) {
+  const texte = texteFraicheur(meta);
+  return texte ? el('p', { class: 'fraicheur' }, texte) : null;
 }
 
 /** Grille d'indicateurs colorés selon leur note (tuiles, conservée pour d'autres usages). */
@@ -106,11 +135,13 @@ export function fichePays(d, p, nav) {
     enteteFiche({
       note: p.note, surtitre: `Pays · ${libelleNiveau(niveauNote(p.note))}`, titre: p.nom, verdict: p.verdict,
       action: nav.boutonComparer?.('pays', p.code),
+      tendance: tendanceNote(p),
     }),
 
     el('section', {},
-      titreSection('Indicateurs clés'),
+      titreSection('Indicateurs clés', 'flèche = évolution depuis la mise à jour précédente'),
       listeIndicateurs(p.indicateurs),
+      detailRepliable(p.detail),
     ),
 
     el('section', {},
@@ -132,6 +163,7 @@ export function fichePays(d, p, nav) {
       ),
     ),
 
+    piedFraicheur(d.meta.pays),
     el('p', { class: 'mention-legale' }, 'Données fictives à des fins de démonstration — ne constitue pas un conseil en investissement.'),
   ];
 }
@@ -175,6 +207,7 @@ export function ficheSecteur(d, s, nav) {
       surtitre: `Secteur · ${pays?.nom ?? s.pays}`,
       titre: s.nom,
       verdict: `${entreprises.length} entreprise${entreprises.length > 1 ? 's' : ''} suivie${entreprises.length > 1 ? 's' : ''}, classées par note.`,
+      tendance: tendanceNote(s),
     }),
     el('div', { class: 'stats' },
       stat('Capitalisation', `${nombre(s.capitalisation_md)} Md€`),
@@ -195,10 +228,11 @@ export function ficheSecteur(d, s, nav) {
             el('br'),
             el('span', { class: 'ligne-entreprise-info mono' }, `${e.ticker} · ${nombre(e.capitalisation_md)} Md€ · ${libelleNiveau(e.niveau ?? niveauNote(e.note))}`),
           ),
-          el('span', { class: 'ligne-entreprise-note' }, nombre(e.note)),
+          el('span', { class: 'ligne-entreprise-note' }, nombre(e.note), badgeTendance(tendanceNote(e))),
         )),
       ),
     ),
+    piedFraicheur(d.meta.secteurs),
   ];
 }
 

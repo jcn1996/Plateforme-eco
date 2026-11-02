@@ -19,7 +19,22 @@ Prototype d'une application personnelle de suivi économique mondial, pensée d'
   - Toucher un arc affiche une bulle, par exemple « États-Unis → Brésil : 4,2 Md$ sur 1 mois ».
   - Quand un pays est sélectionné, seuls ses flux restent visibles.
   - Bouton « Flux » pour les masquer ou les afficher.
-- **Filtres du globe** (puces en bas de l'écran) : note globale, croissance du PIB, inflation, valorisation (PER), devise sur 3 mois, flux étrangers, momentum boursier.
+- **Bandeau des marchés** : Nasdaq 100, S&P 500, Or, Pétrole WTI, Bitcoin, EUR/USD, CAC 40, MSCI World.
+  - Il défile tout seul, se glisse au doigt ou à la souris avec inertie, et se met en pause au toucher (reprise 4 s après le relâchement) ou au survol.
+  - Toucher une cotation affiche sa valeur, sa variation du jour et sa variation sur 1 an.
+- **Indicateurs des pays** (6) :
+  - croissance du PIB ;
+  - PMI manufacturier ;
+  - inflation, avec la cible de la banque centrale ;
+  - taux réel, avec la direction de la banque centrale ;
+  - valorisation (PER comparé à sa moyenne sur 10 ans) ;
+  - momentum boursier sur 12 mois.
+
+  La devise sur 3 mois et les flux étrangers sont dans la section repliable « Détail ».
+- **Tendances** : une flèche ↑ ↓ → indique l'évolution depuis la mise à jour précédente, sur chaque indicateur et chaque note (pays, secteur, entreprise). Le vert signale une note qui s'améliore, le rouge une note qui se dégrade.
+- **Recherche** (loupe dans l'en-tête) : pays, secteurs et entreprises, par nom ou ticker, sans tenir compte des accents. Toucher un résultat ouvre la fiche et centre le globe.
+- **Fraîcheur des données** : sous chaque fiche, « Mis à jour le … · Source : … », lu dans le bloc `meta` des JSON.
+- **Filtres du globe** (puces en bas de l'écran) : la note globale et les 6 indicateurs des pays.
   - Le globe se recolore en fondu, et les étiquettes affichent la valeur choisie.
   - Le choix est mémorisé sur l'appareil.
 - **Gestes** :
@@ -54,6 +69,7 @@ js/panneau-entreprise.js  fiche entreprise
 js/portefeuille.js    écran portefeuille
 js/classement.js      écran classement
 js/comparateur.js     comparateur (sélection, barre flottante, écran)
+js/recherche.js       recherche de pays, secteurs et entreprises
 js/mes-alertes.js     règles d'alertes personnelles
 js/outils.js          couleurs des notes, formats français
 data/*.json           données fictives
@@ -86,8 +102,27 @@ Les fichiers sont reliés par des identifiants :
 | `marches.json` | macro | indices, taux, devises, matières premières |
 | `portefeuille.json` | trader | valeur, statistiques, allocation, positions, historique, dernière décision |
 
+Le bloc `meta` de chaque fichier contient :
+- `genere_le` : date de la mise à jour, affichée sous les fiches ;
+- `mise_a_jour_precedente` ;
+- `source` : pour l'instant « fictive » ;
+- `producteur_futur` : l'agent qui produira ce fichier.
+
+Chaque note et chaque indicateur a un champ `precedent` (valeur et note de la mise à jour précédente), qui alimente les flèches de tendance :
+
+```json
+"inflation": { "libelle": "Inflation", "valeur": 3.9, "unite": "%", "note": 76, "cible": 3.0,
+               "precedent": { "valeur": 4.1, "note": 74 } }
+```
+
+Les pays ont 6 indicateurs (`croissance_pib`, `pmi`, `inflation`, `taux_reel`, `valorisation`, `momentum`) :
+- `inflation` porte en plus la `cible` de la banque centrale ;
+- `taux_reel` porte le `taux_directeur` et la `direction` (« baisse », « stable » ou « hausse ») ;
+- `valorisation` porte le `per` et sa `moyenne_10ans`.
+
+Le bloc `detail` contient `devise_3m` et `flux_etrangers`. `marches.json` donne pour chaque cotation `variation` (jour, en %) et `variation_1an`.
+
 Chaque flux de `pays.json` indique son montant, sa devise et sa période (`montant_md`, `devise`, `periode`).
-Le champ `momentum_boursier` d'un pays alimente le filtre « Momentum boursier ».
 
 Chaque pays a aussi un champ `iso_num` : son code ISO numérique, qui le relie à sa forme dans `countries-110m.json`.
 Singapour, trop petit pour l'échelle 1:110m, est dessiné comme un disque.
@@ -123,7 +158,9 @@ Le serveur des agents pourra les relire telles quelles :
 ```
 
 - `cible.type` vaut `pays` ou `entreprise`. `cible.id` est le code pays ou le ticker, ou `null` pour « tous ».
-- `indicateur` vaut `note`, ou la clé d'un indicateur (`croissance_pib`, `inflation`, `per`, `devise_3m`, `flux_etrangers`, `momentum` ; pour une entreprise : `croissance_ca`, `benefice`, `marge`, `dette_ebitda`, `per_vs_secteur`).
+- `indicateur` vaut `note`, ou la clé d'un indicateur :
+  - pour un pays : `croissance_pib`, `pmi`, `inflation`, `taux_reel`, `valorisation`, `momentum` (et, pour d'anciennes règles, `devise_3m` ou `flux_etrangers`) ;
+  - pour une entreprise : `croissance_ca`, `benefice`, `marge`, `dette_ebitda`, `per_vs_secteur`.
 - `condition` vaut `depasse` (valeur > seuil) ou `passe_sous` (valeur < seuil).
 - « Une entreprise passe au rouge » s'écrit : note `passe_sous` 50.
 

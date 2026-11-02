@@ -3,8 +3,8 @@
    étude complète dépliable.
    ========================================================================== */
 
-import { el, nombre, AGENTS } from './outils.js';
-import { enteteFiche, listeIndicateurs, titreSection, carteAgent } from './panneau-pays.js';
+import { el, nombre, AGENTS, tendanceNote } from './outils.js';
+import { enteteFiche, listeIndicateurs, titreSection, carteAgent, piedFraicheur } from './panneau-pays.js';
 
 /** Ordre d'affichage des onglets. */
 const ORDRE_AGENTS = ['entreprises', 'macro', 'sentiment', 'risque', 'donnees_alternatives'];
@@ -29,6 +29,7 @@ export function ficheEntreprise(d, e, nav = {}) {
       titre: e.nom,
       verdict: e.verdict, // verdict de l'agent entreprises, tout en haut
       action: nav.boutonComparer?.('entreprise', e.ticker),
+      tendance: tendanceNote(e),
     }),
 
     el('section', {},
@@ -42,6 +43,8 @@ export function ficheEntreprise(d, e, nav = {}) {
     ),
 
     etudeComplete(e),
+
+    piedFraicheur(d.meta.entreprises),
 
     el('p', { class: 'mention-legale' }, 'Entreprise et chiffres inventés — démonstration uniquement, ne constitue pas un conseil en investissement.'),
   ];

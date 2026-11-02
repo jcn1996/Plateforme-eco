@@ -5,11 +5,16 @@
 import json, random, math, datetime, os, sys
 
 random.seed(42)
+# Second générateur pour les champs ajoutés ensuite (tendances, nouveaux indicateurs) :
+# les valeurs déjà publiées restent identiques.
+rng2 = random.Random(2026)
 OUT = sys.argv[1]
-GEN = "2026-11-01T07:00:00Z"
+GEN = "2026-11-02T07:00:00Z"            # date de cette mise à jour
+GEN_PRECEDENT = "2026-11-01T07:00:00Z"  # date de la mise à jour précédente (champs « precedent »)
 
-def meta(source):
-    return {"version": 1, "genere_le": GEN, "source": source, "fictif": True}
+def meta(producteur_futur):
+    return {"version": 1, "genere_le": GEN, "mise_a_jour_precedente": GEN_PRECEDENT,
+            "source": "fictive", "producteur_futur": producteur_futur, "fictif": True}
 
 def clamp(v, a=0, b=100):
     return max(a, min(b, v))
@@ -379,20 +384,106 @@ for code, liste in SECT.items():
                 {"titre": "Risques principaux", "texte": "Ralentissement de la demande mondiale, évolution défavorable des devises, pression réglementaire et concurrence accrue sur les prix."},
                 {"titre": "Conclusion des agents", "texte": f"Synthèse du chef d'orchestre : {'surpondérer' if note_e>=65 else 'conserver' if note_e>=50 else 'sous-pondérer'}. Horizon de 12 mois. Analyse purement fictive, ne constitue pas un conseil."},
             ]
+            # Tendances : valeurs et notes de la mise à jour précédente
+            e["precedent"] = {"note": clamp(note_e - rng2.randint(-5, 5))}
+            fonctions = {
+                "croissance_ca": (2.0, lambda x: clamp(round(45 + x * 4))),
+                "benefice": (4.0, lambda x: clamp(round(48 + x * 2.5))),
+                "marge": (1.5, lambda x: clamp(round(30 + x * 1.8))),
+                "dette_ebitda": (0.3, lambda x: clamp(round(88 - x * 15))),
+                "per_vs_secteur": (6.0, lambda x: clamp(round(60 - x * 0.7))),
+            }
+            for cle, (amplitude, f) in fonctions.items():
+                ind = e["indicateurs"][cle]
+                prec = round(ind["valeur"] - rng2.uniform(-amplitude, amplitude), 0 if cle == "per_vs_secteur" else 1)
+                ind["precedent"] = {"valeur": prec, "note": f(prec)}
             entreprises.append(e)
             ents.append(t)
         secteurs.append({"id": sid, "pays": code, "nom": nom_s, "capitalisation_md": cap,
-                         "momentum_3m": mom, "note": note_s, "niveau": niveau(note_s), "entreprises": ents})
+                         "momentum_3m": mom, "note": note_s, "niveau": niveau(note_s),
+                         "precedent": {"note": clamp(note_s - rng2.randint(-5, 5))}, "entreprises": ents})
 
-ecrire("secteurs.json", "fictif (futur : agent-pays)", secteurs)
+ecrire("secteurs.json", "agent-pays", secteurs)
 
-# Momentum boursier du pays : moyenne des momentums sectoriels pondérée par la capitalisation
+# ---------------------------------------------------------------- INDICATEURS DES PAYS
+# Cible d'inflation de la banque centrale (None = pas de cible officielle)
+CIBLES = {"US": 2.0, "CA": 2.0, "MX": 3.0, "BR": 3.0, "AR": None, "GB": 2.0, "FR": 2.0, "DE": 2.0, "CH": 1.0,
+          "SA": 2.0, "ZA": 4.5, "IN": 4.0, "CN": 3.0, "KR": 2.0, "JP": 2.0, "AU": 2.5, "IT": 2.0, "ES": 2.0,
+          "NL": 2.0, "SE": 2.0, "PL": 2.5, "TW": 2.0, "ID": 2.5, "VN": 4.5, "SG": 2.0, "TH": 2.0, "CL": 3.0,
+          "CO": 3.0, "AE": 2.0, "TR": 5.0, "EG": 7.0}
+# Taux directeur (%) et direction de la banque centrale
+TAUX = {"US": (4.25, "baisse"), "CA": (3.0, "baisse"), "MX": (9.5, "baisse"), "BR": (13.75, "baisse"),
+        "AR": (32.0, "baisse"), "GB": (4.5, "baisse"), "FR": (2.75, "baisse"), "DE": (2.75, "baisse"),
+        "CH": (0.5, "stable"), "SA": (5.0, "baisse"), "ZA": (7.5, "baisse"), "IN": (6.25, "baisse"),
+        "CN": (3.1, "baisse"), "KR": (2.75, "baisse"), "JP": (0.5, "hausse"), "AU": (4.1, "stable"),
+        "IT": (2.75, "baisse"), "ES": (2.75, "baisse"), "NL": (2.75, "baisse"), "SE": (2.25, "baisse"),
+        "PL": (5.75, "stable"), "TW": (2.0, "stable"), "ID": (5.75, "baisse"), "VN": (4.5, "stable"),
+        "SG": (3.0, "stable"), "TH": (2.0, "baisse"), "CL": (5.0, "baisse"), "CO": (9.5, "baisse"),
+        "AE": (4.4, "baisse"), "TR": (45.0, "baisse"), "EG": (26.0, "baisse")}
+# PMI manufacturier imposé pour quelques pays (cohérence avec les alertes et les verdicts)
+PMI = {"CN": 48.6, "IN": 57.4, "TW": 54.2, "DE": 47.8, "KR": 52.1, "JP": 50.4, "BR": 52.3, "US": 51.2,
+       "AR": 47.5, "ZA": 48.2, "EG": 49.0, "TR": 47.9}
+# Écart du PER à sa moyenne sur 10 ans (%) imposé pour quelques pays
+ECART_PER = {"US": 14, "IN": 12, "TW": 16, "JP": 3, "CN": -24, "BR": -22, "KR": -12, "AR": -18, "GB": -14,
+             "FR": -6, "DE": -4, "CH": 2}
+# Note globale précédente imposée (cohérence avec les alertes du jour)
+NOTE_PRECEDENTE = {"IN": 72, "CN": 41, "US": 71, "AR": 43}
+
+def note_pib(x): return clamp(round(35 + x * 8))
+def note_pmi(x): return clamp(round(50 + (x - 50) * 5))
+def note_inflation(x, cible): return clamp(round(90 - abs(x - (cible or 2.0)) * 16)) if x < 15 else 8
+def note_reel(x, direction): return clamp(round(80 - abs(x - 1.5) * 7 + {"baisse": 5, "stable": 0, "hausse": -5}[direction]))
+def note_valo(x): return clamp(round(60 - x * 1.3))
+def note_momentum(x): return clamp(round(55 + x * 1.4))
+def note_devise(x): return clamp(round(58 + x * 5))
+def note_flux(x): return clamp(round(55 + x * 1.1))
+
+def indicateur(libelle, valeur, unite, note, prec_valeur, prec_note, **extra):
+    return {"libelle": libelle, "valeur": valeur, "unite": unite, "note": note, **extra,
+            "precedent": {"valeur": prec_valeur, "note": prec_note}}
+
+DONNEES_BRUTES = {code: v for code, *_, v in PAYS}
 for p in pays:
-    sp = [x for x in secteurs if x["pays"] == p["code"]]
-    mom = round(sum(x["capitalisation_md"] * x["momentum_3m"] for x in sp) / sum(x["capitalisation_md"] for x in sp), 1)
-    p["momentum_boursier"] = {"libelle": "Momentum boursier 3 mois", "valeur": mom, "unite": "%", "note": clamp(round(55 + mom * 4))}
-ecrire("pays.json", "fictif (futur : agent-pays + agent-macro)", pays)
-ecrire("entreprises.json", "fictif (futur : agent-entreprises)", entreprises)
+    code = p["code"]
+    pib, infl, per, dev, flux = DONNEES_BRUTES[code]
+    sp = [x for x in secteurs if x["pays"] == code]
+    mom3 = sum(x["capitalisation_md"] * x["momentum_3m"] for x in sp) / sum(x["capitalisation_md"] for x in sp)
+    momentum = round(mom3 * 3 + rng2.uniform(-4, 6), 1)
+    pmi = PMI.get(code, round(50 + (pib - 2) * 1.3 + rng2.uniform(-1.5, 1.5), 1))
+    cible = CIBLES[code]
+    directeur, direction = TAUX[code]
+    reel = round(directeur - infl, 1)
+    ecart = ECART_PER.get(code, round(rng2.uniform(-15, 10)))
+    moyenne10 = round(per / (1 + ecart / 100), 1)
+
+    # Valeurs de la mise à jour précédente (petites variations)
+    pib_p = round(pib - rng2.uniform(-0.3, 0.3), 1)
+    pmi_p = round(pmi - rng2.uniform(-1.5, 1.5), 1)
+    infl_p = round(infl - rng2.uniform(-0.4, 0.4), 1)
+    directeur_p = directeur + (0.25 if direction == "baisse" and rng2.random() < 0.4 else -0.25 if direction == "hausse" and rng2.random() < 0.4 else 0)
+    reel_p = round(directeur_p - infl_p, 1)
+    ecart_p = round(ecart - rng2.uniform(-4, 4))
+    momentum_p = round(momentum - rng2.uniform(-5, 5), 1)
+    dev_p = round(dev - rng2.uniform(-1.5, 1.5), 1)
+    flux_p = round(flux - rng2.uniform(-2, 2), 1)
+
+    p["indicateurs"] = {
+        "croissance_pib": indicateur("Croissance du PIB", pib, "%", note_pib(pib), pib_p, note_pib(pib_p)),
+        "pmi": indicateur("PMI manufacturier", pmi, "", note_pmi(pmi), pmi_p, note_pmi(pmi_p)),
+        "inflation": indicateur("Inflation", infl, "%", note_inflation(infl, cible), infl_p, note_inflation(infl_p, cible), cible=cible),
+        "taux_reel": indicateur("Taux réel", reel, "%", note_reel(reel, direction), reel_p, note_reel(reel_p, direction),
+                                taux_directeur=directeur, direction=direction),
+        "valorisation": indicateur("Valorisation (PER vs 10 ans)", ecart, "%", note_valo(ecart), ecart_p, note_valo(ecart_p),
+                                   per=per, moyenne_10ans=moyenne10),
+        "momentum": indicateur("Momentum boursier 12 mois", momentum, "%", note_momentum(momentum), momentum_p, note_momentum(momentum_p)),
+    }
+    p["detail"] = {
+        "devise_3m": indicateur("Devise sur 3 mois", dev, "%", note_devise(dev), dev_p, note_devise(dev_p)),
+        "flux_etrangers": indicateur("Flux étrangers", flux, "Md€", note_flux(flux), flux_p, note_flux(flux_p)),
+    }
+    p["precedent"] = {"note": NOTE_PRECEDENTE.get(code, clamp(p["note"] - rng2.choice([-3, -2, -1, 0, 0, 1, 2, 3])))}
+ecrire("pays.json", "agent-pays + agent-macro", pays)
+ecrire("entreprises.json", "agent-entreprises", entreprises)
 
 # ---------------------------------------------------------------- ALERTES
 alertes = [
@@ -409,22 +500,22 @@ alertes = [
   "titre": "Argentine : les prix en ligne repartent à la hausse",
   "texte": "Le relevé quotidien des prix montre +2,5 % sur un mois. Le peso reste sous pression."},
 ]
-ecrire("alertes.json", "fictif (futur : agent-chef-orchestre)", alertes)
+ecrire("alertes.json", "agent-chef-orchestre", alertes)
 
 # ---------------------------------------------------------------- MARCHÉS
+# Ordre exact du bandeau : catégorie, nom, valeur, unité, variation du jour (%), variation sur 1 an (%)
 marches = [
- ("indices","S&P 500",6412.8,0.34,"pts"),("indices","CAC 40",7512.3,-0.42,"pts"),
- ("indices","DAX",19870.5,0.12,"pts"),("indices","Nikkei 225",41250.0,1.08,"pts"),
- ("indices","MSCI World",3985.2,0.21,"pts"),("indices","Sensex",84120.6,0.66,"pts"),
- ("taux","OAT 10 ans",3.18,0.03,"%"),("taux","Bund 10 ans",2.54,0.02,"%"),
- ("taux","US 10 ans",4.21,-0.04,"%"),
- ("devises","EUR/USD",1.0912,0.15,""),("devises","USD/JPY",148.36,-0.22,""),
- ("devises","EUR/CHF",0.9384,-0.08,""),
- ("matieres_premieres","Brent",78.40,-1.12,"$"),("matieres_premieres","Or",2684.5,0.48,"$"),
- ("matieres_premieres","Cuivre",9420.0,0.91,"$"),("matieres_premieres","Gaz TTF",36.8,2.35,"€"),
+ ("indices", "Nasdaq 100", 22840.5, "pts", 0.62, 24.8),
+ ("indices", "S&P 500", 6412.8, "pts", 0.34, 18.6),
+ ("matieres_premieres", "Or", 2684.5, "$/once", 0.48, 27.4),
+ ("matieres_premieres", "Pétrole WTI", 74.20, "$/baril", -1.05, -8.9),
+ ("crypto", "Bitcoin", 96420.0, "$", 2.15, 61.3),
+ ("devises", "EUR/USD", 1.0912, "", 0.15, 1.8),
+ ("indices", "CAC 40", 7512.3, "pts", -0.42, 4.1),
+ ("indices", "MSCI World", 3985.2, "pts", 0.21, 15.2),
 ]
-ecrire("marches.json", "fictif (futur : agent-macro)",
-       [{"categorie": c, "nom": n, "valeur": v, "variation": d, "unite": u} for c, n, v, d, u in marches])
+ecrire("marches.json", "agent-macro",
+       [{"categorie": c, "nom": n, "valeur": v, "unite": u, "variation": dj, "variation_1an": da} for c, n, v, u, dj, da in marches])
 
 # ---------------------------------------------------------------- PORTEFEUILLE
 debut = datetime.date(2026, 1, 2)
@@ -479,7 +570,7 @@ portefeuille = {
     },
 }
 with open(os.path.join(OUT, "portefeuille.json"), "w", encoding="utf-8") as f:
-    json.dump({"meta": meta("fictif (futur : agent-trader)"), "donnees": portefeuille}, f, ensure_ascii=False, indent=2)
+    json.dump({"meta": meta("agent-trader"), "donnees": portefeuille}, f, ensure_ascii=False, indent=2)
     f.write("\n")
 print(len(pays), "pays,", len(secteurs), "secteurs,", len(entreprises), "entreprises,",
       "portefeuille", valeur, portefeuille["statistiques"])

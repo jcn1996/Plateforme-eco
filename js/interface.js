@@ -22,26 +22,132 @@ export function demarrerHorloge(noeud) {
   setInterval(maj, 1000);
 }
 
-const CATEGORIES = { indices: 'Indice', taux: 'Taux', devises: 'Devise', matieres_premieres: 'Mat. 1res' };
+const CATEGORIES = { indices: 'Indice', taux: 'Taux', devises: 'Devise', matieres_premieres: 'Mat. 1res', crypto: 'Crypto' };
 
-/** Bandeau défilant : le contenu est dupliqué pour une boucle sans à-coup. */
+/** Nombre de décimales selon le type de cotation. */
+function decimalesMarche(m) {
+  if (m.categorie === 'devises') return 4;
+  if (m.categorie === 'crypto') return 0;
+  return m.valeur > 1000 ? 1 : 2;
+}
+
+/** Valeur formatée avec son unité : « 2 684,5 $/once », « 1,0912 », « 22 840,5 ». */
+function valeurMarche(m) {
+  const unite = !m.unite || m.unite === 'pts' ? '' : ` ${m.unite}`;
+  return nombre(m.valeur, decimalesMarche(m)) + unite;
+}
+
+/* Réglages du bandeau */
+const VITESSE_AUTO = 32;      // défilement automatique, en pixels par seconde
+const REPRISE_APRES = 4000;   // reprise du défilement auto après un toucher (ms)
+
+/**
+ * Bandeau des marchés : défilement automatique, mais manipulable au doigt
+ * (glisser à gauche ou à droite, avec inertie) et à la souris (pause au
+ * survol, glisser possible). Toucher une cotation affiche une petite bulle
+ * (valeur, variation du jour, variation sur 1 an).
+ * Le contenu est dupliqué pour boucler sans à-coup.
+ */
 export function remplirBandeau(piste, marches) {
-  const cotation = (m) => {
-    const decimales = m.categorie === 'devises' ? 4 : m.categorie === 'taux' ? 2 : m.valeur > 1000 ? 1 : 2;
-    const unite = m.unite === '%' ? ' %' : m.unite && m.unite !== 'pts' ? ` ${m.unite}` : '';
-    // Pour les taux, la variation est exprimée en points (pas en %)
-    const varTexte = m.categorie === 'taux' ? variation(m.variation, 2, ' pt') : variation(m.variation, 2);
-    return el('span', { class: 'cotation' },
-      el('span', { class: 'cotation-cat' }, CATEGORIES[m.categorie] ?? ''),
-      el('span', { class: 'cotation-nom' }, m.nom),
-      el('span', { class: 'cotation-valeur mono' }, nombre(m.valeur, decimales) + unite),
-      el('span', { class: `mono ${m.variation >= 0 ? 'hausse' : 'baisse'}` }, `${m.variation >= 0 ? '▲' : '▼'} ${varTexte}`),
-    );
+  const bandeau = piste.parentElement;
+  const cotation = (m, copie) => el('button', {
+    class: 'cotation', type: 'button', tabindex: copie ? '-1' : undefined, 'aria-hidden': copie ? 'true' : undefined,
+    'data-nom': m.nom,
+    'aria-label': `${m.nom} : ${valeurMarche(m)}, ${variation(m.variation, 2)} aujourd'hui, ${variation(m.variation_1an ?? 0, 1)} sur un an`,
+  },
+    el('span', { class: 'cotation-cat' }, CATEGORIES[m.categorie] ?? ''),
+    el('span', { class: 'cotation-nom' }, m.nom),
+    el('span', { class: 'cotation-valeur mono' }, valeurMarche(m)),
+    el('span', { class: `mono ${m.variation >= 0 ? 'hausse' : 'baisse'}` }, `${m.variation >= 0 ? '▲' : '▼'} ${variation(m.variation, 2)}`),
+  );
+  piste.replaceChildren(...marches.map((m) => cotation(m, false)), ...marches.map((m) => cotation(m, true)));
+  const parNom = new Map(marches.map((m) => [m.nom, m]));
+
+  // --- État du défilement ---
+  let decalage = 0;            // en pixels (la piste est translatée vers la gauche)
+  let elan = 0;                // vitesse d'inertie après un glisser (px/s)
+  let glisse = null;           // { x, t, depart, cible, deplace } pendant un glisser
+  let pauseJusqua = 0;         // horodatage de reprise du défilement auto
+  let survol = false;          // souris au-dessus du bandeau
+  let precedent = performance.now();
+  const reduireAnimations = matchMedia('(prefers-reduced-motion: reduce)');
+  const largeurSerie = () => piste.scrollWidth / 2;
+
+  const boucle = (maintenant) => {
+    requestAnimationFrame(boucle);
+    const dt = Math.min(0.5, (maintenant - precedent) / 1000);
+    precedent = maintenant;
+    if (document.hidden || !bandeau.offsetParent) return; // bandeau masqué : rien à faire
+    if (!glisse) {
+      if (Math.abs(elan) > 8) {
+        decalage += elan * dt;                // inertie après un glisser
+        elan *= Math.exp(-dt * 3.2);
+      } else if (!survol && maintenant > pauseJusqua && !reduireAnimations.matches) {
+        decalage += VITESSE_AUTO * dt;        // défilement automatique
+      }
+    }
+    const L = largeurSerie();
+    if (L > 0) decalage = ((decalage % L) + L) % L;
+    piste.style.transform = `translate3d(${-decalage.toFixed(1)}px, 0, 0)`;
   };
-  const serie = marches.map(cotation);
-  const copie = marches.map(cotation);
-  copie.forEach((c) => c.setAttribute('aria-hidden', 'true')); // la copie n'est pas lue deux fois
-  piste.replaceChildren(...serie, ...copie);
+  requestAnimationFrame(boucle);
+
+  bandeau.addEventListener('pointerdown', (e) => {
+    if (e.button > 0) return;
+    glisse = { x: e.clientX, t: performance.now(), depart: e.clientX, cible: e.target.closest('.cotation'), deplace: false, id: e.pointerId };
+    elan = 0;
+    pauseJusqua = Infinity;
+    bandeau.setPointerCapture(e.pointerId);
+  });
+  bandeau.addEventListener('pointermove', (e) => {
+    if (!glisse || e.pointerId !== glisse.id) return;
+    const maintenant = performance.now();
+    const dx = e.clientX - glisse.x;
+    if (Math.abs(e.clientX - glisse.depart) > 6) glisse.deplace = true;
+    decalage -= dx;
+    const vitesse = (-dx / Math.max(1, maintenant - glisse.t)) * 1000;
+    elan = elan * 0.5 + vitesse * 0.5;
+    glisse.x = e.clientX;
+    glisse.t = maintenant;
+  });
+  const relacher = (e) => {
+    if (!glisse || e.pointerId !== glisse.id) return;
+    if (performance.now() - glisse.t > 90) elan = 0; // doigt arrêté avant le lâcher : pas d'élan
+    const { cible, deplace } = glisse;
+    glisse = null;
+    pauseJusqua = performance.now() + REPRISE_APRES;
+    if (!deplace && cible && e.type === 'pointerup') afficherBulle(cible);
+  };
+  bandeau.addEventListener('pointerup', relacher);
+  bandeau.addEventListener('pointercancel', relacher);
+  bandeau.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') survol = true; });
+  bandeau.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') survol = false; });
+  // Clavier : Entrée ou Espace sur une cotation affiche aussi la bulle
+  bandeau.addEventListener('click', (e) => { if (e.detail === 0 && e.target.closest('.cotation')) afficherBulle(e.target.closest('.cotation')); });
+
+  // --- Bulle d'information ---
+  let bulle = null, minuterie = null;
+  const fermerBulle = () => { bulle?.remove(); bulle = null; clearTimeout(minuterie); };
+  function afficherBulle(element) {
+    const m = parNom.get(element.dataset.nom);
+    if (!m) return;
+    fermerBulle();
+    const ligne = (libelle, v, decimales) => el('div', { class: 'bulle-marche-ligne' },
+      el('span', {}, libelle), el('span', { class: `mono ${v >= 0 ? 'hausse' : 'baisse'}` }, variation(v, decimales)));
+    bulle = el('div', { class: 'bulle-marche', role: 'status' },
+      el('div', { class: 'bulle-marche-nom' }, m.nom),
+      el('div', { class: 'bulle-marche-valeur mono' }, valeurMarche(m)),
+      ligne('Aujourd’hui', m.variation, 2),
+      m.variation_1an !== undefined ? ligne('Sur 1 an', m.variation_1an, 1) : null,
+    );
+    document.body.append(bulle);
+    const r = element.getBoundingClientRect();
+    const largeur = bulle.offsetWidth;
+    bulle.style.left = `${Math.min(Math.max(8, r.left + r.width / 2 - largeur / 2), innerWidth - largeur - 8)}px`;
+    bulle.style.top = `${r.bottom + 6}px`;
+    minuterie = setTimeout(fermerBulle, 5000);
+  }
+  document.addEventListener('pointerdown', (e) => { if (bulle && !bandeau.contains(e.target)) fermerBulle(); });
 }
 
 /** Note « équivalente » à un niveau d'alerte, pour réutiliser les couleurs. */

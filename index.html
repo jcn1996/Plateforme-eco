@@ -52,6 +52,10 @@
       </div>
       <time id="horloge" class="horloge mono">--:--</time>
       <div class="entete-actions">
+        <button id="btn-recherche" class="bouton bouton--icone" type="button" aria-expanded="false" aria-controls="recherche" title="Rechercher un pays, un secteur, une entreprise">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12.6 12.6 17 17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span class="visuellement-cache">Rechercher</span>
+        </button>
         <button id="btn-legende" class="bouton bouton--icone" type="button" aria-expanded="false" aria-controls="legende" title="Légende des couleurs">
           <span aria-hidden="true">?</span><span class="visuellement-cache">Légende des couleurs</span>
         </button>
@@ -75,6 +79,16 @@
     </div>
 
     <span class="badge-fictif badge-fictif--discret" title="Toutes les données affichées sont inventées">Données fictives</span>
+
+    <!-- Recherche (pays, secteurs, entreprises) -->
+    <div id="recherche" class="recherche" hidden role="search">
+      <div class="recherche-barre">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12.6 12.6 17 17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <input id="recherche-champ" type="search" placeholder="Pays, secteur, entreprise ou ticker" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Rechercher" aria-controls="recherche-resultats">
+        <button id="recherche-fermer" class="bouton bouton--icone" type="button" title="Fermer la recherche"><span aria-hidden="true">✕</span><span class="visuellement-cache">Fermer la recherche</span></button>
+      </div>
+      <ul id="recherche-resultats" class="recherche-resultats" aria-live="polite"></ul>
+    </div>
 
     <!-- Légende repliée derrière le bouton « ? » -->
     <div id="legende" class="legende-bulle" hidden>

@@ -1,8 +1,10 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-01T07:00:00Z",
-    "source": "fictif (futur : agent-pays + agent-macro)",
+    "genere_le": "2026-11-02T07:00:00Z",
+    "mise_a_jour_precedente": "2026-11-01T07:00:00Z",
+    "source": "fictive",
+    "producteur_futur": "agent-pays + agent-macro",
     "fictif": true
   },
   "donnees": [
@@ -20,31 +22,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 2.4,
           "unite": "%",
-          "note": 54
+          "note": 54,
+          "precedent": {
+            "valeur": 2.6,
+            "note": 56
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 51.2,
+          "unite": "",
+          "note": 56,
+          "precedent": {
+            "valeur": 51.1,
+            "note": 56
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 2.9,
           "unite": "%",
-          "note": 76
+          "note": 76,
+          "cible": 2.0,
+          "precedent": {
+            "valeur": 3.2,
+            "note": 71
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 21.5,
-          "unite": "x",
-          "note": 48
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": 1.8,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": 1.4,
           "unite": "%",
-          "note": 67
+          "note": 84,
+          "taux_directeur": 4.25,
+          "direction": "baisse",
+          "precedent": {
+            "valeur": 1.0,
+            "note": 82
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": 42.0,
-          "unite": "Md€",
-          "note": 100
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": 14,
+          "unite": "%",
+          "note": 42,
+          "per": 21.5,
+          "moyenne_10ans": 18.9,
+          "precedent": {
+            "valeur": 12,
+            "note": 44
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": 11.9,
+          "unite": "%",
+          "note": 72,
+          "precedent": {
+            "valeur": 12.3,
+            "note": 72
+          }
         }
       },
       "lectures_agents": {
@@ -97,11 +134,30 @@
           "periode": "1 mois"
         }
       ],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": 4.4,
-        "unite": "%",
-        "note": 73
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": 1.8,
+          "unite": "%",
+          "note": 67,
+          "precedent": {
+            "valeur": 2.3,
+            "note": 70
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": 42.0,
+          "unite": "Md€",
+          "note": 100,
+          "precedent": {
+            "valeur": 40.9,
+            "note": 100
+          }
+        }
+      },
+      "precedent": {
+        "note": 71
       }
     },
     {
@@ -118,31 +174,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 1.6,
           "unite": "%",
-          "note": 48
+          "note": 48,
+          "precedent": {
+            "valeur": 1.8,
+            "note": 49
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 48.6,
+          "unite": "",
+          "note": 43,
+          "precedent": {
+            "valeur": 49.3,
+            "note": 46
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 2.4,
           "unite": "%",
-          "note": 84
+          "note": 84,
+          "cible": 2.0,
+          "precedent": {
+            "valeur": 2.3,
+            "note": 85
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 15.2,
-          "unite": "x",
-          "note": 70
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": -0.6,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": 0.6,
           "unite": "%",
-          "note": 55
+          "note": 79,
+          "taux_directeur": 3.0,
+          "direction": "baisse",
+          "precedent": {
+            "valeur": 1.0,
+            "note": 82
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": 6.1,
-          "unite": "Md€",
-          "note": 62
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": -9,
+          "unite": "%",
+          "note": 72,
+          "per": 15.2,
+          "moyenne_10ans": 16.7,
+          "precedent": {
+            "valeur": -7,
+            "note": 69
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": 7.4,
+          "unite": "%",
+          "note": 65,
+          "precedent": {
+            "valeur": 10.6,
+            "note": 70
+          }
         }
       },
       "lectures_agents": {
@@ -171,11 +262,30 @@
           "periode": "1 mois"
         }
       ],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": 3.2,
-        "unite": "%",
-        "note": 68
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": -0.6,
+          "unite": "%",
+          "note": 55,
+          "precedent": {
+            "valeur": -0.2,
+            "note": 57
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": 6.1,
+          "unite": "Md€",
+          "note": 62,
+          "precedent": {
+            "valeur": 7.8,
+            "note": 64
+          }
+        }
+      },
+      "precedent": {
+        "note": 64
       }
     },
     {
@@ -192,31 +302,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 2.0,
           "unite": "%",
-          "note": 51
+          "note": 51,
+          "precedent": {
+            "valeur": 2.0,
+            "note": 51
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 49.4,
+          "unite": "",
+          "note": 47,
+          "precedent": {
+            "valeur": 47.9,
+            "note": 39
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 4.1,
           "unite": "%",
-          "note": 56
+          "note": 72,
+          "cible": 3.0,
+          "precedent": {
+            "valeur": 4.2,
+            "note": 71
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 12.8,
-          "unite": "x",
-          "note": 78
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": 0.9,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": 5.4,
           "unite": "%",
-          "note": 62
+          "note": 58,
+          "taux_directeur": 9.5,
+          "direction": "baisse",
+          "precedent": {
+            "valeur": 5.3,
+            "note": 58
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": 7.4,
-          "unite": "Md€",
-          "note": 63
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": 10,
+          "unite": "%",
+          "note": 47,
+          "per": 12.8,
+          "moyenne_10ans": 11.6,
+          "precedent": {
+            "valeur": 8,
+            "note": 50
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": 8.6,
+          "unite": "%",
+          "note": 67,
+          "precedent": {
+            "valeur": 8.9,
+            "note": 67
+          }
         }
       },
       "lectures_agents": {
@@ -238,11 +383,30 @@
         }
       },
       "flux": [],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": 2.1,
-        "unite": "%",
-        "note": 63
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": 0.9,
+          "unite": "%",
+          "note": 62,
+          "precedent": {
+            "valeur": -0.4,
+            "note": 56
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": 7.4,
+          "unite": "Md€",
+          "note": 63,
+          "precedent": {
+            "valeur": 5.7,
+            "note": 61
+          }
+        }
+      },
+      "precedent": {
+        "note": 60
       }
     },
     {
@@ -259,31 +423,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 2.6,
           "unite": "%",
-          "note": 56
+          "note": 56,
+          "precedent": {
+            "valeur": 2.3,
+            "note": 53
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 52.3,
+          "unite": "",
+          "note": 61,
+          "precedent": {
+            "valeur": 53.5,
+            "note": 68
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 3.9,
           "unite": "%",
-          "note": 60
+          "note": 76,
+          "cible": 3.0,
+          "precedent": {
+            "valeur": 4.1,
+            "note": 72
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 8.4,
-          "unite": "x",
-          "note": 94
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": 2.4,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": 9.8,
           "unite": "%",
-          "note": 70
+          "note": 27,
+          "taux_directeur": 13.75,
+          "direction": "baisse",
+          "precedent": {
+            "valeur": 9.9,
+            "note": 26
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": 6.8,
-          "unite": "Md€",
-          "note": 62
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": -22,
+          "unite": "%",
+          "note": 89,
+          "per": 8.4,
+          "moyenne_10ans": 10.8,
+          "precedent": {
+            "valeur": -23,
+            "note": 90
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": 8.8,
+          "unite": "%",
+          "note": 67,
+          "precedent": {
+            "valeur": 9.7,
+            "note": 69
+          }
         }
       },
       "lectures_agents": {
@@ -305,11 +504,30 @@
         }
       },
       "flux": [],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": 3.4,
-        "unite": "%",
-        "note": 69
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": 2.4,
+          "unite": "%",
+          "note": 70,
+          "precedent": {
+            "valeur": 2.5,
+            "note": 70
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": 6.8,
+          "unite": "Md€",
+          "note": 62,
+          "precedent": {
+            "valeur": 7.7,
+            "note": 63
+          }
+        }
+      },
+      "precedent": {
+        "note": 74
       }
     },
     {
@@ -326,31 +544,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 1.2,
           "unite": "%",
-          "note": 45
+          "note": 45,
+          "precedent": {
+            "valeur": 0.9,
+            "note": 42
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 47.5,
+          "unite": "",
+          "note": 38,
+          "precedent": {
+            "valeur": 48.1,
+            "note": 41
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 38.0,
           "unite": "%",
-          "note": 8
+          "note": 8,
+          "cible": null,
+          "precedent": {
+            "valeur": 38.1,
+            "note": 8
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 9.5,
-          "unite": "x",
-          "note": 90
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": -9.8,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": -6.0,
           "unite": "%",
-          "note": 9
+          "note": 32,
+          "taux_directeur": 32.0,
+          "direction": "baisse",
+          "precedent": {
+            "valeur": -6.1,
+            "note": 32
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": -1.4,
-          "unite": "Md€",
-          "note": 53
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": -18,
+          "unite": "%",
+          "note": 83,
+          "per": 9.5,
+          "moyenne_10ans": 11.6,
+          "precedent": {
+            "valeur": -19,
+            "note": 85
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": 13.4,
+          "unite": "%",
+          "note": 74,
+          "precedent": {
+            "valeur": 9.0,
+            "note": 68
+          }
         }
       },
       "lectures_agents": {
@@ -372,11 +625,30 @@
         }
       },
       "flux": [],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": 2.6,
-        "unite": "%",
-        "note": 65
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": -9.8,
+          "unite": "%",
+          "note": 9,
+          "precedent": {
+            "valeur": -8.3,
+            "note": 16
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": -1.4,
+          "unite": "Md€",
+          "note": 53,
+          "precedent": {
+            "valeur": -3.3,
+            "note": 51
+          }
+        }
+      },
+      "precedent": {
+        "note": 43
       }
     },
     {
@@ -393,31 +665,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 0.9,
           "unite": "%",
-          "note": 42
+          "note": 42,
+          "precedent": {
+            "valeur": 0.9,
+            "note": 42
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 49.6,
+          "unite": "",
+          "note": 48,
+          "precedent": {
+            "valeur": 49.5,
+            "note": 48
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 3.2,
           "unite": "%",
-          "note": 71
+          "note": 71,
+          "cible": 2.0,
+          "precedent": {
+            "valeur": 3.3,
+            "note": 69
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 11.9,
-          "unite": "x",
-          "note": 81
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": 0.4,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": 1.3,
           "unite": "%",
-          "note": 60
+          "note": 84,
+          "taux_directeur": 4.5,
+          "direction": "baisse",
+          "precedent": {
+            "valeur": 1.5,
+            "note": 85
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": 2.8,
-          "unite": "Md€",
-          "note": 58
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": -14,
+          "unite": "%",
+          "note": 78,
+          "per": 11.9,
+          "moyenne_10ans": 13.8,
+          "precedent": {
+            "valeur": -16,
+            "note": 81
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": -1.3,
+          "unite": "%",
+          "note": 53,
+          "precedent": {
+            "valeur": 1.5,
+            "note": 57
+          }
         }
       },
       "lectures_agents": {
@@ -446,11 +753,30 @@
           "periode": "1 mois"
         }
       ],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": 0.8,
-        "unite": "%",
-        "note": 58
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": 0.4,
+          "unite": "%",
+          "note": 60,
+          "precedent": {
+            "valeur": 0.8,
+            "note": 62
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": 2.8,
+          "unite": "Md€",
+          "note": 58,
+          "precedent": {
+            "valeur": 2.1,
+            "note": 57
+          }
+        }
+      },
+      "precedent": {
+        "note": 54
       }
     },
     {
@@ -467,31 +793,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 1.1,
           "unite": "%",
-          "note": 44
+          "note": 44,
+          "precedent": {
+            "valeur": 1.0,
+            "note": 43
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 48.8,
+          "unite": "",
+          "note": 44,
+          "precedent": {
+            "valeur": 49.3,
+            "note": 46
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 2.1,
           "unite": "%",
-          "note": 88
+          "note": 88,
+          "cible": 2.0,
+          "precedent": {
+            "valeur": 2.2,
+            "note": 87
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 13.8,
-          "unite": "x",
-          "note": 75
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": -0.3,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": 0.6,
           "unite": "%",
-          "note": 56
+          "note": 79,
+          "taux_directeur": 2.75,
+          "direction": "baisse",
+          "precedent": {
+            "valeur": 0.5,
+            "note": 78
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": 3.4,
-          "unite": "Md€",
-          "note": 59
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": -6,
+          "unite": "%",
+          "note": 68,
+          "per": 13.8,
+          "moyenne_10ans": 14.7,
+          "precedent": {
+            "valeur": -4,
+            "note": 65
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": 13.1,
+          "unite": "%",
+          "note": 73,
+          "precedent": {
+            "valeur": 11.8,
+            "note": 72
+          }
         }
       },
       "lectures_agents": {
@@ -520,11 +881,30 @@
           "periode": "1 mois"
         }
       ],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": 2.6,
-        "unite": "%",
-        "note": 65
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": -0.3,
+          "unite": "%",
+          "note": 56,
+          "precedent": {
+            "valeur": 0.2,
+            "note": 59
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": 3.4,
+          "unite": "Md€",
+          "note": 59,
+          "precedent": {
+            "valeur": 3.8,
+            "note": 59
+          }
+        }
+      },
+      "precedent": {
+        "note": 60
       }
     },
     {
@@ -541,31 +921,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 0.6,
           "unite": "%",
-          "note": 40
+          "note": 40,
+          "precedent": {
+            "valeur": 0.6,
+            "note": 40
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 47.8,
+          "unite": "",
+          "note": 39,
+          "precedent": {
+            "valeur": 46.5,
+            "note": 32
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 2.3,
           "unite": "%",
-          "note": 85
+          "note": 85,
+          "cible": 2.0,
+          "precedent": {
+            "valeur": 2.7,
+            "note": 79
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 13.1,
-          "unite": "x",
-          "note": 77
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": -0.3,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": 0.5,
           "unite": "%",
-          "note": 56
+          "note": 78,
+          "taux_directeur": 2.75,
+          "direction": "baisse",
+          "precedent": {
+            "valeur": 0.0,
+            "note": 74
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": -0.8,
-          "unite": "Md€",
-          "note": 54
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": -4,
+          "unite": "%",
+          "note": 65,
+          "per": 13.1,
+          "moyenne_10ans": 13.6,
+          "precedent": {
+            "valeur": -4,
+            "note": 65
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": 6.2,
+          "unite": "%",
+          "note": 64,
+          "precedent": {
+            "valeur": 2.5,
+            "note": 58
+          }
         }
       },
       "lectures_agents": {
@@ -600,11 +1015,30 @@
           "periode": "1 mois"
         }
       ],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": 1.3,
-        "unite": "%",
-        "note": 60
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": -0.3,
+          "unite": "%",
+          "note": 56,
+          "precedent": {
+            "valeur": -0.2,
+            "note": 57
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": -0.8,
+          "unite": "Md€",
+          "note": 54,
+          "precedent": {
+            "valeur": 0.7,
+            "note": 56
+          }
+        }
+      },
+      "precedent": {
+        "note": 51
       }
     },
     {
@@ -621,31 +1055,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 1.3,
           "unite": "%",
-          "note": 45
+          "note": 45,
+          "precedent": {
+            "valeur": 1.5,
+            "note": 47
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 48.4,
+          "unite": "",
+          "note": 42,
+          "precedent": {
+            "valeur": 49.3,
+            "note": 46
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 0.7,
           "unite": "%",
-          "note": 69
+          "note": 85,
+          "cible": 1.0,
+          "precedent": {
+            "valeur": 0.3,
+            "note": 79
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 17.4,
-          "unite": "x",
-          "note": 62
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": 1.2,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": -0.2,
           "unite": "%",
-          "note": 64
+          "note": 68,
+          "taux_directeur": 0.5,
+          "direction": "stable",
+          "precedent": {
+            "valeur": 0.2,
+            "note": 71
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": 4.9,
-          "unite": "Md€",
-          "note": 60
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": 2,
+          "unite": "%",
+          "note": 57,
+          "per": 17.4,
+          "moyenne_10ans": 17.1,
+          "precedent": {
+            "valeur": 2,
+            "note": 57
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": 8.6,
+          "unite": "%",
+          "note": 67,
+          "precedent": {
+            "valeur": 6.8,
+            "note": 65
+          }
         }
       },
       "lectures_agents": {
@@ -674,11 +1143,30 @@
           "periode": "1 mois"
         }
       ],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": 1.0,
-        "unite": "%",
-        "note": 59
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": 1.2,
+          "unite": "%",
+          "note": 64,
+          "precedent": {
+            "valeur": 2.3,
+            "note": 70
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": 4.9,
+          "unite": "Md€",
+          "note": 60,
+          "precedent": {
+            "valeur": 3.9,
+            "note": 59
+          }
+        }
+      },
+      "precedent": {
+        "note": 63
       }
     },
     {
@@ -695,31 +1183,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 3.1,
           "unite": "%",
-          "note": 60
+          "note": 60,
+          "precedent": {
+            "valeur": 3.0,
+            "note": 59
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 51.1,
+          "unite": "",
+          "note": 56,
+          "precedent": {
+            "valeur": 50.2,
+            "note": 51
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 1.9,
           "unite": "%",
-          "note": 88
+          "note": 88,
+          "cible": 2.0,
+          "precedent": {
+            "valeur": 1.7,
+            "note": 85
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 16.2,
-          "unite": "x",
-          "note": 66
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": 0.0,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": 3.1,
           "unite": "%",
-          "note": 58
+          "note": 74,
+          "taux_directeur": 5.0,
+          "direction": "baisse",
+          "precedent": {
+            "valeur": 3.5,
+            "note": 71
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": 5.5,
-          "unite": "Md€",
-          "note": 61
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": 5,
+          "unite": "%",
+          "note": 54,
+          "per": 16.2,
+          "moyenne_10ans": 15.4,
+          "precedent": {
+            "valeur": 7,
+            "note": 51
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": -3.2,
+          "unite": "%",
+          "note": 51,
+          "precedent": {
+            "valeur": -2.5,
+            "note": 52
+          }
         }
       },
       "lectures_agents": {
@@ -754,11 +1277,30 @@
           "periode": "1 mois"
         }
       ],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": -0.9,
-        "unite": "%",
-        "note": 51
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": 0.0,
+          "unite": "%",
+          "note": 58,
+          "precedent": {
+            "valeur": 0.2,
+            "note": 59
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": 5.5,
+          "unite": "Md€",
+          "note": 61,
+          "precedent": {
+            "valeur": 5.8,
+            "note": 61
+          }
+        }
+      },
+      "precedent": {
+        "note": 54
       }
     },
     {
@@ -775,31 +1317,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 0.8,
           "unite": "%",
-          "note": 41
+          "note": 41,
+          "precedent": {
+            "valeur": 0.6,
+            "note": 40
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 48.2,
+          "unite": "",
+          "note": 41,
+          "precedent": {
+            "valeur": 47.9,
+            "note": 39
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 4.9,
           "unite": "%",
-          "note": 44
+          "note": 84,
+          "cible": 4.5,
+          "precedent": {
+            "valeur": 4.7,
+            "note": 87
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 10.3,
-          "unite": "x",
-          "note": 87
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": -3.4,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": 2.6,
           "unite": "%",
-          "note": 41
+          "note": 77,
+          "taux_directeur": 7.5,
+          "direction": "baisse",
+          "precedent": {
+            "valeur": 2.8,
+            "note": 76
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": -2.2,
-          "unite": "Md€",
-          "note": 53
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": 6,
+          "unite": "%",
+          "note": 52,
+          "per": 10.3,
+          "moyenne_10ans": 9.7,
+          "precedent": {
+            "valeur": 4,
+            "note": 55
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": 9.7,
+          "unite": "%",
+          "note": 69,
+          "precedent": {
+            "valeur": 9.8,
+            "note": 69
+          }
         }
       },
       "lectures_agents": {
@@ -828,11 +1405,30 @@
           "periode": "1 mois"
         }
       ],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": 3.9,
-        "unite": "%",
-        "note": 71
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": -3.4,
+          "unite": "%",
+          "note": 41,
+          "precedent": {
+            "valeur": -4.2,
+            "note": 37
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": -2.2,
+          "unite": "Md€",
+          "note": 53,
+          "precedent": {
+            "valeur": -4.1,
+            "note": 50
+          }
+        }
+      },
+      "precedent": {
+        "note": 44
       }
     },
     {
@@ -849,31 +1445,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 6.6,
           "unite": "%",
-          "note": 88
+          "note": 88,
+          "precedent": {
+            "valeur": 6.7,
+            "note": 89
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 57.4,
+          "unite": "",
+          "note": 87,
+          "precedent": {
+            "valeur": 58.6,
+            "note": 93
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 4.0,
           "unite": "%",
-          "note": 58
+          "note": 90,
+          "cible": 4.0,
+          "precedent": {
+            "valeur": 4.2,
+            "note": 87
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 22.8,
-          "unite": "x",
-          "note": 43
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": -0.8,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": 2.2,
           "unite": "%",
-          "note": 54
+          "note": 80,
+          "taux_directeur": 6.25,
+          "direction": "baisse",
+          "precedent": {
+            "valeur": 2.3,
+            "note": 79
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": 18.6,
-          "unite": "Md€",
-          "note": 75
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": 12,
+          "unite": "%",
+          "note": 44,
+          "per": 22.8,
+          "moyenne_10ans": 20.4,
+          "precedent": {
+            "valeur": 15,
+            "note": 40
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": 14.7,
+          "unite": "%",
+          "note": 76,
+          "precedent": {
+            "valeur": 17.9,
+            "note": 80
+          }
         }
       },
       "lectures_agents": {
@@ -895,11 +1526,30 @@
         }
       },
       "flux": [],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": 3.8,
-        "unite": "%",
-        "note": 70
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": -0.8,
+          "unite": "%",
+          "note": 54,
+          "precedent": {
+            "valeur": -1.5,
+            "note": 50
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": 18.6,
+          "unite": "Md€",
+          "note": 75,
+          "precedent": {
+            "valeur": 19.7,
+            "note": 77
+          }
+        }
+      },
+      "precedent": {
+        "note": 72
       }
     },
     {
@@ -916,31 +1566,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 3.6,
           "unite": "%",
-          "note": 64
+          "note": 64,
+          "precedent": {
+            "valeur": 3.3,
+            "note": 61
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 48.6,
+          "unite": "",
+          "note": 43,
+          "precedent": {
+            "valeur": 47.5,
+            "note": 38
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": -0.4,
           "unite": "%",
-          "note": 52
+          "note": 36,
+          "cible": 3.0,
+          "precedent": {
+            "valeur": -0.6,
+            "note": 32
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 10.6,
-          "unite": "x",
-          "note": 86
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": -2.5,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": 3.5,
           "unite": "%",
-          "note": 46
+          "note": 71,
+          "taux_directeur": 3.1,
+          "direction": "baisse",
+          "precedent": {
+            "valeur": 3.7,
+            "note": 70
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": -18.0,
-          "unite": "Md€",
-          "note": 35
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": -24,
+          "unite": "%",
+          "note": 91,
+          "per": 10.6,
+          "moyenne_10ans": 13.9,
+          "precedent": {
+            "valeur": -26,
+            "note": 94
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": -14.9,
+          "unite": "%",
+          "note": 34,
+          "precedent": {
+            "valeur": -16.2,
+            "note": 32
+          }
         }
       },
       "lectures_agents": {
@@ -975,11 +1660,30 @@
           "periode": "1 mois"
         }
       ],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": -5.7,
-        "unite": "%",
-        "note": 32
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": -2.5,
+          "unite": "%",
+          "note": 46,
+          "precedent": {
+            "valeur": -1.8,
+            "note": 49
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": -18.0,
+          "unite": "Md€",
+          "note": 35,
+          "precedent": {
+            "valeur": -19.6,
+            "note": 33
+          }
+        }
+      },
+      "precedent": {
+        "note": 41
       }
     },
     {
@@ -996,31 +1700,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 2.4,
           "unite": "%",
-          "note": 54
+          "note": 54,
+          "precedent": {
+            "valeur": 2.2,
+            "note": 53
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 52.1,
+          "unite": "",
+          "note": 61,
+          "precedent": {
+            "valeur": 52.1,
+            "note": 61
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 2.0,
           "unite": "%",
-          "note": 90
+          "note": 90,
+          "cible": 2.0,
+          "precedent": {
+            "valeur": 1.8,
+            "note": 87
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 11.4,
-          "unite": "x",
-          "note": 83
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": 1.6,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": 0.8,
           "unite": "%",
-          "note": 66
+          "note": 80,
+          "taux_directeur": 2.75,
+          "direction": "baisse",
+          "precedent": {
+            "valeur": 0.9,
+            "note": 81
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": 9.8,
-          "unite": "Md€",
-          "note": 66
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": -12,
+          "unite": "%",
+          "note": 76,
+          "per": 11.4,
+          "moyenne_10ans": 13.0,
+          "precedent": {
+            "valeur": -9,
+            "note": 72
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": 23.3,
+          "unite": "%",
+          "note": 88,
+          "precedent": {
+            "valeur": 21.4,
+            "note": 85
+          }
         }
       },
       "lectures_agents": {
@@ -1055,11 +1794,30 @@
           "periode": "1 mois"
         }
       ],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": 8.0,
-        "unite": "%",
-        "note": 87
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": 1.6,
+          "unite": "%",
+          "note": 66,
+          "precedent": {
+            "valeur": 2.7,
+            "note": 72
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": 9.8,
+          "unite": "Md€",
+          "note": 66,
+          "precedent": {
+            "valeur": 11.6,
+            "note": 68
+          }
+        }
+      },
+      "precedent": {
+        "note": 74
       }
     },
     {
@@ -1076,31 +1834,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 1.2,
           "unite": "%",
-          "note": 45
+          "note": 45,
+          "precedent": {
+            "valeur": 1.3,
+            "note": 45
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 50.4,
+          "unite": "",
+          "note": 52,
+          "precedent": {
+            "valeur": 51.2,
+            "note": 56
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 2.2,
           "unite": "%",
-          "note": 87
+          "note": 87,
+          "cible": 2.0,
+          "precedent": {
+            "valeur": 2.1,
+            "note": 88
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 15.6,
-          "unite": "x",
-          "note": 68
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": 2.4,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": -1.7,
           "unite": "%",
-          "note": 70
+          "note": 53,
+          "taux_directeur": 0.5,
+          "direction": "hausse",
+          "precedent": {
+            "valeur": -1.9,
+            "note": 51
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": 13.8,
-          "unite": "Md€",
-          "note": 70
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": 3,
+          "unite": "%",
+          "note": 56,
+          "per": 15.6,
+          "moyenne_10ans": 15.1,
+          "precedent": {
+            "valeur": 2,
+            "note": 57
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": 14.1,
+          "unite": "%",
+          "note": 75,
+          "precedent": {
+            "valeur": 10.0,
+            "note": 69
+          }
         }
       },
       "lectures_agents": {
@@ -1135,11 +1928,30 @@
           "periode": "1 mois"
         }
       ],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": 5.2,
-        "unite": "%",
-        "note": 76
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": 2.4,
+          "unite": "%",
+          "note": 70,
+          "precedent": {
+            "valeur": 2.2,
+            "note": 69
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": 13.8,
+          "unite": "Md€",
+          "note": 70,
+          "precedent": {
+            "valeur": 14.7,
+            "note": 71
+          }
+        }
+      },
+      "precedent": {
+        "note": 69
       }
     },
     {
@@ -1156,31 +1968,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 1.7,
           "unite": "%",
-          "note": 49
+          "note": 49,
+          "precedent": {
+            "valeur": 1.4,
+            "note": 46
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 51.1,
+          "unite": "",
+          "note": 56,
+          "precedent": {
+            "valeur": 52.4,
+            "note": 62
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 3.0,
           "unite": "%",
-          "note": 74
+          "note": 82,
+          "cible": 2.5,
+          "precedent": {
+            "valeur": 3.0,
+            "note": 82
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 17.0,
-          "unite": "x",
-          "note": 64
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": -1.1,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": 1.1,
           "unite": "%",
-          "note": 52
+          "note": 77,
+          "taux_directeur": 4.1,
+          "direction": "stable",
+          "precedent": {
+            "valeur": 1.1,
+            "note": 77
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": 2.6,
-          "unite": "Md€",
-          "note": 58
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": 4,
+          "unite": "%",
+          "note": 55,
+          "per": 17.0,
+          "moyenne_10ans": 16.3,
+          "precedent": {
+            "valeur": 6,
+            "note": 52
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": 2.4,
+          "unite": "%",
+          "note": 58,
+          "precedent": {
+            "valeur": 4.7,
+            "note": 62
+          }
         }
       },
       "lectures_agents": {
@@ -1209,11 +2056,30 @@
           "periode": "1 mois"
         }
       ],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": 1.2,
-        "unite": "%",
-        "note": 60
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": -1.1,
+          "unite": "%",
+          "note": 52,
+          "precedent": {
+            "valeur": 0.4,
+            "note": 60
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": 2.6,
+          "unite": "Md€",
+          "note": 58,
+          "precedent": {
+            "valeur": 3.0,
+            "note": 58
+          }
+        }
+      },
+      "precedent": {
+        "note": 64
       }
     },
     {
@@ -1230,31 +2096,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 0.7,
           "unite": "%",
-          "note": 41
+          "note": 41,
+          "precedent": {
+            "valeur": 1.0,
+            "note": 43
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 48.0,
+          "unite": "",
+          "note": 40,
+          "precedent": {
+            "valeur": 47.8,
+            "note": 39
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 1.8,
           "unite": "%",
-          "note": 87
+          "note": 87,
+          "cible": 2.0,
+          "precedent": {
+            "valeur": 2.1,
+            "note": 88
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 11.2,
-          "unite": "x",
-          "note": 84
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": -0.3,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": 0.9,
           "unite": "%",
-          "note": 56
+          "note": 81,
+          "taux_directeur": 2.75,
+          "direction": "baisse",
+          "precedent": {
+            "valeur": 0.6,
+            "note": 79
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": 2.1,
-          "unite": "Md€",
-          "note": 57
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": -1,
+          "unite": "%",
+          "note": 61,
+          "per": 11.2,
+          "moyenne_10ans": 11.3,
+          "precedent": {
+            "valeur": -5,
+            "note": 66
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": 11.9,
+          "unite": "%",
+          "note": 72,
+          "precedent": {
+            "valeur": 16.5,
+            "note": 78
+          }
         }
       },
       "lectures_agents": {
@@ -1276,11 +2177,30 @@
         }
       },
       "flux": [],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": 3.2,
-        "unite": "%",
-        "note": 68
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": -0.3,
+          "unite": "%",
+          "note": 56,
+          "precedent": {
+            "valeur": 0.3,
+            "note": 60
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": 2.1,
+          "unite": "Md€",
+          "note": 57,
+          "precedent": {
+            "valeur": 3.6,
+            "note": 59
+          }
+        }
+      },
+      "precedent": {
+        "note": 58
       }
     },
     {
@@ -1297,31 +2217,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 2.6,
           "unite": "%",
-          "note": 56
+          "note": 56,
+          "precedent": {
+            "valeur": 2.8,
+            "note": 57
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 51.6,
+          "unite": "",
+          "note": 58,
+          "precedent": {
+            "valeur": 50.8,
+            "note": 54
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 2.6,
           "unite": "%",
-          "note": 80
+          "note": 80,
+          "cible": 2.0,
+          "precedent": {
+            "valeur": 2.8,
+            "note": 77
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 11.8,
-          "unite": "x",
-          "note": 82
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": -0.3,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": 0.1,
           "unite": "%",
-          "note": 56
+          "note": 75,
+          "taux_directeur": 2.75,
+          "direction": "baisse",
+          "precedent": {
+            "valeur": -0.0,
+            "note": 74
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": 5.6,
-          "unite": "Md€",
-          "note": 61
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": 0,
+          "unite": "%",
+          "note": 60,
+          "per": 11.8,
+          "moyenne_10ans": 11.8,
+          "precedent": {
+            "valeur": 3,
+            "note": 56
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": 13.2,
+          "unite": "%",
+          "note": 73,
+          "precedent": {
+            "valeur": 16.2,
+            "note": 78
+          }
         }
       },
       "lectures_agents": {
@@ -1350,11 +2305,30 @@
           "periode": "1 mois"
         }
       ],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": 4.1,
-        "unite": "%",
-        "note": 71
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": -0.3,
+          "unite": "%",
+          "note": 56,
+          "precedent": {
+            "valeur": 0.5,
+            "note": 60
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": 5.6,
+          "unite": "Md€",
+          "note": 61,
+          "precedent": {
+            "valeur": 6.1,
+            "note": 62
+          }
+        }
+      },
+      "precedent": {
+        "note": 66
       }
     },
     {
@@ -1371,31 +2345,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 1.2,
           "unite": "%",
-          "note": 45
+          "note": 45,
+          "precedent": {
+            "valeur": 1.2,
+            "note": 45
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 48.4,
+          "unite": "",
+          "note": 42,
+          "precedent": {
+            "valeur": 47.8,
+            "note": 39
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 2.9,
           "unite": "%",
-          "note": 76
+          "note": 76,
+          "cible": 2.0,
+          "precedent": {
+            "valeur": 2.7,
+            "note": 79
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 15.4,
-          "unite": "x",
-          "note": 69
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": -0.3,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": -0.1,
           "unite": "%",
-          "note": 56
+          "note": 74,
+          "taux_directeur": 2.75,
+          "direction": "baisse",
+          "precedent": {
+            "valeur": 0.3,
+            "note": 77
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": 4.8,
-          "unite": "Md€",
-          "note": 60
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": 10,
+          "unite": "%",
+          "note": 47,
+          "per": 15.4,
+          "moyenne_10ans": 14.0,
+          "precedent": {
+            "valeur": 11,
+            "note": 46
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": 5.1,
+          "unite": "%",
+          "note": 62,
+          "precedent": {
+            "valeur": 3.0,
+            "note": 59
+          }
         }
       },
       "lectures_agents": {
@@ -1424,11 +2433,30 @@
           "periode": "1 mois"
         }
       ],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": 2.4,
-        "unite": "%",
-        "note": 65
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": -0.3,
+          "unite": "%",
+          "note": 56,
+          "precedent": {
+            "valeur": -1.4,
+            "note": 51
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": 4.8,
+          "unite": "Md€",
+          "note": 60,
+          "precedent": {
+            "valeur": 3.2,
+            "note": 59
+          }
+        }
+      },
+      "precedent": {
+        "note": 64
       }
     },
     {
@@ -1445,31 +2473,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 1.4,
           "unite": "%",
-          "note": 46
+          "note": 46,
+          "precedent": {
+            "valeur": 1.6,
+            "note": 48
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 48.8,
+          "unite": "",
+          "note": 44,
+          "precedent": {
+            "valeur": 49.6,
+            "note": 48
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 1.6,
           "unite": "%",
-          "note": 84
+          "note": 84,
+          "cible": 2.0,
+          "precedent": {
+            "valeur": 1.8,
+            "note": 87
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 16.8,
-          "unite": "x",
-          "note": 64
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": 1.9,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": 0.6,
           "unite": "%",
-          "note": 68
+          "note": 79,
+          "taux_directeur": 2.25,
+          "direction": "baisse",
+          "precedent": {
+            "valeur": 0.7,
+            "note": 79
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": 2.4,
-          "unite": "Md€",
-          "note": 58
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": -13,
+          "unite": "%",
+          "note": 77,
+          "per": 16.8,
+          "moyenne_10ans": 19.3,
+          "precedent": {
+            "valeur": -16,
+            "note": 81
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": 6.0,
+          "unite": "%",
+          "note": 63,
+          "precedent": {
+            "valeur": 10.9,
+            "note": 70
+          }
         }
       },
       "lectures_agents": {
@@ -1491,11 +2554,30 @@
         }
       },
       "flux": [],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": 2.0,
-        "unite": "%",
-        "note": 63
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": 1.9,
+          "unite": "%",
+          "note": 68,
+          "precedent": {
+            "valeur": 2.8,
+            "note": 72
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": 2.4,
+          "unite": "Md€",
+          "note": 58,
+          "precedent": {
+            "valeur": 0.6,
+            "note": 56
+          }
+        }
+      },
+      "precedent": {
+        "note": 62
       }
     },
     {
@@ -1512,31 +2594,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 3.2,
           "unite": "%",
-          "note": 61
+          "note": 61,
+          "precedent": {
+            "valeur": 3.4,
+            "note": 62
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 50.7,
+          "unite": "",
+          "note": 54,
+          "precedent": {
+            "valeur": 50.9,
+            "note": 54
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 3.8,
           "unite": "%",
-          "note": 61
+          "note": 69,
+          "cible": 2.5,
+          "precedent": {
+            "valeur": 4.1,
+            "note": 64
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 9.6,
-          "unite": "x",
-          "note": 89
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": 1.4,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": 2.0,
           "unite": "%",
-          "note": 65
+          "note": 76,
+          "taux_directeur": 5.75,
+          "direction": "stable",
+          "precedent": {
+            "valeur": 1.7,
+            "note": 79
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": 6.2,
-          "unite": "Md€",
-          "note": 62
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": -4,
+          "unite": "%",
+          "note": 65,
+          "per": 9.6,
+          "moyenne_10ans": 10.0,
+          "precedent": {
+            "valeur": -7,
+            "note": 69
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": 12.5,
+          "unite": "%",
+          "note": 72,
+          "precedent": {
+            "valeur": 15.7,
+            "note": 77
+          }
         }
       },
       "lectures_agents": {
@@ -1558,11 +2675,30 @@
         }
       },
       "flux": [],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": 4.9,
-        "unite": "%",
-        "note": 75
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": 1.4,
+          "unite": "%",
+          "note": 65,
+          "precedent": {
+            "valeur": 1.1,
+            "note": 64
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": 6.2,
+          "unite": "Md€",
+          "note": 62,
+          "precedent": {
+            "valeur": 4.5,
+            "note": 60
+          }
+        }
+      },
+      "precedent": {
+        "note": 68
       }
     },
     {
@@ -1579,31 +2715,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 4.8,
           "unite": "%",
-          "note": 73
+          "note": 73,
+          "precedent": {
+            "valeur": 4.8,
+            "note": 73
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 54.2,
+          "unite": "",
+          "note": 71,
+          "precedent": {
+            "valeur": 55.4,
+            "note": 77
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 1.9,
           "unite": "%",
-          "note": 88
+          "note": 88,
+          "cible": 2.0,
+          "precedent": {
+            "valeur": 2.2,
+            "note": 87
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 18.5,
-          "unite": "x",
-          "note": 58
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": 2.1,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": 0.1,
           "unite": "%",
-          "note": 68
+          "note": 70,
+          "taux_directeur": 2.0,
+          "direction": "stable",
+          "precedent": {
+            "valeur": -0.2,
+            "note": 68
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": 22.4,
-          "unite": "Md€",
-          "note": 80
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": 16,
+          "unite": "%",
+          "note": 39,
+          "per": 18.5,
+          "moyenne_10ans": 15.9,
+          "precedent": {
+            "valeur": 15,
+            "note": 40
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": 37.2,
+          "unite": "%",
+          "note": 100,
+          "precedent": {
+            "valeur": 34.1,
+            "note": 100
+          }
         }
       },
       "lectures_agents": {
@@ -1632,11 +2803,30 @@
           "periode": "1 mois"
         }
       ],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": 10.8,
-        "unite": "%",
-        "note": 98
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": 2.1,
+          "unite": "%",
+          "note": 68,
+          "precedent": {
+            "valeur": 2.2,
+            "note": 69
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": 22.4,
+          "unite": "Md€",
+          "note": 80,
+          "precedent": {
+            "valeur": 20.9,
+            "note": 78
+          }
+        }
+      },
+      "precedent": {
+        "note": 79
       }
     },
     {
@@ -1653,31 +2843,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 5.0,
           "unite": "%",
-          "note": 75
+          "note": 75,
+          "precedent": {
+            "valeur": 5.2,
+            "note": 77
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 52.9,
+          "unite": "",
+          "note": 64,
+          "precedent": {
+            "valeur": 52.6,
+            "note": 63
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 2.4,
           "unite": "%",
-          "note": 84
+          "note": 88,
+          "cible": 2.5,
+          "precedent": {
+            "valeur": 2.4,
+            "note": 88
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 13.9,
-          "unite": "x",
-          "note": 74
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": -1.0,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": 3.4,
           "unite": "%",
-          "note": 53
+          "note": 72,
+          "taux_directeur": 5.75,
+          "direction": "baisse",
+          "precedent": {
+            "valeur": 3.4,
+            "note": 72
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": 7.2,
-          "unite": "Md€",
-          "note": 63
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": 3,
+          "unite": "%",
+          "note": 56,
+          "per": 13.9,
+          "moyenne_10ans": 13.5,
+          "precedent": {
+            "valeur": 0,
+            "note": 60
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": 2.6,
+          "unite": "%",
+          "note": 59,
+          "precedent": {
+            "valeur": 5.6,
+            "note": 63
+          }
         }
       },
       "lectures_agents": {
@@ -1699,11 +2924,30 @@
         }
       },
       "flux": [],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": 0.2,
-        "unite": "%",
-        "note": 56
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": -1.0,
+          "unite": "%",
+          "note": 53,
+          "precedent": {
+            "valeur": 0.3,
+            "note": 60
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": 7.2,
+          "unite": "Md€",
+          "note": 63,
+          "precedent": {
+            "valeur": 8.7,
+            "note": 65
+          }
+        }
+      },
+      "precedent": {
+        "note": 64
       }
     },
     {
@@ -1720,31 +2964,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 6.4,
           "unite": "%",
-          "note": 86
+          "note": 86,
+          "precedent": {
+            "valeur": 6.5,
+            "note": 87
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 54.5,
+          "unite": "",
+          "note": 72,
+          "precedent": {
+            "valeur": 53.4,
+            "note": 67
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 3.1,
           "unite": "%",
-          "note": 72
+          "note": 68,
+          "cible": 4.5,
+          "precedent": {
+            "valeur": 3.4,
+            "note": 72
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 12.6,
-          "unite": "x",
-          "note": 79
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": -0.6,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": 1.4,
           "unite": "%",
-          "note": 55
+          "note": 79,
+          "taux_directeur": 4.5,
+          "direction": "stable",
+          "precedent": {
+            "valeur": 1.1,
+            "note": 77
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": 9.1,
-          "unite": "Md€",
-          "note": 65
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": -5,
+          "unite": "%",
+          "note": 66,
+          "per": 12.6,
+          "moyenne_10ans": 13.3,
+          "precedent": {
+            "valeur": -6,
+            "note": 68
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": 15.3,
+          "unite": "%",
+          "note": 76,
+          "precedent": {
+            "valeur": 11.5,
+            "note": 71
+          }
         }
       },
       "lectures_agents": {
@@ -1766,11 +3045,30 @@
         }
       },
       "flux": [],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": 4.1,
-        "unite": "%",
-        "note": 71
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": -0.6,
+          "unite": "%",
+          "note": 55,
+          "precedent": {
+            "valeur": -0.9,
+            "note": 54
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": 9.1,
+          "unite": "Md€",
+          "note": 65,
+          "precedent": {
+            "valeur": 7.4,
+            "note": 63
+          }
+        }
+      },
+      "precedent": {
+        "note": 66
       }
     },
     {
@@ -1787,31 +3085,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 2.8,
           "unite": "%",
-          "note": 57
+          "note": 57,
+          "precedent": {
+            "valeur": 2.9,
+            "note": 58
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 51.5,
+          "unite": "",
+          "note": 58,
+          "precedent": {
+            "valeur": 52.2,
+            "note": 61
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 2.2,
           "unite": "%",
-          "note": 87
+          "note": 87,
+          "cible": 2.0,
+          "precedent": {
+            "valeur": 1.9,
+            "note": 88
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 13.2,
-          "unite": "x",
-          "note": 77
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": 1.1,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": 0.8,
           "unite": "%",
-          "note": 64
+          "note": 75,
+          "taux_directeur": 3.0,
+          "direction": "stable",
+          "precedent": {
+            "valeur": 1.1,
+            "note": 77
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": 8.8,
-          "unite": "Md€",
-          "note": 65
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": -3,
+          "unite": "%",
+          "note": 64,
+          "per": 13.2,
+          "moyenne_10ans": 13.6,
+          "precedent": {
+            "valeur": 1,
+            "note": 59
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": 13.6,
+          "unite": "%",
+          "note": 74,
+          "precedent": {
+            "valeur": 14.6,
+            "note": 75
+          }
         }
       },
       "lectures_agents": {
@@ -1840,11 +3173,30 @@
           "periode": "1 mois"
         }
       ],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": 2.8,
-        "unite": "%",
-        "note": 66
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": 1.1,
+          "unite": "%",
+          "note": 64,
+          "precedent": {
+            "valeur": -0.3,
+            "note": 56
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": 8.8,
+          "unite": "Md€",
+          "note": 65,
+          "precedent": {
+            "valeur": 7.5,
+            "note": 63
+          }
+        }
+      },
+      "precedent": {
+        "note": 73
       }
     },
     {
@@ -1861,31 +3213,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 2.0,
           "unite": "%",
-          "note": 51
+          "note": 51,
+          "precedent": {
+            "valeur": 2.2,
+            "note": 53
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 49.7,
+          "unite": "",
+          "note": 49,
+          "precedent": {
+            "valeur": 48.5,
+            "note": 42
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 0.8,
           "unite": "%",
-          "note": 71
+          "note": 71,
+          "cible": 2.0,
+          "precedent": {
+            "valeur": 0.9,
+            "note": 72
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 14.6,
-          "unite": "x",
-          "note": 72
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": -0.9,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": 1.2,
           "unite": "%",
-          "note": 54
+          "note": 83,
+          "taux_directeur": 2.0,
+          "direction": "baisse",
+          "precedent": {
+            "valeur": 1.1,
+            "note": 82
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": -1.5,
-          "unite": "Md€",
-          "note": 53
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": 6,
+          "unite": "%",
+          "note": 52,
+          "per": 14.6,
+          "moyenne_10ans": 13.8,
+          "precedent": {
+            "valeur": 8,
+            "note": 50
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": -3.0,
+          "unite": "%",
+          "note": 51,
+          "precedent": {
+            "valeur": -5.2,
+            "note": 48
+          }
         }
       },
       "lectures_agents": {
@@ -1907,11 +3294,30 @@
         }
       },
       "flux": [],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": -1.0,
-        "unite": "%",
-        "note": 51
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": -0.9,
+          "unite": "%",
+          "note": 54,
+          "precedent": {
+            "valeur": 0.2,
+            "note": 59
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": -1.5,
+          "unite": "Md€",
+          "note": 53,
+          "precedent": {
+            "valeur": 0.0,
+            "note": 55
+          }
+        }
+      },
+      "precedent": {
+        "note": 53
       }
     },
     {
@@ -1928,31 +3334,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 2.1,
           "unite": "%",
-          "note": 52
+          "note": 52,
+          "precedent": {
+            "valeur": 1.8,
+            "note": 49
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 49.3,
+          "unite": "",
+          "note": 46,
+          "precedent": {
+            "valeur": 49.6,
+            "note": 48
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 3.9,
           "unite": "%",
-          "note": 60
+          "note": 76,
+          "cible": 3.0,
+          "precedent": {
+            "valeur": 4.2,
+            "note": 71
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 11.4,
-          "unite": "x",
-          "note": 83
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": -1.2,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": 1.1,
           "unite": "%",
-          "note": 52
+          "note": 82,
+          "taux_directeur": 5.0,
+          "direction": "baisse",
+          "precedent": {
+            "valeur": 0.8,
+            "note": 80
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": 1.9,
-          "unite": "Md€",
-          "note": 57
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": 10,
+          "unite": "%",
+          "note": 47,
+          "per": 11.4,
+          "moyenne_10ans": 10.4,
+          "precedent": {
+            "valeur": 9,
+            "note": 48
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": 7.8,
+          "unite": "%",
+          "note": 66,
+          "precedent": {
+            "valeur": 2.9,
+            "note": 59
+          }
         }
       },
       "lectures_agents": {
@@ -1974,11 +3415,30 @@
         }
       },
       "flux": [],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": 2.7,
-        "unite": "%",
-        "note": 66
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": -1.2,
+          "unite": "%",
+          "note": 52,
+          "precedent": {
+            "valeur": -2.3,
+            "note": 46
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": 1.9,
+          "unite": "Md€",
+          "note": 57,
+          "precedent": {
+            "valeur": 0.7,
+            "note": 56
+          }
+        }
+      },
+      "precedent": {
+        "note": 59
       }
     },
     {
@@ -1995,31 +3455,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 1.5,
           "unite": "%",
-          "note": 47
+          "note": 47,
+          "precedent": {
+            "valeur": 1.7,
+            "note": 49
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 50.0,
+          "unite": "",
+          "note": 50,
+          "precedent": {
+            "valeur": 49.3,
+            "note": 46
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 5.4,
           "unite": "%",
-          "note": 36
+          "note": 52,
+          "cible": 3.0,
+          "precedent": {
+            "valeur": 5.7,
+            "note": 47
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 7.6,
-          "unite": "x",
-          "note": 96
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": -2.4,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": 4.1,
           "unite": "%",
-          "note": 46
+          "note": 67,
+          "taux_directeur": 9.5,
+          "direction": "baisse",
+          "precedent": {
+            "valeur": 4.0,
+            "note": 68
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": -0.9,
-          "unite": "Md€",
-          "note": 54
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": 3,
+          "unite": "%",
+          "note": 56,
+          "per": 7.6,
+          "moyenne_10ans": 7.4,
+          "precedent": {
+            "valeur": 1,
+            "note": 59
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": -12.2,
+          "unite": "%",
+          "note": 38,
+          "precedent": {
+            "valeur": -8.6,
+            "note": 43
+          }
         }
       },
       "lectures_agents": {
@@ -2041,11 +3536,30 @@
         }
       },
       "flux": [],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": -2.8,
-        "unite": "%",
-        "note": 44
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": -2.4,
+          "unite": "%",
+          "note": 46,
+          "precedent": {
+            "valeur": -1.4,
+            "note": 51
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": -0.9,
+          "unite": "Md€",
+          "note": 54,
+          "precedent": {
+            "valeur": 0.2,
+            "note": 55
+          }
+        }
+      },
+      "precedent": {
+        "note": 45
       }
     },
     {
@@ -2062,31 +3576,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 3.9,
           "unite": "%",
-          "note": 66
+          "note": 66,
+          "precedent": {
+            "valeur": 3.7,
+            "note": 65
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 51.0,
+          "unite": "",
+          "note": 55,
+          "precedent": {
+            "valeur": 50.6,
+            "note": 53
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 2.1,
           "unite": "%",
-          "note": 88
+          "note": 88,
+          "cible": 2.0,
+          "precedent": {
+            "valeur": 2.2,
+            "note": 87
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 12.9,
-          "unite": "x",
-          "note": 78
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": 0.0,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": 2.3,
           "unite": "%",
-          "note": 58
+          "note": 79,
+          "taux_directeur": 4.4,
+          "direction": "baisse",
+          "precedent": {
+            "valeur": 2.5,
+            "note": 78
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": 9.6,
-          "unite": "Md€",
-          "note": 66
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": 7,
+          "unite": "%",
+          "note": 51,
+          "per": 12.9,
+          "moyenne_10ans": 12.1,
+          "precedent": {
+            "valeur": 4,
+            "note": 55
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": 17.4,
+          "unite": "%",
+          "note": 79,
+          "precedent": {
+            "valeur": 15.9,
+            "note": 77
+          }
         }
       },
       "lectures_agents": {
@@ -2115,11 +3664,30 @@
           "periode": "1 mois"
         }
       ],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": 4.8,
-        "unite": "%",
-        "note": 74
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": 0.0,
+          "unite": "%",
+          "note": 58,
+          "precedent": {
+            "valeur": -0.1,
+            "note": 58
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": 9.6,
+          "unite": "Md€",
+          "note": 66,
+          "precedent": {
+            "valeur": 9.5,
+            "note": 65
+          }
+        }
+      },
+      "precedent": {
+        "note": 65
       }
     },
     {
@@ -2136,31 +3704,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 3.0,
           "unite": "%",
-          "note": 59
+          "note": 59,
+          "precedent": {
+            "valeur": 2.8,
+            "note": 57
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 47.9,
+          "unite": "",
+          "note": 39,
+          "precedent": {
+            "valeur": 49.2,
+            "note": 46
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 35.0,
           "unite": "%",
-          "note": 8
+          "note": 8,
+          "cible": 5.0,
+          "precedent": {
+            "valeur": 35.3,
+            "note": 8
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 6.8,
-          "unite": "x",
-          "note": 99
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": -6.5,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": 10.0,
           "unite": "%",
-          "note": 26
+          "note": 26,
+          "taux_directeur": 45.0,
+          "direction": "baisse",
+          "precedent": {
+            "valeur": 10.0,
+            "note": 26
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": 1.2,
-          "unite": "Md€",
-          "note": 56
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": -12,
+          "unite": "%",
+          "note": 76,
+          "per": 6.8,
+          "moyenne_10ans": 7.7,
+          "precedent": {
+            "valeur": -13,
+            "note": 77
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": 2.7,
+          "unite": "%",
+          "note": 59,
+          "precedent": {
+            "valeur": 4.3,
+            "note": 61
+          }
         }
       },
       "lectures_agents": {
@@ -2182,11 +3785,30 @@
         }
       },
       "flux": [],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": 2.2,
-        "unite": "%",
-        "note": 64
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": -6.5,
+          "unite": "%",
+          "note": 26,
+          "precedent": {
+            "valeur": -5.5,
+            "note": 30
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": 1.2,
+          "unite": "Md€",
+          "note": 56,
+          "precedent": {
+            "valeur": 0.8,
+            "note": 56
+          }
+        }
+      },
+      "precedent": {
+        "note": 40
       }
     },
     {
@@ -2203,31 +3825,66 @@
           "libelle": "Croissance du PIB",
           "valeur": 3.4,
           "unite": "%",
-          "note": 62
+          "note": 62,
+          "precedent": {
+            "valeur": 3.4,
+            "note": 62
+          }
+        },
+        "pmi": {
+          "libelle": "PMI manufacturier",
+          "valeur": 49.0,
+          "unite": "",
+          "note": 45,
+          "precedent": {
+            "valeur": 48.0,
+            "note": 40
+          }
         },
         "inflation": {
           "libelle": "Inflation",
           "valeur": 24.0,
           "unite": "%",
-          "note": 8
+          "note": 8,
+          "cible": 7.0,
+          "precedent": {
+            "valeur": 24.3,
+            "note": 8
+          }
         },
-        "per": {
-          "libelle": "Valorisation (PER)",
-          "valeur": 7.2,
-          "unite": "x",
-          "note": 98
-        },
-        "devise_3m": {
-          "libelle": "Devise sur 3 mois",
-          "valeur": -5.8,
+        "taux_reel": {
+          "libelle": "Taux réel",
+          "valeur": 2.0,
           "unite": "%",
-          "note": 29
+          "note": 82,
+          "taux_directeur": 26.0,
+          "direction": "baisse",
+          "precedent": {
+            "valeur": 1.7,
+            "note": 84
+          }
         },
-        "flux_etrangers": {
-          "libelle": "Flux étrangers",
-          "valeur": -0.4,
-          "unite": "Md€",
-          "note": 55
+        "valorisation": {
+          "libelle": "Valorisation (PER vs 10 ans)",
+          "valeur": 1,
+          "unite": "%",
+          "note": 59,
+          "per": 7.2,
+          "moyenne_10ans": 7.1,
+          "precedent": {
+            "valeur": -1,
+            "note": 61
+          }
+        },
+        "momentum": {
+          "libelle": "Momentum boursier 12 mois",
+          "valeur": 3.8,
+          "unite": "%",
+          "note": 60,
+          "precedent": {
+            "valeur": 2.4,
+            "note": 58
+          }
         }
       },
       "lectures_agents": {
@@ -2249,11 +3906,30 @@
         }
       },
       "flux": [],
-      "momentum_boursier": {
-        "libelle": "Momentum boursier 3 mois",
-        "valeur": 0.2,
-        "unite": "%",
-        "note": 56
+      "detail": {
+        "devise_3m": {
+          "libelle": "Devise sur 3 mois",
+          "valeur": -5.8,
+          "unite": "%",
+          "note": 29,
+          "precedent": {
+            "valeur": -4.7,
+            "note": 34
+          }
+        },
+        "flux_etrangers": {
+          "libelle": "Flux étrangers",
+          "valeur": -0.4,
+          "unite": "Md€",
+          "note": 55,
+          "precedent": {
+            "valeur": -1.2,
+            "note": 54
+          }
+        }
+      },
+      "precedent": {
+        "note": 36
       }
     }
   ]

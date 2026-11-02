@@ -7,7 +7,7 @@
    La sélection est gardée sur l'appareil.
    ========================================================================== */
 
-import { el, nombre, classeNote, niveauNote, libelleNiveau, lireMetrique, METRIQUES_PAYS, METRIQUES_ENTREPRISE } from './outils.js';
+import { el, nombre, badgeTendance, tendanceNote, classeNote, niveauNote, libelleNiveau, lireMetrique, METRIQUES_PAYS, METRIQUES_ENTREPRISE } from './outils.js';
 import { notifier } from './interface.js';
 
 const CLE = 'salle-controle:comparaison';
@@ -148,6 +148,7 @@ export function ecranComparaison(donnees, nav) {
         el('span', { class: 'comparaison-nom' }, e.nom),
         el('span', { class: 'comparaison-sous-titre' }, sousTitre(e)),
         el('span', { class: 'comparaison-note' }, nombre(e.note), el('small', {}, '/100')),
+        badgeTendance(tendanceNote(e)),
         meilleureNote[i] ? el('span', { class: 'comparaison-etoile' }, '★ meilleure note') : null,
       )),
     ),
@@ -173,6 +174,7 @@ export function ecranComparaison(donnees, nav) {
               'aria-label': l ? `${elements[i].nom} : ${l.texte}, note ${l.note} sur 100${best[i] ? ', meilleure valeur' : ''}` : 'non disponible',
             },
               el('span', { class: 'comparaison-valeur' }, l ? l.texte : '–'),
+              l ? badgeTendance(l.tendance) : null,
               l ? el('span', { class: 'comparaison-note-ind' }, best[i] ? '★ ' : '', `${l.note}/100`) : null,
             ))),
         );
