@@ -196,13 +196,21 @@ def collecter_societe(f, s: dict, ancien: dict | None, seuil_ecart: float) -> di
     info = y.get("info") or {}
     devise_cours, centimes = C.devise_majeure(y.get("devise_cours"))
     devise_comptes = y.get("devise_comptes") or info.get("financialCurrency") or (officiel or {}).get("devise") or devise_cours
+    secteur = s.get("secteur") or U.secteur_gics(info.get("sector"))
+    industrie = info.get("industry")
+    if not secteur and hasattr(f.yahoo, "secteur"):
+        try:
+            brut, industrie = f.yahoo.secteur(s["ticker"])
+            secteur = U.secteur_gics(brut)
+        except Exception as e:
+            LOG.debug("secteur Yahoo indisponible pour %s : %s", s["ticker"], str(e)[:80])
     trim = y.get("trimestriel") or []
     ttm = None
     if len(trim) >= 4 and all(t.get("resultat_net") is not None for t in trim[:4]) and annuel and trim[0]["fin"] > annuel[0]["fin"]:
         ttm = sum(t["resultat_net"] for t in trim[:4])
     return {
         "ticker": s["ticker"], "nom": y.get("nom") or s["nom"], "pays": s["pays"],
-        "secteur_gics": s.get("secteur") or U.secteur_gics(info.get("sector")), "industrie": info.get("industry"),
+        "secteur_gics": secteur, "industrie": industrie,
         "devise_cours": devise_cours, "centimes": centimes, "devise_comptes": devise_comptes,
         "actions": info.get("sharesOutstanding") or (annuel[0].get("actions") if annuel else None),
         "cours": cours_compacts(y["cours"]), "annuel": annuel,
@@ -262,6 +270,15 @@ def mise_a_jour_quotidienne(f, base: dict, config: dict, aujourdhui: date) -> di
             if fin and (aujourdhui - date.fromisoformat(fin)).days > 120 and (aujourdhui - date.fromisoformat(essai)).days >= 7:
                 a_revoir.append(t)
     a_revoir = a_revoir[:150]
+    # Rattrapage : sociétés sans secteur (fichier de composition sans secteur, .info refusé)
+    if hasattr(f.yahoo, "secteur"):
+        for t, r in base.items():
+            if not r.get("secteur_gics"):
+                try:
+                    brut, industrie = f.yahoo.secteur(t)
+                    r["secteur_gics"], r["industrie"] = U.secteur_gics(brut), r.get("industrie") or industrie
+                except Exception as e:
+                    LOG.debug("secteur Yahoo indisponible pour %s : %s", t, str(e)[:80])
     LOG.info("Nouvelles publications ou comptes anciens : %d sociétés révisées", len(a_revoir))
     revus, _ = reviser(f, [{"ticker": t, "nom": base[t]["nom"], "pays": base[t]["pays"], "secteur": base[t].get("secteur_gics"),
                             "surveillance": base[t].get("surveillance"), "source_composition": base[t].get("source_composition")}
@@ -340,8 +357,8 @@ def publier(base: dict, config: dict, change: dict, data: Path, aujourdhui: date
             if v is not None:
                 montants[cle] = {"local": v, "usd": v * fx if fx else None, "local_texte": A.montant_texte(v, s["devise_comptes"]),
                                  "usd_texte": A.montant_texte(v * fx, "$") if fx else "n. d."}
-        secteur_gics = s.get("secteur_gics") or "Industrials"
-        nom_s, slug = U.GICS.get(secteur_gics, ("Autres", "autres"))
+        secteur_gics = s.get("secteur_gics")
+        nom_s, slug = U.GICS.get(secteur_gics, ("Non classé", "non-classe"))
         pays_j = pays_json.get(s["pays"])
         phase = zones.get(zone_par_pays.get(s["pays"], "monde"))
         ctx = A.ajustement_contexte(pays_j.get("note") if pays_j else None, phase, config["contexte"])

@@ -137,6 +137,15 @@ class Yahoo:
                 "nom": meta.get("longName") or info.get("longName") or meta.get("shortName"),
                 "annuel": annuel, "trimestriel": trimestres, "info": info}
 
+    def secteur(self, ticker: str) -> tuple[str | None, str | None]:
+        """Secteur et industrie selon la recherche Yahoo (classification Yahoo, proche de GICS), quand
+        ni le fichier de composition ni .info ne les donnent."""
+        r = self.yf.Search(ticker, max_results=5, news_count=0)
+        for q in r.quotes or []:
+            if q.get("symbol", "").upper() == ticker.upper():
+                return q.get("sector") or q.get("sectorDisp"), q.get("industry") or q.get("industryDisp")
+        return None, None
+
     @staticmethod
     def devise_comptes(t, ticker: str) -> str | None:
         """Devise des états financiers (champ currencyCode du flux de séries financières de Yahoo,
