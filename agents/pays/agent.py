@@ -138,6 +138,9 @@ def indicateurs_pays(code: str, cfg: dict, src: dict, aujourdhui: date, config: 
     serie = src["ocde_inflation"].get(iso3)
     if serie and _recente(serie[-1][0], aujourdhui, fraicheur["mensuel"]):
         sortie["inflation"] = _indicateur("inflation", serie[-1][1], "%", serie[-1][0], SOURCES["ocde_inflation"], cible=cible, frequence="mensuelle")
+        r = fmi("fmi_inflation", "PCPIPCH")
+        if r:  # seconde source : sert à confirmer une valeur inhabituelle
+            sortie["inflation"]["confirmation"] = {"valeur": r[0], "date": r[1], "source": r[2]}
     else:
         r = fmi("fmi_inflation", "PCPIPCH")
         sortie["inflation"] = (_indicateur("inflation", r[0], "%", r[1], r[2], cible=cible, frequence="annuelle")
@@ -258,11 +261,17 @@ def secours(cle: str, nouveau: dict, ancien: dict | None, aujourdhui: date) -> d
 
 
 def verifier(cle: str, ind: dict, seuils: dict) -> None:
-    """Valeur hors de la plage habituelle → « à vérifier » (donnée isolée inhabituelle)."""
+    """Valeur hors de la plage habituelle et non confirmée par une seconde source
+    → « à vérifier » (donnée isolée inhabituelle)."""
     if ind.get("valeur") is None or cle not in seuils:
         return
     bas, haut = seuils[cle]
-    if not bas <= ind["valeur"] <= haut:
+    hors = lambda v: not bas <= v <= haut
+    confirmation = ind.get("confirmation")
+    if hors(ind["valeur"]) and confirmation and hors(confirmation["valeur"]):
+        ind["confirmee"] = f"valeur inhabituelle mais confirmée par une seconde source ({confirmation['source']})"
+        return
+    if hors(ind["valeur"]):
         ind["a_verifier"] = True
         ind["raison_a_verifier"] = f"valeur inhabituelle (hors de l'intervalle {bas} à {haut}) : à vérifier avant d'en tirer une conclusion"
 
@@ -308,7 +317,7 @@ def executer(fournisseur, config: dict, ancien: dict | None, aujourdhui: date) -
         globale = notation.note_globale(indicateurs, ponderations)
         conf = notation.confiance(indicateurs, ponderations, globale["couverture"])
         note = globale["note"]
-        verdict = textes.verdict(cfg["nom"], note, indicateurs, PRINCIPAUX, globale["ramenee"])
+        verdict = textes.verdict(cfg["nom"], note, indicateurs, PRINCIPAUX, globale["ramenee"], globale["brute"])
         contre = textes.contre_scenario(note, indicateurs, PRINCIPAUX, conf)
         origine_textes = "règles"
         redige = textes.rediger_avec_gemini(cfg["nom"], note, indicateurs, conf, config["gemini"]["modele"]) if note is not None else None

@@ -80,7 +80,9 @@ class FournisseurReel:
 
     # --- Yahoo Finance : cours des ETF pays et des devises (13 mois quotidiens) ---
     def cours(self, symboles: list[str]) -> dict[str, list[tuple[str, float]]]:
+        import warnings
         import yfinance as yf  # importé ici : inutile en mode test
+        warnings.filterwarnings("ignore", module="yfinance")  # avertissements internes de yfinance sans intérêt ici
         brut = yf.download(symboles, period="13mo", interval="1d", progress=False, auto_adjust=True, threads=False)
         cloture = brut["Close"]
         resultat = {}
@@ -94,15 +96,21 @@ class FournisseurReel:
 
     # --- Yahoo Finance : PER des ETF (peut être refusé selon le réseau) ---
     def per(self, symboles: list[str]) -> dict[str, float]:
+        import time
         import yfinance as yf
         resultat = {}
         for s in symboles:
-            try:
-                per = yf.Ticker(s).info.get("trailingPE")
-                if per and 0 < float(per) < 200:
-                    resultat[s] = float(per)
-            except Exception as e:  # Yahoo refuse parfois ces requêtes (401) : on continue
-                LOG.warning("PER indisponible pour %s (%s)", s, str(e)[:120])
+            for essai in range(2):  # une reprise par ETF, avec une pause (Yahoo limite le rythme)
+                try:
+                    per = yf.Ticker(s).info.get("trailingPE")
+                    if per and 0 < float(per) < 200:
+                        resultat[s] = float(per)
+                    break
+                except Exception as e:  # Yahoo refuse parfois ces requêtes (401, 429) : on continue
+                    if essai:
+                        LOG.warning("PER indisponible pour %s (%s)", s, str(e)[:120])
+                    time.sleep(3)
+            time.sleep(0.7)
         return resultat
 
 

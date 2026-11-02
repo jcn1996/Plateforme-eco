@@ -53,7 +53,7 @@ def nb(x: float, decimales: int = 1, signe: bool = False) -> str:
 def description(cle: str, ind: dict) -> str:
     v = ind["valeur"]
     if cle == "croissance_pib":
-        return f"croissance du PIB de {nb(v)} % ({ind.get('date', '')}, FMI)" if v >= 0 else f"contraction du PIB de {nb(abs(v))} %"
+        return f"croissance du PIB de {nb(v)} % en {ind.get('date', '')} selon le FMI" if v >= 0 else f"contraction du PIB de {nb(abs(v))} % en {ind.get('date', '')} selon le FMI"
     if cle == "indicateur_avance":
         pente = ind.get("pente_3_mois")
         sens = "" if pente is None else " et en hausse" if pente > 0.05 else " et en baisse" if pente < -0.05 else " et stable"
@@ -86,7 +86,7 @@ def _classer(indicateurs: dict, cles: list[str]):
 # Textes par règles
 # ---------------------------------------------------------------------------
 
-def verdict(nom: str, note: int, indicateurs: dict, cles: list[str], ramenee: bool) -> str:
+def verdict(nom: str, note: int, indicateurs: dict, cles: list[str], ramenee: bool, brute: float | None = None) -> str:
     forces, faiblesses = _classer(indicateurs, cles)
     f = [description(k, i) for k, i in forces]
     d = [description(k, i) for k, i in faiblesses]
@@ -99,8 +99,10 @@ def verdict(nom: str, note: int, indicateurs: dict, cles: list[str], ramenee: bo
         appui = f" ; appui : {f[0]}" if f else ""
         return f"{nom} : {d[0]} et {d[1]} pèsent sur la note{appui}."
     if ramenee:
-        isole = (f or d or ["un seul indicateur marqué"])[0]
-        return f"{nom} : signal isolé ({isole}) sans confirmation par un second indicateur ; note maintenue en zone neutre."
+        negatif = brute is not None and brute < 50
+        isole = ((d if negatif else f) or f or d or ["un seul indicateur marqué"])[0]
+        sens = "défavorable" if negatif else "favorable"
+        return f"{nom} : un seul signal {sens} net, {isole}, sans confirmation par un second indicateur ; note maintenue en zone neutre."
     pour = f[0] if f else "aucun indicateur nettement favorable"
     contre = d[0] if d else "aucun point faible marqué"
     return f"{nom} : signaux partagés, avec d'un côté {pour}, de l'autre {contre}."
@@ -110,7 +112,7 @@ def lecture(indicateurs: dict, detail: dict) -> dict:
     """Trois paragraphes courts et factuels."""
     def phrase(cles, source):
         morceaux = [description(k, source[k]) for k in cles if source.get(k, {}).get("valeur") is not None]
-        return (morceaux[0][0].upper() + "; ".join(morceaux)[1:] + ".") if morceaux else "Données indisponibles."
+        return (morceaux[0][0].upper() + " ; ".join(morceaux)[1:] + ".") if morceaux else "Données indisponibles."
     tout = {**indicateurs, **detail}
     return {
         "activite_et_prix": phrase(["croissance_pib", "indicateur_avance", "inflation"], tout),

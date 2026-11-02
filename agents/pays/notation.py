@@ -89,7 +89,8 @@ def note_globale(indicateurs: dict, ponderations: dict) -> dict:
     Moyenne pondérée des indicateurs disponibles.
     Règle de prudence : une note « attractive » (≥ 65) exige au moins deux
     indicateurs attractifs ; une note « défavorable » (< 50) exige au moins
-    deux indicateurs défavorables. Sinon la note est ramenée dans la zone neutre.
+    deux indicateurs défavorables (les valeurs « à vérifier » ne comptent pas).
+    Sinon la note est ramenée dans la zone neutre (64 ou 50).
     """
     presents = {k: v for k, v in indicateurs.items() if k in ponderations and v.get("note") is not None}
     poids_total = sum(ponderations.values())
@@ -98,8 +99,10 @@ def note_globale(indicateurs: dict, ponderations: dict) -> dict:
         return {"note": None, "couverture": 0.0, "brute": None, "ramenee": False}
     brute = sum(ponderations[k] * v["note"] for k, v in presents.items()) / poids_presents
     note = brute
-    nb_attractifs = sum(1 for v in presents.values() if v["note"] >= 65)
-    nb_defavorables = sum(1 for v in presents.values() if v["note"] < 50)
+    # Une valeur « à vérifier » (isolée et inhabituelle) ne suffit pas à confirmer une conclusion
+    fiables = [v for v in presents.values() if not v.get("a_verifier")]
+    nb_attractifs = sum(1 for v in fiables if v["note"] >= 65)
+    nb_defavorables = sum(1 for v in fiables if v["note"] < 50)
     ramenee = False
     if note >= 65 and nb_attractifs < 2:
         note, ramenee = 64, True
