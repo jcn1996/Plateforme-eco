@@ -5,12 +5,14 @@
      le cache ne sert qu'en l'absence de réseau.
    - Images de la Terre et icônes : cache d'abord (fichiers lourds qui
      changent rarement ; une nouvelle VERSION les renouvelle).
-   - Ressources externes (Three.js, polices) : cache dès le premier
+   - La carte détaillée data/countries-50m.json n'est pas préchargée : elle
+     est mise en cache au premier zoom rapproché.
+   - Ressources externes (Three.js, lignes épaisses, polices) : cache dès le premier
      chargement, mis à jour en arrière-plan.
    Changer VERSION vide les anciens caches chez tous les utilisateurs.
    ========================================================================== */
 
-const VERSION = 'salle-controle-v3';
+const VERSION = 'salle-controle-v4';
 
 const FICHIERS_APPLI = [
   './',
@@ -20,6 +22,7 @@ const FICHIERS_APPLI = [
   'js/app.js',
   'js/donnees.js',
   'js/globe.js',
+  'js/carte-vecteur.js',
   'js/interface.js',
   'js/outils.js',
   'js/panneau-pays.js',
