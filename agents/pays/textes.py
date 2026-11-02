@@ -53,7 +53,8 @@ def nb(x: float, decimales: int = 1, signe: bool = False) -> str:
 def description(cle: str, ind: dict) -> str:
     v = ind["valeur"]
     if cle == "croissance_pib":
-        return f"croissance du PIB de {nb(v)} % en {ind.get('date', '')} selon le FMI" if v >= 0 else f"contraction du PIB de {nb(abs(v))} % en {ind.get('date', '')} selon le FMI"
+        selon = ind.get("source_courte", "le FMI")
+        return f"croissance du PIB de {nb(v)} % en {ind.get('date', '')} selon {selon}" if v >= 0 else f"contraction du PIB de {nb(abs(v))} % en {ind.get('date', '')} selon {selon}"
     if cle == "indicateur_avance":
         pente = ind.get("pente_3_mois")
         sens = "" if pente is None else " et en hausse" if pente > 0.05 else " et en baisse" if pente < -0.05 else " et stable"
@@ -151,6 +152,10 @@ def contre_scenario(note: int, indicateurs: dict, cles: list[str], confiance: di
         ind = indicateurs.get(k, {})
         if ind.get("a_verifier"):
             points.insert(0, f"la valeur « {ind['libelle'].lower()} » ({nb(ind['valeur'])}) est inhabituelle et reste à vérifier")
+        if ind.get("verification") == "divergent" and ind.get("valeur") is not None:
+            autres = [s for s in ind.get("sources", []) if s.get("statut") == "diverge" and s.get("valeur") is not None]
+            detail = f" ({autres[0]['nom'].split(',')[0]} : {nb(autres[0]['valeur'])})" if autres else ""
+            points.insert(0, f"les sources divergent sur « {ind['libelle'].lower()} »{detail} : la valeur retenue ({nb(ind['valeur'])}) pourrait être révisée")
     manquants = [indicateurs[k]["libelle"].lower() for k in cles if indicateurs.get(k, {}).get("note") is None]
     if manquants:
         points.append("des données manquantes (" + ", ".join(manquants) + ") qui pourraient modifier l'analyse")

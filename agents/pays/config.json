@@ -563,16 +563,37 @@
     ]
   },
   "couverture": {
-    "_commentaire": "Pays couverts en principe par chaque source (sert à compter les sources en échec par pays).",
-    "ocde": [
+    "_commentaire": "Pays publiés en principe par chaque source : une absence y est comptée comme un échec (qualité des données).",
+    "ocde_cli": [
       "US",
       "CA",
       "MX",
+      "BR",
+      "GB",
+      "FR",
+      "DE",
+      "ZA",
+      "IN",
+      "CN",
+      "KR",
+      "JP",
+      "AU",
+      "IT",
+      "ES",
+      "ID",
+      "TR"
+    ],
+    "ocde_inflation": [
+      "US",
+      "CA",
+      "BR",
+      "AR",
       "GB",
       "FR",
       "DE",
       "CH",
-      "JP",
+      "IN",
+      "CN",
       "KR",
       "AU",
       "IT",
@@ -580,43 +601,35 @@
       "NL",
       "SE",
       "PL",
-      "CL",
-      "CO",
-      "TR",
-      "BR",
-      "IN",
-      "CN",
       "ID",
-      "ZA",
-      "SA",
-      "AR"
+      "CO",
+      "TR"
     ],
     "ocde_eo": [
       "US",
       "CA",
       "MX",
+      "BR",
+      "AR",
       "GB",
       "FR",
       "DE",
       "CH",
-      "JP",
+      "ZA",
+      "IN",
+      "CN",
       "KR",
+      "JP",
       "AU",
       "IT",
       "ES",
       "NL",
       "SE",
       "PL",
+      "ID",
       "CL",
       "CO",
-      "TR",
-      "BR",
-      "IN",
-      "CN",
-      "ID",
-      "ZA",
-      "SA",
-      "AR"
+      "TR"
     ],
     "eurostat": {
       "FR": "FR",
@@ -685,22 +698,20 @@
         "nom": "Réserve fédérale via FRED, borne haute de l'objectif (clé FRED_API_KEY)"
       }
     ],
-    "GB": [
+    "CA": [
       {
         "indicateur": "inflation",
-        "fournisseur": "dbnomics",
-        "serie": "ONS/MM23/D7G7.M",
+        "fournisseur": "boc",
+        "serie": "STATIC_TOTALCPICHANGE",
         "transformation": "direct",
-        "nom": "ONS via DBnomics, CPI glissement annuel"
-      }
-    ],
-    "JP": [
+        "nom": "Statistique Canada via la Banque du Canada, IPC glissement annuel"
+      },
       {
-        "indicateur": "inflation",
-        "fournisseur": "dbnomics",
-        "serie": "STATJP/CPIm/001",
-        "transformation": "glissement",
-        "nom": "Statistics Bureau of Japan via DBnomics, IPC ensemble"
+        "indicateur": "taux_directeur",
+        "fournisseur": "boc",
+        "serie": "V39079",
+        "transformation": "mensuel",
+        "nom": "Banque du Canada, taux cible du financement à un jour"
       }
     ],
     "BR": [
@@ -719,20 +730,40 @@
         "nom": "Banco Central do Brasil, Selic cible (SGS 432)"
       }
     ],
-    "CA": [
+    "GB": [
       {
         "indicateur": "inflation",
-        "fournisseur": "boc",
-        "serie": "STATIC_TOTALCPICHANGE",
+        "fournisseur": "dbnomics",
+        "serie": "ONS/MM23/D7G7.M",
         "transformation": "direct",
-        "nom": "Statistique Canada via la Banque du Canada, IPC glissement annuel"
-      },
+        "nom": "ONS via DBnomics, CPI glissement annuel"
+      }
+    ],
+    "FR": [
       {
-        "indicateur": "taux_directeur",
-        "fournisseur": "boc",
-        "serie": "V39079",
-        "transformation": "mensuel",
-        "nom": "Banque du Canada, taux cible du financement à un jour"
+        "indicateur": "inflation",
+        "fournisseur": "dbnomics",
+        "serie": "INSEE/IPC-2025/M.IPC.SO.00.00.GLISSEMENT_ANNUEL.ENSEMBLE.FE.POURCENT.BRUT.2025.FALSE",
+        "transformation": "direct",
+        "nom": "INSEE via DBnomics, IPC glissement annuel (base 2025)"
+      }
+    ],
+    "DE": [
+      {
+        "indicateur": "inflation",
+        "fournisseur": "dbnomics",
+        "serie": "DESTATIS/61111BM001/DG.PREIS1",
+        "transformation": "glissement",
+        "nom": "Destatis via DBnomics, indice des prix à la consommation"
+      }
+    ],
+    "JP": [
+      {
+        "indicateur": "inflation",
+        "fournisseur": "dbnomics",
+        "serie": "STATJP/CPIm/001",
+        "transformation": "glissement",
+        "nom": "Statistics Bureau of Japan via DBnomics, IPC ensemble"
       }
     ]
   }
