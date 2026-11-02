@@ -58,22 +58,53 @@ export function titreSection(texte, complement) {
  */
 export function listeIndicateurs(indicateurs) {
   return el('ul', { class: 'liste-indicateurs' },
-    Object.entries(indicateurs).map(([cle, ind]) => el('li', {
-      class: `ligne-indicateur ${classeNote(ind.note)}`,
-      title: libelleNiveau(niveauNote(ind.note)),
-    },
-      el('span', { class: 'pastille', 'aria-hidden': 'true' }),
-      el('span', { class: 'ligne-indicateur-libelle' },
-        ind.libelle,
-        // Petit complément : cible d'inflation, direction de la banque centrale…
-        complementIndicateur(cle, ind) ? el('small', {}, complementIndicateur(cle, ind)) : null,
-      ),
-      el('span', { class: 'ligne-indicateur-valeur' },
-        valeurIndicateur(cle, ind),
-        badgeTendance(tendanceIndicateur(cle, ind)),
-      ),
-      el('span', { class: 'ligne-indicateur-note' }, String(ind.note), el('small', {}, '/100')),
-    )),
+    Object.entries(indicateurs).map(([cle, ind]) => {
+      const disponible = ind.valeur !== null && ind.valeur !== undefined && ind.note !== null && ind.note !== undefined;
+      return el('li', {
+        class: `ligne-indicateur ${disponible ? classeNote(ind.note) : 'ligne-indicateur--absente'}`,
+        title: disponible ? libelleNiveau(niveauNote(ind.note)) : (ind.raison ?? 'non disponible'),
+      },
+        el('span', { class: 'pastille', 'aria-hidden': 'true' }),
+        el('span', { class: 'ligne-indicateur-libelle' },
+          ind.libelle,
+          // Signalements de l'agent : valeur ancienne (source en panne) ou inhabituelle
+          ind.ancienne ? el('span', { class: 'drapeau drapeau--ancienne', title: ind.raison_ancienne }, 'ancienne') : null,
+          ind.a_verifier ? el('span', { class: 'drapeau drapeau--verifier', title: ind.raison_a_verifier }, 'à vérifier') : null,
+          // Petit complément : cible d'inflation, direction de la banque centrale…
+          complementIndicateur(cle, ind) ? el('small', {}, complementIndicateur(cle, ind)) : null,
+        ),
+        el('span', { class: 'ligne-indicateur-valeur' },
+          valeurIndicateur(cle, ind),
+          disponible ? badgeTendance(tendanceIndicateur(cle, ind)) : null,
+        ),
+        el('span', { class: 'ligne-indicateur-note' }, disponible ? String(ind.note) : '—', disponible ? el('small', {}, '/100') : null),
+      );
+    }),
+  );
+}
+
+/** Niveau de confiance de l'agent (faible / moyen / élevé) et ses raisons. */
+function blocConfiance(confiance) {
+  if (!confiance) return null;
+  const cle = { 'élevé': 'eleve', moyen: 'moyen', faible: 'faible' }[confiance.niveau] ?? 'moyen';
+  return el('div', { class: `confiance confiance--${cle}` },
+    el('span', { class: 'confiance-titre' }, 'Confiance : ', el('strong', {}, confiance.niveau)),
+    el('span', { class: 'confiance-raisons' }, confiance.raisons.join(' · ')),
+  );
+}
+
+/** Dates et sources exactes de chaque valeur. */
+function listeSources(p) {
+  const tous = { ...p.indicateurs, ...p.detail };
+  return el('details', { class: 'detail-repliable sources' },
+    el('summary', {}, 'Sources et dates des données'),
+    el('ul', { class: 'liste-sources' },
+      Object.values(tous).map((ind) => el('li', {},
+        el('strong', {}, ind.libelle), ' — ',
+        ind.valeur === null || ind.valeur === undefined
+          ? `non disponible (${ind.raison ?? 'pas de source'})`
+          : `${ind.source} · donnée du ${ind.date}${ind.ancienne ? ' · valeur ancienne conservée' : ''}`,
+      ))),
   );
 }
 
@@ -138,14 +169,22 @@ export function fichePays(d, p, nav) {
       tendance: tendanceNote(p),
     }),
 
+    blocConfiance(p.confiance),
+
     el('section', {},
       titreSection('Indicateurs clés', 'flèche = évolution depuis la mise à jour précédente'),
       listeIndicateurs(p.indicateurs),
       detailRepliable(p.detail),
     ),
 
+    // « Ce qui pourrait me donner tort » : contre-scénario de l'agent
+    p.contre_scenario?.length ? el('section', {},
+      titreSection('Ce qui pourrait me donner tort'),
+      el('ul', { class: 'contre-scenario' }, p.contre_scenario.map((t) => el('li', {}, t))),
+    ) : null,
+
     el('section', {},
-      titreSection('Secteurs', 'taille = capitalisation · couleur = momentum 3 mois'),
+      titreSection('Secteurs', `${d.fictifPar?.pays === false ? 'données fictives · ' : ''}taille = capitalisation · couleur = momentum 3 mois`),
       bullesSecteurs(secteurs, nav),
       el('div', { class: 'legende-bulles' },
         el('span', {}, el('span', { class: 'pastille pastille--vert' }), '≥ +2 %'),
@@ -154,7 +193,14 @@ export function fichePays(d, p, nav) {
       ),
     ),
 
-    el('section', {},
+    // Lecture de l'agent pays (données réelles) ou, à défaut, lectures fictives des autres agents
+    p.lecture ? el('section', {},
+      titreSection("Lecture de l'agent pays", p.textes === 'gemini' ? 'rédigée par Gemini' : 'rédigée par des règles'),
+      el('div', { class: 'lecture' },
+        [['activite_et_prix', 'Activité et prix'], ['politique_monetaire_et_risques', 'Politique monétaire et risques'], ['marches', 'Marchés']]
+          .filter(([cle]) => p.lecture[cle])
+          .map(([cle, titre]) => el('p', {}, el('strong', {}, `${titre}. `), p.lecture[cle]))),
+    ) : el('section', {},
       titreSection('Lecture des agents'),
       el('div', { class: 'agents' },
         ['macro', 'sentiment', 'risque', 'donnees_alternatives']
@@ -163,8 +209,11 @@ export function fichePays(d, p, nav) {
       ),
     ),
 
+    p.indicateurs && p.confiance ? listeSources(p) : null,
     piedFraicheur(d.meta.pays),
-    el('p', { class: 'mention-legale' }, 'Données fictives à des fins de démonstration — ne constitue pas un conseil en investissement.'),
+    el('p', { class: 'mention-legale' }, d.fictifPar?.pays === false
+      ? 'Données réelles issues de sources publiques (FMI, OCDE, BIS, Yahoo Finance), analysées automatiquement par l’agent pays. Les secteurs restent fictifs. Ne constitue pas un conseil en investissement.'
+      : 'Données fictives à des fins de démonstration — ne constitue pas un conseil en investissement.'),
   ];
 }
 

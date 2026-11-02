@@ -77,8 +77,10 @@ export function euros(valeur) {
  * Les indicateurs de variation (devise, PER relatif…) affichent leur signe.
  */
 export function valeurIndicateur(cle, ind) {
-  const signe = ['devise_3m', 'per_vs_secteur', 'croissance_ca', 'benefice', 'flux_etrangers', 'taux_reel', 'valorisation', 'momentum'].includes(cle);
-  if (cle === 'pmi') return nombre(ind.valeur, 1);
+  if (ind.valeur === null || ind.valeur === undefined) return 'non disponible';
+  const signe = ['devise_3m', 'per_vs_secteur', 'croissance_ca', 'benefice', 'flux_etrangers', 'taux_reel', 'valorisation', 'momentum', 'solde_courant'].includes(cle);
+  if (cle === 'pmi' || cle === 'indicateur_avance') return nombre(ind.valeur, 1);
+  if (cle === 'solde_courant') return `${variation(ind.valeur, 1, '')} % du PIB`;
   if (cle === 'valorisation') return variation(ind.valeur, 0);
   switch (ind.unite) {
     case '%':
@@ -97,11 +99,20 @@ export function valeurIndicateur(cle, ind) {
  * cible d'inflation, direction de la banque centrale, PER et sa moyenne…
  */
 export function complementIndicateur(cle, ind) {
-  if (cle === 'inflation') return ind.cible != null ? `cible ${nombre(ind.cible, ind.cible % 1 ? 1 : 0)} %` : 'sans cible officielle';
+  if (ind.valeur === null || ind.valeur === undefined) return ind.raison ?? '';
+  if (cle === 'inflation') {
+    const cible = ind.cible != null ? `cible ${nombre(ind.cible, ind.cible % 1 ? 1 : 0)} %` : 'sans cible officielle';
+    return ind.frequence ? `${cible} · ${ind.frequence}` : cible;
+  }
   if (cle === 'taux_reel') return `taux directeur ${nombre(ind.taux_directeur, 2)} % · BC : ${ind.direction}`;
-  if (cle === 'valorisation') return `PER ${nombre(ind.per, 1)} vs ${nombre(ind.moyenne_10ans, 1)} (10 ans)`;
+  if (cle === 'valorisation') {
+    if (ind.mediane != null) return `PER ${nombre(ind.per, 1)} vs médiane ${nombre(ind.mediane, 1)}`;
+    return `PER ${nombre(ind.per, 1)} vs ${nombre(ind.moyenne_10ans, 1)} (10 ans)`;
+  }
+  if (cle === 'indicateur_avance') return 'base 100 · au-dessus = accélération';
+  if (cle === 'devise_3m' && ind.devise) return `${ind.devise} contre le dollar`;
   if (cle === 'pmi') return ind.valeur >= 50 ? 'expansion (> 50)' : 'contraction (< 50)';
-  if (cle === 'momentum') return 'indice sur 12 mois';
+  if (cle === 'momentum') return ind.symbole ? `ETF ${ind.symbole} sur 12 mois` : 'indice sur 12 mois';
   if (cle === 'croissance_pib') return 'sur un an';
   return '';
 }
@@ -137,7 +148,7 @@ export function tendanceNote(element) {
 
 /** Tendance d'un indicateur (valeur), colorée selon l'évolution de sa note. */
 export function tendanceIndicateur(cle, ind) {
-  if (!ind.precedent) return null;
+  if (!ind.precedent || ind.valeur === null || ind.valeur === undefined || ind.precedent.valeur === null) return null;
   const decimales = ['valorisation', 'per_vs_secteur'].includes(cle) ? 0 : 1;
   // Pour un indicateur en %, l'écart s'exprime en points (pt)
   const unite = ind.unite === '%' ? ' pt' : ind.unite === 'x' ? '×' : ind.unite ? ` ${ind.unite}` : '';
@@ -221,16 +232,17 @@ export function svg(balise, attributs = {}, ...enfants) {
 export const METRIQUES_PAYS = [
   { cle: 'note', libelle: 'Note globale', court: 'Note', source: 'note' },
   { cle: 'croissance_pib', libelle: 'Croissance PIB', court: 'PIB', source: 'indicateur' },
-  { cle: 'pmi', libelle: 'PMI manufacturier', court: 'PMI', source: 'indicateur' },
+  { cle: 'indicateur_avance', libelle: 'Indicateur avancé (OCDE)', court: 'Ind. avancé', source: 'indicateur' },
   { cle: 'inflation', libelle: 'Inflation', court: 'Inflation', source: 'indicateur' },
   { cle: 'taux_reel', libelle: 'Taux réel', court: 'Taux réel', source: 'indicateur' },
-  { cle: 'valorisation', libelle: 'Valorisation (PER vs 10 ans)', court: 'Valorisation', source: 'indicateur' },
+  { cle: 'valorisation', libelle: 'Valorisation relative', court: 'Valorisation', source: 'indicateur' },
   { cle: 'momentum', libelle: 'Momentum boursier 12 mois', court: 'Momentum', source: 'indicateur' },
 ];
 
 /** Indicateurs secondaires d'un pays (section « Détail » des fiches). */
 export const DETAIL_PAYS = [
   { cle: 'devise_3m', libelle: 'Devise sur 3 mois' },
+  { cle: 'solde_courant', libelle: 'Solde courant' },
   { cle: 'flux_etrangers', libelle: 'Flux étrangers' },
 ];
 
@@ -256,5 +268,6 @@ export function lireMetrique(element, cle) {
   if (cle === 'note') return { valeur: element.note, note: element.note, texte: nombre(element.note), unite: '/100', tendance: tendanceNote(element) };
   // Les indicateurs secondaires (devise, flux étrangers) restent lisibles, par ex. pour d'anciennes alertes
   const ind = element.indicateurs?.[cle] ?? element.detail?.[cle];
+  if (!ind || ind.valeur === null || ind.valeur === undefined) return null; // non disponible
   return ind ? { valeur: ind.valeur, note: ind.note, texte: valeurIndicateur(cle, ind), unite: ind.unite, tendance: tendanceIndicateur(cle, ind) } : null;
 }

@@ -1,0 +1,521 @@
+{
+  "_commentaire": "Configuration de l'agent pays. Les pondérations (note globale) et les seuils « à vérifier » sont modifiables ici sans toucher au code.",
+  "ponderations": {
+    "croissance_pib": 0.2,
+    "indicateur_avance": 0.15,
+    "inflation": 0.2,
+    "taux_reel": 0.15,
+    "valorisation": 0.15,
+    "momentum": 0.15
+  },
+  "seuils_a_verifier": {
+    "croissance_pib": [
+      -3,
+      8
+    ],
+    "indicateur_avance": [
+      96,
+      104
+    ],
+    "inflation": [
+      -2,
+      20
+    ],
+    "taux_reel": [
+      -8,
+      12
+    ],
+    "valorisation": [
+      -45,
+      60
+    ],
+    "momentum": [
+      -40,
+      60
+    ],
+    "devise_3m": [
+      -12,
+      12
+    ],
+    "solde_courant": [
+      -12,
+      15
+    ]
+  },
+  "fraicheur_max_jours": {
+    "mensuel": 120,
+    "annuel": 540,
+    "quotidien": 10
+  },
+  "gemini": {
+    "modele": "gemini-2.0-flash",
+    "actif_si_cle": true
+  },
+  "pays": {
+    "US": {
+      "nom": "États-Unis",
+      "iso_num": "840",
+      "lat": 39.8,
+      "lon": -98.6,
+      "iso3": "USA",
+      "bis": "US",
+      "etf": "SPY",
+      "devise": {
+        "symbole": "DX-Y.NYB",
+        "inverse": false,
+        "libelle": "indice du dollar (DXY)"
+      },
+      "cible_inflation": 2.0
+    },
+    "CA": {
+      "nom": "Canada",
+      "iso_num": "124",
+      "lat": 56.1,
+      "lon": -106.3,
+      "iso3": "CAN",
+      "bis": "CA",
+      "etf": "EWC",
+      "devise": {
+        "symbole": "CAD=X",
+        "inverse": true,
+        "libelle": "CAD"
+      },
+      "cible_inflation": 2.0
+    },
+    "MX": {
+      "nom": "Mexique",
+      "iso_num": "484",
+      "lat": 23.6,
+      "lon": -102.5,
+      "iso3": "MEX",
+      "bis": "MX",
+      "etf": "EWW",
+      "devise": {
+        "symbole": "MXN=X",
+        "inverse": true,
+        "libelle": "MXN"
+      },
+      "cible_inflation": 3.0
+    },
+    "BR": {
+      "nom": "Brésil",
+      "iso_num": "076",
+      "lat": -14.2,
+      "lon": -51.9,
+      "iso3": "BRA",
+      "bis": "BR",
+      "etf": "EWZ",
+      "devise": {
+        "symbole": "BRL=X",
+        "inverse": true,
+        "libelle": "BRL"
+      },
+      "cible_inflation": 3.0
+    },
+    "AR": {
+      "nom": "Argentine",
+      "iso_num": "032",
+      "lat": -38.4,
+      "lon": -63.6,
+      "iso3": "ARG",
+      "bis": "AR",
+      "etf": "ARGT",
+      "devise": {
+        "symbole": "ARS=X",
+        "inverse": true,
+        "libelle": "ARS"
+      },
+      "cible_inflation": null
+    },
+    "GB": {
+      "nom": "Royaume-Uni",
+      "iso_num": "826",
+      "lat": 54.0,
+      "lon": -2.5,
+      "iso3": "GBR",
+      "bis": "GB",
+      "etf": "EWU",
+      "devise": {
+        "symbole": "GBPUSD=X",
+        "inverse": false,
+        "libelle": "GBP"
+      },
+      "cible_inflation": 2.0
+    },
+    "FR": {
+      "nom": "France",
+      "iso_num": "250",
+      "lat": 46.6,
+      "lon": 2.4,
+      "iso3": "FRA",
+      "bis": "XM",
+      "etf": "EWQ",
+      "devise": {
+        "symbole": "EURUSD=X",
+        "inverse": false,
+        "libelle": "EUR"
+      },
+      "cible_inflation": 2.0
+    },
+    "DE": {
+      "nom": "Allemagne",
+      "iso_num": "276",
+      "lat": 51.2,
+      "lon": 10.4,
+      "iso3": "DEU",
+      "bis": "XM",
+      "etf": "EWG",
+      "devise": {
+        "symbole": "EURUSD=X",
+        "inverse": false,
+        "libelle": "EUR"
+      },
+      "cible_inflation": 2.0
+    },
+    "CH": {
+      "nom": "Suisse",
+      "iso_num": "756",
+      "lat": 46.8,
+      "lon": 8.2,
+      "iso3": "CHE",
+      "bis": "CH",
+      "etf": "EWL",
+      "devise": {
+        "symbole": "CHF=X",
+        "inverse": true,
+        "libelle": "CHF"
+      },
+      "cible_inflation": 1.0
+    },
+    "SA": {
+      "nom": "Arabie saoudite",
+      "iso_num": "682",
+      "lat": 23.9,
+      "lon": 45.1,
+      "iso3": "SAU",
+      "bis": "SA",
+      "etf": "KSA",
+      "devise": {
+        "symbole": "SAR=X",
+        "inverse": true,
+        "libelle": "SAR"
+      },
+      "cible_inflation": 2.0
+    },
+    "ZA": {
+      "nom": "Afrique du Sud",
+      "iso_num": "710",
+      "lat": -30.6,
+      "lon": 22.9,
+      "iso3": "ZAF",
+      "bis": "ZA",
+      "etf": "EZA",
+      "devise": {
+        "symbole": "ZAR=X",
+        "inverse": true,
+        "libelle": "ZAR"
+      },
+      "cible_inflation": 4.5
+    },
+    "IN": {
+      "nom": "Inde",
+      "iso_num": "356",
+      "lat": 20.6,
+      "lon": 79.0,
+      "iso3": "IND",
+      "bis": "IN",
+      "etf": "INDA",
+      "devise": {
+        "symbole": "INR=X",
+        "inverse": true,
+        "libelle": "INR"
+      },
+      "cible_inflation": 4.0
+    },
+    "CN": {
+      "nom": "Chine",
+      "iso_num": "156",
+      "lat": 35.9,
+      "lon": 104.2,
+      "iso3": "CHN",
+      "bis": "CN",
+      "etf": "MCHI",
+      "devise": {
+        "symbole": "CNY=X",
+        "inverse": true,
+        "libelle": "CNY"
+      },
+      "cible_inflation": 3.0
+    },
+    "KR": {
+      "nom": "Corée du Sud",
+      "iso_num": "410",
+      "lat": 35.9,
+      "lon": 127.8,
+      "iso3": "KOR",
+      "bis": "KR",
+      "etf": "EWY",
+      "devise": {
+        "symbole": "KRW=X",
+        "inverse": true,
+        "libelle": "KRW"
+      },
+      "cible_inflation": 2.0
+    },
+    "JP": {
+      "nom": "Japon",
+      "iso_num": "392",
+      "lat": 36.2,
+      "lon": 138.3,
+      "iso3": "JPN",
+      "bis": "JP",
+      "etf": "EWJ",
+      "devise": {
+        "symbole": "JPY=X",
+        "inverse": true,
+        "libelle": "JPY"
+      },
+      "cible_inflation": 2.0
+    },
+    "AU": {
+      "nom": "Australie",
+      "iso_num": "036",
+      "lat": -25.3,
+      "lon": 133.8,
+      "iso3": "AUS",
+      "bis": "AU",
+      "etf": "EWA",
+      "devise": {
+        "symbole": "AUDUSD=X",
+        "inverse": false,
+        "libelle": "AUD"
+      },
+      "cible_inflation": 2.5
+    },
+    "IT": {
+      "nom": "Italie",
+      "iso_num": "380",
+      "lat": 41.9,
+      "lon": 12.6,
+      "iso3": "ITA",
+      "bis": "XM",
+      "etf": "EWI",
+      "devise": {
+        "symbole": "EURUSD=X",
+        "inverse": false,
+        "libelle": "EUR"
+      },
+      "cible_inflation": 2.0
+    },
+    "ES": {
+      "nom": "Espagne",
+      "iso_num": "724",
+      "lat": 40.4,
+      "lon": -3.7,
+      "iso3": "ESP",
+      "bis": "XM",
+      "etf": "EWP",
+      "devise": {
+        "symbole": "EURUSD=X",
+        "inverse": false,
+        "libelle": "EUR"
+      },
+      "cible_inflation": 2.0
+    },
+    "NL": {
+      "nom": "Pays-Bas",
+      "iso_num": "528",
+      "lat": 52.1,
+      "lon": 5.3,
+      "iso3": "NLD",
+      "bis": "XM",
+      "etf": "EWN",
+      "devise": {
+        "symbole": "EURUSD=X",
+        "inverse": false,
+        "libelle": "EUR"
+      },
+      "cible_inflation": 2.0
+    },
+    "SE": {
+      "nom": "Suède",
+      "iso_num": "752",
+      "lat": 60.1,
+      "lon": 18.6,
+      "iso3": "SWE",
+      "bis": "SE",
+      "etf": "EWD",
+      "devise": {
+        "symbole": "SEK=X",
+        "inverse": true,
+        "libelle": "SEK"
+      },
+      "cible_inflation": 2.0
+    },
+    "PL": {
+      "nom": "Pologne",
+      "iso_num": "616",
+      "lat": 51.9,
+      "lon": 19.1,
+      "iso3": "POL",
+      "bis": "PL",
+      "etf": "EPOL",
+      "devise": {
+        "symbole": "PLN=X",
+        "inverse": true,
+        "libelle": "PLN"
+      },
+      "cible_inflation": 2.5
+    },
+    "TW": {
+      "nom": "Taïwan",
+      "iso_num": "158",
+      "lat": 23.7,
+      "lon": 121.0,
+      "iso3": "TWN",
+      "bis": "TW",
+      "etf": "EWT",
+      "devise": {
+        "symbole": "TWD=X",
+        "inverse": true,
+        "libelle": "TWD"
+      },
+      "cible_inflation": 2.0
+    },
+    "ID": {
+      "nom": "Indonésie",
+      "iso_num": "360",
+      "lat": -2.5,
+      "lon": 118.0,
+      "iso3": "IDN",
+      "bis": "ID",
+      "etf": "EIDO",
+      "devise": {
+        "symbole": "IDR=X",
+        "inverse": true,
+        "libelle": "IDR"
+      },
+      "cible_inflation": 2.5
+    },
+    "VN": {
+      "nom": "Vietnam",
+      "iso_num": "704",
+      "lat": 14.1,
+      "lon": 108.3,
+      "iso3": "VNM",
+      "bis": "VN",
+      "etf": "VNM",
+      "devise": {
+        "symbole": "VND=X",
+        "inverse": true,
+        "libelle": "VND"
+      },
+      "cible_inflation": 4.5
+    },
+    "SG": {
+      "nom": "Singapour",
+      "iso_num": "702",
+      "lat": 1.35,
+      "lon": 103.8,
+      "iso3": "SGP",
+      "bis": "SG",
+      "etf": "EWS",
+      "devise": {
+        "symbole": "SGD=X",
+        "inverse": true,
+        "libelle": "SGD"
+      },
+      "cible_inflation": 2.0
+    },
+    "TH": {
+      "nom": "Thaïlande",
+      "iso_num": "764",
+      "lat": 15.9,
+      "lon": 101.0,
+      "iso3": "THA",
+      "bis": "TH",
+      "etf": "THD",
+      "devise": {
+        "symbole": "THB=X",
+        "inverse": true,
+        "libelle": "THB"
+      },
+      "cible_inflation": 2.0
+    },
+    "CL": {
+      "nom": "Chili",
+      "iso_num": "152",
+      "lat": -35.7,
+      "lon": -71.5,
+      "iso3": "CHL",
+      "bis": "CL",
+      "etf": "ECH",
+      "devise": {
+        "symbole": "CLP=X",
+        "inverse": true,
+        "libelle": "CLP"
+      },
+      "cible_inflation": 3.0
+    },
+    "CO": {
+      "nom": "Colombie",
+      "iso_num": "170",
+      "lat": 4.6,
+      "lon": -74.3,
+      "iso3": "COL",
+      "bis": "CO",
+      "etf": "COLO",
+      "devise": {
+        "symbole": "COP=X",
+        "inverse": true,
+        "libelle": "COP"
+      },
+      "cible_inflation": 3.0
+    },
+    "AE": {
+      "nom": "Émirats arabes unis",
+      "iso_num": "784",
+      "lat": 23.4,
+      "lon": 53.8,
+      "iso3": "ARE",
+      "bis": "AE",
+      "etf": "UAE",
+      "devise": {
+        "symbole": "AED=X",
+        "inverse": true,
+        "libelle": "AED"
+      },
+      "cible_inflation": 2.0
+    },
+    "TR": {
+      "nom": "Turquie",
+      "iso_num": "792",
+      "lat": 39.0,
+      "lon": 35.2,
+      "iso3": "TUR",
+      "bis": "TR",
+      "etf": "TUR",
+      "devise": {
+        "symbole": "TRY=X",
+        "inverse": true,
+        "libelle": "TRY"
+      },
+      "cible_inflation": 5.0
+    },
+    "EG": {
+      "nom": "Égypte",
+      "iso_num": "818",
+      "lat": 26.8,
+      "lon": 30.8,
+      "iso3": "EGY",
+      "bis": "EG",
+      "etf": null,
+      "devise": {
+        "symbole": "EGP=X",
+        "inverse": true,
+        "libelle": "EGP"
+      },
+      "cible_inflation": 7.0
+    }
+  }
+}
