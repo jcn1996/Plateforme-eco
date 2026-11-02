@@ -126,10 +126,33 @@ class Yahoo:
                                                "marketCap", "sharesOutstanding", "trailingPE", "enterpriseToEbitda", "country")}
         except Exception as e:
             LOG.debug("info Yahoo indisponible pour %s : %s", ticker, str(e)[:80])
+        devise_comptes = info.get("financialCurrency")
+        if not devise_comptes:
+            try:
+                devise_comptes = self.devise_comptes(t, ticker)
+            except Exception as e:
+                LOG.debug("devise des comptes inconnue pour %s : %s", ticker, str(e)[:80])
         time.sleep(self.pause)
-        return {"cours": cours, "devise_cours": meta.get("currency") or info.get("currency"),
+        return {"cours": cours, "devise_cours": meta.get("currency") or info.get("currency"), "devise_comptes": devise_comptes,
                 "nom": meta.get("longName") or info.get("longName") or meta.get("shortName"),
                 "annuel": annuel, "trimestriel": trimestres, "info": info}
+
+    @staticmethod
+    def devise_comptes(t, ticker: str) -> str | None:
+        """Devise des états financiers (champ currencyCode du flux de séries financières de Yahoo,
+        celui-là même qui fournit les comptes) : indispensable pour les sociétés qui publient en dollars
+        mais cotent en devise locale (BHP, Shell…)."""
+        maintenant = int(time.time())
+        url = f"https://query2.finance.yahoo.com/ws/fundamentals-timeseries/v1/finance/timeseries/{ticker}"
+        j = t._data.get_raw_json(url, params={"symbol": ticker, "type": "annualTotalRevenue,annualNetIncome",
+                                              "period1": maintenant - 5 * 365 * 86400, "period2": maintenant})
+        for r in j.get("timeseries", {}).get("result", []):
+            for cle, points in r.items():
+                if cle.startswith("annual") and isinstance(points, list):
+                    for p in reversed(points):
+                        if p and p.get("currencyCode"):
+                            return p["currencyCode"]
+        return None
 
     def cours_groupes(self, tickers: list[str], periode: str = "13mo") -> dict[str, list]:
         """Clôtures et volumes de nombreux tickers en peu de requêtes (mode quotidien)."""

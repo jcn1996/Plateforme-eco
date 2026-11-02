@@ -1,0 +1,105 @@
+/* ==========================================================================
+   Écran « Pépites » : pépites candidates de l'agent entreprises (data/pepites.json).
+   Filtres par région et par secteur ; pour chaque société : note, ajustement de
+   contexte (pays et cycle, affiché à part), 3 indicateurs clés, verdict.
+   Toucher une ligne ouvre la fiche entreprise.
+   ========================================================================== */
+
+import { el, nombre, variation, classeNote } from './outils.js';
+
+const FICHIER = 'data/pepites.json';
+const filtres = { region: 'toutes', secteur: 'tous' }; // mémorisés pendant la session
+
+/** Charge data/pepites.json ; null si le fichier manque (l'appli continue). */
+export async function chargerPepites() {
+  try {
+    const r = await fetch(FICHIER, { cache: 'no-cache' });
+    if (!r.ok) return null;
+    const j = await r.json();
+    return Array.isArray(j?.donnees) ? { meta: j.meta ?? {}, liste: j.donnees } : null;
+  } catch {
+    return null;
+  }
+}
+
+const LIBELLES_CLES = { croissance_ca: 'CA', marge_op: 'Marge op.', per_secteur: 'PER vs sect.', roe: 'ROE', fscore: 'F-score' };
+
+function puces(titre, options, actif, choisir) {
+  return el('div', { class: 'pepites-filtre', role: 'group', 'aria-label': titre },
+    el('span', { class: 'pepites-filtre-titre' }, titre),
+    el('div', { class: 'pepites-puces' }, options.map(([cle, libelle, n]) => el('button', {
+      class: 'puce', type: 'button', 'aria-pressed': String(cle === actif), onclick: () => choisir(cle),
+    }, libelle, n != null ? el('small', {}, ` ${n}`) : null))),
+  );
+}
+
+export function ecranPepites(p, d, nav) {
+  const entete = el('header', {},
+    el('div', { class: 'fiche-surtitre' }, 'Agent entreprises · toutes régions'),
+    el('h2', { class: 'fiche-titre' }, 'Pépites candidates'),
+  );
+  if (!p) {
+    return [entete, el('p', { class: 'sante-ligne' }, 'Données de l’agent entreprises indisponibles (data/pepites.json introuvable). Lancer l’agent depuis l’onglet Actions.')];
+  }
+  const regions = p.meta.regions ?? {};
+  const conteneur = el('div', {});
+
+  const rendre = () => {
+    const parRegion = p.liste.filter((x) => filtres.region === 'toutes' || x.region === filtres.region);
+    const visibles = parRegion.filter((x) => filtres.secteur === 'tous' || x.secteur_gics === filtres.secteur);
+    const compte = (liste, cle) => liste.reduce((m, x) => m.set(x[cle], (m.get(x[cle]) ?? 0) + 1), new Map());
+    const nbRegions = compte(p.liste, 'region');
+    const nbSecteurs = compte(parRegion, 'secteur_gics');
+    const nomsSecteurs = new Map(p.liste.map((x) => [x.secteur_gics, x.secteur_nom]));
+    conteneur.replaceChildren(
+      puces('Région', [['toutes', 'Toutes', p.liste.length], ...Object.entries(regions).filter(([k]) => nbRegions.has(k)).map(([k, v]) => [k, v, nbRegions.get(k)])],
+        filtres.region, (c) => { filtres.region = c; filtres.secteur = 'tous'; rendre(); }),
+      puces('Secteur', [['tous', 'Tous', parRegion.length], ...[...nbSecteurs].sort((a, b) => b[1] - a[1]).map(([k, n]) => [k, nomsSecteurs.get(k) ?? k, n])],
+        filtres.secteur, (c) => { filtres.secteur = c; rendre(); }),
+      visibles.length
+        ? el('div', { class: 'pepites-liste' }, visibles.map((x) => ligne(x, d, nav)))
+        : el('p', { class: 'fiche-verdict' }, 'Aucune pépite candidate pour ce filtre.'),
+    );
+  };
+  rendre();
+
+  const crit = p.meta.criteres ?? {};
+  return [
+    entete,
+    el('p', { class: 'macro-texte' },
+      `${p.liste.length} société${p.liste.length > 1 ? 's' : ''} remplissent tous les critères`,
+      p.meta.candidats > p.liste.length ? ` (les ${p.liste.length} mieux notées sur ${p.meta.candidats})` : '',
+      '. Note sur 100 ; l’ajustement de contexte (pays et cycle) est affiché à part.'),
+    conteneur,
+    el('details', { class: 'detail-repliable' },
+      el('summary', {}, 'Critères (tous requis)'),
+      el('ul', { class: 'contre-scenario' },
+        el('li', {}, `Croissance du chiffre d’affaires d’au moins ${nombre(crit.croissance_ca_min ?? 10)} %`),
+        el('li', {}, 'Marge opérationnelle en amélioration (bénéfice en hausse pour les financières)'),
+        el('li', {}, 'Flux de trésorerie disponible positif (ROE > 10 % pour les financières)'),
+        el('li', {}, `Dette nette / EBITDA d’au plus ${nombre(crit.dette_ebitda_max ?? 2, 1)}`),
+        el('li', {}, `F-score de Piotroski d’au moins ${crit.fscore_min ?? 7}`),
+        el('li', {}, `Valorisation au plus ${nombre(crit.valorisation_max_pct ?? 10)} % au-dessus de la médiane du secteur`),
+        el('li', {}, 'Aucun signal d’alerte comptable'),
+      )),
+    el('p', { class: 'fraicheur' }, `Mis à jour le ${(p.meta.genere_le ?? '').slice(8, 10)}/${(p.meta.genere_le ?? '').slice(5, 7)}/${(p.meta.genere_le ?? '').slice(0, 4)} · Agent entreprises (règles, sans IA)`),
+    el('p', { class: 'mention-legale' }, 'Liste de candidates à étudier, pas une recommandation : chaque fiche comporte une revue critique et des points à vérifier soi-même. Ne constitue pas un conseil en investissement.'),
+  ];
+}
+
+function ligne(x, d, nav) {
+  const pays = d.paysParCode.get(x.pays)?.nom ?? x.pays;
+  const cles = Object.entries(x.cles ?? {}).slice(0, 3);
+  const ctx = x.contexte?.ajustement ?? 0;
+  return el('button', { class: `ligne-pepite ${classeNote(x.note)}`, type: 'button', onclick: () => nav.ouvrirEntreprise(x.ticker),
+    'aria-label': `${x.nom}, ${pays}, ${x.secteur_nom}, note ${x.note} sur 100, ajustement de contexte ${variation(ctx, 1, ' point')}` },
+  el('div', { class: 'ligne-pepite-tete' },
+    el('span', { class: 'ligne-pepite-nom' }, x.nom),
+    el('span', { class: 'ligne-pepite-note' }, nombre(x.note), el('small', {}, '/100'),
+      el('small', { class: `ligne-pepite-ctx ${ctx > 0 ? 'hausse' : ctx < 0 ? 'baisse' : ''}` }, ` ${variation(ctx, 1, '')} contexte`)),
+  ),
+  el('div', { class: 'ligne-pepite-info' }, `${x.ticker} · ${pays} · ${x.secteur_nom} · confiance ${x.confiance}`),
+  el('div', { class: 'ligne-pepite-cles' }, cles.map(([k, v]) => el('span', {}, el('small', {}, LIBELLES_CLES[k] ?? k), ' ', el('strong', { class: 'mono' }, v)))),
+  el('div', { class: 'ligne-pepite-verdict' }, x.verdict),
+  );
+}

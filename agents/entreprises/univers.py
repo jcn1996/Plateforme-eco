@@ -247,13 +247,34 @@ def construire(composition: Composition | None, config: dict, connu: dict | None
                              "surveillance": True})
         elif s["ticker"] in vus:
             next(x for x in societes if x["ticker"] == s["ticker"])["surveillance"] = True
-    # Doublons (une société présente dans deux fichiers) : on garde la première occurrence
-    uniques, vus = [], set()
+    # Doublons : même ticker, catégories d'actions (GOOGL / GOOG) ou double cotation (BHP à Sydney et
+    # à Johannesburg) : on garde la première occurrence (ordre des pays de la configuration)
+    uniques, vus, noms = [], set(), {}
     for s in societes:
-        if s["ticker"] not in vus:
-            vus.add(s["ticker"])
-            uniques.append(s)
+        cle_nom = cle_societe(s.get("nom") or "")
+        if s["ticker"] in vus:
+            continue
+        if cle_nom and cle_nom in noms and not s.get("surveillance"):
+            LOG.info("Doublon écarté : %s (%s), déjà présent sous %s", s["ticker"], s.get("nom"), noms[cle_nom])
+            continue
+        vus.add(s["ticker"])
+        if cle_nom:
+            noms[cle_nom] = s["ticker"]
+        uniques.append(s)
     return uniques, etats
+
+
+MOTS_VIDES = {"sa", "se", "ag", "nv", "plc", "spa", "ab", "the", "de", "la", "et", "and", "co", "inc", "corp", "corporation",
+              "ltd", "limited", "holding", "holdings", "group", "class", "cl", "shs", "ord", "adr", "registered", "pref", "pn",
+              "on", "pna", "pnb", "unit", "units", "non", "voting", "series", "common", "stock", "tbk", "pcl", "nvdr", "bhd", "asa", "oyj", "publ"}
+
+
+def cle_societe(nom: str) -> str:
+    """Nom normalisé (sans accents, formes juridiques ni catégories d'actions) pour repérer les doublons."""
+    import unicodedata
+    t = "".join(c for c in unicodedata.normalize("NFD", nom.lower()) if unicodedata.category(c) != "Mn")
+    mots = sorted({m for m in re.findall(r"[a-z0-9]+", t) if m not in MOTS_VIDES and len(m) > 1})
+    return " ".join(mots)
 
 
 def lire_surveillance(chemin: Path) -> list[dict]:

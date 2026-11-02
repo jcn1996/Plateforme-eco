@@ -20,6 +20,7 @@ import { ecranPortefeuille } from './portefeuille.js';
 import { ecranClassement } from './classement.js';
 import { chargerSante, ecranSante, problemeDetecte } from './sante.js';
 import { chargerMacro, ecranMacro } from './macro.js';
+import { chargerPepites, ecranPepites } from './pepites.js';
 
 const $ = (sel) => document.querySelector(sel);
 const dom = {
@@ -65,6 +66,7 @@ function estLarge() {
 
 let agentsSante = [];
 let macro = null; // données de l'agent macro (data/macro.json), ou null
+let pepites = null; // pépites candidates de l'agent entreprises (data/pepites.json), ou null
 
 /** Recharge les journaux des agents, met à jour la pastille de l'en-tête et l'écran s'il est ouvert. */
 async function majSante() {
@@ -77,6 +79,24 @@ async function majSante() {
   if (routeActuelle?.type === 'sante') $('#sante-contenu').replaceChildren(...ecranSante(agentsSante));
 }
 
+/**
+ * Mention « Données fictives » : affichée seulement là où l'écran montre des données fictives
+ * (portefeuille démo, alertes, flux de capitaux), et plus là où les agents produisent des données réelles.
+ */
+function majBadgesFictifs(route) {
+  const f = d.fictifPar ?? {};
+  const fictif = {
+    globe: f.flux !== false || f.alertes !== false,
+    pays: f.pays !== false || f.secteurs !== false,
+    secteur: f.secteurs !== false || f.entreprises !== false,
+    entreprise: f.entreprises !== false,
+    portefeuille: f.portefeuille !== false,
+    classement: f.pays !== false || f.entreprises !== false,
+    comparaison: f.pays !== false || f.entreprises !== false,
+  }[route.type] ?? false;
+  document.querySelectorAll('.badge-fictif').forEach((b) => { b.hidden = !fictif; });
+}
+
 /* ============================== Démarrage ============================== */
 
 async function demarrer() {
@@ -85,7 +105,7 @@ async function demarrer() {
 
   try {
     // data/macro.json est facultatif : son absence n'empêche pas l'appli de démarrer
-    [d, macro] = await Promise.all([chargerDonnees(), chargerMacro()]);
+    [d, macro, pepites] = await Promise.all([chargerDonnees(), chargerMacro(), chargerPepites()]);
     d.macro = macro;
   } catch (erreur) {
     console.error(erreur);
@@ -94,7 +114,7 @@ async function demarrer() {
   }
 
   // La mention « Données fictives » disparaît quand plus aucun fichier n'est fictif
-  document.querySelectorAll('.badge-fictif').forEach((b) => { b.hidden = !d.fictif; });
+  majBadgesFictifs({ type: 'globe' });
   remplirBandeau($('#bandeau-piste'), d.marches);
   alertes = initialiserAlertes(
     { bouton: $('#alertes-bascule'), liste: $('#alertes-liste'), compte: $('#alertes-compte'), apercu: $('#alertes-apercu') },
@@ -128,6 +148,7 @@ async function demarrer() {
   $('#btn-classement').addEventListener('click', () => naviguer({ type: 'classement' }));
   $('#btn-sante').addEventListener('click', () => naviguer({ type: 'sante' }));
   $('#btn-macro').addEventListener('click', () => naviguer({ type: 'macro' }));
+  $('#btn-pepites').addEventListener('click', () => naviguer({ type: 'pepites' }));
   // Santé des agents : chargée à part (un journal manquant ne bloque pas l'appli),
   // puis recalculée chaque minute, car le statut « en panne » dépend de l'heure
   majSante();
@@ -285,6 +306,7 @@ function filAriane(route) {
     case 'mes-alertes': return [racine, { libelle: 'Mes alertes', route }];
     case 'sante': return [racine, { libelle: 'Santé des agents', route }];
     case 'macro': return [racine, { libelle: 'Vue macro', route }];
+    case 'pepites': return [racine, { libelle: 'Pépites', route }];
     default: return [racine];
   }
 }
@@ -303,7 +325,7 @@ function majAriane(route) {
 /** Vérifie qu'une route désigne bien un élément existant. */
 function routeValide(route) {
   switch (route.type) {
-    case 'globe': case 'portefeuille': case 'classement': case 'comparaison': case 'mes-alertes': case 'sante': case 'macro': return true;
+    case 'globe': case 'portefeuille': case 'classement': case 'comparaison': case 'mes-alertes': case 'sante': case 'macro': case 'pepites': return true;
     case 'pays': return d.paysParCode.has(route.id);
     case 'secteur': return d.secteurParId.has(route.id);
     case 'entreprise': return d.entrepriseParTicker.has(route.id);
@@ -362,6 +384,7 @@ function afficher(route) {
     'mes-alertes': { section: '#ecran-mes-alertes', contenu: '#mes-alertes-contenu', titre: 'Mes alertes', rendu: () => ecranMesAlertes(d, { surChangement: majAlertes, ouvrir: naviguer }) },
     sante: { section: '#ecran-sante', contenu: '#sante-contenu', titre: 'Santé des agents', rendu: () => ecranSante(agentsSante) },
     macro: { section: '#ecran-macro', contenu: '#macro-contenu', titre: 'Vue macro', rendu: () => ecranMacro(macro) },
+    pepites: { section: '#ecran-pepites', contenu: '#pepites-contenu', titre: 'Pépites', rendu: () => ecranPepites(pepites, d, navigateurPanneau) },
   };
   for (const [type, ecran] of Object.entries(ECRANS)) {
     const visible = route.type === type;
@@ -374,7 +397,7 @@ function afficher(route) {
   }
   majBarre(route.type === 'comparaison');
   // Les pays sont produits par l'agent pays (données réelles) : pas de badge « Données fictives » sur leur fiche
-  document.body.classList.toggle('fiche-donnees-reelles', route.type === 'pays' && d.fictifPar?.pays === false);
+  majBadgesFictifs(route);
   document.body.classList.toggle('ecran-ouvert', route.type in ECRANS);
 
   // Globe : pivot vers le pays concerné, pause quand il est masqué
@@ -391,7 +414,7 @@ function afficher(route) {
 
 /** Le globe ne se dessine que s'il est visible (économie de batterie). */
 function majActiviteGlobe() {
-  const masque = ['portefeuille', 'classement', 'comparaison', 'mes-alertes', 'sante', 'macro'].includes(routeActuelle.type)
+  const masque = ['portefeuille', 'classement', 'comparaison', 'mes-alertes', 'sante', 'macro', 'pepites'].includes(routeActuelle.type)
     || (dom.panneau.classList.contains('est-ouvert') && etatPanneau === 'plein' && !estLarge());
   globe?.definirActif(!masque);
 }
