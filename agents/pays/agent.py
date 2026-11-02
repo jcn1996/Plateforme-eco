@@ -24,6 +24,7 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from statistics import median
 
+from ..commun import sante
 from ..commun.journal import journal
 from ..commun.sortie import ecrire_json, enveloppe, lire_json, maintenant_iso
 from . import croisement, notation, recap, textes
@@ -570,7 +571,8 @@ def executer(fournisseur, config: dict, ancien: dict | None, aujourdhui: date) -
             elif a.get("precedent"):
                 p["precedent"] = a["precedent"]
         sortie.append(p)
-        echecs += [{"pays": code, "indicateur": t["indicateur"], "source": t["nom"], "statut": t["statut"], "raison": t.get("raison")}
+        echecs += [{"pays": code, "indicateur": t["indicateur"], "source": t["nom"], "statut": t["statut"], "raison": t.get("raison"),
+                    "date": t.get("date")}
                    for t in tentatives[code] if t["statut"] in ("échec", "rejetée")]
 
     etats["textes"] = f"Gemini pour {textes_gemini} pays" if textes_gemini else "règles (pas de clé GEMINI_API_KEY ou rédaction refusée)"
@@ -606,10 +608,66 @@ def journaliser(chemin: Path, genere_le: str, etats: dict, echecs: list, donnees
     if entrees and sans_date(entrees[-1]) == sans_date(entree):
         return False
     entrees = (entrees + [entree])[-maximum:]
-    ecrire_json(chemin, {"meta": {"genere_le": genere_le, "source": "agent-pays", "version_agent": VERSION_AGENT,
-                                  "description": "Sources en échec et valeurs rejetées, à chaque exécution où elles changent"},
-                         "donnees": entrees})
+    meta = {**journal_existant.get("meta", {}),  # conserve le bloc « sante »
+            "genere_le": genere_le, "source": "agent-pays", "version_agent": VERSION_AGENT,
+            "description": "Sources en échec et valeurs rejetées, à chaque exécution où elles changent"}
+    ecrire_json(chemin, {"meta": meta, "donnees": entrees})
     return True
+
+
+def _date_dans_raison(raison: str | None) -> str | None:
+    """« trop ancienne (donnée mensuelle de 2025-01, …) » → « 2025-01 » (anciennes entrées du journal)."""
+    import re
+    m = re.search(r"\b(\d{4}(?:-\d{2}){0,2})\b", raison or "")
+    return m.group(1) if m else None
+
+
+def sources_sante(etats: dict, echecs: list, journal_existant: dict | None) -> list[dict]:
+    """État de chaque source pour l'écran « Santé des agents »."""
+    historique = (journal_existant or {}).get("donnees", [])
+
+    def dernier_ok(nom):
+        for e in reversed(historique):
+            if (e.get("etat_des_sources") or {}).get(nom) == "ok":
+                return e.get("genere_le")
+        return None
+
+    res = []
+    for nom, etat in etats.items():
+        if nom == "textes":
+            continue
+        if etat == "ok":
+            res.append({"nom": nom, "etat": "ok"})
+        elif etat == "vide" or etat.startswith("partiel"):
+            res.append({"nom": nom, "etat": "partielle", "detail": "aucune donnée reçue" if etat == "vide" else etat})
+        elif "absente" in etat:  # clé d'API non fournie : source volontairement ignorée
+            res.append({"nom": nom, "etat": "non configurée", "detail": etat.removeprefix("erreur : ")})
+        else:
+            res.append({"nom": nom, "etat": "échec", "derniere_donnee_valide": dernier_ok(nom),
+                        "detail": etat.removeprefix("erreur : ")})
+    # Sources qui répondent, mais dont la donnée est trop ancienne pour être retenue
+    perimees = {}
+    for e in echecs:
+        if e.get("statut") == "rejetée" and str(e.get("raison", "")).startswith("trop ancienne"):
+            p = perimees.setdefault(e["source"], {"nom": e["source"], "etat": "périmée", "dates": [], "pays": []})
+            p["pays"].append(f"{e['pays']} ({e['indicateur']})")
+            date_donnee = e.get("date") or _date_dans_raison(e.get("raison"))
+            if date_donnee:
+                p["dates"].append(str(date_donnee))
+    for p in perimees.values():
+        res.append({"nom": p["nom"], "etat": "périmée", "derniere_donnee_valide": max(p["dates"]) if p["dates"] else None,
+                    "detail": "donnée trop ancienne pour " + ", ".join(sorted(set(p["pays"])))})
+    return res
+
+
+def enregistrer_sante(chemin: Path, etats: dict, echecs: list) -> None:
+    journal_existant = lire_json(chemin)
+    precedent = ((journal_existant or {}).get("meta") or {}).get("sante")
+    bloc = sante.bloc_sante("pays", "Agent pays", 1, "agent-pays.yml",
+                            sources_sante(etats, echecs, journal_existant), datetime.now(timezone.utc), precedent)
+    # Une exécution par jour : la date de dernière exécution est toujours enregistrée
+    sante.enregistrer_sante(chemin, bloc, forcer=True)
+    LOG.info("Santé : %d/%d sources répondent.", bloc["sources_ok"], bloc["sources_total"])
 
 
 def extraire_flux_fictifs(ancien: dict | None, chemin_flux: Path) -> None:
@@ -651,7 +709,8 @@ def main(argv=None) -> int:
         if journaliser(Path(args.journal), maintenant_iso(), etats, echecs, donnees):
             LOG.info("Données inchangées ; journal des sources mis à jour (état des sources différent).")
         else:
-            LOG.info("Aucun changement depuis la dernière exécution : fichiers inchangés.")
+            LOG.info("Aucun changement dans les données depuis la dernière exécution.")
+        enregistrer_sante(Path(args.journal), etats, echecs)
         return 0
 
     meta_ancienne = (ancien or {}).get("meta", {})
@@ -668,6 +727,7 @@ def main(argv=None) -> int:
     ecrire_json(sortie, objet)
     chemin = historiser(Path(args.historique), donnees, aujourdhui, objet["meta"])
     journaliser(Path(args.journal), objet["meta"]["genere_le"], etats, echecs, donnees)
+    enregistrer_sante(Path(args.journal), etats, echecs)
     chemin_recap = recap.ecrire(Path(args.recap), aujourdhui, objet, ancien_reel, etats)
     notes = sorted(((p["note"] or 0, p["nom"]) for p in donnees), reverse=True)
     LOG.info("Écrit : %s, %s et %s", sortie, chemin, chemin_recap)

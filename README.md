@@ -71,7 +71,7 @@ L'agent pays se trouve dans `agents/`, en Python 3.12.
 - Les règles de notation et de conduite sont décrites dans [`agents/pays/regles.md`](agents/pays/regles.md). Les pondérations se modifient dans `agents/pays/config.json`.
 
 **Exécution** : le workflow `.github/workflows/agent-pays.yml` lance l'agent chaque jour à 6 h UTC ; on peut aussi le lancer à la main.
-- Il ne commite sur `main` que si les données ont changé, avec le message « Agent pays : mise à jour du JJ/MM/AAAA ».
+- Il commite sur `main` avec le message « Agent pays : mise à jour du JJ/MM/AAAA ». Même quand les données n'ont pas changé, la date de dernière exécution est enregistrée dans son journal (pour l'écran « Santé des agents »).
 - Chaque jour, il garde ses notes dans `data/historique/pays/AAAA-MM-JJ.json`.
 - Il écrit un récapitulatif factuel dans `data/recap/pays-AAAA-MM-JJ.md` : ce qui a changé, les divergences entre sources, les données manquantes et les mouvements de notes.
 - Il tient le journal des sources en échec dans `data/journal/agent-pays.json`.
@@ -105,6 +105,26 @@ L'agent marchés se trouve dans `agents/marches/`, en Python 3.12. Il met à jou
 python -m agents.marches
 ```
 
+## Santé des agents
+
+L'icône en forme de pouls, dans l'en-tête, ouvre l'écran **Santé des agents**. Une pastille rouge s'y affiche dès qu'un agent n'est pas « OK ».
+Pour chaque agent (pays, marchés, puis les suivants), l'écran affiche :
+- la date et l'heure de la dernière exécution réussie ;
+- le statut :
+  - **en panne** si cette exécution date de plus de 2 fois l'intervalle prévu par le workflow (calculé à partir de ses lignes `cron`) ;
+  - **dégradé** si une source est en échec, de secours, partielle ou périmée ;
+  - **OK** sinon ;
+- le nombre de sources qui répondent sur le total ;
+- les sources en échec ou périmées, avec la date de leur dernière donnée valide.
+
+Les données viennent de `data/journal/*.json` (bloc `meta.sante`, écrit par `agents/commun/sante.py`). `data/journal/index.json` liste les journaux à lire. Un nouvel agent n'a qu'à appeler `sante.bloc_sante(...)` puis `sante.enregistrer_sante(...)` pour apparaître dans l'écran.
+
+## Maintien
+
+Le workflow `.github/workflows/maintien.yml` tourne chaque lundi (et à la main).
+- Il vérifie que les workflows planifiés sont actifs et réactive ceux que GitHub a mis en pause pour inactivité. Un workflow désactivé à la main est seulement signalé.
+- Si le dépôt n'a reçu aucun commit depuis 30 jours, il fait un commit léger (`.github/maintien.txt`), pour éviter la mise en pause automatique des workflows planifiés.
+
 ## Structure
 
 ```
@@ -116,6 +136,7 @@ js/donnees.js         chargement des JSON (seul fichier à modifier si les chemi
 js/globe.js           globe 3D (Three.js r160), gestes, zoom, flux, étiquettes
 js/carte-vecteur.js   carte vectorielle : pays triangulés, trait de frontière, niveaux 110m / 50m
 js/interface.js       horloge, bandeau des marchés, alertes, mode léger
+js/sante.js           écran « Santé des agents »
 js/panneau-pays.js    fiches pays et secteur
 js/panneau-entreprise.js  fiche entreprise
 js/portefeuille.js    écran portefeuille

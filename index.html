@@ -56,6 +56,11 @@
           <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12.6 12.6 17 17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
           <span class="visuellement-cache">Rechercher</span>
         </button>
+        <button id="btn-sante" class="bouton bouton--icone bouton-sante" type="button" title="Santé des agents">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2 10.5h3.5l2-4.5 3 9 2.2-6 1.3 1.5H18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="pastille-probleme" aria-hidden="true"></span>
+          <span class="visuellement-cache">Santé des agents</span>
+        </button>
         <button id="btn-legende" class="bouton bouton--icone" type="button" aria-expanded="false" aria-controls="legende" title="Légende des couleurs">
           <span aria-hidden="true">?</span><span class="visuellement-cache">Légende des couleurs</span>
         </button>
@@ -178,6 +183,15 @@
       <span class="badge-fictif">Données fictives</span>
     </nav>
     <div id="mes-alertes-contenu" class="ecran-contenu"></div>
+  </section>
+
+  <!-- ===================== ÉCRAN SANTÉ DES AGENTS ===================== -->
+  <section id="ecran-sante" class="ecran" hidden aria-label="Santé des agents">
+    <nav class="navigation navigation--ecran" aria-label="Fil d'Ariane">
+      <button class="bouton bouton--icone js-retour" type="button" title="Retour"><span aria-hidden="true">‹</span><span class="visuellement-cache">Retour</span></button>
+      <ol class="ariane js-ariane"></ol>
+    </nav>
+    <div id="sante-contenu" class="ecran-contenu"></div>
   </section>
 
   <!-- Barre flottante du comparateur (sélection en cours) -->

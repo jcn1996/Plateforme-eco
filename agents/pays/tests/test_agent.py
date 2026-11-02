@@ -11,7 +11,7 @@ from pathlib import Path
 
 from agents.commun.sortie import lire_json
 from agents.pays import croisement, notation, textes
-from agents.pays.agent import main, qualite
+from agents.pays.agent import main, qualite, sources_sante
 
 DONNEES = Path(__file__).resolve().parent / "donnees"
 JOUR = "2026-11-02"
@@ -55,6 +55,24 @@ class TestTextes(unittest.TestCase):
         self.assertFalse(textes.ton_conforme("C'est INCONTOURNABLE"))
         self.assertFalse(textes.ton_conforme("l'explosion des prix"))
         self.assertTrue(textes.ton_conforme("Croissance de 2,1 % selon le FMI."))
+
+
+class TestSante(unittest.TestCase):
+    def test_sources_sante(self):
+        etats = {"fmi": "ok", "bis": "erreur : HTTP 503", "fred": "erreur : clé FRED_API_KEY absente : source ignorée",
+                 "ocde": "partiel (3/10)", "textes": "règles"}
+        echecs = [{"pays": "US", "indicateur": "inflation", "source": "BLS", "statut": "rejetée",
+                   "raison": "trop ancienne (donnée mensuelle de 2025-01, plus de 6 mois)", "date": "2025-01"}]
+        journal = {"donnees": [{"genere_le": "2026-10-30T06:01:00Z", "etat_des_sources": {"bis": "ok"}},
+                               {"genere_le": "2026-10-31T06:01:00Z", "etat_des_sources": {"bis": "erreur : x"}}]}
+        res = {s["nom"]: s for s in sources_sante(etats, echecs, journal)}
+        self.assertNotIn("textes", res)
+        self.assertEqual(res["bis"]["etat"], "échec")
+        self.assertEqual(res["bis"]["derniere_donnee_valide"], "2026-10-30T06:01:00Z")
+        self.assertEqual(res["fred"]["etat"], "non configurée")
+        self.assertEqual(res["ocde"]["etat"], "partielle")
+        self.assertEqual(res["BLS"]["etat"], "périmée")
+        self.assertEqual(res["BLS"]["derniere_donnee_valide"], "2025-01")
 
 
 class TestAgent(unittest.TestCase):

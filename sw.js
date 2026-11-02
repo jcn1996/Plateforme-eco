@@ -12,7 +12,7 @@
    Changer VERSION vide les anciens caches chez tous les utilisateurs.
    ========================================================================== */
 
-const VERSION = 'salle-controle-v9';
+const VERSION = 'salle-controle-v10';
 
 const FICHIERS_APPLI = [
   './',
@@ -32,6 +32,7 @@ const FICHIERS_APPLI = [
   'js/comparateur.js',
   'js/mes-alertes.js',
   'js/recherche.js',
+  'js/sante.js',
   'assets/icone.svg',
   'assets/icone-192.png',
   'assets/icone-512.png',
@@ -42,6 +43,7 @@ const FICHIERS_APPLI = [
   'data/portefeuille.json',
   'data/marches.json',
   'data/flux.json',
+  'data/journal/index.json',
   'data/countries-110m.json',
 ];
 
