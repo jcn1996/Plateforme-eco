@@ -5,7 +5,7 @@
    Toucher une ligne ouvre la fiche correspondante.
    ========================================================================== */
 
-import { el, nombre, classeNote, libelleNiveau, niveauNote } from './outils.js';
+import { el, nombre, classeNote, libelleNiveau, niveauNote, badgeTendance, tendanceNote } from './outils.js';
 
 const NB_ENTREPRISES = 20;
 
@@ -47,7 +47,7 @@ export function ecranClassement(d, nav) {
   ];
 }
 
-function ligne({ rang, note, nom, info, surClic }) {
+function ligne({ rang, note, nom, info, surClic, tendance }) {
   return el('button', { class: `ligne-classement ${classeNote(note)}`, type: 'button', onclick: surClic,
     'aria-label': `${rang}. ${nom}, ${info}, note ${note} sur 100, ${libelleNiveau(niveauNote(note))}` },
     el('span', { class: 'ligne-classement-rang', 'aria-hidden': 'true' }, String(rang)),
@@ -56,7 +56,7 @@ function ligne({ rang, note, nom, info, surClic }) {
       el('span', { class: 'ligne-classement-nom' }, nom),
       el('span', { class: 'ligne-classement-info' }, info),
     ),
-    el('span', { class: 'ligne-classement-note', 'aria-hidden': 'true' }, nombre(note)),
+    el('span', { class: 'ligne-classement-note' }, el('span', { 'aria-hidden': 'true' }, nombre(note)), badgeTendance(tendance)),
   );
 }
 
@@ -64,7 +64,7 @@ function lignesPays(d, nav) {
   return [...d.pays]
     .sort((a, b) => b.note - a.note || a.nom.localeCompare(b.nom, 'fr'))
     .map((p, i) => ligne({
-      rang: i + 1, note: p.note, nom: p.nom, info: p.verdict,
+      rang: i + 1, note: p.note, nom: p.nom, info: p.verdict, tendance: tendanceNote(p),
       surClic: () => nav.ouvrirPays(p.code),
     }));
 }
@@ -74,7 +74,7 @@ function lignesEntreprises(d, nav) {
     .sort((a, b) => b.note - a.note || a.nom.localeCompare(b.nom, 'fr'))
     .slice(0, NB_ENTREPRISES)
     .map((e, i) => ligne({
-      rang: i + 1, note: e.note, nom: e.nom,
+      rang: i + 1, note: e.note, nom: e.nom, tendance: tendanceNote(e),
       info: `${d.secteurParId.get(e.secteur)?.nom ?? ''} · ${d.paysParCode.get(e.pays)?.nom ?? e.pays}`,
       surClic: () => nav.ouvrirEntreprise(e.ticker),
     }));

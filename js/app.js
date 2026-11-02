@@ -13,6 +13,7 @@ import { el, nombre, lireMetrique, METRIQUES_PAYS } from './outils.js';
 import { demarrerHorloge, remplirBandeau, initialiserAlertes, initialiserFiltres, lireModeLeger, memoriserModeLeger } from './interface.js';
 import { initialiserComparateur, boutonComparer, majBarre, ecranComparaison } from './comparateur.js';
 import { evaluerRegles, ecranMesAlertes } from './mes-alertes.js';
+import { initialiserRecherche } from './recherche.js';
 import { fichePays, ficheSecteur } from './panneau-pays.js';
 import { ficheEntreprise } from './panneau-entreprise.js';
 import { ecranPortefeuille } from './portefeuille.js';
@@ -40,6 +41,7 @@ const dom = {
 let d = null;      // données chargées
 let globe = null;  // instance du globe 3D (null si WebGL indisponible)
 let alertes = null;
+let recherche = null;
 let routeActuelle = { type: 'globe' };
 
 /*
@@ -104,10 +106,19 @@ async function demarrer() {
 
   $('#btn-portefeuille').addEventListener('click', () => naviguer({ type: 'portefeuille' }));
   $('#btn-classement').addEventListener('click', () => naviguer({ type: 'classement' }));
+  // Recherche : toucher un résultat ouvre la fiche (le globe se centre sur le pays)
+  recherche = initialiserRecherche(d, {
+    bouton: $('#btn-recherche'), panneau: $('#recherche'), champ: $('#recherche-champ'),
+    liste: $('#recherche-resultats'), fermer: $('#recherche-fermer'),
+  }, naviguer);
   brancherLegende();
   document.querySelectorAll('.js-retour').forEach((b) => b.addEventListener('click', retour));
   document.querySelectorAll('.js-fermer').forEach((b) => b.addEventListener('click', () => allerVers({ type: 'globe' })));
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && routeActuelle.type !== 'globe') retour(); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (recherche?.ouverte()) recherche.fermer();
+    else if (routeActuelle.type !== 'globe') retour();
+  });
   brancherGlissementPanneau();
 
   // Le globe est chargé à part : si Three.js ou WebGL est indisponible,
