@@ -22,6 +22,13 @@ LOG = journal("sources")
 FMI_URL = "https://www.imf.org/external/datamapper/api/v1/{serie}"
 OCDE_URL = "https://sdmx.oecd.org/public/rest/data/{flux}/{cle}"
 BIS_URL = "https://stats.bis.org/api/v2/data/dataflow/BIS/WS_CBPOL/1.0/{cle}"
+BM_URL = "https://api.worldbank.org/v2/country/all/indicator/{indicateur}"
+EUROSTAT_URL = "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/{jeu}"
+BCE_URL = "https://data-api.ecb.europa.eu/service/data/{flux}/{cle}"
+BCB_URL = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.{serie}/dados"
+BOC_URL = "https://www.bankofcanada.ca/valet/observations/{serie}/json"
+DBNOMICS_URL = "https://api.db.nomics.world/v22/series/{identifiant}"
+FRED_URL = "https://api.stlouisfed.org/fred/series/observations"
 
 # Libellés exacts des sources, recopiés dans chaque indicateur
 SOURCES = {
@@ -32,6 +39,11 @@ SOURCES = {
     "yahoo_prix": "Yahoo Finance via yfinance, cours de clôture de l'ETF {symbole}",
     "yahoo_per": "Yahoo Finance via yfinance, PER (trailing) de l'ETF {symbole}",
     "yahoo_devise": "Yahoo Finance via yfinance, cours {symbole}",
+    "ocde_eo": "OCDE, Perspectives économiques (DF_EO, GDPV_ANNPCT), prévision {annee}",
+    "bm": "Banque mondiale, {indicateur}, année {annee}",
+    "eurostat": "Eurostat, IPCH (prc_hicp_minr, glissement annuel), mensuel",
+    "bce_taux": "BCE, taux de la facilité de dépôt (FM, Data Portal)",
+    "bce_change": "BCE, cours de référence de l'euro (EXR, Data Portal)",
 }
 
 
@@ -114,6 +126,91 @@ class FournisseurReel:
         return resultat
 
 
+def _jsonstat_par_geo(donnees: dict) -> dict[str, list[tuple[str, float]]]:
+    """Lecture d'un jeu Eurostat (JSON-stat) : {pays: [(période, valeur)]}."""
+    ids, tailles = donnees["id"], donnees["size"]
+    pas = [1] * len(ids)
+    for i in range(len(ids) - 2, -1, -1):
+        pas[i] = pas[i + 1] * tailles[i + 1]
+    index = {k: donnees["dimension"][k]["category"]["index"] for k in ids}
+    i_geo, i_temps = ids.index("geo"), ids.index("time")
+    resultat = {}
+    for geo, g in index["geo"].items():
+        for periode, t in index["time"].items():
+            v = donnees["value"].get(str(g * pas[i_geo] + t * pas[i_temps]))
+            if v is not None:
+                resultat.setdefault(geo, []).append((periode, float(v)))
+    return {k: sorted(v) for k, v in resultat.items()}
+
+
+def _methodes_supplementaires(cls):
+    """Nouvelles sources (vérification croisée), ajoutées au fournisseur réel."""
+
+    def ocde_eo(self, iso3, annee):
+        cle = "+".join(iso3) + ".GDPV_ANNPCT.A"
+        texte = self.t.texte(OCDE_URL.format(flux="OECD.ECO.MAD,DSD_EO@DF_EO,1.2", cle=cle),
+                             params={"startPeriod": str(annee - 1), "endPeriod": str(annee), "format": "csvfilewithlabels"})
+        resultat = {}
+        for l in _csv(texte):
+            if l.get("OBS_VALUE") not in (None, ""):
+                resultat.setdefault(l["REF_AREA"], {})[l["TIME_PERIOD"]] = float(l["OBS_VALUE"])
+        return resultat
+
+    def banque_mondiale(self, indicateur, annee):
+        donnees = self.t.json(BM_URL.format(indicateur=indicateur),
+                              params={"format": "json", "date": f"{annee - 3}:{annee}", "per_page": "20000"})
+        resultat = {}
+        for x in donnees[1] or []:
+            if x.get("value") is not None and x.get("countryiso3code"):
+                resultat.setdefault(x["countryiso3code"], {})[x["date"]] = float(x["value"])
+        return resultat
+
+    def eurostat_ipch(self, geos, debut):
+        texte = self.t.texte(EUROSTAT_URL.format(jeu="prc_hicp_minr"),
+                             params={"unit": "RCH_A", "coicop18": "TOTAL", "sinceTimePeriod": debut, "geo": list(geos)})
+        return _jsonstat_par_geo(json.loads(texte))
+
+    def bce_taux(self):
+        texte = self.t.texte(BCE_URL.format(flux="FM", cle="D.U2.EUR.4F.KR.DFR.LEV"), params={"lastNObservations": "400", "format": "csvdata"})
+        return [(l["TIME_PERIOD"], float(l["OBS_VALUE"])) for l in _csv(texte) if l.get("OBS_VALUE")]
+
+    def bce_change(self, devises):
+        cle = "D." + "+".join(devises) + ".EUR.SP00.A"
+        texte = self.t.texte(BCE_URL.format(flux="EXR", cle=cle), params={"lastNObservations": "120", "format": "csvdata"})
+        resultat = {}
+        for l in _csv(texte):
+            if l.get("OBS_VALUE"):
+                resultat.setdefault(l["CURRENCY"], []).append((l["TIME_PERIOD"], float(l["OBS_VALUE"])))
+        return {k: sorted(v) for k, v in resultat.items()}
+
+    def bcb(self, serie, depuis):
+        donnees = self.t.json(BCB_URL.format(serie=serie), params={"formato": "json", "dataInicial": depuis.strftime("%d/%m/%Y")})
+        return [(f"{x['data'][6:10]}-{x['data'][3:5]}-{x['data'][0:2]}", float(x["valor"])) for x in donnees]
+
+    def boc(self, serie, depuis):
+        donnees = self.t.json(BOC_URL.format(serie=serie), params={"start_date": depuis.isoformat()})
+        return [(o["d"], float(o[serie]["v"])) for o in donnees["observations"] if o.get(serie, {}).get("v") not in (None, "")]
+
+    def dbnomics(self, identifiant):
+        donnees = self.t.json(DBNOMICS_URL.format(identifiant=identifiant), params={"observations": "1", "format": "json"})
+        doc = donnees["series"]["docs"][0]
+        return [(p, float(v)) for p, v in zip(doc["period"], doc["value"]) if v not in ("NA", None)]
+
+    def fred(self, serie, depuis):
+        import os
+        cle = os.environ.get("FRED_API_KEY")
+        if not cle:
+            raise RuntimeError("clé FRED_API_KEY absente : source ignorée")
+        donnees = self.t.json(FRED_URL, params={"series_id": serie, "api_key": cle, "file_type": "json",
+                                                "observation_start": depuis.isoformat()})
+        return [(o["date"], float(o["value"])) for o in donnees["observations"] if o["value"] not in (".", "")]
+
+    for nom, f in list(locals().items()):
+        if callable(f) and nom != "cls":
+            setattr(cls, nom, f)
+    return cls
+
+
 class FournisseurTest:
     """Relit les fichiers de agents/pays/tests/donnees/ (mêmes structures que FournisseurReel)."""
 
@@ -143,3 +240,34 @@ class FournisseurTest:
 
     def per(self, symboles):
         return self._lire("per")
+
+    # Nouvelles sources : mêmes structures que le fournisseur réel
+    def ocde_eo(self, iso3, annee):
+        return self._lire("ocde_eo")
+
+    def banque_mondiale(self, indicateur, annee):
+        return self._lire(f"bm_{indicateur}")
+
+    def eurostat_ipch(self, geos, debut):
+        return {k: [tuple(x) for x in v] for k, v in self._lire("eurostat").items()}
+
+    def bce_taux(self):
+        return [tuple(x) for x in self._lire("bce_taux")]
+
+    def bce_change(self, devises):
+        return {k: [tuple(x) for x in v] for k, v in self._lire("bce_change").items()}
+
+    def bcb(self, serie, depuis):
+        return [tuple(x) for x in self._lire(f"bcb_{serie}")]
+
+    def boc(self, serie, depuis):
+        return [tuple(x) for x in self._lire(f"boc_{serie}")]
+
+    def dbnomics(self, identifiant):
+        return [tuple(x) for x in self._lire("dbnomics_" + identifiant.replace("/", "_"))]
+
+    def fred(self, serie, depuis):
+        return [tuple(x) for x in self._lire(f"fred_{serie}")]
+
+
+_methodes_supplementaires(FournisseurReel)
