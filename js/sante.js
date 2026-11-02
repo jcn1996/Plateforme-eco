@@ -62,9 +62,27 @@ export function statutAgent(agent, maintenant = Date.now()) {
   return 'ok';
 }
 
-/** Vrai si au moins un agent n'est pas « OK » (pastille rouge dans l'en-tête). */
+/** Date du jour (AAAA-MM-JJ, heure locale). */
+function aujourdhuiIso(maintenant) {
+  const d = new Date(maintenant);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+/**
+ * Échéances d'un agent (ex. calendrier des réunions des banques centrales) :
+ * « expiree » quand plus aucune date future n'est connue, « proche » à moins de 60 jours.
+ */
+export function echeances(agent, maintenant = Date.now()) {
+  const jour = aujourdhuiIso(maintenant);
+  return (agent.sante?.echeances ?? []).map((e) => {
+    const jours = Math.round((Date.parse(e.jusqua) - Date.parse(jour)) / 86_400_000);
+    return { ...e, jours, etat: e.jusqua < jour ? 'expiree' : jours <= 60 ? 'proche' : 'ok' };
+  });
+}
+
+/** Vrai si au moins un agent n'est pas « OK » ou si un calendrier n'a plus de date future (pastille rouge). */
 export function problemeDetecte(agents, maintenant = Date.now()) {
-  return agents.some((a) => statutAgent(a, maintenant) !== 'ok');
+  return agents.some((a) => statutAgent(a, maintenant) !== 'ok' || echeances(a, maintenant).some((e) => e.etat === 'expiree'));
 }
 
 /** « 02/11 17:34 » (heure locale), ou une période brute (« 2025-01 ») si ce n'est pas une date complète. */
@@ -98,6 +116,7 @@ function carteAgent(agent, maintenant) {
   }
   const age = (maintenant - Date.parse(s.derniere_execution)) / 60_000;
   const problemes = (s.sources ?? []).filter((src) => ETATS_PROBLEME.has(src.etat));
+  const alertes = echeances(agent, maintenant).filter((e) => e.etat !== 'ok');
   return el('article', { class: `carte sante-carte ${classe}` },
     enTete,
     el('dl', { class: 'sante-details' },
@@ -110,6 +129,18 @@ function carteAgent(agent, maintenant) {
     ),
     statut === 'panne'
       ? el('p', { class: 'sante-alerte' }, `Aucune exécution réussie depuis plus de 2 fois l’intervalle prévu. Vérifier l’onglet Actions (workflow ${s.workflow ?? ''}).`)
+      : null,
+    alertes.length
+      ? el('div', {},
+        el('h4', { class: 'sante-sous-titre' }, 'Calendriers à compléter'),
+        el('ul', { class: 'sante-sources' }, alertes.map((e) => el('li', {},
+          el('div', { class: 'sante-source-ligne' },
+            el('span', { class: 'sante-source-nom' }, e.libelle),
+            el('span', { class: `sante-source-etat sante-etat--${e.etat === 'expiree' ? 'echec' : 'autre'}` },
+              e.etat === 'expiree' ? 'plus de date future' : `dernière date dans ${e.jours} j`),
+          ),
+          el('div', { class: 'sante-source-info' }, `Dernière date connue : ${e.jusqua} · à compléter dans agents/macro/calendrier_banques_centrales.json`),
+        ))))
       : null,
     statut === 'degrade' && s.raisons?.length
       ? el('div', {},

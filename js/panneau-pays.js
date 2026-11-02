@@ -7,6 +7,7 @@ import {
   el, svg, nombre, variation, classeNote, niveauNote, libelleNiveau, valeurIndicateur, AGENTS,
   complementIndicateur, badgeTendance, tendanceIndicateur, tendanceNote, texteFraicheur,
 } from './outils.js';
+import { sectionMacroPays } from './macro.js';
 
 /* ------------------------------ Composants ------------------------------ */
 
@@ -276,6 +277,9 @@ export function fichePays(d, p, nav) {
           .map((cle) => carteAgent(cle, p.lectures_agents[cle])),
       ),
     ),
+
+    // Rubrique « Agent macro » : texte réel de l'agent macro (data/macro.json), avec sa date
+    sectionMacroPays(d.macro, p.code),
 
     p.indicateurs && p.confiance ? listeSources(p) : null,
     piedFraicheur(d.meta.pays),

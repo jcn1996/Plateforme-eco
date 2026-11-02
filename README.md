@@ -107,6 +107,47 @@ L'agent marchés se trouve dans `agents/marches/`, en Python 3.12. Il met à jou
 python -m agents.marches
 ```
 
+## Agent macro (vue d'ensemble, sans IA)
+
+L'agent macro se trouve dans `agents/macro/`, en Python 3.12. Il complète l'agent pays, qui note chaque pays, par une vue de l'économie mondiale.
+
+**Sources** (gratuites ; croisées quand c'est possible) :
+- FRED : courbe des taux US (T10Y2Y, T10Y3M), règle de Sahm (SAHMREALTIME), chômage (UNRATE), fourchette de la Fed. Avec le secret `FRED_API_KEY`, FRED est lu par son API ; sinon par son fichier CSV public, sans clé.
+- Bundesbank : rendements allemands à 2 et 10 ans, vérifiés avec la courbe AAA de la zone euro (BCE Data Portal).
+- OCDE (indicateur avancé, IPC), Eurostat (IPCH), FMI (WEO).
+- BRI (taux directeurs quotidiens) et sources nationales (FRED, BCE, Banque du Canada, Banco Central do Brasil).
+- Yahoo Finance : cuivre, pétrole WTI, indice dollar, or ; taux US à 10 ans et 13 semaines, pour la vérification croisée.
+
+**Analyse** :
+- phase du cycle pour le monde, les États-Unis, la zone euro, la Chine, le Japon et les émergents ;
+- signaux de récession ;
+- banques centrales : taux, dernier mouvement, tendance sur 12 mois, prochaine réunion ;
+- marchés du cycle ;
+- deux phrases de lecture macro par pays suivi.
+
+Les règles sont détaillées dans [`agents/macro/regles.md`](agents/macro/regles.md) : correspondance des phases, deux signaux concordants pour changer de phase, confiance, « Ce qui pourrait me donner tort ».
+
+**Calendrier des banques centrales** : `agents/macro/calendrier_banques_centrales.json` contient les dates officielles relevées sur le site de chaque banque. Quand une banque n'a plus de date future, l'écran « Santé des agents » affiche une alerte, avec un avertissement 60 jours avant. Il faut alors ajouter les nouvelles dates à la main.
+
+**Sorties** :
+- `data/macro.json` ;
+- `data/signaux/macro.json` : signaux candidats pour le futur chef d'orchestre ;
+- `data/historique/macro/AAAA-MM-JJ.json` ;
+- `data/recap/macro-AAAA-MM-JJ.md` ;
+- `data/journal/agent-macro.json`.
+
+**Exécution** : le workflow `.github/workflows/agent-macro.yml` tourne chaque jour à 6 h 30 UTC. On peut aussi le lancer à la main : onglet **Actions** → **Agent macro** → **Run workflow**.
+
+```
+python -m agents.macro             # vraies sources
+python -m agents.macro --test      # données de test (captures réelles), sans réseau
+python -m agents.macro --capturer  # met à jour les données de test
+```
+
+**Dans l'appli** :
+- le bouton « Macro » de l'en-tête ouvre l'écran **Vue macro** : schéma du cycle en 4 quadrants, signaux de récession, banques centrales, courbe des taux US sur 2 ans, marchés du cycle ;
+- la fiche pays affiche la rubrique « Agent macro », avec sa date.
+
 ## Santé des agents
 
 L'icône en forme de pouls, dans l'en-tête, ouvre l'écran **Santé des agents**. Une pastille rouge s'y affiche dès qu'un agent n'est pas « OK ».
@@ -139,6 +180,7 @@ js/globe.js           globe 3D (Three.js r160), gestes, zoom, flux, étiquettes
 js/carte-vecteur.js   carte vectorielle : pays triangulés, trait de frontière, niveaux 110m / 50m
 js/interface.js       horloge, bandeau des marchés, alertes, mode léger
 js/sante.js           écran « Santé des agents »
+js/macro.js           écran « Vue macro » et rubrique « Agent macro » de la fiche pays
 js/panneau-pays.js    fiches pays et secteur
 js/panneau-entreprise.js  fiche entreprise
 js/portefeuille.js    écran portefeuille
@@ -153,7 +195,7 @@ data/recap/           récapitulatif de chaque exécution de l'agent pays
 data/journal/         journal des sources en échec
 data/flux.json        flux de capitaux entre pays (fictifs)
 data/*.json           autres données (fictives pour l'instant)
-agents/               agents Python (agents/commun : téléchargement, cache, journal, écriture ; agents/pays : agent pays ; agents/marches : agent marchés)
+agents/               agents Python (agents/commun : téléchargement, cache, journal, écriture ; agents/pays : agent pays ; agents/marches : agent marchés ; agents/macro : agent macro)
 .github/workflows/    exécution planifiée des agents (GitHub Actions)
 data/countries-110m.json, countries-50m.json  frontières des pays (voir data/LICENCE-countries-110m.txt)
 outils/generer_donnees_fictives.py  régénère les données fictives

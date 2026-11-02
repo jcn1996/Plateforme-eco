@@ -19,6 +19,7 @@ import { ficheEntreprise } from './panneau-entreprise.js';
 import { ecranPortefeuille } from './portefeuille.js';
 import { ecranClassement } from './classement.js';
 import { chargerSante, ecranSante, problemeDetecte } from './sante.js';
+import { chargerMacro, ecranMacro } from './macro.js';
 
 const $ = (sel) => document.querySelector(sel);
 const dom = {
@@ -63,6 +64,7 @@ function estLarge() {
 /* ========================== Santé des agents ========================== */
 
 let agentsSante = [];
+let macro = null; // données de l'agent macro (data/macro.json), ou null
 
 /** Recharge les journaux des agents, met à jour la pastille de l'en-tête et l'écran s'il est ouvert. */
 async function majSante() {
@@ -82,7 +84,9 @@ async function demarrer() {
   enregistrerServiceWorker();
 
   try {
-    d = await chargerDonnees();
+    // data/macro.json est facultatif : son absence n'empêche pas l'appli de démarrer
+    [d, macro] = await Promise.all([chargerDonnees(), chargerMacro()]);
+    d.macro = macro;
   } catch (erreur) {
     console.error(erreur);
     afficherMessage('Impossible de charger les données. Vérifiez votre connexion puis rechargez la page.');
@@ -123,6 +127,7 @@ async function demarrer() {
   $('#btn-portefeuille').addEventListener('click', () => naviguer({ type: 'portefeuille' }));
   $('#btn-classement').addEventListener('click', () => naviguer({ type: 'classement' }));
   $('#btn-sante').addEventListener('click', () => naviguer({ type: 'sante' }));
+  $('#btn-macro').addEventListener('click', () => naviguer({ type: 'macro' }));
   // Santé des agents : chargée à part (un journal manquant ne bloque pas l'appli),
   // puis recalculée chaque minute, car le statut « en panne » dépend de l'heure
   majSante();
@@ -279,6 +284,7 @@ function filAriane(route) {
     case 'comparaison': return [racine, { libelle: 'Comparaison', route }];
     case 'mes-alertes': return [racine, { libelle: 'Mes alertes', route }];
     case 'sante': return [racine, { libelle: 'Santé des agents', route }];
+    case 'macro': return [racine, { libelle: 'Vue macro', route }];
     default: return [racine];
   }
 }
@@ -297,7 +303,7 @@ function majAriane(route) {
 /** Vérifie qu'une route désigne bien un élément existant. */
 function routeValide(route) {
   switch (route.type) {
-    case 'globe': case 'portefeuille': case 'classement': case 'comparaison': case 'mes-alertes': case 'sante': return true;
+    case 'globe': case 'portefeuille': case 'classement': case 'comparaison': case 'mes-alertes': case 'sante': case 'macro': return true;
     case 'pays': return d.paysParCode.has(route.id);
     case 'secteur': return d.secteurParId.has(route.id);
     case 'entreprise': return d.entrepriseParTicker.has(route.id);
@@ -355,6 +361,7 @@ function afficher(route) {
     comparaison: { section: '#ecran-comparaison', contenu: '#comparaison-contenu', titre: 'Comparaison', rendu: () => ecranComparaison(d, navigateurPanneau) },
     'mes-alertes': { section: '#ecran-mes-alertes', contenu: '#mes-alertes-contenu', titre: 'Mes alertes', rendu: () => ecranMesAlertes(d, { surChangement: majAlertes, ouvrir: naviguer }) },
     sante: { section: '#ecran-sante', contenu: '#sante-contenu', titre: 'Santé des agents', rendu: () => ecranSante(agentsSante) },
+    macro: { section: '#ecran-macro', contenu: '#macro-contenu', titre: 'Vue macro', rendu: () => ecranMacro(macro) },
   };
   for (const [type, ecran] of Object.entries(ECRANS)) {
     const visible = route.type === type;
@@ -384,7 +391,7 @@ function afficher(route) {
 
 /** Le globe ne se dessine que s'il est visible (économie de batterie). */
 function majActiviteGlobe() {
-  const masque = ['portefeuille', 'classement', 'comparaison', 'mes-alertes', 'sante'].includes(routeActuelle.type)
+  const masque = ['portefeuille', 'classement', 'comparaison', 'mes-alertes', 'sante', 'macro'].includes(routeActuelle.type)
     || (dom.panneau.classList.contains('est-ouvert') && etatPanneau === 'plein' && !estLarge());
   globe?.definirActif(!masque);
 }
