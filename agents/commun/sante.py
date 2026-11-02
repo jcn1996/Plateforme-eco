@@ -9,6 +9,7 @@ Santé des agents : bloc « sante » écrit dans data/journal/<agent>.json et lu
       "prochaine_prevue":   "2026-11-02T17:45:00Z",    # d'après la planification du workflow
       "intervalle_min": 15,        # écart entre deux exécutions planifiées (celle à laquelle se
                                    # rattache la dernière exécution et la suivante)
+      "planning": {"crons": ["7,22,37,52 7-21 * * 1-5", …], "fuseau": "UTC"},  # planning complet
       "sources_total": 8, "sources_ok": 8,
       "sources": [ {"nom", "etat", "derniere_donnee_valide", "detail"} ],
       "degrade": false, "raisons": [],
@@ -20,9 +21,13 @@ Santé des agents : bloc « sante » écrit dans data/journal/<agent>.json et lu
 « partielle », « échec », « périmée » (elle répond, mais sa donnée est trop ancienne),
 « non configurée » (clé absente : ni comptée, ni signalée).
 
-L'appli calcule elle-même le statut à l'ouverture :
-« en panne » si la dernière exécution réussie date de plus de 2 × intervalle_min,
-« dégradé » si `degrade` est vrai, sinon « OK ».
+derniere_execution, prochaine_prevue, intervalle_min et planning sont aussi recopiés au
+premier niveau du journal.
+
+L'appli calcule elle-même le statut à l'ouverture (js/planning.js), à partir du planning :
+« en retard » / « en panne » si la première exécution prévue après la dernière exécution
+réussie manque depuis plus de 45 min / 2 h (agent à 15 min) ou 2 h / 26 h (agent quotidien),
+« dégradé » si `degrade` est vrai, « en pause » hors des heures prévues, sinon « OK ».
 
 Règle « dégradé » : un indicateur est dégradé quand il a moins de sources valides que sa
 référence, c'est-à-dire les sources valides lors de la dernière exécution saine, limitées à
@@ -46,6 +51,9 @@ RACINE = Path(__file__).resolve().parents[2]
 DOSSIER_JOURNAL = RACINE / "data" / "journal"
 DOSSIER_WORKFLOWS = RACINE / ".github" / "workflows"
 ETATS_PROBLEME = {"secours", "partielle", "échec", "périmée"}
+CHAMPS_HORAIRES = ("derniere_execution", "prochaine_prevue", "intervalle_min")
+# Recopiés au premier niveau du journal (lus par l'appli et par le workflow « Rattrapage »)
+CHAMPS_PREMIER_NIVEAU = (*CHAMPS_HORAIRES, "planning")
 
 
 def iso(t: datetime) -> str:
@@ -173,6 +181,7 @@ def bloc_sante(agent: str, libelle: str, ordre: int, workflow: str, sources: lis
         "derniere_execution": iso(maintenant),
         "prochaine_prevue": iso(prochaine) if prochaine else None,
         "intervalle_min": intervalle,
+        "planning": {"crons": list(crons), "fuseau": "UTC"},
         "sources_total": len(comptees),
         "sources_ok": sum(1 for s in comptees if s["etat"] in ("ok", "secours", "partielle", "périmée")),
         "sources": liste,
@@ -188,7 +197,7 @@ def _sans_horaires(sante: dict | None) -> dict:
     """Bloc sans ce qui change à chaque exécution (pour savoir si l'état a vraiment changé)."""
     if not sante:
         return {}
-    return {**{k: v for k, v in sante.items() if k not in ("derniere_execution", "prochaine_prevue", "intervalle_min")},
+    return {**{k: v for k, v in sante.items() if k not in CHAMPS_HORAIRES},
             "sources": [{k: v for k, v in s.items() if k != "derniere_donnee_valide"} for s in sante.get("sources", [])]}
 
 
@@ -209,6 +218,8 @@ def enregistrer_sante(chemin: Path, sante: dict, forcer: bool = False, battement
     if a_jour:
         return False
     meta["sante"] = sante
+    for champ in CHAMPS_PREMIER_NIVEAU:
+        journal[champ] = sante.get(champ)
     meta.setdefault("source", f"agent-{sante['agent']}")
     if description and "description" not in meta:
         meta["description"] = description

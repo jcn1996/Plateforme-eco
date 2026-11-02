@@ -8,19 +8,19 @@ from agents.commun import sante
 from agents.commun.sortie import lire_json
 
 UTC = timezone.utc
-CRONS_MARCHES = ["*/15 7-21 * * 1-5", "0 22 * * 1-5", "0 * * * 0,6"]
+CRONS_MARCHES = ["7,22,37,52 7-21 * * 1-5", "7 22 * * 1-5", "7 * * * 0,6"]
 
 
 class TestPlanification(unittest.TestCase):
     def test_prochaine_execution(self):
         lundi = datetime(2026, 11, 2, 17, 34, tzinfo=UTC)
-        self.assertEqual(sante.prochaine_execution(CRONS_MARCHES, lundi), datetime(2026, 11, 2, 17, 45, tzinfo=UTC))
-        # Après 22 h en semaine : prochaine à 7 h le lendemain
-        self.assertEqual(sante.prochaine_execution(CRONS_MARCHES, datetime(2026, 11, 2, 22, 0, tzinfo=UTC)),
-                         datetime(2026, 11, 3, 7, 0, tzinfo=UTC))
+        self.assertEqual(sante.prochaine_execution(CRONS_MARCHES, lundi), datetime(2026, 11, 2, 17, 37, tzinfo=UTC))
+        # Après 22 h 07 en semaine : prochaine à 7 h 07 le lendemain
+        self.assertEqual(sante.prochaine_execution(CRONS_MARCHES, datetime(2026, 11, 2, 22, 7, tzinfo=UTC)),
+                         datetime(2026, 11, 3, 7, 7, tzinfo=UTC))
         # Vendredi soir : le samedi est horaire
-        self.assertEqual(sante.prochaine_execution(CRONS_MARCHES, datetime(2026, 11, 6, 22, 3, tzinfo=UTC)),
-                         datetime(2026, 11, 7, 0, 0, tzinfo=UTC))
+        self.assertEqual(sante.prochaine_execution(CRONS_MARCHES, datetime(2026, 11, 6, 22, 10, tzinfo=UTC)),
+                         datetime(2026, 11, 7, 0, 7, tzinfo=UTC))
         self.assertEqual(sante.prochaine_execution(["0 6 * * *"], lundi), datetime(2026, 11, 3, 6, 0, tzinfo=UTC))
 
     def test_intervalle_prevu(self):
@@ -29,12 +29,17 @@ class TestPlanification(unittest.TestCase):
         self.assertEqual(intervalle(["0 6 * * *"], datetime(2026, 11, 2, 6, 4, tzinfo=UTC)), 1440)   # lancé en retard
         self.assertEqual(intervalle(["0 6 * * *"], datetime(2026, 11, 2, 18, 1, tzinfo=UTC)), 1440)  # lancé à la main
         self.assertEqual(intervalle(CRONS_MARCHES, datetime(2026, 11, 2, 17, 34, tzinfo=UTC)), 15)
-        self.assertEqual(intervalle(CRONS_MARCHES, datetime(2026, 11, 2, 22, 2, tzinfo=UTC)), 9 * 60)  # nuit
+        self.assertEqual(intervalle(CRONS_MARCHES, datetime(2026, 11, 2, 22, 9, tzinfo=UTC)), 9 * 60)  # nuit
         self.assertEqual(intervalle(CRONS_MARCHES, datetime(2026, 11, 7, 13, 5, tzinfo=UTC)), 60)     # week-end
 
     def test_lecture_des_workflows(self):
         self.assertEqual(sante.crons_du_workflow("agent-marches.yml"), CRONS_MARCHES)
-        self.assertEqual(sante.crons_du_workflow("agent-pays.yml"), ["0 6 * * *"])
+        self.assertEqual(sante.crons_du_workflow("agent-pays.yml"), ["11 6 * * *"])
+        self.assertEqual(sante.crons_du_workflow("agent-macro.yml"), ["41 6 * * *"])
+        for fichier in ("agent-marches.yml", "agent-pays.yml", "agent-macro.yml", "rattrapage.yml", "maintien.yml"):
+            # Aucune tâche à une minute ronde (souvent retardée ou sautée par GitHub)
+            for cron in sante.crons_du_workflow(fichier):
+                self.assertNotIn(cron.split()[0], ("0", "*", "*/15", "30"), f"{fichier} : {cron}")
 
 
 class TestBloc(unittest.TestCase):
@@ -89,6 +94,13 @@ class TestBloc(unittest.TestCase):
             b4 = self.bloc([{"nom": "a", "etat": "échec"}], maintenant=self.maintenant + timedelta(hours=2))
             self.assertTrue(sante.enregistrer_sante(chemin, b4, battement=timedelta(hours=1)))
             self.assertEqual(lire_json(chemin)["meta"]["sante"]["derniere_execution"], "2026-11-02T19:34:00Z")
+            # Planning complet et champs horaires recopiés au premier niveau du journal
+            j = lire_json(chemin)
+            self.assertEqual(j["derniere_execution"], "2026-11-02T19:34:00Z")
+            self.assertEqual(j["prochaine_prevue"], "2026-11-03T06:00:00Z")
+            self.assertEqual(j["intervalle_min"], 1440)
+            self.assertEqual(j["planning"], {"crons": ["0 6 * * *"], "fuseau": "UTC"})
+            self.assertEqual(j["meta"]["sante"]["planning"], j["planning"])
             index = lire_json(Path(dossier) / "index.json")["donnees"]
             self.assertEqual(index, [{"agent": "test", "libelle": "Agent test", "ordre": 9, "fichier": "agent-test.json"}])
 

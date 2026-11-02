@@ -1,0 +1,62 @@
+# Rattrapage : GitHub retarde ou saute souvent les tâches planifiées. Toutes les heures
+# (minute 29), lit data/journal/*.json et relance (workflow_dispatch) chaque agent dont une
+# exécution prévue manque depuis plus d'une heure. Au plus une relance par agent et par heure ;
+# chaque relance est tracée dans data/journal/rattrapage.json. Voir agents/rattrapage/agent.py.
+# Lancement manuel possible : onglet Actions → « Rattrapage » → « Run workflow ».
+name: Rattrapage
+
+on:
+  schedule:
+    - cron: "29 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write   # trace dans data/journal/rattrapage.json
+  actions: write    # gh workflow run
+
+concurrency:
+  group: rattrapage
+  cancel-in-progress: false
+
+jobs:
+  rattrapage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Récupérer le dépôt (branche main)
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Installer Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Tester le rattrapage (sans réseau)
+        run: python -m unittest discover -s agents/rattrapage -t .
+
+      - name: Relancer les agents en retard
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCHE: main
+        run: python -m agents.rattrapage
+
+      - name: Commiter la trace des relances
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/journal/rattrapage.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "Aucune relance : pas de commit."
+            exit 0
+          fi
+          git commit -m "Rattrapage : $(TZ=Europe/Paris date '+%d/%m %H:%M')"
+          # main a pu bouger entre-temps : nouvelle tentative en cas de conflit
+          for essai in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            git rebase --abort 2>/dev/null || true
+            sleep $((essai * 5))
+          done
+          exit 1

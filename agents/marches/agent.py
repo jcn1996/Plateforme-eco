@@ -223,8 +223,9 @@ def enregistrer_sante(donnees: list[dict], maintenant: datetime, change: bool) -
                               "configurees": ["cours à jour"]} for e in etats}
     bloc = sante.bloc_sante("marches", "Agent marchés", 2, "agent-marches.yml", etats, maintenant, precedent,
                             indicateurs=indicateurs)
-    # Battement d'une heure : si les cours ne bougent pas, on ne commite pas plus d'une fois par heure
-    if sante.enregistrer_sante(JOURNAL, bloc, forcer=change, battement=timedelta(hours=1),
+    # Battement de 30 min : si les cours ne bougent pas, on ne commite pas plus d'une fois par
+    # demi-heure (sous le seuil « en retard » de 45 min de l'écran Santé)
+    if sante.enregistrer_sante(JOURNAL, bloc, forcer=change, battement=timedelta(minutes=30),
                                description="Santé de l'agent marchés (dernière exécution réussie, état des sources)"):
         LOG.info("Journal de santé mis à jour : %d/%d sources répondent.", bloc["sources_ok"], bloc["sources_total"])
 
