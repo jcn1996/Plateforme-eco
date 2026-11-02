@@ -1,7 +1,8 @@
 # Salle de contrôle — plateforme de suivi économique mondial
 
 Prototype d'une application personnelle de suivi économique mondial, pensée d'abord pour le téléphone.
-**Toutes les données sont fictives.** Aucune vraie source de données n'est branchée et aucun agent IA n'existe encore.
+**Les données des pays sont réelles** : elles sont produites chaque jour par l'**agent pays** (FMI, OCDE, BIS, Yahoo Finance), qui tourne gratuitement avec GitHub Actions.
+Le reste (secteurs, entreprises, alertes, flux de capitaux, portefeuille, marchés) est encore **fictif**, en attendant les autres agents.
 
 ## Ce que fait le prototype
 
@@ -22,15 +23,20 @@ Prototype d'une application personnelle de suivi économique mondial, pensée d'
 - **Bandeau des marchés** : Nasdaq 100, S&P 500, Or, Pétrole WTI, Bitcoin, EUR/USD, CAC 40, MSCI World.
   - Il défile tout seul, se glisse au doigt ou à la souris avec inertie, et se met en pause au toucher (reprise 4 s après le relâchement) ou au survol.
   - Toucher une cotation affiche sa valeur, sa variation du jour et sa variation sur 1 an.
-- **Indicateurs des pays** (6) :
-  - croissance du PIB ;
-  - PMI manufacturier ;
+- **Indicateurs des pays** (6, données réelles) :
+  - croissance du PIB (FMI) ;
+  - indicateur avancé (OCDE, au-dessus de 100 = accélération) ;
   - inflation, avec la cible de la banque centrale ;
-  - taux réel, avec la direction de la banque centrale ;
-  - valorisation (PER comparé à sa moyenne sur 10 ans) ;
-  - momentum boursier sur 12 mois.
+  - taux réel (taux directeur de la BIS moins l'inflation), avec la direction de la banque centrale ;
+  - valorisation relative (PER de l'ETF pays comparé à la médiane des pays suivis) ;
+  - momentum boursier sur 12 mois (ETF pays).
 
-  La devise sur 3 mois et les flux étrangers sont dans la section repliable « Détail ».
+  La devise sur 3 mois, le solde courant et les flux étrangers (non disponibles pour l'instant) sont dans la section repliable « Détail ».
+  Chaque fiche pays affiche aussi :
+  - le niveau de confiance de l'agent ;
+  - la rubrique « Ce qui pourrait me donner tort » ;
+  - la lecture de l'agent ;
+  - les sources et les dates exactes de chaque valeur.
 - **Tendances** : une flèche ↑ ↓ → indique l'évolution depuis la mise à jour précédente, sur chaque indicateur et chaque note (pays, secteur, entreprise). Le vert signale une note qui s'améliore, le rouge une note qui se dégrade.
 - **Recherche** (loupe dans l'en-tête) : pays, secteurs et entreprises, par nom ou ticker, sans tenir compte des accents. Toucher un résultat ouvre la fiche et centre le globe.
 - **Fraîcheur des données** : sous chaque fiche, « Mis à jour le … · Source : … », lu dans le bloc `meta` des JSON.
@@ -53,6 +59,31 @@ Prototype d'une application personnelle de suivi économique mondial, pensée d'
 - **Mode léger** (⚡) : densité de pixels limitée à 2, sans halo, sans animation des flux, 30 images/s.
 - **PWA** : l'appli s'installe sur l'écran d'accueil. Le service worker charge l'appli « réseau d'abord », donc la dernière version s'affiche dès l'ouverture ; elle reste utilisable hors ligne.
 
+## Agent pays (données réelles)
+
+L'agent pays se trouve dans `agents/`, en Python 3.12.
+- Il interroge des sources gratuites et sans clé API : FMI, OCDE, BIS et Yahoo Finance.
+- Il note chaque indicateur sur 100, puis calcule une note globale pondérée et un niveau de confiance.
+- Il écrit des textes factuels et met à jour `data/pays.json`.
+- Les règles de notation et de conduite sont décrites dans [`agents/pays/regles.md`](agents/pays/regles.md). Les pondérations se modifient dans `agents/pays/config.json`.
+
+**Exécution** : le workflow `.github/workflows/agent-pays.yml` lance l'agent chaque jour à 6 h UTC ; on peut aussi le lancer à la main.
+- Il ne commite sur `main` que si les données ont changé, avec le message « Agent pays : mise à jour du JJ/MM/AAAA ».
+- Chaque jour, il garde ses notes dans `data/historique/pays/AAAA-MM-JJ.json`.
+
+**Pannes de source** : si une source ne répond pas, l'agent ne s'arrête pas. Il garde la dernière valeur connue avec sa date et la signale comme « ancienne ».
+
+**Textes** : par défaut, ils sont rédigés par des règles. Si le secret GitHub `GEMINI_API_KEY` est créé (Settings → Secrets and variables → Actions), l'API gratuite Gemini les rédige, sous les mêmes contraintes. Un texte non conforme est remplacé par la version par règles.
+
+Pour lancer l'agent sur un ordinateur :
+
+```
+pip install -r agents/requirements.txt
+python -m agents.pays            # vraies sources
+python -m agents.pays --test     # données de test, sans réseau
+python -m unittest discover -s agents -t .   # tests
+```
+
 ## Structure
 
 ```
@@ -72,7 +103,12 @@ js/comparateur.js     comparateur (sélection, barre flottante, écran)
 js/recherche.js       recherche de pays, secteurs et entreprises
 js/mes-alertes.js     règles d'alertes personnelles
 js/outils.js          couleurs des notes, formats français
-data/*.json           données fictives
+data/pays.json        données réelles des pays (produites par l'agent pays)
+data/historique/pays/ historique quotidien des notes de l'agent pays
+data/flux.json        flux de capitaux entre pays (fictifs)
+data/*.json           autres données (fictives pour l'instant)
+agents/               agents Python (agents/commun : téléchargement, cache, journal, écriture ; agents/pays : agent pays)
+.github/workflows/    exécution planifiée des agents (GitHub Actions)
 data/countries-110m.json, countries-50m.json  frontières des pays (voir data/LICENCE-countries-110m.txt)
 outils/generer_donnees_fictives.py  régénère les données fictives
 ```
@@ -115,14 +151,23 @@ Chaque note et chaque indicateur a un champ `precedent` (valeur et note de la mi
                "precedent": { "valeur": 4.1, "note": 74 } }
 ```
 
-Les pays ont 6 indicateurs (`croissance_pib`, `pmi`, `inflation`, `taux_reel`, `valorisation`, `momentum`) :
-- `inflation` porte en plus la `cible` de la banque centrale ;
+Les pays ont 6 indicateurs (`croissance_pib`, `indicateur_avance`, `inflation`, `taux_reel`, `valorisation`, `momentum`). Chacun porte sa `date` et sa `source` exacte. Il peut aussi porter :
+- `ancienne` : source en panne, la dernière valeur connue est conservée ;
+- `a_verifier` : valeur inhabituelle non confirmée.
+
+Un indicateur indisponible a `"valeur": null` et une `raison`.
+- `inflation` porte en plus la `cible` de la banque centrale et sa `frequence` ;
 - `taux_reel` porte le `taux_directeur` et la `direction` (« baisse », « stable » ou « hausse ») ;
-- `valorisation` porte le `per` et sa `moyenne_10ans`.
+- `valorisation` porte le `per` de l'ETF et la `mediane` des pays suivis.
 
-Le bloc `detail` contient `devise_3m` et `flux_etrangers`. `marches.json` donne pour chaque cotation `variation` (jour, en %) et `variation_1an`.
+Chaque pays porte aussi :
+- `confiance` (`niveau`, `score`, `raisons`) ;
+- `contre_scenario` (« Ce qui pourrait me donner tort ») ;
+- `lecture`.
 
-Chaque flux de `pays.json` indique son montant, sa devise et sa période (`montant_md`, `devise`, `periode`).
+Le bloc `detail` contient `devise_3m`, `solde_courant` et `flux_etrangers`. `marches.json` donne pour chaque cotation `variation` (jour, en %) et `variation_1an`.
+
+Les flux de capitaux (fictifs) sont dans `data/flux.json` (`de`, `vers`, `montant_md`, `devise`, `periode`).
 
 Chaque pays a aussi un champ `iso_num` : son code ISO numérique, qui le relie à sa forme dans `countries-110m.json`.
 Singapour, trop petit pour l'échelle 1:110m, est dessiné comme un disque.
