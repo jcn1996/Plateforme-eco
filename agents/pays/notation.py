@@ -14,6 +14,11 @@ from __future__ import annotations
 from statistics import pstdev
 
 
+
+def minuscule(libelle: str) -> str:
+    """« Croissance du PIB » → « croissance du PIB » (sigles conservés)."""
+    return libelle[:1].lower() + libelle[1:]
+
 def borner(x: float, mini: float = 0, maxi: float = 100) -> int:
     return int(round(max(mini, min(maxi, x))))
 
@@ -117,7 +122,10 @@ def confiance(indicateurs: dict, ponderations: dict, couverture: float) -> dict:
     - couverture : part des pondérations dont l'indicateur est disponible ;
     - fraîcheur : chaque valeur « ancienne » (source en panne) retire 0,1 ;
     - concordance : si les notes des indicateurs divergent fortement
-      (écart-type > 22), on retire 0,15 ; chaque valeur « à vérifier » retire 0,1.
+      (écart-type > 22), on retire 0,15 ; chaque valeur « à vérifier » retire 0,1 ;
+    - vérification croisée : chaque indicateur aux sources divergentes retire 0,1 et
+      plafonne le niveau à « moyen » ; de même si plus de la moitié des indicateurs
+      disponibles reposent sur une seule source.
     Score ≥ 0,8 → élevé ; ≥ 0,55 → moyen ; sinon faible.
     """
     principaux = {k: v for k, v in indicateurs.items() if k in ponderations}
@@ -126,19 +134,37 @@ def confiance(indicateurs: dict, ponderations: dict, couverture: float) -> dict:
     raisons = []
     if couverture < 1:
         manquants = [v["libelle"] for v in principaux.values() if v.get("note") is None]
-        raisons.append("données manquantes : " + ", ".join(manquants).lower())
+        raisons.append("données manquantes : " + ", ".join(map(minuscule, manquants)))
     anciennes = [v["libelle"] for v in principaux.values() if v.get("ancienne")]
     if anciennes:
         score -= 0.1 * len(anciennes)
-        raisons.append("valeurs anciennes (source indisponible) : " + ", ".join(anciennes).lower())
+        raisons.append("valeurs anciennes (source indisponible) : " + ", ".join(map(minuscule, anciennes)))
     a_verifier = [v["libelle"] for v in principaux.values() if v.get("a_verifier")]
     if a_verifier:
         score -= 0.1 * len(a_verifier)
-        raisons.append("valeurs à vérifier : " + ", ".join(a_verifier).lower())
+        raisons.append("valeurs à vérifier : " + ", ".join(map(minuscule, a_verifier)))
+    divergents = [v for v in principaux.values() if v.get("verification") == "divergent"]
+    if divergents:
+        score -= 0.1 * len(divergents)
+        raisons.append("sources divergentes : " + ", ".join(
+            minuscule(v["libelle"]) + (f" (écart de {v['ecart_max']:.2f} pt)".replace(".", ",") if v.get("ecart_max") is not None else "")
+            for v in divergents))
     if len(notes) >= 3 and pstdev(notes) > 22:
         score -= 0.15
         raisons.append("indicateurs peu concordants")
+    # Plafond : si la majorité des indicateurs disponibles ne repose que sur une seule source
+    disponibles = [v for v in principaux.values() if v.get("note") is not None]
+    uniques = [v["libelle"] for v in disponibles if v.get("verification") == "source_unique"]
+    plafond_unique = bool(disponibles) and len(uniques) * 2 > len(disponibles)
+    plafond = plafond_unique or bool(divergents)
+    if plafond_unique and score >= 0.8:
+        raisons.append("confiance plafonnée à « moyen » : une seule source pour " + ", ".join(map(minuscule, uniques)))
+    elif divergents and score >= 0.8:
+        raisons.append("confiance plafonnée à « moyen » tant que les sources divergent")
     if not raisons:
-        raisons.append("données complètes, récentes et concordantes")
+        raisons.append("données complètes, récentes et confirmées par plusieurs sources")
     score = max(0.0, round(score, 2))
-    return {"niveau": "élevé" if score >= 0.8 else "moyen" if score >= 0.55 else "faible", "score": score, "raisons": raisons}
+    niveau = "élevé" if score >= 0.8 else "moyen" if score >= 0.55 else "faible"
+    if plafond and niveau == "élevé":
+        niveau = "moyen"
+    return {"niveau": niveau, "score": score, "raisons": raisons, "plafonnee": plafond and score >= 0.8}

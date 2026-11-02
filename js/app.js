@@ -152,9 +152,18 @@ function objetMetrique(cle) {
   return { cle, lire: (p) => lireMetrique(p, cle) };
 }
 
-/** Bandeau des alertes : mes alertes déclenchées en tête, puis celles des agents. */
+/** Bandeau des alertes : « Qualité des données » et mes alertes en tête, puis celles des agents. */
 function majAlertes() {
-  alertes.afficher(d.alertes, evaluerRegles(d));
+  alertes.afficher(d.alertes, evaluerRegles(d), alertesQualite());
+}
+
+/** Pays dont plus d'un tiers des sources ont échoué lors de la dernière exécution de l'agent pays. */
+function alertesQualite() {
+  return d.pays.filter((p) => p.qualite?.alerte).map((p) => ({
+    qualite: true, agent: 'pays', pays: p.code, niveau: 'defavorable', heure: '⚠',
+    titre: `${p.nom} : données incomplètes`,
+    texte: `${p.qualite.sources_en_echec} source${p.qualite.sources_en_echec > 1 ? 's' : ''} sur ${p.qualite.sources_consultees} en échec ou rejetée${p.qualite.sources_en_echec > 1 ? 's' : ''} lors de la dernière mise à jour.`,
+  }));
 }
 
 function appliquerModeLeger(actif) {

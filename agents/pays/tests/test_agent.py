@@ -10,8 +10,8 @@ from datetime import date
 from pathlib import Path
 
 from agents.commun.sortie import lire_json
-from agents.pays import notation, textes
-from agents.pays.agent import main
+from agents.pays import croisement, notation, textes
+from agents.pays.agent import main, qualite
 
 DONNEES = Path(__file__).resolve().parent / "donnees"
 JOUR = "2026-11-02"
@@ -71,7 +71,13 @@ class TestAgent(unittest.TestCase):
 
     def lancer(self, donnees=DONNEES, jour=JOUR):
         return main(["--test", "--donnees-test", str(donnees), "--sortie", str(self.sortie),
-                     "--historique", str(self.dossier / "historique"), "--flux", str(self.dossier / "flux.json"), "--date", jour])
+                     "--historique", str(self.dossier / "historique"), "--flux", str(self.dossier / "flux.json"),
+                     "--journal", str(self.dossier / "journal.json"), "--recap", str(self.dossier / "recap"), "--date", jour])
+
+    def copie_donnees(self):
+        modif = self.dossier / "donnees"
+        shutil.copytree(DONNEES, modif)
+        return modif
 
     def test_execution_complete(self):
         self.assertEqual(self.lancer(), 0)
@@ -89,6 +95,22 @@ class TestAgent(unittest.TestCase):
                     self.assertTrue(ind["date"] and ind["source"], ind)   # date et source exactes
             self.assertIsNone(p["detail"]["flux_etrangers"]["valeur"])   # non disponible
         self.assertTrue((self.dossier / "historique" / f"{JOUR}.json").exists())
+        # Vérification croisée : chaque indicateur publié décrit ses sources et la valeur retenue
+        for p in f["donnees"]:
+            self.assertIn("qualite", p)
+            for ind in p["indicateurs"].values():
+                if ind.get("valeur") is not None:
+                    self.assertIn(ind["verification"], ("concordant", "divergent", "source_unique"))
+                    self.assertEqual(sum(s["statut"] == "retenue" for s in ind["sources"]), 1, ind)
+                    self.assertIn(ind["confiance"], ("faible", "moyen", "élevé"))
+                    if ind["verification"] == "source_unique":
+                        self.assertNotEqual(ind["confiance"], "élevé")   # une seule source : « moyen » au plus
+        # Journal des sources et récapitulatif
+        self.assertTrue(lire_json(self.dossier / "journal.json")["donnees"])
+        recap = (self.dossier / "recap" / f"pays-{JOUR}.md").read_text(encoding="utf-8")
+        for titre in ("Ce qui a changé", "Divergences entre sources", "Données manquantes", "mouvements de notes", "Sources en échec"):
+            self.assertIn(titre, recap)
+        self.assertTrue(textes.ton_conforme(recap))
         # Les flux fictifs ont été déplacés
         self.assertEqual(lire_json(self.dossier / "flux.json")["donnees"][0]["de"], "FR")
 
@@ -101,9 +123,9 @@ class TestAgent(unittest.TestCase):
     def test_source_en_panne_et_tendance(self):
         self.lancer()
         # Deuxième exécution : la BIS est en panne et la croissance du FMI a changé
-        modif = self.dossier / "donnees"
-        shutil.copytree(DONNEES, modif)
+        modif = self.copie_donnees()
         (modif / "bis.json").unlink()
+        (modif / "bce_taux.json").unlink()      # la France a deux sources de taux : BCE et BRI
         fmi = json.loads((modif / "fmi_NGDP_RPCH.json").read_text(encoding="utf-8"))
         fmi["FRA"]["2026"] = fmi["FRA"]["2026"] + 1.0
         (modif / "fmi_NGDP_RPCH.json").write_text(json.dumps(fmi), encoding="utf-8")
@@ -113,8 +135,86 @@ class TestAgent(unittest.TestCase):
         self.assertTrue(fr["indicateurs"]["taux_reel"]["ancienne"])            # dernière valeur connue conservée
         self.assertIn("raison_ancienne", fr["indicateurs"]["taux_reel"])
         self.assertIn("erreur", f["meta"]["etat_des_sources"]["bis"])
+        self.assertEqual(fr["indicateurs"]["taux_reel"]["confiance"], "faible")
+        statuts = {s["source"]: s["statut"] for s in fr["indicateurs"]["taux_reel"]["sources"]}
+        self.assertEqual(statuts, {"bce_taux": "échec", "bis": "échec"})   # l'état des sources du jour est montré
         pib = fr["indicateurs"]["croissance_pib"]
         self.assertAlmostEqual(pib["precedent"]["valeur"] + 1.0, pib["valeur"], places=2)   # tendance
+
+    def test_divergence_entre_sources(self):
+        # Croissance 2026 de la France : FMI 0,4 % et OCDE 1,0 % → écart supérieur à 0,5 point
+        self.lancer()
+        fr = next(p for p in lire_json(self.sortie)["donnees"] if p["code"] == "FR")
+        pib = fr["indicateurs"]["croissance_pib"]
+        self.assertEqual(pib["verification"], "divergent")
+        self.assertEqual(pib["confiance"], "faible")
+        self.assertEqual(pib["sources"][0]["source"], "fmi")                  # source prioritaire retenue
+        self.assertIn("diverge", [s["statut"] for s in pib["sources"]])
+        self.assertTrue(any("sources divergentes" in r for r in fr["confiance"]["raisons"]))
+        self.assertNotEqual(fr["confiance"]["niveau"], "élevé")              # la divergence fait baisser la confiance
+        self.assertTrue(any("divergent" in c for c in fr["contre_scenario"]))
+        recap = next((self.dossier / "recap").glob("*.md")).read_text(encoding="utf-8")
+        self.assertIn("France, croissance du PIB", recap)
+
+    def test_alerte_qualite_et_journal(self):
+        # Pannes simultanées : plus d'un tiers des sources de la France échouent
+        modif = self.copie_donnees()
+        for nom in ("ocde_cli", "ocde_inflation", "ocde_eo", "eurostat", "bce_taux", "fmi_PCPIPCH"):
+            (modif / f"{nom}.json").unlink()
+        self.assertEqual(self.lancer(modif), 0)
+        f = lire_json(self.sortie)
+        fr = next(p for p in f["donnees"] if p["code"] == "FR")
+        self.assertTrue(fr["qualite"]["alerte"])
+        self.assertIn("FR", f["meta"]["alertes_qualite"])
+        entree = lire_json(self.dossier / "journal.json")["donnees"][-1]
+        self.assertIn("eurostat", entree["sources_en_erreur"])
+        self.assertTrue(any(e["pays"] == "FR" and e["statut"] == "échec" for e in entree["echecs_et_rejets"]))
+        self.assertIn("Qualité des données", next((self.dossier / "recap").glob("*.md")).read_text(encoding="utf-8"))
+
+
+class TestCroisement(unittest.TestCase):
+    AUJ = date(2026, 11, 2)
+
+    def cand(self, source, niveau, valeur, periode, nature="mensuelle"):
+        return {"source": source, "nom": source, "niveau": niveau, "valeur": valeur, "date": periode, "nature": nature}
+
+    def test_hierarchie_et_tolerance(self):
+        c = [self.cand("ocde", "internationale", 3.0, "2026-09"), self.cand("insee", "nationale", 2.8, "2026-09")]
+        r = croisement.choisir(c, [-15, 300], 0.5, self.AUJ)
+        self.assertEqual(r["retenu"]["source"], "insee")            # source nationale prioritaire
+        self.assertEqual(r["verification"], "concordant")             # écart faible : 0,2 point
+        r = croisement.choisir(c + [self.cand("eurostat", "internationale", 3.6, "2026-09")], [-15, 300], 0.5, self.AUJ)
+        self.assertEqual(r["verification"], "divergent")              # écart important : 0,8 point
+        # À fiabilité égale, la plus récente l'emporte
+        r = croisement.choisir([self.cand("a", "internationale", 1, "2026-08"), self.cand("b", "internationale", 1.1, "2026-09")], None, 0.5, self.AUJ)
+        self.assertEqual(r["retenu"]["source"], "b")
+
+    def test_rejets_et_source_unique(self):
+        c = [self.cand("bls", "nationale", 3.0, "2025-01"),            # plus de 6 mois : rejetée
+             self.cand("aberrante", "nationale", 900, "2026-09"),       # hors bornes : rejetée
+             self.cand("ocde", "internationale", 3.7, "2026-09"),
+             self.cand("fmi", "internationale", 3.6, "2026", "annuelle")]
+        r = croisement.choisir(c, [-15, 300], 0.5, self.AUJ)
+        self.assertEqual(r["retenu"]["source"], "ocde")
+        statuts = {s["source"]: s["statut"] for s in r["sources"]}
+        self.assertEqual(statuts, {"bls": "rejetée", "aberrante": "rejetée", "ocde": "retenue", "fmi": "non comparable"})
+        self.assertEqual(r["verification"], "source_unique")
+        self.assertIn("plus de 6 mois", next(s["raison"] for s in r["sources"] if s["source"] == "bls"))
+
+    def test_qualite(self):
+        t = [{"source": "a", "nom": "A", "statut": "retenue"}, {"source": "b", "nom": "B", "statut": "échec", "raison": "panne"},
+             {"source": "c", "nom": "C", "statut": "concorde"}]
+        self.assertFalse(qualite(t)["alerte"])                         # 1 sur 3 : pas plus d'un tiers
+        self.assertTrue(qualite(t + [{"source": "d", "nom": "D", "statut": "rejetée", "raison": "trop ancienne"}])["alerte"])
+
+    def test_plafond_confiance(self):
+        p = {"a": 0.5, "b": 0.5}
+        uniques = {"a": {"note": 70, "libelle": "A", "verification": "source_unique"},
+                   "b": {"note": 70, "libelle": "B", "verification": "source_unique"}}
+        self.assertEqual(notation.confiance(uniques, p, 1.0)["niveau"], "moyen")
+        croisees = {"a": {"note": 70, "libelle": "A", "verification": "concordant"},
+                    "b": {"note": 70, "libelle": "B", "verification": "source_unique"}}
+        self.assertEqual(notation.confiance(croisees, p, 1.0)["niveau"], "élevé")
 
 
 if __name__ == "__main__":

@@ -925,5 +925,46 @@ body.fiche-donnees-reelles .badge-fictif--discret { display: none; }
 .lecture p { font-size: 13.5px; color: var(--texte-2); }
 .lecture p + p { margin-top: 6px; }
 .lecture strong { color: var(--texte); font-weight: 600; }
-.sources .liste-sources { display: grid; gap: 6px; padding: 8px 12px 12px; border-top: 1px solid var(--ligne); font-size: 11.5px; color: var(--texte-3); }
+.drapeau--divergent { background: rgba(255, 181, 71, 0.15); color: var(--orange); }
+
+/* Sources et vérification croisée */
+.sources .liste-sources { display: grid; gap: 10px; padding: 10px 12px 12px; border-top: 1px solid var(--ligne); font-size: 11.5px; color: var(--texte-3); }
 .sources .liste-sources strong { color: var(--texte-2); font-weight: 600; }
+.source-indicateur + .source-indicateur { padding-top: 10px; border-top: 1px dashed var(--ligne); }
+.source-entete { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 8px; }
+.source-entete b { color: var(--texte); font-weight: 600; }
+.source-verif { margin-top: 2px; font-size: 11px; color: var(--texte-3); }
+.source-verif--concordant { color: var(--vert); }
+.source-verif--divergent, .source-verif--ancienne { color: var(--orange); }
+.liste-sources-detail { display: grid; gap: 4px; margin-top: 6px; }
+.source {
+  display: grid; grid-template-columns: auto 1fr auto; gap: 1px 8px; align-items: baseline;
+  padding: 4px 8px; border-radius: 6px; background: var(--fond-2);
+}
+.source-statut {
+  grid-row: span 2; align-self: start; width: 78px; padding: 1px 4px; border-radius: 4px; text-align: center; line-height: 1.35;
+  font-size: 9.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.06); color: var(--texte-3);
+}
+.source--retenue .source-statut { background: rgba(0, 229, 160, 0.14); color: var(--vert); }
+.source--concorde .source-statut { background: rgba(0, 229, 160, 0.08); color: var(--vert); }
+.source--diverge .source-statut { background: rgba(255, 181, 71, 0.15); color: var(--orange); }
+.source--rejetee .source-statut { background: rgba(255, 77, 106, 0.12); color: var(--rouge); }
+.source--rejetee .source-nom, .source--rejetee .source-valeur { opacity: 0.7; }
+.source-nom { min-width: 0; overflow-wrap: anywhere; color: var(--texte-2); }
+.source-valeur { white-space: nowrap; color: var(--texte); }
+.source-valeur small { color: var(--texte-3); }
+.source-raison { grid-column: 2 / -1; font-size: 10.5px; color: var(--texte-3); overflow-wrap: anywhere; }
+
+/* Alerte « Qualité des données » */
+.alerte-qualite {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 8px 12px; border: 1px solid rgba(255, 77, 106, 0.4); border-left: 3px solid var(--rouge); border-radius: 10px;
+  background: rgba(255, 77, 106, 0.08); font-size: 12.5px; color: var(--texte-2);
+}
+.alerte-qualite strong { color: var(--rouge); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; }
+.alerte-qualite small { font-size: 11px; color: var(--texte-3); }
+.badge-qualite {
+  display: inline-block; padding: 0 6px; border-radius: 4px;
+  background: rgba(255, 77, 106, 0.15); color: var(--rouge); font-weight: 600;
+}

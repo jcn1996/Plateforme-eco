@@ -1,7 +1,7 @@
 # Salle de contrôle — plateforme de suivi économique mondial
 
 Prototype d'une application personnelle de suivi économique mondial, pensée d'abord pour le téléphone.
-**Les données des pays sont réelles** : elles sont produites chaque jour par l'**agent pays** (FMI, OCDE, BIS, Yahoo Finance), qui tourne gratuitement avec GitHub Actions.
+**Les données des pays sont réelles** : elles sont produites chaque jour par l'**agent pays** (instituts statistiques nationaux, banques centrales, FMI, OCDE, BRI, Banque mondiale, Eurostat, BCE, Yahoo Finance, avec vérification croisée), qui tourne gratuitement avec GitHub Actions.
 Le reste (secteurs, entreprises, alertes, flux de capitaux, portefeuille, marchés) est encore **fictif**, en attendant les autres agents.
 
 ## Ce que fait le prototype
@@ -62,7 +62,8 @@ Le reste (secteurs, entreprises, alertes, flux de capitaux, portefeuille, march�
 ## Agent pays (données réelles)
 
 L'agent pays se trouve dans `agents/`, en Python 3.12.
-- Il interroge des sources gratuites et sans clé API : FMI, OCDE, BIS et Yahoo Finance.
+- Il interroge des sources gratuites : instituts statistiques nationaux (INSEE, Destatis, ONS, BLS, Japon, IBGE, Statistique Canada, via DBnomics ou leur banque centrale), BCE, FMI, OCDE, BRI, Banque mondiale, Eurostat et Yahoo Finance.
+- **Vérification croisée** : chaque indicateur est récupéré auprès de plusieurs sources quand c'est possible. L'ordre de priorité est le suivant : source nationale officielle, puis organisation internationale, puis source de marché. Si deux sources s'écartent trop, l'indicateur est marqué « sources divergentes » et la confiance baisse. Une valeur aberrante ou trop ancienne est rejetée. Tout est décrit dans [`agents/pays/sources.md`](agents/pays/sources.md).
 - Il note chaque indicateur sur 100, puis calcule une note globale pondérée et un niveau de confiance.
 - Il écrit des textes factuels et met à jour `data/pays.json`.
 - Les règles de notation et de conduite sont décrites dans [`agents/pays/regles.md`](agents/pays/regles.md). Les pondérations se modifient dans `agents/pays/config.json`.
@@ -70,10 +71,14 @@ L'agent pays se trouve dans `agents/`, en Python 3.12.
 **Exécution** : le workflow `.github/workflows/agent-pays.yml` lance l'agent chaque jour à 6 h UTC ; on peut aussi le lancer à la main.
 - Il ne commite sur `main` que si les données ont changé, avec le message « Agent pays : mise à jour du JJ/MM/AAAA ».
 - Chaque jour, il garde ses notes dans `data/historique/pays/AAAA-MM-JJ.json`.
+- Il écrit un récapitulatif factuel dans `data/recap/pays-AAAA-MM-JJ.md` : ce qui a changé, les divergences entre sources, les données manquantes et les mouvements de notes.
+- Il tient le journal des sources en échec dans `data/journal/agent-pays.json`.
 
-**Pannes de source** : si une source ne répond pas, l'agent ne s'arrête pas. Il garde la dernière valeur connue avec sa date et la signale comme « ancienne ».
+**Pannes de source** : si une source ne répond pas, l'agent ne s'arrête pas. Il garde la dernière valeur connue avec sa date et la signale comme « ancienne ». Si plus d'un tiers des sources d'un pays échouent, l'appli affiche une alerte « Qualité des données » sur la fiche du pays et en tête du bandeau des alertes.
 
 **Textes** : par défaut, ils sont rédigés par des règles. Si le secret GitHub `GEMINI_API_KEY` est créé (Settings → Secrets and variables → Actions), l'API gratuite Gemini les rédige, sous les mêmes contraintes. Un texte non conforme est remplacé par la version par règles.
+
+**FRED (facultatif)** : avec le secret GitHub `FRED_API_KEY` (clé gratuite sur fred.stlouisfed.org), l'agent ajoute l'inflation et le taux de la Réserve fédérale publiés par FRED. Sans ce secret, il s'en passe.
 
 Pour lancer l'agent sur un ordinateur :
 
@@ -105,6 +110,8 @@ js/mes-alertes.js     règles d'alertes personnelles
 js/outils.js          couleurs des notes, formats français
 data/pays.json        données réelles des pays (produites par l'agent pays)
 data/historique/pays/ historique quotidien des notes de l'agent pays
+data/recap/           récapitulatif de chaque exécution de l'agent pays
+data/journal/         journal des sources en échec
 data/flux.json        flux de capitaux entre pays (fictifs)
 data/*.json           autres données (fictives pour l'instant)
 agents/               agents Python (agents/commun : téléchargement, cache, journal, écriture ; agents/pays : agent pays)
