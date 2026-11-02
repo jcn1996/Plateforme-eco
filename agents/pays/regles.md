@@ -3,22 +3,28 @@
 Ce document décrit **exactement** comment l'agent pays note chaque pays.
 Le code correspondant se trouve dans `notation.py`. Les pondérations et les seuils « à vérifier » sont dans `config.json` et peuvent être modifiés sans toucher au code.
 
-## 1. Sources (gratuites, sans clé API)
+## 1. Sources
 
-| Indicateur | Source | Fréquence |
+Les sources, leur hiérarchie (source nationale officielle > organisation internationale > source de marché) et la vérification croisée sont décrites dans **`sources.md`**.
+
+En résumé :
+- chaque indicateur est récupéré auprès de plusieurs sources quand c'est possible ;
+- la valeur de la source prioritaire est retenue ;
+- un écart supérieur à la tolérance marque l'indicateur « sources divergentes ».
+
+| Indicateur | Définition | Fréquence |
 |---|---|---|
-| Croissance du PIB | FMI, World Economic Outlook, série `NGDP_RPCH` (API DataMapper), année en cours | annuelle (estimation) |
-| Inflation | OCDE, IPC en glissement annuel (`DF_PRICES_ALL`) si la donnée a moins de 120 jours ; sinon FMI `PCPIPCH` | mensuelle ou annuelle |
-| Indicateur avancé (OCDE) | OCDE, Composite Leading Indicator (`DF_CLI`, amplitude ajustée) | mensuelle |
-| Taux réel | taux directeur de la BIS (`WS_CBPOL`) moins l'inflation ci-dessus | mensuelle |
-| Valorisation relative | PER (trailing) de l'ETF pays (Yahoo Finance, via yfinance) comparé à la médiane des pays suivis | quotidienne |
+| Croissance du PIB | croissance réelle de l'année en cours (FMI, comparé à l'OCDE) | annuelle (estimation) |
+| Inflation | glissement annuel des prix à la consommation (institut national, OCDE ou Eurostat) | mensuelle |
+| Indicateur avancé (OCDE) | Composite Leading Indicator (`DF_CLI`, amplitude ajustée) | mensuelle |
+| Taux réel | taux directeur (banque centrale ou BRI) moins l'inflation retenue | mensuelle |
+| Valorisation relative | PER (trailing) de l'ETF pays (Yahoo Finance), comparé à la médiane des pays suivis | quotidienne |
 | Momentum boursier | performance de l'ETF pays sur 12 mois (en dollars) | quotidienne |
-| Devise sur 3 mois (détail) | paire de change contre le dollar (Yahoo Finance) ; indice DXY pour les États-Unis | quotidienne |
-| Solde courant (détail) | FMI `BCA_NGDPD`, % du PIB | annuelle |
+| Devise sur 3 mois (détail) | variation contre le dollar (BCE, sinon Yahoo Finance) ; indice DXY pour les États-Unis | quotidienne |
+| Solde courant (détail) | % du PIB, dernière année écoulée (FMI et Banque mondiale) | annuelle |
 | Flux étrangers (détail) | non disponible pour l'instant | — |
 
-Les pays de la zone euro utilisent le taux de la BCE (code BIS `XM`).
-Chaque valeur publiée porte sa date et sa source exacte.
+Chaque valeur publiée porte sa date, sa source exacte et la liste des sources consultées.
 
 ## 2. Notes par indicateur (/100)
 
@@ -62,6 +68,7 @@ Toutes les notes sont bornées entre 0 et 100.
 Le score de départ est la **couverture**, c'est-à-dire la part des pondérations dont l'indicateur est disponible. On retire ensuite :
 - 0,10 par valeur « ancienne » (source en panne, dernière valeur connue conservée) ;
 - 0,10 par valeur « à vérifier » ;
+- 0,10 par indicateur aux sources divergentes (vérification croisée, voir `sources.md`) ;
 - 0,15 si les notes des indicateurs divergent fortement (écart-type supérieur à 22).
 
 Le niveau est ensuite fixé ainsi :
@@ -69,19 +76,28 @@ Le niveau est ensuite fixé ainsi :
 - score ≥ 0,55 : **moyen** ;
 - en dessous : **faible**.
 
+Si plus de la moitié des indicateurs disponibles ne reposent que sur une seule source, le niveau est **plafonné à « moyen »**.
+
+Chaque indicateur a aussi son propre niveau :
+- **élevé** si ses sources concordent ;
+- **moyen** s'il n'a qu'une source ;
+- **faible** si ses sources divergent, ou si sa valeur est ancienne ou à vérifier.
+
 Les raisons sont publiées avec le niveau.
 
 ## 5. Valeurs « à vérifier »
 
 Une valeur est signalée « à vérifier » quand elle sort de l'intervalle habituel défini dans `config.json` (`seuils_a_verifier`), par exemple une croissance hors de −3 % à +8 %, ou une inflation hors de −2 % à 20 %.
 
-Si une seconde source indépendante confirme la valeur (l'inflation mensuelle de l'OCDE confirmée par l'estimation annuelle du FMI), elle n'est **pas** signalée : elle n'est plus isolée.
+Si une seconde source indépendante confirme la valeur, elle n'est **pas** signalée : elle n'est plus isolée. Par exemple, une inflation mensuelle confirmée par l'estimation annuelle du FMI.
 
 ## 6. Sources en panne
 
 - Si une source échoue, l'agent ne s'arrête pas. Il garde la dernière valeur réelle connue avec sa date d'origine et la marque `"ancienne": true`, en précisant la raison.
 - Les données fictives d'avant le premier passage de l'agent ne sont jamais réutilisées.
+- Exception : une valeur mensuelle de plus de 6 mois n'est pas réutilisée.
 - L'état de chaque source est publié dans `meta.etat_des_sources`.
+- Les échecs et les rejets sont consignés dans `data/journal/agent-pays.json`.
 
 ## 7. Règles de conduite des textes
 

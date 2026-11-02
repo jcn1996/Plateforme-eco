@@ -1,5 +1,7 @@
 # Agent pays : met à jour data/pays.json avec des données réelles et gratuites
-# (FMI, OCDE, BIS, Yahoo Finance), puis commite le résultat sur main.
+# (instituts nationaux, banques centrales, FMI, OCDE, BRI, Banque mondiale, Eurostat,
+# BCE, Yahoo Finance), avec vérification croisée, puis commite le résultat sur main
+# (données, journal des sources et récapitulatif du jour).
 # - automatiquement chaque jour à 6 h UTC ;
 # - à la main : onglet Actions → « Agent pays » → « Run workflow ».
 name: Agent pays
@@ -44,6 +46,8 @@ jobs:
         env:
           # Facultatif : si ce secret existe, les textes sont rédigés par Gemini ; sinon, par des règles
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # Facultatif : clé gratuite FRED (Réserve fédérale de Saint-Louis) ; sans elle, la source est ignorée
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: python -m agents.pays
 
       - name: Commiter les données si elles ont changé

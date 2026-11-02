@@ -23,7 +23,7 @@ def main():
     iso3 = {p["iso3"] for p in config["pays"].values()}
     recent = str(aujourdhui.year - 3)
     annuel = lambda d: {k: {a: x for a, x in v.items() if a >= recent} for k, v in d.items() if k in iso3}
-    quotidien = lambda v: v[::5] + v[-5:]
+    quotidien = lambda v: sorted(dict(v[::5] + v[-5:]).items())  # sans doublon, dans l'ordre
     fichiers = {
         "fmi_NGDP_RPCH": ("fmi_croissance", annuel), "fmi_PCPIPCH": ("fmi_inflation", annuel), "fmi_BCA_NGDPD": ("fmi_solde_courant", annuel),
         "ocde_cli": ("ocde_cli", None), "ocde_inflation": ("ocde_inflation", None), "ocde_eo": ("ocde_eo", None), "bis": ("bis", None),
