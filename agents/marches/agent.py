@@ -217,8 +217,12 @@ def etat_des_sources(donnees: list[dict], maintenant: datetime) -> list[dict]:
 
 def enregistrer_sante(donnees: list[dict], maintenant: datetime, change: bool) -> None:
     precedent = ((lire_json(JOURNAL) or {}).get("meta") or {}).get("sante")
-    bloc = sante.bloc_sante("marches", "Agent marchés", 2, "agent-marches.yml",
-                            etat_des_sources(donnees, maintenant), maintenant, precedent)
+    etats = etat_des_sources(donnees, maintenant)
+    # Un actif garde sa source tant qu'un cours à jour arrive (Yahoo, ou Stooq en secours)
+    indicateurs = {e["nom"]: {"valides": ["cours à jour"] if e["etat"] in ("ok", "secours") else [],
+                              "configurees": ["cours à jour"]} for e in etats}
+    bloc = sante.bloc_sante("marches", "Agent marchés", 2, "agent-marches.yml", etats, maintenant, precedent,
+                            indicateurs=indicateurs)
     # Battement d'une heure : si les cours ne bougent pas, on ne commite pas plus d'une fois par heure
     if sante.enregistrer_sante(JOURNAL, bloc, forcer=change, battement=timedelta(hours=1),
                                description="Santé de l'agent marchés (dernière exécution réussie, état des sources)"):

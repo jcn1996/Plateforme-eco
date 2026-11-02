@@ -12,10 +12,11 @@ from __future__ import annotations
 import csv
 import io
 import json
+from datetime import date
 from pathlib import Path
 
 from ..commun.journal import journal
-from ..commun.telechargement import Telechargeur
+from ..commun.telechargement import ErreurSource, Telechargeur
 
 LOG = journal("sources")
 
@@ -29,12 +30,16 @@ BCB_URL = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.{serie}/dados"
 BOC_URL = "https://www.bankofcanada.ca/valet/observations/{serie}/json"
 DBNOMICS_URL = "https://api.db.nomics.world/v22/series/{identifiant}"
 FRED_URL = "https://api.stlouisfed.org/fred/series/observations"
+BLS_URL = "https://api.bls.gov/publicAPI/{version}/timeseries/data/{serie}"
+# L'OCDE publie désormais l'IPC de certains pays (passés à la nomenclature COICOP 2018)
+# dans un nouveau jeu ; les autres restent à jour dans l'ancien. On interroge les deux.
+OCDE_FLUX_INFLATION = ["OECD.SDD.TPS,DSD_PRICES_COICOP2018@DF_PRICES_C2018_ALL,1.0", "OECD.SDD.TPS,DSD_PRICES@DF_PRICES_ALL,1.0"]
 
 # Libellés exacts des sources, recopiés dans chaque indicateur
 SOURCES = {
     "fmi": "FMI, World Economic Outlook (API DataMapper, série {serie}), année {annee}",
     "ocde_cli": "OCDE, Composite Leading Indicator (DF_CLI, amplitude ajustée), mensuel",
-    "ocde_inflation": "OCDE, indice des prix à la consommation (DF_PRICES_ALL), glissement annuel mensuel",
+    "ocde_inflation": "OCDE, indice des prix à la consommation (DF_PRICES_C2018_ALL ou DF_PRICES_ALL, la plus récente), glissement annuel mensuel",
     "bis": "BIS, taux directeurs des banques centrales (WS_CBPOL), mensuel",
     "yahoo_prix": "Yahoo Finance via yfinance, cours de clôture de l'ETF {symbole}",
     "yahoo_per": "Yahoo Finance via yfinance, PER (trailing) de l'ETF {symbole}",
@@ -79,10 +84,18 @@ class FournisseurReel:
 
     # --- OCDE : inflation mensuelle (glissement annuel de l'IPC) ---
     def ocde_inflation(self, iso3: list[str], debut: str) -> dict[str, list[tuple[str, float]]]:
+        """Pour chaque pays, la série la plus récente parmi le jeu COICOP 2018 et l'ancien jeu."""
         cle = "+".join(iso3) + ".M.N.CPI.PA._T.N.GY"
-        texte = self.t.texte(OCDE_URL.format(flux="OECD.SDD.TPS,DSD_PRICES@DF_PRICES_ALL,1.0", cle=cle),
-                             params={"startPeriod": debut, "format": "csvfilewithlabels"})
-        return _series_par_zone(_csv(texte))
+        jeux, erreurs = [], []
+        for flux in OCDE_FLUX_INFLATION:
+            try:
+                texte = self.t.texte(OCDE_URL.format(flux=flux, cle=cle), params={"startPeriod": debut, "format": "csvfilewithlabels"})
+                jeux.append(_series_par_zone(_csv(texte)))
+            except ErreurSource as e:  # un jeu peut ne contenir aucun des pays demandés (404) : on garde l'autre
+                erreurs.append(str(e))
+        if not jeux:
+            raise ErreurSource(" ; ".join(erreurs))
+        return fusionner_plus_recent(jeux)
 
     # --- BIS : taux directeurs mensuels ---
     def bis_taux(self, codes: list[str], debut: str) -> dict[str, list[tuple[str, float]]]:
@@ -124,6 +137,17 @@ class FournisseurReel:
                     time.sleep(3)
             time.sleep(0.7)
         return resultat
+
+
+def fusionner_plus_recent(jeux: list[dict[str, list[tuple[str, float]]]]) -> dict[str, list[tuple[str, float]]]:
+    """Pour chaque zone, garde la série dont la dernière période est la plus récente
+    (à égalité, le premier jeu de la liste l'emporte)."""
+    resultat = {}
+    for jeu in jeux:
+        for zone, serie in jeu.items():
+            if serie and (zone not in resultat or max(serie)[0] > max(resultat[zone])[0]):
+                resultat[zone] = serie
+    return resultat
 
 
 def _jsonstat_par_geo(donnees: dict) -> dict[str, list[tuple[str, float]]]:
@@ -195,6 +219,22 @@ def _methodes_supplementaires(cls):
         donnees = self.t.json(DBNOMICS_URL.format(identifiant=identifiant), params={"observations": "1", "format": "json"})
         doc = donnees["series"]["docs"][0]
         return [(p, float(v)) for p, v in zip(doc["period"], doc["value"]) if v not in ("NA", None)]
+
+    def bls(self, serie, depuis):
+        """API publique du BLS : version 1 sans clé (25 requêtes par jour et par adresse IP),
+        ou version 2 si la clé facultative BLS_API_KEY est fournie."""
+        import os
+        cle = os.environ.get("BLS_API_KEY")
+        params = {"startyear": str(depuis.year), "endyear": str(date.today().year)}
+        if cle:
+            params["registrationkey"] = cle
+        donnees = self.t.json(BLS_URL.format(version="v2" if cle else "v1", serie=serie), params=params)
+        if donnees.get("status") != "REQUEST_SUCCEEDED":
+            raise ErreurSource(f"BLS : {donnees.get('status')} ({' '.join(donnees.get('message') or [])[:120]})")
+        series = (donnees.get("Results") or {}).get("series") or []
+        points = series[0].get("data", []) if series else []
+        return sorted((f"{x['year']}-{x['period'][1:]}", float(x["value"])) for x in points
+                      if x.get("period", "").startswith("M") and x["period"] != "M13" and x.get("value") not in ("-", ""))
 
     def fred(self, serie, depuis):
         import os
@@ -268,6 +308,9 @@ class FournisseurTest:
 
     def fred(self, serie, depuis):
         return [tuple(x) for x in self._lire(f"fred_{serie}")]
+
+    def bls(self, serie, depuis):
+        return [tuple(x) for x in self._lire(f"bls_{serie}")]
 
 
 _methodes_supplementaires(FournisseurReel)

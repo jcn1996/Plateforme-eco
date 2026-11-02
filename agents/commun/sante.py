@@ -7,9 +7,12 @@ Santé des agents : bloc « sante » écrit dans data/journal/<agent>.json et lu
       "workflow": "agent-marches.yml",
       "derniere_execution": "2026-11-02T17:34:18Z",    # dernière exécution réussie
       "prochaine_prevue":   "2026-11-02T17:45:00Z",    # d'après la planification du workflow
-      "intervalle_min": 15,                             # écart prévu entre les deux
+      "intervalle_min": 15,        # écart entre deux exécutions planifiées (celle à laquelle se
+                                   # rattache la dernière exécution et la suivante)
       "sources_total": 8, "sources_ok": 8,
-      "sources": [ {"nom", "etat", "derniere_donnee_valide", "detail"} ]
+      "sources": [ {"nom", "etat", "derniere_donnee_valide", "detail"} ],
+      "degrade": false, "raisons": [],
+      "references": { "<indicateur>": ["<source>", …] }   # sources valides attendues par indicateur
     }
 
 États d'une source : « ok », « secours » (la source principale a échoué, une autre a répondu),
@@ -18,7 +21,15 @@ Santé des agents : bloc « sante » écrit dans data/journal/<agent>.json et lu
 
 L'appli calcule elle-même le statut à l'ouverture :
 « en panne » si la dernière exécution réussie date de plus de 2 × intervalle_min,
-« dégradé » si une source est en échec, de secours, partielle ou périmée, sinon « OK ».
+« dégradé » si `degrade` est vrai, sinon « OK ».
+
+Règle « dégradé » : un indicateur est dégradé quand il a moins de sources valides que sa
+référence, c'est-à-dire les sources valides lors de la dernière exécution saine, limitées à
+celles encore configurées. Conséquences :
+- une source retirée volontairement de la configuration n'est plus attendue ;
+- une source périmée remplacée par une source à jour ne déclenche rien (le nombre est le même) ;
+- un indicateur qui passe de deux sources valides à une seule est dégradé, et le reste tant
+  que la source perdue n'est pas revenue (ou retirée de la configuration).
 
 data/journal/index.json liste les journaux à lire (l'appli ne peut pas lister un dossier).
 """
@@ -78,6 +89,16 @@ def _correspond(cron: str, t: datetime) -> bool:
             and (t.isoweekday() % 7) in jours_sem)
 
 
+def precedente_execution(crons: list[str], avant: datetime) -> datetime | None:
+    """Dernière minute planifiée (UTC) à ou avant `avant`, dans les 8 jours."""
+    t = avant.astimezone(timezone.utc).replace(second=0, microsecond=0)
+    for _ in range(8 * 24 * 60):
+        if any(_correspond(c, t) for c in crons):
+            return t
+        t -= timedelta(minutes=1)
+    return None
+
+
 def prochaine_execution(crons: list[str], apres: datetime) -> datetime | None:
     """Prochaine minute (UTC) qui correspond à l'une des expressions cron, dans les 8 jours."""
     t = apres.astimezone(timezone.utc).replace(second=0, microsecond=0) + timedelta(minutes=1)
@@ -99,10 +120,31 @@ def crons_du_workflow(fichier: str) -> list[str]:
 
 # ------------------------- Écriture du bloc « sante » -------------------------
 
+def degradation(indicateurs: dict[str, dict], references: dict[str, list[str]]) -> tuple[list[str], dict]:
+    """indicateurs : {nom: {"valides": [sources valides], "configurees": [sources prévues]}}.
+    Renvoie (raisons de dégradation, nouvelles références)."""
+    raisons, nouvelles = [], {}
+    for nom, ind in indicateurs.items():
+        valides = sorted(set(ind.get("valides", [])))
+        configurees = set(ind.get("configurees", [])) | set(valides)
+        attendues = sorted(set(references.get(nom, [])) & configurees)  # sources retirées : plus attendues
+        if len(valides) < len(attendues):
+            perdues = [s for s in attendues if s not in valides]
+            raisons.append(f"{nom} : {len(valides)} source{'s' if len(valides) > 1 else ''} valide"
+                           f"{'s' if len(valides) > 1 else ''} au lieu de {len(attendues)} (perdue : {', '.join(perdues)})")
+            nouvelles[nom] = attendues
+        else:
+            nouvelles[nom] = valides
+    return raisons, nouvelles
+
+
 def bloc_sante(agent: str, libelle: str, ordre: int, workflow: str, sources: list[dict],
-               maintenant: datetime, precedent: dict | None = None, crons: list[str] | None = None) -> dict:
+               maintenant: datetime, precedent: dict | None = None, crons: list[str] | None = None,
+               indicateurs: dict[str, dict] | None = None) -> dict:
     """Construit le bloc « sante ». Pour une source en échec, la date de sa dernière donnée
-    valide est reprise du bloc précédent quand l'agent ne la connaît pas."""
+    valide est reprise du bloc précédent quand l'agent ne la connaît pas.
+    Avec `indicateurs`, l'état « dégradé » suit la règle des sources attendues (voir en tête) ;
+    sans, il est dégradé dès qu'une source est en échec, de secours, partielle ou périmée."""
     anciennes = {s["nom"]: s for s in (precedent or {}).get("sources", [])}
     liste = []
     for s in sources:
@@ -116,15 +158,29 @@ def bloc_sante(agent: str, libelle: str, ordre: int, workflow: str, sources: lis
     comptees = [s for s in liste if s["etat"] != "non configurée"]
     crons = crons_du_workflow(workflow) if crons is None else crons
     prochaine = prochaine_execution(crons, maintenant) if crons else None
-    return {
+    # Intervalle prévu : de l'exécution planifiée à laquelle se rattache celle-ci (même lancée
+    # en retard ou à la main) jusqu'à la suivante. Ex. : quotidien à 6 h → 24 h.
+    rattachee = precedente_execution(crons, maintenant) if crons else None
+    intervalle = round((prochaine - rattachee).total_seconds() / 60) if prochaine and rattachee else None
+    if indicateurs is not None:
+        raisons, references = degradation(indicateurs, (precedent or {}).get("references") or {})
+    else:
+        raisons = [f"{s['nom']} : {s['etat']}" for s in liste if s["etat"] in ETATS_PROBLEME]
+        references = None
+    bloc = {
         "agent": agent, "libelle": libelle, "ordre": ordre, "workflow": workflow,
         "derniere_execution": iso(maintenant),
         "prochaine_prevue": iso(prochaine) if prochaine else None,
-        "intervalle_min": round((prochaine - maintenant).total_seconds() / 60) if prochaine else None,
+        "intervalle_min": intervalle,
         "sources_total": len(comptees),
         "sources_ok": sum(1 for s in comptees if s["etat"] in ("ok", "secours", "partielle", "périmée")),
         "sources": liste,
+        "degrade": bool(raisons),
+        "raisons": raisons,
     }
+    if references is not None:
+        bloc["references"] = references
+    return bloc
 
 
 def _sans_horaires(sante: dict | None) -> dict:

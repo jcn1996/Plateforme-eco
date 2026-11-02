@@ -8,7 +8,8 @@
    Statut (calculé ici, car il dépend de l'heure) :
    - « en panne »  : dernière exécution réussie plus ancienne que 2 × l'intervalle prévu
                      (ou journal illisible) ;
-   - « dégradé »   : au moins une source en échec, de secours, partielle ou périmée ;
+   - « dégradé »   : un indicateur a perdu une source qu'il devrait avoir (champ `degrade`
+                     calculé par l'agent ; voir agents/commun/sante.py) ;
    - « OK »        : sinon.
    ========================================================================== */
 
@@ -55,7 +56,9 @@ export function statutAgent(agent, maintenant = Date.now()) {
   if (!s?.derniere_execution) return 'panne';
   const age = maintenant - Date.parse(s.derniere_execution);
   if (s.intervalle_min && age > 2 * s.intervalle_min * 60_000) return 'panne';
-  if ((s.sources ?? []).some((src) => ETATS_PROBLEME.has(src.etat))) return 'degrade';
+  // Règle de l'agent (sources attendues par indicateur) ; à défaut, toute source en difficulté
+  const degrade = typeof s.degrade === 'boolean' ? s.degrade : (s.sources ?? []).some((src) => ETATS_PROBLEME.has(src.etat));
+  if (degrade) return 'degrade';
   return 'ok';
 }
 
@@ -108,9 +111,14 @@ function carteAgent(agent, maintenant) {
     statut === 'panne'
       ? el('p', { class: 'sante-alerte' }, `Aucune exécution réussie depuis plus de 2 fois l’intervalle prévu. Vérifier l’onglet Actions (workflow ${s.workflow ?? ''}).`)
       : null,
+    statut === 'degrade' && s.raisons?.length
+      ? el('div', {},
+        el('h4', { class: 'sante-sous-titre' }, 'Indicateurs dégradés'),
+        el('ul', { class: 'sante-sources' }, s.raisons.map((r) => el('li', { class: 'sante-source-info' }, r))))
+      : null,
     problemes.length
       ? el('div', {},
-        el('h4', { class: 'sante-sous-titre' }, 'Sources en échec ou périmées'),
+        el('h4', { class: 'sante-sous-titre' }, statut === 'ok' ? 'Sources en échec ou périmées (compensées par d’autres sources)' : 'Sources en échec ou périmées'),
         el('ul', { class: 'sante-sources' }, problemes.map((src) => el('li', {},
           el('div', { class: 'sante-source-ligne' },
             el('span', { class: 'sante-source-nom' }, src.nom),

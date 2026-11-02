@@ -660,14 +660,32 @@ def sources_sante(etats: dict, echecs: list, journal_existant: dict | None) -> l
     return res
 
 
-def enregistrer_sante(chemin: Path, etats: dict, echecs: list) -> None:
+def indicateurs_sante(donnees: list) -> dict:
+    """Pour chaque pays et indicateur : sources valides et sources prévues (règle « dégradé »)."""
+    res = {}
+    for p in donnees:
+        blocs = {**p.get("indicateurs", {}), **p.get("detail", {})}
+        for ind in blocs.values():
+            sources = ind.get("sources") if isinstance(ind, dict) else None
+            if not sources:
+                continue
+            res[f"{p['nom']} · {ind.get('libelle', '?')}"] = {
+                "valides": [s["source"] for s in sources if s.get("statut") not in ("rejetée", "échec")],
+                "configurees": [s["source"] for s in sources],
+            }
+    return res
+
+
+def enregistrer_sante(chemin: Path, etats: dict, echecs: list, donnees: list) -> None:
     journal_existant = lire_json(chemin)
     precedent = ((journal_existant or {}).get("meta") or {}).get("sante")
     bloc = sante.bloc_sante("pays", "Agent pays", 1, "agent-pays.yml",
-                            sources_sante(etats, echecs, journal_existant), datetime.now(timezone.utc), precedent)
+                            sources_sante(etats, echecs, journal_existant), datetime.now(timezone.utc), precedent,
+                            indicateurs=indicateurs_sante(donnees))
     # Une exécution par jour : la date de dernière exécution est toujours enregistrée
     sante.enregistrer_sante(chemin, bloc, forcer=True)
-    LOG.info("Santé : %d/%d sources répondent.", bloc["sources_ok"], bloc["sources_total"])
+    LOG.info("Santé : %d/%d sources répondent ; %s.", bloc["sources_ok"], bloc["sources_total"],
+             "dégradé : " + " ; ".join(bloc["raisons"]) if bloc["degrade"] else "aucun indicateur dégradé")
 
 
 def extraire_flux_fictifs(ancien: dict | None, chemin_flux: Path) -> None:
@@ -710,7 +728,7 @@ def main(argv=None) -> int:
             LOG.info("Données inchangées ; journal des sources mis à jour (état des sources différent).")
         else:
             LOG.info("Aucun changement dans les données depuis la dernière exécution.")
-        enregistrer_sante(Path(args.journal), etats, echecs)
+        enregistrer_sante(Path(args.journal), etats, echecs, donnees)
         return 0
 
     meta_ancienne = (ancien or {}).get("meta", {})
@@ -727,7 +745,7 @@ def main(argv=None) -> int:
     ecrire_json(sortie, objet)
     chemin = historiser(Path(args.historique), donnees, aujourdhui, objet["meta"])
     journaliser(Path(args.journal), objet["meta"]["genere_le"], etats, echecs, donnees)
-    enregistrer_sante(Path(args.journal), etats, echecs)
+    enregistrer_sante(Path(args.journal), etats, echecs, donnees)
     chemin_recap = recap.ecrire(Path(args.recap), aujourdhui, objet, ancien_reel, etats)
     notes = sorted(((p["note"] or 0, p["nom"]) for p in donnees), reverse=True)
     LOG.info("Écrit : %s, %s et %s", sortie, chemin, chemin_recap)

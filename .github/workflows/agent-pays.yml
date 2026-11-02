@@ -48,6 +48,8 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           # Facultatif : clé gratuite FRED (Réserve fédérale de Saint-Louis) ; sans elle, la source est ignorée
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          # Facultatif : clé gratuite du BLS (API v2) ; sans elle, l'API v1 sans clé est utilisée
+          BLS_API_KEY: ${{ secrets.BLS_API_KEY }}
         run: python -m agents.pays
 
       - name: Commiter les données si elles ont changé

@@ -23,6 +23,15 @@ class TestPlanification(unittest.TestCase):
                          datetime(2026, 11, 7, 0, 0, tzinfo=UTC))
         self.assertEqual(sante.prochaine_execution(["0 6 * * *"], lundi), datetime(2026, 11, 3, 6, 0, tzinfo=UTC))
 
+    def test_intervalle_prevu(self):
+        def intervalle(crons, t):
+            return sante.bloc_sante("t", "T", 1, "x.yml", [], t, crons=crons)["intervalle_min"]
+        self.assertEqual(intervalle(["0 6 * * *"], datetime(2026, 11, 2, 6, 4, tzinfo=UTC)), 1440)   # lancé en retard
+        self.assertEqual(intervalle(["0 6 * * *"], datetime(2026, 11, 2, 18, 1, tzinfo=UTC)), 1440)  # lancé à la main
+        self.assertEqual(intervalle(CRONS_MARCHES, datetime(2026, 11, 2, 17, 34, tzinfo=UTC)), 15)
+        self.assertEqual(intervalle(CRONS_MARCHES, datetime(2026, 11, 2, 22, 2, tzinfo=UTC)), 9 * 60)  # nuit
+        self.assertEqual(intervalle(CRONS_MARCHES, datetime(2026, 11, 7, 13, 5, tzinfo=UTC)), 60)     # week-end
+
     def test_lecture_des_workflows(self):
         self.assertEqual(sante.crons_du_workflow("agent-marches.yml"), CRONS_MARCHES)
         self.assertEqual(sante.crons_du_workflow("agent-pays.yml"), ["0 6 * * *"])
@@ -43,8 +52,27 @@ class TestBloc(unittest.TestCase):
         par_nom = {s["nom"]: s for s in b["sources"]}
         self.assertEqual(par_nom["a"]["derniere_donnee_valide"], "2026-11-02T17:34:00Z")
         self.assertEqual(par_nom["b"]["derniere_donnee_valide"], "2026-11-01T06:00:00Z")  # reprise du bloc précédent
-        self.assertEqual(b["intervalle_min"], 746)  # jusqu'au lendemain 6 h
+        self.assertEqual(b["intervalle_min"], 1440)  # quotidien à 6 h : 24 h, même pour une exécution à 17 h 34
         self.assertEqual(b["prochaine_prevue"], "2026-11-03T06:00:00Z")
+
+    def test_regle_degrade(self):
+        ind = lambda valides, configurees: {"valides": valides, "configurees": configurees}
+        # Première exécution : la référence est l'état courant, rien n'est dégradé
+        raisons, ref = sante.degradation({"US · Inflation": ind(["ocde", "fmi"], ["ocde", "fmi", "bls"])}, {})
+        self.assertEqual((raisons, ref["US · Inflation"]), ([], ["fmi", "ocde"]))
+        # Une source périmée remplacée par une source à jour : pas dégradé
+        raisons, ref = sante.degradation({"US · Inflation": ind(["bls", "fmi"], ["ocde", "fmi", "bls"])}, ref)
+        self.assertEqual(raisons, [])
+        # Deux sources → une seule : dégradé, et la référence est conservée
+        raisons, ref2 = sante.degradation({"US · Inflation": ind(["fmi"], ["ocde", "fmi", "bls"])}, ref)
+        self.assertEqual(len(raisons), 1)
+        self.assertIn("perdue : bls", raisons[0])
+        self.assertEqual(ref2, ref)
+        raisons, _ = sante.degradation({"US · Inflation": ind(["fmi"], ["ocde", "fmi", "bls"])}, ref2)
+        self.assertEqual(len(raisons), 1)  # reste dégradé tant que la source n'est pas revenue
+        # La source perdue est retirée de la configuration : plus attendue
+        raisons, ref3 = sante.degradation({"US · Inflation": ind(["fmi"], ["ocde", "fmi"])}, ref2)
+        self.assertEqual((raisons, ref3["US · Inflation"]), ([], ["fmi"]))
 
     def test_battement_et_index(self):
         with tempfile.TemporaryDirectory() as dossier:
