@@ -27,13 +27,16 @@ def lire_json(chemin: Path, defaut=None):
         return defaut
 
 
-def ecrire_json(chemin: Path, objet) -> None:
+def ecrire_json(chemin: Path, objet, compact: bool = False) -> None:
     """Écriture atomique : on écrit un fichier temporaire puis on le renomme
     (un fichier à moitié écrit ne peut jamais être publié)."""
     chemin = Path(chemin)
     chemin.parent.mkdir(parents=True, exist_ok=True)
     fd, temporaire = tempfile.mkstemp(dir=chemin.parent, prefix=".tmp-", suffix=".json")
     with os.fdopen(fd, "w", encoding="utf-8") as f:
-        json.dump(objet, f, ensure_ascii=False, indent=2)
+        if compact:  # gros fichiers (agent entreprises) : sans indentation
+            json.dump(objet, f, ensure_ascii=False, separators=(",", ":"))
+        else:
+            json.dump(objet, f, ensure_ascii=False, indent=2)
         f.write("\n")
     os.replace(temporaire, chemin)

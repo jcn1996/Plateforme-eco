@@ -296,6 +296,11 @@ def publier(base: dict, config: dict, change: dict, data: Path, aujourdhui: date
     zone_par_pays = json.loads((RACINE / "agents" / "macro" / "config.json").read_text(encoding="utf-8"))["zone_par_pays"]
     ancien = lire_json(data / "entreprises.json")
     precedentes = {e["ticker"]: e for e in (ancien or {}).get("donnees", [])} if ancien and (ancien.get("meta") or {}).get("fictif") is False else {}
+    # Détail précédent (alertes, exercice) lu dans les fiches, avant qu'elles soient réécrites
+    for t, e in precedentes.items():
+        fiche = lire_json(data / "entreprises" / "fiches" / fichier_fiche(t))
+        if fiche and fiche.get("donnees"):
+            precedentes[t] = {**fiche["donnees"], **e}
 
     # 1. Mesures, capitalisation en dollars, filtre de taille et de liquidité
     societes = []
@@ -447,13 +452,25 @@ def publier(base: dict, config: dict, change: dict, data: Path, aujourdhui: date
     tous = sorted([*existants, *[s for s in signaux if (s["type"], s["cle"], s["date"]) not in vus]], key=lambda s: s["date"], reverse=True)
     tous = [s for s in tous if s["date"] >= (aujourdhui - timedelta(days=180)).isoformat()]
 
-    # 6. Écritures
+    # 6. Écritures : liste légère (globe, classements, recherche, comparateur) + une fiche détaillée par société
     entreprises.sort(key=lambda e: -(e["capitalisation_md"] or 0))
+    dossier_fiches = data / "entreprises" / "fiches"
+    dossier_fiches.mkdir(parents=True, exist_ok=True)
+    attendues = set()
+    for e in entreprises:
+        nom_fichier = fichier_fiche(e["ticker"])
+        attendues.add(nom_fichier)
+        ecrire_json(dossier_fiches / nom_fichier, {"meta": {"genere_le": maintenant(), "source": "agent-entreprises"}, "donnees": e}, compact=True)
+    for ancien_fichier in dossier_fiches.glob("*.json"):  # sociétés sorties de l'univers
+        if ancien_fichier.name not in attendues:
+            ancien_fichier.unlink()
+    legeres = [leger(e) for e in entreprises]
     sources_utilisees = sorted({e["sources"]["comptes"] for e in entreprises})
     meta = dict(version_agent=VERSION_AGENT, mise_a_jour_precedente=(ancien or {}).get("meta", {}).get("genere_le") if precedentes else None,
                 sources=sources_utilisees, nombre=len(entreprises), devise_capitalisation="USD",
-                medianes={f"{k[0]}|{k[1] or 'monde'}": v for k, v in med.items()})
-    ecrire_json(data / "entreprises.json", enveloppe(entreprises, "agent-entreprises", fictif=False, **meta))
+                fiches="data/entreprises/fiches/<ticker>.json",
+                medianes={f"{k[0]}|{k[1] or 'monde'}": v for k, v in med.items() if k[1] is None})
+    ecrire_json(data / "entreprises.json", enveloppe(legeres, "agent-entreprises", fictif=False, **meta), compact=True)
     ecrire_json(data / "secteurs.json", enveloppe(sorted(liste_secteurs, key=lambda s: (s["pays"], -s["capitalisation_md"])), "agent-entreprises",
                                                   fictif=False, version_agent=VERSION_AGENT, classification="GICS (11 secteurs)", devise_capitalisation="USD"))
     ecrire_json(data / "pepites.json", enveloppe(pepites, "agent-entreprises", fictif=False, version_agent=VERSION_AGENT,
@@ -470,6 +487,23 @@ def publier(base: dict, config: dict, change: dict, data: Path, aujourdhui: date
     return {"entreprises": len(entreprises), "pepites": len(pepites), "candidats": len(candidats), "signaux": len(signaux),
             "secteurs": len(liste_secteurs), "officielles": sum(1 for e in entreprises if e["sources"]["officielle"]),
             "divergences": sum(1 for e in entreprises if (e["sources"]["verification"] or {}).get("statut") == "divergent")}
+
+
+CHAMPS_LEGERS = ("ticker", "nom", "pays", "region", "secteur", "secteur_gics", "secteur_nom", "financier", "devise",
+                 "capitalisation_md", "note", "niveau", "verdict", "indicateurs", "pepite", "precedent", "surveillance")
+
+
+def fichier_fiche(ticker: str) -> str:
+    return "".join(c if c.isalnum() or c in ".-_" else "_" for c in ticker) + ".json"
+
+
+def leger(e: dict) -> dict:
+    """Version légère d'une société pour data/entreprises.json (le détail est dans sa fiche)."""
+    r = {k: e[k] for k in CHAMPS_LEGERS if k in e}
+    r["confiance"] = {"niveau": e["confiance"]["niveau"]}
+    r["contexte"] = {"ajustement": e["contexte"]["ajustement"], "note_ajustee": e["contexte"]["note_ajustee"]}
+    r["fiche"] = f"data/entreprises/fiches/{fichier_fiche(e['ticker'])}"
+    return r
 
 
 def recap_markdown(jour, entreprises, pepites, signaux, etats, candidats, cfg_p) -> str:
@@ -596,7 +630,7 @@ def main(argv=None) -> int:
 
     devises = {r.get("devise_cours") for r in base.values()} | {r.get("devise_comptes") for r in base.values()}
     change = f.yahoo.taux_change({d for d in devises if d})
-    ecrire_json(fichier_base, {"meta": {"genere_le": maintenant(), "source": "agent-entreprises", "version_agent": VERSION_AGENT,
+    ecrire_json(fichier_base, compact=True, objet={"meta": {"genere_le": maintenant(), "source": "agent-entreprises", "version_agent": VERSION_AGENT,
                                         "description": "Comptes normalisés par société (base de travail de l'agent entreprises)"},
                                "societes": base})
     publication = publier(base, config, change, data, aujourdhui,

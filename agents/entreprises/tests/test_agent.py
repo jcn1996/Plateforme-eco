@@ -168,9 +168,12 @@ class TestAgent(unittest.TestCase):
         for x in e["donnees"]:
             self.assertIn(x["niveau"], ("attractif", "neutre", "defavorable"))
             self.assertTrue(A.ton_conforme(x["verdict"]))
-            self.assertTrue(x["contre_scenario"])
-            if not x["sources"]["officielle"]:
-                self.assertNotEqual(x["confiance"]["niveau"], "élevé")
+            fiche = lire_json(self.dossier / x["fiche"].removeprefix("data/"))["donnees"]  # détail de la société
+            self.assertTrue(fiche["contre_scenario"])
+            if not fiche["sources"]["officielle"]:
+                self.assertNotEqual(fiche["confiance"]["niveau"], "élevé")
+        officielles = [lire_json(self.dossier / x["fiche"].removeprefix("data/"))["donnees"]["sources"]["officielle"] for x in e["donnees"]]
+        self.assertIn("ESEF (filings.xbrl.org)", officielles)
         secteurs = lire_json(self.dossier / "secteurs.json")["donnees"]
         tickers = {x["ticker"] for x in e["donnees"]}
         for s in secteurs:
