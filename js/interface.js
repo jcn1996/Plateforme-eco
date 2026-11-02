@@ -174,22 +174,27 @@ export function initialiserAlertes({ bouton, liste, compte, apercu }, paysParCod
     document.body.classList.toggle('alertes-ouvertes', !ouvert); // masque la barre du comparateur
   });
 
-  /** (Re)construit la liste : mes alertes d'abord, puis celles des agents (plus récentes en premier). */
-  function afficher(alertesAgents, mesAlertes = []) {
+  /**
+   * (Re)construit la liste : alertes « Qualité des données » d'abord, puis mes alertes,
+   * puis celles des agents (plus récentes en premier).
+   */
+  function afficher(alertesAgents, mesAlertes = [], alertesQualite = []) {
     const agents = [...alertesAgents].sort((a, b) => b.heure.localeCompare(a.heure));
-    const toutes = [...mesAlertes, ...agents];
+    const toutes = [...alertesQualite, ...mesAlertes, ...agents];
     compte.textContent = String(toutes.length);
-    apercu.textContent = toutes[0] ? `${toutes[0].perso ? 'Mon alerte' : toutes[0].heure} · ${toutes[0].titre}` : '';
+    const prefixe = (a) => (a.qualite ? 'Qualité des données' : a.perso ? 'Mon alerte' : a.heure);
+    apercu.textContent = toutes[0] ? `${prefixe(toutes[0])} · ${toutes[0].titre}` : '';
 
     const ligne = (a) => el('li', {},
       el('button', {
-        class: `alerte ${classeNote(NOTE_NIVEAU[a.niveau] ?? 57)}${a.perso ? ' alerte--perso' : ''}`,
+        class: `alerte ${classeNote(NOTE_NIVEAU[a.niveau] ?? 57)}${a.perso ? ' alerte--perso' : ''}${a.qualite ? ' alerte--qualite' : ''}`,
         type: 'button',
         onclick: () => { replier(); ouvrir(a.route ?? { type: 'pays', id: a.pays }); },
       },
         el('span', { class: 'alerte-heure mono' }, a.heure),
         el('span', { class: 'alerte-entete' },
-          a.perso ? el('span', { class: 'badge-mon-alerte' }, 'Mon alerte') : el('span', {}, AGENTS[a.agent] ?? a.agent),
+          a.qualite ? el('span', { class: 'badge-qualite' }, 'Qualité des données')
+            : a.perso ? el('span', { class: 'badge-mon-alerte' }, 'Mon alerte') : el('span', {}, AGENTS[a.agent] ?? a.agent),
           a.perso ? null : el('span', {}, '·'),
           a.perso ? null : el('span', {}, paysParCode.get(a.pays)?.nom ?? a.pays),
         ),

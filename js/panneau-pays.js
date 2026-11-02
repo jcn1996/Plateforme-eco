@@ -70,6 +70,9 @@ export function listeIndicateurs(indicateurs) {
           // Signalements de l'agent : valeur ancienne (source en panne) ou inhabituelle
           ind.ancienne ? el('span', { class: 'drapeau drapeau--ancienne', title: ind.raison_ancienne }, 'ancienne') : null,
           ind.a_verifier ? el('span', { class: 'drapeau drapeau--verifier', title: ind.raison_a_verifier }, 'à vérifier') : null,
+          // Vérification croisée : les sources comparables ne s'accordent pas
+          ind.verification === 'divergent'
+            ? el('span', { class: 'drapeau drapeau--divergent', title: resumeSources(ind) }, 'sources divergentes') : null,
           // Petit complément : cible d'inflation, direction de la banque centrale…
           complementIndicateur(cle, ind) ? el('small', {}, complementIndicateur(cle, ind)) : null,
         ),
@@ -93,18 +96,82 @@ function blocConfiance(confiance) {
   );
 }
 
-/** Dates et sources exactes de chaque valeur. */
+/** Statuts des sources (vérification croisée), dans l'ordre d'affichage. */
+const STATUTS = {
+  retenue: { texte: 'retenue', classe: 'retenue' },
+  concorde: { texte: 'concorde', classe: 'concorde' },
+  diverge: { texte: 'diverge', classe: 'diverge' },
+  'non comparable': { texte: 'non comparable', classe: 'neutre' },
+  'rejetée': { texte: 'rejetée', classe: 'rejetee' },
+  'échec': { texte: 'échec', classe: 'rejetee' },
+};
+const VERIFICATIONS = {
+  concordant: 'sources concordantes',
+  divergent: 'sources divergentes',
+  source_unique: 'une seule source',
+  ancienne: 'valeur ancienne conservée',
+  aucune_source: 'aucune source valable',
+};
+
+/** « FMI 0,4 · OCDE 1,0 » : résumé des valeurs, pour l'infobulle du drapeau. */
+function resumeSources(ind) {
+  return (ind.sources ?? [])
+    .filter((s) => s.valeur !== null && s.valeur !== undefined && ['retenue', 'concorde', 'diverge'].includes(s.statut))
+    .map((s) => `${s.nom.split(',')[0]} ${nombre(s.valeur, 1)}`).join(' · ');
+}
+
+/** Une source consultée : statut, nom, valeur, date, et la raison d'un rejet ou d'un échec. */
+function ligneSource(s, unite) {
+  const st = STATUTS[s.statut] ?? { texte: s.statut, classe: 'neutre' };
+  const valeur = s.valeur === null || s.valeur === undefined ? null : `${nombre(s.valeur, 2)}${unite ? ` ${unite}` : ''}`;
+  return el('li', { class: `source source--${st.classe}` },
+    el('span', { class: 'source-statut' }, st.texte),
+    el('span', { class: 'source-nom' }, s.nom),
+    el('span', { class: 'source-valeur mono' }, valeur ?? '—', s.date ? el('small', {}, ` · ${s.date}`) : null),
+    s.raison && s.statut !== 'non comparable' ? el('span', { class: 'source-raison' }, s.raison) : null,
+    s.ecart !== undefined && s.statut !== 'retenue' ? el('span', { class: 'source-raison' }, `écart : ${nombre(s.ecart, 2)} pt`) : null,
+  );
+}
+
+/**
+ * Sources et vérification croisée : pour chaque indicateur, les sources consultées,
+ * leurs valeurs, leurs dates, leur statut et la valeur retenue.
+ */
 function listeSources(p) {
   const tous = { ...p.indicateurs, ...p.detail };
   return el('details', { class: 'detail-repliable sources' },
-    el('summary', {}, 'Sources et dates des données'),
+    el('summary', {}, 'Sources et vérification croisée', el('small', {}, 'valeurs, dates, valeur retenue')),
     el('ul', { class: 'liste-sources' },
-      Object.values(tous).map((ind) => el('li', {},
-        el('strong', {}, ind.libelle), ' — ',
-        ind.valeur === null || ind.valeur === undefined
-          ? `non disponible (${ind.raison ?? 'pas de source'})`
-          : `${ind.source} · donnée du ${ind.date}${ind.ancienne ? ' · valeur ancienne conservée' : ''}`,
-      ))),
+      Object.entries(tous).map(([cle, ind]) => {
+        const disponible = ind.valeur !== null && ind.valeur !== undefined;
+        const unite = ind.unite === '% du PIB' ? '%' : ind.unite;
+        return el('li', { class: 'source-indicateur' },
+          el('div', { class: 'source-entete' },
+            el('strong', {}, ind.libelle),
+            disponible
+              ? el('span', {}, 'retenu : ', el('b', { class: 'mono' }, valeurIndicateur(cle, ind)), ` · donnée du ${ind.date}`)
+              : el('span', {}, `non disponible (${ind.raison ?? 'pas de source'})`),
+          ),
+          disponible && (ind.verification || ind.confiance) ? el('div', { class: `source-verif source-verif--${ind.verification ?? 'inconnue'}` },
+            VERIFICATIONS[ind.verification] ?? '',
+            ind.confiance ? ` · confiance ${ind.confiance}` : '',
+            ind.ancienne ? ` · ${ind.raison_ancienne}` : '',
+          ) : null,
+          ind.sources?.length
+            ? el('ul', { class: 'liste-sources-detail' }, ind.sources.map((s) => ligneSource(s, unite)))
+            : (disponible ? el('p', { class: 'source-raison' }, ind.source) : null),
+        );
+      })),
+  );
+}
+
+/** Alerte « Qualité des données » : plus d'un tiers des sources du pays en échec ou rejetées. */
+function blocQualite(q) {
+  if (!q?.alerte) return null;
+  return el('div', { class: 'alerte-qualite', role: 'status' },
+    el('strong', {}, '⚠ Qualité des données'),
+    el('span', {}, `${q.sources_en_echec} source${q.sources_en_echec > 1 ? 's' : ''} sur ${q.sources_consultees} en échec ou rejetée${q.sources_en_echec > 1 ? 's' : ''} : les conclusions de cette fiche sont fragiles.`),
+    q.details?.length ? el('small', {}, q.details.join(' · ')) : null,
   );
 }
 
@@ -169,6 +236,7 @@ export function fichePays(d, p, nav) {
       tendance: tendanceNote(p),
     }),
 
+    blocQualite(p.qualite),
     blocConfiance(p.confiance),
 
     el('section', {},
@@ -212,7 +280,7 @@ export function fichePays(d, p, nav) {
     p.indicateurs && p.confiance ? listeSources(p) : null,
     piedFraicheur(d.meta.pays),
     el('p', { class: 'mention-legale' }, d.fictifPar?.pays === false
-      ? 'Données réelles issues de sources publiques (FMI, OCDE, BIS, Yahoo Finance), analysées automatiquement par l’agent pays. Les secteurs restent fictifs. Ne constitue pas un conseil en investissement.'
+      ? 'Données réelles issues de sources publiques (instituts statistiques nationaux, banques centrales, FMI, OCDE, BRI, Banque mondiale, Eurostat, BCE, Yahoo Finance), vérifiées entre elles et analysées automatiquement par l’agent pays. Les secteurs restent fictifs. Ne constitue pas un conseil en investissement.'
       : 'Données fictives à des fins de démonstration — ne constitue pas un conseil en investissement.'),
   ];
 }
