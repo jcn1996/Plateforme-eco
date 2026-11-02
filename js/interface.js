@@ -37,6 +37,20 @@ function valeurMarche(m) {
   return nombre(m.valeur, decimalesMarche(m)) + unite;
 }
 
+/** Variation signée, ou « n. d. » si elle n'est pas connue. */
+function texteVariation(v, decimales) {
+  return v == null ? 'n. d.' : variation(v, decimales);
+}
+
+/** Heure d'un cours : « 17:34 » si c'est aujourd'hui, sinon « 31/10 17:34 » (heure locale). */
+function heureCours(iso) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  const heure = d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  return d.toDateString() === new Date().toDateString()
+    ? heure : `${d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })} ${heure}`;
+}
+
 /* Réglages du bandeau */
 const VITESSE_AUTO = 32;      // défilement automatique, en pixels par seconde
 const REPRISE_APRES = 4000;   // reprise du défilement auto après un toucher (ms)
@@ -45,20 +59,24 @@ const REPRISE_APRES = 4000;   // reprise du défilement auto après un toucher (
  * Bandeau des marchés : défilement automatique, mais manipulable au doigt
  * (glisser à gauche ou à droite, avec inertie) et à la souris (pause au
  * survol, glisser possible). Toucher une cotation affiche une petite bulle
- * (valeur, variation du jour, variation sur 1 an).
+ * (cours, variation du jour, variation sur 1 an, heure, source et statut du marché).
  * Le contenu est dupliqué pour boucler sans à-coup.
  */
 export function remplirBandeau(piste, marches) {
   const bandeau = piste.parentElement;
+  const ouvert = (m) => m.statut === 'ouvert';
   const cotation = (m, copie) => el('button', {
     class: 'cotation', type: 'button', tabindex: copie ? '-1' : undefined, 'aria-hidden': copie ? 'true' : undefined,
     'data-nom': m.nom,
-    'aria-label': `${m.nom} : ${valeurMarche(m)}, ${variation(m.variation, 2)} aujourd'hui, ${variation(m.variation_1an ?? 0, 1)} sur un an`,
+    'aria-label': `${m.nom} : ${valeurMarche(m)}, ${texteVariation(m.variation, 2)} aujourd'hui, ${texteVariation(m.variation_1an, 1)} sur un an`
+      + (m.statut ? `, marché ${m.statut}` : ''),
   },
     el('span', { class: 'cotation-cat' }, CATEGORIES[m.categorie] ?? ''),
     el('span', { class: 'cotation-nom' }, m.nom),
+    m.statut ? el('span', { class: `cotation-statut${ouvert(m) ? ' cotation-statut--ouvert' : ''}` }, ouvert(m) ? 'ouvert' : 'fermé') : null,
     el('span', { class: 'cotation-valeur mono' }, valeurMarche(m)),
-    el('span', { class: `mono ${m.variation >= 0 ? 'hausse' : 'baisse'}` }, `${m.variation >= 0 ? '▲' : '▼'} ${variation(m.variation, 2)}`),
+    m.variation == null ? null
+      : el('span', { class: `mono ${m.variation >= 0 ? 'hausse' : 'baisse'}` }, `${m.variation >= 0 ? '▲' : '▼'} ${variation(m.variation, 2)}`),
   );
   piste.replaceChildren(...marches.map((m) => cotation(m, false)), ...marches.map((m) => cotation(m, true)));
   const parNom = new Map(marches.map((m) => [m.nom, m]));
@@ -133,12 +151,20 @@ export function remplirBandeau(piste, marches) {
     if (!m) return;
     fermerBulle();
     const ligne = (libelle, v, decimales) => el('div', { class: 'bulle-marche-ligne' },
-      el('span', {}, libelle), el('span', { class: `mono ${v >= 0 ? 'hausse' : 'baisse'}` }, variation(v, decimales)));
+      el('span', {}, libelle),
+      el('span', { class: v == null ? 'mono' : `mono ${v >= 0 ? 'hausse' : 'baisse'}` }, texteVariation(v, decimales)));
     bulle = el('div', { class: 'bulle-marche', role: 'status' },
       el('div', { class: 'bulle-marche-nom' }, m.nom),
       el('div', { class: 'bulle-marche-valeur mono' }, valeurMarche(m)),
       ligne('Aujourd’hui', m.variation, 2),
-      m.variation_1an !== undefined ? ligne('Sur 1 an', m.variation_1an, 1) : null,
+      ligne('Sur 1 an', m.variation_1an, 1),
+      m.heure || m.source ? el('div', { class: 'bulle-marche-pied' },
+        m.heure ? `Cours de ${heureCours(m.heure)}` : null,
+        m.heure && m.source ? ' · ' : null,
+        m.source ?? null,
+        m.statut ? ` · marché ${m.statut}` : null,
+        m.ancienne ? el('div', { class: 'bulle-marche-ancienne' }, 'Valeur ancienne : sources indisponibles') : null,
+      ) : null,
     );
     document.body.append(bulle);
     const r = element.getBoundingClientRect();
