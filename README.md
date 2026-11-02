@@ -5,11 +5,13 @@ Prototype d'une application personnelle de suivi économique mondial, pensée d'
 
 ## Ce que fait le prototype
 
-- **Globe 3D réaliste**
-  - Vraie texture de la Terre : NASA Blue Marble assombrie, avec les lumières des villes de la Black Marble.
-  - Carte **vectorielle**, nette à tous les niveaux de zoom.
-    - Les pays suivis sont des polygones 3D translucides (45 à 55 %), en vert émeraude, ambre ou rouge corail, avec un contour franc ; le relief reste visible.
-    - Les frontières sont jaune clair, d'épaisseur constante à l'écran, avec une légère lueur ; celle du pays sélectionné est plus épaisse.
+- **Globe 100 % vectoriel** (aucune image), net à tous les niveaux de zoom.
+  - L'océan est une sphère bleu nuit unie.
+  - Tous les pays sont des polygones 3D opaques :
+    - pays suivis en couleur pleine selon leur note : vert émeraude, ambre ou rouge corail ;
+    - pays non suivis en gris bleu ;
+    - le pays sélectionné est éclairci.
+  - Les frontières forment un seul trait jaune clair de 0,7 px (1,5 px autour du pays sélectionné).
   - Côtes et frontières détaillées : Natural Earth au 1:110m au démarrage, puis au 1:50m quand on zoome de près (chargé à la demande).
 - **Flux de capitaux (fictifs)**
   - Épaisseur et vitesse selon le montant.
@@ -33,7 +35,7 @@ Prototype d'une application personnelle de suivi économique mondial, pensée d'
 - **Classement** des pays et des 20 meilleures entreprises.
 - **Portefeuille démo** de 100 000 €.
 - **Netteté** : antialiasing, densité de pixels jusqu'à 3 sur les écrans haute résolution.
-- **Mode léger** (⚡) : texture de 1024 px, densité de pixels limitée à 2, sans halo, sans lueur des frontières, sans animation des flux, 30 images/s.
+- **Mode léger** (⚡) : densité de pixels limitée à 2, sans halo, sans animation des flux, 30 images/s.
 - **PWA** : l'appli s'installe sur l'écran d'accueil. Le service worker charge l'appli « réseau d'abord », donc la dernière version s'affiche dès l'ouverture ; elle reste utilisable hors ligne.
 
 ## Structure
@@ -45,7 +47,7 @@ css/style.css         thème « salle de contrôle »
 js/app.js             démarrage, navigation, fil d'Ariane
 js/donnees.js         chargement des JSON (seul fichier à modifier si les chemins changent)
 js/globe.js           globe 3D (Three.js r160), gestes, zoom, flux, étiquettes
-js/carte-vecteur.js   carte vectorielle : teintes triangulées, frontières en lignes épaisses, niveaux 110m / 50m
+js/carte-vecteur.js   carte vectorielle : pays triangulés, trait de frontière, niveaux 110m / 50m
 js/interface.js       horloge, bandeau des marchés, alertes, mode léger
 js/panneau-pays.js    fiches pays et secteur
 js/panneau-entreprise.js  fiche entreprise
@@ -57,8 +59,6 @@ js/outils.js          couleurs des notes, formats français
 data/*.json           données fictives
 data/countries-110m.json, countries-50m.json  frontières des pays (voir data/LICENCE-countries-110m.txt)
 outils/generer_donnees_fictives.py  régénère les données fictives
-outils/composer_texture_terre.py    compose la texture de la Terre (images NASA)
-assets/terre-2048.jpg, terre-1024.jpg  texture de la Terre (voir assets/CREDITS.txt)
 ```
 
 ## Format des données (pour les futurs agents)
@@ -132,8 +132,6 @@ Le serveur des agents pourra les relire telles quelles :
 Les frontières (`data/countries-110m.json` et `data/countries-50m.json`) viennent de [world-atlas](https://github.com/topojson/world-atlas) 2.0.2, dérivé de Natural Earth (domaine public).
 Three.js r160 est chargé depuis cdnjs ; ses modules de lignes épaisses (`examples/jsm/lines`) viennent de jsDelivr, dans la même version, via l'import map de `index.html`.
 La licence ISC de world-atlas est reproduite dans `data/LICENCE-countries-110m.txt`.
-
-La texture de la Terre est composée à partir d'images de la NASA (domaine public) : Blue Marble Next Generation et Black Marble 2012. Les détails sont dans `assets/CREDITS.txt`.
 
 ## Tester en local
 

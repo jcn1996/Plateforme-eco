@@ -3,8 +3,8 @@
    - Page, JavaScript, CSS et données (même origine) : RÉSEAU D'ABORD.
      L'appli affiche donc toujours la dernière version dès l'ouverture ;
      le cache ne sert qu'en l'absence de réseau.
-   - Images de la Terre et icônes : cache d'abord (fichiers lourds qui
-     changent rarement ; une nouvelle VERSION les renouvelle).
+   - Icônes : cache d'abord (elles changent rarement ; une nouvelle VERSION
+     les renouvelle). Le globe est 100 % vectoriel : aucune image de la Terre.
    - La carte détaillée data/countries-50m.json n'est pas préchargée : elle
      est mise en cache au premier zoom rapproché.
    - Ressources externes (Three.js, lignes épaisses, polices) : cache dès le premier
@@ -12,7 +12,7 @@
    Changer VERSION vide les anciens caches chez tous les utilisateurs.
    ========================================================================== */
 
-const VERSION = 'salle-controle-v4';
+const VERSION = 'salle-controle-v5';
 
 const FICHIERS_APPLI = [
   './',
@@ -34,8 +34,6 @@ const FICHIERS_APPLI = [
   'assets/icone.svg',
   'assets/icone-192.png',
   'assets/icone-512.png',
-  'assets/terre-2048.jpg',
-  'assets/terre-1024.jpg',
   'data/pays.json',
   'data/secteurs.json',
   'data/entreprises.json',
