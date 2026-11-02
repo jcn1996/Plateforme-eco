@@ -14,6 +14,11 @@ from __future__ import annotations
 from statistics import pstdev
 
 
+
+def minuscule(libelle: str) -> str:
+    """« Croissance du PIB » → « croissance du PIB » (sigles conservés)."""
+    return libelle[:1].lower() + libelle[1:]
+
 def borner(x: float, mini: float = 0, maxi: float = 100) -> int:
     return int(round(max(mini, min(maxi, x))))
 
@@ -129,20 +134,20 @@ def confiance(indicateurs: dict, ponderations: dict, couverture: float) -> dict:
     raisons = []
     if couverture < 1:
         manquants = [v["libelle"] for v in principaux.values() if v.get("note") is None]
-        raisons.append("données manquantes : " + ", ".join(manquants).lower())
+        raisons.append("données manquantes : " + ", ".join(map(minuscule, manquants)))
     anciennes = [v["libelle"] for v in principaux.values() if v.get("ancienne")]
     if anciennes:
         score -= 0.1 * len(anciennes)
-        raisons.append("valeurs anciennes (source indisponible) : " + ", ".join(anciennes).lower())
+        raisons.append("valeurs anciennes (source indisponible) : " + ", ".join(map(minuscule, anciennes)))
     a_verifier = [v["libelle"] for v in principaux.values() if v.get("a_verifier")]
     if a_verifier:
         score -= 0.1 * len(a_verifier)
-        raisons.append("valeurs à vérifier : " + ", ".join(a_verifier).lower())
+        raisons.append("valeurs à vérifier : " + ", ".join(map(minuscule, a_verifier)))
     divergents = [v for v in principaux.values() if v.get("verification") == "divergent"]
     if divergents:
         score -= 0.1 * len(divergents)
         raisons.append("sources divergentes : " + ", ".join(
-            v["libelle"].lower() + (f" (écart de {v['ecart_max']:.2f} pt)".replace(".", ",") if v.get("ecart_max") is not None else "")
+            minuscule(v["libelle"]) + (f" (écart de {v['ecart_max']:.2f} pt)".replace(".", ",") if v.get("ecart_max") is not None else "")
             for v in divergents))
     if len(notes) >= 3 and pstdev(notes) > 22:
         score -= 0.15
@@ -152,7 +157,7 @@ def confiance(indicateurs: dict, ponderations: dict, couverture: float) -> dict:
     uniques = [v["libelle"] for v in disponibles if v.get("verification") == "source_unique"]
     plafond = bool(disponibles) and len(uniques) * 2 > len(disponibles)
     if plafond and score >= 0.8:
-        raisons.append("confiance plafonnée à « moyen » : une seule source pour " + ", ".join(uniques).lower())
+        raisons.append("confiance plafonnée à « moyen » : une seule source pour " + ", ".join(map(minuscule, uniques)))
     if not raisons:
         raisons.append("données complètes, récentes et confirmées par plusieurs sources")
     score = max(0.0, round(score, 2))

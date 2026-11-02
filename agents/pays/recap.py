@@ -13,6 +13,7 @@ from __future__ import annotations
 from datetime import date
 from pathlib import Path
 
+from .notation import minuscule
 from .textes import nb, ton_conforme
 
 MOUVEMENT_MIN = 3  # écart de note (points) à partir duquel un mouvement est cité
@@ -47,8 +48,10 @@ def contenu(jour: date, objet: dict, ancien: dict | None, etats: dict) -> str:
             a = _indicateurs(anciens.get(p["code"], {}))
             for cle, ind in _indicateurs(p).items():
                 avant = a.get(cle, {})
-                if ind.get("valeur") != avant.get("valeur") and (ind.get("valeur") is not None or avant.get("valeur") is not None):
-                    changements.append(f"- {p['nom']}, {ind['libelle'].lower()} : {_valeur(avant)} → {_valeur(ind)}"
+                # Changement visible : valeur arrondie ou date de la donnée différente
+                if (_valeur(ind), ind.get("date")) != (_valeur(avant), avant.get("date")) and \
+                        (ind.get("valeur") is not None or avant.get("valeur") is not None):
+                    changements.append(f"- {p['nom']}, {minuscule(ind['libelle'])} : {_valeur(avant)} → {_valeur(ind)}"
                                        f"{' (donnée du ' + str(ind['date']) + ')' if ind.get('date') else ''}")
     if not anciens:
         lignes.append("Première exécution comparable : aucun état antérieur sur données réelles.")
@@ -80,9 +83,9 @@ def contenu(jour: date, objet: dict, ancien: dict | None, etats: dict) -> str:
     for p in donnees:
         for cle, ind in _indicateurs(p).items():
             if ind.get("verification") == "divergent" and ind.get("sources"):
-                valeurs = "; ".join(f"{s['nom'].split(',')[0]} {nb(s['valeur'])} ({s['date']})"
+                valeurs = " ; ".join(f"{s['nom'].split(',')[0]} {nb(s['valeur'])} ({s['date']})"
                                     for s in ind["sources"] if s["statut"] in ("retenue", "concorde", "diverge") and s.get("valeur") is not None)
-                divergences.append(f"- {p['nom']}, {ind['libelle'].lower()} : {valeurs}. Valeur retenue : {_valeur(ind)} ; écart maximal {nb(ind.get('ecart_max') or 0, 2)} point(s).")
+                divergences.append(f"- {p['nom']}, {minuscule(ind['libelle'])} : {valeurs}. Valeur retenue : {_valeur(ind)} ; écart maximal {nb(ind.get('ecart_max') or 0, 2)} point(s).")
     lignes += divergences or ["Aucune divergence au-delà des tolérances."]
     lignes.append("")
 
@@ -90,8 +93,8 @@ def contenu(jour: date, objet: dict, ancien: dict | None, etats: dict) -> str:
     lignes += ["## 4. Données manquantes ou anciennes", ""]
     manquantes = []
     for p in donnees:
-        absentes = [ind["libelle"].lower() for cle, ind in p.get("indicateurs", {}).items() if ind.get("valeur") is None]
-        anciennes = [ind["libelle"].lower() for ind in _indicateurs(p).values() if ind.get("ancienne")]
+        absentes = [minuscule(ind["libelle"]) for cle, ind in p.get("indicateurs", {}).items() if ind.get("valeur") is None]
+        anciennes = [minuscule(ind["libelle"]) for ind in _indicateurs(p).values() if ind.get("ancienne")]
         morceaux = []
         if absentes:
             morceaux.append("manquant : " + ", ".join(absentes))
