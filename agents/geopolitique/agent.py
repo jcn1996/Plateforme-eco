@@ -31,6 +31,7 @@ from ..commun import sante
 from ..commun.journal import journal
 from ..commun.sortie import ecrire_json, enveloppe, lire_json
 from . import evenements as E
+from . import gravite as G
 from . import ia
 from . import score as S
 from .sources import FournisseurReel, FournisseurTest
@@ -250,9 +251,45 @@ LANGUES = {"en": "anglais", "fr": "français", "es": "espagnol", "de": "allemand
            "zh": "chinois", "ar": "arabe", "ru": "russe", "ja": "japonais"}
 
 
+def publier_theme(fiches: list[dict], titre: str | None, confirme: bool, noms: dict) -> dict:
+    """Thème en cours : un seul élément publié, avec la chronologie des faits."""
+    fiches = sorted(fiches, key=lambda x: x["dernier"])
+    principale = max(fiches, key=lambda x: (x["gravite"], x["dernier"]))
+    recente = next((x for x in reversed(fiches) if x["resume"]), fiches[-1])
+    compte: dict[str, int] = {}
+    for x in fiches:
+        for c in x["pays"]:
+            compte[c] = compte.get(c, 0) + 1
+    # Pays du thème : principaux dans au moins la moitié de ses faits (un pays d'un seul fait n'est pas retenu)
+    pays = [c for c, k in sorted(compte.items(), key=lambda kv: -kv[1]) if 2 * k >= len(fiches)] or list(compte)
+    lieux = [c for c in dict.fromkeys(c for x in fiches for c in x.get("lieux", [])) if c not in pays]
+    sources, vus = [], set()
+    for x in reversed(fiches):
+        for s in x["sources"]:
+            if s["url"] not in vus:
+                vus.add(s["url"])
+                sources.append(s)
+    return {
+        **principale, "id": "theme-" + fiches[0]["id"], "theme": True, "theme_confirme": confirme, "nb_evenements": len(fiches),
+        "titre": titre or principale["titre"], "titre_origine": principale["titre_origine"],
+        "titre_langue": None if titre else principale["titre_langue"], "mention": None if titre else principale["mention"],
+        "pays": pays, "pays_noms": [noms.get(c, c) for c in pays], "pays_suivis": [c for c in pays if any(c in x["pays_suivis"] for x in fiches)],
+        "lieux": lieux, "lieux_noms": [noms.get(c, c) for c in lieux],
+        "gravite": principale["gravite"], "resume": recente["resume"],
+        "premier": min(x["premier"] for x in fiches), "dernier": max(x["dernier"] for x in fiches),
+        "sources": sources[:15], "nb_articles": sum(x["nb_articles"] for x in fiches),
+        "nb_domaines": max(x["nb_domaines"] for x in fiches), "officiel": any(x["officiel"] for x in fiches),
+        "ia": any(x["ia"] for x in fiches),
+        "chronologie": [{"id": x["id"], "date": x["dernier"], "titre": x["titre"], "gravite": x["gravite"],
+                         "resume": x["resume"][0]["texte"] if x["resume"] else None, "nb_sources": len(x["sources"]),
+                         "source": x["sources"][0]["url"] if x["sources"] else None} for x in fiches],
+    }
+
+
 def publier(e: dict, config: dict, noms: dict, etat: dict, aujourdhui) -> dict:
     a = e.get("analyse") or {}
     pays = e.get("pays_principaux") or []
+    lieux = e.get("lieux") or []
     tons = []
     for code in pays:
         p = config["pays"].get(code)
@@ -274,7 +311,8 @@ def publier(e: dict, config: dict, noms: dict, etat: dict, aujourdhui) -> dict:
         "categorie_libelle": config["categories"][categorie]["libelle"],
         "pays": pays, "pays_noms": ["Monde"] if mondial else [noms.get(c, c) for c in pays], "mondial": mondial,
         "pays_suivis": [c for c in pays if c in config["pays"]],
-        "regions": regions, "gravite": e["gravite"], "note_gravite": a.get("note_gravite"),
+        "lieux": lieux, "lieux_noms": [noms.get(c, c) for c in lieux], "theme": False, "chronologie": [],
+        "regions": regions, "gravite": e["gravite"], "gravite_regles": e.get("gravite_regles"), "note_gravite": e.get("note_controle"),
         "ia": bool(a), "modele": a.get("modele"), "analyse_le": a.get("analyse_le"),
         "resume": a.get("resume", []), "actifs": a.get("actifs", []), "horizon": a.get("horizon"),
         "confiance": a.get("confiance", "faible"), "contre": a.get("contre", []),
@@ -502,23 +540,59 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "hor
         fusions += faites
         significatifs = [e for e in evenements if e["dernier"] >= limite_aff and E.significatif(e, config)]
         nouveaux_ids = {absorbe_par.get(i, i) for i in nouveaux_ids} | {b for b, a in faites if a in nouveaux_ids}
-    for e in evenements:
+    for e in significatifs:
+        # Pays principaux (acteurs, directement touchés) et lieux (pays d'accueil d'une négociation)
+        e["pays_principaux"], e["lieux"] = E.pays_et_lieux(e, det)
+        # Gravité : contrôle par les repères (Gemini relève d'un cran au plus), puis plafonds par catégorie
         a = e.get("analyse") or {}
-        e["gravite"] = a.get("gravite") or E.gravite_regles(e, config)
-        if a:  # plafonds aussi pour les analyses en cache (faites avant leur ajout)
-            g, note = ia.plafonner(e["gravite"], a.get("categorie") or e["categorie"],
-                                   [x["titre"] for x in e["articles"]] + [r["texte"] for r in a.get("resume", [])], config)
-            if note:
-                e["gravite"], a["gravite"], a["note_gravite"] = g, g, note
-        resume = [r["texte"] for r in (e.get("analyse") or {}).get("resume", [])]
-        e["pays_principaux"] = E.pays_principaux(e, det, resume)
+        g, regle, note = G.gravite_finale(e, config, e["pays_principaux"])
+        if a:
+            g2, note2 = ia.plafonner(g, a.get("categorie") or e["categorie"],
+                                     [x["titre"] for x in e["articles"]] + [r["texte"] for r in a.get("resume", [])], config)
+            if note2:
+                g, note = g2, note2
+        e["gravite"], e["gravite_regles"], e["note_controle"] = g, regle, note or a.get("note_gravite")
 
     # Scores par pays
     scores = S.scores(config, significatifs, etat, maintenant)
     S.enregistrer_historique(etat, scores, aujourdhui)
-    # Publiés : événements rattachés à au moins un pays, ou à portée mondiale explicite (affichés « Monde »)
-    publics = sorted((x for x in (publier(e, config, noms, etat, aujourdhui) for e in significatifs) if x["pays"] or x["mondial"]),
-                     key=lambda x: (x["gravite"], x["dernier"]), reverse=True)[:80]
+
+    # Publiés : événements rattachés à au moins un pays, ou à portée mondiale explicite (affichés « Monde »),
+    # regroupés en thèmes en cours (7 jours glissants), confirmés par Gemini quand il répond
+    cle = cle_gemini if cle_gemini is not None else os.environ.get("GEMINI_API_KEY")
+    publiables = [e for e in significatifs if e["pays_principaux"] or (e.get("analyse") or {}).get("mondial")]
+    groupes = E.former_themes(publiables, config)
+    cache_themes = etat.setdefault("themes_confirmes", {})
+    a_confirmer = [g for g in groupes if len(g) > 1 and E.cle_theme(g) not in cache_themes]
+    for k, v in ia.confirmer_themes(a_confirmer, config, quotas, cle, poster, rapport_ia).items():
+        cache_themes[k] = {**v, "le": E.iso(maintenant)}
+    etat["themes_confirmes"] = {E.cle_theme(g): cache_themes[E.cle_theme(g)] for g in groupes if E.cle_theme(g) in cache_themes}
+    fiches = {e["id"]: publier(e, config, noms, etat, aujourdhui) for e in publiables}
+    publics = []
+    for g in groupes:
+        conf = cache_themes.get(E.cle_theme(g)) if len(g) > 1 else None
+        if len(g) > 1 and conf is not None:
+            membres = [e for e in g if e["id"] in conf["membres"]]
+            seuls = [e for e in g if e["id"] not in conf["membres"]] if len(membres) >= 2 else g
+            if len(membres) >= 2:
+                publics.append(publier_theme([fiches[e["id"]] for e in membres], conf.get("titre"), True, noms))
+            publics += [fiches[e["id"]] for e in seuls]
+        elif len(g) > 1:
+            publics.append(publier_theme([fiches[e["id"]] for e in g], None, False, noms))
+        else:
+            publics.append(fiches[g[0]["id"]])
+    # Tous les titres en français : titres d'origine restants traduits par Gemini (cache)
+    traductions = etat.setdefault("traductions", {})
+    a_traduire = sorted({x["titre_origine"] for x in publics if x["mention"] == "non traduit" and x["titre_origine"] not in traductions})
+    traductions.update(ia.traduire_titres(a_traduire, config, quotas, cle, poster, rapport_ia))
+    for x in publics:
+        if x["mention"] == "non traduit" and traductions.get(x["titre_origine"]):
+            x.update(titre=traductions[x["titre_origine"]], mention=None, titre_traduit=True)
+    origines = {x["titre_origine"] for x in publics}
+    etat["traductions"] = {k: v for k, v in traductions.items() if k in origines}
+    # Distribution cible des gravités sur 24 h
+    calibrage = G.calibrer(publics, config, E.iso(maintenant - timedelta(hours=24)))
+    publics = sorted(publics, key=lambda x: (x["gravite"], x["dernier"]), reverse=True)[:80]
     par_pays = {}
     for code, s in scores.items():
         derniers = sorted((x for x in publics if code in x["pays"]), key=lambda x: x["dernier"], reverse=True)[:3]
@@ -584,7 +658,8 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "hor
               "ia": {k: rapport_ia.get(k) for k in ("modele", "appels", "reussites", "analyses", "rejets", "quota_atteint", "modeles_utilises")}
               | {"erreurs": [e[:200] for e in rapport_ia["erreurs"]][:10], "appels_du_jour": q["appels"], "quota_jour": q["quota_jour"],
                  "suppressions": rapport_ia["suppressions"][:20]},
-              "fusions": len(fusions),
+              "fusions": len(fusions), "calibrage_gravite": calibrage,
+              "themes": sum(1 for x in publics if x["theme"]),
               "etat_des_sources": {v["nom"]: v["etat"] for v in etats.values()}, "signaux": [s["titre"] for s in sig]}
     j["donnees"] = (j.get("donnees", []) + [entree])[-200:]
     j["meta"] = {**j.get("meta", {}), "genere_le": E.iso(maintenant), "source": "agent-geopolitique", "version_agent": VERSION_AGENT,

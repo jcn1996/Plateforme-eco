@@ -1271,3 +1271,12 @@ body.alertes-ouvertes .barre-comparaison { display: none; }
 .geo-ref { font-size: 10px; fill: var(--texte-3); }
 @media (max-width: 420px) { .geo-actifs li { grid-template-columns: 1fr; gap: 0; } }
 .geo-mention { font-weight: 400; font-size: 11px; color: var(--orange); white-space: nowrap; }
+.geo-theme { color: var(--cyan); font-weight: 600; }
+.geo-lieu { color: var(--texte-3); }
+.geo-chronologie { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; border-left: 1px solid var(--ligne); }
+.geo-chronologie li { display: grid; grid-template-columns: auto 1fr; gap: 8px; padding-left: 10px; font-size: 12.5px; position: relative; }
+.geo-chronologie li::before { content: ""; position: absolute; left: -4px; top: 6px; width: 7px; height: 7px; border-radius: 50%; background: var(--cyan); }
+.geo-chronologie a { color: var(--texte); overflow-wrap: anywhere; }
+.geo-chronologie small { color: var(--texte-2); }
+.geo-chrono-date { color: var(--texte-3); font-size: 11px; white-space: nowrap; }
+@media (max-width: 420px) { .geo-chronologie li { grid-template-columns: 1fr; gap: 2px; } }

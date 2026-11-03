@@ -53,6 +53,7 @@ class GeminiSimule:
         self.appels, self.horloge, self.fabrique, self.scenario = [], horloge, fabrique or analyse_type, scenario
         self.par_modele = {}
         self.evenements_envoyes = []
+        self.titre_theme = "Frappes américaines en Iran et détroit d'Ormuz"
 
     def __call__(self, url, params=None, timeout=None, json=None):
         modele = url.split("/models/")[1].split(":")[0]
@@ -62,7 +63,19 @@ class GeminiSimule:
         if erreur:
             return Reponse(erreur[0], erreur[1])
         prompt = json["contents"][0]["parts"][0]["text"]
-        blocs = __import__("json").loads(prompt[prompt.index("Événements :\n") + len("Événements :\n"):])
+        J = __import__("json")
+        if "Thèmes proposés :\n" in prompt:  # confirmation des thèmes : tous les membres, titre français
+            themes = J.loads(prompt.split("Thèmes proposés :\n", 1)[1])
+            self.themes_proposes = getattr(self, "themes_proposes", []) + themes
+            rep = {"themes": [{"theme": t["theme"], "membres": [e["id"] for e in t["evenements"]],
+                               "titre": self.titre_theme} for t in themes]}
+            return Reponse(200, {"candidates": [{"content": {"parts": [{"text": J.dumps(rep)}]}}]})
+        if prompt.startswith("Traduis ces titres"):
+            titres = J.loads(prompt.split("\n", 1)[1])
+            self.titres_traduits = getattr(self, "titres_traduits", []) + titres
+            rep = {"traductions": [f"Titre traduit en français n° {i}" for i, _ in enumerate(titres)]}
+            return Reponse(200, {"candidates": [{"content": {"parts": [{"text": J.dumps(rep)}]}}]})
+        blocs = J.loads(prompt[prompt.index("Événements :\n") + len("Événements :\n"):])
         self.evenements_envoyes += [b["evenement"] for b in blocs]
         analyses = [self.fabrique(b["evenement"], b["sources"]) for b in blocs]
         return Reponse(200, {"candidates": [{"content": {"parts": [{"text": __import__("json").dumps({"analyses": analyses})}]}}]})
@@ -317,7 +330,8 @@ class TestGemini(Base):
         for e in (x for x in d["evenements"] if x["ia"]):
             urls = {s["url"] for s in e["sources"]}
             self.assertIsNone(e["mention"])
-            self.assertEqual(e["titre"], "Les États-Unis frappent une île iranienne")  # titre en français de Gemini
+            # titre en français de Gemini (événement) ou titre de thème confirmé par Gemini
+            self.assertIn(e["titre"], ("Les États-Unis frappent une île iranienne", "Frappes américaines en Iran et détroit d'Ormuz"))
             for a in e["resume"] + e["actifs"] + e["contre"]:
                 self.assertTrue(a["sources"] and set(a["sources"]) <= urls)
                 self.assertTrue(ia.en_francais(a["texte"]))
@@ -345,8 +359,8 @@ class TestGemini(Base):
         for e in analyses:
             self.assertEqual([x["texte"] for x in e["resume"]], ["Les États-Unis ont frappé une île iranienne."])
             self.assertEqual(e["actifs"], [])
-            self.assertEqual(e["gravite"], 3)
-            self.assertIn("plafonnée à 3", e["note_gravite"])
+            self.assertLessEqual(e["gravite"], 3)  # 5 avec une seule source : plafonnée à 3, puis contrôle par les repères
+            self.assertTrue(e["note_gravite"])
             self.assertNotIn("XX", e["pays"])
             self.assertIn(e["categorie"], self.config["categories"])
             self.assertEqual((e["horizon"], e["confiance"]), ("semaines", "faible"))
@@ -379,6 +393,11 @@ class TestGemini(Base):
         evts = [{"id": f"e{i}", "categorie": c, "pays": ["US"], "noyau": [], "premier": "2026-11-03T10:00:00Z", "dernier": "2026-11-03T10:00:00Z",
                  "articles": [{"titre": f"t{i}{k}", "url": f"https://d{k}.example/{i}", "domaine": f"d{k}.example", "origine": "gdelt"} for k in range(n)]}
                for i, (c, n) in enumerate([("election", 9), ("diplomatie", 8), ("conflit", 3), ("sanctions", 3)])]
+        evts[2]["articles"][0]["titre"] = "Airstrikes kill 12 in border town"           # repère 3 : frappes, morts
+        evts[3]["articles"][0]["titre"] = "US announces new sanctions on Iran oil buyers"  # repère 3 : sanctions visant un pays
+        for e in evts[2:]:
+            for a in e["articles"][1:]:
+                a["titre"] = e["articles"][0]["titre"]
         ordre = [e["id"] for e in sorted(evts, key=lambda e: ia.priorite(e, self.config), reverse=True)]
         self.assertEqual(set(ordre[:2]), {"e2", "e3"})  # conflit et sanctions (gravité 3) avant élection et diplomatie
 
@@ -531,9 +550,10 @@ class TestDerniersCorrectifs(Base):
         fab = lambda eid, sources: {**analyse_type(eid, sources), "titre": "US strikes Iranian island ahead of the vote"}
         r = self.lancer(cle="cle-test", poster=GeminiSimule(fabrique=fab))
         self.assertTrue(any("titre refusé" in s for s in r["rapport_ia"]["suppressions"]))
-        for e in (x for x in self.publics()["evenements"] if x["ia"]):
-            self.assertEqual(e["titre"], e["titre_origine"])  # titre d'origine, avec sa langue
-            self.assertEqual(e["mention"], None if e["titre_langue"] == "français" else "non traduit")
+        for e in (x for x in self.publics()["evenements"] if x["ia"] and not x["theme"]):
+            # titre français de Gemini refusé : titre d'origine s'il est en français, sinon traduction par Gemini
+            self.assertIsNone(e["mention"])
+            self.assertTrue(e["titre"] == e["titre_origine"] or e.get("titre_traduit"))
 
     def test_election_normale_plafonnee(self):
         cfg = charger_config()
@@ -583,6 +603,113 @@ class TestDerniersCorrectifs(Base):
         mondiaux = [e for e in d["evenements"] if e["mondial"]]
         self.assertTrue(all(e["pays_noms"] == ["Monde"] and not e["pays"] for e in mondiaux))
         self.assertTrue(all(e["pays"] or e["mondial"] for e in d["evenements"]))
+
+
+def evt(id_, titre, pays, categorie="conflit", date="2026-11-03T10:00:00Z", n=3, analyse=None):
+    """Événement interne minimal : n articles de domaines différents, même titre."""
+    e = {"id": id_, "categorie": categorie, "pays": pays, "pays_principaux": pays, "noyau": [], "premier": date, "dernier": date,
+         "articles": [{"titre": titre, "url": f"https://d{k}.example/{id_}", "domaine": f"d{k}.example", "date": date,
+                       "origine": "gdelt", "langue": "en", "pays": pays, "pays_titre": pays} for k in range(n)]}
+    if analyse:
+        e["analyse"] = analyse
+    return e
+
+
+class TestQualite(unittest.TestCase):
+    """Gravité contrôlée par les repères, distribution cible, thèmes en cours, lieux, français."""
+
+    def setUp(self):
+        self.config = charger_config()
+        self.det = E.Detecteur(self.config)
+
+    def test_controle_gemini_releve_d_un_cran_au_plus(self):
+        from agents.geopolitique import gravite as G
+        routine = evt("a", "US and Canada hold trade talks", ["US", "CA"], "diplomatie", analyse={"gravite": 4, "titre": "Discussions commerciales"})
+        g, regle, note = G.gravite_finale(routine, self.config)
+        self.assertEqual((regle, g), (1, 2))  # routine : 1 ; Gemini (4) ne relève que d'un cran
+        self.assertIn("ramenée à 2", note)
+        detroit = evt("b", "US strikes Iranian targets in the Strait of Hormuz", ["US", "IR"], analyse={"gravite": 4})
+        self.assertEqual(G.gravite_finale(detroit, self.config)[:2], (4, 4))  # conflit armé + effet direct (détroit)
+        sans_effet = evt("c", "Russian airstrikes kill 29 in Zaporizhzhia", ["RU", "UA"], analyse={"gravite": 4})
+        self.assertEqual(G.gravite_finale(sans_effet, self.config)[:2], (3, 2))  # pas de pays suivi, pas d'effet marché
+        moins = evt("d", "US strikes Iranian targets in the Strait of Hormuz", ["US", "IR"], analyse={"gravite": 2})
+        self.assertEqual(G.gravite_finale(moins, self.config)[0], 2)  # Gemini peut abaisser
+        self.assertEqual(G.gravite_finale(evt("e", "US strikes Iranian targets in the Strait of Hormuz", ["US", "IR"]), self.config)[0], 3)  # sans IA : 3 au plus
+
+    def test_election_americaine_au_plus_3(self):
+        from agents.geopolitique import gravite as G
+        e = evt("m", "Americans head to the polls for midterm elections", ["US"], "election", analyse={"gravite": 4})
+        g, regle, _ = G.gravite_finale(e, self.config)
+        self.assertLessEqual(g, 2)
+        self.assertEqual(ia.plafonner(4, "election", ["Americans head to the polls"], self.config)[0], 3)
+
+    def test_distribution_cible(self):
+        from agents.geopolitique import gravite as G
+        publics = [{"id": f"x{i}", "gravite": 4, "gravite_regles": 4 if i < 2 else 3, "nb_domaines": 10 - i, "nb_articles": 5,
+                    "dernier": "2026-11-03T12:00:00Z", "note_gravite": None} for i in range(8)]
+        publics += [{"id": f"y{i}", "gravite": 2, "gravite_regles": 2, "nb_domaines": 3, "nb_articles": 3,
+                     "dernier": "2026-11-03T12:00:00Z", "note_gravite": None} for i in range(12)]
+        ajustements = G.calibrer(publics, self.config, "2026-11-02T14:00:00Z")
+        compte = {g: sum(1 for x in publics if x["gravite"] == g) for g in (2, 3, 4)}
+        self.assertEqual(compte[4], 3)  # 15 % de 20
+        self.assertLessEqual(compte[3], 7)  # 35 % de 20
+        self.assertGreater(compte[2], compte[3] + compte[4])  # la majorité en 1-2
+        self.assertEqual({x["id"] for x in publics if x["gravite"] == 4}, {"x0", "x1", "x2"})  # les plus étayés
+        self.assertTrue(ajustements)
+
+    def test_theme_frappes_americaines_en_iran(self):
+        """Les 3 événements de l'exécution de 20 h 16 : un seul thème."""
+        evts = [evt("t1", "Trump confirms strikes on Iranian island of Qeshm", ["US", "IR"], "conflit", "2026-11-03T15:44:00Z",
+                    analyse={"titre": "Trump confirme des frappes sur une île iranienne"}),
+                evt("t2", "US strikes Iranian targets in the Strait of Hormuz", ["US", "IR"], "maritime", "2026-11-03T16:58:00Z",
+                    analyse={"titre": "Frappes américaines et tensions autour du détroit d'Ormuz"}),
+                evt("t3", "US strikes in Iran as tensions persist", ["US", "IR", "QA"], "conflit", "2026-11-03T19:10:00Z",
+                    analyse={"titre": "Les États-Unis mènent des frappes en Iran tandis que les tensions persistent"}),
+                evt("autre", "US sanctions buyers of Iranian oil", ["US", "IR"], "sanctions", "2026-11-03T18:00:00Z")]
+        groupes = E.former_themes(evts, self.config)
+        theme = max(groupes, key=len)
+        self.assertEqual([e["id"] for e in theme], ["t1", "t2", "t3"])  # par ordre chronologique
+        self.assertIn([evts[3]], groupes)  # sanctions : autre famille, pas dans le thème
+        loin = evt("t4", "US strikes Iranian island again", ["US", "IR"], "conflit", "2026-11-12T10:00:00Z")
+        self.assertEqual(len(max(E.former_themes(evts[:3] + [loin], self.config), key=len)), 3)  # au-delà de 7 jours
+
+    def test_negociations_abou_dabi_lieu_et_pays(self):
+        e = evt("ad", "Russia must show it is serious about ceasefire at Abu Dhabi talks, Germany's Merz says", ["RU", "AE", "DE", "UA"],
+                analyse={"pays_ia": ["US", "AE", "RU", "UA", "DE"], "titre": "Négociations de cessez-le-feu à Abou Dabi pour l'Ukraine",
+                         "resume": [{"texte": "Les États-Unis organisent à Abou Dabi des pourparlers entre l'Ukraine et la Russie.", "sources": []}]})
+        e["articles"][1]["titre"] = "Ukraine war briefing: US to mediate talks with Kyiv and Moscow in Abu Dhabi"
+        principaux, lieux = E.pays_et_lieux(e, self.det)
+        self.assertEqual(set(principaux), {"US", "RU", "UA"})
+        self.assertEqual(lieux, ["AE"])
+        self.assertNotIn("DE", principaux)  # l'Allemagne commente seulement
+
+    def test_francais_sans_accents_refuse(self):
+        sources = {"S1": {"id": "S1", "url": "https://a.example/1", "domaine": "a.example", "titre": "t"}}
+        sup = []
+        res = ia._affirmations([{"texte": "Le president de la Cour penale internationale a demande aux membres de proteger l'institution.",
+                                 "sources": ["S1"]}], sources, 2, sup)
+        self.assertEqual(res, [])
+        self.assertIn("sans accents", sup[0])
+
+
+class TestThemesEtTraductions(Base):
+    def test_theme_publie_avec_chronologie_et_titres_traduits(self):
+        g = GeminiSimule()
+        self.lancer(cle="cle-test", poster=g)
+        d = self.publics()
+        for e in d["evenements"]:
+            self.assertIsNone(e["mention"], e["titre"])  # tous les titres en français (Gemini, thème ou traduction)
+        themes = [e for e in d["evenements"] if e["theme"]]
+        for t in themes:
+            self.assertGreaterEqual(len(t["chronologie"]), 2)
+            self.assertEqual([c["date"] for c in t["chronologie"]], sorted(c["date"] for c in t["chronologie"]))
+            self.assertTrue(t["theme_confirme"])
+            self.assertEqual(t["titre"], g.titre_theme)
+
+    def test_sans_gemini_theme_par_regles(self):
+        self.lancer()
+        for t in (e for e in self.publics()["evenements"] if e["theme"]):
+            self.assertFalse(t["theme_confirme"])
 
 
 # ------------------------------------------------------------------ quotas sur des journées complètes

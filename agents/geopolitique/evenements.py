@@ -59,15 +59,34 @@ class Detecteur:
 
     def __init__(self, config: dict):
         self.pays: list[tuple[str, re.Pattern, bool]] = []
+        self.noms: dict[str, list[str]] = {}  # noms normalisés (minuscules), pour les lieux et les commentateurs
+        lieux = config.get("lieux", {})
+        self.mots_reunion = [normaliser(m) for m in lieux.get("mots_reunion", [])]
+        self.prepositions = lieux.get("prepositions", ["in", "at", "a", "au", "aux", "en"])
         for groupe in ("pays", "autres_pays"):
             for code, p in config[groupe].items():
                 if code.startswith("_"):
                     continue
+                self.noms[code] = [normaliser(n) for n in p["noms"] if len(n) > 3]
                 for nom in p["noms"]:
                     if " " not in nom and "." not in nom:
                         MOTS_PAYS.add(racine(normaliser(nom)))
                     sensible = nom.upper() == nom and any(c.isalpha() for c in nom)
                     self.pays.append((code, _motif(nom if sensible else normaliser(nom)), sensible))
+        # Lieux (« talks … in Abu Dhabi », « pourparlers … à Abou Dabi », « Abu Dhabi talks », « pourparlers d'Abou Dabi »,
+        # « UAE hosts talks » : le mot de réunion et le lieu sont proches) et commentateurs (« Germany's Merz says »)
+        reunion = "|".join(re.escape(m) for m in self.mots_reunion) or "(?!)"
+        preps = "|".join(self.prepositions)
+        self.motif_reunion = re.compile(rf"(?<![\w])(?:{reunion})")
+        self.motifs_lieu, self.motifs_commentateur = {}, {}
+        for code, noms in self.noms.items():
+            if not noms:
+                continue
+            n = "(?:" + "|".join(re.escape(x) for x in noms) + ")"
+            self.motifs_lieu[code] = re.compile(
+                rf"(?:{reunion})(?: [\w'-]+){{0,4}} (?:{preps}) (?:the )?{n}(?![\w])|(?<![\w]){n} (?:{reunion})"
+                rf"|(?:{reunion}) (?:de |d'){n}(?![\w])|(?<![\w]){n} (?:hosts|accueille)")
+            self.motifs_commentateur[code] = re.compile(rf"(?<![\w]){n}'s \w+(?: \w+)? (?:says|said|warns|urges|calls|insists)\b")
         TITRES_EXCLUS[:] = [re.compile(rf"(?<![\w]){re.escape(normaliser(m))}(?![\w])") for m in config.get("titres_exclus", [])]
         self.categories = [(cle, [(normaliser(m), _motif(normaliser(m)), len(m.split())) for m in c["mots"]])
                            for cle, c in config["categories"].items()]
@@ -226,6 +245,98 @@ def pays_principaux(e: dict, det: Detecteur, resume: list[str] | None = None) ->
         res += [c for c in du_resume if c in presents] if (presents or res) else du_resume
     res += pays_majoritaires(e, det)
     return list(dict.fromkeys(res))
+
+
+def _texte_norm(t: str) -> str:
+    return normaliser(t or "").replace("’", "'")
+
+
+def lieux_de(textes: list[str], det: Detecteur) -> list[str]:
+    """Pays seulement lieu d'une négociation, d'un sommet ou d'une réunion : « talks … in Abu Dhabi »,
+    « pourparlers à Abou Dabi »."""
+    res = []
+    for t in (_texte_norm(x) for x in textes if x):
+        if not det.motif_reunion.search(t):
+            continue
+        for code, motif in det.motifs_lieu.items():
+            if code not in res and motif.search(t):
+                res.append(code)
+    return res
+
+
+def commentateurs_de(titre: str, det: Detecteur) -> list[str]:
+    """Pays seulement cités comme auteur d'un commentaire : « …, Germany's Merz says »."""
+    t = _texte_norm(titre)
+    return [code for code, motif in det.motifs_commentateur.items() if motif.search(t)]
+
+
+def pays_et_lieux(e: dict, det: Detecteur) -> tuple[list[str], list[str]]:
+    """(pays principaux, lieux). Pays principaux : acteurs ou directement touchés (avec analyse : ceux
+    que Gemini désigne comme acteurs, s'ils sont cités dans les articles ; sans analyse : titre de
+    référence, résumé, majorité des articles). Le pays d'accueil d'une négociation n'est qu'un « lieu »,
+    et un pays seulement commentateur n'est pas retenu."""
+    a = e.get("analyse") or {}
+    resume = [r["texte"] for r in a.get("resume", [])]
+    cites = set(pays_presents(e, det, 0.0001)) | set(det.pays_de(" ".join(resume)))
+    if a.get("pays_ia"):
+        base = [c for c in a["pays_ia"] if c in cites]
+    else:
+        base = pays_principaux(e, det, resume)
+    textes = [titre_reference(e), a.get("titre") or "", *resume]
+    lieux = [c for c in dict.fromkeys(list(a.get("lieux_ia") or []) + lieux_de(textes, det)) if c in cites]
+    # Un pays qui agit (sujet d'une phrase du résumé de Gemini) reste acteur même s'il accueille
+    exclus = set(lieux) | set(commentateurs_de(titre_reference(e), det))
+    principaux = [c for c in base if c not in exclus]
+    return principaux, [c for c in lieux if c not in principaux]
+
+
+# ------------------------------------------------------------------ thèmes en cours
+
+def mots_theme(e: dict) -> set[str]:
+    """Mots-clés de l'événement (titres des articles) et mots du titre français de Gemini."""
+    titre_fr = (e.get("analyse") or {}).get("titre") or ""
+    return set(mots_cles(e)) | set(_mots_titre(titre_fr))
+
+
+def former_themes(evenements: list[dict], config: dict) -> list[list[dict]]:
+    """Thèmes en cours (config « themes ») : événements à moins de `jours` jours d'écart (de proche en
+    proche), mêmes pays principaux (ou l'un contenant l'autre, 2 pays communs au moins), même famille de
+    catégories et au moins `mots_communs_min` mots-clés communs. Renvoie des groupes ; un événement
+    seul forme un groupe d'un élément."""
+    cfg = config["themes"]
+    famille = lambda e: cfg["familles"].get((e.get("analyse") or {}).get("categorie") or e["categorie"], e["categorie"])
+    parent = list(range(len(evenements)))
+
+    def racine_uf(i):
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+    mots = [mots_theme(e) for e in evenements]
+    for i, e1 in enumerate(evenements):
+        p1 = set(e1.get("pays_principaux") or [])
+        if not p1:
+            continue
+        for j in range(i + 1, len(evenements)):
+            e2 = evenements[j]
+            p2 = set(e2.get("pays_principaux") or [])
+            # Mêmes pays principaux : identiques, ou l'un contient l'autre avec au moins 2 pays en commun
+            # ({US, IR} et {US, IR, QA}) ; un seul pays commun ne suffit pas s'ils diffèrent
+            memes = p1 == p2 or ((p1 <= p2 or p2 <= p1) and len(p1 & p2) >= 2)
+            if not memes or famille(e1) != famille(e2):
+                continue
+            if abs((_date(e1["dernier"]) - _date(e2["dernier"])).total_seconds()) > cfg["jours"] * 86400:
+                continue
+            if len(mots[i] & mots[j]) >= cfg["mots_communs_min"]:
+                parent[racine_uf(j)] = racine_uf(i)
+    groupes: dict[int, list[dict]] = {}
+    for i, e in enumerate(evenements):
+        groupes.setdefault(racine_uf(i), []).append(e)
+    return [sorted(g, key=lambda e: e["dernier"]) for g in groupes.values()]
+
+
+def cle_theme(groupe: list[dict]) -> str:
+    return "+".join(sorted(e["id"] for e in groupe))
 
 
 def pays_majoritaires(e: dict, det: Detecteur | None = None) -> list[str]:
@@ -419,10 +530,10 @@ def significatif(e: dict, config: dict) -> bool:
 
 
 def gravite_regles(e: dict, config: dict) -> int:
-    """Gravité sans IA : base de la catégorie, +1 si la couverture est large (8 domaines ou plus).
-    Plafonnée à 3 : une gravité de 4 ou 5 demande l'analyse et au moins 2 sources indépendantes."""
-    g = config["categories"][e["categorie"]]["gravite_base"] + (1 if independantes(e["articles"]) >= 8 else 0)
-    return max(1, min(3, g))
+    """Gravité sans IA : niveau des repères (gravite.py), plafonné à 3 (une gravité de 4 ou 5 demande
+    l'analyse et au moins 2 sources indépendantes)."""
+    from .gravite import niveau_regles
+    return min(3, niveau_regles(e, config)[0])
 
 
 def sources_publiques(e: dict, maxi: int = 12) -> list[dict]:
