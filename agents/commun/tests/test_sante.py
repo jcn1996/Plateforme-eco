@@ -53,7 +53,7 @@ class TestBloc(unittest.TestCase):
         precedent = {"sources": [{"nom": "b", "derniere_donnee_valide": "2026-11-01T06:00:00Z"}]}
         b = self.bloc([{"nom": "a", "etat": "ok"}, {"nom": "b", "etat": "échec"}, {"nom": "c", "etat": "non configurée"},
                        {"nom": "d", "etat": "périmée", "derniere_donnee_valide": "2025-01"}], precedent)
-        self.assertEqual((b["sources_ok"], b["sources_total"]), (2, 3))
+        self.assertEqual((b["sources_ok"], b["sources_total"]), (1, 3))  # seule la source « ok » répond ; « non configurée » non comptée
         par_nom = {s["nom"]: s for s in b["sources"]}
         self.assertEqual(par_nom["a"]["derniere_donnee_valide"], "2026-11-02T17:34:00Z")
         self.assertEqual(par_nom["b"]["derniere_donnee_valide"], "2026-11-01T06:00:00Z")  # reprise du bloc précédent

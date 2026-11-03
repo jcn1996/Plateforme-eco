@@ -136,6 +136,36 @@ class TestUnivers(unittest.TestCase):
         self.assertTrue(liste[-1]["surveillance"])
 
 
+class TestListes(unittest.TestCase):
+    def test_regroupement_des_cotations(self):
+        soc = [{"ticker": "NEM", "nom": "Newmont Corporation", "pays": "US", "liquidite_musd": 900},
+               {"ticker": "NEM.AX", "nom": "Newmont Corporation", "pays": "AU", "liquidite_musd": 40},
+               {"ticker": "INVE-A.ST", "nom": "Investor AB ser. A", "pays": "SE", "liquidite_musd": 5},
+               {"ticker": "INVE-B.ST", "nom": "Investor AB ser. B", "pays": "SE", "liquidite_musd": 60}]
+        r = {x["ticker"]: x for x in A.regrouper_cotations(soc, U.cle_societe)}
+        self.assertEqual(set(r), {"NEM", "INVE-B.ST"})
+        self.assertEqual(r["NEM"]["autres_cotations"], [{"ticker": "NEM.AX", "pays": "AU"}])
+
+    def test_holdings(self):
+        self.assertTrue(A.est_holding("Investor AB", "Asset Management", "INVE-B.ST", CFG["pepites"]))
+        self.assertFalse(A.est_holding("BlackRock, Inc.", "Asset Management", "BLK", CFG["pepites"]))
+        self.assertTrue(A.est_holding("Some Fund", "Closed-End Fund - Equity", "X", CFG["pepites"]))
+
+    def test_deux_listes_et_plafond_par_secteur(self):
+        cfg = {**CFG["pepites"], "plafond_par_secteur": 2}
+        c = ([{"ticker": f"OR{i}", "cap": 5, "analystes": 3, "secteur": "Materials", "note_ajustee": 90 - i} for i in range(4)]
+             + [{"ticker": "SUIVIE", "cap": 5, "analystes": 25, "secteur": "Industrials", "note_ajustee": 95},
+                {"ticker": "GRANDE", "cap": 300, "analystes": 40, "secteur": "Health Care", "note_ajustee": 80},
+                {"ticker": "INCONNUE", "cap": 2, "analystes": None, "secteur": "Energy", "note_ajustee": 70}])
+        l = A.selection_listes(c, cfg)
+        self.assertEqual([x["ticker"] for x in l["pepites"]], ["OR0", "OR1", "INCONNUE"])  # 2 par secteur ; trop suivie écartée
+        self.assertEqual([x["ticker"] for x in l["qpr"]], ["GRANDE"])
+
+    def test_concentration(self):
+        c = [{"industrie": "Gold", "secteur_nom": "Matériaux"}] * 9 + [{"industrie": f"X{i}", "secteur_nom": "Industrie"} for i in range(51)]
+        self.assertEqual(A.concentration(c, CFG["pepites"]), ["9 candidates sur 60 sont des mines d'or : sensibilité au cours de l'or."])
+
+
 class TestWikipedia(unittest.TestCase):
     def test_tableau(self):
         html = ("<table class='wikitable'><tr><th>Ticker</th><th>Logo</th><th>Company</th><th>Prime Standard Sector</th></tr>"

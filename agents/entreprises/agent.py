@@ -217,6 +217,7 @@ def collecter_societe(f, s: dict, ancien: dict | None, seuil_ecart: float) -> di
         "trimestre": {"fin": trim[0]["fin"], "resultat_net_ttm": ttm} if trim else None,
         "officiel": officiel, "source_officielle": source_off, "verification": verification, "ids": ids,
         "surveillance": bool(s.get("surveillance")), "source_composition": s.get("source_composition"),
+        "analystes": info.get("numberOfAnalystOpinions"),
         "maj_comptes": date.today().isoformat(), "tentative": date.today().isoformat(),
     }
 
@@ -270,6 +271,16 @@ def mise_a_jour_quotidienne(f, base: dict, config: dict, aujourdhui: date) -> di
             if fin and (aujourdhui - date.fromisoformat(fin)).days > 120 and (aujourdhui - date.fromisoformat(essai)).days >= 7:
                 a_revoir.append(t)
     a_revoir = a_revoir[:150]
+    # Sociétés américaines sans comptes SEC (secret absent lors de leur révision, CIK introuvable, panne) :
+    # mises en file pour la prochaine révision complète, qui les relira avec la SEC
+    file_sec = 0
+    for r in base.values():
+        if r["pays"] == "US" and not (r.get("source_officielle") or "").startswith("SEC"):
+            r["file_sec"] = True
+            file_sec += 1
+        else:
+            r.pop("file_sec", None)
+    LOG.info("Sociétés américaines sans comptes SEC, en file pour la prochaine révision complète : %d", file_sec)
     # Rattrapage : sociétés sans secteur (fichier de composition sans secteur, .info refusé)
     if hasattr(f.yahoo, "secteur"):
         for t, r in base.items():
@@ -284,7 +295,7 @@ def mise_a_jour_quotidienne(f, base: dict, config: dict, aujourdhui: date) -> di
                             "surveillance": base[t].get("surveillance"), "source_composition": base[t].get("source_composition")}
                            for t in a_revoir], base, config)
     base.update(revus)
-    return {"cours": len(cours), "revues": len(a_revoir)}
+    return {"cours": len(cours), "revues": len(a_revoir), "en_file_sec": file_sec}
 
 
 def echantillon(liste: list[dict], n: int, config: dict) -> list[dict]:
@@ -337,6 +348,11 @@ def publier(base: dict, config: dict, change: dict, data: Path, aujourdhui: date
         s["mesures"] = A.mesures(s)
         s["financier"] = A.type_financier(s.get("secteur_gics"), {"industry": r.get("industrie")}, r["annuel"][0])
         societes.append(s)
+    # Une société cotée plusieurs fois n'apparaît qu'une fois (cotation la plus liquide)
+    avant = len(societes)
+    societes = A.regrouper_cotations(societes, U.cle_societe)
+    if len(societes) < avant:
+        LOG.info("Cotations multiples regroupées : %d cotations secondaires écartées", avant - len(societes))
     med = A.medianes_sectorielles([s for s in societes if s.get("secteur_gics")])
 
     # 2. Notes, textes, pépites
@@ -380,7 +396,10 @@ def publier(base: dict, config: dict, change: dict, data: Path, aujourdhui: date
             "contre_scenario": A.contre_scenario(m, ind), "montants": montants,
             "contexte": {"ajustement": ctx["points"], "details": ctx["details"], "note_ajustee": round(g["note"] + ctx["points"], 1),
                          "phase": phase, "note_pays": pays_j.get("note") if pays_j else None},
-            "pepite": False, "criteres_pepite": crit["criteres"],
+            "pepite": False, "qpr": False, "criteres_pepite": crit["criteres"],
+            "holding": A.est_holding(s["nom"], s.get("industrie"), s["ticker"], config["pepites"]),
+            "industrie": s.get("industrie"), "analystes": s.get("analystes"),
+            "autres_cotations": s.get("autres_cotations", []),
             "sources": {
                 "comptes": f"{s['source_officielle']} + Yahoo Finance" if s.get("source_officielle") else "Yahoo Finance (yfinance)",
                 "officielle": s.get("source_officielle"), "verification": s.get("verification"),
@@ -398,23 +417,32 @@ def publier(base: dict, config: dict, change: dict, data: Path, aujourdhui: date
         elif p and p.get("precedent"):
             e["precedent"] = p["precedent"]
         entreprises.append(e)
-        if crit["ok"]:
+        if crit["ok"] and not e["holding"]:
             candidats.append((e, s, m, ind))
 
-    # 3. Pépites : les mieux notées après ajustement de contexte
+    # 3. Deux listes : « pépites » (300 M$ à 20 Md$, peu suivies) et « qualité à prix raisonnable » (grandes sociétés),
+    #    classées par note ajustée selon le contexte, au plus N sociétés par secteur dans chaque liste
     cfg_p = config["pepites"]
-    candidats.sort(key=lambda c: -c[0]["contexte"]["note_ajustee"])
+    par_ticker = {e["ticker"]: (e, s, m, ind) for e, s, m, ind in candidats}
+    resume_candidats = [{"ticker": e["ticker"], "cap": e["capitalisation_md"], "analystes": e["analystes"], "secteur": e["secteur_gics"],
+                         "secteur_nom": e["secteur_nom"], "industrie": e["industrie"], "note_ajustee": e["contexte"]["note_ajustee"]}
+                        for e, *_ in candidats]
+    listes = A.selection_listes(resume_candidats, cfg_p)
+    avertissements = A.concentration(resume_candidats, cfg_p)
     pepites = []
-    for e, s, m, ind in candidats[: cfg_p["nombre_max"]]:
-        e["pepite"] = True
-        pj = pays_json.get(s["pays"])
-        devise_3m = (((pj or {}).get("detail") or {}).get("devise_3m") or {}).get("valeur")
-        e["revue_critique"] = A.revue_critique(s, m, ind, pj, devise_3m)
-        pepites.append({"ticker": e["ticker"], "nom": e["nom"], "pays": e["pays"], "region": e["region"], "secteur": e["secteur"],
-                        "secteur_gics": e["secteur_gics"], "secteur_nom": e["secteur_nom"], "note": e["note"],
-                        "contexte": e["contexte"], "verdict": e["verdict"], "confiance": e["confiance"]["niveau"],
-                        "cles": {k: ind[k]["affichage"] for k in ("croissance_ca", "marge_op", "per_secteur", "roe", "fscore") if k in ind},
-                        "revue_critique": e["revue_critique"]})
+    for nom_liste, choisis in listes.items():
+        for c in choisis:
+            e, s, m, ind = par_ticker[c["ticker"]]
+            e["pepite" if nom_liste == "pepites" else "qpr"] = True
+            pj = pays_json.get(s["pays"])
+            devise_3m = (((pj or {}).get("detail") or {}).get("devise_3m") or {}).get("valeur")
+            e["revue_critique"] = A.revue_critique(s, m, ind, pj, devise_3m)
+            pepites.append({"liste": nom_liste, "ticker": e["ticker"], "nom": e["nom"], "pays": e["pays"], "region": e["region"],
+                            "secteur": e["secteur"], "secteur_gics": e["secteur_gics"], "secteur_nom": e["secteur_nom"],
+                            "industrie": e["industrie"], "capitalisation_md": e["capitalisation_md"], "analystes": e["analystes"],
+                            "note": e["note"], "contexte": e["contexte"], "verdict": e["verdict"], "confiance": e["confiance"]["niveau"],
+                            "cles": {k: ind[k]["affichage"] for k in ("croissance_ca", "marge_op", "per_secteur", "roe", "fscore") if k in ind},
+                            "autres_cotations": e["autres_cotations"], "revue_critique": e["revue_critique"]})
 
     # 4. Secteurs par pays (bulles des fiches pays)
     secteurs = {}
@@ -444,12 +472,13 @@ def publier(base: dict, config: dict, change: dict, data: Path, aujourdhui: date
 
     # 5. Signaux pour le chef d'orchestre
     signaux = []
-    anciennes_pepites = {t for t, e in precedentes.items() if e.get("pepite")}
+    anciennes_pepites = {t for t, e in precedentes.items() if e.get("pepite") or e.get("qpr")}
     for e in entreprises:
         p = precedentes.get(e["ticker"])
-        if e["pepite"] and e["ticker"] not in anciennes_pepites:
+        if (e["pepite"] or e["qpr"]) and e["ticker"] not in anciennes_pepites:
             signaux.append({"date": aujourdhui.isoformat(), "type": "nouvelle_pepite", "cle": e["ticker"], "importance": "moyenne",
-                            "titre": f"{e['nom']} entre dans les pépites candidates", "explication": e["verdict"], "source": e["sources"]["comptes"]})
+                            "titre": f"{e['nom']} entre dans la liste « {'Pépites' if e['pepite'] else 'Qualité à prix raisonnable'} »",
+                            "explication": e["verdict"], "source": e["sources"]["comptes"]})
         if p and e["alertes"] and not p.get("alertes"):
             signaux.append({"date": aujourdhui.isoformat(), "type": "alerte_comptable", "cle": e["ticker"], "importance": "moyenne",
                             "titre": f"{e['nom']} : {e['alertes'][0]['titre'].lower()}", "explication": e["alertes"][0]["texte"], "source": e["sources"]["comptes"]})
@@ -459,7 +488,7 @@ def publier(base: dict, config: dict, change: dict, data: Path, aujourdhui: date
         if p and (p.get("sources") or {}).get("exercice") != e["sources"]["exercice"]:
             signaux.append({"date": aujourdhui.isoformat(), "type": "nouveaux_comptes", "cle": e["ticker"], "importance": "faible",
                             "titre": f"{e['nom']} : comptes de l'exercice clos le {e['sources']['exercice']}", "explication": e["verdict"], "source": e["sources"]["comptes"]})
-    for t in anciennes_pepites - {e["ticker"] for e in entreprises if e["pepite"]}:
+    for t in anciennes_pepites - {e["ticker"] for e in entreprises if e["pepite"] or e["qpr"]}:
         p = precedentes[t]
         signaux.append({"date": aujourdhui.isoformat(), "type": "sortie_pepite", "cle": t, "importance": "faible",
                         "titre": f"{p['nom']} sort des pépites candidates", "explication": "Au moins un critère n'est plus rempli.", "source": "agent entreprises"})
@@ -492,12 +521,16 @@ def publier(base: dict, config: dict, change: dict, data: Path, aujourdhui: date
                                                   fictif=False, version_agent=VERSION_AGENT, classification="GICS (11 secteurs)", devise_capitalisation="USD"))
     ecrire_json(data / "pepites.json", enveloppe(pepites, "agent-entreprises", fictif=False, version_agent=VERSION_AGENT,
                                                  criteres={k: v for k, v in cfg_p.items() if not k.startswith("_")},
-                                                 candidats=len(candidats), regions=config["regions"]))
+                                                 candidats=len(candidats), regions=config["regions"],
+                                                 listes={"pepites": "Pépites", "qpr": "Qualité à prix raisonnable"},
+                                                 nombres={k: len(v) for k, v in listes.items()},
+                                                 avertissements=avertissements,
+                                                 holdings_exclues=sum(1 for e in entreprises if e["holding"])))
     ecrire_json(fichier_sig, enveloppe(tous, "agent-entreprises", fictif=False, version_agent=VERSION_AGENT,
                                        description="Signaux candidats pour le chef d'orchestre (180 derniers jours)"))
     ecrire_json(data / "historique" / "entreprises" / f"{aujourdhui.isoformat()}.json",
                 {"meta": {"genere_le": maintenant(), "source": "agent-entreprises", "version_agent": VERSION_AGENT},
-                 "donnees": {e["ticker"]: {"note": e["note"], "pepite": e["pepite"], "cap": e["capitalisation_md"]} for e in entreprises}})
+                 "donnees": {e["ticker"]: {"note": e["note"], "pepite": e["pepite"], "qpr": e["qpr"], "cap": e["capitalisation_md"]} for e in entreprises}})
     recap = recap_markdown(aujourdhui, entreprises, pepites, signaux, etats_sources, len(candidats), cfg_p)
     (data / "recap").mkdir(parents=True, exist_ok=True)
     (data / "recap" / f"entreprises-{aujourdhui.isoformat()}.md").write_text(recap, encoding="utf-8")
@@ -507,7 +540,8 @@ def publier(base: dict, config: dict, change: dict, data: Path, aujourdhui: date
 
 
 CHAMPS_LEGERS = ("ticker", "nom", "pays", "region", "secteur", "secteur_gics", "secteur_nom", "financier", "devise",
-                 "capitalisation_md", "note", "niveau", "verdict", "indicateurs", "pepite", "precedent", "surveillance")
+                 "capitalisation_md", "note", "niveau", "verdict", "indicateurs", "pepite", "qpr", "precedent", "surveillance",
+                 "autres_cotations")
 
 
 def fichier_fiche(ticker: str) -> str:
@@ -528,22 +562,29 @@ def recap_markdown(jour, entreprises, pepites, signaux, etats, candidats, cfg_p)
          f"- Sociétés analysées : {len(entreprises)}",
          f"- Comptes vérifiés avec une source officielle : {sum(1 for e in entreprises if e['sources']['officielle'])}",
          f"- Écarts entre source officielle et Yahoo : {sum(1 for e in entreprises if (e['sources']['verification'] or {}).get('statut') == 'divergent')}",
-         f"- Pépites candidates : {len(pepites)} (sur {candidats} sociétés remplissant tous les critères ; objectif {cfg_p['nombre_min']} à {cfg_p['nombre_max']})", "",
+         f"- Sociétés remplissant tous les critères : {candidats} ; retenues : {sum(1 for p in pepites if p['liste'] == 'pepites')} pépites "
+         f"(300 M$ à {cfg_p['cap_max_md']:g} Md$, peu suivies) et {sum(1 for p in pepites if p['liste'] == 'qpr')} en « qualité à prix raisonnable »"
+         f" ; au plus {cfg_p['plafond_par_secteur']} par secteur", "",
          "## Pépites candidates", ""]
-    l += [f"- {p['nom']} ({p['ticker']}, {p['pays']}) : {p['note']}/100, ajustement de contexte {p['contexte']['ajustement']:+} — {p['verdict']}" for p in pepites] or ["- aucune"]
+    l += [f"- [{'pépite' if p['liste'] == 'pepites' else 'QPR'}] {p['nom']} ({p['ticker']}, {p['pays']}) : {p['note']}/100, ajustement de contexte {p['contexte']['ajustement']:+} — {p['verdict']}" for p in pepites] or ["- aucune"]
     l += ["", "## Signaux du jour", ""] + ([f"- [{s['importance']}] {s['titre']}" for s in signaux] or ["- aucun"])
     l += ["", "## Sources", ""] + [f"- {k} : {v}" for k, v in etats.items()]
     return "\n".join(l) + "\n"
 
 
 def enregistrer_sante(data: Path, etats_compo: dict, etats_rev: dict | None, f, publication: dict, base: dict, quand: datetime):
-    sources = []
+    sources, raisons = [], []
     for code, e in etats_compo.items():
         etat = {"ok": "ok", "ancienne": "périmée", "depart": "périmée", "échec": "échec"}[e["etat"]]
         sources.append({"nom": f"Composition {code} ({e.get('source') or 'aucune'})", "etat": etat, "detail": e.get("detail")})
+        if etat != "ok":  # une composition utile qui n'a pas pu être relue rend l'agent « dégradé »
+            raisons.append(f"Composition {code} : {e.get('source') or 'aucune liste'} (sources de composition en échec)")
     sec_actif = getattr(f.sec, "actif", False)
-    sources.append({"nom": "SEC (XBRL companyfacts, submissions)", "etat": "ok" if sec_actif else "non configurée",
-                    "detail": None if sec_actif else "secret SEC_USER_AGENT absent"})
+    # SEC_USER_AGENT est obligatoire : son absence est un échec (et non une clé facultative non configurée)
+    sources.append({"nom": "SEC (XBRL companyfacts, submissions)", "etat": "ok" if sec_actif else "échec",
+                    "detail": None if sec_actif else "secret SEC_USER_AGENT absent : comptes officiels américains non lus"})
+    if not sec_actif:
+        raisons.append("SEC : secret SEC_USER_AGENT absent")
     for nom, actif in (("EDINET (Japon)", getattr(getattr(f, "edinet", None), "actif", False)), ("DART (Corée)", getattr(getattr(f, "dart", None), "actif", False))):
         sources.append({"nom": nom, "etat": "ok" if actif else "non configurée", "detail": None if actif else "clé absente : source ignorée"})
     if etats_rev:
@@ -562,14 +603,25 @@ def enregistrer_sante(data: Path, etats_compo: dict, etats_rev: dict | None, f, 
               for k, v in indicateurs.items()}
     chemin = data / "journal" / "agent-entreprises.json"
     journal_e = lire_json(chemin) or {"meta": {}, "donnees": []}
+    officiels = {}
+    for r in base.values():
+        cle = (r.get("source_officielle") or "aucune").split(" ")[0]
+        officiels[cle] = officiels.get(cle, 0) + 1
+    us = [r for r in base.values() if r["pays"] == "US"]
+    resume_officiel = {"par_source": officiels, "us_total": len(us),
+                       "us_avec_sec": sum(1 for r in us if (r.get("source_officielle") or "").startswith("SEC")),
+                       "us_en_file_sec": sum(1 for r in us if r.get("file_sec"))}
     journal_e["donnees"] = (journal_e.get("donnees", []) + [{"genere_le": maintenant(), "composition": etats_compo,
+                                                              "comptes_officiels": resume_officiel,
                                                               "revision": {k: v for k, v in (etats_rev or {}).items() if k != "echecs"},
                                                               "echecs": (etats_rev or {}).get("echecs", [])[:50], "publication": publication}])[-60:]
     journal_e["meta"] = {**journal_e.get("meta", {}), "genere_le": maintenant(), "source": "agent-entreprises", "version_agent": VERSION_AGENT,
                          "description": "Composition, révision des comptes et publication, à chaque exécution"}
     ecrire_json(chemin, journal_e)
     precedent = (journal_e.get("meta") or {}).get("sante")
-    bloc = sante.bloc_sante("entreprises", "Agent entreprises", 4, "agent-entreprises.yml", sources, quand, precedent, indicateurs=resume)
+    bloc = sante.bloc_sante("entreprises", "Agent entreprises", 4, "agent-entreprises.yml", sources, quand, precedent, indicateurs=resume,
+                            raisons_supplementaires=raisons)
+    bloc["comptes_officiels"] = resume_officiel
     sante.enregistrer_sante(chemin, bloc, forcer=True)
     return bloc
 
@@ -614,6 +666,8 @@ def main(argv=None) -> int:
         if args.echantillon:
             liste = echantillon(liste, args.echantillon, config)
         liste = tranche(liste, (lot or {}).get("tranche"))
+        # Sociétés en file (comptes SEC manquants) traitées en premier
+        liste.sort(key=lambda x: 0 if (base.get(x["ticker"]) or {}).get("file_sec") else 1)
         LOG.info("Révision complète : %d sociétés (%s)", len(liste), args.lot or ("échantillon" if args.echantillon else "toutes"))
         revus, etats_rev = reviser(f, liste, base, config)
         univers_lot = {"societes": [{k: s.get(k) for k in ("ticker", "nom", "pays", "secteur", "poids", "source_composition")} for s in liste
