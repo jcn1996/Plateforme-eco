@@ -61,7 +61,8 @@ jobs:
             exit 0
           fi
       - name: Commiter (avec le suivi des recommandations)
-        run: outils/pousser_avec_suivi.sh "Agent entreprises : mise à jour du $(date -u +%d/%m/%Y)" data/
+        run: |
+          outils/pousser_avec_suivi.sh "Agent entreprises : mise à jour du $(date -u +%d/%m/%Y)" data/
 
   # ---------------------------------------------------------------- révision complète : un job par lot
   lots:
@@ -113,4 +114,5 @@ jobs:
       - name: Assembler les lots et publier
         run: python -m agents.entreprises --mode assembler --lots lots/*.json
       - name: Commiter (avec le suivi des recommandations)
-        run: outils/pousser_avec_suivi.sh "Agent entreprises : révision complète du $(date -u +%d/%m/%Y)" data/
+        run: |
+          outils/pousser_avec_suivi.sh "Agent entreprises : révision complète du $(date -u +%d/%m/%Y)" data/
