@@ -81,6 +81,18 @@ def en_francais(texte: str) -> bool:
     return fr >= 1 and fr > en
 
 
+def plafonner(gravite: int, categorie: str, textes: list[str], config: dict) -> tuple[int, str | None]:
+    """Plafonds par catégorie (ex. élection qui se déroule normalement : 3 au plus), sauf exception
+    (contestation, violences…) présente dans les titres des sources ou dans le résumé."""
+    plafond = config["gravite"]["plafonds"].get(categorie)
+    if not plafond or gravite <= plafond["max"]:
+        return gravite, None
+    texte = E.normaliser(" ".join(textes))
+    if any(re.search(rf"\b{re.escape(m)}", texte) for m in plafond["exceptions"]):
+        return gravite, None
+    return plafond["max"], f"gravité {gravite} proposée, ramenée à {plafond['max']} : {categorie} sans contestation ni violences"
+
+
 def en_francais_titre(titre: str) -> bool:
     """Titre court : peu de mots outils ; on accepte aussi les accents ou l'absence de mots outils anglais."""
     mots = re.findall(r"[a-zàâçéèêëîïôûùüÿœ']+", titre.lower())
@@ -355,14 +367,8 @@ def valider(brut: dict, e: dict, config: dict, sources: list[dict]) -> tuple[dic
     if gravite >= 4 and independantes < 2:
         note_gravite = f"gravité {gravite} proposée, plafonnée à 3 : une seule source indépendante citée"
         gravite = 3
-    # Plafonds par catégorie (ex. élection qui se déroule normalement : 3 au plus), sauf exception
-    # (contestation, violences…) présente dans les titres des sources ou dans le résumé
-    plafond = config["gravite"]["plafonds"].get(categorie)
-    if plafond and gravite > plafond["max"]:
-        texte = E.normaliser(" ".join([s["titre"] for s in sources] + [a["texte"] for a in resume]))
-        if not any(re.search(rf"\b{re.escape(m)}", texte) for m in plafond["exceptions"]):
-            note_gravite = f"gravité {gravite} proposée, ramenée à {plafond['max']} : {categorie} sans contestation ni violences"
-            gravite = plafond["max"]
+    gravite, note = plafonner(gravite, categorie, [s["titre"] for s in sources] + [a["texte"] for a in resume], config)
+    note_gravite = note or note_gravite
     titre = None
     if isinstance(brut.get("titre"), str):
         t = re.sub(r"\s*[\[(]S\d+(?:\s*[,;]\s*S\d+)*[\])]", "", brut["titre"]).strip().rstrip(".")
@@ -388,7 +394,7 @@ def valider(brut: dict, e: dict, config: dict, sources: list[dict]) -> tuple[dic
 def a_analyser(e: dict, config: dict, maintenant: datetime) -> bool:
     """Cache : un événement analysé n'est repris que s'il a beaucoup grossi, et pas avant le délai."""
     a = e.get("analyse")
-    if not a:
+    if not a or "titre" not in a:  # analyse d'avant les titres en français : refaite une fois
         return True
     cfg = config["gemini"]
     age = maintenant - datetime.fromisoformat(a["analyse_le"].replace("Z", "+00:00"))
@@ -400,6 +406,24 @@ def priorite(e: dict, config: dict) -> tuple:
     """Ordre d'analyse : gravité estimée 3 ou plus d'abord, puis score de sélection, puis le plus récent."""
     gravite = (e.get("analyse") or {}).get("gravite") or E.gravite_regles(e, config)
     return (gravite >= 3, E.score_selection(e, config), e["dernier"])
+
+
+def former_lots(candidats: list[dict], n: int) -> list[list[dict]]:
+    """Lots de n événements, dans l'ordre de priorité ; chaque lot est complété d'abord par les
+    événements qui ont les mêmes pays et la même catégorie que son premier, pour que Gemini puisse
+    signaler les doublons (« meme_que »)."""
+    restants, lots = list(candidats), []
+    cle = lambda e: (tuple(sorted(e.get("pays_principaux") or e["pays"])), e["categorie"])
+    while restants:
+        tete = restants.pop(0)
+        proches = [e for e in restants if cle(e) == cle(tete) or set(cle(e)[0]) & set(cle(tete)[0]) and cle(e)[1] == cle(tete)[1]]
+        lot = [tete] + proches[: n - 1]
+        for e in lot[1:]:
+            restants.remove(e)
+        while len(lot) < n and restants:
+            lot.append(restants.pop(0))
+        lots.append(lot)
+    return lots
 
 
 def analyser(candidats: list[dict], config: dict, quotas: Quotas, maintenant: datetime, cle: str | None = None,
@@ -414,8 +438,7 @@ def analyser(candidats: list[dict], config: dict, quotas: Quotas, maintenant: da
     if not cle or not candidats:
         return rapport
     candidats = sorted(candidats, key=lambda e: priorite(e, config), reverse=True)
-    n = cfg["evenements_par_appel"]
-    lots = [candidats[i:i + n] for i in range(0, len(candidats), n)]
+    lots = former_lots(candidats, cfg["evenements_par_appel"])
     for lot in lots:
         if quotas.appels_execution() >= cfg["appels_max_par_execution"]:
             break

@@ -503,7 +503,13 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "hor
         significatifs = [e for e in evenements if e["dernier"] >= limite_aff and E.significatif(e, config)]
         nouveaux_ids = {absorbe_par.get(i, i) for i in nouveaux_ids} | {b for b, a in faites if a in nouveaux_ids}
     for e in evenements:
-        e["gravite"] = (e.get("analyse") or {}).get("gravite") or E.gravite_regles(e, config)
+        a = e.get("analyse") or {}
+        e["gravite"] = a.get("gravite") or E.gravite_regles(e, config)
+        if a:  # plafonds aussi pour les analyses en cache (faites avant leur ajout)
+            g, note = ia.plafonner(e["gravite"], a.get("categorie") or e["categorie"],
+                                   [x["titre"] for x in e["articles"]] + [r["texte"] for r in a.get("resume", [])], config)
+            if note:
+                e["gravite"], a["gravite"], a["note_gravite"] = g, g, note
         resume = [r["texte"] for r in (e.get("analyse") or {}).get("resume", [])]
         e["pays_principaux"] = E.pays_principaux(e, det, resume)
 
