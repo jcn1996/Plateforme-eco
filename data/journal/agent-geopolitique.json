@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genere_le": "2026-11-03T18:16:56Z",
+    "genere_le": "2026-11-03T18:46:27Z",
     "source": "agent-geopolitique",
     "version_agent": "1.0",
     "description": "Sources, appels à Gemini (quota) et signaux, à chaque exécution",
@@ -9,7 +9,7 @@
       "libelle": "Agent géopolitique",
       "ordre": 6,
       "workflow": "agent-geopolitique.yml",
-      "derniere_execution": "2026-11-03T18:16:56Z",
+      "derniere_execution": "2026-11-03T18:46:27Z",
       "prochaine_prevue": "2026-11-03T19:03:00Z",
       "intervalle_min": 60,
       "planning": {
@@ -19,56 +19,57 @@
         ],
         "fuseau": "UTC"
       },
-      "sources_total": 19,
-      "sources_ok": 16,
+      "sources_total": 27,
+      "sources_ok": 18,
       "sources": [
         {
           "nom": "GDELT, API DOC 2.0 (articles par thème)",
-          "etat": "partielle",
-          "detail": "0 articles ; 1/3 requêtes groupées ; échecs : groupe 2 : HTTP 429 après 4 essai(s)",
+          "etat": "échec",
+          "detail": "0 articles ; source secondaire (information) : HTTP 429 après 1 essai(s)",
+          "secondaire": true,
           "derniere_donnee_valide": "2026-11-03T18:16:56Z"
         },
         {
           "nom": "GDELT 2.0, fichiers d'événements géolocalisés (15 min)",
           "etat": "ok",
-          "detail": "4 fichiers (4 nouveaux), 30 pays suivis présents",
-          "derniere_donnee_valide": "2026-11-03T18:16:56Z"
+          "detail": "4 fichiers (2 nouveaux), 31 pays suivis présents",
+          "derniere_donnee_valide": "2026-11-03T18:46:27Z"
         },
         {
           "nom": "Federal Register (API)",
           "etat": "ok",
           "detail": "3 documents",
-          "derniere_donnee_valide": "2026-11-03T18:16:56Z"
+          "derniere_donnee_valide": "2026-11-03T18:46:27Z"
         },
         {
           "nom": "OFAC, actions récentes (Trésor américain)",
           "etat": "ok",
           "detail": "10 actions listées",
-          "derniere_donnee_valide": "2026-11-03T18:16:56Z"
+          "derniere_donnee_valide": "2026-11-03T18:46:27Z"
         },
         {
           "nom": "Maison-Blanche, décisions présidentielles (RSS)",
           "etat": "ok",
           "detail": "30 éléments",
-          "derniere_donnee_valide": "2026-11-03T18:16:56Z"
+          "derniere_donnee_valide": "2026-11-03T18:46:27Z"
         },
         {
           "nom": "Élysée, communiqués (RSS)",
           "etat": "ok",
           "detail": "50 éléments",
-          "derniere_donnee_valide": "2026-11-03T18:16:56Z"
+          "derniere_donnee_valide": "2026-11-03T18:46:27Z"
         },
         {
           "nom": "Commission européenne, communiqués (RSS)",
           "etat": "ok",
           "detail": "10 éléments",
-          "derniere_donnee_valide": "2026-11-03T18:16:56Z"
+          "derniere_donnee_valide": "2026-11-03T18:46:27Z"
         },
         {
           "nom": "Conseil de l'UE, communiqués et sanctions (RSS)",
-          "etat": "échec",
-          "detail": "https://www.consilium.europa.eu/en/rss/pressreleases.ashx : ReadTimeout: HTTPSConnectionPool(host='www.consilium.europa.eu', port=443): Read timed out. (read timeout=30)",
-          "derniere_donnee_valide": "2026-11-03T17:16:36Z"
+          "etat": "ok",
+          "detail": "20 éléments",
+          "derniere_donnee_valide": "2026-11-03T18:46:27Z"
         },
         {
           "nom": "Ministère chinois du Commerce (MOFCOM)",
@@ -80,7 +81,7 @@
           "nom": "BRI, discours des banquiers centraux (RSS)",
           "etat": "ok",
           "detail": "50 éléments",
-          "derniere_donnee_valide": "2026-11-03T18:16:56Z"
+          "derniere_donnee_valide": "2026-11-03T18:46:27Z"
         },
         {
           "nom": "Reuters",
@@ -96,98 +97,116 @@
         },
         {
           "nom": "France 24 (dépêches AFP) (RSS)",
+          "etat": "ok",
+          "detail": "24 éléments",
+          "derniere_donnee_valide": "2026-11-03T18:46:27Z"
+        },
+        {
+          "nom": "Google Actualités : sanctions (anglais)",
           "etat": "échec",
-          "detail": "https://www.france24.com/fr/rss : HTTP 404",
-          "derniere_donnee_valide": "2026-11-03T17:16:36Z"
+          "detail": "https://news.google.com/rss/search?q=sanctions+OR+embargo+when:1d&hl=en-US&gl=US&ceid=US:en : HTTP 503",
+          "derniere_donnee_valide": null
+        },
+        {
+          "nom": "Google Actualités : droits de douane (anglais)",
+          "etat": "échec",
+          "detail": "https://news.google.com/rss/search?q=tariffs+OR+%22trade+war%22+when:1d&hl=en-US&gl=US&ceid=US:en : HTTP 503",
+          "derniere_donnee_valide": null
+        },
+        {
+          "nom": "Google Actualités : conflits (anglais)",
+          "etat": "échec",
+          "detail": "https://news.google.com/rss/search?q=airstrike+OR+invasion+OR+ceasefire+OR+%22military+offensive%22+when:1d&hl=en-US&gl=US&ceid=US:en : HTTP 503",
+          "derniere_donnee_valide": null
+        },
+        {
+          "nom": "Google Actualités : élections (anglais)",
+          "etat": "échec",
+          "detail": "https://news.google.com/rss/search?q=election+results+OR+%22disputed+election%22+when:1d&hl=en-US&gl=US&ceid=US:en : HTTP 503",
+          "derniere_donnee_valide": null
+        },
+        {
+          "nom": "Google Actualités : sanctions (français)",
+          "etat": "échec",
+          "detail": "https://news.google.com/rss/search?q=sanctions+OR+embargo+when:1d&hl=fr&gl=FR&ceid=FR:fr : HTTP 503",
+          "derniere_donnee_valide": null
+        },
+        {
+          "nom": "Google Actualités : droits de douane (français)",
+          "etat": "échec",
+          "detail": "https://news.google.com/rss/search?q=%22droits+de+douane%22+OR+%22guerre+commerciale%22+when:1d&hl=fr&gl=FR&ceid=FR:fr : HTTP 503",
+          "derniere_donnee_valide": null
+        },
+        {
+          "nom": "Google Actualités : conflits (français)",
+          "etat": "échec",
+          "detail": "https://news.google.com/rss/search?q=frappes+OR+offensive+OR+%22cessez-le-feu%22+when:1d&hl=fr&gl=FR&ceid=FR:fr : HTTP 503",
+          "derniere_donnee_valide": null
+        },
+        {
+          "nom": "Google Actualités : élections (français)",
+          "etat": "échec",
+          "detail": "https://news.google.com/rss/search?q=%C3%A9lection+r%C3%A9sultats+OR+%22%C3%A9lection+contest%C3%A9e%22+when:1d&hl=fr&gl=FR&ceid=FR:fr : HTTP 503",
+          "derniere_donnee_valide": null
         },
         {
           "nom": "BBC News, monde (RSS)",
           "etat": "ok",
           "detail": "31 éléments",
-          "derniere_donnee_valide": "2026-11-03T18:16:56Z"
+          "derniere_donnee_valide": "2026-11-03T18:46:27Z"
         },
         {
           "nom": "Le Monde, international (RSS)",
           "etat": "ok",
           "detail": "20 éléments",
-          "derniere_donnee_valide": "2026-11-03T18:16:56Z"
+          "derniere_donnee_valide": "2026-11-03T18:46:27Z"
         },
         {
           "nom": "Financial Times, monde (RSS)",
           "etat": "ok",
           "detail": "25 éléments",
-          "derniere_donnee_valide": "2026-11-03T18:16:56Z"
+          "derniere_donnee_valide": "2026-11-03T18:46:27Z"
         },
         {
           "nom": "The Guardian, monde (RSS)",
           "etat": "ok",
           "detail": "45 éléments",
-          "derniere_donnee_valide": "2026-11-03T18:16:56Z"
+          "derniere_donnee_valide": "2026-11-03T18:46:27Z"
         },
         {
           "nom": "Deutsche Welle, monde (RSS)",
           "etat": "ok",
           "detail": "11 éléments",
-          "derniere_donnee_valide": "2026-11-03T18:16:56Z"
+          "derniere_donnee_valide": "2026-11-03T18:46:27Z"
         },
         {
           "nom": "Al Jazeera (RSS)",
           "etat": "ok",
           "detail": "25 éléments",
-          "derniere_donnee_valide": "2026-11-03T18:16:56Z"
+          "derniere_donnee_valide": "2026-11-03T18:46:27Z"
         },
         {
           "nom": "Indice de risque géopolitique quotidien (Caldara et Iacoviello)",
           "etat": "ok",
           "detail": "relevé le 2026-11-03",
-          "derniere_donnee_valide": "2026-11-03T18:16:56Z"
+          "derniere_donnee_valide": "2026-11-03T18:46:27Z"
         },
         {
           "nom": "FRED, incertitude de politique économique (USEPUINDXD)",
           "etat": "ok",
           "detail": "relevé le 2026-11-03",
-          "derniere_donnee_valide": "2026-11-03T18:16:56Z"
+          "derniere_donnee_valide": "2026-11-03T18:46:27Z"
         },
         {
           "nom": "Gemini (analyse des événements)",
           "etat": "ok",
-          "detail": "4 appel(s) cette exécution (gemini-3.5-flash-lite ×1) ; 9 aujourd'hui (jour du Pacifique) ; modèle de secours utilisé : gemini-3.5-flash-lite",
-          "derniere_donnee_valide": "2026-11-03T18:16:56Z"
+          "detail": "0 appel(s) cette exécution (aucun appel nécessaire) ; 9 aujourd'hui (jour du Pacifique)",
+          "derniere_donnee_valide": "2026-11-03T18:46:27Z"
         }
       ],
-      "degrade": true,
-      "raisons": [
-        "Événements · presse et GDELT : 7 sources valides au lieu de 8 (perdue : France 24 (dépêches AFP) (RSS))",
-        "Événements · sources officielles : 6 sources valides au lieu de 7 (perdue : Conseil de l'UE, communiqués et sanctions (RSS))"
-      ],
-      "references": {
-        "Événements · presse et GDELT": [
-          "Al Jazeera (RSS)",
-          "BBC News, monde (RSS)",
-          "Deutsche Welle, monde (RSS)",
-          "Financial Times, monde (RSS)",
-          "France 24 (dépêches AFP) (RSS)",
-          "GDELT, API DOC 2.0 (articles par thème)",
-          "Le Monde, international (RSS)",
-          "The Guardian, monde (RSS)"
-        ],
-        "Événements · sources officielles": [
-          "BRI, discours des banquiers centraux (RSS)",
-          "Commission européenne, communiqués (RSS)",
-          "Conseil de l'UE, communiqués et sanctions (RSS)",
-          "Federal Register (API)",
-          "Maison-Blanche, décisions présidentielles (RSS)",
-          "OFAC, actions récentes (Trésor américain)",
-          "Élysée, communiqués (RSS)"
-        ],
-        "Tonalité par pays (GDELT)": [
-          "GDELT 2.0, fichiers d'événements géolocalisés (15 min)"
-        ],
-        "Indices GPR et EPU": [
-          "FRED, incertitude de politique économique (USEPUINDXD)",
-          "Indice de risque géopolitique quotidien (Caldara et Iacoviello)"
-        ]
-      },
+      "degrade": false,
+      "raisons": [],
+      "references": {},
       "ia": {
         "modele": "gemini-flash-latest",
         "appels_du_jour": 9,
@@ -550,9 +569,63 @@
         "FRED, incertitude de politique économique (USEPUINDXD)": "ok"
       },
       "signaux": []
+    },
+    {
+      "genere_le": "2026-11-03T18:46:27Z",
+      "mode": "horaire",
+      "synthese": false,
+      "articles_nouveaux": 2,
+      "evenements_suivis": 99,
+      "evenements_significatifs": 6,
+      "ia": {
+        "modele": "gemini-flash-latest",
+        "appels": 0,
+        "reussites": 0,
+        "analyses": 0,
+        "rejets": 0,
+        "quota_atteint": false,
+        "modeles_utilises": {},
+        "erreurs": [],
+        "appels_du_jour": 9,
+        "quota_jour": 1200,
+        "suppressions": []
+      },
+      "fusions": 0,
+      "etat_des_sources": {
+        "GDELT, API DOC 2.0 (articles par thème)": "échec",
+        "GDELT 2.0, fichiers d'événements géolocalisés (15 min)": "ok",
+        "Federal Register (API)": "ok",
+        "OFAC, actions récentes (Trésor américain)": "ok",
+        "Maison-Blanche, décisions présidentielles (RSS)": "ok",
+        "Élysée, communiqués (RSS)": "ok",
+        "Commission européenne, communiqués (RSS)": "ok",
+        "Conseil de l'UE, communiqués et sanctions (RSS)": "ok",
+        "Ministère chinois du Commerce (MOFCOM)": "non configurée",
+        "BRI, discours des banquiers centraux (RSS)": "ok",
+        "Reuters": "non configurée",
+        "Associated Press": "non configurée",
+        "France 24 (dépêches AFP) (RSS)": "ok",
+        "Google Actualités : sanctions (anglais)": "échec",
+        "Google Actualités : droits de douane (anglais)": "échec",
+        "Google Actualités : conflits (anglais)": "échec",
+        "Google Actualités : élections (anglais)": "échec",
+        "Google Actualités : sanctions (français)": "échec",
+        "Google Actualités : droits de douane (français)": "échec",
+        "Google Actualités : conflits (français)": "échec",
+        "Google Actualités : élections (français)": "échec",
+        "BBC News, monde (RSS)": "ok",
+        "Le Monde, international (RSS)": "ok",
+        "Financial Times, monde (RSS)": "ok",
+        "The Guardian, monde (RSS)": "ok",
+        "Deutsche Welle, monde (RSS)": "ok",
+        "Al Jazeera (RSS)": "ok",
+        "Indice de risque géopolitique quotidien (Caldara et Iacoviello)": "ok",
+        "FRED, incertitude de politique économique (USEPUINDXD)": "ok"
+      },
+      "signaux": []
     }
   ],
-  "derniere_execution": "2026-11-03T18:16:56Z",
+  "derniere_execution": "2026-11-03T18:46:27Z",
   "prochaine_prevue": "2026-11-03T19:03:00Z",
   "intervalle_min": 60,
   "planning": {
