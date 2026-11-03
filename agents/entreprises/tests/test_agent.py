@@ -136,6 +136,37 @@ class TestUnivers(unittest.TestCase):
         self.assertTrue(liste[-1]["surveillance"])
 
 
+class TestWikipedia(unittest.TestCase):
+    def test_tableau(self):
+        html = ("<table class='wikitable'><tr><th>Ticker</th><th>Logo</th><th>Company</th><th>Prime Standard Sector</th></tr>"
+                + "".join(f"<tr><td>{t}</td><td></td><td>{n}</td><td>{sct}</td></tr>" for t, n, sct in [
+                    ("ADS.DE", "Adidas", "Consumer Goods"), ("AIR.PA", "Airbus", "Industrials"), ("ALV.DE", "Allianz", "Insurance"),
+                    ("BAS.DE", "BASF", "Chemicals"), ("BAYN.DE", "Bayer", "Pharma & Healthcare"), ("BMW.DE", "BMW", "Automobile")])
+                + "</table>")
+        r = U.lire_wikipedia(html, "DE", {"suffixe": ".DE"})
+        self.assertEqual([x["ticker"] for x in r], ["ADS.DE", "ALV.DE", "BAS.DE", "BAYN.DE", "BMW.DE"])  # Airbus (Paris) écarté
+        self.assertEqual(r[1]["secteur"], "Financials")
+        self.assertEqual(r[3]["secteur"], "Health Care")
+
+    def test_prefixes_et_zero(self):
+        html = ("<table class='wikitable'><tr><th>Ticker</th><th>Name</th><th>Sub-index</th></tr>"
+                + "".join(f"<tr><td>{t}</td><td>{n}</td><td>Finance</td></tr>" for t, n in [
+                    ("SEHK: 5", "HSBC"), ("SEHK: 388", "HKEx"), ("SSE: 600519", "Moutai"), ("SZSE: 300750", "CATL"), ("SEHK: 939", "CCB")])
+                + "</table>")
+        r = U.lire_wikipedia(html, "CN", {"suffixe": ".HK", "zero_pad": 4, "prefixes": {"SEHK": ".HK", "SSE": ".SS", "SZSE": ".SZ"}})
+        self.assertEqual([x["ticker"] for x in r], ["0005.HK", "0388.HK", "600519.SS", "300750.SZ", "0939.HK"])
+
+    def test_liste_nikkei(self):
+        html = "<h3>Automotive</h3><ul>" + "".join(f"<li>{n} (TYO: {c})</li>" for n, c in [
+            ("Toyota Motor Corp.", "7203"), ("Honda Motor Co., Ltd.", "7267"), ("Nissan", "7201"), ("Subaru", "7270"), ("Mazda", "7261")]) + "</ul>"
+        r = U.lire_wikipedia(html, "JP", {"suffixe": ".T", "mode": "liste", "motif": "\\(TYO:\\s*([0-9A-Z]{4})\\)"})
+        self.assertEqual(r[0], {"ticker": "7203.T", "nom": "Toyota Motor Corp.", "pays": "JP", "secteur": "Consumer Discretionary", "poids": 0.0})
+
+    def test_page_sans_tableau(self):
+        with self.assertRaises(ValueError):
+            U.lire_wikipedia("<p>Top 10 constituents: Al Rajhi Bank…</p>", "SA", {"suffixe": ".SR"})
+
+
 class TestComptes(unittest.TestCase):
     def test_verification(self):
         off = {"fin": "2025-12-31", "ca": 1000.0, "resultat_net": 100.0}

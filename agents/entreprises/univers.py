@@ -139,25 +139,171 @@ def lire_ssga(contenu: bytes) -> list[dict]:
     return sorted(res, key=lambda x: -x["poids"])
 
 
+# --------------------------------------------------------------- Wikipédia (secours)
+
+# Libellés de secteurs rencontrés sur Wikipédia (GICS, ICB, Prime Standard, SET…) → clé GICS, par mots-clés
+MOTS_SECTEURS = [
+    (("bank", "banking", "insurance", "financ", "asset management", "capital markets"), "Financials"),
+    (("oil", "gas", "energy", "petrol", "coal"), "Energy"),
+    (("mining", "metal", "chemical", "material", "steel", "paper", "gold", "construction material"), "Materials"),
+    (("software", "technolog", "semiconductor", "electronic", "it services", "computer"), "Information Technology"),
+    (("telecom", "media", "communication", "entertainment", "interactive"), "Communication"),
+    (("pharma", "health", "medical", "biotech", "drug"), "Health Care"),
+    (("utilit", "electric", "power", "water"), "Utilities"),
+    (("real estate", "property", "propert", "reit"), "Real Estate"),
+    (("food", "beverage", "tobacco", "personal", "household", "drink", "agricult", "staples", "commerce"), "Consumer Staples"),
+    (("retail", "automobile", "auto", "apparel", "luxury", "consumer", "travel", "leisure", "hotel", "textile"), "Consumer Discretionary"),
+    (("industr", "aerospace", "defen", "transport", "construction", "engineering", "machinery", "logistic", "airline", "shipping"), "Industrials"),
+]
+
+
+def secteur_wikipedia(libelle: str | None) -> str | None:
+    if not libelle:
+        return None
+    direct = secteur_gics(libelle)
+    if direct:
+        return direct
+    t = libelle.lower()
+    for mots, cle in MOTS_SECTEURS:
+        if any(m in t for m in mots):
+            return cle
+    return None
+
+
+SUFFIXES_CONNUS = {sfx for _, sfx in SUFFIXES if sfx} | {".OL", ".HE", ".CO", ".BR", ".LS", ".VI", ".IR"}
+EN_TETES_TICKER = ("ticker", "symbol", "code", "stock symbol", "ticker symbol", "stock code")
+EN_TETES_NOM = ("company", "name", "company name", "securities name", "constituent", "constituent name")
+EN_TETES_SECTEUR = ("sector", "industry", "segment", "sub-index", "gics")
+
+
+def ticker_wikipedia(cellule: str, suffixe: str, zero_pad: int = 0) -> str | None:
+    """« SEHK: 5 » → 0005.HK ; « BT.A » → BT-A.L ; « AI.PA » (déjà suffixé) → AI.PA ; « AIR.PA » sur le DAX → None."""
+    t = (cellule or "").strip().split("\n")[0].strip()
+    if ":" in t:
+        t = t.split(":")[-1].strip()
+    t = t.split()[0] if t.split() else ""
+    t = t.upper().strip(".,;")
+    if not t or not re.fullmatch(r"[A-Z0-9.\-&]+", t):
+        return None
+    if t.endswith(suffixe.upper()):
+        racine = t[: -len(suffixe)]
+    elif "." in t and "." + t.rsplit(".", 1)[1] in SUFFIXES_CONNUS:
+        return None  # valeur cotée sur une autre place (ex. Airbus dans le tableau du DAX)
+    else:
+        racine = t.replace(".", "-")
+    if zero_pad and racine.isdigit():
+        racine = racine.zfill(zero_pad)
+    return f"{racine}{suffixe}"
+
+
+def lire_wikipedia(html: str, pays: str, cfg: dict) -> list[dict]:
+    """Tableau des membres d'un indice (en-têtes Ticker / Symbol / Code…), ou liste à puces « (TYO: 7203) »
+    pour le Nikkei 225. Lève ValueError si rien d'exploitable n'est trouvé."""
+    from bs4 import BeautifulSoup
+    soup = BeautifulSoup(html, "lxml")
+    suffixe, pad = cfg["suffixe"], cfg.get("zero_pad", 0)
+    suffixes_par_prefixe = cfg.get("prefixes", {})
+    res = []
+    if cfg.get("mode") == "liste":
+        motif = re.compile(cfg["motif"])
+        secteur = None
+        for el in soup.find_all(["h2", "h3", "h4", "li"]):
+            if el.name in ("h2", "h3", "h4"):
+                secteur = el.get_text(" ", strip=True)
+                continue
+            texte = el.get_text(" ", strip=True)
+            m = motif.search(texte)
+            if m:
+                code = m.group(1)
+                nom = texte[: m.start()].strip(" (")
+                res.append({"ticker": f"{code.zfill(pad) if pad and code.isdigit() else code}{suffixe}", "nom": nom,
+                            "pays": pays, "secteur": secteur_wikipedia(secteur), "poids": 0.0})
+    else:
+        for table in soup.select("table.wikitable"):
+            lignes = table.find_all("tr")
+            if not lignes:
+                continue
+            entetes = [c.get_text(" ", strip=True).lower() for c in lignes[0].find_all(["th", "td"])]
+
+            def colonne(noms, exact=True):
+                for i, h in enumerate(entetes):
+                    if (h in noms) if exact else any(n in h for n in noms):
+                        return i
+                return None
+            i_t = colonne(EN_TETES_TICKER)
+            if i_t is None:
+                i_t = colonne(("ticker", "symbol"), exact=False)
+            i_n = colonne(EN_TETES_NOM) if colonne(EN_TETES_NOM) is not None else colonne(("company", "name"), exact=False)
+            i_s = colonne(EN_TETES_SECTEUR, exact=False)
+            if i_t is None or i_n is None:
+                continue
+            for tr in lignes[1:]:
+                cellules = tr.find_all(["td", "th"])
+                if len(cellules) <= max(i_t, i_n):
+                    continue
+                brut = cellules[i_t].get_text("\n", strip=True)
+                prefixe = brut.split(":")[0].strip().upper() if ":" in brut else None
+                sfx = suffixes_par_prefixe.get(prefixe, suffixe) if prefixe else suffixe
+                t = ticker_wikipedia(brut, sfx, pad)
+                if not t:
+                    continue
+                sect = cellules[i_s].get_text(" ", strip=True) if i_s is not None and len(cellules) > i_s else None
+                res.append({"ticker": t, "nom": cellules[i_n].get_text(" ", strip=True), "pays": pays,
+                            "secteur": secteur_wikipedia(sect), "poids": 0.0})
+            if res:
+                break
+    uniques = list({s["ticker"]: s for s in res}.values())
+    if len(uniques) < cfg.get("minimum", 5):
+        raise ValueError(f"tableau des membres introuvable ou trop court ({len(uniques)} lignes)")
+    return uniques
+
+
 # --------------------------------------------------------------- composition
 
+NAVIGATEUR = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
+AGENT_WIKIPEDIA = "Plateforme-eco/1.0 (https://github.com/jcn1996/Plateforme-eco; agent entreprises)"
+
+
 class Composition:
-    def __init__(self, telechargeur, config: dict):
+    def __init__(self, telechargeur, config: dict, yahoo=None):
         self.t = telechargeur
         self.cfg = config["univers"]
+        self.yahoo = yahoo  # pour classer les membres d'un indice par montant échangé
 
     def etf_ishares(self, etf: str, pays: str) -> list[dict]:
+        """Point d'accès CSV officiel des fonds iShares (lien « Download holdings » de la page du fonds)."""
         info = self.cfg["ishares"].get(etf)
         if not info:
-            raise ValueError(f"URL iShares inconnue pour {etf}")
+            raise ValueError(f"{etf} n'est pas un ETF iShares (ou URL inconnue)")
         url = self.cfg["url_ishares"].format(id=info["id"], slug=info["slug"], t=etf)
-        return lire_ishares(self.t.texte(url), pays)
+        texte = self.t.texte(url, entetes={"User-Agent": NAVIGATEUR, "Accept": "text/csv,*/*",
+                                           "Referer": f"https://www.ishares.com/us/products/{info['id']}/{info['slug']}"})
+        return lire_ishares(texte, pays)
 
     def etf_ssga(self, etf: str) -> list[dict]:
         url = self.cfg["ssga"][etf]
         r = self.t.session.get(url, timeout=60)
         r.raise_for_status()
         return lire_ssga(r.content)
+
+    def wikipedia(self, pays: str) -> tuple[list[dict], str]:
+        """Membres de l'indice national selon Wikipédia (API MediaWiki), essayés page par page."""
+        cfg = self.cfg["wikipedia"].get(pays)
+        if not cfg:
+            raise ValueError("pas d'indice exploitable sur Wikipédia pour ce pays")
+        erreurs = []
+        for page in cfg["pages"]:
+            try:
+                d = self.t.json("https://en.wikipedia.org/w/api.php",
+                                params={"action": "parse", "page": page, "prop": "text", "format": "json",
+                                        "formatversion": "2", "redirects": "1"},
+                                entetes={"User-Agent": AGENT_WIKIPEDIA})
+                if "error" in d:
+                    raise ValueError(d["error"].get("info", "page introuvable"))
+                return lire_wikipedia(d["parse"]["text"], pays, cfg), page
+            except Exception as e:
+                erreurs.append(f"{page} : {str(e)[:80]}")
+        raise RuntimeError(" ; ".join(erreurs))
 
     def filtre_yahoo(self, pays: str, nombre: int) -> list[dict]:
         """Plus grosses capitalisations cotées dans le pays (filtre d'actions Yahoo)."""
@@ -175,8 +321,20 @@ class Composition:
             raise ValueError(f"filtre Yahoo vide pour {pays}")
         return res
 
+    def classer(self, liste: list[dict]) -> list[dict]:
+        """Classe les membres d'un indice (Wikipédia les liste par ordre alphabétique) par montant moyen
+        échangé sur 3 mois, à partir des cours téléchargés par lots (peu de requêtes)."""
+        if not self.yahoo:
+            return liste
+        cours = self.yahoo.cours_groupes([s["ticker"] for s in liste], periode="3mo")
+        for s in liste:
+            points = cours.get(s["ticker"]) or []
+            s["poids"] = sum(c * v for _, c, v in points) / len(points) if points else -1.0
+        return sorted([s for s in liste if s["poids"] >= 0], key=lambda x: -x["poids"])
+
     def pays(self, code: str, plafond: int | None) -> tuple[list[dict], str]:
-        """Liste des sociétés d'un pays et source utilisée. Lève une erreur si toutes les sources échouent."""
+        """Liste des sociétés d'un pays et source utilisée. Ordre : iShares, puis Wikipédia, puis (si activé)
+        filtre d'actions Yahoo. Lève une erreur si toutes échouent (la dernière liste connue prend alors le relais)."""
         p = self.cfg["pays"][code]
         erreurs = []
         if code == "US":
@@ -201,9 +359,18 @@ class Composition:
             except Exception as e:
                 erreurs.append(f"iShares {etf} : {str(e)[:120]}")
         try:
-            return self.filtre_yahoo(code, plafond)[:plafond], "filtre d'actions Yahoo (plus grosses capitalisations)"
+            membres, page = self.wikipedia(code)
+            classes = self.classer(membres)
+            if classes:
+                return classes[:plafond], f"Wikipédia ({page}), classé par montant échangé"
+            erreurs.append("Wikipédia : aucun membre coté sur Yahoo")
         except Exception as e:
-            erreurs.append(f"filtre Yahoo : {str(e)[:120]}")
+            erreurs.append(f"Wikipédia : {str(e)[:160]}")
+        if self.cfg.get("filtre_yahoo", True):
+            try:
+                return self.filtre_yahoo(code, plafond)[:plafond], "filtre d'actions Yahoo (plus grosses capitalisations)"
+            except Exception as e:
+                erreurs.append(f"filtre Yahoo : {str(e)[:120]}")
         raise RuntimeError(" ; ".join(erreurs))
 
 
@@ -266,7 +433,8 @@ def construire(composition: Composition | None, config: dict, connu: dict | None
 
 MOTS_VIDES = {"sa", "se", "ag", "nv", "plc", "spa", "ab", "the", "de", "la", "et", "and", "co", "inc", "corp", "corporation",
               "ltd", "limited", "holding", "holdings", "group", "class", "cl", "shs", "ord", "adr", "registered", "pref", "pn",
-              "on", "pna", "pnb", "unit", "units", "non", "voting", "series", "common", "stock", "tbk", "pcl", "nvdr", "bhd", "asa", "oyj", "publ"}
+              "on", "pna", "pnb", "unit", "units", "non", "voting", "series", "common", "stock", "tbk", "pcl", "nvdr", "bhd", "asa", "oyj", "publ",
+              "ser", "cdi", "cdr", "drc", "gdr", "ads", "adr", "depositary", "receipt", "receipts", "shares", "share", "sa", "nv"}
 
 
 def cle_societe(nom: str) -> str:

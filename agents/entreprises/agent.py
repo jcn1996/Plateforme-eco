@@ -55,7 +55,7 @@ class Fournisseur:
         self.esef = C.Esef(self.t)
         self.edinet = C.Edinet(self.t)
         self.dart = C.Dart(self.t)
-        self.composition = U.Composition(self.t, config)
+        self.composition = U.Composition(self.t, config, self.yahoo)
 
     def officiel(self, s: dict, ids: dict) -> tuple[dict | None, str | None, dict]:
         """Comptes officiels de la société (ou None) et nom de la source ; complète les identifiants (LEI, CIK)."""
