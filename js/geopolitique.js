@@ -120,11 +120,14 @@ function carteEvenement(e) {
     el('div', { class: 'geo-evenement-tete' },
       badgeGravite(e.gravite),
       el('div', {},
-        el('h3', { class: 'geo-titre' }, e.titre),
+        el('h3', { class: 'geo-titre' }, e.titre,
+          // Titre d'origine non traduit (version sans IA) : sa langue et « non analysé »
+          e.mention ? el('span', { class: 'geo-mention' }, ` ${e.titre_langue ? `(${e.titre_langue}) · ` : ''}${e.mention}`) : null),
         el('div', { class: 'geo-meta' },
           el('span', { class: 'geo-categorie' }, e.categorie_libelle),
           ` · ${e.pays_noms?.length ? e.pays_noms.join(', ') : 'pays non déterminés'} · ${dateHeure(e.dernier)}`,
-          e.ia ? null : el('span', { class: 'geo-sans-ia' }, 'sans IA'))),
+          e.ia ? null : el('span', { class: 'geo-sans-ia' }, 'sans IA'),
+          e.ia && e.modele ? el('small', {}, ` · ${e.modele}`) : null)),
     ),
     e.resume?.length
       ? el('div', { class: 'geo-bloc' },
@@ -152,7 +155,7 @@ function carteEvenement(e) {
         el('ul', { class: 'contre-scenario' }, e.contre.map((c) => el('li', {}, `${c.texte} `, ...renvois(c.sources, srcs)))))
       : null,
     el('details', { class: 'geo-sources' },
-      el('summary', {}, `Sources (${srcs.length}${e.officiel ? ', dont officielles' : ''})`),
+      el('summary', {}, `Sources (${srcs.length}${e.nb_domaines < srcs.length ? `, dont ${e.nb_domaines} indépendante${e.nb_domaines > 1 ? 's' : ''}` : ''}${e.officiel ? ', dont officielles' : ''})`),
       el('ol', {}, srcs.map((s) => el('li', {},
         el('a', { href: s.url, target: '_blank', rel: 'noopener noreferrer' }, s.titre),
         el('small', {}, ` ${s.domaine}${s.officiel ? ' · officielle' : ''} · ${dateHeure(s.date)}`))))),
@@ -242,6 +245,7 @@ export function sectionGeopolitiquePays(geo, code) {
         badgeGravite(e.gravite),
         el('div', {},
           e.source ? el('a', { href: e.source, target: '_blank', rel: 'noopener noreferrer' }, e.titre) : e.titre,
+          e.mention ? el('span', { class: 'geo-mention' }, ` ${e.titre_langue ? `(${e.titre_langue}) · ` : ''}${e.mention}`) : null,
           el('small', {}, ` ${e.categorie_libelle} · ${dateHeure(e.date)}`),
           e.resume ? el('p', { class: 'geo-texte' }, e.resume) : null))))
       : el('p', { class: 'macro-texte' }, 'Aucun événement significatif récent.'),

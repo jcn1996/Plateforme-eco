@@ -2,13 +2,18 @@
   "_commentaire": "Configuration de l'agent géopolitique. Quotas Gemini, requêtes GDELT, flux RSS, catégories, pays (codes FIPS de GDELT et noms reconnus dans les titres), pondérations du score. Modifiable sans toucher au code. Règles : agents/geopolitique/regles.md.",
 
   "gemini": {
-    "_commentaire": "Quotas gratuits : ils ne sont plus publiés en chiffres (consultables dans Google AI Studio, par projet). Valeurs prudentes par défaut ; le jour de quota est celui du Pacifique (remise à zéro à minuit, heure du Pacifique). « gemini-flash-latest » désigne le modèle Flash le plus récent (alias tenu à jour par Google).",
-    "modele": "gemini-flash-latest",
-    "quota_jour": 20,
-    "quota_minute": 10,
-    "intervalle_min_secondes": 7,
-    "appels_max_par_execution": 2,
+    "_commentaire": "Chaîne de modèles : le premier qui répond est utilisé (Flash le plus récent, puis Flash-Lite, puis la génération Flash précédente). Chaque modèle a son propre quota gratuit, par projet, remis à zéro à minuit (heure du Pacifique). Google ne publie plus ces limites en chiffres (visibles seulement dans AI Studio, connecté) : rpm et rpd ci-dessous sont les dernières valeurs publiques connues, À CONFIRMER dans https://aistudio.google.com/rate-limit. L'agent applique une marge de 20 % et apprend la limite réelle des réponses 429 (quota du jour atteint : plus d'appel à ce modèle jusqu'au lendemain, et limite retenue pour les jours suivants).",
+    "modeles": [
+      {"nom": "gemini-flash-latest", "libelle": "Flash le plus récent (alias)", "rpm": 10, "rpd": 250},
+      {"nom": "gemini-3.5-flash-lite", "libelle": "Flash-Lite", "rpm": 15, "rpd": 1000},
+      {"nom": "gemini-3.6-flash", "libelle": "Flash de la génération précédente", "rpm": 10, "rpd": 250}
+    ],
+    "marge": 0.2,
+    "appels_max_par_execution": 10,
     "evenements_par_appel": 3,
+    "essais": 3,
+    "attentes_reprise_secondes": [5, 15],
+    "attente_429_minute_max_secondes": 60,
     "fuseau_quota": "America/Los_Angeles",
     "delai_reponse_secondes": 60,
     "reanalyse_apres_heures": 24,
@@ -16,10 +21,16 @@
   },
 
   "gdelt": {
-    "_commentaire": "API DOC 2.0 : une requête par thème (au plus une toutes les 5 s, consigne de GDELT). Fichiers d'événements GDELT 2.0 (géolocalisés, publiés toutes les 15 minutes) : tonalité et volume par pays. L'API GEO 2.0 ne répond plus (404) ; la géolocalisation vient de ces fichiers.",
+    "_commentaire": "API DOC 2.0 : d'abord une requête groupée (tous les thèmes en une requête : GDELT limite chaque adresse IP à une requête toutes les 5 s, et les adresses de GitHub sont partagées) ; si GDELT la refuse, une requête par thème. Au moins 6 s entre deux requêtes ; reprises sur 429 et 5xx (attentes croissantes, en-tête Retry-After respecté), dans la limite de budget_secondes. Fichiers d'événements GDELT 2.0 (géolocalisés, publiés toutes les 15 minutes) : tonalité et volume par pays. L'API GEO 2.0 ne répond plus (404) ; la géolocalisation vient de ces fichiers.",
     "fenetre_doc": "3h",
     "articles_max_par_requete": 75,
+    "articles_max_requete_groupee": 250,
+    "requete_groupee": true,
+    "longueur_max_requete": 160,
     "delai_entre_requetes_secondes": 6,
+    "essais": 4,
+    "attentes_reprise_secondes": [10, 20, 40],
+    "budget_secondes": 240,
     "fichiers_evenements_par_execution": 4,
     "requetes": {
       "sanctions": "(sanctions OR embargo OR \"export controls\" OR \"asset freeze\")",
@@ -33,21 +44,21 @@
   },
 
   "sources_rss": [
-    {"cle": "maison_blanche", "nom": "Maison-Blanche, décisions présidentielles (RSS)", "url": "https://www.whitehouse.gov/presidential-actions/feed/", "type": "officiel", "pays": "US"},
-    {"cle": "elysee", "nom": "Élysée, communiqués (RSS)", "url": "https://www.elysee.fr/feed", "type": "officiel", "pays": "FR"},
-    {"cle": "commission_ue", "nom": "Commission européenne, communiqués (RSS)", "url": "https://ec.europa.eu/commission/presscorner/api/rss?language=en", "type": "officiel", "pays": "UE"},
-    {"cle": "conseil_ue", "nom": "Conseil de l'UE, communiqués et sanctions (RSS)", "url": "https://www.consilium.europa.eu/en/rss/pressreleases.ashx", "type": "officiel", "pays": "UE"},
-    {"cle": "mofcom", "nom": "Ministère chinois du Commerce (MOFCOM)", "url": null, "type": "officiel", "pays": "CN", "_note": "pas de flux RSS public au 03/11/2026 : source « non configurée » ; ses annonces sont captées par la presse"},
-    {"cle": "bri_discours", "nom": "BRI, discours des banquiers centraux (RSS)", "url": "https://www.bis.org/doclist/cbspeeches.rss", "type": "officiel", "pays": null, "filtre": "geopolit|tariff|trade|sanction|war\\b|conflict|fragment|tension|g[ée]opolitique|droits de douane|guerre"},
-    {"cle": "reuters", "nom": "Reuters", "url": null, "type": "media", "_note": "plus de flux RSS public : captée par GDELT"},
-    {"cle": "ap", "nom": "Associated Press", "url": null, "type": "media", "_note": "pas de flux RSS public : captée par GDELT"},
-    {"cle": "afp", "nom": "France 24 (dépêches AFP) (RSS)", "url": "https://www.france24.com/fr/rss", "type": "media"},
-    {"cle": "bbc", "nom": "BBC News, monde (RSS)", "url": "https://feeds.bbci.co.uk/news/world/rss.xml", "type": "media"},
-    {"cle": "le_monde", "nom": "Le Monde, international (RSS)", "url": "https://www.lemonde.fr/international/rss_full.xml", "type": "media"},
-    {"cle": "ft", "nom": "Financial Times, monde (RSS)", "url": "https://www.ft.com/world?format=rss", "type": "media"},
-    {"cle": "guardian", "nom": "The Guardian, monde (RSS)", "url": "https://www.theguardian.com/world/rss", "type": "media"},
-    {"cle": "dw", "nom": "Deutsche Welle, monde (RSS)", "url": "https://rss.dw.com/rdf/rss-en-world", "type": "media"},
-    {"cle": "al_jazeera", "nom": "Al Jazeera (RSS)", "url": "https://www.aljazeera.com/xml/rss/all.xml", "type": "media"}
+    {"cle": "maison_blanche", "langue": "en", "nom": "Maison-Blanche, décisions présidentielles (RSS)", "url": "https://www.whitehouse.gov/presidential-actions/feed/", "type": "officiel", "pays": "US"},
+    {"cle": "elysee", "langue": "fr", "nom": "Élysée, communiqués (RSS)", "url": "https://www.elysee.fr/feed", "type": "officiel", "pays": "FR"},
+    {"cle": "commission_ue", "langue": "en", "nom": "Commission européenne, communiqués (RSS)", "url": "https://ec.europa.eu/commission/presscorner/api/rss?language=en", "type": "officiel", "pays": "UE"},
+    {"cle": "conseil_ue", "langue": "en", "nom": "Conseil de l'UE, communiqués et sanctions (RSS)", "url": "https://www.consilium.europa.eu/en/rss/pressreleases.ashx", "type": "officiel", "pays": "UE"},
+    {"cle": "mofcom", "langue": "zh", "nom": "Ministère chinois du Commerce (MOFCOM)", "url": null, "type": "officiel", "pays": "CN", "_note": "pas de flux RSS public au 03/11/2026 : source « non configurée » ; ses annonces sont captées par la presse"},
+    {"cle": "bri_discours", "langue": "en", "nom": "BRI, discours des banquiers centraux (RSS)", "url": "https://www.bis.org/doclist/cbspeeches.rss", "type": "officiel", "pays": null, "filtre": "geopolit|tariff|trade|sanction|war\\b|conflict|fragment|tension|g[ée]opolitique|droits de douane|guerre"},
+    {"cle": "reuters", "langue": "en", "nom": "Reuters", "url": null, "type": "media", "_note": "plus de flux RSS public : captée par GDELT"},
+    {"cle": "ap", "langue": "en", "nom": "Associated Press", "url": null, "type": "media", "_note": "pas de flux RSS public : captée par GDELT"},
+    {"cle": "afp", "langue": "fr", "nom": "France 24 (dépêches AFP) (RSS)", "url": "https://www.france24.com/fr/rss", "type": "media"},
+    {"cle": "bbc", "langue": "en", "nom": "BBC News, monde (RSS)", "url": "https://feeds.bbci.co.uk/news/world/rss.xml", "type": "media"},
+    {"cle": "le_monde", "langue": "fr", "nom": "Le Monde, international (RSS)", "url": "https://www.lemonde.fr/international/rss_full.xml", "type": "media"},
+    {"cle": "ft", "langue": "en", "nom": "Financial Times, monde (RSS)", "url": "https://www.ft.com/world?format=rss", "type": "media"},
+    {"cle": "guardian", "langue": "en", "nom": "The Guardian, monde (RSS)", "url": "https://www.theguardian.com/world/rss", "type": "media"},
+    {"cle": "dw", "langue": "en", "nom": "Deutsche Welle, monde (RSS)", "url": "https://rss.dw.com/rdf/rss-en-world", "type": "media"},
+    {"cle": "al_jazeera", "langue": "en", "nom": "Al Jazeera (RSS)", "url": "https://www.aljazeera.com/xml/rss/all.xml", "type": "media"}
   ],
 
   "federal_register": {

@@ -6,7 +6,7 @@ Code : `agent.py` (étapes), `sources.py`, `evenements.py` (regroupement, sans I
 
 | Source | Usage | Rythme |
 |---|---|---|
-| GDELT, API DOC 2.0 | articles par thème : sanctions, droits de douane, conflits, élections, coups d'État, routes maritimes | chaque heure (une requête toutes les 6 s) |
+| GDELT, API DOC 2.0 | articles sur les sanctions, droits de douane, conflits, élections, coups d'État, routes maritimes : une requête groupée (tous les thèmes), ou une par thème si GDELT la refuse | chaque heure (au moins 6 s entre deux requêtes ; reprises sur 429 et 5xx après 10, 20 et 40 s ou Retry-After ; code exact journalisé ; 240 s au plus) |
 | GDELT 2.0, fichiers d'événements (15 min) | événements géolocalisés : tonalité, volume, part des conflits par pays | chaque heure (les 4 derniers fichiers) |
 | Federal Register (API) | décrets et proclamations présidentiels ; mesures de l'OFAC, du BIS et de l'USTR | chaque heure |
 | OFAC, « Recent Actions » | sanctions américaines | chaque heure |
@@ -22,7 +22,16 @@ Absentes, et indiquées « non configurée » dans l'écran Santé : Reuters et 
 ## 2. Événements
 
 - Un article est retenu s'il relève d'une catégorie (mots-clés de `config.json`). Les pays sont reconnus par leurs noms, en anglais et en français. Les sigles (US, UK, EU…) ne comptent qu'en majuscules.
-- Les articles sont regroupés par événement : pays communs, moins de 48 h d'écart et mots significatifs partagés. Les événements sont gardés 30 jours dans `data/geopolitique/etat.json`.
+- Les articles sont regroupés par événement : pays communs, moins de 48 h d'écart et mots significatifs partagés. Les noms de pays ne comptent pas comme mots significatifs : ils sont représentés par leur code (« Iranian » et « Iran » → IR). Les titres de GDELT sont nettoyés (« U . S . » → « U.S. »).
+- **Doublons** : à chaque exécution, deux événements sont fusionnés s'ils remplissent trois conditions :
+  - leurs couvertures sont à moins de 48 h ;
+  - ils ont les mêmes pays principaux ;
+  - leurs mots-clés sont proches. Les mots-clés sont les mots présents dans au moins 40 % des titres. Il faut 3 mots en commun et 35 %, ou 2 mots et 50 % si la catégorie ou les pays principaux sont les mêmes.
+
+  Un article qui mélange deux sujets (« US strikes Iranian island ahead of midterm elections ») ne suffit donc pas à relier les frappes et les élections. Gemini peut aussi confirmer qu'un événement du lot est le même qu'un autre (« meme_que ») : ils sont fusionnés.
+- **Pays principaux** (affichés et comptés dans le score) : seuls les pays acteurs ou directement touchés sont retenus. Ce sont les pays cités dans le titre de référence ou dans le résumé, ou présents dans plus de la moitié des articles. Un pays cité une fois parmi d'autres n'est pas retenu.
+- **Titre de référence** : la source officielle s'il y en a une. Sinon, le titre le plus centré sur l'événement : celui qui a le plus de mots-clés, le moins de mots hors sujet et aucun pays seulement cité.
+- Les événements sont gardés 30 jours dans `data/geopolitique/etat.json`.
 - **Sources indépendantes** : domaines distincts. Une dépêche reprise mot pour mot sur plusieurs sites (syndication AP, NPR…) ne compte qu'une fois.
 - **Événement significatif** : score de sélection ≥ 6, avec au moins 3 sources indépendantes ou une source officielle. Le score de sélection est calculé ainsi :
   - 2 × log2(1 + sources indépendantes) ;
@@ -32,7 +41,14 @@ Absentes, et indiquées « non configurée » dans l'écran Santé : Reuters et 
 
 ## 3. Analyse par Gemini
 
-- Modèle : `gemini.modele`. Par défaut, `gemini-flash-latest`, l'alias du modèle Flash le plus récent. Clé : secret `GEMINI_API_KEY`.
+- **Modèles** : chaîne `gemini.modeles`. Par défaut :
+  - `gemini-flash-latest` (alias du modèle Flash le plus récent) ;
+  - puis `gemini-3.5-flash-lite` ;
+  - puis `gemini-3.6-flash` (génération Flash précédente).
+
+  Clé : secret `GEMINI_API_KEY`. Sur une erreur 5xx (dont 503, modèle surchargé) ou une erreur réseau, l'agent fait 3 essais, après 5 puis 15 s d'attente. Il passe ensuite au modèle suivant, qui est aussi utilisé pour le reste de l'exécution. Un 400 ou un 404 (modèle inconnu) fait passer directement au modèle suivant.
+- **Priorité** : les événements de gravité estimée 3 ou plus sont analysés en premier.
+- **Langue** : tous les textes de Gemini doivent être en français. Une affirmation en anglais est supprimée.
 - Pour chaque événement significatif, l'agent produit :
   - un résumé factuel en 2 phrases ;
   - les pays et la catégorie ;
@@ -45,27 +61,39 @@ Absentes, et indiquées « non configurée » dans l'écran Santé : Reuters et 
   - chaque affirmation doit citer au moins une de ces sources, sinon elle est supprimée ;
   - un actif hors de la liste, un pays ou une catégorie inconnus sont écartés ;
   - un événement sans résumé sourcé reste en version sans IA.
-- **Gravité 4 ou 5** : seulement si au moins 2 sources indépendantes sont citées. Sinon, elle est plafonnée à 3, et le plafonnement est indiqué.
-- **Sans Gemini** (clé absente, quota atteint, panne) : l'agent publie les événements sans IA, avec les titres des sources, la tonalité GDELT des pays concernés et une gravité estimée par règles (au plus 3). L'appli et la synthèse le signalent.
+- **Gravité 4 ou 5** : seulement si au moins 2 sources indépendantes sont citées.
+- **Version de la méthode** : quand la méthode de regroupement change (`VERSION_REGROUPEMENT`), les événements sont refaits une fois à partir de leurs articles. Sinon, elle est plafonnée à 3, et le plafonnement est indiqué.
+- **Sans Gemini** (clé absente, quota atteint, panne) : l'agent publie les événements sans IA. Chacun garde son titre d'origine, non traduit, avec sa langue et la mention « non analysé ». S'y ajoutent les sources, la tonalité GDELT des pays concernés et une gravité estimée par règles (au plus 3). L'appli et la synthèse le signalent.
 
 ### Quotas gratuits
 
-Google ne publie plus les quotas gratuits en chiffres : ils se consultent dans AI Studio, par projet. Ils se remettent à zéro à minuit, heure du Pacifique. Valeurs prudentes par défaut :
+Chaque modèle a son propre quota gratuit, par projet. Il est remis à zéro à minuit, heure du Pacifique. Google ne publie plus ces limites en chiffres : elles se lisent dans AI Studio, connecté, sur https://aistudio.google.com/rate-limit (vérifié le 03/11/2026). Les valeurs de `gemini.modeles` (`rpm`, `rpd`) sont les dernières valeurs publiques connues :
 
-| Réglage | Valeur | Effet |
-|---|---|---|
-| `quota_jour` | 20 | appels au plus par jour du Pacifique, comptés d'une exécution à l'autre |
-| `appels_max_par_execution` | 2 | et pas plus que (reste du jour ÷ exécutions horaires restantes), arrondi au-dessus : le budget couvre toute la journée |
-| `quota_minute`, `intervalle_min_secondes` | 10, 7 s | au plus 10 appels par minute, 7 s entre deux appels |
-| `evenements_par_appel` | 3 | jusqu'à 60 événements analysés par jour |
-| cache | 24 h et sources × 2 | un événement analysé n'est repris que s'il a doublé de sources, et pas avant 24 h |
+| Modèle | rpm | rpd | Effectif (marge de 20 %) |
+|---|---|---|---|
+| gemini-flash-latest | 10 | 250 | 8 par minute, 200 par jour |
+| gemini-3.5-flash-lite | 15 | 1 000 | 12 par minute, 800 par jour |
+| gemini-3.6-flash | 10 | 250 | 8 par minute, 200 par jour |
 
-Une réponse 429 suspend les appels pendant une heure. Les tests (`tests/test_agent.py`, classe `TestQuotasJournee`) simulent 48 exécutions horaires, puis une journée avec 12 lancements manuels en plus, avec toujours plus d'événements que le quota n'en permet. Ils vérifient :
-- le plafond par jour du Pacifique ;
-- le plafond par exécution ;
-- le plafond par minute ;
-- l'intervalle entre deux appels ;
-- la répartition des appels sur toute la journée.
+**À confirmer dans AI Studio**, puis à corriger dans `config.json` si besoin. L'agent s'adapte aussi seul aux réponses 429 :
+- **quota par minute** (message « per minute » ou `retryDelay`) : il attend le délai indiqué (60 s au plus), puis fait un nouvel essai ;
+- **quota du jour**, ou 429 répété : plus d'appel à ce modèle jusqu'au lendemain (jour du Pacifique), et passage au modèle suivant. Si le message indique le quota du jour, le nombre d'appels réussis est retenu comme limite, puis la marge de 20 % s'applique les jours suivants.
+
+Autres garde-fous :
+- au plus 10 appels par exécution, et pas plus que la part du reste du jour qui revient à l'exécution : le budget couvre toute la journée ;
+- au moins 60 s ÷ rpm effectif entre deux appels à un même modèle ;
+- 3 événements par appel ;
+- cache : un événement n'est réanalysé qu'après 24 h et s'il a doublé de sources.
+
+Les tests (`tests/test_agent.py`, classe `TestQuotasJournee`) simulent trois situations :
+- 48 exécutions horaires ;
+- une journée avec 12 lancements manuels en plus ;
+- un modèle dont la vraie limite est plus basse que la configuration.
+
+Ils vérifient :
+- les plafonds par modèle, par jour du Pacifique, par minute et par exécution ;
+- la répartition des appels sur la journée ;
+- l'apprentissage de la limite après un 429.
 
 ## 4. Score de risque géopolitique (/100, par pays suivi)
 

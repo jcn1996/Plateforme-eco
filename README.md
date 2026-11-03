@@ -159,7 +159,8 @@ L'agent suit les événements géopolitiques et leur impact possible sur les mar
 - les événements significatifs sont analysés par Gemini (secret `GEMINI_API_KEY`, modèle réglable dans `agents/geopolitique/config.json`). L'agent produit un résumé, les pays, la catégorie, la gravité de 1 à 5, les actifs touchés et le sens de l'impact, l'horizon, la confiance et « Ce qui pourrait me donner tort » ;
 - chaque affirmation doit citer une source fournie à Gemini, sinon elle est supprimée ;
 - une gravité de 4 ou 5 exige 2 sources indépendantes ;
-- les quotas gratuits sont respectés : 20 appels par jour du Pacifique au plus, répartis sur la journée, avec plusieurs événements par appel et un cache ;
+- les quotas gratuits sont respectés, avec une chaîne de modèles (Flash le plus récent, Flash-Lite, Flash précédent) et des limites par modèle avec une marge de 20 %. Ces limites sont à confirmer dans AI Studio : l'agent apprend aussi la vraie limite des réponses 429. Les reprises suivent une attente progressive (503) et les gravités 3 et plus passent en priorité ;
+- les doublons sont fusionnés, seuls les pays acteurs ou directement touchés sont retenus, et tous les résumés sont en français ;
 - sans Gemini, l'agent publie une version sans IA, signalée dans l'appli.
 
 **Score** : un score de risque /100 par pays suivi, avec sa variation sur 7 jours.
@@ -187,6 +188,8 @@ python -m agents.geopolitique --mode quotidien    # écrit aussi la synthèse du
 python -m agents.geopolitique --test --data /tmp/essai   # données de test, sans réseau ni Gemini
 python -m agents.geopolitique.tests.capturer_donnees_test # met à jour les données de test
 ```
+
+**Essai d'une correction** : onglet **Actions** → **Agent géopolitique** → **Run workflow**, choisir la branche et cocher « essai ». Le code de la branche tourne alors sur une copie des données de `main`, avec les vrais secrets, sans rien commiter. Le statut santé est affiché à la fin du journal.
 
 ## Agent entreprises (environ 1 200 sociétés, sans IA)
 

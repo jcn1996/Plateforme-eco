@@ -63,6 +63,69 @@ def _recent(date_iso: str | None, maintenant: datetime, heures: float) -> bool:
 
 # ------------------------------------------------------------------ collecte
 
+def requetes_groupees(requetes: dict, longueur_max: int) -> list[str]:
+    """Les thèmes regroupés en quelques requêtes (a OR b OR c…) d'au plus `longueur_max` caractères :
+    GDELT refuse une requête trop longue (« Your query was too short or too long »)."""
+    termes = []
+    for r in requetes.values():
+        termes += [t.strip() for t in r.strip().strip("()").split(" OR ") if t.strip()]
+    groupes, courant = [], []
+    for terme in dict.fromkeys(termes):
+        if courant and len(" OR ".join(courant + [terme])) + 2 > longueur_max:
+            groupes.append(courant)
+            courant = []
+        courant.append(terme)
+    if courant:
+        groupes.append(courant)
+    return ["(" + " OR ".join(g) + ")" for g in groupes]
+
+
+def gdelt_doc(f, config: dict, articles: list[dict], maintenant: datetime, garde: float) -> tuple[int, str, str]:
+    """Requête groupée d'abord (une requête au lieu de six : moins de refus 429), puis, si GDELT la
+    refuse pour une autre raison que la limite de débit, une requête par thème.
+    Renvoie (articles retenus, détail, état de la source)."""
+    g = config["gdelt"]
+    n = 0
+
+    def ajouter(liste, indice):
+        nonlocal n
+        for a in liste:
+            if _recent(a["date"], maintenant, garde):
+                articles.append({**a, "indice": indice, "source": "GDELT DOC 2.0", "officiel": False})
+                n += 1
+
+    if g.get("requete_groupee"):
+        groupes = requetes_groupees(g["requetes"], g["longueur_max_requete"])
+        ok, echecs = 0, []
+        for k, requete in enumerate(groupes, 1):
+            try:
+                ajouter(f.gdelt_doc(f"groupe {k}/{len(groupes)}", requete, g["articles_max_requete_groupee"]), None)
+                ok += 1
+            except Exception as e:  # noqa: BLE001
+                texte = str(e)
+                echecs.append(f"groupe {k} : {texte[:120]}")
+                LOG.warning("GDELT DOC, groupe %d/%d : %s", k, len(groupes), texte[:200])
+                if "429" in texte or "budget" in texte:  # limite de débit : les suivantes échoueraient aussi
+                    break
+        if ok or not echecs or any("429" in x or "budget" in x for x in echecs):
+            detail = f"{ok}/{len(groupes)} requêtes groupées" + (f" ; échecs : {'; '.join(echecs)[:220]}" if echecs else "")
+            return n, detail, "ok" if ok == len(groupes) else "partielle" if ok else "échec"
+    ok, echecs, consecutifs = 0, [], 0
+    for cat, requete in g["requetes"].items():
+        if consecutifs >= 2:  # limite de débit : inutile d'insister (durée de l'exécution bornée)
+            echecs.append(f"{cat} : non tentée (deux échecs consécutifs)")
+            continue
+        try:
+            ajouter(f.gdelt_doc(cat, requete), cat)
+            ok += 1
+            consecutifs = 0
+        except Exception as e:  # noqa: BLE001 - une requête en échec n'arrête pas les autres
+            consecutifs += 1
+            echecs.append(f"{cat} : {str(e)[:90]}")
+    total = len(g["requetes"])
+    detail = f"{ok}/{total} requêtes par thème" + (f" ; échecs : {'; '.join(echecs)[:220]}" if echecs else "")
+    return n, detail, "ok" if ok == total else "partielle" if ok else "échec"
+
 def collecter(f, config: dict, etat: dict, maintenant: datetime, mode: str) -> tuple[list[dict], dict]:
     """Renvoie (articles bruts, états des sources {cle: {nom, etat, detail, groupe}})."""
     articles, etats = [], {}
@@ -71,27 +134,9 @@ def collecter(f, config: dict, etat: dict, maintenant: datetime, mode: str) -> t
     def noter(cle, nom, groupe, etat_s, detail=None):
         etats[cle] = {"nom": nom, "groupe": groupe, "etat": etat_s, "detail": detail}
 
-    # GDELT, API DOC 2.0 : une requête par thème
-    ok, echecs, n, consecutifs = 0, [], 0, 0
-    for cat, requete in config["gdelt"]["requetes"].items():
-        if consecutifs >= 2:  # GDELT limite les requêtes : inutile d'insister (durée de l'exécution bornée)
-            echecs.append(f"{cat} : non tentée (deux échecs consécutifs)")
-            continue
-        try:
-            for a in f.gdelt_doc(cat, requete):
-                if _recent(a["date"], maintenant, garde_media):
-                    articles.append({**a, "indice": cat, "source": "GDELT DOC 2.0", "officiel": False})
-                    n += 1
-            ok += 1
-            consecutifs = 0
-        except Exception as e:  # noqa: BLE001 - une requête en échec n'arrête pas les autres
-            consecutifs += 1
-            echecs.append(f"{cat} : {str(e)[:90]}")
-            LOG.warning("GDELT DOC %s indisponible : %s", cat, str(e)[:160])
-    total = len(config["gdelt"]["requetes"])
-    noter("gdelt_doc", "GDELT, API DOC 2.0 (articles par thème)", "presse",
-          "ok" if ok == total else "partielle" if ok else "échec",
-          f"{n} articles, {ok}/{total} requêtes" + (f" ; échecs : {'; '.join(echecs)[:200]}" if echecs else ""))
+    # GDELT, API DOC 2.0
+    n, detail, etat_doc = gdelt_doc(f, config, articles, maintenant, garde_media)
+    noter("gdelt_doc", "GDELT, API DOC 2.0 (articles par thème)", "presse", etat_doc, f"{n} articles ; {detail}")
 
     # GDELT, fichiers d'événements à 15 minutes (géolocalisés) : tonalité et volume par pays
     fips = {p["fips"] for p in config["pays"].values()}
@@ -124,7 +169,7 @@ def collecter(f, config: dict, etat: dict, maintenant: datetime, mode: str) -> t
         for d in docs:
             if _recent(d["date"], maintenant, garde_off):
                 ofac = any("Foreign Assets" in a for a in d.get("agences", []))
-                articles.append({**d, "origine": "officiel", "source": "Federal Register", "officiel": True,
+                articles.append({**d, "origine": "officiel", "source": "Federal Register", "officiel": True, "langue": "en",
                                  "categorie_par_defaut": "sanctions" if ofac else None})
         noter("federal_register", "Federal Register (API)", "officiel", "ok", f"{len(docs)} documents")
     except Exception as e:  # noqa: BLE001
@@ -135,7 +180,8 @@ def collecter(f, config: dict, etat: dict, maintenant: datetime, mode: str) -> t
         actions = f.ofac()
         for a in actions:
             if _recent(a["date"], maintenant, garde_off):
-                articles.append({**a, "origine": "officiel", "source": "OFAC", "officiel": True, "categorie_par_defaut": "sanctions"})
+                articles.append({**a, "origine": "officiel", "source": "OFAC", "officiel": True, "langue": "en",
+                                 "categorie_par_defaut": "sanctions"})
         noter("ofac", "OFAC, actions récentes (Trésor américain)", "officiel", "ok" if actions else "partielle", f"{len(actions)} actions listées")
     except Exception as e:  # noqa: BLE001
         noter("ofac", "OFAC, actions récentes (Trésor américain)", "officiel", "échec", str(e)[:200])
@@ -155,6 +201,7 @@ def collecter(f, config: dict, etat: dict, maintenant: datetime, mode: str) -> t
                     continue
                 if _recent(it["date"], maintenant, garde):
                     articles.append({**it, "origine": "officiel" if s["type"] == "officiel" else "rss", "source": s["nom"],
+                                     "langue": s.get("langue"),
                                      "officiel": s["type"] == "officiel",
                                      "categorie_par_defaut": "monetaire" if s["cle"] == "bri_discours" else None})
             noter(s["cle"], s["nom"], groupe, "ok" if items else "partielle", f"{len(items)} éléments")
@@ -184,9 +231,13 @@ def collecter(f, config: dict, etat: dict, maintenant: datetime, mode: str) -> t
 
 # ------------------------------------------------------------------ mise en forme
 
+LANGUES = {"en": "anglais", "fr": "français", "es": "espagnol", "de": "allemand", "it": "italien", "pt": "portugais",
+           "zh": "chinois", "ar": "arabe", "ru": "russe", "ja": "japonais"}
+
+
 def publier(e: dict, config: dict, noms: dict, etat: dict, aujourdhui) -> dict:
     a = e.get("analyse") or {}
-    pays = a.get("pays") or e["pays"]
+    pays = e.get("pays_principaux") or []
     tons = []
     for code in pays:
         p = config["pays"].get(code)
@@ -198,6 +249,9 @@ def publier(e: dict, config: dict, noms: dict, etat: dict, aujourdhui) -> dict:
     categorie = a.get("categorie") or e["categorie"]
     return {
         "id": e["id"], "titre": E.titre_reference(e), "categorie": categorie,
+        # Titre d'origine (non traduit) : sa langue, et « non analysé » sans analyse par IA
+        "titre_langue": LANGUES.get(E.langue_reference(e) or "", E.langue_reference(e)),
+        "mention": None if a else "non analysé",
         "categorie_libelle": config["categories"][categorie]["libelle"],
         "pays": pays, "pays_noms": [noms.get(c, c) for c in pays], "pays_suivis": [c for c in pays if c in config["pays"]],
         "regions": regions, "gravite": e["gravite"], "note_gravite": a.get("note_gravite"),
@@ -287,7 +341,8 @@ def recap_markdown(jour, evts: list[dict], scores: dict, sig: list[dict], etats:
     l += ["## Événements des dernières 24 heures (par gravité)", ""]
     recents = [e for e in evts if e["dernier"] >= E.iso(datetime.combine(jour, datetime.min.time(), timezone.utc) - timedelta(hours=18))]
     for e in recents[:15]:
-        l.append(f"### [{e['gravite']}/5] {e['titre']}")
+        suffixe = f" ({e['titre_langue']}, non analysé)" if e["mention"] else ""
+        l.append(f"### [{e['gravite']}/5] {e['titre']}{suffixe}")
         l.append(f"- Catégorie : {e['categorie_libelle']} · pays : {', '.join(e['pays_noms']) or 'non déterminés'} · "
                  f"{'analyse Gemini, confiance ' + e['confiance'] if e['ia'] else 'sans IA'}")
         for r in e["resume"]:
@@ -314,7 +369,8 @@ def recap_markdown(jour, evts: list[dict], scores: dict, sig: list[dict], etats:
         l.append(f"- {p['nom']} : {p['derniere']} au {date_fr(p['date'])} (moyenne 30 j : {p['moyenne_30j']})")
     l += ["", "## Signaux", ""] + ([f"- [{s['importance']}] {s['titre']}" for s in sig] or ["- aucun"])
     l += ["", "## Analyse par IA", "",
-          f"- Modèle : {rapport_ia.get('modele')} · appels aujourd'hui (jour du Pacifique) : {quota.get('appels', 0)} sur {quota.get('quota_jour')}"]
+          f"- Modèles : {', '.join(m['modele'] + ' ' + str(m['appels']) + '/' + str(m['limite_jour']) for m in quota.get('modeles', []))} "
+          f"(appels du jour du Pacifique / limite avec marge de 20 %)"]
     erreurs = [v for v in etats.values() if v["etat"] in ("échec", "partielle", "périmée")]
     l += ["", "## Sources en échec", ""] + ([f"- {v['nom']} : {v['etat']} ({v.get('detail') or ''})" for v in erreurs] or ["- aucune"])
     return "\n".join(l) + "\n"
@@ -322,17 +378,28 @@ def recap_markdown(jour, evts: list[dict], scores: dict, sig: list[dict], etats:
 
 # ------------------------------------------------------------------ santé
 
+def gemini_en_panne(rapport_ia: dict) -> bool:
+    """Gemini n'a jamais répondu pendant l'exécution, pour une autre raison que les quotas."""
+    return bool(rapport_ia["cle"] and rapport_ia["erreurs"] and not rapport_ia["reussites"]
+                and not all("429" in e for e in rapport_ia["erreurs"]))
+
+
 def sources_sante(etats: dict, rapport_ia: dict, quota: dict) -> list[dict]:
     res = [{"nom": v["nom"], "etat": v["etat"], "detail": v.get("detail")} for v in etats.values()]
+    nom = "Gemini (analyse des événements)"
     if not rapport_ia["cle"]:
-        res.append({"nom": "Gemini (analyse des événements)", "etat": "non configurée", "detail": "secret GEMINI_API_KEY absent : version sans IA"})
-    elif rapport_ia.get("erreur") and not rapport_ia.get("quota_atteint"):
-        res.append({"nom": "Gemini (analyse des événements)", "etat": "échec", "detail": rapport_ia["erreur"]})
+        res.append({"nom": nom, "etat": "non configurée", "detail": "secret GEMINI_API_KEY absent : version sans IA"})
+    elif gemini_en_panne(rapport_ia):
+        res.append({"nom": nom, "etat": "échec", "detail": "; ".join(rapport_ia["erreurs"])[-300:]})
     else:
-        detail = f"{rapport_ia['appels']} appel(s) cette exécution, {quota.get('appels', 0)}/{quota.get('quota_jour')} aujourd'hui"
+        utilises = ", ".join(f"{m} ×{n}" for m, n in rapport_ia["modeles_utilises"].items()) or "aucun appel nécessaire"
+        detail = f"{rapport_ia['appels']} appel(s) cette exécution ({utilises}) ; {quota['appels']} aujourd'hui (jour du Pacifique)"
+        secours = [m for m in rapport_ia["modeles_utilises"] if m != quota["modele"]]
+        if secours:
+            detail += f" ; modèle de secours utilisé : {', '.join(secours)}"
         if rapport_ia.get("quota_atteint"):
-            detail += " ; quota atteint (429) : appels suspendus 1 h"
-        res.append({"nom": "Gemini (analyse des événements)", "etat": "ok", "detail": detail})
+            detail += " ; quota atteint (429) : modèle concerné suspendu jusqu'au lendemain"
+        res.append({"nom": nom, "etat": "ok", "detail": detail})
     return res
 
 
@@ -382,23 +449,37 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "hor
     etat["urls_vues"] = vues
 
     evenements = etat.get("evenements", [])
+    if evenements and etat.get("version_regroupement") != E.VERSION_REGROUPEMENT:
+        LOG.info("Méthode de regroupement modifiée : %d événements refaits à partir de leurs articles", len(evenements))
+        evenements = E.reconstruire(evenements, det, config, maintenant)
+    etat["version_regroupement"] = E.VERSION_REGROUPEMENT
     avant = {e["id"] for e in evenements}
     touches = E.regrouper(prets, evenements, config, maintenant)
     evenements = E.nettoyer(evenements, maintenant, config["evenements_garde_jours"])
+    # Doublons : événements qui décrivent le même fait (48 h, mêmes pays principaux, titres proches)
+    evenements, fusions = E.fusionner(evenements, det)
     # Nouveaux : événements créés, ou qui reçoivent une source officielle, pendant cette exécution
     urls_neuves = {p["url"] for p in prets}
-    nouveaux_ids = {e["id"] for e in touches
-                    if e["id"] not in avant or any(a.get("officiel") and a["url"] in urls_neuves for a in e["articles"])}
+    absorbe_par = {autre: base for base, autre in fusions}
+    ids_touches = {absorbe_par.get(e["id"], e["id"]) for e in touches}
+    nouveaux_ids = {e["id"] for e in evenements if e["id"] in ids_touches and (
+        e["id"] not in avant or any(a.get("officiel") and a["url"] in urls_neuves for a in e["articles"]))}
 
-    # Analyse par Gemini des événements significatifs, les plus importants d'abord
+    # Analyse par Gemini des événements significatifs (gravité estimée 3 ou plus d'abord)
     limite_aff = E.iso(maintenant - timedelta(days=config["evenements_affiches_jours"]))
     significatifs = [e for e in evenements if e["dernier"] >= limite_aff and E.significatif(e, config)]
-    candidats = sorted((e for e in significatifs if ia.a_analyser(e, config, maintenant)),
-                       key=lambda e: (E.score_selection(e, config), e["dernier"]), reverse=True)
-    quota = ia.Quota(etat, config["gemini"], horloge=horloge, dormir=dormir or time.sleep)
-    rapport_ia = ia.analyser(candidats, config, quota, maintenant, cle=cle_gemini, poster=poster)
+    candidats = [e for e in significatifs if ia.a_analyser(e, config, maintenant)]
+    quotas = ia.Quotas(etat, config["gemini"], horloge=horloge, dormir=dormir or time.sleep)
+    rapport_ia = ia.analyser(candidats, config, quotas, maintenant, cle=cle_gemini, poster=poster)
+    if rapport_ia["fusions"]:  # regroupements confirmés par Gemini
+        evenements, faites = E.fusionner(evenements, det, rapport_ia["fusions"])
+        fusions += faites
+        significatifs = [e for e in evenements if e["dernier"] >= limite_aff and E.significatif(e, config)]
+        nouveaux_ids = {absorbe_par.get(i, i) for i in nouveaux_ids} | {b for b, a in faites if a in nouveaux_ids}
     for e in evenements:
         e["gravite"] = (e.get("analyse") or {}).get("gravite") or E.gravite_regles(e, config)
+        resume = [r["texte"] for r in (e.get("analyse") or {}).get("resume", [])]
+        e["pays_principaux"] = E.pays_principaux(e, det, resume)
 
     # Scores par pays
     scores = S.scores(config, significatifs, etat, maintenant)
@@ -410,20 +491,20 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "hor
         derniers = sorted((x for x in publics if code in x["pays"]), key=lambda x: x["dernier"], reverse=True)[:3]
         par_pays[code] = {**s, "nom": noms.get(code, code), "region": config["pays"][code]["region"],
                           "derniers_evenements": [{"id": x["id"], "titre": x["titre"], "gravite": x["gravite"], "date": x["dernier"],
-                                                   "categorie_libelle": x["categorie_libelle"],
+                                                   "categorie_libelle": x["categorie_libelle"], "titre_langue": x["titre_langue"],
+                                                   "mention": x["mention"],
                                                    "resume": x["resume"][0]["texte"] if x["resume"] else None,
                                                    "source": x["sources"][0]["url"] if x["sources"] else None} for x in derniers]}
     ind = indices(etat, maintenant)
-    quota.restants(maintenant)  # passe au nouveau jour de quota si besoin (compteur remis à zéro)
-    q = {"jour": quota.etat.get("jour"), "appels": quota.etat.get("appels", 0), "quota_jour": config["gemini"]["quota_jour"],
-         "modele": config["gemini"]["modele"]}
-    sans_ia = not rapport_ia["cle"] or (rapport_ia["erreur"] and not rapport_ia["analyses"])
+    q = quotas.resume()
+    sans_ia = not rapport_ia["cle"] or (rapport_ia["erreur"] and not rapport_ia["reussites"])
     donnees = {
         "date": aujourdhui.isoformat(),
         "mode_ia": "sans IA" if not any(x["ia"] for x in publics) else "gemini",
         "avertissement_ia": ("Analyse par IA indisponible pour cette mise à jour (" +
-                             ("clé GEMINI_API_KEY absente" if not rapport_ia["cle"] else rapport_ia["erreur"] or "") +
-                             ") : les nouveaux événements sont présentés sans IA (titres des sources, tonalité GDELT, gravité estimée par règles).")
+                             ("clé GEMINI_API_KEY absente" if not rapport_ia["cle"] else (rapport_ia["erreur"] or "")[:120]) +
+                             ") : les nouveaux événements sont présentés sans IA (titre d'origine et sa langue, mention « non analysé », "
+                             "tonalité GDELT, gravité estimée par règles).")
         if sans_ia else None,
         "evenements": publics, "pays": par_pays, "indices": ind, "quota_ia": q,
         "regions": config["regions"], "categories": {k: v["libelle"] for k, v in config["categories"].items()},
@@ -467,29 +548,35 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "hor
     j = lire_json(chemin_journal) or {"meta": {}, "donnees": []}
     entree = {"genere_le": E.iso(maintenant), "mode": mode, "synthese": recap,
               "articles_nouveaux": len(prets), "evenements_suivis": len(evenements), "evenements_significatifs": len(significatifs),
-              "ia": {k: rapport_ia.get(k) for k in ("modele", "autorises", "appels", "analyses", "rejets", "erreur", "quota_atteint")}
-              | {"appels_du_jour": q["appels"], "quota_jour": q["quota_jour"], "suppressions": rapport_ia["suppressions"][:20]},
+              "ia": {k: rapport_ia.get(k) for k in ("modele", "appels", "reussites", "analyses", "rejets", "quota_atteint", "modeles_utilises")}
+              | {"erreurs": [e[:200] for e in rapport_ia["erreurs"]][:10], "appels_du_jour": q["appels"], "quota_jour": q["quota_jour"],
+                 "suppressions": rapport_ia["suppressions"][:20]},
+              "fusions": len(fusions),
               "etat_des_sources": {v["nom"]: v["etat"] for v in etats.values()}, "signaux": [s["titre"] for s in sig]}
     j["donnees"] = (j.get("donnees", []) + [entree])[-200:]
     j["meta"] = {**j.get("meta", {}), "genere_le": E.iso(maintenant), "source": "agent-geopolitique", "version_agent": VERSION_AGENT,
                  "description": "Sources, appels à Gemini (quota) et signaux, à chaque exécution"}
     ecrire_json(chemin_journal, j)
     raisons = []
-    if rapport_ia["cle"] and rapport_ia.get("erreur") and not rapport_ia.get("quota_atteint"):
-        raisons.append(f"Analyse sans IA : Gemini indisponible ({rapport_ia['erreur'][:120]})")
+    if gemini_en_panne(rapport_ia):
+        raisons.append(f"Analyse sans IA : Gemini indisponible ({(rapport_ia['erreur'] or '')[:120]})")
     bloc = sante.bloc_sante("geopolitique", "Agent géopolitique", 6, WORKFLOW, sources_sante(etats, rapport_ia, q), maintenant,
                             (j.get("meta") or {}).get("sante"), indicateurs=indicateurs_sante(etats), raisons_supplementaires=raisons)
     bloc["ia"] = {"modele": q["modele"], "appels_du_jour": q["appels"], "quota_jour": q["quota_jour"], "jour_quota": q["jour"],
-                  "mode": donnees["mode_ia"]}
+                  "mode": donnees["mode_ia"], "modeles": q["modeles"]}
     sante.enregistrer_sante(chemin_journal, bloc, forcer=True)
 
     etat["evenements"] = evenements
     etat["maj"] = E.iso(maintenant)
     ecrire_json(chemin_etat, etat, compact=True)
 
-    LOG.info("%d articles nouveaux, %d événements suivis, %d significatifs ; Gemini : %d appel(s), %d analyse(s) ; %d signal(aux)%s",
-             len(prets), len(evenements), len(significatifs), rapport_ia["appels"], rapport_ia["analyses"], len(sig),
-             " ; synthèse écrite" if recap else "")
+    LOG.info("%d articles nouveaux, %d événements suivis (%d fusions), %d significatifs ; Gemini : %d appel(s), %d analyse(s) ; "
+             "%d signal(aux)%s", len(prets), len(evenements), len(fusions), len(significatifs), rapport_ia["appels"],
+             rapport_ia["analyses"], len(sig), " ; synthèse écrite" if recap else "")
+    for x in publics[:8]:
+        LOG.info("  [%d/5] %s | %s | %s%s", x["gravite"], ", ".join(x["pays"]) or "-", f"{x['modele']}" if x["ia"] else "non analysé",
+                 x["titre"][:90], f" — {x['resume'][0]['texte'][:140]}" if x["resume"] else "")
+    LOG.info("Statut santé : %s%s", "DÉGRADÉ" if bloc["degrade"] else "OK", (" — " + " | ".join(bloc["raisons"])) if bloc["raisons"] else "")
     return {"ok": True, "rapport_ia": rapport_ia, "donnees": donnees, "signaux": sig, "etat": etat, "sante": bloc, "recap": recap}
 
 
