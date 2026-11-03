@@ -6,6 +6,7 @@
    ========================================================================== */
 
 import { el, nombre, variation, classeNote } from './outils.js';
+import { boutonAnalyser, pastilleReco } from './analyses.js';
 
 const FICHIER = 'data/pepites.json';
 const filtres = { liste: 'pepites', region: 'toutes', secteur: 'tous' }; // mémorisés pendant la session
@@ -42,6 +43,8 @@ export function ecranPepites(p, d, nav) {
   const entete = el('header', {},
     el('div', { class: 'fiche-surtitre' }, 'Agent entreprises · toutes régions'),
     el('h2', { class: 'fiche-titre' }, 'Pépites candidates'),
+    el('div', { class: 'analyses-actions' }, boutonAnalyser(),
+      nav.ouvrir ? el('button', { type: 'button', class: 'bouton', onclick: () => nav.ouvrir({ type: 'analyses' }) }, 'Mes analyses') : null),
   );
   if (!p) {
     return [entete, el('p', { class: 'sante-ligne' }, 'Données de l’agent entreprises indisponibles (data/pepites.json introuvable). Lancer l’agent depuis l’onglet Actions.')];
@@ -101,7 +104,7 @@ export function ecranPepites(p, d, nav) {
         el('li', {}, `Pépites : capitalisation de ${nombre((crit.cap_min_md ?? 0.3) * 1000)} M$ à ${nombre(crit.cap_max_md ?? 20)} Md$ et au plus ${crit.analystes_max ?? 8} analystes (quand Yahoo le fournit)`),
       )),
     el('p', { class: 'fraicheur' }, `Mis à jour le ${(p.meta.genere_le ?? '').slice(8, 10)}/${(p.meta.genere_le ?? '').slice(5, 7)}/${(p.meta.genere_le ?? '').slice(0, 4)} · Agent entreprises (règles, sans IA)`),
-    el('p', { class: 'mention-legale' }, 'Liste de candidates à étudier, pas une recommandation : chaque fiche comporte une revue critique et des points à vérifier soi-même. Ne constitue pas un conseil en investissement.'),
+    el('p', { class: 'mention-legale' }, 'Liste de candidates à étudier : chaque fiche comporte une revue critique et des points à vérifier soi-même. Recommandations : avis indicatif généré automatiquement, sans prise en compte d’un profil ou d’une situation personnelle. Ne constitue pas un conseil en investissement.'),
   ];
 }
 
@@ -119,6 +122,8 @@ function ligne(x, d, nav) {
   el('div', { class: 'ligne-pepite-info' }, [x.ticker, pays, x.secteur_nom, x.capitalisation_md != null ? `${nombre(x.capitalisation_md, x.capitalisation_md < 10 ? 1 : 0)} Md$` : null,
     x.analystes != null ? `${x.analystes} analyste${x.analystes > 1 ? 's' : ''}` : null, `confiance ${x.confiance}`].filter(Boolean).join(' · ')),
   el('div', { class: 'ligne-pepite-cles' }, cles.map(([k, v]) => el('span', {}, el('small', {}, LIBELLES_CLES[k] ?? k), ' ', el('strong', { class: 'mono' }, v)))),
+  x.recommandation ? el('div', { class: 'ligne-reco' }, el('small', {}, 'Non détenu'), pastilleReco(x.recommandation),
+    el('small', {}, 'Détenu'), pastilleReco(x.recommandation, true)) : null,
   el('div', { class: 'ligne-pepite-verdict' }, x.verdict),
   );
 }

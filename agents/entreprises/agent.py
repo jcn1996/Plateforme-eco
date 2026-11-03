@@ -27,6 +27,7 @@ from ..commun.sortie import ecrire_json, enveloppe, lire_json
 from ..commun.telechargement import Telechargeur
 from . import analyse as A
 from . import comptes as C
+from . import recommandation as R
 from . import univers as U
 
 LOG = journal("agent-entreprises")
@@ -335,18 +336,10 @@ def publier(base: dict, config: dict, change: dict, data: Path, aujourdhui: date
     for t, r in base.items():
         if not r.get("annuel") or not r.get("cours"):
             continue
-        prix = r["cours"][-1][1] / (r.get("centimes") or 1)
-        fx_c = change.get(r["devise_cours"])
-        cap = r["actions"] * prix * fx_c if r.get("actions") and fx_c else None
-        echange = r["cours"][-1][2] if len(r["cours"][-1]) > 2 else 0
-        liquidite = echange / (r.get("centimes") or 1) * fx_c / 1e6 if echange and fx_c else None
+        s = mesurer(r, change, cfg_u)
+        cap, liquidite = s["capitalisation_usd"], s["liquidite_musd"]
         if not r.get("surveillance") and ((cap or 0) < cfg_u["capitalisation_min_musd"] * 1e6 or (liquidite is not None and liquidite < cfg_u["volume_min_musd_jour"])):
             continue
-        region = cfg_u["pays"].get(r["pays"], {}).get("region", "autre")
-        s = {**r, "region": region, "capitalisation_usd": cap, "liquidite_musd": liquidite,
-             "fx_comptes": change.get(r["devise_comptes"]), "resultat_net_ttm": (r.get("trimestre") or {}).get("resultat_net_ttm")}
-        s["mesures"] = A.mesures(s)
-        s["financier"] = A.type_financier(s.get("secteur_gics"), {"industry": r.get("industrie")}, r["annuel"][0])
         societes.append(s)
     # Une société cotée plusieurs fois n'apparaît qu'une fois (cotation la plus liquide)
     avant = len(societes)
@@ -358,59 +351,10 @@ def publier(base: dict, config: dict, change: dict, data: Path, aujourdhui: date
     # 2. Notes, textes, pépites
     entreprises, candidats = [], []
     for s in societes:
-        m = s["mesures"]
-        m.update(A.comparer(m, s.get("secteur_gics"), s["region"], med))
-        n = A.notes(m, s["financier"])
-        g = A.note_globale(n, config["ponderations_financieres"] if s["financier"] else config["ponderations"])
-        if g["note"] is None:
+        r = analyser_societe(s, med, config, pays_json, zones, zone_par_pays, aujourdhui)
+        if not r:
             continue
-        ind = A.indicateurs_affiches(m, n)
-        conf = A.confiance(s, g, aujourdhui)
-        a0 = s["annuel"][0]
-        fx = s["fx_comptes"]
-        montants = {}
-        for cle, v in (("ca", a0.get("ca")), ("resultat_net", a0.get("resultat_net")), ("fcf", a0.get("fcf")), ("dette_nette", m.get("dette_nette"))):
-            if v is not None:
-                montants[cle] = {"local": v, "usd": v * fx if fx else None, "local_texte": A.montant_texte(v, s["devise_comptes"]),
-                                 "usd_texte": A.montant_texte(v * fx, "$") if fx else "n. d."}
-        secteur_gics = s.get("secteur_gics")
-        nom_s, slug = U.GICS.get(secteur_gics, ("Non classé", "non-classe"))
-        pays_j = pays_json.get(s["pays"])
-        phase = zones.get(zone_par_pays.get(s["pays"], "monde"))
-        ctx = A.ajustement_contexte(pays_j.get("note") if pays_j else None, phase, config["contexte"])
-        crit = A.criteres_pepite(m, n, s["financier"], config["pepites"])
-        verdict = A.verdict(ind, g["note"])
-        off = s.get("officiel") or {}
-        e = {
-            "ticker": s["ticker"], "nom": s["nom"], "pays": s["pays"], "region": s["region"],
-            "secteur": f"{s['pays']}-{slug}", "secteur_gics": secteur_gics, "secteur_nom": nom_s,
-            "financier": s["financier"], "devise": s["devise_comptes"], "devise_cours": s["devise_cours"],
-            "capitalisation_md": round(s["capitalisation_usd"] / 1e9, 2) if s.get("capitalisation_usd") else None,
-            "liquidite_musd": round(s["liquidite_musd"], 1) if s.get("liquidite_musd") is not None else None,
-            "note": g["note"], "niveau": A.niveau(g["note"]), "note_brute": g["brute"], "couverture": g["couverture"],
-            "verdict": verdict, "confiance": conf, "indicateurs": ind,
-            "fscore": m.get("fscore"), "alertes": m.get("alertes", []),
-            "momentum": {"m3": m.get("momentum_3m"), "m6": m.get("momentum_6m"), "m12": m.get("momentum_12m")},
-            "valorisation": {k: (round(v, 2) if isinstance(v, float) else v) for k, v in m.items()
-                             if k.startswith(("per", "ev_ebitda")) and not k.endswith("_negatif")},
-            "contre_scenario": A.contre_scenario(m, ind), "montants": montants,
-            "contexte": {"ajustement": ctx["points"], "details": ctx["details"], "note_ajustee": round(g["note"] + ctx["points"], 1),
-                         "phase": phase, "note_pays": pays_j.get("note") if pays_j else None},
-            "pepite": False, "qpr": False, "criteres_pepite": crit["criteres"],
-            "holding": A.est_holding(s["nom"], s.get("industrie"), s["ticker"], config["pepites"], s.get("secteur_gics")),
-            "industrie": s.get("industrie"), "analystes": s.get("analystes"),
-            "autres_cotations": s.get("autres_cotations", []),
-            "sources": {
-                "comptes": f"{s['source_officielle']} + Yahoo Finance" if s.get("source_officielle") else "Yahoo Finance (yfinance)",
-                "officielle": s.get("source_officielle"), "verification": s.get("verification"),
-                "rapport_officiel": off.get("url"), "exercice": a0.get("fin"),
-                "date_cours": s["cours"][-1][0], "maj_comptes": s.get("maj_comptes"), "ancienne": bool(s.get("ancienne")),
-                "composition": s.get("source_composition"),
-            },
-            "agents": {"entreprises": {"note": g["note"], "texte": verdict}},
-            "etude_complete": A.etude(s["nom"], m, ind, montants, s["devise_comptes"]),
-            "surveillance": s.get("surveillance", False),
-        }
+        e, m, ind, crit = r
         p = precedentes.get(s["ticker"])
         if p and p.get("note") is not None and p["note"] != e["note"]:
             e["precedent"] = {"note": p["note"]}
@@ -442,7 +386,8 @@ def publier(base: dict, config: dict, change: dict, data: Path, aujourdhui: date
                             "industrie": e["industrie"], "capitalisation_md": e["capitalisation_md"], "analystes": e["analystes"],
                             "note": e["note"], "contexte": e["contexte"], "verdict": e["verdict"], "confiance": e["confiance"]["niveau"],
                             "cles": {k: ind[k]["affichage"] for k in ("croissance_ca", "marge_op", "per_secteur", "roe", "fscore") if k in ind},
-                            "autres_cotations": e["autres_cotations"], "revue_critique": e["revue_critique"]})
+                            "autres_cotations": e["autres_cotations"], "revue_critique": e["revue_critique"],
+                            "recommandation": R.resume(e["recommandation"])})
 
     # 4. Secteurs par pays (bulles des fiches pays)
     secteurs = {}
@@ -515,7 +460,7 @@ def publier(base: dict, config: dict, change: dict, data: Path, aujourdhui: date
     meta = dict(version_agent=VERSION_AGENT, mise_a_jour_precedente=(ancien or {}).get("meta", {}).get("genere_le") if precedentes else None,
                 sources=sources_utilisees, nombre=len(entreprises), devise_capitalisation="USD",
                 fiches="data/entreprises/fiches/<ticker>.json",
-                medianes={f"{k[0]}|{k[1] or 'monde'}": v for k, v in med.items() if k[1] is None})
+                medianes={f"{k[0]}|{k[1] or 'monde'}": v for k, v in med.items()})
     ecrire_json(data / "entreprises.json", enveloppe(legeres, "agent-entreprises", fictif=False, **meta), compact=True)
     ecrire_json(data / "secteurs.json", enveloppe(sorted(liste_secteurs, key=lambda s: (s["pays"], -s["capitalisation_md"])), "agent-entreprises",
                                                   fictif=False, version_agent=VERSION_AGENT, classification="GICS (11 secteurs)", devise_capitalisation="USD"))
@@ -539,6 +484,90 @@ def publier(base: dict, config: dict, change: dict, data: Path, aujourdhui: date
             "divergences": sum(1 for e in entreprises if (e["sources"]["verification"] or {}).get("statut") == "divergent")}
 
 
+def analyser_societe(s: dict, med: dict, config: dict, pays_json: dict, zones: dict, zone_par_pays: dict,
+                     aujourdhui: date, revue: bool = False) -> tuple[dict, dict, dict, dict] | None:
+    """Analyse complète d'une société (mesures déjà calculées dans s["mesures"]) : comparaison sectorielle, notes,
+    verdict, confiance, contexte, critères de pépite, recommandation. Partagée avec l'analyse à la demande.
+    Renvoie (fiche, mesures, indicateurs affichés, critères de pépite), ou None si la société ne peut être notée."""
+    m = s["mesures"]
+    m.update(A.comparer(m, s.get("secteur_gics"), s["region"], med))
+    n = A.notes(m, s["financier"])
+    g = A.note_globale(n, config["ponderations_financieres"] if s["financier"] else config["ponderations"])
+    if g["note"] is None:
+        return None
+    ind = A.indicateurs_affiches(m, n)
+    conf = A.confiance(s, g, aujourdhui)
+    a0 = s["annuel"][0]
+    fx = s.get("fx_comptes")
+    montants = {}
+    for cle, v in (("ca", a0.get("ca")), ("resultat_net", a0.get("resultat_net")), ("fcf", a0.get("fcf")), ("dette_nette", m.get("dette_nette"))):
+        if v is not None:
+            montants[cle] = {"local": v, "usd": v * fx if fx else None, "local_texte": A.montant_texte(v, s["devise_comptes"]),
+                             "usd_texte": A.montant_texte(v * fx, "$") if fx else "n. d."}
+    secteur_gics = s.get("secteur_gics")
+    nom_s, slug = U.GICS.get(secteur_gics, ("Non classé", "non-classe"))
+    pays_j = pays_json.get(s["pays"])
+    phase = zones.get(zone_par_pays.get(s["pays"], "monde"))
+    ctx = A.ajustement_contexte(pays_j.get("note") if pays_j else None, phase, config["contexte"])
+    crit = A.criteres_pepite(m, n, s["financier"], config["pepites"])
+    verdict = A.verdict(ind, g["note"])
+    contre = A.contre_scenario(m, ind)
+    off = s.get("officiel") or {}
+    devise_3m = (((pays_j or {}).get("detail") or {}).get("devise_3m") or {}).get("valeur")
+    revue_c = A.revue_critique(s, m, ind, pays_j, devise_3m)
+    reco = R.recommander(s, m, g["note"], conf["niveau"], revue_c["risques"] + contre, config["recommandation"])
+    e = {
+        "ticker": s["ticker"], "nom": s["nom"], "pays": s["pays"], "region": s["region"],
+        "secteur": f"{s['pays']}-{slug}", "secteur_gics": secteur_gics, "secteur_nom": nom_s,
+        "financier": s["financier"], "devise": s["devise_comptes"], "devise_cours": s["devise_cours"],
+        "capitalisation_md": round(s["capitalisation_usd"] / 1e9, 2) if s.get("capitalisation_usd") else None,
+        "liquidite_musd": round(s["liquidite_musd"], 1) if s.get("liquidite_musd") is not None else None,
+        "note": g["note"], "niveau": A.niveau(g["note"]), "note_brute": g["brute"], "couverture": g["couverture"],
+        "verdict": verdict, "confiance": conf, "indicateurs": ind,
+        "fscore": m.get("fscore"), "alertes": m.get("alertes", []),
+        "momentum": {"m3": m.get("momentum_3m"), "m6": m.get("momentum_6m"), "m12": m.get("momentum_12m")},
+        "valorisation": {k: (round(v, 2) if isinstance(v, float) else v) for k, v in m.items()
+                         if k.startswith(("per", "ev_ebitda")) and not k.endswith("_negatif")},
+        "contre_scenario": contre, "montants": montants,
+        "contexte": {"ajustement": ctx["points"], "details": ctx["details"], "note_ajustee": round(g["note"] + ctx["points"], 1),
+                     "phase": phase, "note_pays": pays_j.get("note") if pays_j else None},
+        "pepite": False, "qpr": False, "criteres_pepite": crit["criteres"],
+        "holding": A.est_holding(s["nom"], s.get("industrie"), s["ticker"], config["pepites"], secteur_gics),
+        "industrie": s.get("industrie"), "analystes": s.get("analystes"),
+        "autres_cotations": s.get("autres_cotations", []),
+        "recommandation": reco,
+        "sources": {
+            "comptes": f"{s['source_officielle']} + Yahoo Finance" if s.get("source_officielle") else "Yahoo Finance (yfinance)",
+            "officielle": s.get("source_officielle"), "verification": s.get("verification"),
+            "rapport_officiel": off.get("url"), "exercice": a0.get("fin"),
+            "date_cours": s["cours"][-1][0], "maj_comptes": s.get("maj_comptes"), "ancienne": bool(s.get("ancienne")),
+            "composition": s.get("source_composition"),
+        },
+        "agents": {"entreprises": {"note": g["note"], "texte": verdict}},
+        "etude_complete": A.etude(s["nom"], m, ind, montants, s["devise_comptes"]),
+        "surveillance": s.get("surveillance", False),
+    }
+    if revue:
+        e["revue_critique"] = revue_c
+    return e, m, ind, crit
+
+
+def mesurer(r: dict, change: dict, cfg_u: dict) -> dict:
+    """Société de la base → société prête à analyser : cours, capitalisation et liquidité en dollars, mesures."""
+    prix = r["cours"][-1][1] / (r.get("centimes") or 1)
+    fx_c = change.get(r["devise_cours"])
+    cap = r["actions"] * prix * fx_c if r.get("actions") and fx_c else None
+    echange = r["cours"][-1][2] if len(r["cours"][-1]) > 2 else 0
+    liquidite = echange / (r.get("centimes") or 1) * fx_c / 1e6 if echange and fx_c else None
+    region = cfg_u["pays"].get(r["pays"], {}).get("region", "autre")
+    s = {**r, "region": region, "capitalisation_usd": cap, "liquidite_musd": liquidite, "prix": prix, "fx_cours": fx_c,
+         "date_cours": r["cours"][-1][0], "fx_comptes": change.get(r["devise_comptes"]),
+         "resultat_net_ttm": (r.get("trimestre") or {}).get("resultat_net_ttm")}
+    s["mesures"] = A.mesures(s)
+    s["financier"] = A.type_financier(s.get("secteur_gics"), {"industry": r.get("industrie")}, r["annuel"][0])
+    return s
+
+
 CHAMPS_LEGERS = ("ticker", "nom", "pays", "region", "secteur", "secteur_gics", "secteur_nom", "financier", "devise",
                  "capitalisation_md", "note", "niveau", "verdict", "indicateurs", "pepite", "qpr", "precedent", "surveillance",
                  "autres_cotations")
@@ -554,6 +583,8 @@ def leger(e: dict) -> dict:
     r["confiance"] = {"niveau": e["confiance"]["niveau"]}
     r["contexte"] = {"ajustement": e["contexte"]["ajustement"], "note_ajustee": e["contexte"]["note_ajustee"]}
     r["fiche"] = f"data/entreprises/fiches/{fichier_fiche(e['ticker'])}"
+    if e.get("recommandation"):
+        r["recommandation"] = R.resume(e["recommandation"])
     return r
 
 

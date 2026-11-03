@@ -207,7 +207,30 @@ python -m agents.entreprises --mode assembler --lots lot*.json
 python -m agents.entreprises --mode quotidien
 ```
 
-**Liste de surveillance** : ajouter une ligne dans `config/surveillance.json`, par exemple `{"ticker": "ASML.AS", "pays": "NL"}`. Le ticker est le symbole Yahoo Finance ; le pays, le code à 2 lettres d'un pays suivi. La société est analysée à la révision suivante, même hors de l'univers et quelle que soit sa taille.
+**Liste de surveillance** : chaque analyse à la demande y ajoute la société ; on peut aussi ajouter une ligne dans `config/surveillance.json`, par exemple `{"ticker": "ASML.AS", "pays": "NL"}`. Le ticker est le symbole Yahoo Finance ; le pays, le code à 2 lettres d'un pays suivi. La société est analysée à la révision suivante, même hors de l'univers et quelle que soit sa taille.
+
+## Analyse à la demande
+
+Analyse d'une société précise avec la même grille que l'agent entreprises (mêmes sources dans le même ordre : SEC, ESEF, EDINET, DART, Yahoo ; mêmes indicateurs, F-score, signaux d'alerte, notes, verdict, confiance, « Ce qui pourrait me donner tort », revue critique, ajustement de contexte), plus le rang dans le secteur parmi les sociétés déjà analysées et la recommandation.
+
+**Lancer une analyse.** Dans l'appli : bouton **Analyser une entreprise** (écran Pépites, écran Mes analyses, ou recherche sans résultat) → saisir un ticker Yahoo (`ASML`, `MC.PA`, `7203.T`) ou un nom (« Hermès ») → la page GitHub de nouvelle issue s'ouvre, titre prérempli « Analyse : … » → **Submit**. Résultat dans 2 à 5 minutes. On peut aussi ouvrir l'issue à la main.
+
+**Ce que fait le workflow** (`.github/workflows/analyse-demande.yml`, déclenché par `issues: opened` quand le titre commence par « Analyse ») :
+- si l'auteur de l'issue n'est pas le propriétaire du dépôt : commentaire poli, fermeture, rien n'est lancé ;
+- résolution de la saisie avec la recherche Yahoo : ticker exact retenu tel quel ; pour un nom, cotation la plus liquide (montant moyen échangé sur 3 mois), les autres candidates sont citées ; aucune action : « introuvable » avec des suggestions ;
+- analyse (`python -m agents.analyse_demande`), écriture de `data/analyses/<TICKER>.json` et `data/analyses/index.json`, ajout de la société à `config/surveillance.json` (elle est ensuite suivie par l'agent entreprises) ;
+- commentaire en français sur l'issue (note /100, verdict, recommandation, 5 indicateurs clés, principaux risques, niveau de confiance, lien `https://jcn1996.github.io/Plateforme-eco/#analyse-TICKER`), puis fermeture ;
+- en cas d'erreur : échec enregistré (écran Santé, carte « Analyse à la demande »), signalé dans l'issue, issue fermée.
+
+**Dans l'appli** : icône « document » de l'en-tête → **Mes analyses** (date, note, verdict, recommandation ; les demandes dont l'issue est encore ouverte s'affichent « en cours ») ; toucher une ligne ouvre la fiche complète. Lien direct : `#analyse-TICKER`.
+
+Test sans réseau, avec des événements simulés : `python -m unittest agents.analyse_demande.tests.test_agent`. Essai réel : écrire un fichier d'événement (`{"issue": {"number": 1, "title": "Analyse : ASML", "user": {"login": "jcn1996"}}, "repository": {"owner": {"login": "jcn1996"}}}`) puis `python -m agents.analyse_demande --evenement evenement.json --sortie /tmp/sortie`.
+
+## Recommandations et fiabilité
+
+Chaque fiche (agent entreprises, pépites, analyses à la demande) porte une recommandation à 12 mois, en deux lectures : **si non détenu** (Acheter / Acheter sur repli / Attendre / Éviter) et **si détenu** (Renforcer / Conserver / Alléger / Vendre), avec une fourchette de valeur estimée par deux méthodes (multiples comparés à la médiane du secteur ; flux de trésorerie disponibles actualisés, hypothèses affichées), l'écart au cours, le prix de repli, 2 ou 3 conditions précises qui invalideraient la recommandation et les principaux risques. « Acheter » ou « Vendre » exigent une confiance « moyen » ou « élevé » et au moins 3 signaux concordants (note, valorisation, momentum, qualité comptable) ; un signal d'alerte comptable interdit « Acheter ». Règles et seuils : `agents/entreprises/recommandation.md` et section `recommandation` de `agents/entreprises/config.json`.
+
+Suivi : `data/historique/recommandations.json` (date, cours, recommandation, fourchette), écrit par `python -m agents.entreprises.suivi`, lancé juste avant chaque poussée par les workflows « Agent entreprises » et « Analyse à la demande » (`outils/pousser_avec_suivi.sh`). Performance à 3, 6 et 12 mois comparée au MSCI World (ETF URTH) et taux de réussite par type, affichés dans l'écran **Fiabilité des recommandations** (depuis Mes analyses ou une fiche).
 
 ## Réveil externe (cron-job.org)
 
@@ -292,6 +315,7 @@ js/sante.js           écran « Santé des agents »
 js/planning.js        planning cron des agents : statut (OK, en pause, en retard, en panne)
 js/macro.js           écran « Vue macro » et rubrique « Agent macro » de la fiche pays
 js/pepites.js         écran « Pépites »
+js/analyses.js        analyse à la demande (bouton, « Mes analyses »), écran « Fiabilité des recommandations »
 js/panneau-pays.js    fiches pays et secteur
 js/panneau-entreprise.js  fiche entreprise
 js/portefeuille.js    écran portefeuille
@@ -304,9 +328,12 @@ data/pays.json        données réelles des pays (produites par l'agent pays)
 data/historique/pays/ historique quotidien des notes de l'agent pays
 data/recap/           récapitulatif de chaque exécution de l'agent pays
 data/journal/         journal des sources en échec
+data/analyses/        analyses à la demande (index.json et une fiche par société)
+data/historique/recommandations.json  recommandations enregistrées et leur performance
+config/surveillance.json  liste de surveillance (complétée par les analyses à la demande)
 data/flux.json        flux de capitaux entre pays (fictifs)
 data/*.json           autres données (fictives pour l'instant)
-agents/               agents Python (agents/commun : téléchargement, cache, journal, écriture ; agents/pays : agent pays ; agents/marches : agent marchés ; agents/macro : agent macro ; agents/rattrapage : relance des exécutions manquées)
+agents/               agents Python (agents/commun : téléchargement, cache, journal, écriture ; agents/pays : agent pays ; agents/marches : agent marchés ; agents/macro : agent macro ; agents/rattrapage : relance des exécutions manquées ; agents/entreprises : agent entreprises, recommandation et suivi ; agents/analyse_demande : analyse à la demande)
 .github/workflows/    exécution planifiée des agents (GitHub Actions)
 data/countries-110m.json, countries-50m.json  frontières des pays (voir data/LICENCE-countries-110m.txt)
 outils/generer_donnees_fictives.py  régénère les données fictives

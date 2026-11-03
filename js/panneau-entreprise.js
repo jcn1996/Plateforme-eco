@@ -7,6 +7,7 @@
    ========================================================================== */
 
 import { el, nombre, AGENTS, tendanceNote, variation } from './outils.js';
+import { pastilleReco } from './analyses.js';
 import { enteteFiche, listeIndicateurs, titreSection, carteAgent, piedFraicheur } from './panneau-pays.js';
 
 /** Ordre d'affichage des onglets. */
@@ -68,7 +69,9 @@ export function ficheEntreprise(d, e, nav = {}) {
       `Autres cotations : ${e.autres_cotations.map((c) => `${c.ticker} (${d.paysParCode.get(c.pays)?.nom ?? c.pays})`).join(', ')} · cotation retenue : la plus liquide`) : null,
     e.holding ? el('p', { class: 'entreprise-cotations' }, 'Holding ou société d’investissement : exclue des pépites (la décote sur l’actif net n’est pas mesurée).') : null,
     blocConfiance(e.confiance),
+    blocRecommandation(e.recommandation, nav),
     blocContexte(e.contexte),
+    blocRang(e.rang_secteur),
 
     el('section', {},
       titreSection('Indicateurs clés', e.financier ? `critères adaptés (${e.financier === 'banque' ? 'banque' : e.financier === 'assurance' ? 'assurance' : 'société financière'})` : 'note sur 100 par indicateur'),
@@ -92,7 +95,10 @@ export function ficheEntreprise(d, e, nav = {}) {
 
     etudeComplete(e),
     blocSources(e),
-    piedFraicheur(d.meta.entreprises),
+    e.analyseDemande
+      ? el('p', { class: 'fraicheur' }, `Analyse à la demande du ${dateFr(e.demande?.date)}${e.demande?.issue ? ` · issue #${e.demande.issue}` : ''} · même grille que l’agent entreprises (règles, sans IA)`,
+        e.demande?.url_issue ? [' · ', el('a', { href: e.demande.url_issue, target: '_blank', rel: 'noopener' }, 'demande ↗')] : null)
+      : piedFraicheur(d.meta.entreprises),
 
     el('p', { class: 'mention-legale' }, reel
       ? 'Données réelles issues de sources publiques (sources officielles et Yahoo Finance), analysées automatiquement par l’agent entreprises. Ne constitue pas un conseil en investissement.'
@@ -239,4 +245,68 @@ function etudeComplete(e) {
     },
   }, "Voir l'étude complète");
   return el('section', { class: 'etude' }, bouton, corps);
+}
+
+function prix(v, devise) {
+  if (v == null) return 'n. d.';
+  return `${nombre(v, Math.abs(v) < 1000 ? 2 : 0)} ${devise ?? ''}`.trim();
+}
+
+/** Recommandation à 12 mois : deux lectures, fourchette de valeur (deux méthodes), signaux, conditions d'invalidation, risques. */
+function blocRecommandation(r, nav = {}) {
+  if (!r) return null;
+  // Résumé de data/entreprises.json ({n, d, e}) tant que la fiche détaillée n'est pas chargée
+  if (!r.signaux) {
+    return el('section', { class: 'carte recommandation' }, titreSection('Recommandation', 'horizon 12 mois'),
+      el('div', { class: 'reco-lectures' },
+        el('div', {}, el('small', {}, 'Si non détenu'), pastilleReco(r)),
+        el('div', {}, el('small', {}, 'Si détenu'), pastilleReco(r, true))));
+  }
+  const v = r.valeur;
+  const sens = (s) => (s > 0 ? 'favorable' : s < 0 ? 'défavorable' : 'neutre');
+  return el('section', { class: 'carte recommandation' },
+    titreSection('Recommandation', `horizon ${r.horizon_mois} mois`),
+    el('div', { class: 'reco-lectures' },
+      el('div', {}, el('small', {}, 'Si non détenu'), pastilleReco({ n: r.si_non_detenu })),
+      el('div', {}, el('small', {}, 'Si détenu'), pastilleReco({ d: r.si_detenu }, true)),
+    ),
+    el('dl', { class: 'reco-valeur' },
+      el('dt', {}, 'Cours'), el('dd', { class: 'mono' }, `${prix(r.cours, r.devise)}`, el('small', {}, ` au ${dateFr(r.date_cours)}`)),
+      v ? [el('dt', {}, 'Valeur estimée'), el('dd', { class: 'mono' }, `${prix(v.bas, r.devise)} – ${prix(v.haut, r.devise)}`,
+        el('small', {}, ` centrale ${prix(v.centrale, r.devise)}`))] : [el('dt', {}, 'Valeur estimée'), el('dd', {}, 'non calculable')],
+      v?.ecart_pct != null ? [el('dt', {}, 'Écart au cours'), el('dd', { class: `mono ${v.ecart_pct > 0 ? 'hausse' : 'baisse'}` }, variation(v.ecart_pct, 1))] : null,
+      r.prix_repli ? [el('dt', {}, 'Passerait à « Acheter »'), el('dd', { class: 'mono' }, `sous ${prix(r.prix_repli, r.devise)}`)] : null,
+    ),
+    v && !v.fiable ? el('p', { class: 'reco-reserve' }, `Estimation non exploitable pour le signal de valorisation : ${v.reserve}.`) : null,
+    el('p', { class: 'fiche-verdict' }, r.justification),
+    el('ul', { class: 'reco-signaux' }, r.signaux.map((s) => el('li', { class: `reco-signal reco-signal--${s.sens > 0 ? 'pos' : s.sens < 0 ? 'neg' : 'neutre'}` },
+      el('span', { 'aria-hidden': 'true' }, s.sens > 0 ? '▲' : s.sens < 0 ? '▼' : '•'), el('strong', {}, s.libelle), ` : ${s.texte}`,
+      el('span', { class: 'visuellement-cache' }, ` (${sens(s.sens)})`)))),
+    el('h4', {}, 'Ce qui invaliderait la recommandation'),
+    el('ul', { class: 'contre-scenario' }, r.conditions_invalidation.map((c) => el('li', {}, c))),
+    r.risques?.length ? [el('h4', {}, 'Principaux risques'), el('ul', { class: 'contre-scenario' }, r.risques.map((c) => el('li', {}, c)))] : null,
+    v?.methodes?.length ? el('details', { class: 'detail-repliable' },
+      el('summary', {}, 'Méthodes et hypothèses'),
+      el('ul', { class: 'liste-sources' }, v.methodes.map((m) => el('li', {}, el('strong', {}, `${m.nom} : `), `${prix(m.bas, r.devise)} – ${prix(m.haut, r.devise)}`,
+        el('br', {}),
+        m.cle === 'dcf'
+          ? `Croissance initiale ${nombre(m.hypotheses.croissance, 1)} % ramenée à ${nombre(m.hypotheses.croissance_terminale, 1)} % en ${m.hypotheses.annees} ans ; taux d’actualisation ${nombre(m.hypotheses.taux_actualisation, 1)} % ; fourchette : ${m.hypotheses.fourchette}.`
+          : `${(m.hypotheses.references ?? []).join(' ; ')} (${m.hypotheses.base}).`)))) : null,
+    nav.ouvrirFiabilite ? el('button', { type: 'button', class: 'lien', onclick: nav.ouvrirFiabilite }, 'Fiabilité des recommandations passées ›') : null,
+    el('p', { class: 'reco-mention' }, r.mention),
+  );
+}
+
+/** Rang dans le secteur (analyses à la demande). */
+function blocRang(r) {
+  if (!r?.monde) return null;
+  const rang = (x) => `${x.rang}${x.rang === 1 ? 're' : 'e'} sur ${x.total}`;
+  return el('section', { class: 'carte' },
+    titreSection('Rang dans le secteur', `${r.secteur_nom} · sociétés déjà analysées`),
+    el('dl', { class: 'reco-valeur' },
+      el('dt', {}, 'Monde'), el('dd', { class: 'mono' }, rang(r.monde), el('small', {}, ` note médiane ${r.monde.note_mediane}/100`)),
+      r.region ? [el('dt', {}, r.region.nom), el('dd', { class: 'mono' }, rang(r.region), el('small', {}, ` note médiane ${r.region.note_mediane}/100`))] : null,
+    ),
+    r.meilleures?.length ? el('p', { class: 'fiche-verdict' }, 'Mieux notées du secteur : ', r.meilleures.map((m) => `${m.nom} (${m.note})`).join(', '), '.') : null,
+  );
 }

@@ -5,9 +5,10 @@
    ========================================================================== */
 
 import { el, nombre, classeNote, normaliser } from './outils.js';
+import { boutonAnalyser } from './analyses.js';
 
 const MAX_RESULTATS = 25;
-const TYPES = { pays: 'Pays', secteur: 'Secteur', entreprise: 'Entreprise' };
+const TYPES = { pays: 'Pays', secteur: 'Secteur', entreprise: 'Entreprise', analyse: 'Analyse' };
 
 /** Index de recherche : un élément par pays, secteur et entreprise. */
 function construireIndex(d) {
@@ -24,6 +25,11 @@ function construireIndex(d) {
     ...d.entreprises.map((e) => ({
       type: 'entreprise', route: { type: 'entreprise', id: e.ticker }, nom: e.nom, note: e.note,
       info: `${e.ticker} · ${d.secteurParId.get(e.secteur)?.nom ?? ''} · ${nomPays(e.pays)}`, cles: [e.nom, e.ticker],
+    })),
+    // Analyses à la demande de sociétés hors de l'univers de l'agent entreprises
+    ...(d.analyses ?? []).filter((a) => !d.entrepriseParTicker.has(a.ticker)).map((a) => ({
+      type: 'analyse', route: { type: 'analyse', id: a.ticker }, nom: a.nom, note: a.note,
+      info: `${a.ticker} · ${a.secteur_nom ?? ''} · analyse à la demande`, cles: [a.nom, a.ticker],
     })),
   ].map((x) => ({ ...x, cles: x.cles.map(normaliser) }));
 }
@@ -56,7 +62,7 @@ export function initialiserRecherche(d, { bouton, panneau, champ, liste, fermer 
       liste.replaceChildren(el('li', { class: 'recherche-aide' }, 'Tapez un pays, un secteur, une entreprise ou un ticker (ex. « bresil », « semi », « HANB »).'));
       return;
     }
-    const ordreType = { pays: 0, secteur: 1, entreprise: 2 };
+    const ordreType = { pays: 0, secteur: 1, entreprise: 2, analyse: 3 };
     resultats = index
       .map((x) => ({ x, s: score(x, requete) }))
       .filter((r) => r.s > 0)
@@ -76,7 +82,8 @@ export function initialiserRecherche(d, { bouton, panneau, champ, liste, fermer 
           ),
           el('span', { class: 'resultat-note mono' }, nombre(r.note)),
         )))
-      : [el('li', { class: 'recherche-aide' }, `Aucun résultat pour « ${champ.value.trim()} ».`)]));
+      : [el('li', { class: 'recherche-aide' }, `Aucun résultat pour « ${champ.value.trim()} » parmi les sociétés déjà analysées.`),
+        el('li', { class: 'recherche-aide' }, boutonAnalyser(champ.value.trim(), `Analyser « ${champ.value.trim()} »`))]));
   };
 
   function choisir(r) {

@@ -277,7 +277,9 @@ class Sec:
 def _mots(nom: str) -> set[str]:
     t = "".join(c for c in unicodedata.normalize("NFD", nom.lower()) if unicodedata.category(c) != "Mn")
     vides = {"sa", "se", "ag", "nv", "plc", "spa", "ab", "the", "group", "holding", "holdings", "de", "la", "et", "and", "co",
-             "company", "societe", "europeenne", "asa", "oyj", "publ", "bv", "ltd", "limited", "inc", "corp", "corporation"}
+             "company", "societe", "europeenne", "asa", "oyj", "publ", "bv", "ltd", "limited", "inc", "corp", "corporation",
+             # formes juridiques longues (ex. « Hermès International Société en commandite par actions »)
+             "en", "commandite", "par", "actions", "anonyme", "sca", "kgaa", "aktiengesellschaft", "societas", "europaea", "nv"}
     return {m for m in re.findall(r"[a-z0-9]+", t) if m not in vides and len(m) > 1}
 
 
