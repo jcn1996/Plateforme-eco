@@ -205,6 +205,41 @@ python -m agents.entreprises --mode quotidien
 
 **Liste de surveillance** : ajouter une ligne dans `config/surveillance.json`, par exemple `{"ticker": "ASML.AS", "pays": "NL"}`. Le ticker est le symbole Yahoo Finance ; le pays, le code à 2 lettres d'un pays suivi. La société est analysée à la révision suivante, même hors de l'univers et quelle que soit sa taille.
 
+## Réveil externe (cron-job.org)
+
+Les tâches planifiées de GitHub (`schedule`) peuvent être retardées, voire sautées sans erreur. Un service externe appelle donc toutes les 15 minutes le workflow **Planificateur** (`.github/workflows/planificateur.yml`, déclenché uniquement par `workflow_dispatch`).
+
+À chaque appel, le planificateur (`agents/planificateur/`) :
+- lit l'heure UTC et les plannings (lignes `cron`) des workflows des agents ;
+- lance (`gh workflow run`) chaque agent dont le dernier créneau prévu n'est pas encore fait :
+  - agent marchés : selon son créneau ;
+  - agents pays, macro et entreprises : une fois par jour à leur heure ;
+  - révision complète du samedi ;
+  - maintien du lundi.
+- ne lance jamais deux fois le même créneau : il se fonde sur `derniere_execution` des journaux. Une nouvelle tentative a lieu après 60 min sans résultat, deux tentatives au plus, et rien n'est lancé si une exécution est déjà en cours.
+- trace ses lancements dans `data/journal/planificateur.json`. Ce fichier n'est commité que s'il y a eu un lancement, ou au plus toutes les 20 min pour indiquer le dernier appel.
+
+Les plannings GitHub restent actifs en secours ; la `concurrency` de chaque workflow évite les doublons. L'écran Santé affiche le dernier appel reçu, et le planificateur passe « en panne » sans appel depuis plus de 45 minutes.
+
+**Mise en place** :
+1. **Jeton GitHub** : GitHub → Settings → Developer settings → Personal access tokens → **Fine-grained tokens** → Generate new token.
+   - Accès : *Only select repositories* → `Plateforme-eco`.
+   - Permission : **Actions : Read and write**.
+   - Note la date d'expiration : il faudra renouveler le jeton.
+2. **Tâche sur cron-job.org** (Create cronjob) :
+   - **URL** : `https://api.github.com/repos/jcn1996/Plateforme-eco/actions/workflows/planificateur.yml/dispatches`
+   - **Planning** : toutes les 15 minutes.
+   - **Méthode** (onglet *Advanced*) : `POST`.
+   - **En-têtes** :
+     ```
+     Authorization: Bearer <token>
+     Accept: application/vnd.github+json
+     X-GitHub-Api-Version: 2022-11-28
+     ```
+   - **Corps** : `{"ref":"main"}`
+   - Réponse attendue : **204 No Content**. Un code 401 ou 403 signale un jeton invalide, expiré ou sans la permission Actions ; un 404, une URL ou un nom de workflow erroné.
+3. Vérifier dans l'onglet **Actions** qu'une exécution « Planificateur » apparaît après le premier appel.
+
 ## Santé des agents
 
 L'icône en forme de pouls, dans l'en-tête, ouvre l'écran **Santé des agents**. Une pastille rouge s'y affiche dès qu'un agent n'est pas « OK ».

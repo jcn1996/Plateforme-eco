@@ -1,0 +1,12 @@
+{
+  "_commentaire": "Planificateur. Les plannings (lignes cron) sont lus dans les workflows des agents ; ce fichier ne précise que les paramètres de lancement propres à certains créneaux et les workflows à ignorer.",
+  "ignores": ["planificateur.yml", "rattrapage.yml"],
+  "parametres": {
+    "agent-entreprises.yml": {"10 3 * * 6": {"mode": "complet"}, "*": {"mode": "quotidien"}}
+  },
+  "marge_minutes": 2,
+  "nouvelle_tentative_minutes": 60,
+  "tentatives_max": 2,
+  "battement_minutes": 20,
+  "panne_minutes": 45
+}

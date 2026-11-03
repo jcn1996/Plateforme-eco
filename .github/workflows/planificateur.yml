@@ -1,0 +1,56 @@
+# Planificateur : réveil externe des agents.
+# Les tâches planifiées de GitHub (schedule) peuvent être retardées ou sautées. Ce workflow est appelé
+# toutes les 15 minutes par un service externe (cron-job.org, voir le README, « Réveil externe ») ;
+# il lance chaque agent dont une exécution est due et pas encore faite (voir agents/planificateur/agent.py).
+# Les plannings GitHub des agents restent actifs en secours : leur « concurrency » évite les doublons.
+name: Planificateur
+
+on:
+  workflow_dispatch:   # uniquement : appel externe (API GitHub) ou bouton « Run workflow »
+
+permissions:
+  contents: write   # trace dans data/journal/planificateur.json
+  actions: write    # gh workflow run
+
+concurrency:
+  group: planificateur
+  cancel-in-progress: false
+
+jobs:
+  planificateur:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Récupérer le dépôt (branche main)
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Installer Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Lancer les agents dont une exécution est due
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCHE: main
+        run: python -m agents.planificateur
+
+      - name: Commiter la trace (seulement si elle a changé)
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/journal/planificateur.json data/journal/index.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "Rien de nouveau : pas de commit."
+            exit 0
+          fi
+          git commit -m "Planificateur : $(TZ=Europe/Paris date '+%d/%m %H:%M')"
+          for essai in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            git rebase --abort 2>/dev/null || true
+            sleep $((essai * 5))
+          done
+          exit 1
