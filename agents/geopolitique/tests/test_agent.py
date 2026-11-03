@@ -549,6 +549,13 @@ class TestDerniersCorrectifs(Base):
         analyse, _ = ia.valider(brut, e, cfg, sources)
         self.assertEqual(analyse["gravite"], 4)  # contestation ou violences : pas de plafond
 
+    def test_doublons_probables_dans_le_meme_lot(self):
+        evts = [{**evenement_synthetique(i, MAINTENANT, c), "pays": p} for i, (c, p) in
+                enumerate([("conflit", ["US", "IR"]), ("election", ["FR"]), ("commerce", ["CN"]), ("conflit", ["US", "IR"])])]
+        lots = ia.former_lots(evts, 3)
+        self.assertEqual([e["id"] for e in lots[0]][:2], ["evt-0", "evt-3"])  # même pays et catégorie : même lot
+        self.assertEqual(sum(len(l) for l in lots), 4)
+
     def test_reperes_de_gravite_dans_le_prompt(self):
         cfg = charger_config()
         e = evenement_synthetique(1, MAINTENANT)
