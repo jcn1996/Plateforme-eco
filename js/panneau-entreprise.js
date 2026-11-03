@@ -63,7 +63,10 @@ export function ficheEntreprise(d, e, nav = {}) {
     }),
 
     e.fiche && !e.detailCharge ? el('p', { class: 'fiche-verdict' }, 'Chargement du détail…') : null,
-    e.pepite ? el('p', { class: 'pepite-bandeau' }, el('strong', {}, 'Pépite candidate'), ' · tous les critères sont remplis ; revue critique ci-dessous') : null,
+    e.pepite || e.qpr ? el('p', { class: 'pepite-bandeau' }, el('strong', {}, e.pepite ? 'Pépite candidate' : 'Qualité à prix raisonnable'), ' · tous les critères sont remplis ; revue critique ci-dessous') : null,
+    e.autres_cotations?.length ? el('p', { class: 'entreprise-cotations' },
+      `Autres cotations : ${e.autres_cotations.map((c) => `${c.ticker} (${d.paysParCode.get(c.pays)?.nom ?? c.pays})`).join(', ')} · cotation retenue : la plus liquide`) : null,
+    e.holding ? el('p', { class: 'entreprise-cotations' }, 'Holding ou société d’investissement : exclue des pépites (la décote sur l’actif net n’est pas mesurée).') : null,
     blocConfiance(e.confiance),
     blocContexte(e.contexte),
 

@@ -155,9 +155,13 @@ L'agent entreprises se trouve dans `agents/entreprises/`. Les règles de conduit
 **Univers** : S&P 500 et les 150 plus grandes valeurs du S&P 400, puis les plus grosses positions des ETF iShares MSCI de chaque pays suivi, avec un plafond par pays (`config.json`) ; à cela s'ajoute la liste de surveillance personnelle (`config/surveillance.json`).
 - Filtre : capitalisation d'au moins 300 M$ et volume suffisant.
 - Doublons écartés : catégories d'actions (GOOGL / GOOG) et doubles cotations.
-- Si une source de composition échoue :
-  1. secours : SSGA SPY / MDY pour les États-Unis, filtre d'actions Yahoo ailleurs ;
-  2. sinon, dernière liste connue (`data/entreprises/univers.json`).
+- Ordre des sources de composition :
+  1. fichiers iShares (point d'accès CSV officiel de la page du fonds) ;
+  2. membres de l'indice national sur Wikipédia (CAC 40, DAX, FTSE 100, Nikkei 225, KOSPI 200…), classés par montant échangé ;
+  3. filtre d'actions Yahoo (désactivable : `"filtre_yahoo": false` dans `config.json`) ;
+  4. dernière liste connue (`data/entreprises/univers.json`), puis liste de départ, signalées « périmées » (l'agent passe alors « dégradé »).
+- États-Unis : SSGA SPY / MDY en secours d'iShares.
+- Une société cotée plusieurs fois n'apparaît qu'une fois : la cotation la plus liquide est gardée, les autres sont indiquées sur la fiche.
 
 **Comptes** :
 - États-Unis : SEC (API XBRL et flux des publications ; secret `SEC_USER_AGENT`).
@@ -181,7 +185,11 @@ Quand la source officielle et Yahoo s'écartent de plus de 5 %, la source offici
 
 Chaque société reçoit une note sur 100 (pondérations dans `config.json`), un verdict, un niveau de confiance et une rubrique « Ce qui pourrait me donner tort ».
 
-**Pépites candidates** (`data/pepites.json`) : sociétés qui remplissent tous les critères de `config.json`. Elles sont classées par note ajustée selon le contexte : note du pays et phase du cycle de sa zone, un ajustement modéré affiché à part. Chacune a une revue critique : risques, piège de valeur possible, risque de change, risque pays, points à vérifier soi-même et lien vers le dernier rapport officiel.
+**Pépites candidates** (`data/pepites.json`) : sociétés qui remplissent tous les critères de `config.json`, réparties en deux listes :
+- « Pépites » : capitalisation de 300 M$ à 20 Md$, peu suivies (au plus 8 analystes quand Yahoo le fournit) ;
+- « Qualité à prix raisonnable » : grandes sociétés.
+
+Au plus 3 sociétés par secteur dans chaque liste ; un avertissement apparaît quand une industrie ou un secteur est surreprésenté parmi les candidates. Les holdings et sociétés d'investissement sont exclues. Elles sont classées par note ajustée selon le contexte : note du pays et phase du cycle de sa zone, un ajustement modéré affiché à part. Chacune a une revue critique : risques, piège de valeur possible, risque de change, risque pays, points à vérifier soi-même et lien vers le dernier rapport officiel.
 
 **Exécution** (`.github/workflows/agent-entreprises.yml`) :
 - en semaine à 22 h 30 UTC : cours, momentum, valorisation, et révision des sociétés ayant publié ;

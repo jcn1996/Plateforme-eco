@@ -1,7 +1,7 @@
 {
   "_commentaire": "Configuration de l'agent entreprises. Seuils, pondérations et plafonds modifiables sans toucher au code.",
   "univers": {
-    "_commentaire": "Composition : 1) fichiers iShares (URL ci-dessous) ; 2) secours : SSGA SPY/MDY pour les États-Unis, filtre d'actions Yahoo (plus grosses capitalisations du pays) ailleurs ; 3) dernière liste connue (data/entreprises/univers.json).",
+    "_commentaire": "Composition : 1) fichiers iShares (point d'accès CSV officiel de la page du fonds) ; 2) membres de l'indice national sur Wikipédia (API MediaWiki), classés par montant échangé ; 3) filtre d'actions Yahoo si « filtre_yahoo » est vrai ; 4) dernière liste connue (data/entreprises/univers.json), puis liste de départ, signalées « périmées ». États-Unis : SSGA SPY/MDY en secours d'iShares. ARGT et GXG (Global X), VNM et EGPT (VanEck) ne sont pas des ETF iShares : ces pays passent directement aux secours.",
     "sp400_max": 150,
     "capitalisation_min_musd": 300,
     "volume_min_musd_jour": 1.0,
@@ -12,14 +12,49 @@
         "slug": "ishares-core-sp-500-etf",
         "verifie": true
       },
-      "IJH": {
-        "id": 239763,
-        "slug": "ishares-core-sp-midcap-etf",
-        "verifie": false
+      "EWJ": {
+        "id": 239665,
+        "slug": "ishares-msci-japan-etf",
+        "verifie": true
       },
       "EWY": {
         "id": 239681,
         "slug": "ishares-msci-south-korea-etf",
+        "verifie": true
+      },
+      "EWT": {
+        "id": 239686,
+        "slug": "ishares-msci-taiwan-etf",
+        "verifie": true
+      },
+      "INDA": {
+        "id": 239659,
+        "slug": "ishares-msci-india-etf",
+        "verifie": true
+      },
+      "EWZ": {
+        "id": 239612,
+        "slug": "ishares-msci-brazil-capped-etf",
+        "verifie": true
+      },
+      "EWW": {
+        "id": 239670,
+        "slug": "ishares-msci-mexico-capped-etf",
+        "verifie": true
+      },
+      "MCHI": {
+        "id": 239619,
+        "slug": "ishares-msci-china-etf",
+        "verifie": true
+      },
+      "EWG": {
+        "id": 239650,
+        "slug": "ishares-msci-germany-etf",
+        "verifie": true
+      },
+      "EWQ": {
+        "id": 239648,
+        "slug": "ishares-msci-france-etf",
         "verifie": true
       },
       "EWU": {
@@ -27,104 +62,89 @@
         "slug": "ishares-msci-united-kingdom-etf",
         "verifie": true
       },
-      "EWJ": {
-        "id": 239665,
-        "slug": "ishares-msci-japan-etf",
-        "verifie": false
-      },
-      "EWT": {
-        "id": 239686,
-        "slug": "ishares-msci-taiwan-etf",
-        "verifie": false
-      },
-      "INDA": {
-        "id": 239659,
-        "slug": "ishares-msci-india-etf",
-        "verifie": false
-      },
-      "EWZ": {
-        "id": 239612,
-        "slug": "ishares-msci-brazil-etf",
-        "verifie": false
-      },
-      "EWW": {
-        "id": 239676,
-        "slug": "ishares-msci-mexico-etf",
-        "verifie": false
-      },
-      "MCHI": {
-        "id": 239619,
-        "slug": "ishares-msci-china-etf",
-        "verifie": false
-      },
-      "EWG": {
-        "id": 239650,
-        "slug": "ishares-msci-germany-etf",
-        "verifie": false
-      },
-      "EWQ": {
-        "id": 239648,
-        "slug": "ishares-msci-france-etf",
-        "verifie": false
-      },
       "EWI": {
-        "id": 239654,
-        "slug": "ishares-msci-italy-etf",
-        "verifie": false
+        "id": 239664,
+        "slug": "ishares-msci-italy-capped-etf",
+        "verifie": true
       },
       "EWP": {
-        "id": 239680,
-        "slug": "ishares-msci-spain-etf",
-        "verifie": false
+        "id": 239683,
+        "slug": "ishares-msci-spain-capped-etf",
+        "verifie": true
       },
       "EWN": {
-        "id": 239677,
+        "id": 239671,
         "slug": "ishares-msci-netherlands-etf",
-        "verifie": false
+        "verifie": true
       },
       "EWD": {
-        "id": 239682,
+        "id": 239684,
         "slug": "ishares-msci-sweden-etf",
-        "verifie": false
+        "verifie": true
       },
       "EWL": {
-        "id": 239684,
-        "slug": "ishares-msci-switzerland-etf",
-        "verifie": false
+        "id": 239685,
+        "slug": "ishares-msci-switzerland-capped-etf",
+        "verifie": true
+      },
+      "EPOL": {
+        "id": 239676,
+        "slug": "ishares-msci-poland-capped-etf",
+        "verifie": true
       },
       "EWA": {
         "id": 239607,
         "slug": "ishares-msci-australia-etf",
-        "verifie": false
+        "verifie": true
       },
       "EWC": {
         "id": 239615,
         "slug": "ishares-msci-canada-etf",
-        "verifie": false
+        "verifie": true
       },
-      "EWS": {
-        "id": 239678,
-        "slug": "ishares-msci-singapore-etf",
-        "verifie": false
+      "EZA": {
+        "id": 239680,
+        "slug": "ishares-msci-south-africa-etf",
+        "verifie": true
+      },
+      "KSA": {
+        "id": 271542,
+        "slug": "ishares-msci-saudi-arabia-capped-etf",
+        "verifie": true
+      },
+      "UAE": {
+        "id": 264275,
+        "slug": "ishares-msci-uae-capped-etf",
+        "verifie": true
       },
       "TUR": {
         "id": 239689,
         "slug": "ishares-msci-turkey-etf",
-        "verifie": false
+        "verifie": true
       },
       "EIDO": {
         "id": 239661,
         "slug": "ishares-msci-indonesia-etf",
-        "verifie": false
+        "verifie": true
+      },
+      "EWS": {
+        "id": 239678,
+        "slug": "ishares-msci-singapore-capped-etf",
+        "verifie": true
       },
       "THD": {
         "id": 239688,
         "slug": "ishares-msci-thailand-etf",
-        "verifie": false
+        "verifie": true
       },
       "ECH": {
         "id": 239618,
-        "slug": "ishares-msci-chile-etf",
+        "slug": "ishares-msci-chile-capped-etf",
+        "verifie": true
+      },
+      "IJH": {
+        "id": 239763,
+        "slug": "ishares-core-sp-midcap-etf",
         "verifie": false
       }
     },
@@ -165,9 +185,7 @@
       "AR": {
         "region": "amerique_latine",
         "plafond": 6,
-        "etf": [
-          "ARGT"
-        ]
+        "etf": []
       },
       "CL": {
         "region": "amerique_latine",
@@ -179,9 +197,7 @@
       "CO": {
         "region": "amerique_latine",
         "plafond": 5,
-        "etf": [
-          "GXG"
-        ]
+        "etf": []
       },
       "GB": {
         "region": "europe",
@@ -312,9 +328,7 @@
       "VN": {
         "region": "asie_pacifique",
         "plafond": 6,
-        "etf": [
-          "VNM"
-        ]
+        "etf": []
       },
       "SA": {
         "region": "moyen_orient_afrique",
@@ -347,9 +361,141 @@
       "EG": {
         "region": "moyen_orient_afrique",
         "plafond": 5,
-        "etf": [
-          "EGPT"
-        ]
+        "etf": []
+      }
+    },
+    "filtre_yahoo": true,
+    "wikipedia": {
+      "_commentaire": "Pages de Wikipédia (anglais) des indices nationaux. Une page sans tableau exploitable (codes absents) fait passer au secours suivant.",
+      "FR": {
+        "pages": [
+          "CAC 40"
+        ],
+        "suffixe": ".PA"
+      },
+      "DE": {
+        "pages": [
+          "DAX"
+        ],
+        "suffixe": ".DE"
+      },
+      "GB": {
+        "pages": [
+          "FTSE 100 Index"
+        ],
+        "suffixe": ".L"
+      },
+      "CH": {
+        "pages": [
+          "Swiss Market Index"
+        ],
+        "suffixe": ".SW"
+      },
+      "IT": {
+        "pages": [
+          "FTSE MIB"
+        ],
+        "suffixe": ".MI"
+      },
+      "ES": {
+        "pages": [
+          "IBEX 35"
+        ],
+        "suffixe": ".MC"
+      },
+      "NL": {
+        "pages": [
+          "AEX index"
+        ],
+        "suffixe": ".AS"
+      },
+      "SE": {
+        "pages": [
+          "OMX Stockholm 30"
+        ],
+        "suffixe": ".ST"
+      },
+      "JP": {
+        "pages": [
+          "Nikkei 225"
+        ],
+        "suffixe": ".T",
+        "mode": "liste",
+        "motif": "\\(TYO:\\s*([0-9A-Z]{4})\\)"
+      },
+      "KR": {
+        "pages": [
+          "KOSPI 200"
+        ],
+        "suffixe": ".KS",
+        "zero_pad": 6
+      },
+      "IN": {
+        "pages": [
+          "NIFTY 50"
+        ],
+        "suffixe": ".NS"
+      },
+      "CN": {
+        "pages": [
+          "Hang Seng Index",
+          "CSI 300 Index"
+        ],
+        "suffixe": ".HK",
+        "zero_pad": 4,
+        "prefixes": {
+          "SEHK": ".HK",
+          "SSE": ".SS",
+          "SZSE": ".SZ"
+        }
+      },
+      "AU": {
+        "pages": [
+          "S&P/ASX 200"
+        ],
+        "suffixe": ".AX"
+      },
+      "CA": {
+        "pages": [
+          "S&P/TSX 60"
+        ],
+        "suffixe": ".TO"
+      },
+      "CO": {
+        "pages": [
+          "COLCAP"
+        ],
+        "suffixe": ".CL"
+      },
+      "SG": {
+        "pages": [
+          "Straits Times Index"
+        ],
+        "suffixe": ".SI"
+      },
+      "TH": {
+        "pages": [
+          "SET50 Index and SET100 Index"
+        ],
+        "suffixe": ".BK"
+      },
+      "MX": {
+        "pages": [
+          "Índice de Precios y Cotizaciones"
+        ],
+        "suffixe": ".MX"
+      },
+      "AR": {
+        "pages": [
+          "MERVAL"
+        ],
+        "suffixe": ".BA"
+      },
+      "CL": {
+        "pages": [
+          "Índice de Precios Selectivo de Acciones"
+        ],
+        "suffixe": ".SN"
       }
     }
   },
@@ -453,13 +599,38 @@
   },
   "ecart_officiel_max_pct": 5.0,
   "pepites": {
-    "_commentaire": "Critères cumulés. valorisation_max_pct : PER (ou VE/EBITDA) au plus X % au-dessus de la médiane du secteur.",
+    "_commentaire": "Deux listes. « pepites » : capitalisation entre cap_min et cap_max (Md$), peu suivies (analystes ≤ analystes_max quand Yahoo le fournit). « qualite_prix_raisonnable » : grandes sociétés (au-dessus de cap_max) qui remplissent les mêmes critères. plafond_par_secteur : au plus N sociétés d'un même secteur GICS par liste. Holdings et sociétés d'investissement exclues. Holding = industrie exclue, ou « Asset Management » avec un mot de holdings_mots dans le nom.",
     "croissance_ca_min": 10.0,
     "fscore_min": 7,
     "dette_ebitda_max": 2.0,
     "valorisation_max_pct": 10.0,
     "nombre_min": 15,
-    "nombre_max": 25
+    "nombre_max": 25,
+    "cap_min_md": 0.3,
+    "cap_max_md": 20.0,
+    "analystes_max": 8,
+    "plafond_par_secteur": 3,
+    "nombre_max_qpr": 25,
+    "concentration_seuil": 0.15,
+    "concentration_min": 4,
+    "industries_exclues": [
+      "Closed-End Fund",
+      "Shell Companies",
+      "Financial Conglomerates"
+    ],
+    "tickers_exclus": [],
+    "holdings_mots": [
+      "investor",
+      "holding",
+      "invest",
+      "kinnevik",
+      "industrivarden",
+      "exor",
+      "wendel",
+      "sofina",
+      "gbl",
+      "berkshire"
+    ]
   },
   "contexte": {
     "_commentaire": "Ajustement modéré de la note selon le pays et la phase du cycle de sa zone ; plafonné et affiché à part.",

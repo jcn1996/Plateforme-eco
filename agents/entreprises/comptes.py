@@ -123,7 +123,8 @@ class Yahoo:
         try:  # .info peut être refusé (401) selon le réseau : on s'en passe
             brut = t.info or {}
             info = {k: brut.get(k) for k in ("longName", "shortName", "sector", "industry", "financialCurrency", "currency",
-                                               "marketCap", "sharesOutstanding", "trailingPE", "enterpriseToEbitda", "country")}
+                                               "marketCap", "sharesOutstanding", "trailingPE", "enterpriseToEbitda", "country",
+                                               "numberOfAnalystOpinions")}
         except Exception as e:
             LOG.debug("info Yahoo indisponible pour %s : %s", ticker, str(e)[:80])
         devise_comptes = info.get("financialCurrency")

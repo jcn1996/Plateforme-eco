@@ -136,6 +136,70 @@ class TestUnivers(unittest.TestCase):
         self.assertTrue(liste[-1]["surveillance"])
 
 
+class TestListes(unittest.TestCase):
+    def test_regroupement_des_cotations(self):
+        soc = [{"ticker": "NEM", "nom": "Newmont Corporation", "pays": "US", "liquidite_musd": 900},
+               {"ticker": "NEM.AX", "nom": "Newmont Corporation", "pays": "AU", "liquidite_musd": 40},
+               {"ticker": "INVE-A.ST", "nom": "Investor AB ser. A", "pays": "SE", "liquidite_musd": 5},
+               {"ticker": "INVE-B.ST", "nom": "Investor AB ser. B", "pays": "SE", "liquidite_musd": 60}]
+        soc += [{"ticker": "EQT", "nom": "EQT Corporation", "pays": "US", "liquidite_musd": 300, "secteur_gics": "Energy", "capitalisation_usd": 34e9},
+                {"ticker": "EQT.ST", "nom": "EQT AB", "pays": "SE", "liquidite_musd": 50, "secteur_gics": "Financials", "capitalisation_usd": 30e9}]
+        r = {x["ticker"]: x for x in A.regrouper_cotations(soc, U.cle_societe)}
+        self.assertEqual(set(r), {"NEM", "INVE-B.ST", "EQT", "EQT.ST"})  # même nom, secteurs différents : deux sociétés
+        self.assertEqual(r["NEM"]["autres_cotations"], [{"ticker": "NEM.AX", "pays": "AU"}])
+
+    def test_holdings(self):
+        self.assertTrue(A.est_holding("Investor AB", "Asset Management", "INVE-B.ST", CFG["pepites"]))
+        self.assertFalse(A.est_holding("BlackRock, Inc.", "Asset Management", "BLK", CFG["pepites"]))
+        self.assertTrue(A.est_holding("Some Fund", "Closed-End Fund - Equity", "X", CFG["pepites"]))
+        self.assertTrue(A.est_holding("Investor AB", None, "INVE-B.ST", CFG["pepites"], "Financials"))  # industrie inconnue
+
+    def test_deux_listes_et_plafond_par_secteur(self):
+        cfg = {**CFG["pepites"], "plafond_par_secteur": 2}
+        c = ([{"ticker": f"OR{i}", "cap": 5, "analystes": 3, "secteur": "Materials", "note_ajustee": 90 - i} for i in range(4)]
+             + [{"ticker": "SUIVIE", "cap": 5, "analystes": 25, "secteur": "Industrials", "note_ajustee": 95},
+                {"ticker": "GRANDE", "cap": 300, "analystes": 40, "secteur": "Health Care", "note_ajustee": 80},
+                {"ticker": "INCONNUE", "cap": 2, "analystes": None, "secteur": "Energy", "note_ajustee": 70}])
+        l = A.selection_listes(c, cfg)
+        self.assertEqual([x["ticker"] for x in l["pepites"]], ["OR0", "OR1", "INCONNUE"])  # 2 par secteur ; trop suivie écartée
+        self.assertEqual([x["ticker"] for x in l["qpr"]], ["GRANDE"])
+
+    def test_concentration(self):
+        c = [{"industrie": "Gold", "secteur_nom": "Matériaux"}] * 9 + [{"industrie": f"X{i}", "secteur_nom": "Industrie"} for i in range(51)]
+        self.assertEqual(A.concentration(c, CFG["pepites"]), ["9 candidates sur 60 sont des mines d'or : sensibilité au cours de l'or."])
+
+
+class TestWikipedia(unittest.TestCase):
+    def test_tableau(self):
+        html = ("<table class='wikitable'><tr><th>Ticker</th><th>Logo</th><th>Company</th><th>Prime Standard Sector</th></tr>"
+                + "".join(f"<tr><td>{t}</td><td></td><td>{n}</td><td>{sct}</td></tr>" for t, n, sct in [
+                    ("ADS.DE", "Adidas", "Consumer Goods"), ("AIR.PA", "Airbus", "Industrials"), ("ALV.DE", "Allianz", "Insurance"),
+                    ("BAS.DE", "BASF", "Chemicals"), ("BAYN.DE", "Bayer", "Pharma & Healthcare"), ("BMW.DE", "BMW", "Automobile")])
+                + "</table>")
+        r = U.lire_wikipedia(html, "DE", {"suffixe": ".DE"})
+        self.assertEqual([x["ticker"] for x in r], ["ADS.DE", "ALV.DE", "BAS.DE", "BAYN.DE", "BMW.DE"])  # Airbus (Paris) écarté
+        self.assertEqual(r[1]["secteur"], "Financials")
+        self.assertEqual(r[3]["secteur"], "Health Care")
+
+    def test_prefixes_et_zero(self):
+        html = ("<table class='wikitable'><tr><th>Ticker</th><th>Name</th><th>Sub-index</th></tr>"
+                + "".join(f"<tr><td>{t}</td><td>{n}</td><td>Finance</td></tr>" for t, n in [
+                    ("SEHK: 5", "HSBC"), ("SEHK: 388", "HKEx"), ("SSE: 600519", "Moutai"), ("SZSE: 300750", "CATL"), ("SEHK: 939", "CCB")])
+                + "</table>")
+        r = U.lire_wikipedia(html, "CN", {"suffixe": ".HK", "zero_pad": 4, "prefixes": {"SEHK": ".HK", "SSE": ".SS", "SZSE": ".SZ"}})
+        self.assertEqual([x["ticker"] for x in r], ["0005.HK", "0388.HK", "600519.SS", "300750.SZ", "0939.HK"])
+
+    def test_liste_nikkei(self):
+        html = "<h3>Automotive</h3><ul>" + "".join(f"<li>{n} (TYO: {c})</li>" for n, c in [
+            ("Toyota Motor Corp.", "7203"), ("Honda Motor Co., Ltd.", "7267"), ("Nissan", "7201"), ("Subaru", "7270"), ("Mazda", "7261")]) + "</ul>"
+        r = U.lire_wikipedia(html, "JP", {"suffixe": ".T", "mode": "liste", "motif": "\\(TYO:\\s*([0-9A-Z]{4})\\)"})
+        self.assertEqual(r[0], {"ticker": "7203.T", "nom": "Toyota Motor Corp.", "pays": "JP", "secteur": "Consumer Discretionary", "poids": 0.0})
+
+    def test_page_sans_tableau(self):
+        with self.assertRaises(ValueError):
+            U.lire_wikipedia("<p>Top 10 constituents: Al Rajhi Bank…</p>", "SA", {"suffixe": ".SR"})
+
+
 class TestComptes(unittest.TestCase):
     def test_verification(self):
         off = {"fin": "2025-12-31", "ca": 1000.0, "resultat_net": 100.0}

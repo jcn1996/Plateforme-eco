@@ -149,11 +149,14 @@ def degradation(indicateurs: dict[str, dict], references: dict[str, list[str]]) 
 
 def bloc_sante(agent: str, libelle: str, ordre: int, workflow: str, sources: list[dict],
                maintenant: datetime, precedent: dict | None = None, crons: list[str] | None = None,
-               indicateurs: dict[str, dict] | None = None) -> dict:
+               indicateurs: dict[str, dict] | None = None, raisons_supplementaires: list[str] | None = None) -> dict:
     """Construit le bloc « sante ». Pour une source en échec, la date de sa dernière donnée
     valide est reprise du bloc précédent quand l'agent ne la connaît pas.
     Avec `indicateurs`, l'état « dégradé » suit la règle des sources attendues (voir en tête) ;
-    sans, il est dégradé dès qu'une source est en échec, de secours, partielle ou périmée."""
+    sans, il est dégradé dès qu'une source est en échec, de secours, partielle ou périmée.
+    `raisons_supplementaires` : causes de dégradation propres à l'agent (ex. source utile périmée).
+    « sources_ok » ne compte que les sources à l'état « ok » ; les sources « non configurée »
+    (clé facultative absente) ne sont ni comptées ni considérées comme en échec."""
     anciennes = {s["nom"]: s for s in (precedent or {}).get("sources", [])}
     liste = []
     for s in sources:
@@ -176,6 +179,7 @@ def bloc_sante(agent: str, libelle: str, ordre: int, workflow: str, sources: lis
     else:
         raisons = [f"{s['nom']} : {s['etat']}" for s in liste if s["etat"] in ETATS_PROBLEME]
         references = None
+    raisons = raisons + list(raisons_supplementaires or [])
     bloc = {
         "agent": agent, "libelle": libelle, "ordre": ordre, "workflow": workflow,
         "derniere_execution": iso(maintenant),
@@ -183,7 +187,7 @@ def bloc_sante(agent: str, libelle: str, ordre: int, workflow: str, sources: lis
         "intervalle_min": intervalle,
         "planning": {"crons": list(crons), "fuseau": "UTC"},
         "sources_total": len(comptees),
-        "sources_ok": sum(1 for s in comptees if s["etat"] in ("ok", "secours", "partielle", "périmée")),
+        "sources_ok": sum(1 for s in comptees if s["etat"] == "ok"),
         "sources": liste,
         "degrade": bool(raisons),
         "raisons": raisons,

@@ -493,3 +493,119 @@ def revue_critique(s: dict, m: dict, ind: dict, pays: dict | None, devise_3m: fl
         a_verifier.append("Vérifier l'accessibilité du titre pour un investisseur étranger et les contrôles de capitaux.")
     return {"risques": risques, "piege_de_valeur": piege, "risque_change": change, "risque_pays": risque_pays,
             "a_verifier": a_verifier, "rapport_officiel": (s.get("officiel") or {}).get("url")}
+
+
+# ------------------------------------------------------------------ cotations multiples, holdings, listes de pépites
+
+def regrouper_cotations(societes: list[dict], cle) -> list[dict]:
+    """Une société cotée plusieurs fois (catégories d'actions A/B, double cotation NEM / NEM.AX) n'apparaît
+    qu'une fois : on garde la cotation la plus liquide et on note les autres dans « autres_cotations ».
+    Même nom ne suffit pas (EQT Corporation et EQT AB sont deux sociétés) : il faut aussi le même secteur
+    et des capitalisations comparables (rapport de 1 à 2 au plus)."""
+    groupes = {}
+    for s in societes:
+        groupes.setdefault(cle(s.get("nom") or s["ticker"]) or s["ticker"], []).append(s)
+
+    def compatibles(a, b):
+        if a.get("secteur_gics") != b.get("secteur_gics"):
+            return False
+        ca, cb = a.get("capitalisation_usd"), b.get("capitalisation_usd")
+        return not (ca and cb) or 0.5 <= ca / cb <= 2
+
+    res = []
+    for g in groupes.values():
+        g = sorted(g, key=lambda s: (bool(s.get("surveillance")), s.get("liquidite_musd") or 0), reverse=True)
+        grappes = []
+        for s in g:
+            for gr in grappes:
+                if compatibles(gr[0], s):
+                    gr.append(s)
+                    break
+            else:
+                grappes.append([s])
+        for gr in grappes:
+            principale = gr[0]
+            principale["autres_cotations"] = [{"ticker": s["ticker"], "pays": s["pays"]} for s in gr[1:]]
+            res.append(principale)
+    return res
+
+
+def est_holding(nom: str, industrie: str | None, ticker: str, cfg: dict, secteur: str | None = None) -> bool:
+    """Holding ou société d'investissement (ex. Investor AB) : exclue des pépites, faute de pouvoir mesurer
+    la décote sur l'actif net avec des sources gratuites."""
+    ind = (industrie or "").lower()
+    if ticker in cfg.get("tickers_exclus", []):
+        return True
+    if any(x.lower() in ind for x in cfg.get("industries_exclues", [])):
+        return True
+    nom_holding = any(m in (nom or "").lower() for m in cfg.get("holdings_mots", []))
+    # Industrie inconnue (.info refusé) : le nom suffit pour une société du secteur Finance
+    if nom_holding and ("asset management" in ind or (not ind and secteur == "Financials")):
+        return True
+    return False
+
+
+def selection_listes(candidats: list[dict], cfg: dict) -> dict[str, list[dict]]:
+    """candidats : sociétés qui remplissent tous les critères ({ticker, cap, analystes, secteur, note_ajustee}).
+    « pepites » : capitalisation entre cap_min et cap_max (Md$), peu suivies ; « qpr » : au-dessus de cap_max.
+    Au plus plafond_par_secteur sociétés d'un même secteur dans chaque liste."""
+    listes = {"pepites": [], "qpr": []}
+    par_secteur = {"pepites": {}, "qpr": {}}
+    for c in sorted(candidats, key=lambda c: -c["note_ajustee"]):
+        cap = c.get("cap") or 0
+        if cap >= cfg["cap_max_md"]:
+            liste, maximum = "qpr", cfg.get("nombre_max_qpr", cfg["nombre_max"])
+        elif cap >= cfg["cap_min_md"] and (c.get("analystes") is None or c["analystes"] <= cfg["analystes_max"]):
+            liste, maximum = "pepites", cfg["nombre_max"]
+        else:
+            continue  # trop suivie pour une pépite, trop petite pour la liste « qualité à prix raisonnable »
+        n = par_secteur[liste].get(c["secteur"], 0)
+        if n >= cfg["plafond_par_secteur"] or len(listes[liste]) >= maximum:
+            continue
+        par_secteur[liste][c["secteur"]] = n + 1
+        listes[liste].append(c)
+    return listes
+
+
+# Industries Yahoo fréquentes : libellé français et sensibilité principale
+INDUSTRIES = {
+    "gold": ("mines d'or", "sensibilité au cours de l'or"),
+    "other precious metals & mining": ("mines de métaux précieux", "sensibilité aux cours des métaux précieux"),
+    "copper": ("mines de cuivre", "sensibilité au cours du cuivre"),
+    "other industrial metals & mining": ("mines de métaux industriels", "sensibilité aux cours des métaux"),
+    "steel": ("sidérurgistes", "sensibilité au cycle de l'acier"),
+    "oil & gas e&p": ("producteurs de pétrole et de gaz", "sensibilité aux cours du pétrole et du gaz"),
+    "oil & gas integrated": ("pétrolières intégrées", "sensibilité aux cours du pétrole"),
+    "oil & gas midstream": ("transport de pétrole et de gaz", "sensibilité aux volumes d'hydrocarbures"),
+    "semiconductors": ("fabricants de semi-conducteurs", "sensibilité au cycle des semi-conducteurs"),
+    "semiconductor equipment & materials": ("équipementiers de semi-conducteurs", "sensibilité au cycle des semi-conducteurs"),
+    "banks - regional": ("banques régionales", "sensibilité aux taux et au crédit"),
+    "banks - diversified": ("banques", "sensibilité aux taux et au crédit"),
+    "insurance - property & casualty": ("assureurs dommages", "sensibilité aux sinistres et aux catastrophes naturelles"),
+    "agricultural inputs": ("producteurs d'engrais", "sensibilité aux prix des engrais et du gaz"),
+    "airlines": ("compagnies aériennes", "sensibilité au kérosène et à la demande de voyages"),
+}
+
+
+def concentration(candidats: list[dict], cfg: dict) -> list[str]:
+    """Avertissement quand une industrie (ou un secteur) est surreprésentée parmi les candidates."""
+    total = len(candidats)
+    if not total:
+        return []
+    avert = []
+    for cle, libelle_par_defaut in (("industrie", None), ("secteur_nom", None)):
+        compte = {}
+        for c in candidats:
+            if c.get(cle):
+                compte[c[cle]] = compte.get(c[cle], 0) + 1
+        for valeur, n in sorted(compte.items(), key=lambda kv: -kv[1]):
+            if n >= cfg["concentration_min"] and n / total >= cfg["concentration_seuil"]:
+                if cle == "industrie":
+                    nom, risque = INDUSTRIES.get(valeur.lower(), (f"« {valeur} »", "sensibilité au cycle de cette industrie"))
+                    avert.append(f"{n} candidates sur {total} sont des {nom} : {risque}." if valeur.lower() in INDUSTRIES
+                                 else f"{n} candidates sur {total} relèvent de l'industrie {nom} : {risque}.")
+                else:
+                    avert.append(f"{n} candidates sur {total} appartiennent au secteur {valeur} : concentration sectorielle.")
+        if avert:
+            break  # l'industrie, plus précise, suffit quand elle est déjà surreprésentée
+    return avert
