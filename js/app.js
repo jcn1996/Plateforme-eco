@@ -21,6 +21,7 @@ import { ecranClassement } from './classement.js';
 import { chargerSante, ecranSante, problemeDetecte } from './sante.js';
 import { chargerMacro, ecranMacro } from './macro.js';
 import { chargerPepites, ecranPepites } from './pepites.js';
+import { chargerAnalyses, chargerEnCours, chargerAnalyse, chargerRecommandations, ecranAnalyses, ecranFiabilite } from './analyses.js';
 
 const $ = (sel) => document.querySelector(sel);
 const dom = {
@@ -67,6 +68,10 @@ function estLarge() {
 let agentsSante = [];
 let macro = null; // données de l'agent macro (data/macro.json), ou null
 let pepites = null; // pépites candidates de l'agent entreprises (data/pepites.json), ou null
+let analyses = { liste: [] }; // analyses à la demande (data/analyses/index.json)
+let enCours; // demandes d'analyse en cours (issues ouvertes) : undefined = pas encore lues, null = GitHub injoignable
+let recommandations; // historique des recommandations : undefined = pas encore lu
+const fichesAnalyses = new Map(); // ticker → fiche d'analyse chargée (null si introuvable)
 
 /** Recharge les journaux des agents, met à jour la pastille de l'en-tête et l'écran s'il est ouvert. */
 async function majSante() {
@@ -105,8 +110,9 @@ async function demarrer() {
 
   try {
     // data/macro.json est facultatif : son absence n'empêche pas l'appli de démarrer
-    [d, macro, pepites] = await Promise.all([chargerDonnees(), chargerMacro(), chargerPepites()]);
+    [d, macro, pepites, analyses] = await Promise.all([chargerDonnees(), chargerMacro(), chargerPepites(), chargerAnalyses()]);
     d.macro = macro;
+    d.analyses = analyses.liste;
   } catch (erreur) {
     console.error(erreur);
     afficherMessage('Impossible de charger les données. Vérifiez votre connexion puis rechargez la page.');
@@ -149,6 +155,7 @@ async function demarrer() {
   $('#btn-sante').addEventListener('click', () => naviguer({ type: 'sante' }));
   $('#btn-macro').addEventListener('click', () => naviguer({ type: 'macro' }));
   $('#btn-pepites').addEventListener('click', () => naviguer({ type: 'pepites' }));
+  $('#btn-analyses').addEventListener('click', () => naviguer({ type: 'analyses' }));
   // Santé des agents : chargée à part (un journal manquant ne bloque pas l'appli),
   // puis recalculée chaque minute, car le statut « en panne » dépend de l'heure
   majSante();
@@ -224,9 +231,13 @@ function appliquerModeLeger(actif) {
 
 /** Transforme une route en adresse (#/pays/FR) et inversement. */
 function versAdresse(route) {
+  // Lien direct vers une analyse à la demande : #analyse-TICKER (adresse donnée dans la réponse de l'issue)
+  if (route.type === 'analyse') return `#analyse-${encodeURIComponent(route.id)}`;
   return route.type === 'globe' ? '#/' : route.id ? `#/${route.type}/${encodeURIComponent(route.id)}` : `#/${route.type}`;
 }
 function lireAdresse() {
+  const analyse = location.hash.match(/^#analyse-(.+)$/);
+  if (analyse) return { type: 'analyse', id: decodeURIComponent(analyse[1]) };
   const [type, id] = location.hash.replace(/^#\/?/, '').split('/');
   if (!type) return { type: 'globe' };
   return { type, id: id ? decodeURIComponent(id) : undefined };
@@ -307,6 +318,12 @@ function filAriane(route) {
     case 'sante': return [racine, { libelle: 'Santé des agents', route }];
     case 'macro': return [racine, { libelle: 'Vue macro', route }];
     case 'pepites': return [racine, { libelle: 'Pépites', route }];
+    case 'analyses': return [racine, { libelle: 'Mes analyses', route }];
+    case 'fiabilite': return [racine, { libelle: 'Mes analyses', route: { type: 'analyses' } }, { libelle: 'Fiabilité', route }];
+    case 'analyse': {
+      const nom = fichesAnalyses.get(route.id)?.nom ?? analyses.liste.find((a) => a.ticker === route.id)?.nom ?? route.id;
+      return [racine, { libelle: 'Mes analyses', route: { type: 'analyses' } }, { libelle: nom, route }];
+    }
     default: return [racine];
   }
 }
@@ -325,7 +342,9 @@ function majAriane(route) {
 /** Vérifie qu'une route désigne bien un élément existant. */
 function routeValide(route) {
   switch (route.type) {
-    case 'globe': case 'portefeuille': case 'classement': case 'comparaison': case 'mes-alertes': case 'sante': case 'macro': case 'pepites': return true;
+    case 'globe': case 'portefeuille': case 'classement': case 'comparaison': case 'mes-alertes': case 'sante': case 'macro': case 'pepites':
+    case 'analyses': case 'fiabilite': return true;
+    case 'analyse': return Boolean(route.id);
     case 'pays': return d.paysParCode.has(route.id);
     case 'secteur': return d.secteurParId.has(route.id);
     case 'entreprise': return d.entrepriseParTicker.has(route.id);
@@ -346,6 +365,8 @@ function afficher(route) {
     ouvrirPays: (code) => naviguer({ type: 'pays', id: code }),
     ouvrirSecteur: (id) => naviguer({ type: 'secteur', id }),
     ouvrirEntreprise: (ticker) => naviguer({ type: 'entreprise', id: ticker }),
+    ouvrirFiabilite: () => naviguer({ type: 'fiabilite' }),
+    ouvrir: naviguer,
     boutonComparer,
   };
 
@@ -368,6 +389,21 @@ function afficher(route) {
           dom.panneauContenu.replaceChildren(...ficheEntreprise(d, e, navigateurPanneau).filter(Boolean));
           dom.panneauContenu.scrollTop = defilement;
         }
+      });
+    }
+  } else if (route.type === 'analyse') {
+    // Analyse à la demande : fiche chargée à la demande (data/analyses/<ticker>.json)
+    const rendre = (e) => (e
+      ? ficheEntreprise(d, e, navigateurPanneau)
+      : [el('h2', { class: 'fiche-titre' }, route.id), el('p', { class: 'fiche-verdict' }, 'Analyse introuvable : elle est peut-être encore en cours (résultat dans 2 à 5 minutes après la demande).')]);
+    const connue = fichesAnalyses.get(route.id);
+    contenu = connue !== undefined ? rendre(connue) : [el('h2', { class: 'fiche-titre' }, route.id), el('p', { class: 'fiche-verdict' }, 'Chargement de l’analyse…')];
+    codePays = connue?.pays ?? null;
+    titre = `${connue?.nom ?? route.id} — Salle de contrôle`;
+    if (connue === undefined) {
+      chargerAnalyse(route.id).then((e) => {
+        fichesAnalyses.set(route.id, e);
+        if (routeActuelle.type === 'analyse' && routeActuelle.id === route.id) afficher(route);
       });
     }
   }
@@ -395,7 +431,22 @@ function afficher(route) {
     sante: { section: '#ecran-sante', contenu: '#sante-contenu', titre: 'Santé des agents', rendu: () => ecranSante(agentsSante) },
     macro: { section: '#ecran-macro', contenu: '#macro-contenu', titre: 'Vue macro', rendu: () => ecranMacro(macro) },
     pepites: { section: '#ecran-pepites', contenu: '#pepites-contenu', titre: 'Pépites', rendu: () => ecranPepites(pepites, d, navigateurPanneau) },
+    analyses: { section: '#ecran-analyses', contenu: '#analyses-contenu', titre: 'Mes analyses', rendu: () => ecranAnalyses({ analyses, enCours }, navigateurPanneau) },
+    fiabilite: { section: '#ecran-fiabilite', contenu: '#fiabilite-contenu', titre: 'Fiabilité des recommandations', rendu: () => ecranFiabilite(recommandations, navigateurPanneau) },
   };
+  // Données lues à l'ouverture de l'écran, puis nouveau rendu s'il est toujours affiché
+  if (route.type === 'analyses') {
+    Promise.all([chargerAnalyses(), chargerEnCours()]).then(([a, c]) => {
+      analyses = a; enCours = c; d.analyses = a.liste;
+      if (routeActuelle.type === 'analyses') $('#analyses-contenu').replaceChildren(...ecranAnalyses({ analyses, enCours }, navigateurPanneau).filter(Boolean));
+    });
+  }
+  if (route.type === 'fiabilite' && recommandations === undefined) {
+    chargerRecommandations().then((h) => {
+      recommandations = h;
+      if (routeActuelle.type === 'fiabilite') $('#fiabilite-contenu').replaceChildren(...ecranFiabilite(recommandations, navigateurPanneau).filter(Boolean));
+    });
+  }
   for (const [type, ecran] of Object.entries(ECRANS)) {
     const visible = route.type === type;
     if (visible) {
@@ -424,7 +475,7 @@ function afficher(route) {
 
 /** Le globe ne se dessine que s'il est visible (économie de batterie). */
 function majActiviteGlobe() {
-  const masque = ['portefeuille', 'classement', 'comparaison', 'mes-alertes', 'sante', 'macro', 'pepites'].includes(routeActuelle.type)
+  const masque = ['portefeuille', 'classement', 'comparaison', 'mes-alertes', 'sante', 'macro', 'pepites', 'analyses', 'fiabilite'].includes(routeActuelle.type)
     || (dom.panneau.classList.contains('est-ouvert') && etatPanneau === 'plein' && !estLarge());
   globe?.definirActif(!masque);
 }

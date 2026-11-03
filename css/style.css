@@ -1156,3 +1156,63 @@ body.alertes-ouvertes .barre-comparaison { display: none; }
 .pepites-puces .puce[aria-pressed="true"] { border-color: var(--cyan); background: rgba(0, 229, 255, 0.18); color: #eafcff; }
 .pepites-avertissement { padding: 8px 12px; border: 1px solid var(--orange); border-radius: var(--rayon); background: rgba(255, 181, 71, 0.08); font-size: 12.5px; color: var(--texte); }
 .entreprise-cotations { font-size: 11.5px; color: var(--texte-3); }
+
+/* ---------- Analyse à la demande, recommandation, fiabilité ---------- */
+.analyses-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.bouton-analyser { min-height: 40px; }
+.recherche-aide .bouton-analyser { margin-top: 2px; }
+.dialogue-analyse {
+  width: min(440px, calc(100vw - 32px)); padding: 18px; border: 1px solid var(--ligne-forte); border-radius: var(--rayon);
+  background: var(--fond-2); color: var(--texte);
+}
+.dialogue-analyse::backdrop { background: rgba(2, 6, 14, 0.7); }
+.dialogue-analyse h3 { margin: 0 0 8px; font-family: var(--police-titre); font-size: 18px; }
+.analyse-aide, .analyse-explication { font-size: 12.5px; color: var(--texte-2); margin: 8px 0; }
+.analyse-explication strong { color: var(--texte); font-weight: 600; }
+.analyse-champ {
+  width: 100%; box-sizing: border-box; min-height: 44px; padding: 8px 12px; border: 1px solid var(--ligne-forte);
+  border-radius: 10px; background: var(--fond); color: var(--texte); font: 16px var(--police-texte);
+}
+.analyse-erreur { color: var(--rouge); font-size: 12px; margin: 6px 0 0; }
+.analyse-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+.analyses-en-cours { list-style: none; margin: 6px 0 0; padding: 0; font-size: 13px; color: var(--texte-2); }
+.analyses-en-cours li + li { margin-top: 6px; }
+.analyses-en-cours a, .lien { color: var(--cyan); }
+.lien { background: none; border: 0; padding: 0; font: inherit; text-decoration: underline; cursor: pointer; text-align: left; }
+
+.pastille-reco {
+  display: inline-block; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--c-reco, var(--ligne-forte));
+  color: var(--c-reco, var(--texte)); font-size: 12px; font-weight: 600; white-space: nowrap;
+}
+.pastille-reco--pos { --c-reco: var(--vert); }
+.pastille-reco--mi { --c-reco: #9be7c4; }
+.pastille-reco--neutre { --c-reco: var(--texte-2); }
+.pastille-reco--mi-neg { --c-reco: var(--orange); }
+.pastille-reco--neg { --c-reco: var(--rouge); }
+.ligne-reco { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+.ligne-reco small { font-size: 11px; color: var(--texte-3); }
+
+.recommandation h4 { margin: 12px 0 4px; font-size: 13px; color: var(--texte-2); }
+.reco-lectures { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 8px 0; }
+.reco-lectures > div { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+.reco-lectures small { font-size: 11px; color: var(--texte-3); text-transform: uppercase; letter-spacing: 0.05em; }
+.reco-lectures .pastille-reco { font-size: 15px; padding: 4px 12px; }
+.reco-valeur { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 8px 0; font-size: 13px; }
+.reco-valeur dt { color: var(--texte-3); }
+.reco-valeur dd { margin: 0; }
+.reco-valeur small { color: var(--texte-3); font-family: var(--police-texte); }
+.reco-reserve { font-size: 12px; color: var(--orange); }
+.reco-signaux { list-style: none; margin: 6px 0; padding: 0; font-size: 12.5px; }
+.reco-signal { display: flex; gap: 6px; align-items: baseline; }
+.reco-signal--pos > span:first-child { color: var(--vert); }
+.reco-signal--neg > span:first-child { color: var(--rouge); }
+.reco-signal--neutre > span:first-child { color: var(--texte-3); }
+.reco-mention { margin-top: 10px; font-size: 11px; color: var(--texte-3); font-style: italic; }
+
+.tableau-defilant { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.tableau-fiabilite { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.tableau-fiabilite th, .tableau-fiabilite td { padding: 6px 8px; border-bottom: 1px solid var(--ligne); text-align: left; vertical-align: top; }
+.tableau-fiabilite thead th { color: var(--texte-3); font-weight: 500; }
+.tableau-fiabilite thead small, .tableau-fiabilite td small { display: block; font-size: 10.5px; color: var(--texte-3); font-family: var(--police-texte); }
+.liste-suivi { margin: 6px 0 0; padding-left: 18px; font-size: 12.5px; color: var(--texte-2); }
+.liste-suivi li + li { margin-top: 4px; }
