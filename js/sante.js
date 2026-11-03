@@ -100,6 +100,8 @@ export async function chargerSante() {
 /** Statut d'un agent à l'instant `maintenant`. */
 export function statutAgent(agent, maintenant = Date.now()) {
   const s = agent.sante;
+  // Analyse à la demande : pas de planning ; dégradée si la dernière exécution a échoué
+  if (s?.a_la_demande) return s.dernier_statut === 'echec' ? 'degrade' : 'ok';
   if (!s?.derniere_execution) return 'panne';
   if (s.appel_externe) {
     // Planificateur : appelé toutes les 15 min par le réveil externe ; en panne sans appel depuis 45 min
@@ -174,6 +176,34 @@ function cartePlanificateur(agent, s, statut, classe, enTete, age) {
   );
 }
 
+/** Carte de l'analyse à la demande : dernière analyse réussie, dernière tentative, échecs récents. */
+function carteALaDemande(s, statut, classe, enTete) {
+  const r = s.derniere_reussite;
+  const libelleStatut = { ok: 'réussie', introuvable: 'société introuvable', insuffisant: 'données insuffisantes', echec: 'échec', refus: 'refusée' };
+  return el('article', { class: `carte sante-carte ${classe}` },
+    enTete,
+    el('dl', { class: 'sante-details' },
+      el('dt', {}, 'Dernière analyse réussie'),
+      el('dd', {}, r ? `${dateLisible(r.date)} · ${r.ticker}${r.issue ? ` (issue #${r.issue})` : ''}` : 'aucune pour l’instant'),
+      el('dt', {}, 'Dernière demande'),
+      el('dd', {}, s.derniere_tentative ? `${dateLisible(s.derniere_tentative)} · ${libelleStatut[s.dernier_statut] ?? s.dernier_statut ?? ''}` : 'aucune'),
+      el('dt', {}, 'Analyses réussies'),
+      el('dd', { class: 'mono' }, `${s.analyses_reussies ?? 0} / ${s.executions ?? 0} demandes`),
+      el('dt', {}, 'Déclenchement'),
+      el('dd', {}, 'à la demande (issue « Analyse : … »), sans planning'),
+    ),
+    s.echecs_recents?.length
+      ? el('div', {},
+        el('h4', { class: 'sante-sous-titre' }, statut === 'degrade' ? 'Dernière analyse en échec' : 'Échecs récents'),
+        el('ul', { class: 'sante-sources' }, s.echecs_recents.map((e) => el('li', {},
+          el('div', { class: 'sante-source-ligne' },
+            el('span', { class: 'sante-source-nom' }, `« ${e.texte ?? '?'} »${e.issue ? ` · issue #${e.issue}` : ''}`),
+            el('span', { class: 'sante-source-etat sante-etat--echec' }, dateLisible(e.date))),
+          el('div', { class: 'sante-source-info' }, e.detail ?? ''))))) : el('p', { class: 'sante-ligne' }, 'Aucun échec enregistré.'),
+    statut === 'degrade' ? el('p', { class: 'sante-alerte sante-alerte--retard' }, `Vérifier l’onglet Actions (workflow ${s.workflow ?? 'analyse-demande.yml'}), puis relancer avec une nouvelle issue.`) : null,
+  );
+}
+
 function carteAgent(agent, maintenant) {
   const s = agent.sante;
   const statut = statutAgent(agent, maintenant);
@@ -186,6 +216,7 @@ function carteAgent(agent, maintenant) {
     return el('article', { class: `carte sante-carte ${classe}` }, enTete,
       el('p', { class: 'sante-ligne' }, 'Journal introuvable ou illisible : aucune exécution réussie connue.'));
   }
+  if (s.a_la_demande) return carteALaDemande(s, statut, classe, enTete);
   const age = (maintenant - Date.parse(s.derniere_execution)) / 60_000;
   if (s.appel_externe) return cartePlanificateur(agent, s, statut, classe, enTete, age);
   const plan = situationPlanning(s, maintenant);
