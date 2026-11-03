@@ -1,0 +1,54 @@
+{
+  "meta": {
+    "genere_le": "2026-11-03T09:37:04Z",
+    "source": "planificateur",
+    "description": "Appels du réveil externe (cron-job.org) et lancements d'agents décidés par le planificateur",
+    "dernier_appel": "2026-11-03T09:37:04Z",
+    "sante": {
+      "agent": "planificateur",
+      "libelle": "Planificateur (réveil externe)",
+      "ordre": 0,
+      "workflow": "planificateur.yml",
+      "derniere_execution": "2026-11-03T09:37:04Z",
+      "appel_externe": true,
+      "panne_minutes": 45,
+      "prochaine_prevue": null,
+      "intervalle_min": 15,
+      "sources_total": 1,
+      "sources_ok": 1,
+      "sources": [
+        {
+          "nom": "gh workflow run (lancement des agents)",
+          "etat": "ok",
+          "detail": null
+        }
+      ],
+      "degrade": false,
+      "raisons": [],
+      "dernier_lancement": "2026-11-03T09:37:04Z"
+    }
+  },
+  "donnees": [
+    {
+      "cle": "agent-marches.yml|7,22,37,52 7-21 * * 1-5",
+      "workflow": "agent-marches.yml",
+      "parametres": {},
+      "creneau": "2026-11-03T09:22:00Z",
+      "le": "2026-11-03T09:37:04Z",
+      "raison": "créneau dû, pas encore fait",
+      "statut": "lancé",
+      "detail": "https://github.com/jcn1996/Plateforme-eco/actions/runs/41612474534"
+    },
+    {
+      "cle": "maintien.yml|41 4 * * 1",
+      "workflow": "maintien.yml",
+      "parametres": {},
+      "creneau": "2026-11-02T04:41:00Z",
+      "le": "2026-11-03T09:37:04Z",
+      "raison": "créneau dû, pas encore fait",
+      "statut": "lancé",
+      "detail": "https://github.com/jcn1996/Plateforme-eco/actions/runs/41612479656"
+    }
+  ],
+  "derniere_execution": "2026-11-03T09:37:04Z"
+}
