@@ -210,16 +210,23 @@ def pays_principaux(e: dict, det: Detecteur, resume: list[str] | None = None) ->
     Un pays cité une fois dans un article parmi d'autres n'est pas retenu."""
     res = det.pays_de(titre_reference(e))
     if resume:
-        res += det.pays_de(" ".join(resume))
+        # Pays du résumé : retenus s'ils sont aussi cités dans au moins un tiers des articles (un
+        # résumé qui évoque l'Ukraine à propos des élections américaines ne rattache pas l'événement à l'Ukraine)
+        res += [c for c in det.pays_de(" ".join(resume)) if c in pays_presents(e, det, 1 / 3)]
     res += pays_majoritaires(e, det)
     return list(dict.fromkeys(res))
 
 
 def pays_majoritaires(e: dict, det: Detecteur | None = None) -> list[str]:
     """Pays présents (titre ou description) dans plus de la moitié des articles (au moins 2 articles)."""
-    n = len(e["articles"])
-    if n < 2:
+    if len(e["articles"]) < 2:
         return []
+    return pays_presents(e, det, 0.5, strict=True)
+
+
+def pays_presents(e: dict, det: Detecteur | None, part: float, strict: bool = False) -> list[str]:
+    """Pays cités (titre ou description) dans au moins `part` des articles (plus de `part` si `strict`)."""
+    n = len(e["articles"])
     compte: dict[str, int] = {}
     for a in e["articles"]:
         presents = a.get("pays")
@@ -227,7 +234,7 @@ def pays_majoritaires(e: dict, det: Detecteur | None = None) -> list[str]:
             presents = det.pays_de(f"{a.get('titre')}. {a.get('description') or ''}") if det else []
         for c in set(presents):
             compte[c] = compte.get(c, 0) + 1
-    return [c for c, k in sorted(compte.items(), key=lambda x: -x[1]) if 2 * k > n]
+    return [c for c, k in sorted(compte.items(), key=lambda x: -x[1]) if (k > part * n if strict else k >= part * n)]
 
 
 # ------------------------------------------------------------------ fusion des doublons

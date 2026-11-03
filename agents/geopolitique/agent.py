@@ -63,12 +63,21 @@ def _recent(date_iso: str | None, maintenant: datetime, heures: float) -> bool:
 
 # ------------------------------------------------------------------ collecte
 
-def requete_groupee(requetes: dict) -> str:
-    """Tous les thèmes en une requête : (a OR b OR c…), sans les parenthèses de chaque thème."""
+def requetes_groupees(requetes: dict, longueur_max: int) -> list[str]:
+    """Les thèmes regroupés en quelques requêtes (a OR b OR c…) d'au plus `longueur_max` caractères :
+    GDELT refuse une requête trop longue (« Your query was too short or too long »)."""
     termes = []
     for r in requetes.values():
         termes += [t.strip() for t in r.strip().strip("()").split(" OR ") if t.strip()]
-    return "(" + " OR ".join(dict.fromkeys(termes)) + ")"
+    groupes, courant = [], []
+    for terme in dict.fromkeys(termes):
+        if courant and len(" OR ".join(courant + [terme])) + 2 > longueur_max:
+            groupes.append(courant)
+            courant = []
+        courant.append(terme)
+    if courant:
+        groupes.append(courant)
+    return ["(" + " OR ".join(g) + ")" for g in groupes]
 
 
 def gdelt_doc(f, config: dict, articles: list[dict], maintenant: datetime, garde: float) -> tuple[int, str, str]:
@@ -86,14 +95,21 @@ def gdelt_doc(f, config: dict, articles: list[dict], maintenant: datetime, garde
                 n += 1
 
     if g.get("requete_groupee"):
-        try:
-            ajouter(f.gdelt_doc("groupee", requete_groupee(g["requetes"]), g["articles_max_requete_groupee"]), None)
-            return n, "requête groupée (tous les thèmes)", "ok"
-        except Exception as e:  # noqa: BLE001
-            texte = str(e)
-            LOG.warning("GDELT DOC, requête groupée : %s", texte[:200])
-            if "429" in texte or "budget" in texte:
-                return 0, f"requête groupée : {texte[:200]}", "échec"
+        groupes = requetes_groupees(g["requetes"], g["longueur_max_requete"])
+        ok, echecs = 0, []
+        for k, requete in enumerate(groupes, 1):
+            try:
+                ajouter(f.gdelt_doc(f"groupe {k}/{len(groupes)}", requete, g["articles_max_requete_groupee"]), None)
+                ok += 1
+            except Exception as e:  # noqa: BLE001
+                texte = str(e)
+                echecs.append(f"groupe {k} : {texte[:120]}")
+                LOG.warning("GDELT DOC, groupe %d/%d : %s", k, len(groupes), texte[:200])
+                if "429" in texte or "budget" in texte:  # limite de débit : les suivantes échoueraient aussi
+                    break
+        if ok or not echecs or any("429" in x or "budget" in x for x in echecs):
+            detail = f"{ok}/{len(groupes)} requêtes groupées" + (f" ; échecs : {'; '.join(echecs)[:220]}" if echecs else "")
+            return n, detail, "ok" if ok == len(groupes) else "partielle" if ok else "échec"
     ok, echecs, consecutifs = 0, [], 0
     for cat, requete in g["requetes"].items():
         if consecutifs >= 2:  # limite de débit : inutile d'insister (durée de l'exécution bornée)

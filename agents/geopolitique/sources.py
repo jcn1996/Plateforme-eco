@@ -293,20 +293,30 @@ class FournisseurReel:
         t = datetime.strptime(m.group(1), "%Y%m%d%H%M%S")
         total: dict[str, dict] = {}
         horodatages = []
-        for k in range(n):
-            h = (t - timedelta(minutes=15 * k)).strftime("%Y%m%d%H%M%S")
-            try:
-                contenu = self.t.octets(GDELT_EXPORT.format(horodatage=h))
-            except ErreurSource as e:
-                LOG.warning("GDELT, fichier %s indisponible : %s", h, e)
-                continue
-            with zipfile.ZipFile(io.BytesIO(contenu)) as z:
-                texte = z.read(z.namelist()[0]).decode("utf-8", errors="replace")
-            horodatages.append(h)
-            for pays, a in agreger_export(texte, fips_suivis).items():
-                cumul = total.setdefault(pays, {"evenements": 0, "articles": 0, "ton_pondere": 0.0, "conflits": 0})
-                for c in cumul:
-                    cumul[c] += a[c]
+        # Les n fichiers les plus récents disponibles : un fichier annoncé peut ne pas être encore
+        # publié (404), on remonte alors jusqu'à 2 h en arrière ; si aucun ne répond, nouvel essai après 20 s
+        for tour in range(2):
+            for k in range(n + 8):
+                if len(horodatages) >= n:
+                    break
+                h = (t - timedelta(minutes=15 * k)).strftime("%Y%m%d%H%M%S")
+                if h in horodatages:
+                    continue
+                try:
+                    contenu = self.t.octets(GDELT_EXPORT.format(horodatage=h))
+                except ErreurSource as e:
+                    LOG.warning("GDELT, fichier %s indisponible : %s", h, e)
+                    continue
+                with zipfile.ZipFile(io.BytesIO(contenu)) as z:
+                    texte = z.read(z.namelist()[0]).decode("utf-8", errors="replace")
+                horodatages.append(h)
+                for pays, a in agreger_export(texte, fips_suivis).items():
+                    cumul = total.setdefault(pays, {"evenements": 0, "articles": 0, "ton_pondere": 0.0, "conflits": 0})
+                    for c in cumul:
+                        cumul[c] += a[c]
+            if horodatages:
+                break
+            time.sleep(20)
         if not horodatages:
             raise ErreurSource("GDELT : aucun fichier d'événements lisible")
         return {"horodatages": horodatages, "pays": total}
@@ -355,7 +365,9 @@ class FournisseurTest:
         return chemin.read_text(encoding="utf-8")
 
     def gdelt_doc(self, cle, requete, maxi=None):
-        if cle == "groupee":  # la requête groupée renvoie les articles de tous les thèmes
+        if cle.startswith("groupe"):  # requêtes groupées : la première renvoie les articles de tous les thèmes
+            if not cle.startswith("groupe 1/"):
+                return []
             res = []
             for chemin in sorted(self.dossier.glob("gdelt_doc_*.json")):
                 res += lire_doc(chemin.read_text(encoding="utf-8"))

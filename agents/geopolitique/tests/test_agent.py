@@ -12,7 +12,7 @@ from agents.commun.telechargement import ErreurSource
 from agents.geopolitique import evenements as E
 from agents.geopolitique import ia
 from agents.geopolitique import score as S
-from agents.geopolitique.agent import DOSSIER, charger_config, executer, requete_groupee
+from agents.geopolitique.agent import DOSSIER, charger_config, executer, requetes_groupees
 from agents.geopolitique.sources import ClientGdelt, FournisseurTest, agreger_export, lire_federal_register, lire_ofac, lire_rss
 
 DONNEES = DOSSIER / "tests" / "donnees"
@@ -127,11 +127,16 @@ class TestSources(unittest.TestCase):
         self.assertIn("US", agg)
         self.assertTrue(set(agg) <= fips)
 
-    def test_requete_groupee(self):
-        q = requete_groupee(charger_config()["gdelt"]["requetes"])
-        self.assertTrue(q.startswith("(sanctions OR embargo"))
-        self.assertEqual(q.count("("), 1)
-        self.assertIn('"strait of hormuz"', q)
+    def test_requetes_groupees(self):
+        g = charger_config()["gdelt"]
+        groupes = requetes_groupees(g["requetes"], g["longueur_max_requete"])
+        self.assertTrue(groupes[0].startswith("(sanctions OR embargo"))
+        self.assertLess(len(groupes), len(g["requetes"]))  # moins de requêtes qu'une par thème
+        self.assertTrue(all(len(q) <= g["longueur_max_requete"] and q.count("(") == 1 for q in groupes))
+        self.assertTrue(any('"strait of hormuz"' in q for q in groupes))
+        attendus = {t.strip() for r in g["requetes"].values() for t in r.strip("()").split(" OR ")}
+        obtenus = {t for q in groupes for t in q.strip("()").split(" OR ")}
+        self.assertEqual(obtenus, attendus)  # aucun terme perdu
 
 
 class SessionSimulee:
@@ -250,6 +255,9 @@ class TestRegroupement(unittest.TestCase):
         principal = max(evts, key=lambda e: len(e["articles"]))
         self.assertEqual(E.pays_principaux(principal, self.det), ["US"])
         self.assertEqual(E.pays_principaux(principal, self.det, ["Les Américains votent pour renouveler le Congrès."]), ["US"])
+        # Résumé de Gemini qui évoque l'Ukraine et l'Iran : pas rattaché à ces pays (cités dans peu d'articles)
+        resume = ["Les électeurs américains votent ; les enjeux incluent la politique envers l'Ukraine et l'Iran."]
+        self.assertEqual(E.pays_principaux(principal, self.det, resume), ["US"])
 
 
 # ------------------------------------------------------------------ exécution complète
@@ -273,7 +281,7 @@ class TestSansIA(Base):
         self.assertEqual(next(x for x in s["sources"] if x["nom"].startswith("Gemini"))["etat"], "non configurée")
         doc = next(x for x in s["sources"] if x["nom"].startswith("GDELT, API DOC"))
         self.assertEqual(doc["etat"], "ok")
-        self.assertIn("requête groupée", doc["detail"])
+        self.assertIn("requêtes groupées", doc["detail"])
         self.assertTrue(r["recap"])
 
     def test_requetes_par_theme_si_groupee_desactivee(self):
