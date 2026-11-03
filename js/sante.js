@@ -138,6 +138,8 @@ function carteAgent(agent, maintenant) {
   const age = (maintenant - Date.parse(s.derniere_execution)) / 60_000;
   const plan = situationPlanning(s, maintenant);
   const problemes = (s.sources ?? []).filter((src) => ETATS_PROBLEME.has(src.etat));
+  // Clés facultatives absentes : affichées pour information, sans compter comme un échec
+  const nonConfigurees = (s.sources ?? []).filter((src) => src.etat === 'non configurée');
   const alertes = echeances(agent, maintenant).filter((e) => e.etat !== 'ok');
   return el('article', { class: `carte sante-carte ${classe}` },
     enTete,
@@ -173,7 +175,7 @@ function carteAgent(agent, maintenant) {
       : null,
     statut === 'degrade' && s.raisons?.length
       ? el('div', {},
-        el('h4', { class: 'sante-sous-titre' }, 'Indicateurs dégradés'),
+        el('h4', { class: 'sante-sous-titre' }, 'Causes de la dégradation'),
         el('ul', { class: 'sante-sources' }, s.raisons.map((r) => el('li', { class: 'sante-source-info' }, r))))
       : null,
     problemes.length
@@ -189,6 +191,10 @@ function carteAgent(agent, maintenant) {
             src.detail ? ` · ${src.detail}` : null),
         ))))
       : el('p', { class: 'sante-ligne' }, 'Toutes les sources répondent.'),
+    nonConfigurees.length
+      ? el('p', { class: 'sante-source-info' }, 'Non configurées (facultatives, non comptées) : ',
+        nonConfigurees.map((src) => src.nom).join(', '), '.')
+      : null,
   );
 }
 

@@ -8,7 +8,12 @@
 import { el, nombre, variation, classeNote } from './outils.js';
 
 const FICHIER = 'data/pepites.json';
-const filtres = { region: 'toutes', secteur: 'tous' }; // mémorisés pendant la session
+const filtres = { liste: 'pepites', region: 'toutes', secteur: 'tous' }; // mémorisés pendant la session
+
+const LISTES = {
+  pepites: { titre: 'Pépites', aide: 'Capitalisation de 300 M$ à 20 Md$, peu suivies par les analystes' },
+  qpr: { titre: 'Qualité à prix raisonnable', aide: 'Grandes sociétés (plus de 20 Md$) qui remplissent les mêmes critères' },
+};
 
 /** Charge data/pepites.json ; null si le fichier manque (l'appli continue). */
 export async function chargerPepites() {
@@ -44,21 +49,30 @@ export function ecranPepites(p, d, nav) {
   const regions = p.meta.regions ?? {};
   const conteneur = el('div', {});
 
+  // Anciennes données (une seule liste, sans champ « liste ») : tout est dans « pepites »
+  const dansListe = (x) => (x.liste ?? 'pepites') === filtres.liste;
+  const onglets = el('div', { class: 'onglets', role: 'tablist', 'aria-label': 'Listes' });
   const rendre = () => {
-    const parRegion = p.liste.filter((x) => filtres.region === 'toutes' || x.region === filtres.region);
+    onglets.replaceChildren(...Object.entries(LISTES).map(([cle, l]) => el('button', {
+      class: 'onglet', type: 'button', role: 'tab', 'aria-selected': String(filtres.liste === cle),
+      onclick: () => { filtres.liste = cle; filtres.region = 'toutes'; filtres.secteur = 'tous'; rendre(); },
+    }, `${l.titre} (${p.liste.filter((x) => (x.liste ?? 'pepites') === cle).length})`)));
+    const liste = p.liste.filter(dansListe);
+    const parRegion = liste.filter((x) => filtres.region === 'toutes' || x.region === filtres.region);
     const visibles = parRegion.filter((x) => filtres.secteur === 'tous' || x.secteur_gics === filtres.secteur);
     const compte = (liste, cle) => liste.reduce((m, x) => m.set(x[cle], (m.get(x[cle]) ?? 0) + 1), new Map());
-    const nbRegions = compte(p.liste, 'region');
+    const nbRegions = compte(liste, 'region');
     const nbSecteurs = compte(parRegion, 'secteur_gics');
     const nomsSecteurs = new Map(p.liste.map((x) => [x.secteur_gics, x.secteur_nom]));
     conteneur.replaceChildren(
-      puces('Région', [['toutes', 'Toutes', p.liste.length], ...Object.entries(regions).filter(([k]) => nbRegions.has(k)).map(([k, v]) => [k, v, nbRegions.get(k)])],
+      el('p', { class: 'fiche-verdict' }, LISTES[filtres.liste].aide, ` · au plus ${p.meta.criteres?.plafond_par_secteur ?? 3} sociétés par secteur`),
+      puces('Région', [['toutes', 'Toutes', liste.length], ...Object.entries(regions).filter(([k]) => nbRegions.has(k)).map(([k, v]) => [k, v, nbRegions.get(k)])],
         filtres.region, (c) => { filtres.region = c; filtres.secteur = 'tous'; rendre(); }),
       puces('Secteur', [['tous', 'Tous', parRegion.length], ...[...nbSecteurs].sort((a, b) => b[1] - a[1]).map(([k, n]) => [k, nomsSecteurs.get(k) ?? k, n])],
         filtres.secteur, (c) => { filtres.secteur = c; rendre(); }),
       visibles.length
         ? el('div', { class: 'pepites-liste' }, visibles.map((x) => ligne(x, d, nav)))
-        : el('p', { class: 'fiche-verdict' }, 'Aucune pépite candidate pour ce filtre.'),
+        : el('p', { class: 'fiche-verdict' }, 'Aucune société pour ce filtre.'),
     );
   };
   rendre();
@@ -67,9 +81,11 @@ export function ecranPepites(p, d, nav) {
   return [
     entete,
     el('p', { class: 'macro-texte' },
-      `${p.liste.length} société${p.liste.length > 1 ? 's' : ''} remplissent tous les critères`,
-      p.meta.candidats > p.liste.length ? ` (les ${p.liste.length} mieux notées sur ${p.meta.candidats})` : '',
+      `${p.meta.candidats ?? p.liste.length} sociétés remplissent tous les critères ; ${p.liste.length} retenues dans les deux listes`,
+      p.meta.holdings_exclues ? ` (${p.meta.holdings_exclues} holdings et sociétés d’investissement exclues)` : '',
       '. Note sur 100 ; l’ajustement de contexte (pays et cycle) est affiché à part.'),
+    ...(p.meta.avertissements ?? []).map((a) => el('p', { class: 'pepites-avertissement', role: 'note' }, el('strong', {}, 'Concentration : '), a)),
+    onglets,
     conteneur,
     el('details', { class: 'detail-repliable' },
       el('summary', {}, 'Critères (tous requis)'),
@@ -81,6 +97,8 @@ export function ecranPepites(p, d, nav) {
         el('li', {}, `F-score de Piotroski d’au moins ${crit.fscore_min ?? 7}`),
         el('li', {}, `Valorisation au plus ${nombre(crit.valorisation_max_pct ?? 10)} % au-dessus de la médiane du secteur`),
         el('li', {}, 'Aucun signal d’alerte comptable'),
+        el('li', {}, 'Holdings et sociétés d’investissement exclues (la décote sur l’actif net n’est pas mesurable avec des sources gratuites)'),
+        el('li', {}, `Pépites : capitalisation de ${nombre((crit.cap_min_md ?? 0.3) * 1000)} M$ à ${nombre(crit.cap_max_md ?? 20)} Md$ et au plus ${crit.analystes_max ?? 8} analystes (quand Yahoo le fournit)`),
       )),
     el('p', { class: 'fraicheur' }, `Mis à jour le ${(p.meta.genere_le ?? '').slice(8, 10)}/${(p.meta.genere_le ?? '').slice(5, 7)}/${(p.meta.genere_le ?? '').slice(0, 4)} · Agent entreprises (règles, sans IA)`),
     el('p', { class: 'mention-legale' }, 'Liste de candidates à étudier, pas une recommandation : chaque fiche comporte une revue critique et des points à vérifier soi-même. Ne constitue pas un conseil en investissement.'),
@@ -98,7 +116,8 @@ function ligne(x, d, nav) {
     el('span', { class: 'ligne-pepite-note' }, nombre(x.note), el('small', {}, '/100'),
       el('small', { class: `ligne-pepite-ctx ${ctx > 0 ? 'hausse' : ctx < 0 ? 'baisse' : ''}` }, ` ${variation(ctx, 1, '')} contexte`)),
   ),
-  el('div', { class: 'ligne-pepite-info' }, `${x.ticker} · ${pays} · ${x.secteur_nom} · confiance ${x.confiance}`),
+  el('div', { class: 'ligne-pepite-info' }, [x.ticker, pays, x.secteur_nom, x.capitalisation_md != null ? `${nombre(x.capitalisation_md, x.capitalisation_md < 10 ? 1 : 0)} Md$` : null,
+    x.analystes != null ? `${x.analystes} analyste${x.analystes > 1 ? 's' : ''}` : null, `confiance ${x.confiance}`].filter(Boolean).join(' · ')),
   el('div', { class: 'ligne-pepite-cles' }, cles.map(([k, v]) => el('span', {}, el('small', {}, LIBELLES_CLES[k] ?? k), ' ', el('strong', { class: 'mono' }, v)))),
   el('div', { class: 'ligne-pepite-verdict' }, x.verdict),
   );
