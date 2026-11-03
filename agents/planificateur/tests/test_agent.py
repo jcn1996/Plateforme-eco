@@ -132,5 +132,41 @@ class TestDecisions(Base):
         self.assertIn("planificateur.json", [e["fichier"] for e in index])
 
 
+class TestGeopolitique(Base):
+    """Agent géopolitique : planning réel (workflow du dépôt), toutes les heures, mode « quotidien » à 6 h 03."""
+
+    def setUp(self):
+        super().setUp()
+        reel = Path(__file__).resolve().parents[3] / ".github" / "workflows" / "agent-geopolitique.yml"
+        shutil.copy(reel, self.wf / "agent-geopolitique.yml")
+        for w in ("agent-marches.yml", "agent-pays.yml", "agent-entreprises.yml", "maintien.yml"):
+            (self.wf / w).unlink()
+
+    def geo(self):
+        return [l for l in self.lances if l[0] == "agent-geopolitique.yml"]
+
+    def test_toutes_les_heures(self):
+        self.journal("agent-geopolitique.yml", "2026-11-03T13:04:00Z")
+        self.appel("2026-11-03T14:00:00Z")
+        self.assertEqual(self.geo(), [])  # créneau de 14 h 03 pas encore atteint
+        self.appel("2026-11-03T14:06:00Z")
+        self.assertEqual(self.geo(), [("agent-geopolitique.yml", {"mode": "horaire"})])
+        self.journal("agent-geopolitique.yml", "2026-11-03T14:08:00Z")
+        self.appel("2026-11-03T14:21:00Z")
+        self.assertEqual(len(self.geo()), 1)  # fait : pas de second lancement
+
+    def test_synthese_de_six_heures(self):
+        self.journal("agent-geopolitique.yml", "2026-11-03T05:04:00Z")
+        self.appel("2026-11-03T06:06:00Z")
+        self.assertEqual(self.geo(), [("agent-geopolitique.yml", {"mode": "quotidien"})])
+
+    def test_six_heures_manquee_rattrapee_en_quotidien(self):
+        # Exécution de 5 h faite ; 6 h 03 et 7 h 03 manquées : le créneau le plus récent (horaire) est lancé,
+        # l'agent écrit quand même la synthèse du jour, qui manque après 6 h UTC
+        self.journal("agent-geopolitique.yml", "2026-11-03T05:04:00Z")
+        self.appel("2026-11-03T07:10:00Z")
+        self.assertEqual(self.geo(), [("agent-geopolitique.yml", {"mode": "horaire"})])
+
+
 if __name__ == "__main__":
     unittest.main()

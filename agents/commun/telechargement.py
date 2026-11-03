@@ -74,5 +74,32 @@ class Telechargeur:
                 time.sleep(pause)
         raise ErreurSource(f"{url} : {derniere_erreur}")
 
+    def octets(self, url: str, params: dict | None = None, entetes: dict | None = None) -> bytes:
+        """Comme texte(), pour un fichier binaire (zip, xls). Même cache, mêmes reprises."""
+        cache = self._chemin_cache(url, params).with_suffix(".bin")
+        if cache.exists() and time.time() - cache.stat().st_mtime < self.duree_cache:
+            return cache.read_bytes()
+        derniere_erreur = None
+        for essai in range(1, self.essais + 1):
+            attente = self.delai_politesse - (time.monotonic() - self._derniere_requete)
+            if attente > 0:
+                time.sleep(attente)
+            self._derniere_requete = time.monotonic()
+            try:
+                r = self.session.get(url, params=params, headers=entetes, timeout=self.delai_max)
+                if r.status_code == 200:
+                    cache.write_bytes(r.content)
+                    return r.content
+                derniere_erreur = f"HTTP {r.status_code}"
+                if r.status_code not in (429, 500, 502, 503, 504):
+                    break
+            except requests.RequestException as e:
+                derniere_erreur = f"{type(e).__name__}: {e}"
+            if essai < self.essais:
+                pause = self.attente_initiale * 2 ** (essai - 1)
+                LOG.warning("Échec %s (%s), nouvel essai dans %.0f s", url, derniere_erreur, pause)
+                time.sleep(pause)
+        raise ErreurSource(f"{url} : {derniere_erreur}")
+
     def json(self, url: str, params: dict | None = None, entetes: dict | None = None):
         return json.loads(self.texte(url, params, entetes))
