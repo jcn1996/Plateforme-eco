@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genere_le": "2026-11-02T23:25:46Z",
+    "genere_le": "2026-11-03T06:48:20Z",
     "source": "agent-entreprises",
     "version_agent": "1.0",
     "description": "Composition, révision des comptes et publication, à chaque exécution",
@@ -9,16 +9,23 @@
       "libelle": "Agent entreprises",
       "ordre": 4,
       "workflow": "agent-entreprises.yml",
-      "derniere_execution": "2026-11-02T23:24:53Z",
+      "derniere_execution": "2026-11-03T06:47:22Z",
       "prochaine_prevue": "2026-11-03T22:30:00Z",
       "intervalle_min": 1440,
-      "sources_total": 31,
-      "sources_ok": 31,
+      "planning": {
+        "crons": [
+          "30 22 * * 1-5",
+          "10 3 * * 6"
+        ],
+        "fuseau": "UTC"
+      },
+      "sources_total": 32,
+      "sources_ok": 32,
       "sources": [
         {
           "nom": "Composition US (SSGA SPY + SSGA MDY)",
           "etat": "ok",
-          "derniere_donnee_valide": "2026-11-02T23:24:53Z",
+          "derniere_donnee_valide": "2026-11-03T06:47:22Z",
           "detail": null
         },
         {
@@ -203,9 +210,9 @@
         },
         {
           "nom": "SEC (XBRL companyfacts, submissions)",
-          "etat": "non configurée",
-          "derniere_donnee_valide": null,
-          "detail": "secret SEC_USER_AGENT absent"
+          "etat": "ok",
+          "derniere_donnee_valide": "2026-11-03T06:47:22Z",
+          "detail": null
         },
         {
           "nom": "EDINET (Japon)",
@@ -730,6 +737,217 @@
         "officielles": 13,
         "divergences": 3
       }
+    },
+    {
+      "genere_le": "2026-11-03T06:48:20Z",
+      "composition": {
+        "US": {
+          "etat": "ok",
+          "source": "SSGA SPY + SSGA MDY",
+          "nombre": 654
+        },
+        "CA": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 4,
+          "detail": "iShares EWC : fichier iShares sans tableau de composition (page HTML reçue ?) ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        },
+        "MX": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 3,
+          "detail": "iShares EWW : fichier iShares sans tableau de composition (page HTML reçue ?) ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        },
+        "BR": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 4,
+          "detail": "iShares EWZ : fichier iShares sans tableau de composition (page HTML reçue ?) ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        },
+        "AR": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 1,
+          "detail": "iShares ARGT : URL iShares inconnue pour ARGT ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        },
+        "CL": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 1,
+          "detail": "iShares ECH : fichier iShares sans tableau de composition (page HTML reçue ?) ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        },
+        "CO": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 1,
+          "detail": "iShares GXG : URL iShares inconnue pour GXG ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        },
+        "GB": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 5,
+          "detail": "iShares EWU : fichier iShares sans tableau de composition (page HTML reçue ?) ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        },
+        "FR": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 6,
+          "detail": "iShares EWQ : fichier iShares sans tableau de composition (page HTML reçue ?) ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        },
+        "DE": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 5,
+          "detail": "iShares EWG : fichier iShares sans tableau de composition (page HTML reçue ?) ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        },
+        "CH": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 4,
+          "detail": "iShares EWL : fichier iShares sans tableau de composition (page HTML reçue ?) ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        },
+        "IT": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 3,
+          "detail": "iShares EWI : fichier iShares sans tableau de composition (page HTML reçue ?) ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        },
+        "ES": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 3,
+          "detail": "iShares EWP : fichier iShares sans tableau de composition (page HTML reçue ?) ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        },
+        "NL": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 3,
+          "detail": "iShares EWN : fichier iShares sans tableau de composition (page HTML reçue ?) ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        },
+        "SE": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 3,
+          "detail": "iShares EWD : https://www.ishares.com/us/products/239682/ishares-msci-sweden-etf/1467271812596.ajax?fileType=csv&fileName=EWD_holdings ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        },
+        "PL": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 2,
+          "detail": "iShares EPOL : URL iShares inconnue pour EPOL ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        },
+        "JP": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 6,
+          "detail": "iShares EWJ : fichier iShares sans tableau de composition (page HTML reçue ?) ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        },
+        "CN": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 4,
+          "detail": "iShares MCHI : fichier iShares sans tableau de composition (page HTML reçue ?) ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        },
+        "IN": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 4,
+          "detail": "iShares INDA : fichier iShares sans tableau de composition (page HTML reçue ?) ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        },
+        "KR": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 3,
+          "detail": "iShares EWY : fichier iShares sans tableau de composition (page HTML reçue ?) ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        },
+        "TW": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 3,
+          "detail": "iShares EWT : fichier iShares sans tableau de composition (page HTML reçue ?) ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        },
+        "AU": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 3,
+          "detail": "iShares EWA : fichier iShares sans tableau de composition (page HTML reçue ?) ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        },
+        "ID": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 2,
+          "detail": "iShares EIDO : fichier iShares sans tableau de composition (page HTML reçue ?) ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        },
+        "SG": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 2,
+          "detail": "iShares EWS : fichier iShares sans tableau de composition (page HTML reçue ?) ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        },
+        "TH": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 2,
+          "detail": "iShares THD : fichier iShares sans tableau de composition (page HTML reçue ?) ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        },
+        "VN": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 1,
+          "detail": "iShares VNM : URL iShares inconnue pour VNM ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        },
+        "SA": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 2,
+          "detail": "iShares KSA : URL iShares inconnue pour KSA ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        },
+        "AE": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 2,
+          "detail": "iShares UAE : URL iShares inconnue pour UAE ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        },
+        "TR": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 2,
+          "detail": "iShares TUR : fichier iShares sans tableau de composition (page HTML reçue ?) ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        },
+        "ZA": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 2,
+          "detail": "iShares EZA : URL iShares inconnue pour EZA ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        },
+        "EG": {
+          "etat": "depart",
+          "source": "liste de départ",
+          "nombre": 1,
+          "detail": "iShares EGPT : URL iShares inconnue pour EGPT ; filtre Yahoo : HTTP Error 401: Unauthorized"
+        }
+      },
+      "revision": {},
+      "echecs": [],
+      "publication": {
+        "entreprises": 734,
+        "pepites": 25,
+        "candidats": 37,
+        "signaux": 0,
+        "secteurs": 87,
+        "officielles": 13,
+        "divergences": 3
+      }
     }
-  ]
+  ],
+  "derniere_execution": "2026-11-03T06:47:22Z",
+  "prochaine_prevue": "2026-11-03T22:30:00Z",
+  "intervalle_min": 1440,
+  "planning": {
+    "crons": [
+      "30 22 * * 1-5",
+      "10 3 * * 6"
+    ],
+    "fuseau": "UTC"
+  }
 }
