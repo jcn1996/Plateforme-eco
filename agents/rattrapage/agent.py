@@ -27,7 +27,7 @@ from agents.commun.sortie import ecrire_json, lire_json
 LOG = journal("rattrapage")
 DOSSIER = sante.DOSSIER_JOURNAL
 FICHIER = DOSSIER / "rattrapage.json"
-IGNORES = {"index.json", "rattrapage.json"}
+IGNORES = {"index.json", "rattrapage.json", "planificateur.json"}
 DELAI = timedelta(hours=1)          # retard au-delà duquel on relance
 UNE_RELANCE_PAR = timedelta(hours=1)
 MAXIMUM = 200

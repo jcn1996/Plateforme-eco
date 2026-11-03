@@ -54,6 +54,24 @@ export function fusionnerSante(journal) {
 }
 
 /** Charge l'index puis chaque journal. Ne lève jamais : un journal illisible donne un agent « en panne ». */
+/* Planificateur (réveil externe) : dernier appel lu en direct sur l'API publique de GitHub
+   (dernière exécution du workflow), au plus toutes les 5 minutes ; à défaut, dans son journal
+   (mis à jour au moins toutes les 20 minutes). */
+const API_PLANIFICATEUR = 'https://api.github.com/repos/jcn1996/Plateforme-eco/actions/workflows/planificateur.yml/runs?per_page=1';
+let appelEnDirect = { lu: 0, date: null };
+
+async function dernierAppelEnDirect() {
+  if (Date.now() - appelEnDirect.lu < 5 * 60_000) return appelEnDirect.date;
+  appelEnDirect.lu = Date.now();
+  try {
+    const r = await fetch(API_PLANIFICATEUR, { headers: { Accept: 'application/vnd.github+json' } });
+    if (r.ok) appelEnDirect.date = (await r.json()).workflow_runs?.[0]?.created_at ?? null;
+  } catch {
+    /* dépôt privé, limite de l'API ou hors ligne : on garde le journal */
+  }
+  return appelEnDirect.date;
+}
+
 export async function chargerSante() {
   let index;
   try {
@@ -64,7 +82,15 @@ export async function chargerSante() {
   return Promise.all(index.map(async (entree) => {
     try {
       const journal = await lireJson(`data/journal/${entree.fichier}`);
-      return { ...entree, sante: fusionnerSante(journal) };
+      const s = fusionnerSante(journal);
+      if (s?.appel_externe) {
+        const direct = await dernierAppelEnDirect();
+        if (direct && (!s.derniere_execution || Date.parse(direct) > Date.parse(s.derniere_execution))) {
+          s.derniere_execution = direct;
+          s.appel_lu_en_direct = true;
+        }
+      }
+      return { ...entree, sante: s };
     } catch {
       return { ...entree, sante: null };
     }
@@ -75,6 +101,11 @@ export async function chargerSante() {
 export function statutAgent(agent, maintenant = Date.now()) {
   const s = agent.sante;
   if (!s?.derniere_execution) return 'panne';
+  if (s.appel_externe) {
+    // Planificateur : appelé toutes les 15 min par le réveil externe ; en panne sans appel depuis 45 min
+    if (maintenant - Date.parse(s.derniere_execution) > (s.panne_minutes ?? 45) * 60_000) return 'panne';
+    return s.degrade ? 'degrade' : 'ok';
+  }
   const { etat } = situationPlanning(s, maintenant);
   if (etat === 'panne' || etat === 'retard') return etat;
   // Règle de l'agent (sources attendues par indicateur) ; à défaut, toute source en difficulté
@@ -123,6 +154,26 @@ function duree(minutes) {
   return `${Math.round(minutes / 1440)}\u00a0j`;
 }
 
+/** Carte du planificateur (réveil externe) : dernier appel reçu, dernier lancement d'agent. */
+function cartePlanificateur(agent, s, statut, classe, enTete, age) {
+  return el('article', { class: `carte sante-carte ${classe}` },
+    enTete,
+    el('dl', { class: 'sante-details' },
+      el('dt', {}, 'Dernier appel reçu'),
+      el('dd', {}, `${dateLisible(s.derniere_execution)} (il y a ${duree(age)})${s.appel_lu_en_direct ? ' · lu sur GitHub' : ''}`),
+      el('dt', {}, 'Appels attendus'),
+      el('dd', {}, `toutes les 15 min (panne au-delà de ${duree(s.panne_minutes ?? 45)})`),
+      el('dt', {}, 'Dernier lancement d’agent'),
+      el('dd', {}, s.dernier_lancement ? dateLisible(s.dernier_lancement) : 'aucun'),
+    ),
+    statut === 'panne'
+      ? el('p', { class: 'sante-alerte' }, `Aucun appel du réveil externe depuis plus de ${duree(s.panne_minutes ?? 45)}. `
+        + 'Vérifier la tâche sur cron-job.org et son jeton GitHub (voir le README, « Réveil externe »). Les plannings GitHub restent actifs en secours.')
+      : null,
+    s.raisons?.length ? el('ul', { class: 'sante-sources' }, s.raisons.map((r) => el('li', { class: 'sante-source-info' }, r))) : null,
+  );
+}
+
 function carteAgent(agent, maintenant) {
   const s = agent.sante;
   const statut = statutAgent(agent, maintenant);
@@ -136,6 +187,7 @@ function carteAgent(agent, maintenant) {
       el('p', { class: 'sante-ligne' }, 'Journal introuvable ou illisible : aucune exécution réussie connue.'));
   }
   const age = (maintenant - Date.parse(s.derniere_execution)) / 60_000;
+  if (s.appel_externe) return cartePlanificateur(agent, s, statut, classe, enTete, age);
   const plan = situationPlanning(s, maintenant);
   const problemes = (s.sources ?? []).filter((src) => ETATS_PROBLEME.has(src.etat));
   // Clés facultatives absentes : affichées pour information, sans compter comme un échec
