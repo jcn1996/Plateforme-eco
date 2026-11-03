@@ -279,7 +279,11 @@ def pays_et_lieux(e: dict, det: Detecteur) -> tuple[list[str], list[str]]:
     resume = [r["texte"] for r in a.get("resume", [])]
     cites = set(pays_presents(e, det, 0.0001)) | set(det.pays_de(" ".join(resume)))
     if a.get("pays_ia"):
-        base = [c for c in a["pays_ia"] if c in cites]
+        # Pays acteurs selon Gemini, gardés s'ils figurent dans le titre de référence ou le titre français,
+        # dans le résumé, ou dans au moins un tiers des articles (pas un pays cité dans un seul commentaire)
+        appuis = (set(det.pays_de(titre_reference(e))) | set(det.pays_de(a.get("titre") or ""))
+                  | set(det.pays_de(" ".join(resume))) | set(pays_presents(e, det, 1 / 3)))
+        base = [c for c in a["pays_ia"] if c in cites and c in appuis]
     else:
         base = pays_principaux(e, det, resume)
     textes = [titre_reference(e), a.get("titre") or "", *resume]

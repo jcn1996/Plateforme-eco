@@ -683,6 +683,16 @@ class TestQualite(unittest.TestCase):
         self.assertEqual(lieux, ["AE"])
         self.assertNotIn("DE", principaux)  # l'Allemagne commente seulement
 
+    def test_pays_de_gemini_seulement_commentateur_ecarte(self):
+        titres = ["Russian strikes kill 29 in Zaporizhzhia"] * 5 + ["Macron condemns Russian strikes on Ukraine"]
+        e = evt("uk", titres[0], ["RU", "UA"], analyse={"pays_ia": ["RU", "UA", "FR", "DE"], "titre": "Frappes russes meurtrières en Ukraine",
+                                                         "resume": [{"texte": "Des frappes russes ont fait 29 morts en Ukraine.", "sources": []}]}, n=6)
+        for a, t in zip(e["articles"], titres):
+            a["titre"] = t
+            a["pays"] = ["FR", "RU", "UA"] if "Macron" in t else ["RU", "UA"]
+        principaux, _ = E.pays_et_lieux(e, self.det)
+        self.assertEqual(set(principaux), {"RU", "UA"})
+
     def test_francais_sans_accents_refuse(self):
         sources = {"S1": {"id": "S1", "url": "https://a.example/1", "domaine": "a.example", "titre": "t"}}
         sup = []
