@@ -694,6 +694,8 @@ def main(argv=None) -> int:
             return 0
         base.update(revus)
         _sauver_univers(data, univers_lot["societes"], etats_compo)
+        # Révision partielle (--pays, échantillon) : la santé porte sur tous les pays connus, pas seulement ceux revus
+        etats_compo = ((lire_json(data / "entreprises" / "univers.json") or {}).get("meta") or {}).get("etats", etats_compo)
     elif args.mode == "assembler":
         etats_rev = {"ok": 0, "echec": 0, "officiel": 0, "echecs": []}
         for chemin in args.lots:

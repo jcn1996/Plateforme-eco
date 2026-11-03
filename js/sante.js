@@ -247,7 +247,8 @@ function carteAgent(agent, maintenant) {
       : el('p', { class: 'sante-ligne' }, 'Toutes les sources répondent.'),
     manuelles.length
       ? el('p', { class: 'sante-source-info' }, 'Listes manuelles (information) : ',
-        manuelles.map((src) => src.nom.replace(/^Composition /, '')).join(', '), '. Revérification nécessaire après 6 mois.')
+        manuelles.map((src) => `${(src.nom.match(/^Composition (\w+)/) ?? [])[1] ?? src.nom} (vérifiée le ${src.manuelle.slice(8, 10)}/${src.manuelle.slice(5, 7)}/${src.manuelle.slice(0, 4)})`).join(', '),
+        '. Revérification nécessaire après 6 mois (config/compositions_manuelles.json).')
       : null,
     nonConfigurees.length
       ? el('p', { class: 'sante-source-info' }, 'Non configurées (facultatives, non comptées) : ',

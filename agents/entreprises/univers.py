@@ -355,6 +355,14 @@ class Composition:
             raise ValueError(f"VanEck {etf} : fichier non servi (HTTP {r.status_code}, vérification par cookie)")
         return self.resoudre(lire_positions_vaneck(r.content), pays)
 
+    def cotees(self, liste: list[dict]) -> list[dict]:
+        """Écarte les places sans cours sur Yahoo Finance (ex. Abu Dhabi, « .AD ») avant d'appliquer le plafond."""
+        exclus = tuple(self.cfg.get("suffixes_sans_cours", []))
+        res = [x for x in liste if not (exclus and x["ticker"].upper().endswith(exclus))]
+        if not res:
+            raise ValueError("aucune position cotée sur une place couverte par Yahoo Finance")
+        return res
+
     def resoudre(self, positions: list[dict], pays: str) -> list[dict]:
         """Codes Bloomberg (« ECOPETL CB ») → symboles Yahoo, par recherche du nom sur Yahoo
         (on garde le symbole de la place du pays ; à défaut, la racine du code + le suffixe du pays)."""
@@ -453,10 +461,10 @@ class Composition:
             fournisseur = self.cfg.get("fournisseurs", {}).get(etf, {}).get("type", "ishares")
             try:
                 if fournisseur == "globalx":
-                    return self.etf_globalx(etf, code)[:plafond], f"Global X {etf}"
+                    return self.cotees(self.etf_globalx(etf, code))[:plafond], f"Global X {etf}"
                 if fournisseur == "vaneck":
-                    return self.etf_vaneck(etf, code)[:plafond], f"VanEck {etf}"
-                return self.etf_ishares(etf, code)[:plafond], f"iShares {etf}"
+                    return self.cotees(self.etf_vaneck(etf, code))[:plafond], f"VanEck {etf}"
+                return self.cotees(self.etf_ishares(etf, code))[:plafond], f"iShares {etf}"
             except Exception as e:
                 erreurs.append(f"{fournisseur} {etf} : {str(e)[:120]}")
         try:
