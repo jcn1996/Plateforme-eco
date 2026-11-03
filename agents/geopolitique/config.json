@@ -1,0 +1,168 @@
+{
+  "_commentaire": "Configuration de l'agent géopolitique. Quotas Gemini, requêtes GDELT, flux RSS, catégories, pays (codes FIPS de GDELT et noms reconnus dans les titres), pondérations du score. Modifiable sans toucher au code. Règles : agents/geopolitique/regles.md.",
+
+  "gemini": {
+    "_commentaire": "Quotas gratuits : ils ne sont plus publiés en chiffres (consultables dans Google AI Studio, par projet). Valeurs prudentes par défaut ; le jour de quota est celui du Pacifique (remise à zéro à minuit, heure du Pacifique). « gemini-flash-latest » désigne le modèle Flash le plus récent (alias tenu à jour par Google).",
+    "modele": "gemini-flash-latest",
+    "quota_jour": 20,
+    "quota_minute": 10,
+    "intervalle_min_secondes": 7,
+    "appels_max_par_execution": 2,
+    "evenements_par_appel": 3,
+    "fuseau_quota": "America/Los_Angeles",
+    "delai_reponse_secondes": 60,
+    "reanalyse_apres_heures": 24,
+    "reanalyse_si_sources_multipliees_par": 2
+  },
+
+  "gdelt": {
+    "_commentaire": "API DOC 2.0 : une requête par thème (au plus une toutes les 5 s, consigne de GDELT). Fichiers d'événements GDELT 2.0 (géolocalisés, publiés toutes les 15 minutes) : tonalité et volume par pays. L'API GEO 2.0 ne répond plus (404) ; la géolocalisation vient de ces fichiers.",
+    "fenetre_doc": "3h",
+    "articles_max_par_requete": 75,
+    "delai_entre_requetes_secondes": 6,
+    "fichiers_evenements_par_execution": 4,
+    "requetes": {
+      "sanctions": "(sanctions OR embargo OR \"export controls\" OR \"asset freeze\")",
+      "commerce": "(tariff OR tariffs OR \"trade war\" OR \"anti-dumping\" OR \"import duties\")",
+      "conflit": "(airstrike OR \"missile strike\" OR invasion OR offensive OR ceasefire OR \"troops\")",
+      "election": "(election OR referendum OR \"snap election\" OR \"vote count\")",
+      "coup": "(coup OR junta OR \"martial law\" OR \"military takeover\")",
+      "maritime": "(blockade OR \"strait of hormuz\" OR \"red sea\" OR \"shipping lane\" OR \"taiwan strait\")"
+    },
+    "langues": ["english", "french"]
+  },
+
+  "sources_rss": [
+    {"cle": "maison_blanche", "nom": "Maison-Blanche, décisions présidentielles (RSS)", "url": "https://www.whitehouse.gov/presidential-actions/feed/", "type": "officiel", "pays": "US"},
+    {"cle": "elysee", "nom": "Élysée, communiqués (RSS)", "url": "https://www.elysee.fr/feed", "type": "officiel", "pays": "FR"},
+    {"cle": "commission_ue", "nom": "Commission européenne, communiqués (RSS)", "url": "https://ec.europa.eu/commission/presscorner/api/rss?language=en", "type": "officiel", "pays": "UE"},
+    {"cle": "conseil_ue", "nom": "Conseil de l'UE, communiqués et sanctions (RSS)", "url": "https://www.consilium.europa.eu/en/rss/pressreleases.ashx", "type": "officiel", "pays": "UE"},
+    {"cle": "mofcom", "nom": "Ministère chinois du Commerce (MOFCOM)", "url": null, "type": "officiel", "pays": "CN", "_note": "pas de flux RSS public au 03/11/2026 : source « non configurée » ; ses annonces sont captées par la presse"},
+    {"cle": "bri_discours", "nom": "BRI, discours des banquiers centraux (RSS)", "url": "https://www.bis.org/doclist/cbspeeches.rss", "type": "officiel", "pays": null, "filtre": "geopolit|tariff|trade|sanction|war\\b|conflict|fragment|tension|g[ée]opolitique|droits de douane|guerre"},
+    {"cle": "reuters", "nom": "Reuters", "url": null, "type": "media", "_note": "plus de flux RSS public : captée par GDELT"},
+    {"cle": "ap", "nom": "Associated Press", "url": null, "type": "media", "_note": "pas de flux RSS public : captée par GDELT"},
+    {"cle": "afp", "nom": "France 24 (dépêches AFP) (RSS)", "url": "https://www.france24.com/fr/rss", "type": "media"},
+    {"cle": "bbc", "nom": "BBC News, monde (RSS)", "url": "https://feeds.bbci.co.uk/news/world/rss.xml", "type": "media"},
+    {"cle": "le_monde", "nom": "Le Monde, international (RSS)", "url": "https://www.lemonde.fr/international/rss_full.xml", "type": "media"},
+    {"cle": "ft", "nom": "Financial Times, monde (RSS)", "url": "https://www.ft.com/world?format=rss", "type": "media"},
+    {"cle": "guardian", "nom": "The Guardian, monde (RSS)", "url": "https://www.theguardian.com/world/rss", "type": "media"},
+    {"cle": "dw", "nom": "Deutsche Welle, monde (RSS)", "url": "https://rss.dw.com/rdf/rss-en-world", "type": "media"},
+    {"cle": "al_jazeera", "nom": "Al Jazeera (RSS)", "url": "https://www.aljazeera.com/xml/rss/all.xml", "type": "media"}
+  ],
+
+  "federal_register": {
+    "_commentaire": "Décrets et proclamations présidentiels, mesures de l'OFAC (sanctions), du BIS (contrôle des exportations) et de l'USTR (commerce). Les avis antidumping de routine de l'ITA ne sont pas suivis.",
+    "agences": ["foreign-assets-control-office", "industry-and-security-bureau", "trade-representative-office-of-united-states"],
+    "jours": 3
+  },
+
+  "officiel_garde_jours": 4,
+  "articles_garde_heures": 72,
+  "evenements_garde_jours": 30,
+  "evenements_affiches_jours": 7,
+
+  "selection": {
+    "_commentaire": "Un événement est significatif s'il atteint score_min. Score : log2(1 + domaines distincts) × 2 + source officielle (3 pour une sanction, une mesure commerciale, un conflit, un coup d'État ou une route maritime ; 1 sinon) + 1,5 par pays suivi concerné (au plus 3) + 1 si couvert par GDELT.",
+    "score_min": 6,
+    "domaines_min_sans_officiel": 3,
+    "similarite_min": 0.34
+  },
+
+  "categories": {
+    "sanctions": {"libelle": "Sanctions", "gravite_base": 3, "mots": ["sanction", "sanctions", "sanctioned", "embargo", "asset freeze", "export controls", "restrictive measures", "designations", "general license", "blacklist", "entity list", "gel des avoirs", "mesures restrictives"]},
+    "commerce": {"libelle": "Commerce et droits de douane", "gravite_base": 2, "mots": ["tariff", "tariffs", "trade war", "trade deal", "anti-dumping", "antidumping", "countervailing duty", "import duties", "adjusting imports", "section 232", "section 301", "droits de douane", "guerre commerciale", "quota", "export ban", "rare earth"]},
+    "conflit": {"libelle": "Conflit armé", "gravite_base": 3, "mots": ["airstrike", "airstrikes", "strike", "strikes", "missile", "missiles", "drone strike", "bombing", "bombs", "invasion", "offensive", "shelling", "troops", "ceasefire", "war", "frappe", "frappes", "guerre", "cessez-le-feu", "bombardement", "bombarde", "offensive militaire"]},
+    "election": {"libelle": "Élections", "gravite_base": 1, "mots": ["election", "elections", "referendum", "vote", "polls", "élection", "élections", "législatives", "présidentielle", "scrutin"]},
+    "coup": {"libelle": "Coup d'État et crise institutionnelle", "gravite_base": 3, "mots": ["coup", "junta", "martial law", "military takeover", "coup d'etat", "putsch", "loi martiale", "state of emergency", "impeachment", "destitution"]},
+    "maritime": {"libelle": "Blocus et routes maritimes", "gravite_base": 3, "mots": ["blockade", "strait of hormuz", "hormuz", "red sea", "suez", "bab el-mandeb", "shipping", "tanker", "taiwan strait", "south china sea", "blocus", "detroit d'ormuz", "detroit de taiwan", "mer rouge", "mer de chine", "petrolier", "fret maritime"]},
+    "diplomatie": {"libelle": "Diplomatie et sommets", "gravite_base": 1, "mots": ["summit", "talks", "negotiations", "treaty", "agreement", "sommet", "négociations", "accord", "traité", "visit", "visite"]},
+    "monetaire": {"libelle": "Politique monétaire et banques centrales", "gravite_base": 1, "mots": ["central bank", "interest rate", "monetary policy", "inflation", "banque centrale", "taux directeur", "politique monétaire"]}
+  },
+
+  "actifs": ["pétrole", "gaz", "or", "devises", "défense", "semi-conducteurs", "transport maritime", "agriculture", "métaux industriels", "actions", "obligations d'État", "énergie", "technologie", "automobile", "aéronautique", "banques", "cryptomonnaies"],
+
+  "score": {
+    "_commentaire": "Score de risque /100 par pays suivi = événements × 0,5 + tonalité × 0,3 + tendance × 0,2. Événements : 100 × (1 − exp(−Σ gravité² × 0,5^(âge/demi-vie) / echelle)). Tonalité : tonalité moyenne GDELT des événements géolocalisés dans le pays et part des événements de conflit. Tendance : volume d'événements de conflit des 7 derniers jours rapporté à la moyenne sur 30 jours.",
+    "poids": {"evenements": 0.5, "tonalite": 0.3, "tendance": 0.2},
+    "demi_vie_jours": 3,
+    "echelle_evenements": 25,
+    "fenetre_jours": 14,
+    "seuil_eleve": 60,
+    "seuil_modere": 35
+  },
+
+  "signaux": {
+    "gravite_min": 4,
+    "hausse_score_pts": 10,
+    "garde_jours": 180
+  },
+
+  "regions": {
+    "amerique_nord": "Amérique du Nord",
+    "amerique_latine": "Amérique latine",
+    "europe": "Europe",
+    "moyen_orient": "Moyen-Orient et Afrique du Nord",
+    "afrique": "Afrique subsaharienne",
+    "asie": "Asie-Pacifique",
+    "monde": "Monde"
+  },
+
+  "pays": {
+    "US": {"fips": "US", "region": "amerique_nord", "noms": ["united states", "U.S.", "US", "USA", "america", "american", "washington", "white house", "pentagon", "trump", "etats-unis", "americain", "americaine"]},
+    "CA": {"fips": "CA", "region": "amerique_nord", "noms": ["canada", "canadian", "ottawa", "canadien", "canadienne"]},
+    "MX": {"fips": "MX", "region": "amerique_latine", "noms": ["mexico", "mexican", "mexique", "mexicain", "mexicaine"]},
+    "BR": {"fips": "BR", "region": "amerique_latine", "noms": ["brazil", "brazilian", "bresil", "bresilien", "bresilienne", "brasilia"]},
+    "AR": {"fips": "AR", "region": "amerique_latine", "noms": ["argentina", "argentine", "argentin", "buenos aires"]},
+    "GB": {"fips": "UK", "region": "europe", "noms": ["united kingdom", "UK", "britain", "british", "london", "royaume-uni", "britannique", "londres"]},
+    "FR": {"fips": "FR", "region": "europe", "noms": ["france", "french", "paris", "elysee", "macron", "francais", "francaise"]},
+    "DE": {"fips": "GM", "region": "europe", "noms": ["germany", "german", "berlin", "allemagne", "allemand", "allemande"]},
+    "CH": {"fips": "SZ", "region": "europe", "noms": ["switzerland", "swiss", "suisse", "berne"]},
+    "SA": {"fips": "SA", "region": "moyen_orient", "noms": ["saudi", "saudi arabia", "riyadh", "arabie saoudite", "saoudien", "saoudienne", "riyad"]},
+    "ZA": {"fips": "SF", "region": "afrique", "noms": ["south africa", "south african", "pretoria", "afrique du sud", "sud-africain", "sud-africaine"]},
+    "IN": {"fips": "IN", "region": "asie", "noms": ["india", "indian", "new delhi", "delhi", "modi", "inde", "indien", "indienne"]},
+    "CN": {"fips": "CH", "region": "asie", "noms": ["china", "chinese", "beijing", "xi jinping", "chine", "chinois", "chinoise", "pekin", "mofcom"]},
+    "KR": {"fips": "KS", "region": "asie", "noms": ["south korea", "south korean", "seoul", "coree du sud", "sud-coreen", "sud-coreenne"]},
+    "JP": {"fips": "JA", "region": "asie", "noms": ["japan", "japanese", "tokyo", "japon", "japonais", "japonaise"]},
+    "AU": {"fips": "AS", "region": "asie", "noms": ["australia", "australian", "canberra", "australie", "australien", "australienne"]},
+    "IT": {"fips": "IT", "region": "europe", "noms": ["italy", "italian", "rome", "italie", "italien", "italienne"]},
+    "ES": {"fips": "SP", "region": "europe", "noms": ["spain", "spanish", "madrid", "espagne", "espagnol", "espagnole"]},
+    "NL": {"fips": "NL", "region": "europe", "noms": ["netherlands", "dutch", "the hague", "pays-bas", "neerlandais", "neerlandaise"]},
+    "SE": {"fips": "SW", "region": "europe", "noms": ["sweden", "swedish", "stockholm", "suede", "suedois", "suedoise"]},
+    "PL": {"fips": "PL", "region": "europe", "noms": ["poland", "polish", "warsaw", "pologne", "polonais", "polonaise", "varsovie"]},
+    "TW": {"fips": "TW", "region": "asie", "noms": ["taiwan", "taiwanese", "taipei", "taiwanais", "taiwanaise"]},
+    "ID": {"fips": "ID", "region": "asie", "noms": ["indonesia", "indonesian", "jakarta", "indonesie", "indonesien", "indonesienne"]},
+    "VN": {"fips": "VM", "region": "asie", "noms": ["vietnam", "viet nam", "vietnamese", "hanoi", "vietnamien", "vietnamienne"]},
+    "SG": {"fips": "SN", "region": "asie", "noms": ["singapore", "singapour", "singaporean"]},
+    "TH": {"fips": "TH", "region": "asie", "noms": ["thailand", "thai", "bangkok", "thailande", "thailandais", "thailandaise"]},
+    "CL": {"fips": "CI", "region": "amerique_latine", "noms": ["chile", "chilean", "santiago", "chili", "chilien", "chilienne"]},
+    "CO": {"fips": "CO", "region": "amerique_latine", "noms": ["colombia", "colombian", "bogota", "colombie", "colombien", "colombienne"]},
+    "AE": {"fips": "AE", "region": "moyen_orient", "noms": ["united arab emirates", "UAE", "emirati", "abu dhabi", "dubai", "emirats arabes unis", "emirats"]},
+    "TR": {"fips": "TU", "region": "moyen_orient", "noms": ["turkey", "turkiye", "turkish", "ankara", "erdogan", "turquie", "turc", "turque"]},
+    "EG": {"fips": "EG", "region": "moyen_orient", "noms": ["egypt", "egyptian", "cairo", "egypte", "egyptien", "egyptienne", "le caire", "suez"]}
+  },
+
+  "autres_pays": {
+    "_commentaire": "Pays non suivis (pas de score) mais reconnus dans les événements, car souvent à l'origine de risques pour les pays suivis.",
+    "RU": {"nom": "Russie", "region": "europe", "noms": ["russia", "russian", "moscow", "kremlin", "putin", "russie", "russe", "moscou", "poutine"]},
+    "UA": {"nom": "Ukraine", "region": "europe", "noms": ["ukraine", "ukrainian", "kyiv", "kiev", "zelensky", "ukrainien", "ukrainienne"]},
+    "IR": {"nom": "Iran", "region": "moyen_orient", "noms": ["iran", "iranian", "tehran", "iranien", "iranienne", "teheran"]},
+    "IL": {"nom": "Israël", "region": "moyen_orient", "noms": ["israel", "israeli", "netanyahu", "israelien", "israelienne"]},
+    "PS": {"nom": "Territoires palestiniens", "region": "moyen_orient", "noms": ["gaza", "palestinian", "west bank", "hamas", "palestinien", "palestinienne", "cisjordanie"]},
+    "LB": {"nom": "Liban", "region": "moyen_orient", "noms": ["lebanon", "lebanese", "hezbollah", "liban", "libanais"]},
+    "SY": {"nom": "Syrie", "region": "moyen_orient", "noms": ["syria", "syrian", "damascus", "syrie", "syrien", "damas"]},
+    "YE": {"nom": "Yémen", "region": "moyen_orient", "noms": ["yemen", "houthi", "houthis", "yemen", "yemenite"]},
+    "IQ": {"nom": "Irak", "region": "moyen_orient", "noms": ["iraq", "iraqi", "baghdad", "irak", "irakien", "bagdad"]},
+    "VE": {"nom": "Venezuela", "region": "amerique_latine", "noms": ["venezuela", "venezuelan", "caracas", "maduro", "venezuelien", "venezuelienne"]},
+    "CU": {"nom": "Cuba", "region": "amerique_latine", "noms": ["cuba", "cuban", "havana", "cubain", "cubaine", "la havane"]},
+    "KP": {"nom": "Corée du Nord", "region": "asie", "noms": ["north korea", "north korean", "pyongyang", "kim jong", "coree du nord", "nord-coreen", "nord-coreenne"]},
+    "PK": {"nom": "Pakistan", "region": "asie", "noms": ["pakistan", "pakistani", "islamabad", "pakistanais"]},
+    "BY": {"nom": "Biélorussie", "region": "europe", "noms": ["belarus", "belarusian", "minsk", "bielorussie"]},
+    "MM": {"nom": "Birmanie", "region": "asie", "noms": ["myanmar", "burma", "birmanie"]},
+    "AF": {"nom": "Afghanistan", "region": "asie", "noms": ["afghanistan", "taliban", "kabul", "afghan"]},
+    "NG": {"nom": "Nigeria", "region": "afrique", "noms": ["nigeria", "nigerian", "abuja", "nigerian"]},
+    "SD": {"nom": "Soudan", "region": "afrique", "noms": ["sudan", "sudanese", "khartoum", "soudan", "soudanais"]},
+    "CD": {"nom": "RD Congo", "region": "afrique", "noms": ["congo", "congolese", "kinshasa", "congolais"]},
+    "QA": {"nom": "Qatar", "region": "moyen_orient", "noms": ["qatar", "qatari", "doha"]},
+    "UE": {"nom": "Union européenne", "region": "europe", "noms": ["european union", "EU", "brussels", "european commission", "union europeenne", "UE", "bruxelles", "commission europeenne"]}
+  }
+}

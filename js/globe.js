@@ -78,7 +78,7 @@ export class Globe {
    * @param {HTMLElement} calqueEtiquettes  le conteneur des étiquettes HTML
    * @param {object} options
    *   pays, frontieres, leger, afficherFlux,
-   *   metrique : { cle, lire(pays) → { note, texte } }  (ce que représentent les couleurs)
+   *   metrique : { cle, lire(pays) → { note, texte, niveau? } }  (ce que représentent les couleurs)
    *   surSelection(code) : appelé quand on touche un pays
    *   formaterFlux(flux) : texte de la bulle d'un arc
    */
@@ -344,7 +344,8 @@ export class Globe {
       const p = this.parCode.get(o.code);
       const m = this.metrique.lire(p);
       const absente = !m || m.note === null || m.note === undefined; // donnée non disponible pour ce pays
-      const niveau = absente ? 'neutre' : niveauNote(m.note);
+      // Une métrique peut imposer son niveau de couleur (risque géopolitique : haut = rouge)
+      const niveau = absente ? 'neutre' : (m.niveau ?? niveauNote(m.note));
       o.couleurCible.set(absente ? NON_SUIVI : COULEURS[niveau]);
       o.teinteCible = new THREE.Color(absente ? NON_SUIVI : TEINTES[niveau]);
       o.teinteEclaircie = o.teinteCible.clone().lerp(BLANC, ECLAIRCISSEMENT);

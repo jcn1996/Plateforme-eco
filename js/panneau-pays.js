@@ -8,6 +8,7 @@ import {
   complementIndicateur, badgeTendance, tendanceIndicateur, tendanceNote, texteFraicheur,
 } from './outils.js';
 import { sectionMacroPays } from './macro.js';
+import { sectionGeopolitiquePays } from './geopolitique.js';
 
 /* ------------------------------ Composants ------------------------------ */
 
@@ -280,6 +281,9 @@ export function fichePays(d, p, nav) {
 
     // Rubrique « Agent macro » : texte réel de l'agent macro (data/macro.json), avec sa date
     sectionMacroPays(d.macro, p.code),
+
+    // Rubrique « Géopolitique » : score de risque, variation sur 7 jours, 3 derniers événements
+    sectionGeopolitiquePays(d.geopolitique, p.code),
 
     p.indicateurs && p.confiance ? listeSources(p) : null,
     piedFraicheur(d.meta.pays),

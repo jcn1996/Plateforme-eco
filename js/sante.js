@@ -237,6 +237,9 @@ function carteAgent(agent, maintenant) {
       el('dd', {}, plan.prochaine != null ? `${heureParis(plan.prochaine)} (heure de Paris)` : 'inconnue'),
       el('dt', {}, 'Intervalle prévu'),
       el('dd', {}, plan.base ? `${duree(plan.base)} (retard au-delà de ${duree(plan.seuils.retard)}, panne au-delà de ${duree(plan.seuils.panne)})` : 'inconnu'),
+      // Agents qui appellent une IA sous quota gratuit (agent géopolitique) : consommation du jour
+      s.ia ? el('dt', {}, 'Analyse par IA') : null,
+      s.ia ? el('dd', {}, `${s.ia.mode === 'gemini' ? 'Gemini' : 'sans IA'} · ${s.ia.appels_du_jour ?? 0} / ${s.ia.quota_jour ?? '?'} appels (jour du Pacifique ${s.ia.jour_quota ?? ''}) · ${s.ia.modele ?? ''}`) : null,
     ),
     statut === 'pause'
       ? el('p', { class: 'sante-ligne' }, `Hors des heures prévues. Prochaine mise à jour : ${heureParis(plan.prochaine)}.`)

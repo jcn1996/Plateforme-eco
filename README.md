@@ -148,6 +148,46 @@ python -m agents.macro --capturer  # met à jour les données de test
 - le bouton « Macro » de l'en-tête ouvre l'écran **Vue macro** : schéma du cycle en 4 quadrants, signaux de récession, banques centrales, courbe des taux US sur 2 ans, marchés du cycle ;
 - la fiche pays affiche la rubrique « Agent macro », avec sa date.
 
+## Agent géopolitique (événements, avec Gemini sous quotas gratuits)
+
+L'agent suit les événements géopolitiques et leur impact possible sur les marchés. Il tourne toutes les heures.
+
+**Sources** : GDELT (API DOC 2.0 et fichiers d'événements géolocalisés publiés toutes les 15 minutes), Federal Register, OFAC, flux officiels (Maison-Blanche, Élysée, Commission européenne, Conseil de l'UE, BRI), presse internationale (RSS), indice de risque géopolitique de Caldara et Iacoviello, indice d'incertitude de politique économique (FRED). Pas de réseaux sociaux.
+
+**Analyse** :
+- les articles sont regroupés par événement ;
+- les événements significatifs sont analysés par Gemini (secret `GEMINI_API_KEY`, modèle réglable dans `agents/geopolitique/config.json`). L'agent produit un résumé, les pays, la catégorie, la gravité de 1 à 5, les actifs touchés et le sens de l'impact, l'horizon, la confiance et « Ce qui pourrait me donner tort » ;
+- chaque affirmation doit citer une source fournie à Gemini, sinon elle est supprimée ;
+- une gravité de 4 ou 5 exige 2 sources indépendantes ;
+- les quotas gratuits sont respectés : 20 appels par jour du Pacifique au plus, répartis sur la journée, avec plusieurs événements par appel et un cache ;
+- sans Gemini, l'agent publie une version sans IA, signalée dans l'appli.
+
+**Score** : un score de risque /100 par pays suivi, avec sa variation sur 7 jours.
+
+Détails : [`agents/geopolitique/regles.md`](agents/geopolitique/regles.md).
+
+**Sorties** :
+- `data/geopolitique.json` ;
+- `data/signaux/geopolitique.json` : signaux pour le chef d'orchestre et le futur agent risque ;
+- `data/historique/geopolitique/AAAA-MM-JJ.json` ;
+- `data/recap/geopolitique-AAAA-MM-JJ.md` : synthèse du jour, à 6 h UTC ;
+- `data/geopolitique/etat.json` : événements suivis, cache, quota ;
+- `data/journal/agent-geopolitique.json`.
+
+**Appli** :
+- bouton « Géopolitique » dans l'en-tête ;
+- filtre du globe « Risque géopolitique » (rouge = risque élevé) ;
+- rubrique « Géopolitique » dans la fiche pays.
+
+**Exécution** : le workflow `.github/workflows/agent-geopolitique.yml` est lancé chaque heure (minute 3) par le planificateur. Ses plannings GitHub restent en secours. Le créneau de 6 h 03 UTC est en mode « quotidien », pour la synthèse.
+
+```
+python -m agents.geopolitique                     # vraies sources (Gemini si GEMINI_API_KEY existe)
+python -m agents.geopolitique --mode quotidien    # écrit aussi la synthèse du jour
+python -m agents.geopolitique --test --data /tmp/essai   # données de test, sans réseau ni Gemini
+python -m agents.geopolitique.tests.capturer_donnees_test # met à jour les données de test
+```
+
 ## Agent entreprises (environ 1 200 sociétés, sans IA)
 
 L'agent entreprises se trouve dans `agents/entreprises/`. Les règles de conduite sont les mêmes que pour l'agent pays.
