@@ -590,6 +590,11 @@ class TestScore(unittest.TestCase):
         self.assertTrue(ia.en_francais("Les États-Unis ont frappé une île iranienne."))
         self.assertFalse(ia.en_francais("The United States struck an Iranian island."))
 
+    def test_renvois_retires_du_texte(self):
+        sources = [{"id": "S1", "url": "https://a.example/1", "domaine": "a.example", "titre": "t"}]
+        res = ia._affirmations([{"texte": "Les électeurs votent pour le Congrès [S1].", "sources": ["S1"]}], {"S1": sources[0]}, 2, [])
+        self.assertEqual(res[0]["texte"], "Les électeurs votent pour le Congrès.")
+
 
 if __name__ == "__main__":
     unittest.main()

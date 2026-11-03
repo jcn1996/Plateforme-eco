@@ -297,7 +297,8 @@ def _affirmations(liste, par_id: dict, maxi: int, supprimees: list) -> list[dict
         if not isinstance(a, dict) or not isinstance(a.get("texte"), str) or not a["texte"].strip():
             continue
         ids = [s for s in (a.get("sources") or []) if isinstance(s, str) and s.strip() in par_id]
-        texte = a["texte"].strip()
+        # Renvois laissés dans le texte (« … [S10]. ») : retirés, les sources sont déjà reliées
+        texte = re.sub(r"\s*[\[(]S\d+(?:\s*[,;]\s*S\d+)*[\])]", "", a["texte"]).strip()
         if not ids:
             supprimees.append(f"sans source : {texte[:80]}")
             continue
