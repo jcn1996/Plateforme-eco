@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-03T07:13:16Z",
+    "genere_le": "2026-11-03T08:05:20Z",
     "source": "agent-entreprises",
     "fictif": false,
     "version_agent": "1.0",
@@ -11,266 +11,97 @@
       "dette_ebitda_max": 2.0,
       "valorisation_max_pct": 10.0,
       "nombre_min": 15,
-      "nombre_max": 25
+      "nombre_max": 25,
+      "cap_min_md": 0.3,
+      "cap_max_md": 20.0,
+      "analystes_max": 8,
+      "plafond_par_secteur": 3,
+      "nombre_max_qpr": 25,
+      "concentration_seuil": 0.15,
+      "concentration_min": 4,
+      "industries_exclues": [
+        "Closed-End Fund",
+        "Shell Companies",
+        "Financial Conglomerates"
+      ],
+      "tickers_exclus": [],
+      "holdings_mots": [
+        "investor",
+        "holding",
+        "invest",
+        "kinnevik",
+        "industrivarden",
+        "exor",
+        "wendel",
+        "sofina",
+        "gbl",
+        "berkshire"
+      ]
     },
-    "candidats": 60,
+    "candidats": 71,
     "regions": {
       "amerique_nord": "Amérique du Nord",
       "amerique_latine": "Amérique latine",
       "europe": "Europe",
       "asie_pacifique": "Asie-Pacifique",
       "moyen_orient_afrique": "Moyen-Orient et Afrique"
-    }
+    },
+    "listes": {
+      "pepites": "Pépites",
+      "qpr": "Qualité à prix raisonnable"
+    },
+    "nombres": {
+      "pepites": 4,
+      "qpr": 24
+    },
+    "avertissements": [
+      "18 candidates sur 71 appartiennent au secteur Finance : concentration sectorielle.",
+      "12 candidates sur 71 appartiennent au secteur Technologies de l'information : concentration sectorielle.",
+      "11 candidates sur 71 appartiennent au secteur Matériaux : concentration sectorielle."
+    ],
+    "holdings_exclues": 8
   },
   "donnees": [
     {
-      "ticker": "000660.KS",
-      "nom": "SK hynix Inc.",
-      "pays": "KR",
-      "region": "asie_pacifique",
-      "secteur": "KR-technologie",
-      "secteur_gics": "Information Technology",
-      "secteur_nom": "Technologies de l'information",
+      "liste": "pepites",
+      "ticker": "PE&OLES.MX",
+      "nom": "Industrias Peñoles, S.A.B. de C.V.",
+      "pays": "MX",
+      "region": "amerique_latine",
+      "secteur": "MX-materiaux",
+      "secteur_gics": "Materials",
+      "secteur_nom": "Matériaux",
+      "industrie": "Other Industrial Metals & Mining",
+      "capitalisation_md": 16.37,
+      "analystes": 4,
       "note": 87,
       "contexte": {
-        "ajustement": 3.3,
+        "ajustement": 2.4,
         "details": [
-          "pays noté 79/100 : +2,3 pt",
+          "pays noté 68/100 : +1,4 pt",
           "phase « Expansion sans inflation » : +1 pt"
         ],
-        "note_ajustee": 90.3,
+        "note_ajustee": 89.4,
         "phase": "Expansion sans inflation",
-        "note_pays": 79
+        "note_pays": 68
       },
-      "verdict": "Dossier solide sur les comptes ; points forts : marge opérationnelle : 48,6 %, croissance du ca : +46,8 %.",
+      "verdict": "Dossier solide sur les comptes ; points forts : croissance du ca : +30,0 %, marge opérationnelle : 29,9 %.",
       "confiance": "moyen",
       "cles": {
-        "croissance_ca": "+46,8 %",
-        "marge_op": "48,6 %",
-        "per_secteur": "−82,1 %",
-        "fscore": "7/9"
-      },
-      "revue_critique": {
-        "risques": [
-          "Conversion du bénéfice en cash : 57,8 %",
-          "Croissance très rapide : vérifier qu'elle ne provient pas d'une acquisition ou d'un élément non récurrent."
-        ],
-        "piege_de_valeur": "peu probable au vu des comptes",
-        "risque_change": "comptes en KRW : la performance en dollars dépend aussi du change (devise du pays +6,3 % sur 3 mois contre le dollar)",
-        "risque_pays": "Corée du Sud noté 79/100 (attractif), confiance moyen",
-        "a_verifier": [
-          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
-          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
-          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
-        ],
-        "rapport_officiel": null
-      }
-    },
-    {
-      "ticker": "ANG.JO",
-      "nom": "AngloGold Ashanti plc",
-      "pays": "ZA",
-      "region": "moyen_orient_afrique",
-      "secteur": "ZA-materiaux",
-      "secteur_gics": "Materials",
-      "secteur_nom": "Matériaux",
-      "note": 88,
-      "contexte": {
-        "ajustement": 2.3,
-        "details": [
-          "pays noté 66/100 : +1,3 pt",
-          "phase « Expansion sans inflation » : +1 pt"
-        ],
-        "note_ajustee": 90.3,
-        "phase": "Expansion sans inflation",
-        "note_pays": 66
-      },
-      "verdict": "Dossier solide sur les comptes ; points forts : marge opérationnelle : 43,2 %, f-score de piotroski : 9/9.",
-      "confiance": "moyen",
-      "cles": {
-        "croissance_ca": "+70,8 %",
-        "marge_op": "43,2 %",
-        "per_secteur": "−27,9 %",
-        "fscore": "9/9"
-      },
-      "revue_critique": {
-        "risques": [
-          "Aucun indicateur sous 60/100 : le risque principal est un retournement de la tendance récente.",
-          "Croissance très rapide : vérifier qu'elle ne provient pas d'une acquisition ou d'un élément non récurrent."
-        ],
-        "piege_de_valeur": "peu probable au vu des comptes",
-        "risque_change": "comptes en dollars : pas de risque de change direct pour un investisseur en dollars",
-        "risque_pays": "Afrique du Sud noté 66/100 (attractif), confiance moyen",
-        "a_verifier": [
-          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
-          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
-          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
-        ],
-        "rapport_officiel": null
-      }
-    },
-    {
-      "ticker": "NEM",
-      "nom": "Newmont Corporation",
-      "pays": "US",
-      "region": "amerique_nord",
-      "secteur": "US-materiaux",
-      "secteur_gics": "Materials",
-      "secteur_nom": "Matériaux",
-      "note": 89,
-      "contexte": {
-        "ajustement": 0.3,
-        "details": [
-          "pays noté 54/100 : +0,3 pt",
-          "phase « Surchauffe » : 0 pt"
-        ],
-        "note_ajustee": 89.3,
-        "phase": "Surchauffe",
-        "note_pays": 54
-      },
-      "verdict": "Dossier solide sur les comptes ; points forts : marge opérationnelle : 48,6 %, f-score de piotroski : 9/9.",
-      "confiance": "élevé",
-      "cles": {
-        "croissance_ca": "+21,3 %",
-        "marge_op": "48,6 %",
-        "per_secteur": "−44,1 %",
-        "fscore": "9/9"
-      },
-      "revue_critique": {
-        "risques": [
-          "Aucun indicateur sous 60/100 : le risque principal est un retournement de la tendance récente."
-        ],
-        "piege_de_valeur": "peu probable au vu des comptes",
-        "risque_change": "comptes en dollars : pas de risque de change direct pour un investisseur en dollars",
-        "risque_pays": "États-Unis noté 54/100 (neutre), confiance moyen",
-        "a_verifier": [
-          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
-          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
-          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
-        ],
-        "rapport_officiel": "https://www.sec.gov/Archives/edgar/data/1164727/000116472726000010/nem-20251231.htm"
-      }
-    },
-    {
-      "ticker": "2330.TW",
-      "nom": "Taiwan Semiconductor Manufacturing Company Limited",
-      "pays": "TW",
-      "region": "asie_pacifique",
-      "secteur": "TW-technologie",
-      "secteur_gics": "Information Technology",
-      "secteur_nom": "Technologies de l'information",
-      "note": 87,
-      "contexte": {
-        "ajustement": 2.1,
-        "details": [
-          "pays noté 64/100 : +1,1 pt",
-          "phase « Expansion sans inflation » : +1 pt"
-        ],
-        "note_ajustee": 89.1,
-        "phase": "Expansion sans inflation",
-        "note_pays": 64
-      },
-      "verdict": "Dossier solide sur les comptes ; points forts : marge opérationnelle : 50,8 %, f-score de piotroski : 9/9.",
-      "confiance": "moyen",
-      "cles": {
-        "croissance_ca": "+31,6 %",
-        "marge_op": "50,8 %",
-        "per_secteur": "−30,9 %",
-        "fscore": "9/9"
-      },
-      "revue_critique": {
-        "risques": [
-          "Conversion du bénéfice en cash : 58,5 %",
-          "VE/EBITDA vs secteur : +0,7 %",
-          "Croissance très rapide : vérifier qu'elle ne provient pas d'une acquisition ou d'un élément non récurrent."
-        ],
-        "piege_de_valeur": "peu probable au vu des comptes",
-        "risque_change": "comptes en TWD : la performance en dollars dépend aussi du change (devise du pays −0,9 % sur 3 mois contre le dollar)",
-        "risque_pays": "Taïwan noté 64/100 (neutre), confiance faible",
-        "a_verifier": [
-          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
-          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
-          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
-        ],
-        "rapport_officiel": null
-      }
-    },
-    {
-      "ticker": "CF",
-      "nom": "CF Industries Holdings, Inc.",
-      "pays": "US",
-      "region": "amerique_nord",
-      "secteur": "US-materiaux",
-      "secteur_gics": "Materials",
-      "secteur_nom": "Matériaux",
-      "note": 88,
-      "contexte": {
-        "ajustement": 0.3,
-        "details": [
-          "pays noté 54/100 : +0,3 pt",
-          "phase « Surchauffe » : 0 pt"
-        ],
-        "note_ajustee": 88.3,
-        "phase": "Surchauffe",
-        "note_pays": 54
-      },
-      "verdict": "Dossier solide sur les comptes ; points forts : marge opérationnelle : 33,5 %, roic : 23,7 %.",
-      "confiance": "élevé",
-      "cles": {
-        "croissance_ca": "+19,3 %",
-        "marge_op": "33,5 %",
-        "per_secteur": "−60,4 %",
+        "croissance_ca": "+30,0 %",
+        "marge_op": "29,9 %",
+        "per_secteur": "−56,5 %",
         "fscore": "8/9"
       },
+      "autres_cotations": [],
       "revue_critique": {
         "risques": [
-          "Aucun indicateur sous 60/100 : le risque principal est un retournement de la tendance récente."
+          "Momentum 12 mois : +0,7 %",
+          "Croissance très rapide : vérifier qu'elle ne provient pas d'une acquisition ou d'un élément non récurrent."
         ],
         "piege_de_valeur": "peu probable au vu des comptes",
         "risque_change": "comptes en dollars : pas de risque de change direct pour un investisseur en dollars",
-        "risque_pays": "États-Unis noté 54/100 (neutre), confiance moyen",
-        "a_verifier": [
-          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
-          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
-          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
-        ],
-        "rapport_officiel": "https://www.sec.gov/Archives/edgar/data/1324404/000132440426000007/cf-20251231.htm"
-      }
-    },
-    {
-      "ticker": "INVE-B.ST",
-      "nom": "Investor AB (publ)",
-      "pays": "SE",
-      "region": "europe",
-      "secteur": "SE-finance",
-      "secteur_gics": "Financials",
-      "secteur_nom": "Finance",
-      "note": 85,
-      "contexte": {
-        "ajustement": 2.3,
-        "details": [
-          "pays noté 66/100 : +1,3 pt",
-          "phase « Expansion sans inflation » : +1 pt"
-        ],
-        "note_ajustee": 87.3,
-        "phase": "Expansion sans inflation",
-        "note_pays": 66
-      },
-      "verdict": "Dossier solide sur les comptes ; points forts : croissance du ca : +28,2 %, per vs secteur : −50,9 %.",
-      "confiance": "moyen",
-      "cles": {
-        "croissance_ca": "+28,2 %",
-        "per_secteur": "−50,9 %",
-        "roe": "16,5 %"
-      },
-      "revue_critique": {
-        "risques": [
-          "Aucun indicateur sous 60/100 : le risque principal est un retournement de la tendance récente.",
-          "Croissance très rapide : vérifier qu'elle ne provient pas d'une acquisition ou d'un élément non récurrent."
-        ],
-        "piege_de_valeur": "peu probable au vu des comptes",
-        "risque_change": "comptes en SEK : la performance en dollars dépend aussi du change (devise du pays −2,4 % sur 3 mois contre le dollar)",
-        "risque_pays": "Suède noté 66/100 (attractif), confiance moyen",
+        "risque_pays": "Mexique noté 68/100 (attractif), confiance moyen",
         "a_verifier": [
           "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
           "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
@@ -280,305 +111,7 @@
       }
     },
     {
-      "ticker": "INVE-A.ST",
-      "nom": "Investor AB (publ)",
-      "pays": "SE",
-      "region": "europe",
-      "secteur": "SE-finance",
-      "secteur_gics": "Financials",
-      "secteur_nom": "Finance",
-      "note": 85,
-      "contexte": {
-        "ajustement": 2.3,
-        "details": [
-          "pays noté 66/100 : +1,3 pt",
-          "phase « Expansion sans inflation » : +1 pt"
-        ],
-        "note_ajustee": 87.3,
-        "phase": "Expansion sans inflation",
-        "note_pays": 66
-      },
-      "verdict": "Dossier solide sur les comptes ; points forts : croissance du ca : +28,2 %, per vs secteur : −80,4 %.",
-      "confiance": "moyen",
-      "cles": {
-        "croissance_ca": "+28,2 %",
-        "per_secteur": "−80,4 %",
-        "roe": "16,5 %"
-      },
-      "revue_critique": {
-        "risques": [
-          "Aucun indicateur sous 60/100 : le risque principal est un retournement de la tendance récente.",
-          "Croissance très rapide : vérifier qu'elle ne provient pas d'une acquisition ou d'un élément non récurrent."
-        ],
-        "piege_de_valeur": "peu probable au vu des comptes",
-        "risque_change": "comptes en SEK : la performance en dollars dépend aussi du change (devise du pays −2,4 % sur 3 mois contre le dollar)",
-        "risque_pays": "Suède noté 66/100 (attractif), confiance moyen",
-        "a_verifier": [
-          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
-          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
-          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
-        ],
-        "rapport_officiel": null
-      }
-    },
-    {
-      "ticker": "GFI.JO",
-      "nom": "Gold Fields Limited",
-      "pays": "ZA",
-      "region": "moyen_orient_afrique",
-      "secteur": "ZA-materiaux",
-      "secteur_gics": "Materials",
-      "secteur_nom": "Matériaux",
-      "note": 85,
-      "contexte": {
-        "ajustement": 2.3,
-        "details": [
-          "pays noté 66/100 : +1,3 pt",
-          "phase « Expansion sans inflation » : +1 pt"
-        ],
-        "note_ajustee": 87.3,
-        "phase": "Expansion sans inflation",
-        "note_pays": 66
-      },
-      "verdict": "Dossier solide sur les comptes ; points forts : marge opérationnelle : 50,3 %, f-score de piotroski : 9/9 ; point faible : momentum 12 mois : −17,8 %.",
-      "confiance": "moyen",
-      "cles": {
-        "croissance_ca": "+68,2 %",
-        "marge_op": "50,3 %",
-        "per_secteur": "−44,1 %",
-        "fscore": "9/9"
-      },
-      "revue_critique": {
-        "risques": [
-          "Momentum 12 mois : −17,8 %",
-          "Conversion du bénéfice en cash : 66,5 %",
-          "Croissance très rapide : vérifier qu'elle ne provient pas d'une acquisition ou d'un élément non récurrent."
-        ],
-        "piege_de_valeur": "possible : décote marquée associée à un cours ou à un bénéfice en recul",
-        "risque_change": "comptes en dollars : pas de risque de change direct pour un investisseur en dollars",
-        "risque_pays": "Afrique du Sud noté 66/100 (attractif), confiance moyen",
-        "a_verifier": [
-          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
-          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
-          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
-        ],
-        "rapport_officiel": null
-      }
-    },
-    {
-      "ticker": "EMAAR.AE",
-      "nom": "Emaar Properties PJSC",
-      "pays": "AE",
-      "region": "moyen_orient_afrique",
-      "secteur": "AE-immobilier",
-      "secteur_gics": "Real Estate",
-      "secteur_nom": "Immobilier",
-      "note": 85,
-      "contexte": {
-        "ajustement": 1.0,
-        "details": [
-          "pays noté 50/100 : 0,0 pt",
-          "phase « Expansion sans inflation » : +1 pt"
-        ],
-        "note_ajustee": 86.0,
-        "phase": "Expansion sans inflation",
-        "note_pays": 50
-      },
-      "verdict": "Dossier solide sur les comptes ; points forts : croissance du ca : +39,6 %, marge opérationnelle : 45,5 % ; point faible : momentum 12 mois : −10,0 %.",
-      "confiance": "moyen",
-      "cles": {
-        "croissance_ca": "+39,6 %",
-        "marge_op": "45,5 %",
-        "per_secteur": "−80,5 %",
-        "fscore": "7/9"
-      },
-      "revue_critique": {
-        "risques": [
-          "Momentum 12 mois : −10,0 %",
-          "Croissance très rapide : vérifier qu'elle ne provient pas d'une acquisition ou d'un élément non récurrent."
-        ],
-        "piege_de_valeur": "possible : décote marquée associée à un cours ou à un bénéfice en recul",
-        "risque_change": "comptes en AED : la performance en dollars dépend aussi du change (devise du pays 0,0 % sur 3 mois contre le dollar)",
-        "risque_pays": "Émirats arabes unis noté 50/100 (neutre), confiance faible",
-        "a_verifier": [
-          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
-          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
-          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés.",
-          "Vérifier l'accessibilité du titre pour un investisseur étranger et les contrôles de capitaux."
-        ],
-        "rapport_officiel": null
-      }
-    },
-    {
-      "ticker": "NEM.AX",
-      "nom": "Newmont Corporation",
-      "pays": "AU",
-      "region": "asie_pacifique",
-      "secteur": "AU-materiaux",
-      "secteur_gics": "Materials",
-      "secteur_nom": "Matériaux",
-      "note": 84,
-      "contexte": {
-        "ajustement": 1.2,
-        "details": [
-          "pays noté 52/100 : +0,2 pt",
-          "phase « Expansion sans inflation » : +1 pt"
-        ],
-        "note_ajustee": 85.2,
-        "phase": "Expansion sans inflation",
-        "note_pays": 52
-      },
-      "verdict": "Dossier solide sur les comptes ; points forts : marge opérationnelle : 48,6 %, f-score de piotroski : 9/9.",
-      "confiance": "moyen",
-      "cles": {
-        "croissance_ca": "+21,3 %",
-        "marge_op": "48,6 %",
-        "per_secteur": "0,0 %",
-        "fscore": "9/9"
-      },
-      "revue_critique": {
-        "risques": [
-          "PER vs secteur : 0,0 %"
-        ],
-        "piege_de_valeur": "peu probable au vu des comptes",
-        "risque_change": "comptes en dollars : pas de risque de change direct pour un investisseur en dollars",
-        "risque_pays": "Australie noté 52/100 (neutre), confiance moyen",
-        "a_verifier": [
-          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
-          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
-          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
-        ],
-        "rapport_officiel": null
-      }
-    },
-    {
-      "ticker": "2345.TW",
-      "nom": "Accton Technology Corporation",
-      "pays": "TW",
-      "region": "asie_pacifique",
-      "secteur": "TW-technologie",
-      "secteur_gics": "Information Technology",
-      "secteur_nom": "Technologies de l'information",
-      "note": 83,
-      "contexte": {
-        "ajustement": 2.1,
-        "details": [
-          "pays noté 64/100 : +1,1 pt",
-          "phase « Expansion sans inflation » : +1 pt"
-        ],
-        "note_ajustee": 85.1,
-        "phase": "Expansion sans inflation",
-        "note_pays": 64
-      },
-      "verdict": "Dossier solide sur les comptes ; points forts : croissance du ca : +124,9 %, dette nette / ebitda : trésorerie nette.",
-      "confiance": "moyen",
-      "cles": {
-        "croissance_ca": "+124,9 %",
-        "marge_op": "13,0 %",
-        "per_secteur": "−25,2 %",
-        "fscore": "7/9"
-      },
-      "revue_critique": {
-        "risques": [
-          "VE/EBITDA vs secteur : +9,0 %",
-          "Croissance très rapide : vérifier qu'elle ne provient pas d'une acquisition ou d'un élément non récurrent."
-        ],
-        "piege_de_valeur": "peu probable au vu des comptes",
-        "risque_change": "comptes en TWD : la performance en dollars dépend aussi du change (devise du pays −0,9 % sur 3 mois contre le dollar)",
-        "risque_pays": "Taïwan noté 64/100 (neutre), confiance faible",
-        "a_verifier": [
-          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
-          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
-          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
-        ],
-        "rapport_officiel": null
-      }
-    },
-    {
-      "ticker": "BHPL.XC",
-      "nom": "BHP Group Limited",
-      "pays": "GB",
-      "region": "europe",
-      "secteur": "GB-materiaux",
-      "secteur_gics": "Materials",
-      "secteur_nom": "Matériaux",
-      "note": 82,
-      "contexte": {
-        "ajustement": 2.0,
-        "details": [
-          "pays noté 62/100 : +1,0 pt",
-          "phase « Expansion sans inflation » : +1 pt"
-        ],
-        "note_ajustee": 84.0,
-        "phase": "Expansion sans inflation",
-        "note_pays": 62
-      },
-      "verdict": "Dossier solide sur les comptes ; points forts : marge opérationnelle : 43,4 %, roic : 24,7 %.",
-      "confiance": "moyen",
-      "cles": {
-        "croissance_ca": "+14,6 %",
-        "marge_op": "43,4 %",
-        "per_secteur": "0,0 %",
-        "fscore": "8/9"
-      },
-      "revue_critique": {
-        "risques": [
-          "PER vs secteur : 0,0 %"
-        ],
-        "piege_de_valeur": "peu probable au vu des comptes",
-        "risque_change": "comptes en dollars : pas de risque de change direct pour un investisseur en dollars",
-        "risque_pays": "Royaume-Uni noté 62/100 (neutre), confiance moyen",
-        "a_verifier": [
-          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
-          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
-          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
-        ],
-        "rapport_officiel": null
-      }
-    },
-    {
-      "ticker": "4503.T",
-      "nom": "Astellas Pharma Inc.",
-      "pays": "JP",
-      "region": "asie_pacifique",
-      "secteur": "JP-sante",
-      "secteur_gics": "Health Care",
-      "secteur_nom": "Santé",
-      "note": 83,
-      "contexte": {
-        "ajustement": 0.9,
-        "details": [
-          "pays noté 61/100 : +0,9 pt",
-          "phase « Surchauffe » : 0 pt"
-        ],
-        "note_ajustee": 83.9,
-        "phase": "Surchauffe",
-        "note_pays": 61
-      },
-      "verdict": "Dossier solide sur les comptes ; points forts : couverture des intérêts : 27,0×, croissance du bénéfice : +474,5 %.",
-      "confiance": "moyen",
-      "cles": {
-        "croissance_ca": "+11,9 %",
-        "marge_op": "17,8 %",
-        "per_secteur": "−42,7 %",
-        "fscore": "8/9"
-      },
-      "revue_critique": {
-        "risques": [
-          "Aucun indicateur sous 60/100 : le risque principal est un retournement de la tendance récente."
-        ],
-        "piege_de_valeur": "peu probable au vu des comptes",
-        "risque_change": "comptes en JPY : la performance en dollars dépend aussi du change (devise du pays −0,8 % sur 3 mois contre le dollar)",
-        "risque_pays": "Japon noté 61/100 (neutre), confiance moyen",
-        "a_verifier": [
-          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
-          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
-          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
-        ],
-        "rapport_officiel": null
-      }
-    },
-    {
+      "liste": "pepites",
       "ticker": "COMI.CA",
       "nom": "Commercial International Bank Egypt (CIB) S.A.E.",
       "pays": "EG",
@@ -586,6 +119,9 @@
       "secteur": "EG-finance",
       "secteur_gics": "Financials",
       "secteur_nom": "Finance",
+      "industrie": null,
+      "capitalisation_md": 7.04,
+      "analystes": null,
       "note": 82,
       "contexte": {
         "ajustement": 1.0,
@@ -601,9 +137,10 @@
       "confiance": "moyen",
       "cles": {
         "croissance_ca": "+16,0 %",
-        "per_secteur": "−23,7 %",
+        "per_secteur": "−25,0 %",
         "roe": "26,6 %"
       },
+      "autres_cotations": [],
       "revue_critique": {
         "risques": [
           "Aucun indicateur sous 60/100 : le risque principal est un retournement de la tendance récente."
@@ -621,259 +158,7 @@
       }
     },
     {
-      "ticker": "300502.SZ",
-      "nom": "Eoptolink Technology Inc., Ltd.",
-      "pays": "CN",
-      "region": "asie_pacifique",
-      "secteur": "CN-technologie",
-      "secteur_gics": "Information Technology",
-      "secteur_nom": "Technologies de l'information",
-      "note": 81,
-      "contexte": {
-        "ajustement": 1.5,
-        "details": [
-          "pays noté 56/100 : +0,5 pt",
-          "phase « Expansion sans inflation » : +1 pt"
-        ],
-        "note_ajustee": 82.5,
-        "phase": "Expansion sans inflation",
-        "note_pays": 56
-      },
-      "verdict": "Dossier solide sur les comptes ; points forts : marge opérationnelle : 43,2 %, croissance du ca : +187,3 % ; point faible : momentum 12 mois : −30,3 %.",
-      "confiance": "moyen",
-      "cles": {
-        "croissance_ca": "+187,3 %",
-        "marge_op": "43,2 %",
-        "per_secteur": "−51,6 %",
-        "fscore": "8/9"
-      },
-      "revue_critique": {
-        "risques": [
-          "Momentum 12 mois : −30,3 %",
-          "VE/EBITDA vs secteur : −0,7 %",
-          "Croissance très rapide : vérifier qu'elle ne provient pas d'une acquisition ou d'un élément non récurrent."
-        ],
-        "piege_de_valeur": "possible : décote marquée associée à un cours ou à un bénéfice en recul",
-        "risque_change": "comptes en CNY : la performance en dollars dépend aussi du change (devise du pays +1,6 % sur 3 mois contre le dollar)",
-        "risque_pays": "Chine noté 56/100 (neutre), confiance moyen",
-        "a_verifier": [
-          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
-          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
-          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés.",
-          "Vérifier l'accessibilité du titre pour un investisseur étranger et les contrôles de capitaux."
-        ],
-        "rapport_officiel": null
-      }
-    },
-    {
-      "ticker": "PGR",
-      "nom": "The Progressive Corporation",
-      "pays": "US",
-      "region": "amerique_nord",
-      "secteur": "US-finance",
-      "secteur_gics": "Financials",
-      "secteur_nom": "Finance",
-      "note": 82,
-      "contexte": {
-        "ajustement": 0.3,
-        "details": [
-          "pays noté 54/100 : +0,3 pt",
-          "phase « Surchauffe » : 0 pt"
-        ],
-        "note_ajustee": 82.3,
-        "phase": "Surchauffe",
-        "note_pays": 54
-      },
-      "verdict": "Dossier solide sur les comptes ; points forts : roe : 37,3 %, croissance du bénéfice : +33,6 %.",
-      "confiance": "élevé",
-      "cles": {
-        "croissance_ca": "+16,4 %",
-        "per_secteur": "−16,5 %",
-        "roe": "37,3 %"
-      },
-      "revue_critique": {
-        "risques": [
-          "Aucun indicateur sous 60/100 : le risque principal est un retournement de la tendance récente."
-        ],
-        "piege_de_valeur": "peu probable au vu des comptes",
-        "risque_change": "comptes en dollars : pas de risque de change direct pour un investisseur en dollars",
-        "risque_pays": "États-Unis noté 54/100 (neutre), confiance moyen",
-        "a_verifier": [
-          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
-          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
-          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
-        ],
-        "rapport_officiel": "https://www.sec.gov/Archives/edgar/data/80661/000008066126000086/pgr-20251231.htm"
-      }
-    },
-    {
-      "ticker": "ADBE",
-      "nom": "Adobe Inc.",
-      "pays": "US",
-      "region": "amerique_nord",
-      "secteur": "US-technologie",
-      "secteur_gics": "Information Technology",
-      "secteur_nom": "Technologies de l'information",
-      "note": 82,
-      "contexte": {
-        "ajustement": 0.3,
-        "details": [
-          "pays noté 54/100 : +0,3 pt",
-          "phase « Surchauffe » : 0 pt"
-        ],
-        "note_ajustee": 82.3,
-        "phase": "Surchauffe",
-        "note_pays": 54
-      },
-      "verdict": "Dossier solide sur les comptes ; points forts : marge opérationnelle : 36,6 %, couverture des intérêts : 33,1× ; point faible : momentum 12 mois : −26,1 %.",
-      "confiance": "élevé",
-      "cles": {
-        "croissance_ca": "+10,5 %",
-        "marge_op": "36,6 %",
-        "per_secteur": "−55,8 %",
-        "fscore": "7/9"
-      },
-      "revue_critique": {
-        "risques": [
-          "Momentum 12 mois : −26,1 %"
-        ],
-        "piege_de_valeur": "possible : décote marquée associée à un cours ou à un bénéfice en recul",
-        "risque_change": "comptes en dollars : pas de risque de change direct pour un investisseur en dollars",
-        "risque_pays": "États-Unis noté 54/100 (neutre), confiance moyen",
-        "a_verifier": [
-          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
-          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
-          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
-        ],
-        "rapport_officiel": "https://www.sec.gov/Archives/edgar/data/796343/000079634326000003/adbe-20251128.htm"
-      }
-    },
-    {
-      "ticker": "TPR",
-      "nom": "Tapestry, Inc.",
-      "pays": "US",
-      "region": "amerique_nord",
-      "secteur": "US-conso-discretionnaire",
-      "secteur_gics": "Consumer Discretionary",
-      "secteur_nom": "Consommation discrétionnaire",
-      "note": 82,
-      "contexte": {
-        "ajustement": 0.3,
-        "details": [
-          "pays noté 54/100 : +0,3 pt",
-          "phase « Surchauffe » : 0 pt"
-        ],
-        "note_ajustee": 82.3,
-        "phase": "Surchauffe",
-        "note_pays": 54
-      },
-      "verdict": "Dossier solide sur les comptes ; points forts : couverture des intérêts : 34,7×, roic : 51,2 %.",
-      "confiance": "élevé",
-      "cles": {
-        "croissance_ca": "+14,2 %",
-        "marge_op": "23,9 %",
-        "per_secteur": "−22,9 %",
-        "fscore": "8/9"
-      },
-      "revue_critique": {
-        "risques": [
-          "Momentum 12 mois : +11,4 %"
-        ],
-        "piege_de_valeur": "peu probable au vu des comptes",
-        "risque_change": "comptes en dollars : pas de risque de change direct pour un investisseur en dollars",
-        "risque_pays": "États-Unis noté 54/100 (neutre), confiance moyen",
-        "a_verifier": [
-          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
-          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
-          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
-        ],
-        "rapport_officiel": "https://www.sec.gov/Archives/edgar/data/1116132/000111613226000018/tpr-20260627.htm"
-      }
-    },
-    {
-      "ticker": "PTC",
-      "nom": "PTC Inc.",
-      "pays": "US",
-      "region": "amerique_nord",
-      "secteur": "US-technologie",
-      "secteur_gics": "Information Technology",
-      "secteur_nom": "Technologies de l'information",
-      "note": 82,
-      "contexte": {
-        "ajustement": 0.3,
-        "details": [
-          "pays noté 54/100 : +0,3 pt",
-          "phase « Surchauffe » : 0 pt"
-        ],
-        "note_ajustee": 82.3,
-        "phase": "Surchauffe",
-        "note_pays": 54
-      },
-      "verdict": "Dossier solide sur les comptes ; points forts : marge opérationnelle : 36,4 %, f-score de piotroski : 9/9 ; point faible : momentum 12 mois : −2,1 %.",
-      "confiance": "élevé",
-      "cles": {
-        "croissance_ca": "+19,2 %",
-        "marge_op": "36,4 %",
-        "per_secteur": "−43,3 %",
-        "fscore": "9/9"
-      },
-      "revue_critique": {
-        "risques": [
-          "Momentum 12 mois : −2,1 %"
-        ],
-        "piege_de_valeur": "possible : décote marquée associée à un cours ou à un bénéfice en recul",
-        "risque_change": "comptes en dollars : pas de risque de change direct pour un investisseur en dollars",
-        "risque_pays": "États-Unis noté 54/100 (neutre), confiance moyen",
-        "a_verifier": [
-          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
-          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
-          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
-        ],
-        "rapport_officiel": "https://www.sec.gov/Archives/edgar/data/857005/000119312525291326/ptc-20250930.htm"
-      }
-    },
-    {
-      "ticker": "RNR",
-      "nom": "RenaissanceRe Holdings Ltd.",
-      "pays": "US",
-      "region": "amerique_nord",
-      "secteur": "US-finance",
-      "secteur_gics": "Financials",
-      "secteur_nom": "Finance",
-      "note": 82,
-      "contexte": {
-        "ajustement": 0.3,
-        "details": [
-          "pays noté 54/100 : +0,3 pt",
-          "phase « Surchauffe » : 0 pt"
-        ],
-        "note_ajustee": 82.3,
-        "phase": "Surchauffe",
-        "note_pays": 54
-      },
-      "verdict": "Dossier solide sur les comptes ; points forts : croissance du bénéfice : +48,4 %, roe : 23,1 %.",
-      "confiance": "élevé",
-      "cles": {
-        "croissance_ca": "+10,3 %",
-        "per_secteur": "−31,9 %",
-        "roe": "23,1 %"
-      },
-      "revue_critique": {
-        "risques": [
-          "Aucun indicateur sous 60/100 : le risque principal est un retournement de la tendance récente."
-        ],
-        "piege_de_valeur": "peu probable au vu des comptes",
-        "risque_change": "comptes en dollars : pas de risque de change direct pour un investisseur en dollars",
-        "risque_pays": "États-Unis noté 54/100 (neutre), confiance moyen",
-        "a_verifier": [
-          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
-          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
-          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
-        ],
-        "rapport_officiel": "https://www.sec.gov/Archives/edgar/data/913144/000091314426000012/rnr-20251231.htm"
-      }
-    },
-    {
+      "liste": "pepites",
       "ticker": "MLI",
       "nom": "Mueller Industries, Inc.",
       "pays": "US",
@@ -881,6 +166,9 @@
       "secteur": "US-industrie",
       "secteur_gics": "Industrials",
       "secteur_nom": "Industrie",
+      "industrie": "Metal Fabrication",
+      "capitalisation_md": 12.02,
+      "analystes": 2,
       "note": 82,
       "contexte": {
         "ajustement": 0.3,
@@ -900,6 +188,7 @@
         "per_secteur": "−48,1 %",
         "fscore": "7/9"
       },
+      "autres_cotations": [],
       "revue_critique": {
         "risques": [
           "Momentum 12 mois : +5,3 %"
@@ -916,82 +205,46 @@
       }
     },
     {
-      "ticker": "RL",
-      "nom": "Ralph Lauren Corporation",
-      "pays": "US",
-      "region": "amerique_nord",
-      "secteur": "US-conso-discretionnaire",
-      "secteur_gics": "Consumer Discretionary",
-      "secteur_nom": "Consommation discrétionnaire",
-      "note": 81,
+      "liste": "pepites",
+      "ticker": "688235.SS",
+      "nom": "BeOne Medicines AG",
+      "pays": "CN",
+      "region": "asie_pacifique",
+      "secteur": "CN-sante",
+      "secteur_gics": "Health Care",
+      "secteur_nom": "Santé",
+      "industrie": "Biotechnology",
+      "capitalisation_md": 4.16,
+      "analystes": 7,
+      "note": 75,
       "contexte": {
-        "ajustement": 0.3,
+        "ajustement": 1.5,
         "details": [
-          "pays noté 54/100 : +0,3 pt",
-          "phase « Surchauffe » : 0 pt"
-        ],
-        "note_ajustee": 81.3,
-        "phase": "Surchauffe",
-        "note_pays": 54
-      },
-      "verdict": "Dossier solide sur les comptes ; points forts : couverture des intérêts : 23,9×, roic : 25,4 %.",
-      "confiance": "élevé",
-      "cles": {
-        "croissance_ca": "+14,6 %",
-        "marge_op": "16,0 %",
-        "per_secteur": "−25,1 %",
-        "fscore": "8/9"
-      },
-      "revue_critique": {
-        "risques": [
-          "Aucun indicateur sous 60/100 : le risque principal est un retournement de la tendance récente."
-        ],
-        "piege_de_valeur": "peu probable au vu des comptes",
-        "risque_change": "comptes en dollars : pas de risque de change direct pour un investisseur en dollars",
-        "risque_pays": "États-Unis noté 54/100 (neutre), confiance moyen",
-        "a_verifier": [
-          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
-          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
-          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
-        ],
-        "rapport_officiel": "https://www.sec.gov/Archives/edgar/data/1037038/000162828026037074/rl-20260328.htm"
-      }
-    },
-    {
-      "ticker": "2020.SR",
-      "nom": "SABIC Agri-Nutrients Company",
-      "pays": "SA",
-      "region": "moyen_orient_afrique",
-      "secteur": "SA-materiaux",
-      "secteur_gics": "Materials",
-      "secteur_nom": "Matériaux",
-      "note": 80,
-      "contexte": {
-        "ajustement": 1.3,
-        "details": [
-          "pays noté 54/100 : +0,3 pt",
+          "pays noté 56/100 : +0,5 pt",
           "phase « Expansion sans inflation » : +1 pt"
         ],
-        "note_ajustee": 81.3,
+        "note_ajustee": 76.5,
         "phase": "Expansion sans inflation",
-        "note_pays": 54
+        "note_pays": 56
       },
-      "verdict": "Dossier solide sur les comptes ; points forts : f-score de piotroski : 9/9, dette nette / ebitda : trésorerie nette ; point faible : momentum 12 mois : −2,0 %.",
+      "verdict": "Dossier solide sur les comptes ; points forts : croissance du ca : +40,2 %, dette nette / ebitda : trésorerie nette ; point faible : momentum 12 mois : −14,6 %.",
       "confiance": "moyen",
       "cles": {
-        "croissance_ca": "+18,2 %",
-        "marge_op": "31,4 %",
-        "per_secteur": "0,0 %",
-        "fscore": "9/9"
+        "croissance_ca": "+40,2 %",
+        "marge_op": "8,4 %",
+        "per_secteur": "−79,4 %",
+        "fscore": "7/9"
       },
+      "autres_cotations": [],
       "revue_critique": {
         "risques": [
-          "Momentum 12 mois : −2,0 %",
-          "PER vs secteur : 0,0 %"
+          "Momentum 12 mois : −14,6 %",
+          "ROIC : 5,7 %",
+          "Croissance très rapide : vérifier qu'elle ne provient pas d'une acquisition ou d'un élément non récurrent."
         ],
-        "piege_de_valeur": "peu probable au vu des comptes",
-        "risque_change": "comptes en SAR : la performance en dollars dépend aussi du change (devise du pays −2,9 % sur 3 mois contre le dollar)",
-        "risque_pays": "Arabie saoudite noté 54/100 (neutre), confiance moyen",
+        "piege_de_valeur": "possible : décote marquée associée à un cours ou à un bénéfice en recul",
+        "risque_change": "comptes en dollars : pas de risque de change direct pour un investisseur en dollars",
+        "risque_pays": "Chine noté 56/100 (neutre), confiance moyen",
         "a_verifier": [
           "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
           "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
@@ -1002,31 +255,380 @@
       }
     },
     {
-      "ticker": "8725.T",
-      "nom": "MS&AD Insurance Group Holdings, Inc.",
+      "liste": "qpr",
+      "ticker": "000660.KS",
+      "nom": "SK hynix Inc.",
+      "pays": "KR",
+      "region": "asie_pacifique",
+      "secteur": "KR-technologie",
+      "secteur_gics": "Information Technology",
+      "secteur_nom": "Technologies de l'information",
+      "industrie": "Semiconductors",
+      "capitalisation_md": 735.21,
+      "analystes": 39,
+      "note": 87,
+      "contexte": {
+        "ajustement": 3.3,
+        "details": [
+          "pays noté 79/100 : +2,3 pt",
+          "phase « Expansion sans inflation » : +1 pt"
+        ],
+        "note_ajustee": 90.3,
+        "phase": "Expansion sans inflation",
+        "note_pays": 79
+      },
+      "verdict": "Dossier solide sur les comptes ; points forts : marge opérationnelle : 48,6 %, croissance du ca : +46,8 %.",
+      "confiance": "moyen",
+      "cles": {
+        "croissance_ca": "+46,8 %",
+        "marge_op": "48,6 %",
+        "per_secteur": "−81,6 %",
+        "fscore": "7/9"
+      },
+      "autres_cotations": [],
+      "revue_critique": {
+        "risques": [
+          "Conversion du bénéfice en cash : 57,8 %",
+          "Croissance très rapide : vérifier qu'elle ne provient pas d'une acquisition ou d'un élément non récurrent."
+        ],
+        "piege_de_valeur": "peu probable au vu des comptes",
+        "risque_change": "comptes en KRW : la performance en dollars dépend aussi du change (devise du pays +6,3 % sur 3 mois contre le dollar)",
+        "risque_pays": "Corée du Sud noté 79/100 (attractif), confiance moyen",
+        "a_verifier": [
+          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
+          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
+          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
+        ],
+        "rapport_officiel": null
+      }
+    },
+    {
+      "liste": "qpr",
+      "ticker": "ANG.JO",
+      "nom": "AngloGold Ashanti plc",
+      "pays": "ZA",
+      "region": "moyen_orient_afrique",
+      "secteur": "ZA-materiaux",
+      "secteur_gics": "Materials",
+      "secteur_nom": "Matériaux",
+      "industrie": "Gold",
+      "capitalisation_md": 40.57,
+      "analystes": 9,
+      "note": 88,
+      "contexte": {
+        "ajustement": 2.3,
+        "details": [
+          "pays noté 66/100 : +1,3 pt",
+          "phase « Expansion sans inflation » : +1 pt"
+        ],
+        "note_ajustee": 90.3,
+        "phase": "Expansion sans inflation",
+        "note_pays": 66
+      },
+      "verdict": "Dossier solide sur les comptes ; points forts : marge opérationnelle : 43,2 %, f-score de piotroski : 9/9.",
+      "confiance": "moyen",
+      "cles": {
+        "croissance_ca": "+70,8 %",
+        "marge_op": "43,2 %",
+        "per_secteur": "−37,9 %",
+        "fscore": "9/9"
+      },
+      "autres_cotations": [],
+      "revue_critique": {
+        "risques": [
+          "VE/EBITDA vs secteur : −3,6 %",
+          "Croissance très rapide : vérifier qu'elle ne provient pas d'une acquisition ou d'un élément non récurrent."
+        ],
+        "piege_de_valeur": "peu probable au vu des comptes",
+        "risque_change": "comptes en dollars : pas de risque de change direct pour un investisseur en dollars",
+        "risque_pays": "Afrique du Sud noté 66/100 (attractif), confiance moyen",
+        "a_verifier": [
+          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
+          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
+          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
+        ],
+        "rapport_officiel": null
+      }
+    },
+    {
+      "liste": "qpr",
+      "ticker": "ABX.TO",
+      "nom": "Barrick Mining Corporation",
+      "pays": "CA",
+      "region": "amerique_nord",
+      "secteur": "CA-materiaux",
+      "secteur_gics": "Materials",
+      "secteur_nom": "Matériaux",
+      "industrie": "Gold",
+      "capitalisation_md": 62.6,
+      "analystes": 12,
+      "note": 88,
+      "contexte": {
+        "ajustement": 1.7,
+        "details": [
+          "pays noté 59/100 : +0,7 pt",
+          "phase « Expansion sans inflation » : +1 pt"
+        ],
+        "note_ajustee": 89.7,
+        "phase": "Expansion sans inflation",
+        "note_pays": 59
+      },
+      "verdict": "Dossier solide sur les comptes ; points forts : marge opérationnelle : 47,2 %, f-score de piotroski : 9/9.",
+      "confiance": "moyen",
+      "cles": {
+        "croissance_ca": "+31,2 %",
+        "marge_op": "47,2 %",
+        "per_secteur": "−52,8 %",
+        "fscore": "9/9"
+      },
+      "autres_cotations": [],
+      "revue_critique": {
+        "risques": [
+          "Aucun indicateur sous 60/100 : le risque principal est un retournement de la tendance récente.",
+          "Croissance très rapide : vérifier qu'elle ne provient pas d'une acquisition ou d'un élément non récurrent."
+        ],
+        "piege_de_valeur": "peu probable au vu des comptes",
+        "risque_change": "comptes en dollars : pas de risque de change direct pour un investisseur en dollars",
+        "risque_pays": "Canada noté 59/100 (neutre), confiance moyen",
+        "a_verifier": [
+          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
+          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
+          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
+        ],
+        "rapport_officiel": null
+      }
+    },
+    {
+      "liste": "qpr",
+      "ticker": "K.TO",
+      "nom": "Kinross Gold Corporation",
+      "pays": "CA",
+      "region": "amerique_nord",
+      "secteur": "CA-materiaux",
+      "secteur_gics": "Materials",
+      "secteur_nom": "Matériaux",
+      "industrie": "Gold",
+      "capitalisation_md": 24.25,
+      "analystes": 8,
+      "note": 88,
+      "contexte": {
+        "ajustement": 1.7,
+        "details": [
+          "pays noté 59/100 : +0,7 pt",
+          "phase « Expansion sans inflation » : +1 pt"
+        ],
+        "note_ajustee": 89.7,
+        "phase": "Expansion sans inflation",
+        "note_pays": 59
+      },
+      "verdict": "Dossier solide sur les comptes ; points forts : marge opérationnelle : 45,8 %, f-score de piotroski : 9/9 ; point faible : momentum 12 mois : −11,4 %.",
+      "confiance": "moyen",
+      "cles": {
+        "croissance_ca": "+36,9 %",
+        "marge_op": "45,8 %",
+        "per_secteur": "−62,4 %",
+        "fscore": "9/9"
+      },
+      "autres_cotations": [],
+      "revue_critique": {
+        "risques": [
+          "Momentum 12 mois : −11,4 %",
+          "Croissance très rapide : vérifier qu'elle ne provient pas d'une acquisition ou d'un élément non récurrent."
+        ],
+        "piege_de_valeur": "possible : décote marquée associée à un cours ou à un bénéfice en recul",
+        "risque_change": "comptes en dollars : pas de risque de change direct pour un investisseur en dollars",
+        "risque_pays": "Canada noté 59/100 (neutre), confiance moyen",
+        "a_verifier": [
+          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
+          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
+          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
+        ],
+        "rapport_officiel": null
+      }
+    },
+    {
+      "liste": "qpr",
+      "ticker": "2330.TW",
+      "nom": "Taiwan Semiconductor Manufacturing Company Limited",
+      "pays": "TW",
+      "region": "asie_pacifique",
+      "secteur": "TW-technologie",
+      "secteur_gics": "Information Technology",
+      "secteur_nom": "Technologies de l'information",
+      "industrie": "Semiconductors",
+      "capitalisation_md": 1813.98,
+      "analystes": 35,
+      "note": 87,
+      "contexte": {
+        "ajustement": 2.1,
+        "details": [
+          "pays noté 64/100 : +1,1 pt",
+          "phase « Expansion sans inflation » : +1 pt"
+        ],
+        "note_ajustee": 89.1,
+        "phase": "Expansion sans inflation",
+        "note_pays": 64
+      },
+      "verdict": "Dossier solide sur les comptes ; points forts : marge opérationnelle : 50,8 %, f-score de piotroski : 9/9.",
+      "confiance": "moyen",
+      "cles": {
+        "croissance_ca": "+31,6 %",
+        "marge_op": "50,8 %",
+        "per_secteur": "−28,9 %",
+        "fscore": "9/9"
+      },
+      "autres_cotations": [
+        {
+          "ticker": "TSMC34.SA",
+          "pays": "BR"
+        }
+      ],
+      "revue_critique": {
+        "risques": [
+          "Conversion du bénéfice en cash : 58,5 %",
+          "VE/EBITDA vs secteur : +0,8 %",
+          "Croissance très rapide : vérifier qu'elle ne provient pas d'une acquisition ou d'un élément non récurrent."
+        ],
+        "piege_de_valeur": "peu probable au vu des comptes",
+        "risque_change": "comptes en TWD : la performance en dollars dépend aussi du change (devise du pays −0,9 % sur 3 mois contre le dollar)",
+        "risque_pays": "Taïwan noté 64/100 (neutre), confiance faible",
+        "a_verifier": [
+          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
+          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
+          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
+        ],
+        "rapport_officiel": null
+      }
+    },
+    {
+      "liste": "qpr",
+      "ticker": "EMAAR.AE",
+      "nom": "Emaar Properties PJSC",
+      "pays": "AE",
+      "region": "moyen_orient_afrique",
+      "secteur": "AE-immobilier",
+      "secteur_gics": "Real Estate",
+      "secteur_nom": "Immobilier",
+      "industrie": "Real Estate - Development",
+      "capitalisation_md": 27.97,
+      "analystes": 16,
+      "note": 85,
+      "contexte": {
+        "ajustement": 1.0,
+        "details": [
+          "pays noté 50/100 : 0,0 pt",
+          "phase « Expansion sans inflation » : +1 pt"
+        ],
+        "note_ajustee": 86.0,
+        "phase": "Expansion sans inflation",
+        "note_pays": 50
+      },
+      "verdict": "Dossier solide sur les comptes ; points forts : croissance du ca : +39,6 %, marge opérationnelle : 45,5 % ; point faible : momentum 12 mois : −9,4 %.",
+      "confiance": "moyen",
+      "cles": {
+        "croissance_ca": "+39,6 %",
+        "marge_op": "45,5 %",
+        "per_secteur": "−78,4 %",
+        "fscore": "7/9"
+      },
+      "autres_cotations": [],
+      "revue_critique": {
+        "risques": [
+          "Momentum 12 mois : −9,4 %",
+          "Croissance très rapide : vérifier qu'elle ne provient pas d'une acquisition ou d'un élément non récurrent."
+        ],
+        "piege_de_valeur": "possible : décote marquée associée à un cours ou à un bénéfice en recul",
+        "risque_change": "comptes en AED : la performance en dollars dépend aussi du change (devise du pays 0,0 % sur 3 mois contre le dollar)",
+        "risque_pays": "Émirats arabes unis noté 50/100 (neutre), confiance faible",
+        "a_verifier": [
+          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
+          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
+          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés.",
+          "Vérifier l'accessibilité du titre pour un investisseur étranger et les contrôles de capitaux."
+        ],
+        "rapport_officiel": null
+      }
+    },
+    {
+      "liste": "qpr",
+      "ticker": "2345.TW",
+      "nom": "Accton Technology Corporation",
+      "pays": "TW",
+      "region": "asie_pacifique",
+      "secteur": "TW-technologie",
+      "secteur_gics": "Information Technology",
+      "secteur_nom": "Technologies de l'information",
+      "industrie": "Communication Equipment",
+      "capitalisation_md": 25.47,
+      "analystes": 14,
+      "note": 83,
+      "contexte": {
+        "ajustement": 2.1,
+        "details": [
+          "pays noté 64/100 : +1,1 pt",
+          "phase « Expansion sans inflation » : +1 pt"
+        ],
+        "note_ajustee": 85.1,
+        "phase": "Expansion sans inflation",
+        "note_pays": 64
+      },
+      "verdict": "Dossier solide sur les comptes ; points forts : croissance du ca : +124,9 %, dette nette / ebitda : trésorerie nette.",
+      "confiance": "moyen",
+      "cles": {
+        "croissance_ca": "+124,9 %",
+        "marge_op": "13,0 %",
+        "per_secteur": "−23,1 %",
+        "fscore": "7/9"
+      },
+      "autres_cotations": [],
+      "revue_critique": {
+        "risques": [
+          "VE/EBITDA vs secteur : +9,1 %",
+          "Croissance très rapide : vérifier qu'elle ne provient pas d'une acquisition ou d'un élément non récurrent."
+        ],
+        "piege_de_valeur": "peu probable au vu des comptes",
+        "risque_change": "comptes en TWD : la performance en dollars dépend aussi du change (devise du pays −0,9 % sur 3 mois contre le dollar)",
+        "risque_pays": "Taïwan noté 64/100 (neutre), confiance faible",
+        "a_verifier": [
+          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
+          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
+          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
+        ],
+        "rapport_officiel": null
+      }
+    },
+    {
+      "liste": "qpr",
+      "ticker": "4503.T",
+      "nom": "Astellas Pharma Inc.",
       "pays": "JP",
       "region": "asie_pacifique",
-      "secteur": "JP-finance",
-      "secteur_gics": "Financials",
-      "secteur_nom": "Finance",
-      "note": 80,
+      "secteur": "JP-sante",
+      "secteur_gics": "Health Care",
+      "secteur_nom": "Santé",
+      "industrie": "Drug Manufacturers - General",
+      "capitalisation_md": 29.18,
+      "analystes": 14,
+      "note": 83,
       "contexte": {
         "ajustement": 0.9,
         "details": [
           "pays noté 61/100 : +0,9 pt",
           "phase « Surchauffe » : 0 pt"
         ],
-        "note_ajustee": 80.9,
+        "note_ajustee": 83.9,
         "phase": "Surchauffe",
         "note_pays": 61
       },
-      "verdict": "Dossier solide sur les comptes ; points forts : momentum 12 mois : +69,6 %, per vs secteur : −31,7 %.",
+      "verdict": "Dossier solide sur les comptes ; points forts : couverture des intérêts : 27,0×, croissance du bénéfice : +474,5 %.",
       "confiance": "moyen",
       "cles": {
-        "croissance_ca": "+14,3 %",
-        "per_secteur": "−31,7 %",
-        "roe": "16,5 %"
+        "croissance_ca": "+11,9 %",
+        "marge_op": "17,8 %",
+        "per_secteur": "−59,1 %",
+        "fscore": "8/9"
       },
+      "autres_cotations": [],
       "revue_critique": {
         "risques": [
           "Aucun indicateur sous 60/100 : le risque principal est un retournement de la tendance récente."
@@ -1043,46 +645,774 @@
       }
     },
     {
-      "ticker": "HCLTECH.NS",
-      "nom": "HCL Technologies Limited",
-      "pays": "IN",
-      "region": "asie_pacifique",
-      "secteur": "IN-technologie",
-      "secteur_gics": "Information Technology",
-      "secteur_nom": "Technologies de l'information",
-      "note": 79,
+      "liste": "qpr",
+      "ticker": "PGR",
+      "nom": "The Progressive Corporation",
+      "pays": "US",
+      "region": "amerique_nord",
+      "secteur": "US-finance",
+      "secteur_gics": "Financials",
+      "secteur_nom": "Finance",
+      "industrie": "Insurance - Property & Casualty",
+      "capitalisation_md": 135.56,
+      "analystes": 21,
+      "note": 83,
       "contexte": {
-        "ajustement": 1.8,
+        "ajustement": 0.3,
         "details": [
-          "pays noté 60/100 : +0,8 pt",
-          "phase « Expansion sans inflation » : +1 pt"
+          "pays noté 54/100 : +0,3 pt",
+          "phase « Surchauffe » : 0 pt"
         ],
-        "note_ajustee": 80.8,
-        "phase": "Expansion sans inflation",
-        "note_pays": 60
+        "note_ajustee": 83.3,
+        "phase": "Surchauffe",
+        "note_pays": 54
       },
-      "verdict": "Dossier solide sur les comptes ; points forts : dette nette / ebitda : trésorerie nette, couverture des intérêts : 47,0× ; point faible : croissance du bénéfice : −4,3 %.",
-      "confiance": "moyen",
+      "verdict": "Dossier solide sur les comptes ; points forts : roe : 37,3 %, croissance du bénéfice : +33,6 %.",
+      "confiance": "élevé",
       "cles": {
-        "croissance_ca": "+11,2 %",
-        "marge_op": "31,4 %",
-        "per_secteur": "−99,3 %",
-        "fscore": "7/9"
+        "croissance_ca": "+16,4 %",
+        "per_secteur": "−21,2 %",
+        "roe": "37,3 %"
       },
+      "autres_cotations": [],
       "revue_critique": {
         "risques": [
-          "Croissance du bénéfice : −4,3 %",
-          "Momentum 12 mois : −3,1 %"
+          "Aucun indicateur sous 60/100 : le risque principal est un retournement de la tendance récente."
+        ],
+        "piege_de_valeur": "peu probable au vu des comptes",
+        "risque_change": "comptes en dollars : pas de risque de change direct pour un investisseur en dollars",
+        "risque_pays": "États-Unis noté 54/100 (neutre), confiance moyen",
+        "a_verifier": [
+          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
+          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
+          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
+        ],
+        "rapport_officiel": "https://www.sec.gov/Archives/edgar/data/80661/000008066126000086/pgr-20251231.htm"
+      }
+    },
+    {
+      "liste": "qpr",
+      "ticker": "TPR",
+      "nom": "Tapestry, Inc.",
+      "pays": "US",
+      "region": "amerique_nord",
+      "secteur": "US-conso-discretionnaire",
+      "secteur_gics": "Consumer Discretionary",
+      "secteur_nom": "Consommation discrétionnaire",
+      "industrie": "Luxury Goods",
+      "capitalisation_md": 23.96,
+      "analystes": 19,
+      "note": 82,
+      "contexte": {
+        "ajustement": 0.3,
+        "details": [
+          "pays noté 54/100 : +0,3 pt",
+          "phase « Surchauffe » : 0 pt"
+        ],
+        "note_ajustee": 82.3,
+        "phase": "Surchauffe",
+        "note_pays": 54
+      },
+      "verdict": "Dossier solide sur les comptes ; points forts : couverture des intérêts : 34,7×, roic : 51,2 %.",
+      "confiance": "élevé",
+      "cles": {
+        "croissance_ca": "+14,2 %",
+        "marge_op": "23,9 %",
+        "per_secteur": "−22,1 %",
+        "fscore": "8/9"
+      },
+      "autres_cotations": [],
+      "revue_critique": {
+        "risques": [
+          "Momentum 12 mois : +11,4 %"
+        ],
+        "piege_de_valeur": "peu probable au vu des comptes",
+        "risque_change": "comptes en dollars : pas de risque de change direct pour un investisseur en dollars",
+        "risque_pays": "États-Unis noté 54/100 (neutre), confiance moyen",
+        "a_verifier": [
+          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
+          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
+          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
+        ],
+        "rapport_officiel": "https://www.sec.gov/Archives/edgar/data/1116132/000111613226000018/tpr-20260627.htm"
+      }
+    },
+    {
+      "liste": "qpr",
+      "ticker": "PRU.L",
+      "nom": "Prudential plc",
+      "pays": "GB",
+      "region": "europe",
+      "secteur": "GB-finance",
+      "secteur_gics": "Financials",
+      "secteur_nom": "Finance",
+      "industrie": "Insurance - Life",
+      "capitalisation_md": 30.25,
+      "analystes": 13,
+      "note": 79,
+      "contexte": {
+        "ajustement": 2.0,
+        "details": [
+          "pays noté 62/100 : +1,0 pt",
+          "phase « Expansion sans inflation » : +1 pt"
+        ],
+        "note_ajustee": 81.0,
+        "phase": "Expansion sans inflation",
+        "note_pays": 62
+      },
+      "verdict": "Dossier solide sur les comptes ; points forts : croissance du ca : +69,0 %, croissance du bénéfice : +74,1 % ; point faible : momentum 12 mois : −13,3 %.",
+      "confiance": "moyen",
+      "cles": {
+        "croissance_ca": "+69,0 %",
+        "per_secteur": "−39,3 %",
+        "roe": "19,8 %"
+      },
+      "autres_cotations": [],
+      "revue_critique": {
+        "risques": [
+          "Momentum 12 mois : −13,3 %",
+          "Croissance très rapide : vérifier qu'elle ne provient pas d'une acquisition ou d'un élément non récurrent."
         ],
         "piege_de_valeur": "possible : décote marquée associée à un cours ou à un bénéfice en recul",
         "risque_change": "comptes en dollars : pas de risque de change direct pour un investisseur en dollars",
-        "risque_pays": "Inde noté 60/100 (neutre), confiance moyen",
+        "risque_pays": "Royaume-Uni noté 62/100 (neutre), confiance moyen",
         "a_verifier": [
           "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
           "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
           "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
         ],
         "rapport_officiel": null
+      }
+    },
+    {
+      "liste": "qpr",
+      "ticker": "8725.T",
+      "nom": "MS&AD Insurance Group Holdings, Inc.",
+      "pays": "JP",
+      "region": "asie_pacifique",
+      "secteur": "JP-finance",
+      "secteur_gics": "Financials",
+      "secteur_nom": "Finance",
+      "industrie": "Insurance - Property & Casualty",
+      "capitalisation_md": 46.85,
+      "analystes": 11,
+      "note": 80,
+      "contexte": {
+        "ajustement": 0.9,
+        "details": [
+          "pays noté 61/100 : +0,9 pt",
+          "phase « Surchauffe » : 0 pt"
+        ],
+        "note_ajustee": 80.9,
+        "phase": "Surchauffe",
+        "note_pays": 61
+      },
+      "verdict": "Dossier solide sur les comptes ; points forts : per vs secteur : −32,7 %, momentum 12 mois : +69,6 %.",
+      "confiance": "moyen",
+      "cles": {
+        "croissance_ca": "+14,3 %",
+        "per_secteur": "−32,7 %",
+        "roe": "16,5 %"
+      },
+      "autres_cotations": [],
+      "revue_critique": {
+        "risques": [
+          "Aucun indicateur sous 60/100 : le risque principal est un retournement de la tendance récente."
+        ],
+        "piege_de_valeur": "peu probable au vu des comptes",
+        "risque_change": "comptes en JPY : la performance en dollars dépend aussi du change (devise du pays −0,8 % sur 3 mois contre le dollar)",
+        "risque_pays": "Japon noté 61/100 (neutre), confiance moyen",
+        "a_verifier": [
+          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
+          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
+          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
+        ],
+        "rapport_officiel": null
+      }
+    },
+    {
+      "liste": "qpr",
+      "ticker": "EQT",
+      "nom": "EQT Corporation",
+      "pays": "US",
+      "region": "amerique_nord",
+      "secteur": "US-energie",
+      "secteur_gics": "Energy",
+      "secteur_nom": "Énergie",
+      "industrie": "Oil & Gas E&P",
+      "capitalisation_md": 34.31,
+      "analystes": 22,
+      "note": 80,
+      "contexte": {
+        "ajustement": 0.3,
+        "details": [
+          "pays noté 54/100 : +0,3 pt",
+          "phase « Surchauffe » : 0 pt"
+        ],
+        "note_ajustee": 80.3,
+        "phase": "Surchauffe",
+        "note_pays": 54
+      },
+      "verdict": "Dossier solide sur les comptes ; points forts : marge opérationnelle : 36,1 %, croissance du ca : +60,0 %.",
+      "confiance": "élevé",
+      "cles": {
+        "croissance_ca": "+60,0 %",
+        "marge_op": "36,1 %",
+        "per_secteur": "−32,1 %",
+        "fscore": "8/9"
+      },
+      "autres_cotations": [],
+      "revue_critique": {
+        "risques": [
+          "ROIC : 7,5 %",
+          "Momentum 12 mois : +3,6 %",
+          "Croissance très rapide : vérifier qu'elle ne provient pas d'une acquisition ou d'un élément non récurrent."
+        ],
+        "piege_de_valeur": "peu probable au vu des comptes",
+        "risque_change": "comptes en dollars : pas de risque de change direct pour un investisseur en dollars",
+        "risque_pays": "États-Unis noté 54/100 (neutre), confiance moyen",
+        "a_verifier": [
+          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
+          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
+          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
+        ],
+        "rapport_officiel": "https://www.sec.gov/Archives/edgar/data/33213/000003321326000018/eqt-20251231.htm"
+      }
+    },
+    {
+      "liste": "qpr",
+      "ticker": "RR.L",
+      "nom": "Rolls-Royce Holdings plc",
+      "pays": "GB",
+      "region": "europe",
+      "secteur": "GB-industrie",
+      "secteur_gics": "Industrials",
+      "secteur_nom": "Industrie",
+      "industrie": "Aerospace & Defense",
+      "capitalisation_md": 136.4,
+      "analystes": 20,
+      "note": 78,
+      "contexte": {
+        "ajustement": 2.0,
+        "details": [
+          "pays noté 62/100 : +1,0 pt",
+          "phase « Expansion sans inflation » : +1 pt"
+        ],
+        "note_ajustee": 80.0,
+        "phase": "Expansion sans inflation",
+        "note_pays": 62
+      },
+      "verdict": "Dossier solide sur les comptes ; points forts : dette nette / ebitda : trésorerie nette, roic : 67,2 %.",
+      "confiance": "élevé",
+      "cles": {
+        "croissance_ca": "+12,2 %",
+        "marge_op": "20,8 %",
+        "per_secteur": "−26,2 %",
+        "fscore": "7/9"
+      },
+      "autres_cotations": [
+        {
+          "ticker": "RRL.XC",
+          "pays": "GB"
+        }
+      ],
+      "revue_critique": {
+        "risques": [
+          "Conversion du bénéfice en cash : 61,3 %",
+          "Momentum 12 mois : +6,1 %"
+        ],
+        "piege_de_valeur": "peu probable au vu des comptes",
+        "risque_change": "comptes en GBP : la performance en dollars dépend aussi du change (devise du pays −0,4 % sur 3 mois contre le dollar)",
+        "risque_pays": "Royaume-Uni noté 62/100 (neutre), confiance moyen",
+        "a_verifier": [
+          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
+          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
+          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
+        ],
+        "rapport_officiel": "https://filings.xbrl.org/213800EC7997ZBLZJH69/2025-12-31/ESEF/GB/0/213800EC7997ZBLZJH69-2025-12-31/reports/ixbrlviewer.html"
+      }
+    },
+    {
+      "liste": "qpr",
+      "ticker": "EXE",
+      "nom": "Expand Energy Corporation",
+      "pays": "US",
+      "region": "amerique_nord",
+      "secteur": "US-energie",
+      "secteur_gics": "Energy",
+      "secteur_nom": "Énergie",
+      "industrie": "Oil & Gas E&P",
+      "capitalisation_md": 20.66,
+      "analystes": 27,
+      "note": 79,
+      "contexte": {
+        "ajustement": 0.3,
+        "details": [
+          "pays noté 54/100 : +0,3 pt",
+          "phase « Surchauffe » : 0 pt"
+        ],
+        "note_ajustee": 79.3,
+        "phase": "Surchauffe",
+        "note_pays": 54
+      },
+      "verdict": "Dossier solide sur les comptes ; points forts : croissance du ca : +187,2 %, croissance du bénéfice : +354,8 % ; point faible : momentum 12 mois : −11,5 %.",
+      "confiance": "élevé",
+      "cles": {
+        "croissance_ca": "+187,2 %",
+        "marge_op": "22,9 %",
+        "per_secteur": "−59,7 %",
+        "fscore": "8/9"
+      },
+      "autres_cotations": [],
+      "revue_critique": {
+        "risques": [
+          "Momentum 12 mois : −11,5 %",
+          "ROIC : 9,4 %",
+          "Croissance très rapide : vérifier qu'elle ne provient pas d'une acquisition ou d'un élément non récurrent."
+        ],
+        "piege_de_valeur": "possible : décote marquée associée à un cours ou à un bénéfice en recul",
+        "risque_change": "comptes en dollars : pas de risque de change direct pour un investisseur en dollars",
+        "risque_pays": "États-Unis noté 54/100 (neutre), confiance moyen",
+        "a_verifier": [
+          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
+          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
+          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
+        ],
+        "rapport_officiel": "https://www.sec.gov/Archives/edgar/data/895126/000089512626000011/exe-20251231.htm"
+      }
+    },
+    {
+      "liste": "qpr",
+      "ticker": "APP",
+      "nom": "AppLovin Corporation",
+      "pays": "US",
+      "region": "amerique_nord",
+      "secteur": "US-communication",
+      "secteur_gics": "Communication",
+      "secteur_nom": "Services de communication",
+      "industrie": "Advertising Agencies",
+      "capitalisation_md": 69.67,
+      "analystes": 31,
+      "note": 78,
+      "contexte": {
+        "ajustement": 0.3,
+        "details": [
+          "pays noté 54/100 : +0,3 pt",
+          "phase « Surchauffe » : 0 pt"
+        ],
+        "note_ajustee": 78.3,
+        "phase": "Surchauffe",
+        "note_pays": 54
+      },
+      "verdict": "Dossier solide sur les comptes ; points forts : marge opérationnelle : 75,8 %, f-score de piotroski : 9/9 ; point faible : momentum 12 mois : −64,1 %.",
+      "confiance": "élevé",
+      "cles": {
+        "croissance_ca": "+70,0 %",
+        "marge_op": "75,8 %",
+        "per_secteur": "−5,3 %",
+        "fscore": "9/9"
+      },
+      "autres_cotations": [],
+      "revue_critique": {
+        "risques": [
+          "VE/EBITDA vs secteur : +82,3 %",
+          "Momentum 12 mois : −64,1 %",
+          "Croissance très rapide : vérifier qu'elle ne provient pas d'une acquisition ou d'un élément non récurrent."
+        ],
+        "piege_de_valeur": "peu probable au vu des comptes",
+        "risque_change": "comptes en dollars : pas de risque de change direct pour un investisseur en dollars",
+        "risque_pays": "États-Unis noté 54/100 (neutre), confiance moyen",
+        "a_verifier": [
+          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
+          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
+          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
+        ],
+        "rapport_officiel": "https://www.sec.gov/Archives/edgar/data/1751008/000175100826000010/app-20251231.htm"
+      }
+    },
+    {
+      "liste": "qpr",
+      "ticker": "FIX",
+      "nom": "Comfort Systems USA, Inc.",
+      "pays": "US",
+      "region": "amerique_nord",
+      "secteur": "US-industrie",
+      "secteur_gics": "Industrials",
+      "secteur_nom": "Industrie",
+      "industrie": "Engineering & Construction",
+      "capitalisation_md": 42.24,
+      "analystes": 8,
+      "note": 78,
+      "contexte": {
+        "ajustement": 0.3,
+        "details": [
+          "pays noté 54/100 : +0,3 pt",
+          "phase « Surchauffe » : 0 pt"
+        ],
+        "note_ajustee": 78.3,
+        "phase": "Surchauffe",
+        "note_pays": 54
+      },
+      "verdict": "Dossier solide sur les comptes ; points forts : croissance du ca : +29,5 %, couverture des intérêts : pas de charge d'intérêts ; point faible : ve/ebitda vs secteur : +66,8 %.",
+      "confiance": "élevé",
+      "cles": {
+        "croissance_ca": "+29,5 %",
+        "marge_op": "14,4 %",
+        "per_secteur": "−3,5 %",
+        "fscore": "7/9"
+      },
+      "autres_cotations": [],
+      "revue_critique": {
+        "risques": [
+          "VE/EBITDA vs secteur : +66,8 %",
+          "PER vs secteur : −3,5 %",
+          "Croissance très rapide : vérifier qu'elle ne provient pas d'une acquisition ou d'un élément non récurrent."
+        ],
+        "piege_de_valeur": "peu probable au vu des comptes",
+        "risque_change": "comptes en dollars : pas de risque de change direct pour un investisseur en dollars",
+        "risque_pays": "États-Unis noté 54/100 (neutre), confiance moyen",
+        "a_verifier": [
+          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
+          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
+          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
+        ],
+        "rapport_officiel": "https://www.sec.gov/Archives/edgar/data/1035983/000110465926017530/fix-20251231x10k.htm"
+      }
+    },
+    {
+      "liste": "qpr",
+      "ticker": "EME",
+      "nom": "EMCOR Group, Inc.",
+      "pays": "US",
+      "region": "amerique_nord",
+      "secteur": "US-industrie",
+      "secteur_gics": "Industrials",
+      "secteur_nom": "Industrie",
+      "industrie": "Engineering & Construction",
+      "capitalisation_md": 29.89,
+      "analystes": 8,
+      "note": 78,
+      "contexte": {
+        "ajustement": 0.3,
+        "details": [
+          "pays noté 54/100 : +0,3 pt",
+          "phase « Surchauffe » : 0 pt"
+        ],
+        "note_ajustee": 78.3,
+        "phase": "Surchauffe",
+        "note_pays": 54
+      },
+      "verdict": "Dossier solide sur les comptes ; points forts : couverture des intérêts : pas de charge d'intérêts, dette nette / ebitda : trésorerie nette.",
+      "confiance": "élevé",
+      "cles": {
+        "croissance_ca": "+16,6 %",
+        "marge_op": "9,2 %",
+        "per_secteur": "−27,8 %",
+        "fscore": "7/9"
+      },
+      "autres_cotations": [],
+      "revue_critique": {
+        "risques": [
+          "Momentum 12 mois : +1,3 %",
+          "Marge opérationnelle : 9,2 %"
+        ],
+        "piege_de_valeur": "peu probable au vu des comptes",
+        "risque_change": "comptes en dollars : pas de risque de change direct pour un investisseur en dollars",
+        "risque_pays": "États-Unis noté 54/100 (neutre), confiance moyen",
+        "a_verifier": [
+          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
+          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
+          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
+        ],
+        "rapport_officiel": "https://www.sec.gov/Archives/edgar/data/105634/000010563426000025/eme-20251231.htm"
+      }
+    },
+    {
+      "liste": "qpr",
+      "ticker": "000333.SZ",
+      "nom": "Midea Group Co., Ltd.",
+      "pays": "CN",
+      "region": "asie_pacifique",
+      "secteur": "CN-conso-discretionnaire",
+      "secteur_gics": "Consumer Discretionary",
+      "secteur_nom": "Consommation discrétionnaire",
+      "industrie": "Furnishings, Fixtures & Appliances",
+      "capitalisation_md": 92.98,
+      "analystes": 19,
+      "note": 76,
+      "contexte": {
+        "ajustement": 1.5,
+        "details": [
+          "pays noté 56/100 : +0,5 pt",
+          "phase « Expansion sans inflation » : +1 pt"
+        ],
+        "note_ajustee": 77.5,
+        "phase": "Expansion sans inflation",
+        "note_pays": 56
+      },
+      "verdict": "Dossier solide sur les comptes ; points forts : couverture des intérêts : 20,9×, dette nette / ebitda : trésorerie nette.",
+      "confiance": "moyen",
+      "cles": {
+        "croissance_ca": "+12,1 %",
+        "marge_op": "10,1 %",
+        "per_secteur": "−34,4 %",
+        "fscore": "7/9"
+      },
+      "autres_cotations": [],
+      "revue_critique": {
+        "risques": [
+          "Marge opérationnelle : 10,1 %"
+        ],
+        "piege_de_valeur": "peu probable au vu des comptes",
+        "risque_change": "comptes en CNY : la performance en dollars dépend aussi du change (devise du pays +1,6 % sur 3 mois contre le dollar)",
+        "risque_pays": "Chine noté 56/100 (neutre), confiance moyen",
+        "a_verifier": [
+          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
+          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
+          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés.",
+          "Vérifier l'accessibilité du titre pour un investisseur étranger et les contrôles de capitaux."
+        ],
+        "rapport_officiel": null
+      }
+    },
+    {
+      "liste": "qpr",
+      "ticker": "2914.T",
+      "nom": "Japan Tobacco Inc.",
+      "pays": "JP",
+      "region": "asie_pacifique",
+      "secteur": "JP-conso-base",
+      "secteur_gics": "Consumer Staples",
+      "secteur_nom": "Consommation de base",
+      "industrie": "Tobacco",
+      "capitalisation_md": 82.81,
+      "analystes": 14,
+      "note": 76,
+      "contexte": {
+        "ajustement": 0.9,
+        "details": [
+          "pays noté 61/100 : +0,9 pt",
+          "phase « Surchauffe » : 0 pt"
+        ],
+        "note_ajustee": 76.9,
+        "phase": "Surchauffe",
+        "note_pays": 61
+      },
+      "verdict": "Dossier solide sur les comptes ; points forts : croissance du bénéfice : +184,6 %, marge opérationnelle : 24,6 %.",
+      "confiance": "moyen",
+      "cles": {
+        "croissance_ca": "+13,4 %",
+        "marge_op": "24,6 %",
+        "per_secteur": "−17,2 %",
+        "fscore": "8/9"
+      },
+      "autres_cotations": [],
+      "revue_critique": {
+        "risques": [
+          "Couverture des intérêts : 4,4×",
+          "ROIC : 10,0 %"
+        ],
+        "piege_de_valeur": "peu probable au vu des comptes",
+        "risque_change": "comptes en JPY : la performance en dollars dépend aussi du change (devise du pays −0,8 % sur 3 mois contre le dollar)",
+        "risque_pays": "Japon noté 61/100 (neutre), confiance moyen",
+        "a_verifier": [
+          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
+          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
+          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
+        ],
+        "rapport_officiel": null
+      }
+    },
+    {
+      "liste": "qpr",
+      "ticker": "0700.HK",
+      "nom": "Tencent Holdings Limited",
+      "pays": "CN",
+      "region": "asie_pacifique",
+      "secteur": "CN-communication",
+      "secteur_gics": "Communication",
+      "secteur_nom": "Services de communication",
+      "industrie": null,
+      "capitalisation_md": 457.13,
+      "analystes": null,
+      "note": 74,
+      "contexte": {
+        "ajustement": 1.5,
+        "details": [
+          "pays noté 56/100 : +0,5 pt",
+          "phase « Expansion sans inflation » : +1 pt"
+        ],
+        "note_ajustee": 75.5,
+        "phase": "Expansion sans inflation",
+        "note_pays": 56
+      },
+      "verdict": "Dossier solide sur les comptes ; points forts : marge opérationnelle : 33,1 %, dette nette / ebitda : trésorerie nette ; point faible : momentum 12 mois : −36,0 %.",
+      "confiance": "moyen",
+      "cles": {
+        "croissance_ca": "+13,9 %",
+        "marge_op": "33,1 %",
+        "per_secteur": "−20,3 %",
+        "fscore": "7/9"
+      },
+      "autres_cotations": [],
+      "revue_critique": {
+        "risques": [
+          "Momentum 12 mois : −36,0 %"
+        ],
+        "piege_de_valeur": "possible : décote marquée associée à un cours ou à un bénéfice en recul",
+        "risque_change": "comptes en CNY : la performance en dollars dépend aussi du change (devise du pays +1,6 % sur 3 mois contre le dollar)",
+        "risque_pays": "Chine noté 56/100 (neutre), confiance moyen",
+        "a_verifier": [
+          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
+          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
+          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés.",
+          "Vérifier l'accessibilité du titre pour un investisseur étranger et les contrôles de capitaux."
+        ],
+        "rapport_officiel": null
+      }
+    },
+    {
+      "liste": "qpr",
+      "ticker": "NFLX",
+      "nom": "Netflix, Inc.",
+      "pays": "US",
+      "region": "amerique_nord",
+      "secteur": "US-communication",
+      "secteur_gics": "Communication",
+      "secteur_nom": "Services de communication",
+      "industrie": "Entertainment",
+      "capitalisation_md": 259.58,
+      "analystes": 43,
+      "note": 74,
+      "contexte": {
+        "ajustement": 0.3,
+        "details": [
+          "pays noté 54/100 : +0,3 pt",
+          "phase « Surchauffe » : 0 pt"
+        ],
+        "note_ajustee": 74.3,
+        "phase": "Surchauffe",
+        "note_pays": 54
+      },
+      "verdict": "Dossier solide sur les comptes ; points forts : marge opérationnelle : 29,5 %, roic : 28,0 % ; point faible : momentum 12 mois : −44,3 %.",
+      "confiance": "élevé",
+      "cles": {
+        "croissance_ca": "+15,9 %",
+        "marge_op": "29,5 %",
+        "per_secteur": "+5,3 %",
+        "fscore": "7/9"
+      },
+      "autres_cotations": [],
+      "revue_critique": {
+        "risques": [
+          "Momentum 12 mois : −44,3 %",
+          "PER vs secteur : +5,3 %"
+        ],
+        "piege_de_valeur": "peu probable au vu des comptes",
+        "risque_change": "comptes en dollars : pas de risque de change direct pour un investisseur en dollars",
+        "risque_pays": "États-Unis noté 54/100 (neutre), confiance moyen",
+        "a_verifier": [
+          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
+          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
+          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
+        ],
+        "rapport_officiel": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000034/nflx-20251231.htm"
+      }
+    },
+    {
+      "liste": "qpr",
+      "ticker": "BKNG",
+      "nom": "Booking Holdings Inc.",
+      "pays": "US",
+      "region": "amerique_nord",
+      "secteur": "US-conso-discretionnaire",
+      "secteur_gics": "Consumer Discretionary",
+      "secteur_nom": "Consommation discrétionnaire",
+      "industrie": "Travel Services",
+      "capitalisation_md": 119.14,
+      "analystes": 35,
+      "note": 73,
+      "contexte": {
+        "ajustement": 0.3,
+        "details": [
+          "pays noté 54/100 : +0,3 pt",
+          "phase « Surchauffe » : 0 pt"
+        ],
+        "note_ajustee": 73.3,
+        "phase": "Surchauffe",
+        "note_pays": 54
+      },
+      "verdict": "Dossier solide sur les comptes ; points forts : marge opérationnelle : 34,5 %, roic : 55,8 % ; point faible : momentum 12 mois : −23,6 %.",
+      "confiance": "élevé",
+      "cles": {
+        "croissance_ca": "+13,4 %",
+        "marge_op": "34,5 %",
+        "per_secteur": "−17,9 %",
+        "fscore": "7/9"
+      },
+      "autres_cotations": [],
+      "revue_critique": {
+        "risques": [
+          "Momentum 12 mois : −23,6 %",
+          "Croissance du bénéfice : −8,1 %"
+        ],
+        "piege_de_valeur": "peu probable au vu des comptes",
+        "risque_change": "comptes en dollars : pas de risque de change direct pour un investisseur en dollars",
+        "risque_pays": "États-Unis noté 54/100 (neutre), confiance moyen",
+        "a_verifier": [
+          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
+          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
+          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
+        ],
+        "rapport_officiel": "https://www.sec.gov/Archives/edgar/data/1075531/000107553126000009/bkng-20251231.htm"
+      }
+    },
+    {
+      "liste": "qpr",
+      "ticker": "BSX",
+      "nom": "Boston Scientific Corporation",
+      "pays": "US",
+      "region": "amerique_nord",
+      "secteur": "US-sante",
+      "secteur_gics": "Health Care",
+      "secteur_nom": "Santé",
+      "industrie": "Medical Devices",
+      "capitalisation_md": 64.23,
+      "analystes": 28,
+      "note": 73,
+      "contexte": {
+        "ajustement": 0.3,
+        "details": [
+          "pays noté 54/100 : +0,3 pt",
+          "phase « Surchauffe » : 0 pt"
+        ],
+        "note_ajustee": 73.3,
+        "phase": "Surchauffe",
+        "note_pays": 54
+      },
+      "verdict": "Dossier solide sur les comptes ; points forts : croissance du bénéfice : +56,4 %, croissance du ca : +19,9 % ; point faible : momentum 12 mois : −56,0 %.",
+      "confiance": "élevé",
+      "cles": {
+        "croissance_ca": "+19,9 %",
+        "marge_op": "19,8 %",
+        "per_secteur": "−37,5 %",
+        "fscore": "7/9"
+      },
+      "autres_cotations": [],
+      "revue_critique": {
+        "risques": [
+          "Momentum 12 mois : −56,0 %",
+          "ROIC : 9,5 %"
+        ],
+        "piege_de_valeur": "possible : décote marquée associée à un cours ou à un bénéfice en recul",
+        "risque_change": "comptes en dollars : pas de risque de change direct pour un investisseur en dollars",
+        "risque_pays": "États-Unis noté 54/100 (neutre), confiance moyen",
+        "a_verifier": [
+          "Lire le dernier rapport annuel : origine de la croissance (organique ou acquisitions), concentration des clients.",
+          "Vérifier l'actionnariat (actionnaire de contrôle, État) et la politique de dividende.",
+          "Comparer avec les publications trimestrielles les plus récentes, postérieures aux comptes analysés."
+        ],
+        "rapport_officiel": "https://www.sec.gov/Archives/edgar/data/885725/000088572526000010/bsx-20251231.htm"
       }
     }
   ]
