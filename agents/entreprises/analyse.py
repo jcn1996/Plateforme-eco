@@ -499,20 +499,38 @@ def revue_critique(s: dict, m: dict, ind: dict, pays: dict | None, devise_3m: fl
 
 def regrouper_cotations(societes: list[dict], cle) -> list[dict]:
     """Une société cotée plusieurs fois (catégories d'actions A/B, double cotation NEM / NEM.AX) n'apparaît
-    qu'une fois : on garde la cotation la plus liquide et on note les autres dans « autres_cotations »."""
+    qu'une fois : on garde la cotation la plus liquide et on note les autres dans « autres_cotations ».
+    Même nom ne suffit pas (EQT Corporation et EQT AB sont deux sociétés) : il faut aussi le même secteur
+    et des capitalisations comparables (rapport de 1 à 2 au plus)."""
     groupes = {}
     for s in societes:
         groupes.setdefault(cle(s.get("nom") or s["ticker"]) or s["ticker"], []).append(s)
+
+    def compatibles(a, b):
+        if a.get("secteur_gics") != b.get("secteur_gics"):
+            return False
+        ca, cb = a.get("capitalisation_usd"), b.get("capitalisation_usd")
+        return not (ca and cb) or 0.5 <= ca / cb <= 2
+
     res = []
     for g in groupes.values():
         g = sorted(g, key=lambda s: (bool(s.get("surveillance")), s.get("liquidite_musd") or 0), reverse=True)
-        principale = g[0]
-        principale["autres_cotations"] = [{"ticker": s["ticker"], "pays": s["pays"]} for s in g[1:]]
-        res.append(principale)
+        grappes = []
+        for s in g:
+            for gr in grappes:
+                if compatibles(gr[0], s):
+                    gr.append(s)
+                    break
+            else:
+                grappes.append([s])
+        for gr in grappes:
+            principale = gr[0]
+            principale["autres_cotations"] = [{"ticker": s["ticker"], "pays": s["pays"]} for s in gr[1:]]
+            res.append(principale)
     return res
 
 
-def est_holding(nom: str, industrie: str | None, ticker: str, cfg: dict) -> bool:
+def est_holding(nom: str, industrie: str | None, ticker: str, cfg: dict, secteur: str | None = None) -> bool:
     """Holding ou société d'investissement (ex. Investor AB) : exclue des pépites, faute de pouvoir mesurer
     la décote sur l'actif net avec des sources gratuites."""
     ind = (industrie or "").lower()
@@ -520,7 +538,9 @@ def est_holding(nom: str, industrie: str | None, ticker: str, cfg: dict) -> bool
         return True
     if any(x.lower() in ind for x in cfg.get("industries_exclues", [])):
         return True
-    if "asset management" in ind and any(m in (nom or "").lower() for m in cfg.get("holdings_mots", [])):
+    nom_holding = any(m in (nom or "").lower() for m in cfg.get("holdings_mots", []))
+    # Industrie inconnue (.info refusé) : le nom suffit pour une société du secteur Finance
+    if nom_holding and ("asset management" in ind or (not ind and secteur == "Financials")):
         return True
     return False
 

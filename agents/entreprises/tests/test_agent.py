@@ -142,14 +142,17 @@ class TestListes(unittest.TestCase):
                {"ticker": "NEM.AX", "nom": "Newmont Corporation", "pays": "AU", "liquidite_musd": 40},
                {"ticker": "INVE-A.ST", "nom": "Investor AB ser. A", "pays": "SE", "liquidite_musd": 5},
                {"ticker": "INVE-B.ST", "nom": "Investor AB ser. B", "pays": "SE", "liquidite_musd": 60}]
+        soc += [{"ticker": "EQT", "nom": "EQT Corporation", "pays": "US", "liquidite_musd": 300, "secteur_gics": "Energy", "capitalisation_usd": 34e9},
+                {"ticker": "EQT.ST", "nom": "EQT AB", "pays": "SE", "liquidite_musd": 50, "secteur_gics": "Financials", "capitalisation_usd": 30e9}]
         r = {x["ticker"]: x for x in A.regrouper_cotations(soc, U.cle_societe)}
-        self.assertEqual(set(r), {"NEM", "INVE-B.ST"})
+        self.assertEqual(set(r), {"NEM", "INVE-B.ST", "EQT", "EQT.ST"})  # même nom, secteurs différents : deux sociétés
         self.assertEqual(r["NEM"]["autres_cotations"], [{"ticker": "NEM.AX", "pays": "AU"}])
 
     def test_holdings(self):
         self.assertTrue(A.est_holding("Investor AB", "Asset Management", "INVE-B.ST", CFG["pepites"]))
         self.assertFalse(A.est_holding("BlackRock, Inc.", "Asset Management", "BLK", CFG["pepites"]))
         self.assertTrue(A.est_holding("Some Fund", "Closed-End Fund - Equity", "X", CFG["pepites"]))
+        self.assertTrue(A.est_holding("Investor AB", None, "INVE-B.ST", CFG["pepites"], "Financials"))  # industrie inconnue
 
     def test_deux_listes_et_plafond_par_secteur(self):
         cfg = {**CFG["pepites"], "plafond_par_secteur": 2}

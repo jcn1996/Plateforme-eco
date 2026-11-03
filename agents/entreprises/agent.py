@@ -397,7 +397,7 @@ def publier(base: dict, config: dict, change: dict, data: Path, aujourdhui: date
             "contexte": {"ajustement": ctx["points"], "details": ctx["details"], "note_ajustee": round(g["note"] + ctx["points"], 1),
                          "phase": phase, "note_pays": pays_j.get("note") if pays_j else None},
             "pepite": False, "qpr": False, "criteres_pepite": crit["criteres"],
-            "holding": A.est_holding(s["nom"], s.get("industrie"), s["ticker"], config["pepites"]),
+            "holding": A.est_holding(s["nom"], s.get("industrie"), s["ticker"], config["pepites"], s.get("secteur_gics")),
             "industrie": s.get("industrie"), "analystes": s.get("analystes"),
             "autres_cotations": s.get("autres_cotations", []),
             "sources": {
