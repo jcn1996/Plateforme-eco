@@ -160,8 +160,8 @@ def bloc_sante(agent: str, libelle: str, ordre: int, workflow: str, sources: lis
     anciennes = {s["nom"]: s for s in (precedent or {}).get("sources", [])}
     liste = []
     for s in sources:
-        s = {"nom": s["nom"], "etat": s["etat"], "derniere_donnee_valide": s.get("derniere_donnee_valide"),
-             "detail": s.get("detail")}
+        s = {**s, "nom": s["nom"], "etat": s["etat"], "derniere_donnee_valide": s.get("derniere_donnee_valide"),
+             "detail": s.get("detail")}  # champs propres à l'agent conservés (ex. « manuelle »)
         if s["etat"] in ("ok", "secours", "partielle") and not s["derniere_donnee_valide"]:
             s["derniere_donnee_valide"] = iso(maintenant)
         if s["etat"] == "échec" and not s["derniere_donnee_valide"]:

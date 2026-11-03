@@ -1,7 +1,7 @@
 {
   "_commentaire": "Configuration de l'agent entreprises. Seuils, pondérations et plafonds modifiables sans toucher au code.",
   "univers": {
-    "_commentaire": "Composition : 1) fichiers iShares (point d'accès CSV officiel de la page du fonds) ; 2) membres de l'indice national sur Wikipédia (API MediaWiki), classés par montant échangé ; 3) filtre d'actions Yahoo si « filtre_yahoo » est vrai ; 4) dernière liste connue (data/entreprises/univers.json), puis liste de départ, signalées « périmées ». États-Unis : SSGA SPY/MDY en secours d'iShares. ARGT et GXG (Global X), VNM et EGPT (VanEck) ne sont pas des ETF iShares : ces pays passent directement aux secours.",
+    "_commentaire": "Composition : 1) fichiers iShares (point d'accès CSV officiel de la page du fonds) ; 2) membres de l'indice national sur Wikipédia (API MediaWiki), classés par montant échangé ; 3) filtre d'actions Yahoo si « filtre_yahoo » est vrai ; 4) dernière liste connue (data/entreprises/univers.json), puis liste de départ, signalées « périmées ». États-Unis : SSGA SPY/MDY en secours d'iShares. Colombie : Global X COLO (ex-GXG) ; Vietnam et Égypte : VanEck VNM et EGPT. Ensuite : liste manuelle vérifiée (config/compositions_manuelles.json).",
     "sp400_max": 150,
     "capitalisation_min_musd": 300,
     "volume_min_musd_jour": 1.0,
@@ -197,7 +197,9 @@
       "CO": {
         "region": "amerique_latine",
         "plafond": 5,
-        "etf": []
+        "etf": [
+          "COLO"
+        ]
       },
       "GB": {
         "region": "europe",
@@ -328,7 +330,9 @@
       "VN": {
         "region": "asie_pacifique",
         "plafond": 6,
-        "etf": []
+        "etf": [
+          "VNM"
+        ]
       },
       "SA": {
         "region": "moyen_orient_afrique",
@@ -361,7 +365,9 @@
       "EG": {
         "region": "moyen_orient_afrique",
         "plafond": 5,
-        "etf": []
+        "etf": [
+          "EGPT"
+        ]
       }
     },
     "filtre_yahoo": true,
@@ -497,6 +503,27 @@
         ],
         "suffixe": ".SN"
       }
+    },
+    "fournisseurs": {
+      "_commentaire": "ETF qui ne sont pas des iShares : fichier de positions publié par leur fournisseur. GXG est devenu COLO le 20/06/2025.",
+      "COLO": {
+        "type": "globalx"
+      },
+      "VNM": {
+        "type": "vaneck",
+        "slug": "vietnam-etf-vnm"
+      },
+      "EGPT": {
+        "type": "vaneck",
+        "slug": "egypt-index-etf-egpt"
+      }
+    },
+    "suffixes_pays": {
+      "CO": ".CL",
+      "VN": ".VN",
+      "EG": ".CA",
+      "AE": ".AE",
+      "AR": ".BA"
     }
   },
   "lots": {
