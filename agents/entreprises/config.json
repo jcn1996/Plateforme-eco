@@ -645,5 +645,94 @@
   },
   "sec": {
     "requetes_par_seconde": 8
+  },
+  "recommandation": {
+    "_commentaire": "Recommandation à 12 mois (voir agents/entreprises/recommandation.md). Seuils modifiables sans toucher au code.",
+    "horizon_mois": 12,
+    "regles": {
+      "_commentaire": "« Acheter »/« Renforcer » : au moins signaux_concordants_min signaux favorables, aucun défavorable, confiance dans confiances_tranchees, aucun signal d'alerte comptable. « Vendre » : au moins signaux_concordants_min signaux défavorables, aucun favorable, même exigence de confiance. « Acheter sur repli » : tout est réuni sauf la valorisation, et le prix de déclenchement est au plus repli_max_pct % sous le cours. « Alléger » : au moins alleger_negatifs_min signaux défavorables (plus que de favorables), ou valeur estimée inférieure d'au moins alleger_survalorisation_pct % au cours avec une note globale sous le seuil favorable.",
+      "signaux_concordants_min": 3,
+      "confiances_tranchees": [
+        "moyen",
+        "élevé"
+      ],
+      "eviter_negatifs_min": 2,
+      "alleger_negatifs_min": 2,
+      "alleger_survalorisation_pct": 40.0,
+      "repli_max_pct": 25.0
+    },
+    "signaux": {
+      "_commentaire": "Seuils des quatre signaux (favorable / défavorable).",
+      "note_positive": 65,
+      "note_negative": 50,
+      "valorisation_positive": 15.0,
+      "valorisation_negative": 15.0,
+      "momentum_positif": 5.0,
+      "momentum_negatif": -10.0,
+      "fscore_positif": 6,
+      "fscore_negatif": 3,
+      "roe_financier_min": 10.0
+    },
+    "dcf": {
+      "_commentaire": "Actualisation simplifiée des flux de trésorerie disponibles : croissance initiale = tendance du CA sur 3 ans (à défaut 1 an) bornée, ramenée linéairement à la croissance terminale ; taux = taux_base + prime de la région.",
+      "annees": 5,
+      "croissance_defaut": 3.0,
+      "croissance_min": 0.0,
+      "croissance_max": 10.0,
+      "croissance_terminale": 2.0,
+      "taux_base": 8.0,
+      "primes_region": {
+        "amerique_nord": 0.0,
+        "europe": 0.5,
+        "asie_pacifique": 1.5,
+        "amerique_latine": 3.0,
+        "moyen_orient_afrique": 3.0,
+        "autre": 2.0
+      },
+      "ecart_taux": 1.0,
+      "ecart_croissance": 2.0
+    },
+    "divergence_max": 3.0,
+    "ecart_plausible": [
+      -80.0,
+      300.0
+    ],
+    "suivi": {
+      "_commentaire": "Suivi des recommandations (data/historique/recommandations.json). Indice de comparaison : ETF iShares MSCI World (URTH). Une recommandation de l'agent entreprises n'est enregistrée que si elle change, au plus une fois tous les intervalle_min_jours jours par société. Réussite : performance relative à l'indice au-dessus (ou en dessous) des seuils ci-dessous.",
+      "indice": "URTH",
+      "indice_nom": "MSCI World (ETF URTH)",
+      "horizons_mois": [
+        3,
+        6,
+        12
+      ],
+      "intervalle_min_jours": 7,
+      "reussite": {
+        "Acheter": {
+          "relative_min": 0.0
+        },
+        "Renforcer": {
+          "relative_min": 0.0
+        },
+        "Acheter sur repli": {
+          "relative_min": -5.0
+        },
+        "Conserver": {
+          "relative_min": -5.0
+        },
+        "Attendre": {
+          "absolue_max": 10.0
+        },
+        "Alléger": {
+          "relative_max": 5.0
+        },
+        "Éviter": {
+          "relative_max": 0.0
+        },
+        "Vendre": {
+          "relative_max": 0.0
+        }
+      }
+    }
   }
 }

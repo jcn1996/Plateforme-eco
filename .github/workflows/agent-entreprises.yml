@@ -1,6 +1,7 @@
 # Agent entreprises (sans IA) : environ 1 200 sociétés cotées dans les pays suivis.
 # - du lundi au vendredi à 22 h 30 UTC : cours, momentum, valorisation, sociétés ayant publié de nouveaux comptes ;
 # - le samedi à 3 h 10 UTC : révision complète, découpée en lots (un job par lot, en parallèle), puis assemblage ;
+# - après chaque publication : suivi des recommandations (data/historique/recommandations.json) ;
 # - à la main : onglet Actions → « Agent entreprises » → « Run workflow » (choisir le mode).
 name: Agent entreprises
 
@@ -59,18 +60,8 @@ jobs:
             echo "Pas encore de base de comptes : lancer d'abord le mode « complet »."
             exit 0
           fi
-      - name: Commiter
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/
-          if git diff --cached --quiet; then echo "Aucun changement."; exit 0; fi
-          git commit -m "Agent entreprises : mise à jour du $(date -u +%d/%m/%Y)"
-          for essai in 1 2 3; do
-            git pull --rebase origin main && git push origin HEAD:main && exit 0
-            sleep $((essai * 5))
-          done
-          exit 1
+      - name: Commiter (avec le suivi des recommandations)
+        run: outils/pousser_avec_suivi.sh "Agent entreprises : mise à jour du $(date -u +%d/%m/%Y)" data/
 
   # ---------------------------------------------------------------- révision complète : un job par lot
   lots:
@@ -121,15 +112,5 @@ jobs:
           merge-multiple: true
       - name: Assembler les lots et publier
         run: python -m agents.entreprises --mode assembler --lots lots/*.json
-      - name: Commiter
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/
-          if git diff --cached --quiet; then echo "Aucun changement."; exit 0; fi
-          git commit -m "Agent entreprises : révision complète du $(date -u +%d/%m/%Y)"
-          for essai in 1 2 3; do
-            git pull --rebase origin main && git push origin HEAD:main && exit 0
-            sleep $((essai * 5))
-          done
-          exit 1
+      - name: Commiter (avec le suivi des recommandations)
+        run: outils/pousser_avec_suivi.sh "Agent entreprises : révision complète du $(date -u +%d/%m/%Y)" data/
