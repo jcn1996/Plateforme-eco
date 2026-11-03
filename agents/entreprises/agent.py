@@ -603,9 +603,22 @@ def recap_markdown(jour, entreprises, pepites, signaux, etats, candidats, cfg_p)
     return "\n".join(l) + "\n"
 
 
+LISTE_MANUELLE_MAX_JOURS = 183  # au-delà de 6 mois, une liste manuelle doit être revérifiée
+
+
 def enregistrer_sante(data: Path, etats_compo: dict, etats_rev: dict | None, f, publication: dict, base: dict, quand: datetime):
     sources, raisons = [], []
     for code, e in etats_compo.items():
+        if e["etat"] == "manuelle":
+            # Liste manuelle vérifiée : information, sans dégradation tant qu'elle a moins de 6 mois
+            age = (quand.date() - date.fromisoformat(e["verifie_le"])).days
+            recente = age <= LISTE_MANUELLE_MAX_JOURS
+            sources.append({"nom": f"Composition {code} ({e['source']})", "etat": "ok" if recente else "périmée",
+                            "manuelle": e["verifie_le"],
+                            "detail": None if recente else f"vérifiée il y a {age} jours : à revérifier (config/compositions_manuelles.json)"})
+            if not recente:
+                raisons.append(f"Composition {code} : liste manuelle vérifiée il y a plus de 6 mois")
+            continue
         etat = {"ok": "ok", "ancienne": "périmée", "depart": "périmée", "échec": "échec"}[e["etat"]]
         sources.append({"nom": f"Composition {code} ({e.get('source') or 'aucune'})", "etat": etat, "detail": e.get("detail")})
         if etat != "ok":  # une composition utile qui n'a pas pu être relue rend l'agent « dégradé »
@@ -665,6 +678,7 @@ def main(argv=None) -> int:
     ap.add_argument("--lot", help="lot de la révision complète (voir config.json, « lots »)")
     ap.add_argument("--sortie-lot", help="fichier où écrire le résultat d'un lot (révision complète en plusieurs jobs)")
     ap.add_argument("--lots", nargs="*", default=[], help="fichiers de lots à assembler")
+    ap.add_argument("--pays", help="révision complète limitée à ces pays (codes séparés par des virgules, ex. CO,VN,AE,EG)")
     ap.add_argument("--echantillon", type=int, help="révision complète d'un échantillon de N sociétés, puis publication")
     ap.add_argument("--test", action="store_true", help="données de test enregistrées, sans réseau")
     ap.add_argument("--capturer", type=int, help="enregistre les N premières sociétés comme données de test")
@@ -686,14 +700,15 @@ def main(argv=None) -> int:
 
     if args.mode == "complet":
         lot = config["lots"].get(args.lot) if args.lot else None
-        pays = lot["pays"] if lot else None
+        pays = lot["pays"] if lot else ([c.strip().upper() for c in args.pays.split(",")] if args.pays else None)
         connu = lire_json(data / "entreprises" / "univers.json")
         depart = json.loads((DOSSIER / "univers_depart.json").read_text(encoding="utf-8"))["societes"]
         surveillance = U.lire_surveillance(RACINE / "config" / "surveillance.json")
         if args.test:
             depart = [s for s in depart if s["ticker"] in f.d["yahoo"]]
             surveillance = [s for s in surveillance if s["ticker"] in f.d["yahoo"]]
-        liste, etats_compo = U.construire(f.composition, config, connu, depart, surveillance, pays)
+        manuelles = (lire_json(RACINE / "config" / "compositions_manuelles.json") or {}).get("pays", {})
+        liste, etats_compo = U.construire(f.composition, config, connu, depart, surveillance, pays, manuelles)
         if args.echantillon:
             liste = echantillon(liste, args.echantillon, config)
         liste = tranche(liste, (lot or {}).get("tranche"))
@@ -710,6 +725,8 @@ def main(argv=None) -> int:
             return 0
         base.update(revus)
         _sauver_univers(data, univers_lot["societes"], etats_compo)
+        # Révision partielle (--pays, échantillon) : la santé porte sur tous les pays connus, pas seulement ceux revus
+        etats_compo = ((lire_json(data / "entreprises" / "univers.json") or {}).get("meta") or {}).get("etats", etats_compo)
     elif args.mode == "assembler":
         etats_rev = {"ok": 0, "echec": 0, "officiel": 0, "echecs": []}
         for chemin in args.lots:

@@ -159,7 +159,11 @@ L'agent entreprises se trouve dans `agents/entreprises/`. Les règles de conduit
   1. fichiers iShares (point d'accès CSV officiel de la page du fonds) ;
   2. membres de l'indice national sur Wikipédia (CAC 40, DAX, FTSE 100, Nikkei 225, KOSPI 200…), classés par montant échangé ;
   3. filtre d'actions Yahoo (désactivable : `"filtre_yahoo": false` dans `config.json`) ;
-  4. dernière liste connue (`data/entreprises/univers.json`), puis liste de départ, signalées « périmées » (l'agent passe alors « dégradé »).
+  4. liste manuelle vérifiée (`config/compositions_manuelles.json`, avec sa date de vérification) : affichée en information dans l'écran Santé, sans dégradation tant qu'elle a moins de 6 mois ;
+  5. dernière liste connue (`data/entreprises/univers.json`), puis liste de départ, signalées « périmées » (l'agent passe alors « dégradé »).
+- ETF qui ne sont pas des iShares : Colombie, Global X COLO (ex-GXG), fichier CSV du jour sur globalxetfs.com ; Vietnam et Égypte, VanEck VNM et EGPT (fichier de positions de vaneck.com, souvent refusé aux robots : la liste manuelle prend alors le relais).
+- Émirats : iShares UAE. Les sociétés cotées à Abu Dhabi n'ont pas de cours sur Yahoo Finance : seules celles de Dubaï sont analysées.
+- Mettre à jour une liste manuelle : remplacer les sociétés de `config/compositions_manuelles.json` (symboles Yahoo), changer `verifie_le`, puis lancer l'agent en mode `pays` (Actions → Agent entreprises → Run workflow, mode `pays`, pays `VN,EG`).
 - États-Unis : SSGA SPY / MDY en secours d'iShares.
 - Une société cotée plusieurs fois n'apparaît qu'une fois : la cotation la plus liquide est gardée, les autres sont indiquées sur la fiche.
 

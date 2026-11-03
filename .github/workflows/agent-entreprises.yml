@@ -12,13 +12,16 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: "quotidien, complet (tous les lots) ou echantillon"
+        description: "quotidien, complet (tous les lots), pays (révision complète des pays indiqués) ou echantillon"
         type: choice
-        options: [quotidien, complet, echantillon]
+        options: [quotidien, complet, pays, echantillon]
         default: quotidien
       taille:
         description: "Taille de l'échantillon (mode echantillon)"
         default: "60"
+      pays:
+        description: "Pays à réviser (mode pays), codes séparés par des virgules"
+        default: "CO,VN,AE,EG"
 
 permissions:
   contents: write
@@ -52,7 +55,9 @@ jobs:
         run: python -m unittest discover -s agents/entreprises -t .
       - name: Lancer l'agent entreprises
         run: |
-          if [ "${{ inputs.mode }}" = "echantillon" ]; then
+          if [ "${{ inputs.mode }}" = "pays" ]; then
+            python -m agents.entreprises --mode complet --pays "${{ inputs.pays }}"
+          elif [ "${{ inputs.mode }}" = "echantillon" ]; then
             python -m agents.entreprises --mode complet --echantillon "${{ inputs.taille }}"
           elif [ -f data/entreprises/comptes.json ]; then
             python -m agents.entreprises --mode quotidien

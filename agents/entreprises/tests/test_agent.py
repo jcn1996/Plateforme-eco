@@ -200,6 +200,49 @@ class TestWikipedia(unittest.TestCase):
             U.lire_wikipedia("<p>Top 10 constituents: Al Rajhi Bank…</p>", "SA", {"suffixe": ".SR"})
 
 
+class TestCompositionsManquantes(unittest.TestCase):
+    def test_global_x(self):
+        csv = ("Global X MSCI Colombia ETF\nFund Holdings Data as of 11/02/2026\n"
+               "% of Net Assets,Ticker,Name,SEDOL,Market Price ($),Shares Held,Market Value ($)\n"
+               '0.03,"",COLOMBIAN PESO,"",0.0003,"146,321,312.77","45,798.11"\n'
+               '-4.22,"",CASH,"",1.0,"-7,428,122.64","-7,428,122.64"\n'
+               '15.57,PFCIBEST CB,GRUPO CIBEST SA,BTPR2M4,23.31,"1,177,011.00","27,438,489.63"\n'
+               '7.97,ECOPETL CB,ECOPETROL SA,B2473N4,0.87,"16,144,629.00","14,047,947.56"\n')
+        r = U.lire_positions_globalx(csv)
+        self.assertEqual([(x["code"], x["poids"]) for x in r], [("PFCIBEST CB", 15.57), ("ECOPETL CB", 7.97)])
+
+    def test_liste_manuelle_avant_la_derniere_liste_connue(self):
+        connu = {"societes": [{"ticker": "OLD.VN", "nom": "Ancienne", "pays": "VN", "secteur": None, "poids": 1}]}
+        man = {"VN": {"verifie_le": "2026-11-03", "societes": [{"ticker": "VCB.VN", "nom": "Vietcombank"}, {"ticker": "FPT.VN", "nom": "FPT"}]}}
+        liste, etats = U.construire(None, CFG, connu, [], [], ["VN"], man)
+        self.assertEqual([s["ticker"] for s in liste], ["VCB.VN", "FPT.VN"])
+        self.assertEqual((etats["VN"]["etat"], etats["VN"]["verifie_le"]), ("manuelle", "2026-11-03"))
+        self.assertIn("liste manuelle (vérifiée le 03/11/2026)", etats["VN"]["source"])
+
+    def test_sante_liste_manuelle(self):
+        from datetime import datetime, timezone
+        from agents.entreprises import agent as AG
+        d = Path(tempfile.mkdtemp())
+        try:
+            f = type("F", (), {"sec": type("S", (), {"actif": True})()})()
+            etats = {"VN": {"etat": "manuelle", "source": "liste manuelle (vérifiée le 03/11/2026)", "verifie_le": "2026-11-03", "nombre": 6}}
+            b = AG.enregistrer_sante(d, etats, None, f, {}, {}, datetime(2026, 12, 1, tzinfo=timezone.utc))
+            self.assertFalse(b["degrade"])
+            self.assertEqual(b["sources"][0]["manuelle"], "2026-11-03")
+            b = AG.enregistrer_sante(d, etats, None, f, {}, {}, datetime(2027, 6, 1, tzinfo=timezone.utc))  # plus de 6 mois
+            self.assertTrue(b["degrade"])
+        finally:
+            shutil.rmtree(d)
+
+    def test_fichier_des_listes_manuelles(self):
+        m = json.loads((DOSSIER.parents[1] / "config" / "compositions_manuelles.json").read_text(encoding="utf-8"))["pays"]
+        self.assertEqual(set(m), {"VN", "EG", "AE"})
+        for code, v in m.items():
+            date.fromisoformat(v["verifie_le"])
+            self.assertTrue(v["source"].startswith("http"))
+            self.assertGreaterEqual(len(v["societes"]), 10)
+
+
 class TestComptes(unittest.TestCase):
     def test_verification(self):
         off = {"fin": "2025-12-31", "ca": 1000.0, "resultat_net": 100.0}
