@@ -1,24 +1,31 @@
 """
 Analyse des événements par Gemini, sous contraintes.
 
-Quotas gratuits (config « gemini ») :
-- au plus `quota_jour` appels par jour de quota (jour du Pacifique : Google remet les quotas à
-  zéro à minuit, heure du Pacifique), comptés dans data/geopolitique/etat.json, donc d'une
-  exécution à l'autre ;
+Modèles : chaîne configurable (config « gemini.modeles ») ; le premier qui répond est utilisé.
+Sur une erreur 5xx (modèle surchargé, 503) ou réseau : nouvelles tentatives avec attente
+progressive (`essais`, `attentes_reprise_secondes`), puis modèle suivant de la chaîne.
+
+Quotas gratuits, par modèle (chaque modèle a son propre quota, par projet ; Google les remet à
+zéro à minuit, heure du Pacifique) :
+- limites rpm et rpd de la configuration, moins une marge (20 %) ; elles ne sont plus publiées
+  en chiffres et doivent être confirmées dans AI Studio ;
 - au plus `appels_max_par_execution` appels par exécution, et pas plus que la part du reste du
-  jour qui revient à cette exécution (reste ÷ exécutions horaires restantes, arrondi au-dessus) :
-  le budget n'est pas épuisé dès le matin ;
-- au plus `quota_minute` appels sur 60 s et `intervalle_min_secondes` entre deux appels ;
-- plusieurs événements par appel (`evenements_par_appel`) ; un événement déjà analysé n'est
-  repris qu'après `reanalyse_apres_heures` et si ses sources ont été multipliées par
-  `reanalyse_si_sources_multipliees_par` (cache) ;
-- une réponse 429 (quota atteint) suspend les appels pendant une heure.
+  jour qui revient à cette exécution (reste ÷ exécutions horaires restantes, arrondi au-dessus) ;
+- intervalle minimal entre deux appels (60 s ÷ rpm effectif) ;
+- adaptation aux réponses 429 : quota par minute → attente (retryDelay, au plus 60 s) puis
+  un nouvel essai ; quota du jour (ou 429 répété) → plus d'appel à ce modèle jusqu'au lendemain,
+  et, si le message indique le quota du jour, limite apprise pour les jours suivants ;
+- plusieurs événements par appel ; cache : un événement analysé n'est repris qu'après
+  `reanalyse_apres_heures` et si ses sources ont été multipliées par `reanalyse_si_sources_multipliees_par`.
+Les événements de gravité estimée 3 ou plus passent en premier.
 
 Anti-hallucination : Gemini ne reçoit que des sources numérotées (S1, S2…) avec leur URL ;
-chaque affirmation qu'il renvoie doit citer au moins une de ces sources. Une affirmation sans
-source valide est supprimée ; un événement sans résumé sourcé repasse en version sans IA.
-Gravité 4 ou 5 seulement avec au moins 2 sources indépendantes citées (domaines différents, une
-dépêche reprise mot pour mot sur plusieurs sites ne comptant qu'une fois).
+chaque affirmation qu'il renvoie doit citer au moins une de ces sources, être en français et
+sobre. Une affirmation qui ne remplit pas ces conditions est supprimée ; un événement sans
+résumé valide repasse en version sans IA. Gravité 4 ou 5 seulement avec au moins 2 sources
+indépendantes citées (domaines différents, une dépêche reprise mot pour mot ne comptant qu'une fois).
+Gemini peut aussi signaler que deux événements du lot décrivent le même fait (« meme_que ») :
+l'agent les fusionne.
 """
 from __future__ import annotations
 
@@ -44,14 +51,20 @@ MOTS_DRAMATISATION = ["catastrophe", "catastrophique", "chaos", "chaotique", "ap
 SENS = {"hausse", "baisse", "incertain"}
 HORIZONS = {"jours", "semaines", "mois"}
 CONFIANCES = {"faible", "moyenne", "élevée"}
+MOTS_FR = set("le la les des du de un une et est en au aux à pour par sur avec dans qui que ont sont été son sa ses leur cette ce ne pas plus".split())
+MOTS_EN = set("the and of to in is are was were has have with for on by that from this its their been will would".split())
 
 
 class ErreurQuota(Exception):
-    """Gemini a répondu 429 : quota atteint."""
+    """Gemini a répondu 429 : quota atteint (`jour` : quota du jour)."""
+
+    def __init__(self, message: str, jour: bool):
+        super().__init__(message)
+        self.jour = jour
 
 
 class ErreurIA(Exception):
-    """Gemini indisponible ou réponse inutilisable."""
+    """Gemini indisponible (après les reprises) ou réponse inutilisable."""
 
 
 def sobre(texte: str) -> bool:
@@ -60,59 +73,76 @@ def sobre(texte: str) -> bool:
     return ton_conforme(texte) and not any(re.search(rf"\b{re.escape(m)}\b", t) for m in MOTS_DRAMATISATION)
 
 
+def en_francais(texte: str) -> bool:
+    """Contrôle simple de la langue : plus de mots outils français qu'anglais, et au moins un."""
+    mots = re.findall(r"[a-zàâçéèêëîïôûùüÿœ']+", texte.lower())
+    fr = sum(1 for m in mots if m in MOTS_FR or m.startswith(("l'", "d'", "qu'")))
+    en = sum(1 for m in mots if m in MOTS_EN)
+    return fr >= 1 and fr > en
+
+
 # ------------------------------------------------------------------ quotas
 
-class Quota:
-    """Compteur d'appels persistant (etat["quota_gemini"]). `horloge` et `dormir` sont remplaçables (tests)."""
+def _jour(t: datetime, fuseau: str) -> str:
+    return t.astimezone(ZoneInfo(fuseau)).date().isoformat()
 
-    def __init__(self, etat: dict, cfg: dict, horloge=None, dormir=time.sleep):
-        self.cfg = cfg
-        self.etat = etat.setdefault("quota_gemini", {"jour": None, "appels": 0, "recents": []})
-        self.horloge = horloge or (lambda: datetime.now(timezone.utc))
-        self.dormir = dormir
+
+class QuotaModele:
+    """Compteur persistant d'un modèle (etat["quota_gemini"]["modeles"][nom])."""
+
+    def __init__(self, etat_modeles: dict, modele: dict, cfg: dict, horloge, dormir):
+        self.nom, self.modele, self.cfg = modele["nom"], modele, cfg
+        self.e = etat_modeles.setdefault(self.nom, {"jour": None, "appels": 0, "recents": []})
+        self.horloge, self.dormir = horloge, dormir
+        self.autorises_execution = None  # fixé au premier usage de l'exécution
         self.appels_execution = 0
-        self.quota_atteint = False
+        self.hors_service = False  # en panne pendant cette exécution (5xx après reprises, 4xx) : modèle suivant
 
-    def jour(self, t: datetime) -> str:
-        return t.astimezone(ZoneInfo(self.cfg["fuseau_quota"])).date().isoformat()
+    # Limites effectives (marge, limite apprise)
+    def rpd(self) -> int:
+        limite = min(self.modele["rpd"], self.e.get("limite_apprise") or self.modele["rpd"])
+        return max(1, math.floor(limite * (1 - self.cfg["marge"])))
 
-    def _mise_a_jour(self, t: datetime) -> None:
-        if self.etat.get("jour") != self.jour(t):
-            self.etat.update({"jour": self.jour(t), "appels": 0})
+    def rpm(self) -> int:
+        return max(1, math.floor(self.modele["rpm"] * (1 - self.cfg["marge"])))
+
+    def _jour_courant(self, t: datetime) -> None:
+        j = _jour(t, self.cfg["fuseau_quota"])
+        if self.e.get("jour") != j:
+            self.e.update({"jour": j, "appels": 0, "plafond_jour": None})
 
     def restants(self, t: datetime | None = None) -> int:
         t = t or self.horloge()
-        self._mise_a_jour(t)
-        bloque = self.etat.get("bloque_jusqua")
-        if bloque and t < datetime.fromisoformat(bloque):
-            return 0
-        return max(0, self.cfg["quota_jour"] - self.etat["appels"])
+        self._jour_courant(t)
+        plafond = self.rpd() if self.e.get("plafond_jour") is None else min(self.rpd(), self.e["plafond_jour"])
+        return max(0, plafond - self.e["appels"])
 
     def executions_restantes(self, t: datetime) -> int:
-        """Exécutions horaires restantes avant la remise à zéro (celle-ci comprise)."""
         local = t.astimezone(ZoneInfo(self.cfg["fuseau_quota"]))
         minuit = (local + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
         return max(1, math.ceil((minuit - local).total_seconds() / 3600))
 
-    def autorises(self, t: datetime | None = None) -> int:
-        """Appels permis pour cette exécution (avant le premier appel)."""
-        t = t or self.horloge()
-        reste = self.restants(t)
-        if reste == 0:
+    def disponibles(self) -> int:
+        """Appels encore permis à ce modèle pendant cette exécution."""
+        if self.hors_service:
             return 0
-        part = math.ceil(reste / self.executions_restantes(t))
-        return min(self.cfg["appels_max_par_execution"], reste, part)
+        t = self.horloge()
+        reste = self.restants(t)
+        if self.autorises_execution is None:
+            self.autorises_execution = min(self.cfg["appels_max_par_execution"], reste,
+                                           math.ceil(reste / self.executions_restantes(t)))
+        return max(0, min(reste, self.autorises_execution - self.appels_execution))
 
     def attendre_creneau(self) -> None:
-        """Respecte l'intervalle minimal et le plafond par minute."""
+        intervalle = 60 / self.rpm()
         while True:
             t = self.horloge()
-            recents = [r for r in self.etat.get("recents", []) if t - datetime.fromisoformat(r) < timedelta(seconds=60)]
-            self.etat["recents"] = recents
+            recents = [r for r in self.e.get("recents", []) if t - datetime.fromisoformat(r) < timedelta(seconds=60)]
+            self.e["recents"] = recents
             attente = 0.0
             if recents:
-                attente = self.cfg["intervalle_min_secondes"] - (t - datetime.fromisoformat(recents[-1])).total_seconds()
-            if len(recents) >= self.cfg["quota_minute"]:
+                attente = intervalle - (t - datetime.fromisoformat(recents[-1])).total_seconds()
+            if len(recents) >= self.rpm():
                 attente = max(attente, 60 - (t - datetime.fromisoformat(recents[0])).total_seconds())
             if attente <= 0:
                 return
@@ -120,37 +150,108 @@ class Quota:
 
     def enregistrer(self) -> None:
         t = self.horloge()
-        self._mise_a_jour(t)
-        self.etat["appels"] += 1
-        self.etat["recents"] = (self.etat.get("recents", []) + [t.isoformat()])[-self.cfg["quota_minute"]:]
+        self._jour_courant(t)
+        self.e["appels"] += 1
+        self.e["recents"] = (self.e.get("recents", []) + [t.isoformat()])[-self.rpm():]
         self.appels_execution += 1
 
-    def marquer_atteint(self) -> None:
-        """Réponse 429 : plus d'appel pendant une heure (quota par minute ou par jour atteint)."""
-        self.quota_atteint = True
-        self.etat["bloque_jusqua"] = (self.horloge() + timedelta(hours=1)).isoformat()
+    def epuise_jusqua_demain(self, apprendre: bool) -> None:
+        """429 : plus d'appel à ce modèle avant le prochain jour de quota. Si le message indique
+        le quota du jour, la limite observée est retenue pour les jours suivants."""
+        self.e["plafond_jour"] = self.e["appels"]
+        if apprendre and self.e["appels"] > 0:
+            self.e["limite_apprise"] = min(self.e.get("limite_apprise") or 10 ** 6, self.e["appels"])
+
+    def resume(self) -> dict:
+        self.restants()
+        return {"modele": self.nom, "appels": self.e["appels"], "limite_jour": self.rpd(), "limite_minute": self.rpm(),
+                "epuise": self.e.get("plafond_jour") is not None, "limite_apprise": self.e.get("limite_apprise")}
+
+
+class Quotas:
+    """Quotas de tous les modèles de la chaîne, et plafond de l'exécution."""
+
+    def __init__(self, etat: dict, cfg: dict, horloge=None, dormir=time.sleep):
+        self.cfg = cfg
+        self.horloge = horloge or (lambda: datetime.now(timezone.utc))
+        base = etat.get("quota_gemini") or {}
+        if "modeles" not in base:  # ancien format (un seul compteur) : on repart de zéro
+            base = {"modeles": {}}
+        etat["quota_gemini"] = base
+        self.modeles = [QuotaModele(base["modeles"], m, cfg, self.horloge, dormir) for m in cfg["modeles"]]
+        self.dormir = dormir
+
+    def jour(self, t: datetime | None = None) -> str:
+        return _jour(t or self.horloge(), self.cfg["fuseau_quota"])
+
+    def appels_execution(self) -> int:
+        return sum(q.appels_execution for q in self.modeles)
+
+    def resume(self) -> dict:
+        modeles = [q.resume() for q in self.modeles]
+        return {"jour": self.jour(), "appels": sum(m["appels"] for m in modeles),
+                "quota_jour": sum(m["limite_jour"] for m in modeles), "modeles": modeles,
+                "modele": self.modeles[0].nom}
 
 
 # ------------------------------------------------------------------ appel
 
-def appeler(consigne: str, cfg: dict, cle: str, poster=None) -> str:
+def _type_429(texte: str) -> str:
+    t = texte.lower()
+    if re.search(r"per ?day|perday|daily|quota_exceeded|requests per day", t):
+        return "jour"
+    if re.search(r"per ?minute|perminute|rate_limit_exceeded|retrydelay", t):
+        return "minute"
+    return "inconnu"
+
+
+def _retry_delay(texte: str) -> float | None:
+    m = re.search(r'"retryDelay"\s*:\s*"(\d+(?:\.\d+)?)s"', texte)
+    return float(m.group(1)) if m else None
+
+
+def appeler(consigne: str, q: QuotaModele, cfg: dict, cle: str, poster=None) -> str:
+    """Un appel au modèle de q, avec reprises (5xx, réseau, 429 par minute). Chaque essai compte dans le quota."""
     import requests
     poster = poster or requests.post
-    try:
-        r = poster(URL_GEMINI.format(modele=cfg["modele"]), params={"key": cle}, timeout=cfg["delai_reponse_secondes"],
-                   json={"contents": [{"parts": [{"text": consigne}]}],
-                         "generationConfig": {"responseMimeType": "application/json", "temperature": 0.1}})
-    except Exception as e:  # réseau
-        raise ErreurIA(f"{type(e).__name__}: {str(e)[:120]}") from e
-    if r.status_code == 429:
-        raise ErreurQuota("HTTP 429 (quota atteint)")
-    if r.status_code != 200:
-        raise ErreurIA(f"HTTP {r.status_code} : {r.text[:160]}")
-    try:
-        return r.json()["candidates"][0]["content"]["parts"][0]["text"]
-    except (KeyError, IndexError, ValueError) as e:
-        raise ErreurIA("réponse sans texte") from e
+    attentes = cfg["attentes_reprise_secondes"]
+    essais_429 = 0
+    derniere = None
+    for essai in range(1, cfg["essais"] + 1):
+        q.attendre_creneau()
+        q.enregistrer()
+        try:
+            r = poster(URL_GEMINI.format(modele=q.nom), params={"key": cle}, timeout=cfg["delai_reponse_secondes"],
+                       json={"contents": [{"parts": [{"text": consigne}]}],
+                             "generationConfig": {"responseMimeType": "application/json", "temperature": 0.1}})
+            code, corps = r.status_code, r.text or ""
+        except Exception as e:  # réseau
+            code, corps = None, f"{type(e).__name__}: {str(e)[:120]}"
+        if code == 200:
+            try:
+                return r.json()["candidates"][0]["content"]["parts"][0]["text"]
+            except (KeyError, IndexError, ValueError) as e:
+                raise ErreurIA(f"{q.nom} : réponse sans texte") from e
+        extrait = re.sub(r"\s+", " ", corps)[:160]
+        LOG.warning("Gemini %s : %s (essai %d/%d) %s", q.nom, f"HTTP {code}" if code else "erreur réseau", essai, cfg["essais"], extrait)
+        derniere = f"{q.nom} : {'HTTP ' + str(code) if code else 'réseau'} : {extrait}"
+        if code == 429:
+            nature = _type_429(corps)
+            essais_429 += 1
+            if nature == "minute" and essais_429 == 1 and essai < cfg["essais"]:
+                q.dormir(min(cfg["attente_429_minute_max_secondes"], _retry_delay(corps) or 30))
+                continue
+            raise ErreurQuota(derniere, jour=nature == "jour")
+        if code is None or code >= 500:
+            if essai < cfg["essais"]:
+                q.dormir(attentes[min(essai - 1, len(attentes) - 1)])
+                continue
+            raise ErreurIA(f"{derniere} (après {cfg['essais']} essais)")
+        raise ErreurIA(derniere)  # 400, 403, 404 (modèle inconnu)… : inutile d'insister
+    raise ErreurIA(derniere or f"{q.nom} : échec")
 
+
+# ------------------------------------------------------------------ prompt
 
 def sources_numerotees(e: dict) -> list[dict]:
     return [{**s, "id": f"S{i}"} for i, s in enumerate(E.sources_publiques(e, maxi=10), 1)]
@@ -167,16 +268,19 @@ def consigne(lot: list[dict], config: dict, sources: dict) -> str:
     actifs = ", ".join(config["actifs"])
     pays = ", ".join(sorted(set(config["pays"]) | {k for k in config["autres_pays"] if not k.startswith("_")}))
     return (
-        "Tu es analyste géopolitique pour un suivi des marchés. Rédige en français, ton froid et factuel : "
-        "pas de superlatifs, pas de dramatisation (mots interdits : " + ", ".join(MOTS_INTERDITS[:10] + MOTS_DRAMATISATION[:8]) + "). "
+        "Tu es analyste géopolitique pour un suivi des marchés. Rédige TOUS les textes en français (les sources peuvent "
+        "être en anglais : traduis), ton froid et factuel : pas de superlatifs, pas de dramatisation (mots interdits : "
+        + ", ".join(MOTS_INTERDITS[:10] + MOTS_DRAMATISATION[:8]) + "). "
         "Distingue les faits (résumé, tirés des sources) des interprétations (impact sur les marchés). "
         "Règle absolue : chaque affirmation cite au moins une source par son identifiant (S1, S2…) parmi celles fournies "
         "pour CET événement ; n'utilise aucune autre connaissance que ces titres. Une affirmation sans source sera supprimée. "
         "Gravité de 1 (sans effet attendu sur les marchés) à 5 (choc majeur) ; 4 ou 5 seulement si au moins deux sources "
-        "de domaines différents le confirment.\n"
+        "de domaines différents le confirment. Pays : seulement les pays acteurs ou directement touchés, pas ceux "
+        "simplement cités. Si deux événements de la liste décrivent le même fait, indique pour le second "
+        "\"meme_que\": \"identifiant du premier\".\n"
         f"Catégories possibles : {categories}. Actifs possibles : {actifs}. Codes pays possibles : {pays}.\n"
-        "Réponds uniquement en JSON : {\"analyses\": [{\"evenement\": \"id\", "
-        "\"resume\": [{\"texte\": \"phrase factuelle\", \"sources\": [\"S1\"]}, {\"texte\": \"2e phrase\", \"sources\": [\"S2\"]}], "
+        "Réponds uniquement en JSON : {\"analyses\": [{\"evenement\": \"id\", \"meme_que\": null, "
+        "\"resume\": [{\"texte\": \"phrase factuelle en français\", \"sources\": [\"S1\"]}, {\"texte\": \"2e phrase\", \"sources\": [\"S2\"]}], "
         "\"pays\": [\"US\"], \"categorie\": \"sanctions\", \"gravite\": 3, "
         "\"actifs\": [{\"actif\": \"pétrole\", \"sens\": \"hausse|baisse|incertain\", \"texte\": \"raison en une phrase\", \"sources\": [\"S1\"]}], "
         "\"horizon\": \"jours|semaines|mois\", \"confiance\": \"faible|moyenne|élevée\", "
@@ -200,6 +304,9 @@ def _affirmations(liste, par_id: dict, maxi: int, supprimees: list) -> list[dict
         if not sobre(texte) or len(texte) > 400:
             supprimees.append(f"ton non conforme : {texte[:80]}")
             continue
+        if not en_francais(texte):
+            supprimees.append(f"pas en français : {texte[:80]}")
+            continue
         res.append({**{k: v for k, v in a.items() if k not in ("texte", "sources")}, "texte": texte,
                     "sources": [par_id[s.strip()]["url"] for s in dict.fromkeys(ids)],
                     "_cites": [par_id[s.strip()] for s in dict.fromkeys(ids)]})
@@ -212,7 +319,7 @@ def valider(brut: dict, e: dict, config: dict, sources: list[dict]) -> tuple[dic
     par_id = {s["id"]: s for s in sources}
     resume = _affirmations(brut.get("resume"), par_id, 2, supprimees)
     if not resume:
-        return None, supprimees + ["résumé sans affirmation sourcée : version sans IA"]
+        return None, supprimees + ["résumé sans affirmation sourcée en français : version sans IA"]
     actifs = []
     for a in _affirmations(brut.get("actifs"), par_id, 6, supprimees):
         if a.get("actif") in config["actifs"] and a.get("sens") in SENS:
@@ -221,7 +328,7 @@ def valider(brut: dict, e: dict, config: dict, sources: list[dict]) -> tuple[dic
             supprimees.append(f"actif ou sens inconnu : {a.get('actif')} / {a.get('sens')}")
     contre = _affirmations(brut.get("contre"), par_id, 3, supprimees)
     connus = set(config["pays"]) | {k for k in config["autres_pays"] if not k.startswith("_")}
-    pays = [p for p in (brut.get("pays") or []) if p in connus] or e["pays"]
+    pays = [p for p in (brut.get("pays") or []) if p in connus]
     categorie = brut.get("categorie") if brut.get("categorie") in config["categories"] else e["categorie"]
     try:
         gravite = max(1, min(5, int(brut.get("gravite"))))
@@ -236,7 +343,7 @@ def valider(brut: dict, e: dict, config: dict, sources: list[dict]) -> tuple[dic
     for a in resume + actifs + contre:
         a.pop("_cites", None)
     analyse = {
-        "resume": resume, "pays": pays, "categorie": categorie, "gravite": gravite, "note_gravite": note_gravite,
+        "resume": resume, "pays_ia": pays, "categorie": categorie, "gravite": gravite, "note_gravite": note_gravite,
         "actifs": [{"actif": a["actif"], "sens": a["sens"], "texte": a["texte"], "sources": a["sources"]} for a in actifs],
         "horizon": brut.get("horizon") if brut.get("horizon") in HORIZONS else "semaines",
         "confiance": brut.get("confiance") if brut.get("confiance") in CONFIANCES else "faible",
@@ -258,46 +365,73 @@ def a_analyser(e: dict, config: dict, maintenant: datetime) -> bool:
             and len(e["articles"]) >= cfg["reanalyse_si_sources_multipliees_par"] * a.get("nb_articles", 1))
 
 
-def analyser(candidats: list[dict], config: dict, quota: Quota, maintenant: datetime, cle: str | None = None,
+def priorite(e: dict, config: dict) -> tuple:
+    """Ordre d'analyse : gravité estimée 3 ou plus d'abord, puis score de sélection, puis le plus récent."""
+    gravite = (e.get("analyse") or {}).get("gravite") or E.gravite_regles(e, config)
+    return (gravite >= 3, E.score_selection(e, config), e["dernier"])
+
+
+def analyser(candidats: list[dict], config: dict, quotas: Quotas, maintenant: datetime, cle: str | None = None,
              poster=None) -> dict:
-    """Analyse les candidats (déjà triés par importance), dans la limite des quotas.
-    Écrit e["analyse"] pour chaque événement validé. Renvoie le compte rendu de l'exécution."""
+    """Analyse les candidats (dans l'ordre de priorité), dans la limite des quotas, en descendant la
+    chaîne de modèles si besoin. Écrit e["analyse"] pour chaque événement validé."""
     cfg = config["gemini"]
     cle = cle if cle is not None else os.environ.get("GEMINI_API_KEY")
-    rapport = {"modele": cfg["modele"], "appels": 0, "analyses": 0, "rejets": 0, "suppressions": [], "erreur": None,
-               "quota_atteint": False, "cle": bool(cle)}
+    rapport = {"modele": cfg["modeles"][0]["nom"], "appels": 0, "analyses": 0, "rejets": 0, "suppressions": [],
+               "erreur": None, "erreurs": [], "quota_atteint": False, "cle": bool(cle), "modeles_utilises": {},
+               "reussites": 0, "fusions": []}
     if not cle or not candidats:
-        rapport["autorises"] = 0
         return rapport
-    autorises = quota.autorises(maintenant)
-    rapport["autorises"] = autorises
+    candidats = sorted(candidats, key=lambda e: priorite(e, config), reverse=True)
     n = cfg["evenements_par_appel"]
-    lots = [candidats[i:i + n] for i in range(0, len(candidats), n)][:autorises]
+    lots = [candidats[i:i + n] for i in range(0, len(candidats), n)]
     for lot in lots:
+        if quotas.appels_execution() >= cfg["appels_max_par_execution"]:
+            break
         sources = {e["id"]: sources_numerotees(e) for e in lot}
-        quota.attendre_creneau()
-        quota.enregistrer()
-        rapport["appels"] += 1
+        texte, modele = None, None
+        for q in quotas.modeles:
+            if q.disponibles() <= 0 or quotas.appels_execution() >= cfg["appels_max_par_execution"]:
+                continue
+            avant = q.appels_execution
+            try:
+                texte = appeler(consigne(lot, config, sources), q, cfg, cle, poster)
+                modele = q.nom
+            except ErreurQuota as err:
+                q.epuise_jusqua_demain(apprendre=err.jour)
+                rapport["quota_atteint"] = True
+                rapport["erreurs"].append(f"{err} → {q.nom} suspendu jusqu'au lendemain (jour du Pacifique)")
+            except ErreurIA as err:
+                q.hors_service = True
+                rapport["erreurs"].append(str(err))
+            finally:
+                rapport["appels"] += q.appels_execution - avant
+            if texte is not None:
+                break
+        if texte is None:
+            if not any(q.disponibles() > 0 for q in quotas.modeles):
+                break
+            continue
         try:
-            texte = appeler(consigne(lot, config, sources), cfg, cle, poster)
             reponse = json.loads(texte)
             analyses = {a.get("evenement"): a for a in (reponse.get("analyses") or []) if isinstance(a, dict)}
-        except ErreurQuota as err:
-            quota.marquer_atteint()
-            rapport.update(quota_atteint=True, erreur=str(err))
-            LOG.warning("Gemini : quota atteint, fin des appels pour cette exécution")
-            break
-        except (ErreurIA, ValueError, AttributeError) as err:
-            rapport["erreur"] = str(err)[:200]
-            LOG.warning("Gemini indisponible (%s) : version sans IA", str(err)[:120])
-            break
+        except (ValueError, AttributeError) as err:
+            rapport["erreurs"].append(f"{modele} : réponse illisible ({str(err)[:80]})")
+            continue
+        rapport["reussites"] += 1
+        rapport["modeles_utilises"][modele] = rapport["modeles_utilises"].get(modele, 0) + 1
+        ids = {e["id"] for e in lot}
         for e in lot:
             brut = analyses.get(e["id"])
+            if isinstance(brut, dict) and brut.get("meme_que") in ids - {e["id"]}:
+                rapport["fusions"].append((brut["meme_que"], e["id"]))
             analyse, supprimees = valider(brut, e, config, sources[e["id"]]) if isinstance(brut, dict) else (None, ["événement absent de la réponse"])
             rapport["suppressions"] += [f"{e['id']} : {s}" for s in supprimees]
             if analyse:
-                e["analyse"] = {**analyse, "analyse_le": E.iso(maintenant), "nb_articles": len(e["articles"]), "modele": cfg["modele"]}
+                e["analyse"] = {**analyse, "analyse_le": E.iso(maintenant), "nb_articles": len(e["articles"]), "modele": modele}
                 rapport["analyses"] += 1
             else:
                 rapport["rejets"] += 1
+    if rapport["erreurs"] and not rapport["reussites"]:
+        rapport["erreur"] = rapport["erreurs"][-1][:240]
     return rapport

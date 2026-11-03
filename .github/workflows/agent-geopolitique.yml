@@ -17,6 +17,10 @@ on:
         type: choice
         options: [horaire, quotidien]
         default: horaire
+      essai:
+        description: "Essai : code de la branche choisie, sur une copie des données, sans commit (pour vérifier une correction)"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -30,10 +34,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Récupérer le dépôt (branche main)
+      - name: Récupérer le dépôt (branche main ; branche choisie en mode essai)
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ inputs.essai && github.ref_name || 'main' }}
 
       - name: Installer Python 3.12
         uses: actions/setup-python@v5
@@ -58,9 +62,16 @@ jobs:
         run: |
           MODE="${{ inputs.mode }}"
           if [ "${{ github.event_name }}" = "schedule" ] && [ "${{ github.event.schedule }}" = "3 6 * * *" ]; then MODE=quotidien; fi
-          python -m agents.geopolitique --mode "${MODE:-horaire}"
+          if [ "${{ inputs.essai }}" = "true" ]; then
+            # Essai : copie des données de main, rien n'est commité
+            git fetch --depth 1 origin main && mkdir -p "$RUNNER_TEMP/essai" && git archive origin/main data | tar -x -C "$RUNNER_TEMP/essai"
+            python -m agents.geopolitique --mode "${MODE:-horaire}" --data "$RUNNER_TEMP/essai/data"
+          else
+            python -m agents.geopolitique --mode "${MODE:-horaire}"
+          fi
 
       - name: Commiter les données si elles ont changé
+        if: ${{ !inputs.essai }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

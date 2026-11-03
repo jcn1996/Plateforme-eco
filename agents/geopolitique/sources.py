@@ -21,6 +21,7 @@ import html
 import io
 import json
 import re
+import time
 import zipfile
 from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
@@ -41,6 +42,10 @@ GPR_QUOTIDIEN = "https://www.matteoiacoviello.com/gpr_files/data_gpr_daily_recen
 
 # Colonnes du fichier d'événements GDELT 2.0 (61 colonnes, séparées par des tabulations)
 COL_QUAD, COL_GOLDSTEIN, COL_ARTICLES, COL_TON, COL_PAYS, COL_URL = 29, 30, 33, 34, 53, 60
+
+
+LANGUES_GDELT = {"english": "en", "french": "fr", "spanish": "es", "german": "de", "italian": "it", "portuguese": "pt",
+                 "chinese": "zh", "arabic": "ar", "russian": "ru", "japanese": "ja"}
 
 
 def iso(t: datetime) -> str:
@@ -76,7 +81,8 @@ def lire_doc(texte: str) -> list[dict]:
             continue
         if a.get("url") and a.get("title"):
             res.append({"titre": html.unescape(a["title"]).strip(), "url": a["url"], "domaine": domaine(a["url"]),
-                        "date": date, "langue": a.get("language"), "pays_source": a.get("sourcecountry"),
+                        "date": date, "langue": LANGUES_GDELT.get((a.get("language") or "").lower(), (a.get("language") or "")[:2].lower() or None),
+                        "pays_source": a.get("sourcecountry"),
                         "origine": "gdelt"})
     return res
 
@@ -206,22 +212,77 @@ def lire_gpr(contenu: bytes) -> list[list]:
 
 # ------------------------------------------------------------------ fournisseurs
 
+class ClientGdelt:
+    """API DOC 2.0 de GDELT : au moins `delai_entre_requetes_secondes` (≥ 5 s, consigne de GDELT)
+    entre deux requêtes de l'exécution ; reprises sur 429 et 5xx avec attentes croissantes
+    (`attentes_reprise_secondes`, ou l'en-tête Retry-After s'il est plus long) ; chaque échec est
+    journalisé avec son code exact ; `budget_secondes` borne le temps total passé sur l'API
+    (au-delà, les requêtes suivantes ne sont pas tentées)."""
+
+    def __init__(self, cfg: dict, session, horloge=time.monotonic, dormir=time.sleep):
+        self.cfg, self.session, self.horloge, self.dormir = cfg, session, horloge, dormir
+        self.intervalle = max(5.0, float(cfg["delai_entre_requetes_secondes"]))
+        self.debut = None
+        self.derniere = None
+        self.tentatives: list[dict] = []  # trace : {requete, essai, code, detail}
+
+    def _reste(self) -> float:
+        return self.cfg["budget_secondes"] - (self.horloge() - self.debut)
+
+    def requete(self, cle: str, params: dict) -> str:
+        import requests
+        if self.debut is None:
+            self.debut = self.horloge()
+        attentes = self.cfg["attentes_reprise_secondes"]
+        derniere = None
+        for essai in range(1, self.cfg["essais"] + 1):
+            if self.derniere is not None:
+                pause = self.intervalle - (self.horloge() - self.derniere)
+                if pause > 0:
+                    self.dormir(pause)
+            if self._reste() <= 0:
+                raise ErreurSource(f"budget de {self.cfg['budget_secondes']} s épuisé" + (f" ; dernier échec : {derniere}" if derniere else ""))
+            self.derniere = self.horloge()
+            try:
+                r = self.session.get(GDELT_DOC, params=params, timeout=25)
+                code, corps, apres = r.status_code, r.text, r.headers.get("Retry-After")
+            except requests.RequestException as e:
+                code, corps, apres = None, f"{type(e).__name__}: {str(e)[:120]}", None
+            if code == 200:
+                self.tentatives.append({"requete": cle, "essai": essai, "code": 200})
+                return corps
+            extrait = re.sub(r"\s+", " ", corps or "")[:120]
+            derniere = f"HTTP {code}" if code else "erreur réseau"
+            self.tentatives.append({"requete": cle, "essai": essai, "code": code, "detail": extrait})
+            LOG.warning("GDELT DOC %s : %s (essai %d/%d) %s", cle, derniere, essai, self.cfg["essais"], extrait)
+            if code is not None and code not in (429, 500, 502, 503, 504):
+                raise ErreurSource(f"{derniere} : {extrait}")
+            if essai < self.cfg["essais"]:
+                attente = attentes[min(essai - 1, len(attentes) - 1)]
+                try:
+                    attente = max(attente, float(apres)) if apres else attente
+                except ValueError:
+                    pass
+                if attente > self._reste():
+                    break
+                self.dormir(attente)
+        raise ErreurSource(f"{derniere} après {essai} essai(s)")
+
+
 class FournisseurReel:
     def __init__(self, dossier_cache: Path, config: dict):
         self.config = config
         # Cache court : l'agent tourne toutes les heures
         self.t = Telechargeur(dossier_cache, duree_cache_h=0.25, essais=3, delai_max=30)
-        # API DOC : 2 essais, délai de réponse court (GDELT limite à une requête toutes les 5 s)
-        self.t_gdelt = Telechargeur(dossier_cache, duree_cache_h=0.25, essais=2, attente_initiale=6, delai_max=25,
-                                    delai_politesse=config["gdelt"]["delai_entre_requetes_secondes"])
+        self.gdelt = ClientGdelt(config["gdelt"], self.t.session)
 
-    def gdelt_doc(self, cle: str, requete: str) -> list[dict]:
+    def gdelt_doc(self, cle: str, requete: str, maxi: int | None = None) -> list[dict]:
         g = self.config["gdelt"]
         langues = " OR ".join(f"sourcelang:{l}" for l in g["langues"])
         params = {"query": f"{requete} ({langues})" if len(g["langues"]) > 1 else f"{requete} {langues}",
-                  "mode": "ArtList", "format": "json", "maxrecords": g["articles_max_par_requete"],
+                  "mode": "ArtList", "format": "json", "maxrecords": maxi or g["articles_max_par_requete"],
                   "timespan": g["fenetre_doc"], "sort": "DateDesc"}
-        return lire_doc(self.t_gdelt.texte(GDELT_DOC, params=params))
+        return lire_doc(self.gdelt.requete(cle, params))
 
     def gdelt_evenements(self, fips_suivis: set[str], n: int) -> dict:
         """Les n derniers fichiers d'événements (15 min chacun) : {horodatages, pays: agrégats}."""
@@ -293,7 +354,14 @@ class FournisseurTest:
             raise ErreurSource(f"donnée de test absente : {nom} (simulation d'une source en panne)")
         return chemin.read_text(encoding="utf-8")
 
-    def gdelt_doc(self, cle, requete):
+    def gdelt_doc(self, cle, requete, maxi=None):
+        if cle == "groupee":  # la requête groupée renvoie les articles de tous les thèmes
+            res = []
+            for chemin in sorted(self.dossier.glob("gdelt_doc_*.json")):
+                res += lire_doc(chemin.read_text(encoding="utf-8"))
+            if not res:
+                raise ErreurSource("donnée de test absente : gdelt_doc_*.json")
+            return res
         return lire_doc(self._texte(f"gdelt_doc_{cle}.json"))
 
     def gdelt_evenements(self, fips_suivis, n):

@@ -25,7 +25,7 @@ def composante_evenements(code: str, evenements: list[dict], maintenant: datetim
     s, n = 0.0, 0
     limite = maintenant - timedelta(days=cfg["fenetre_jours"])
     for e in evenements:
-        pays = (e.get("analyse") or {}).get("pays") or e["pays"]
+        pays = e.get("pays_principaux") or []
         if code not in pays:
             continue
         dernier = datetime.fromisoformat(e["dernier"].replace("Z", "+00:00"))
