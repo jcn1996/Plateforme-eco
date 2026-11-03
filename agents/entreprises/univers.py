@@ -121,6 +121,51 @@ def lire_ishares(texte: str, pays_defaut: str) -> list[dict]:
     return sorted(res, key=lambda x: -x["poids"])
 
 
+def lire_positions_globalx(texte: str) -> list[dict]:
+    """CSV Global X : 2 lignes de titre, puis « % of Net Assets,Ticker,Name,SEDOL,… » ; lignes sans code
+    (liquidités, devises) ignorées."""
+    lignes = texte.splitlines()
+    debut = next((i for i, l in enumerate(lignes) if l.startswith("% of Net Assets")), None)
+    if debut is None:
+        raise ValueError("fichier Global X sans tableau de positions")
+    res = []
+    for l in csv.DictReader(io.StringIO("\n".join(lignes[debut:]))):
+        code = (l.get("Ticker") or "").strip()
+        if not code:
+            continue
+        try:
+            poids = float(str(l.get("% of Net Assets", "0")).replace(",", ""))
+        except ValueError:
+            poids = 0.0
+        res.append({"code": code, "nom": (l.get("Name") or code).strip(), "poids": poids})
+    if not res:
+        raise ValueError("aucune position dans le fichier Global X")
+    return res
+
+
+def lire_positions_vaneck(contenu: bytes) -> list[dict]:
+    """Fichier Excel de positions VanEck : colonnes « Ticker » et « Holding Name » (ou « Name »), « % of Net Assets »."""
+    import openpyxl
+    lignes = list(openpyxl.load_workbook(io.BytesIO(contenu), read_only=True, data_only=True).active.iter_rows(values_only=True))
+    debut = next(i for i, l in enumerate(lignes) if l and "Ticker" in [str(c).strip() for c in l if c])
+    entete = [str(c).strip() if c else "" for c in lignes[debut]]
+    i_t = entete.index("Ticker")
+    i_n = next(i for i, h in enumerate(entete) if h in ("Holding Name", "Name", "Security Name"))
+    i_p = next((i for i, h in enumerate(entete) if "% of Net Assets" in h or h == "Weight"), None)
+    res = []
+    for l in lignes[debut + 1:]:
+        if not l or not l[i_t] or not l[i_n]:
+            continue
+        try:
+            poids = float(str(l[i_p]).replace("%", "")) if i_p is not None and l[i_p] is not None else 0.0
+        except ValueError:
+            poids = 0.0
+        res.append({"code": str(l[i_t]).strip(), "nom": str(l[i_n]).strip(), "poids": poids})
+    if not res:
+        raise ValueError("aucune position dans le fichier VanEck")
+    return res
+
+
 def lire_ssga(contenu: bytes) -> list[dict]:
     """Fichier Excel SSGA (SPY, MDY) : « Name, Ticker, Identifier, SEDOL, Weight, Sector, Shares Held, Local Currency »."""
     import openpyxl
@@ -275,10 +320,69 @@ class Composition:
         info = self.cfg["ishares"].get(etf)
         if not info:
             raise ValueError(f"{etf} n'est pas un ETF iShares (ou URL inconnue)")
-        url = self.cfg["url_ishares"].format(id=info["id"], slug=info["slug"], t=etf)
-        texte = self.t.texte(url, entetes={"User-Agent": NAVIGATEUR, "Accept": "text/csv,*/*",
-                                           "Referer": f"https://www.ishares.com/us/products/{info['id']}/{info['slug']}"})
-        return lire_ishares(texte, pays)
+        page = f"https://www.ishares.com/us/products/{info['id']}/{info['slug']}"
+        entetes = {"User-Agent": NAVIGATEUR, "Accept": "text/csv,*/*", "Referer": page}
+        erreurs = []
+        # Fichier « latest-holdings.csv » (lien de la page du fonds), puis point d'accès .ajax
+        for url in (f"{page}/latest-holdings.csv", self.cfg["url_ishares"].format(id=info["id"], slug=info["slug"], t=etf)):
+            try:
+                return lire_ishares(self.t.texte(url, entetes=entetes), pays)
+            except Exception as e:
+                erreurs.append(f"{url.rsplit('/', 1)[-1][:40]} : {str(e)[:80]}")
+        raise ValueError(" ; ".join(erreurs))
+
+    # --- Global X et VanEck : fichiers de positions publiés par le fournisseur de l'ETF ---
+    def etf_globalx(self, etf: str, pays: str) -> list[dict]:
+        """CSV « <etf>_full-holdings_AAAAMMJJ.csv » (dernier jour ouvré, jusqu'à 7 jours en arrière)."""
+        from datetime import date, timedelta
+        erreurs = []
+        for k in range(8):
+            jour = date.today() - timedelta(days=k)
+            if jour.weekday() >= 5:
+                continue
+            url = f"https://assets.globalxetfs.com/funds/holdings/{etf.lower()}_full-holdings_{jour:%Y%m%d}.csv"
+            try:
+                return self.resoudre(lire_positions_globalx(self.t.texte(url)), pays)
+            except Exception as e:
+                erreurs.append(f"{jour:%d/%m} : {str(e)[:40]}")
+        raise ValueError("fichier Global X introuvable (" + " ; ".join(erreurs[:3]) + ")")
+
+    def etf_vaneck(self, etf: str, pays: str) -> list[dict]:
+        info = self.cfg["fournisseurs"][etf]
+        url = f"https://www.vaneck.com/us/en/investments/{info['slug']}/downloads/holdings/"
+        r = self.t.session.get(url, headers={"User-Agent": NAVIGATEUR}, timeout=60, allow_redirects=False)
+        if r.status_code != 200 or b"PK" not in r.content[:4]:
+            raise ValueError(f"VanEck {etf} : fichier non servi (HTTP {r.status_code}, vérification par cookie)")
+        return self.resoudre(lire_positions_vaneck(r.content), pays)
+
+    def cotees(self, liste: list[dict]) -> list[dict]:
+        """Écarte les places sans cours sur Yahoo Finance (ex. Abu Dhabi, « .AD ») avant d'appliquer le plafond."""
+        exclus = tuple(self.cfg.get("suffixes_sans_cours", []))
+        res = [x for x in liste if not (exclus and x["ticker"].upper().endswith(exclus))]
+        if not res:
+            raise ValueError("aucune position cotée sur une place couverte par Yahoo Finance")
+        return res
+
+    def resoudre(self, positions: list[dict], pays: str) -> list[dict]:
+        """Codes Bloomberg (« ECOPETL CB ») → symboles Yahoo, par recherche du nom sur Yahoo
+        (on garde le symbole de la place du pays ; à défaut, la racine du code + le suffixe du pays)."""
+        import warnings
+        import yfinance as yf
+        warnings.filterwarnings("ignore")
+        suffixe = self.cfg["suffixes_pays"].get(pays, "")
+        res = []
+        for p in positions:
+            racine = p["code"].split()[0].upper()
+            symbole = None
+            try:
+                quotes = [q.get("symbol", "") for q in yf.Search(p["nom"], max_results=8, news_count=0).quotes or []]
+                locaux = [q for q in quotes if suffixe and q.upper().endswith(suffixe.upper())]
+                symbole = next((q for q in locaux if q.upper().startswith(racine)), locaux[0] if locaux else None)
+            except Exception as e:
+                LOG.debug("recherche Yahoo %s : %s", p["nom"], str(e)[:60])
+            res.append({"ticker": symbole or f"{racine}{suffixe}", "nom": p["nom"].title(), "pays": pays,
+                        "secteur": secteur_gics(p.get("secteur")), "poids": p["poids"]})
+        return sorted(res, key=lambda x: -x["poids"])
 
     def etf_ssga(self, etf: str) -> list[dict]:
         url = self.cfg["ssga"][etf]
@@ -354,10 +458,15 @@ class Composition:
                 societes += liste[:limite] if limite else liste
             return societes, " + ".join(sources)
         for etf in p["etf"]:
+            fournisseur = self.cfg.get("fournisseurs", {}).get(etf, {}).get("type", "ishares")
             try:
-                return self.etf_ishares(etf, code)[:plafond], f"iShares {etf}"
+                if fournisseur == "globalx":
+                    return self.cotees(self.etf_globalx(etf, code))[:plafond], f"Global X {etf}"
+                if fournisseur == "vaneck":
+                    return self.cotees(self.etf_vaneck(etf, code))[:plafond], f"VanEck {etf}"
+                return self.cotees(self.etf_ishares(etf, code))[:plafond], f"iShares {etf}"
             except Exception as e:
-                erreurs.append(f"iShares {etf} : {str(e)[:120]}")
+                erreurs.append(f"{fournisseur} {etf} : {str(e)[:120]}")
         try:
             membres, page = self.wikipedia(code)
             classes = self.classer(membres)
@@ -375,8 +484,12 @@ class Composition:
 
 
 def construire(composition: Composition | None, config: dict, connu: dict | None, depart: list[dict],
-               surveillance: list[dict], pays_demandes: list[str] | None = None) -> tuple[list[dict], dict]:
-    """Univers complet (avant filtre de capitalisation et de liquidité) et état des sources par pays."""
+               surveillance: list[dict], pays_demandes: list[str] | None = None,
+               manuelles: dict | None = None) -> tuple[list[dict], dict]:
+    """Univers complet (avant filtre de capitalisation et de liquidité) et état des sources par pays.
+    Ordre : sources automatiques (fournisseur de l'ETF, Wikipédia, filtre Yahoo), liste manuelle vérifiée
+    (config/compositions_manuelles.json), dernière liste connue, liste de départ."""
+    manuelles = manuelles or {}
     cfg = config["univers"]["pays"]
     anciens = {}
     for s in (connu or {}).get("societes", []):
@@ -393,7 +506,16 @@ def construire(composition: Composition | None, config: dict, connu: dict | None
             liste, source = composition.pays(code, plafond)
             etats[code] = {"etat": "ok", "source": source, "nombre": len(liste)}
         except Exception as e:
-            if anciens.get(code):
+            m = manuelles.get(code)
+            if m and m.get("societes"):
+                liste = [{"ticker": x["ticker"], "nom": x.get("nom") or x["ticker"], "pays": code,
+                          "secteur": secteur_gics(x.get("secteur")), "poids": 0.0} for x in m["societes"]]
+                liste = liste[:plafond] if plafond else liste
+                source = f"liste manuelle (vérifiée le {m['verifie_le'][8:10]}/{m['verifie_le'][5:7]}/{m['verifie_le'][:4]})"
+                etats[code] = {"etat": "manuelle", "source": source, "nombre": len(liste), "verifie_le": m["verifie_le"],
+                               "detail": str(e)[:200]}
+                LOG.info("Composition %s : %s", code, source)
+            elif anciens.get(code):
                 liste, source = anciens[code], "dernière liste connue"
                 etats[code] = {"etat": "ancienne", "source": source, "nombre": len(liste), "detail": str(e)[:200]}
             elif par_depart.get(code):
