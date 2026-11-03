@@ -77,6 +77,7 @@ export function euros(valeur) {
  * Les indicateurs de variation (devise, PER relatif…) affichent leur signe.
  */
 export function valeurIndicateur(cle, ind) {
+  if (ind.affichage) return ind.affichage; // texte préparé par l'agent (indicateurs des entreprises)
   if (ind.valeur === null || ind.valeur === undefined) return 'non disponible';
   const signe = ['devise_3m', 'per_vs_secteur', 'croissance_ca', 'benefice', 'flux_etrangers', 'taux_reel', 'valorisation', 'momentum', 'solde_courant'].includes(cle);
   if (cle === 'pmi' || cle === 'indicateur_avance') return nombre(ind.valeur, 1);
@@ -99,6 +100,7 @@ export function valeurIndicateur(cle, ind) {
  * cible d'inflation, direction de la banque centrale, PER et sa moyenne…
  */
 export function complementIndicateur(cle, ind) {
+  if (ind.complement !== undefined) return ind.complement;
   if (ind.valeur === null || ind.valeur === undefined) return ind.raison ?? '';
   if (cle === 'inflation') {
     const cible = ind.cible != null ? `cible ${nombre(ind.cible, ind.cible % 1 ? 1 : 0)} %` : 'sans cible officielle';
@@ -250,10 +252,14 @@ export const DETAIL_PAYS = [
 export const METRIQUES_ENTREPRISE = [
   { cle: 'note', libelle: 'Note globale', source: 'note' },
   { cle: 'croissance_ca', libelle: 'Croissance du CA', source: 'indicateur' },
-  { cle: 'benefice', libelle: 'Bénéfice (évol. 1 an)', source: 'indicateur' },
-  { cle: 'marge', libelle: 'Marge opérationnelle', source: 'indicateur' },
+  { cle: 'croissance_benefice', libelle: 'Croissance du bénéfice', source: 'indicateur' },
+  { cle: 'marge_op', libelle: 'Marge opérationnelle', source: 'indicateur' },
+  { cle: 'roic', libelle: 'ROIC', source: 'indicateur' },
+  { cle: 'roe', libelle: 'ROE (financières)', source: 'indicateur' },
   { cle: 'dette_ebitda', libelle: 'Dette nette / EBITDA', source: 'indicateur' },
-  { cle: 'per_vs_secteur', libelle: 'PER vs secteur', source: 'indicateur' },
+  { cle: 'per_secteur', libelle: 'PER vs secteur', source: 'indicateur' },
+  { cle: 'momentum_12m', libelle: 'Momentum 12 mois', source: 'indicateur' },
+  { cle: 'fscore', libelle: 'F-score de Piotroski', source: 'indicateur' },
 ];
 
 export function metrique(type, cle) {

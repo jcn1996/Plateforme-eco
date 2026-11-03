@@ -1098,3 +1098,59 @@ body.alertes-ouvertes .barre-comparaison { display: none; }
 .point-zone--non-confirme { fill: var(--fond-2); stroke: var(--texte); stroke-width: 1.5; }
 .point-zone--monde.point-zone--non-confirme { stroke: var(--cyan); }
 .infobulle-note { margin-top: 6px; max-width: 210px; font-size: 11px; color: var(--texte-3); }
+
+/* ==========================================================================
+   Agent entreprises : fiche entreprise et écran « Pépites »
+   ========================================================================== */
+/* En-tête : 8 boutons sur un téléphone étroit */
+@media (max-width: 400px) {
+  .entete-actions { gap: 3px; }
+  .entete .bouton--icone, .bouton--icone-texte { width: 28px; min-width: 28px; }
+}
+@media (max-width: 374px) {
+  .horloge { display: none; }
+}
+
+.pepite-bandeau {
+  padding: 8px 12px; border: 1px solid var(--vert); border-radius: var(--rayon);
+  background: rgba(46, 229, 157, 0.08); font-size: 12.5px; color: var(--texte);
+}
+.entreprise-contexte { display: grid; gap: 4px; }
+.entreprise-contexte-ligne { display: flex; justify-content: space-between; font-size: 13px; color: var(--texte-2); }
+.entreprise-contexte-detail { font-size: 11.5px; color: var(--texte-3); }
+.entreprise-montants { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; font-size: 13px; }
+.entreprise-montants dt { color: var(--texte-2); }
+.entreprise-montants dd { margin: 0; display: flex; flex-direction: column; align-items: flex-end; }
+.entreprise-montants small { font-size: 11px; color: var(--texte-3); }
+.fscore { display: grid; gap: 4px; list-style: none; margin: 0; padding: 0; font-size: 12.5px; }
+.fscore li { display: grid; grid-template-columns: 18px 1fr; color: var(--texte-2); }
+.fscore--ok span:first-child { color: var(--vert); }
+.fscore--ko span:first-child { color: var(--rouge); }
+.fscore--na { opacity: 0.6; }
+.entreprise-alertes { display: grid; gap: 6px; margin: 0; padding-left: 18px; font-size: 12.5px; color: var(--texte); }
+.entreprise-alertes strong { color: var(--orange); }
+.revue-critique h4 { margin: 10px 0 4px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--texte-3); }
+.revue-critique ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 12.5px; }
+.revue-critique p { margin-top: 6px; font-size: 12.5px; }
+.revue-critique a, .liste-sources a { color: var(--cyan); }
+.liste-sources { display: grid; gap: 4px; margin: 8px 0 0; padding-left: 18px; font-size: 12px; color: var(--texte-2); }
+
+.pepites-filtre { display: grid; gap: 6px; margin-bottom: 10px; }
+.pepites-filtre-titre { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--texte-3); }
+.pepites-puces { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+.pepites-puces .puce { flex: none; }
+.pepites-puces small { color: var(--texte-3); }
+.pepites-liste { display: grid; gap: 8px; }
+.ligne-pepite {
+  display: grid; gap: 4px; width: 100%; padding: 10px 12px; text-align: left; color: inherit; font: inherit; cursor: pointer;
+  border: 1px solid var(--ligne); border-left: 3px solid var(--c-note, var(--ligne)); border-radius: var(--rayon); background: var(--fond-2);
+}
+.ligne-pepite-tete { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.ligne-pepite-nom { font-size: 14px; font-weight: 600; }
+.ligne-pepite-note { flex: none; font-family: var(--police-mono); font-size: 16px; color: var(--c-note, var(--texte)); }
+.ligne-pepite-note small { font-size: 10.5px; color: var(--texte-3); }
+.ligne-pepite-info { font-size: 11.5px; color: var(--texte-3); }
+.ligne-pepite-cles { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--texte-2); }
+.ligne-pepite-cles strong { color: var(--texte); font-weight: 500; }
+.ligne-pepite-verdict { font-size: 12px; color: var(--texte-2); }
+.pepites-puces .puce[aria-pressed="true"] { border-color: var(--cyan); background: rgba(0, 229, 255, 0.18); color: #eafcff; }

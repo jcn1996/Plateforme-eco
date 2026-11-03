@@ -1,0 +1,478 @@
+{
+  "_commentaire": "Configuration de l'agent entreprises. Seuils, pondérations et plafonds modifiables sans toucher au code.",
+  "univers": {
+    "_commentaire": "Composition : 1) fichiers iShares (URL ci-dessous) ; 2) secours : SSGA SPY/MDY pour les États-Unis, filtre d'actions Yahoo (plus grosses capitalisations du pays) ailleurs ; 3) dernière liste connue (data/entreprises/univers.json).",
+    "sp400_max": 150,
+    "capitalisation_min_musd": 300,
+    "volume_min_musd_jour": 1.0,
+    "url_ishares": "https://www.ishares.com/us/products/{id}/{slug}/1467271812596.ajax?fileType=csv&fileName={t}_holdings&dataType=fund",
+    "ishares": {
+      "IVV": {
+        "id": 239726,
+        "slug": "ishares-core-sp-500-etf",
+        "verifie": true
+      },
+      "IJH": {
+        "id": 239763,
+        "slug": "ishares-core-sp-midcap-etf",
+        "verifie": false
+      },
+      "EWY": {
+        "id": 239681,
+        "slug": "ishares-msci-south-korea-etf",
+        "verifie": true
+      },
+      "EWU": {
+        "id": 239690,
+        "slug": "ishares-msci-united-kingdom-etf",
+        "verifie": true
+      },
+      "EWJ": {
+        "id": 239665,
+        "slug": "ishares-msci-japan-etf",
+        "verifie": false
+      },
+      "EWT": {
+        "id": 239686,
+        "slug": "ishares-msci-taiwan-etf",
+        "verifie": false
+      },
+      "INDA": {
+        "id": 239659,
+        "slug": "ishares-msci-india-etf",
+        "verifie": false
+      },
+      "EWZ": {
+        "id": 239612,
+        "slug": "ishares-msci-brazil-etf",
+        "verifie": false
+      },
+      "EWW": {
+        "id": 239676,
+        "slug": "ishares-msci-mexico-etf",
+        "verifie": false
+      },
+      "MCHI": {
+        "id": 239619,
+        "slug": "ishares-msci-china-etf",
+        "verifie": false
+      },
+      "EWG": {
+        "id": 239650,
+        "slug": "ishares-msci-germany-etf",
+        "verifie": false
+      },
+      "EWQ": {
+        "id": 239648,
+        "slug": "ishares-msci-france-etf",
+        "verifie": false
+      },
+      "EWI": {
+        "id": 239654,
+        "slug": "ishares-msci-italy-etf",
+        "verifie": false
+      },
+      "EWP": {
+        "id": 239680,
+        "slug": "ishares-msci-spain-etf",
+        "verifie": false
+      },
+      "EWN": {
+        "id": 239677,
+        "slug": "ishares-msci-netherlands-etf",
+        "verifie": false
+      },
+      "EWD": {
+        "id": 239682,
+        "slug": "ishares-msci-sweden-etf",
+        "verifie": false
+      },
+      "EWL": {
+        "id": 239684,
+        "slug": "ishares-msci-switzerland-etf",
+        "verifie": false
+      },
+      "EWA": {
+        "id": 239607,
+        "slug": "ishares-msci-australia-etf",
+        "verifie": false
+      },
+      "EWC": {
+        "id": 239615,
+        "slug": "ishares-msci-canada-etf",
+        "verifie": false
+      },
+      "EWS": {
+        "id": 239678,
+        "slug": "ishares-msci-singapore-etf",
+        "verifie": false
+      },
+      "TUR": {
+        "id": 239689,
+        "slug": "ishares-msci-turkey-etf",
+        "verifie": false
+      },
+      "EIDO": {
+        "id": 239661,
+        "slug": "ishares-msci-indonesia-etf",
+        "verifie": false
+      },
+      "THD": {
+        "id": 239688,
+        "slug": "ishares-msci-thailand-etf",
+        "verifie": false
+      },
+      "ECH": {
+        "id": 239618,
+        "slug": "ishares-msci-chile-etf",
+        "verifie": false
+      }
+    },
+    "ssga": {
+      "IVV": "https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx",
+      "IJH": "https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-mdy.xlsx"
+    },
+    "pays": {
+      "US": {
+        "region": "amerique_nord",
+        "plafond": null,
+        "etf": [
+          "IVV",
+          "IJH"
+        ]
+      },
+      "CA": {
+        "region": "amerique_nord",
+        "plafond": 40,
+        "etf": [
+          "EWC"
+        ]
+      },
+      "MX": {
+        "region": "amerique_latine",
+        "plafond": 15,
+        "etf": [
+          "EWW"
+        ]
+      },
+      "BR": {
+        "region": "amerique_latine",
+        "plafond": 25,
+        "etf": [
+          "EWZ"
+        ]
+      },
+      "AR": {
+        "region": "amerique_latine",
+        "plafond": 6,
+        "etf": [
+          "ARGT"
+        ]
+      },
+      "CL": {
+        "region": "amerique_latine",
+        "plafond": 8,
+        "etf": [
+          "ECH"
+        ]
+      },
+      "CO": {
+        "region": "amerique_latine",
+        "plafond": 5,
+        "etf": [
+          "GXG"
+        ]
+      },
+      "GB": {
+        "region": "europe",
+        "plafond": 50,
+        "etf": [
+          "EWU"
+        ]
+      },
+      "FR": {
+        "region": "europe",
+        "plafond": 40,
+        "etf": [
+          "EWQ"
+        ]
+      },
+      "DE": {
+        "region": "europe",
+        "plafond": 40,
+        "etf": [
+          "EWG"
+        ]
+      },
+      "CH": {
+        "region": "europe",
+        "plafond": 30,
+        "etf": [
+          "EWL"
+        ]
+      },
+      "IT": {
+        "region": "europe",
+        "plafond": 20,
+        "etf": [
+          "EWI"
+        ]
+      },
+      "ES": {
+        "region": "europe",
+        "plafond": 20,
+        "etf": [
+          "EWP"
+        ]
+      },
+      "NL": {
+        "region": "europe",
+        "plafond": 20,
+        "etf": [
+          "EWN"
+        ]
+      },
+      "SE": {
+        "region": "europe",
+        "plafond": 20,
+        "etf": [
+          "EWD"
+        ]
+      },
+      "PL": {
+        "region": "europe",
+        "plafond": 10,
+        "etf": [
+          "EPOL"
+        ]
+      },
+      "JP": {
+        "region": "asie_pacifique",
+        "plafond": 80,
+        "etf": [
+          "EWJ"
+        ]
+      },
+      "CN": {
+        "region": "asie_pacifique",
+        "plafond": 60,
+        "etf": [
+          "MCHI"
+        ]
+      },
+      "IN": {
+        "region": "asie_pacifique",
+        "plafond": 50,
+        "etf": [
+          "INDA"
+        ]
+      },
+      "KR": {
+        "region": "asie_pacifique",
+        "plafond": 35,
+        "etf": [
+          "EWY"
+        ]
+      },
+      "TW": {
+        "region": "asie_pacifique",
+        "plafond": 35,
+        "etf": [
+          "EWT"
+        ]
+      },
+      "AU": {
+        "region": "asie_pacifique",
+        "plafond": 35,
+        "etf": [
+          "EWA"
+        ]
+      },
+      "ID": {
+        "region": "asie_pacifique",
+        "plafond": 12,
+        "etf": [
+          "EIDO"
+        ]
+      },
+      "SG": {
+        "region": "asie_pacifique",
+        "plafond": 10,
+        "etf": [
+          "EWS"
+        ]
+      },
+      "TH": {
+        "region": "asie_pacifique",
+        "plafond": 12,
+        "etf": [
+          "THD"
+        ]
+      },
+      "VN": {
+        "region": "asie_pacifique",
+        "plafond": 6,
+        "etf": [
+          "VNM"
+        ]
+      },
+      "SA": {
+        "region": "moyen_orient_afrique",
+        "plafond": 20,
+        "etf": [
+          "KSA"
+        ]
+      },
+      "AE": {
+        "region": "moyen_orient_afrique",
+        "plafond": 8,
+        "etf": [
+          "UAE"
+        ]
+      },
+      "TR": {
+        "region": "moyen_orient_afrique",
+        "plafond": 10,
+        "etf": [
+          "TUR"
+        ]
+      },
+      "ZA": {
+        "region": "moyen_orient_afrique",
+        "plafond": 15,
+        "etf": [
+          "EZA"
+        ]
+      },
+      "EG": {
+        "region": "moyen_orient_afrique",
+        "plafond": 5,
+        "etf": [
+          "EGPT"
+        ]
+      }
+    }
+  },
+  "lots": {
+    "_commentaire": "Révision complète du samedi, découpée en lots (durée maximale d'un job GitHub : 6 h).",
+    "etats_unis_1": {
+      "pays": [
+        "US"
+      ],
+      "tranche": [
+        0,
+        2
+      ]
+    },
+    "etats_unis_2": {
+      "pays": [
+        "US"
+      ],
+      "tranche": [
+        1,
+        2
+      ]
+    },
+    "ameriques": {
+      "pays": [
+        "CA",
+        "MX",
+        "BR",
+        "AR",
+        "CL",
+        "CO"
+      ]
+    },
+    "europe": {
+      "pays": [
+        "GB",
+        "FR",
+        "DE",
+        "CH",
+        "IT",
+        "ES",
+        "NL",
+        "SE",
+        "PL"
+      ]
+    },
+    "asie_pacifique": {
+      "pays": [
+        "JP",
+        "CN",
+        "IN",
+        "KR",
+        "TW",
+        "AU",
+        "ID",
+        "SG",
+        "TH",
+        "VN"
+      ]
+    },
+    "moyen_orient_afrique": {
+      "pays": [
+        "SA",
+        "AE",
+        "TR",
+        "ZA",
+        "EG"
+      ]
+    }
+  },
+  "regions": {
+    "amerique_nord": "Amérique du Nord",
+    "amerique_latine": "Amérique latine",
+    "europe": "Europe",
+    "asie_pacifique": "Asie-Pacifique",
+    "moyen_orient_afrique": "Moyen-Orient et Afrique"
+  },
+  "ponderations": {
+    "_commentaire": "Note globale = moyenne pondérée des notes disponibles (sociétés non financières).",
+    "croissance_ca": 0.12,
+    "croissance_benefice": 0.1,
+    "marge_op": 0.1,
+    "conversion_cash": 0.08,
+    "dette_ebitda": 0.1,
+    "couverture_interets": 0.05,
+    "roic": 0.12,
+    "per_secteur": 0.08,
+    "ev_ebitda_secteur": 0.07,
+    "momentum_12m": 0.08,
+    "fscore": 0.1
+  },
+  "ponderations_financieres": {
+    "_commentaire": "Banques et assurances : critères adaptés.",
+    "croissance_ca": 0.15,
+    "croissance_benefice": 0.12,
+    "roe": 0.25,
+    "cout_revenu": 0.12,
+    "croissance_bilan": 0.1,
+    "per_secteur": 0.12,
+    "momentum_12m": 0.14
+  },
+  "ecart_officiel_max_pct": 5.0,
+  "pepites": {
+    "_commentaire": "Critères cumulés. valorisation_max_pct : PER (ou VE/EBITDA) au plus X % au-dessus de la médiane du secteur.",
+    "croissance_ca_min": 10.0,
+    "fscore_min": 7,
+    "dette_ebitda_max": 2.0,
+    "valorisation_max_pct": 10.0,
+    "nombre_min": 15,
+    "nombre_max": 25
+  },
+  "contexte": {
+    "_commentaire": "Ajustement modéré de la note selon le pays et la phase du cycle de sa zone ; plafonné et affiché à part.",
+    "poids_pays": 0.08,
+    "points_phase": {
+      "Reprise": 2,
+      "Expansion sans inflation": 1,
+      "Surchauffe": 0,
+      "Ralentissement inflationniste": -2
+    },
+    "plafond": 4
+  },
+  "sec": {
+    "requetes_par_seconde": 8
+  }
+}

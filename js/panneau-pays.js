@@ -253,8 +253,8 @@ export function fichePays(d, p, nav) {
     ) : null,
 
     el('section', {},
-      titreSection('Secteurs', `${d.fictifPar?.pays === false ? 'données fictives · ' : ''}taille = capitalisation · couleur = momentum 3 mois`),
-      bullesSecteurs(secteurs, nav),
+      titreSection('Secteurs', `${d.fictifPar?.secteurs !== false ? 'données fictives · ' : 'secteurs GICS · '}taille = capitalisation · couleur = momentum 3 mois`),
+      bullesSecteurs(secteurs, nav, uniteCap(d)),
       el('div', { class: 'legende-bulles' },
         el('span', {}, el('span', { class: 'pastille pastille--vert' }), '≥ +2 %'),
         el('span', {}, el('span', { class: 'pastille pastille--orange' }), 'entre −2 et +2 %'),
@@ -284,13 +284,16 @@ export function fichePays(d, p, nav) {
     p.indicateurs && p.confiance ? listeSources(p) : null,
     piedFraicheur(d.meta.pays),
     el('p', { class: 'mention-legale' }, d.fictifPar?.pays === false
-      ? 'Données réelles issues de sources publiques (instituts statistiques nationaux, banques centrales, FMI, OCDE, BRI, Banque mondiale, Eurostat, BCE, Yahoo Finance), vérifiées entre elles et analysées automatiquement par l’agent pays. Les secteurs restent fictifs. Ne constitue pas un conseil en investissement.'
+      ? 'Données réelles issues de sources publiques (instituts statistiques nationaux, banques centrales, FMI, OCDE, BRI, Banque mondiale, Eurostat, BCE, Yahoo Finance), vérifiées entre elles et analysées automatiquement par l’agent pays. Secteurs et entreprises : agent entreprises (comptes officiels et Yahoo Finance).' + (d.fictifPar?.secteurs !== false ? ' Les secteurs restent fictifs.' : '') + ' Ne constitue pas un conseil en investissement.'
       : 'Données fictives à des fins de démonstration — ne constitue pas un conseil en investissement.'),
   ];
 }
 
+/** Unité des capitalisations : dollars pour les données réelles de l'agent entreprises, euros pour l'ancienne démonstration. */
+const uniteCap = (d) => (d.fictifPar?.secteurs === false ? 'Md$' : 'Md€');
+
 /** Bulles des secteurs : diamètre proportionnel à la racine de la capitalisation. */
-function bullesSecteurs(secteurs, nav) {
+function bullesSecteurs(secteurs, nav, unite = 'Md€') {
   if (!secteurs.length) return el('p', { class: 'fiche-verdict' }, 'Aucun secteur suivi pour ce pays.');
   const racines = secteurs.map((s) => Math.sqrt(s.capitalisation_md));
   const min = Math.min(...racines), max = Math.max(...racines);
@@ -306,12 +309,12 @@ function bullesSecteurs(secteurs, nav) {
           class: `bulle note--${niveauMomentum(s.momentum_3m)}`,
           type: 'button',
           style: { width: `${taille}px` },
-          'aria-label': `Secteur ${s.nom}, capitalisation ${nombre(s.capitalisation_md)} milliards d'euros, momentum 3 mois ${variation(s.momentum_3m, 1)}`,
+          'aria-label': `Secteur ${s.nom}, capitalisation ${nombre(s.capitalisation_md)} ${unite === 'Md$' ? 'milliards de dollars' : 'milliards d’euros'}, momentum 3 mois ${variation(s.momentum_3m, 1)}`,
           onclick: () => nav.ouvrirSecteur(s.id),
         },
           el('span', { class: 'bulle-nom' }, s.nom),
           el('span', { class: 'bulle-mom' }, variation(s.momentum_3m, 1)),
-          el('span', { class: 'bulle-cap' }, `${nombre(s.capitalisation_md)} Md€`),
+          el('span', { class: 'bulle-cap' }, `${nombre(s.capitalisation_md)} ${unite}`),
         );
       }),
   );
@@ -331,7 +334,7 @@ export function ficheSecteur(d, s, nav) {
       tendance: tendanceNote(s),
     }),
     el('div', { class: 'stats' },
-      stat('Capitalisation', `${nombre(s.capitalisation_md)} Md€`),
+      stat('Capitalisation', `${nombre(s.capitalisation_md)} ${uniteCap(d)}`),
       stat('Momentum 3 mois', variation(s.momentum_3m, 1), `note--${niveauMomentum(s.momentum_3m)}`),
       stat('Note secteur', `${s.note}/100`, classeNote(s.note)),
     ),
@@ -347,7 +350,7 @@ export function ficheSecteur(d, s, nav) {
           el('span', { class: 'ligne-entreprise-textes' },
             el('span', { class: 'ligne-entreprise-nom' }, e.nom),
             el('br'),
-            el('span', { class: 'ligne-entreprise-info mono' }, `${e.ticker} · ${nombre(e.capitalisation_md)} Md€ · ${libelleNiveau(e.niveau ?? niveauNote(e.note))}`),
+            el('span', { class: 'ligne-entreprise-info mono' }, `${e.ticker} · ${nombre(e.capitalisation_md, e.capitalisation_md < 10 ? 1 : 0)} ${uniteCap(d)} · ${libelleNiveau(e.niveau ?? niveauNote(e.note))}`),
           ),
           el('span', { class: 'ligne-entreprise-note' }, nombre(e.note), badgeTendance(tendanceNote(e))),
         )),

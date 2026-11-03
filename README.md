@@ -3,7 +3,7 @@
 Prototype d'une application personnelle de suivi économique mondial, pensée d'abord pour le téléphone.
 **Les données des pays sont réelles** : elles sont produites chaque jour par l'**agent pays** (instituts statistiques nationaux, banques centrales, FMI, OCDE, BRI, Banque mondiale, Eurostat, BCE, Yahoo Finance, avec vérification croisée), qui tourne gratuitement avec GitHub Actions.
 **Les cours du bandeau des marchés sont réels** : l'**agent marchés** (sans IA) les met à jour toutes les 15 minutes en semaine.
-Le reste (secteurs, entreprises, alertes, flux de capitaux, portefeuille) est encore **fictif**, en attendant les autres agents.
+**Les secteurs et les entreprises sont réels** (agent entreprises). Le reste (alertes, flux de capitaux, portefeuille) est encore **fictif**, en attendant les autres agents.
 
 ## Ce que fait le prototype
 
@@ -148,6 +148,55 @@ python -m agents.macro --capturer  # met à jour les données de test
 - le bouton « Macro » de l'en-tête ouvre l'écran **Vue macro** : schéma du cycle en 4 quadrants, signaux de récession, banques centrales, courbe des taux US sur 2 ans, marchés du cycle ;
 - la fiche pays affiche la rubrique « Agent macro », avec sa date.
 
+## Agent entreprises (environ 1 200 sociétés, sans IA)
+
+L'agent entreprises se trouve dans `agents/entreprises/`. Les règles de conduite sont les mêmes que pour l'agent pays.
+
+**Univers** : S&P 500 et les 150 plus grandes valeurs du S&P 400, puis les plus grosses positions des ETF iShares MSCI de chaque pays suivi, avec un plafond par pays (`config.json`) ; à cela s'ajoute la liste de surveillance personnelle (`config/surveillance.json`).
+- Filtre : capitalisation d'au moins 300 M$ et volume suffisant.
+- Doublons écartés : catégories d'actions (GOOGL / GOOG) et doubles cotations.
+- Si une source de composition échoue :
+  1. secours : SSGA SPY / MDY pour les États-Unis, filtre d'actions Yahoo ailleurs ;
+  2. sinon, dernière liste connue (`data/entreprises/univers.json`).
+
+**Comptes** :
+- États-Unis : SEC (API XBRL et flux des publications ; secret `SEC_USER_AGENT`).
+- Europe : rapports annuels ESEF sur filings.xbrl.org, le LEI étant trouvé via GLEIF.
+- Japon et Corée : EDINET (`EDINET_API_KEY`) et DART (`DART_API_KEY`), facultatifs.
+- Partout : yfinance pour les cours et les états financiers annuels et trimestriels.
+
+Quand la source officielle et Yahoo s'écartent de plus de 5 %, la source officielle est retenue et l'écart signalé. Sans source officielle, la confiance est plafonnée à « moyen ».
+
+**Analyse** :
+- croissance du CA (sur un an et tendance sur 3 ans) et du bénéfice ;
+- marge opérationnelle et son évolution ;
+- conversion du bénéfice en cash ;
+- dette nette / EBITDA, couverture des intérêts ;
+- ROIC, ou ROE pour les financières ;
+- PER et VE/EBITDA comparés à la médiane du secteur (régionale, à défaut mondiale) ;
+- momentum sur 6 et 12 mois ;
+- F-score de Piotroski ;
+- signaux d'alerte comptables ;
+- critères adaptés aux banques et assurances.
+
+Chaque société reçoit une note sur 100 (pondérations dans `config.json`), un verdict, un niveau de confiance et une rubrique « Ce qui pourrait me donner tort ».
+
+**Pépites candidates** (`data/pepites.json`) : sociétés qui remplissent tous les critères de `config.json`. Elles sont classées par note ajustée selon le contexte : note du pays et phase du cycle de sa zone, un ajustement modéré affiché à part. Chacune a une revue critique : risques, piège de valeur possible, risque de change, risque pays, points à vérifier soi-même et lien vers le dernier rapport officiel.
+
+**Exécution** (`.github/workflows/agent-entreprises.yml`) :
+- en semaine à 22 h 30 UTC : cours, momentum, valorisation, et révision des sociétés ayant publié ;
+- le samedi : révision complète en 6 lots parallèles, puis assemblage ;
+- à la main : onglet **Actions** → **Agent entreprises** → **Run workflow** (mode `quotidien`, `complet` ou `echantillon`).
+
+```
+python -m agents.entreprises --mode complet --echantillon 60   # essai sur 60 sociétés
+python -m agents.entreprises --mode complet --lot europe --sortie-lot lot.json
+python -m agents.entreprises --mode assembler --lots lot*.json
+python -m agents.entreprises --mode quotidien
+```
+
+**Liste de surveillance** : ajouter une ligne dans `config/surveillance.json`, par exemple `{"ticker": "ASML.AS", "pays": "NL"}`. Le ticker est le symbole Yahoo Finance ; le pays, le code à 2 lettres d'un pays suivi. La société est analysée à la révision suivante, même hors de l'univers et quelle que soit sa taille.
+
 ## Santé des agents
 
 L'icône en forme de pouls, dans l'en-tête, ouvre l'écran **Santé des agents**. Une pastille rouge s'y affiche dès qu'un agent n'est pas « OK ».
@@ -195,6 +244,7 @@ js/interface.js       horloge, bandeau des marchés, alertes, mode léger
 js/sante.js           écran « Santé des agents »
 js/planning.js        planning cron des agents : statut (OK, en pause, en retard, en panne)
 js/macro.js           écran « Vue macro » et rubrique « Agent macro » de la fiche pays
+js/pepites.js         écran « Pépites »
 js/panneau-pays.js    fiches pays et secteur
 js/panneau-entreprise.js  fiche entreprise
 js/portefeuille.js    écran portefeuille
