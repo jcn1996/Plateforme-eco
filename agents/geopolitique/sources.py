@@ -125,6 +125,8 @@ def lire_rss(texte: str) -> list[dict]:
                 champs.setdefault("url", (f.text or "").strip() or f.get("href"))
             elif nom == "category":
                 categories.append((f.text or f.get("term") or "").strip())
+            elif nom == "source":  # agrégateurs (Google Actualités) : site d'origine de l'article
+                champs["source_url"], champs["source_nom"] = f.get("url"), (f.text or "").strip()
             elif nom in ("title", "description", "summary", "pubDate", "date", "updated", "published"):
                 champs.setdefault(nom, f.text)
         url = champs.get("url") or e.get("{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about")
@@ -132,9 +134,17 @@ def lire_rss(texte: str) -> list[dict]:
         if not url or not titre:
             continue
         date = _date_flux(champs.get("pubDate") or champs.get("date") or champs.get("updated") or champs.get("published"))
-        res.append({"titre": titre, "url": url.strip(), "domaine": domaine(url), "date": date,
-                    "description": _sans_balises(champs.get("description") or champs.get("summary"))[:400],
-                    "categories": [c for c in categories if c]})
+        item = {"titre": titre, "url": url.strip(), "domaine": domaine(url), "date": date,
+                "description": _sans_balises(champs.get("description") or champs.get("summary"))[:400],
+                "categories": [c for c in categories if c]}
+        if champs.get("source_url"):
+            # Le lien reste celui de l'agrégateur ; le domaine et le titre sont ceux du site d'origine
+            item["domaine"] = domaine(champs["source_url"])
+            nom = champs.get("source_nom") or ""
+            if nom and item["titre"].endswith(f" - {nom}"):
+                item["titre"] = item["titre"][: -len(nom) - 3].strip()
+            item["description"] = ""  # description d'agrégateur : titre et nom du site, sans information
+        res.append(item)
     return res
 
 

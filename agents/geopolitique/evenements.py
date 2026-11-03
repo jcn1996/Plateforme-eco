@@ -45,6 +45,13 @@ def _motif(nom: str) -> re.Pattern:
 # Noms de pays d'un seul mot (racines) : exclus des mots significatifs, car les pays sont déjà
 # représentés par leur code (« Iranian » et « Iran » → @IR). Rempli par Detecteur.
 MOTS_PAYS: set[str] = set()
+# Formats exclus comme titre de référence (galeries photo, directs, « ce qu'il faut savoir »…) : config « titres_exclus »
+TITRES_EXCLUS: list[re.Pattern] = []
+
+
+def format_exclu(titre: str) -> bool:
+    t = normaliser(titre)
+    return any(m.search(t) for m in TITRES_EXCLUS)
 
 
 class Detecteur:
@@ -61,6 +68,7 @@ class Detecteur:
                         MOTS_PAYS.add(racine(normaliser(nom)))
                     sensible = nom.upper() == nom and any(c.isalpha() for c in nom)
                     self.pays.append((code, _motif(nom if sensible else normaliser(nom)), sensible))
+        TITRES_EXCLUS[:] = [re.compile(rf"(?<![\w]){re.escape(normaliser(m))}(?![\w])") for m in config.get("titres_exclus", [])]
         self.categories = [(cle, [(normaliser(m), _motif(normaliser(m)), len(m.split())) for m in c["mots"]])
                            for cle, c in config["categories"].items()]
 
@@ -211,8 +219,11 @@ def pays_principaux(e: dict, det: Detecteur, resume: list[str] | None = None) ->
     res = det.pays_de(titre_reference(e))
     if resume:
         # Pays du résumé : retenus s'ils sont aussi cités dans au moins un tiers des articles (un
-        # résumé qui évoque l'Ukraine à propos des élections américaines ne rattache pas l'événement à l'Ukraine)
-        res += [c for c in det.pays_de(" ".join(resume)) if c in pays_presents(e, det, 1 / 3)]
+        # résumé qui évoque l'Ukraine à propos des élections américaines ne rattache pas l'événement à
+        # l'Ukraine) ; si aucun article ne nomme de pays (« Control of Congress… »), ceux du résumé
+        du_resume = det.pays_de(" ".join(resume))
+        presents = pays_presents(e, det, 1 / 3)
+        res += [c for c in du_resume if c in presents] if (presents or res) else du_resume
     res += pays_majoritaires(e, det)
     return list(dict.fromkeys(res))
 
@@ -428,11 +439,16 @@ def sources_publiques(e: dict, maxi: int = 12) -> list[dict]:
 
 
 def article_reference(e: dict) -> dict:
-    """Article le plus représentatif : source officielle s'il y en a, sinon le titre qui contient le
-    plus de mots-clés de l'événement (le plus ancien en cas d'égalité)."""
+    """Article de référence : source officielle s'il y en a ; sinon l'article le plus repris (même titre
+    sur le plus de sites), puis le plus centré sur l'événement. Les galeries photo, directs et pages
+    « ce qu'il faut savoir » (config « titres_exclus ») ne sont pas retenus, sauf s'il n'y a qu'eux."""
     officiels = [a for a in e["articles"] if a.get("officiel")]
     if officiels:
         return officiels[0]
+    candidats = [a for a in e["articles"] if not format_exclu(a["titre"])] or e["articles"]
+    reprises: dict[str, set] = {}
+    for a in e["articles"]:
+        reprises.setdefault(titre_normalise(a["titre"]), set()).add(a.get("domaine"))
     cles = mots_cles(e)
     majoritaires = set(pays_majoritaires(e))
 
@@ -442,7 +458,8 @@ def article_reference(e: dict) -> dict:
         mots = _mots_titre(a["titre"])
         hors = [c for c in (a.get("pays_titre") or []) if c not in majoritaires]
         return len(mots & cles) - 0.5 * len(mots - cles) - len(hors)
-    return max(sorted(e["articles"], key=lambda a: a.get("date") or ""), key=pertinence)
+    return max(sorted(candidats, key=lambda a: a.get("date") or ""),
+               key=lambda a: (len(reprises[titre_normalise(a["titre"])]), pertinence(a)))
 
 
 def titre_reference(e: dict) -> str:
