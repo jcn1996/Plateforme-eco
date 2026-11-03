@@ -36,7 +36,7 @@ class Reponse:
 
 def analyse_type(eid, sources):
     ids = [s["id"] for s in sources]
-    return {"evenement": eid,
+    return {"evenement": eid, "titre": "Les États-Unis frappent une île iranienne", "portee": "pays",
             "resume": [{"texte": "Les sources rapportent l'événement.", "sources": ids[:1]},
                        {"texte": "Une deuxième source le confirme.", "sources": ids[1:2] or ids[:1]}],
             "pays": [], "categorie": None, "gravite": 2,
@@ -52,6 +52,7 @@ class GeminiSimule:
     def __init__(self, horloge=None, fabrique=None, scenario=None):
         self.appels, self.horloge, self.fabrique, self.scenario = [], horloge, fabrique or analyse_type, scenario
         self.par_modele = {}
+        self.evenements_envoyes = []
 
     def __call__(self, url, params=None, timeout=None, json=None):
         modele = url.split("/models/")[1].split(":")[0]
@@ -62,6 +63,7 @@ class GeminiSimule:
             return Reponse(erreur[0], erreur[1])
         prompt = json["contents"][0]["parts"][0]["text"]
         blocs = __import__("json").loads(prompt[prompt.index("Événements :\n") + len("Événements :\n"):])
+        self.evenements_envoyes += [b["evenement"] for b in blocs]
         analyses = [self.fabrique(b["evenement"], b["sources"]) for b in blocs]
         return Reponse(200, {"candidates": [{"content": {"parts": [{"text": __import__("json").dumps({"analyses": analyses})}]}}]})
 
@@ -271,21 +273,29 @@ class TestSansIA(Base):
         self.assertTrue(d["evenements"])
         for e in d["evenements"]:
             self.assertTrue(e["gravite"] <= 3 and not e["ia"] and e["sources"])
-            self.assertEqual(e["mention"], "non analysé")
             self.assertIn(e["titre_langue"], ("anglais", "français"))
+            # Sans IA : titre d'origine, « non traduit » s'il n'est pas en français
+            self.assertEqual(e["mention"], None if e["titre_langue"] == "français" else "non traduit")
+            self.assertTrue(e["pays"] or e["mondial"])  # aucun événement sans pays publié
+            self.assertFalse(E.format_exclu(e["titre"]))
         self.assertEqual(len(d["pays"]), len(self.config["pays"]))
         self.assertTrue((self.data / "recap" / "geopolitique-2026-11-03.md").exists())
-        self.assertIn("non analysé", (self.data / "recap" / "geopolitique-2026-11-03.md").read_text(encoding="utf-8"))
+        self.assertIn("non traduit", (self.data / "recap" / "geopolitique-2026-11-03.md").read_text(encoding="utf-8"))
         s = lire_json(self.data / "journal" / "agent-geopolitique.json")["meta"]["sante"]
         self.assertEqual(s["intervalle_min"], 60)
         self.assertEqual(next(x for x in s["sources"] if x["nom"].startswith("Gemini"))["etat"], "non configurée")
         doc = next(x for x in s["sources"] if x["nom"].startswith("GDELT, API DOC"))
         self.assertEqual(doc["etat"], "ok")
-        self.assertIn("requêtes groupées", doc["detail"])
+        self.assertTrue(doc["secondaire"])
+        self.assertIn("source secondaire", doc["detail"])
+        gnews = [x for x in s["sources"] if x["nom"].startswith("Google Actualités")]
+        self.assertEqual(len(gnews), 8)
+        self.assertTrue(all(x["etat"] == "ok" for x in gnews))
         self.assertTrue(r["recap"])
 
     def test_requetes_par_theme_si_groupee_desactivee(self):
         self.config["gdelt"]["requete_groupee"] = False
+        self.config["gdelt"]["secondaire"] = False
         r = self.lancer()
         doc = next(x for x in r["sante"]["sources"] if x["nom"].startswith("GDELT, API DOC"))
         self.assertEqual(doc["etat"], "partielle")  # requête « coup » absente des données de test
@@ -307,13 +317,15 @@ class TestGemini(Base):
         for e in (x for x in d["evenements"] if x["ia"]):
             urls = {s["url"] for s in e["sources"]}
             self.assertIsNone(e["mention"])
+            self.assertEqual(e["titre"], "Les États-Unis frappent une île iranienne")  # titre en français de Gemini
             for a in e["resume"] + e["actifs"] + e["contre"]:
                 self.assertTrue(a["sources"] and set(a["sources"]) <= urls)
                 self.assertTrue(ia.en_francais(a["texte"]))
-        n = len(g.appels)
+        # Une heure plus tard : aucun événement déjà analysé n'est renvoyé à Gemini (cache)
+        analyses_1 = {e["id"] for e in r1["etat"]["evenements"] if e.get("analyse")}
+        n = len(g.evenements_envoyes)
         self.lancer(MAINTENANT + timedelta(hours=1), cle="cle-test", poster=g)
-        restants = [e for e in r1["etat"]["evenements"] if E.significatif(e, self.config) and not e.get("analyse")]
-        self.assertLessEqual(len(g.appels) - n, -(-len(restants) // self.config["gemini"]["evenements_par_appel"]))
+        self.assertFalse(set(g.evenements_envoyes[n:]) & analyses_1)
 
     def test_anti_hallucination_et_francais(self):
         def fabrique(eid, sources):
@@ -347,7 +359,7 @@ class TestGemini(Base):
         self.lancer(cle="cle-test", poster=GeminiSimule(fabrique=fab))
         evts = self.publics()["evenements"]
         self.assertFalse(any(e["ia"] for e in evts))
-        self.assertTrue(all(e["mention"] == "non analysé" for e in evts))
+        self.assertTrue(all(e["mention"] in ("non traduit", None) and not e["ia"] for e in evts))
 
     def test_gravite_4_avec_deux_sources_et_signal(self):
         def fab(eid, sources):
@@ -454,6 +466,116 @@ class TestGeminiPannes(Base):
         ids = {e["id"] for e in r["etat"]["evenements"]}
         for base, autre in r["rapport_ia"]["fusions"]:
             self.assertFalse(base in ids and autre in ids)
+
+
+class TestDerniersCorrectifs(Base):
+    """Source secondaire, santé, titres, gravité, pays."""
+
+    def test_gdelt_doc_secondaire_ne_degrade_pas(self):
+        class SansDoc(FournisseurTest):
+            def gdelt_doc(self, cle, requete, maxi=None):
+                raise ErreurSource("HTTP 429 après 1 essai(s)")
+        self.f = SansDoc(DONNEES)
+        r = self.lancer(cle="cle-test", poster=GeminiSimule())
+        doc = next(x for x in r["sante"]["sources"] if x["nom"].startswith("GDELT, API DOC"))
+        self.assertEqual(doc["etat"], "échec")
+        self.assertTrue(doc["secondaire"])
+        self.assertFalse(r["sante"]["degrade"], r["sante"]["raisons"])
+
+    def test_une_source_isolee_en_echec_est_compensee(self):
+        class SansFrance24(FournisseurTest):
+            def rss(self, cle, url):
+                if cle == "afp":
+                    raise ErreurSource("HTTP 404")
+                return super().rss(cle, url)
+        self.f = SansFrance24(DONNEES)
+        r = self.lancer(cle="cle-test", poster=GeminiSimule())
+        self.assertFalse(r["sante"]["degrade"], r["sante"]["raisons"])
+
+    def test_degrade_sans_fichiers_gdelt_ou_avec_trop_peu_de_sources(self):
+        class SansFichiers(FournisseurTest):
+            def gdelt_evenements(self, fips, n):
+                raise ErreurSource("HTTP 404")
+        self.f = SansFichiers(DONNEES)
+        r = self.lancer()
+        self.assertTrue(any("Fichiers d'événements GDELT" in x for x in r["sante"]["raisons"]))
+
+        class PresqueRien(FournisseurTest):
+            def rss(self, cle, url):
+                if cle not in ("bbc", "guardian"):
+                    raise ErreurSource("HTTP 503")
+                return super().rss(cle, url)
+
+            def federal_register(self, a, d):
+                raise ErreurSource("HTTP 503")
+
+            def ofac(self):
+                raise ErreurSource("HTTP 503")
+
+            def gpr(self):
+                raise ErreurSource("HTTP 503")
+
+            def epu(self, d):
+                raise ErreurSource("HTTP 503")
+        self.f = PresqueRien(DONNEES)
+        r = self.lancer(MAINTENANT + timedelta(hours=1))
+        self.assertTrue(any("moins que le minimum de 5" in x for x in r["sante"]["raisons"]))
+
+    def test_google_actualites_domaine_d_origine(self):
+        items = lire_rss((DONNEES / "rss_gnews_conflits_en.xml").read_text(encoding="utf-8"))
+        self.assertTrue(items)
+        self.assertTrue(all(i["domaine"] != "google.com" and i["url"].startswith("https://news.google.com/") for i in items))
+        self.assertFalse(any(i["titre"].endswith(" - NPR") for i in items))
+
+    def test_titre_anglais_de_gemini_refuse(self):
+        fab = lambda eid, sources: {**analyse_type(eid, sources), "titre": "US strikes Iranian island ahead of the vote"}
+        r = self.lancer(cle="cle-test", poster=GeminiSimule(fabrique=fab))
+        self.assertTrue(any("titre refusé" in s for s in r["rapport_ia"]["suppressions"]))
+        for e in (x for x in self.publics()["evenements"] if x["ia"]):
+            self.assertEqual(e["titre"], e["titre_origine"])  # titre d'origine, avec sa langue
+            self.assertEqual(e["mention"], None if e["titre_langue"] == "français" else "non traduit")
+
+    def test_election_normale_plafonnee(self):
+        cfg = charger_config()
+        e = {"id": "x", "categorie": "election", "pays": ["US"], "articles": [{"titre": "Americans vote in midterms", "domaine": "a.com"}]}
+        sources = [{"id": "S1", "url": "https://a.com/1", "domaine": "a.com", "titre": "Americans vote in midterms"},
+                   {"id": "S2", "url": "https://b.com/1", "domaine": "b.com", "titre": "Polls open across the US"}]
+        brut = {"titre": "Les Américains votent pour les élections de mi-mandat", "categorie": "election", "gravite": 4,
+                "resume": [{"texte": "Les électeurs américains votent pour renouveler le Congrès.", "sources": ["S1", "S2"]}]}
+        analyse, _ = ia.valider(brut, e, cfg, sources)
+        self.assertEqual(analyse["gravite"], 3)
+        self.assertIn("ramenée à 3", analyse["note_gravite"])
+        sources[1]["titre"] = "Violence erupts as opposition disputes US election result"
+        analyse, _ = ia.valider(brut, e, cfg, sources)
+        self.assertEqual(analyse["gravite"], 4)  # contestation ou violences : pas de plafond
+
+    def test_reperes_de_gravite_dans_le_prompt(self):
+        cfg = charger_config()
+        e = evenement_synthetique(1, MAINTENANT)
+        p = ia.consigne([e], cfg, {e["id"]: ia.sources_numerotees(e)})
+        for k in "12345":
+            self.assertIn(f"{k} = {cfg['gravite']['reperes'][k]}", p)
+        self.assertIn("élection qui se déroule normalement", p)
+
+    def test_formats_exclus_du_titre_de_reference(self):
+        cfg = charger_config()
+        det = E.Detecteur(cfg)
+        arts = [article("In Pictures: US midterm elections in 20 photos", "aljazeera.com"),
+                article("US midterm elections live: Polls open in test for Trump", "aljazeera.com"),
+                article("What to know on Election Day", "dailyunion.com")]
+        arts += [article("Americans head to the polls for midterm election referendum on Trump tenure", d) for d in ("a.ca", "b.com", "c.com")]
+        evts = []
+        E.regrouper([p for p in (E.preparer(x, det) for x in arts) if p], evts, cfg, MAINTENANT)
+        principal = max(evts, key=lambda e: len(e["articles"]))
+        self.assertEqual(E.titre_reference(principal), "Americans head to the polls for midterm election referendum on Trump tenure")
+
+    def test_evenement_sans_pays_non_publie_sauf_mondial(self):
+        fab = lambda eid, sources: {**analyse_type(eid, sources), "portee": "mondiale"}
+        self.lancer(cle="cle-test", poster=GeminiSimule(fabrique=fab))
+        d = self.publics()
+        mondiaux = [e for e in d["evenements"] if e["mondial"]]
+        self.assertTrue(all(e["pays_noms"] == ["Monde"] and not e["pays"] for e in mondiaux))
+        self.assertTrue(all(e["pays"] or e["mondial"] for e in d["evenements"]))
 
 
 # ------------------------------------------------------------------ quotas sur des journées complètes

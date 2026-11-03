@@ -121,7 +121,7 @@ function carteEvenement(e) {
       badgeGravite(e.gravite),
       el('div', {},
         el('h3', { class: 'geo-titre' }, e.titre,
-          // Titre d'origine non traduit (version sans IA) : sa langue et « non analysé »
+          // Titre d'origine (sans titre français de Gemini) : sa langue et « non traduit »
           e.mention ? el('span', { class: 'geo-mention' }, ` ${e.titre_langue ? `(${e.titre_langue}) · ` : ''}${e.mention}`) : null),
         el('div', { class: 'geo-meta' },
           el('span', { class: 'geo-categorie' }, e.categorie_libelle),

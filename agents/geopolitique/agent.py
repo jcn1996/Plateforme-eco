@@ -86,6 +86,19 @@ def gdelt_doc(f, config: dict, articles: list[dict], maintenant: datetime, garde
     Renvoie (articles retenus, détail, état de la source)."""
     g = config["gdelt"]
     n = 0
+    if g.get("secondaire"):
+        # Source secondaire : une seule requête groupée, un seul essai (limite de débit de GDELT)
+        def garder(liste):
+            nonlocal n
+            for a in liste:
+                if _recent(a["date"], maintenant, garde):
+                    articles.append({**a, "indice": None, "source": "GDELT DOC 2.0", "officiel": False})
+                    n += 1
+        try:
+            garder(f.gdelt_doc("groupe 1/1", g["requete_secondaire"], g["articles_max_requete_groupee"]))
+            return n, "source secondaire : 1 requête groupée", "ok"
+        except Exception as e:  # noqa: BLE001
+            return 0, f"source secondaire (information) : {str(e)[:160]}", "échec"
 
     def ajouter(liste, indice):
         nonlocal n
@@ -137,6 +150,8 @@ def collecter(f, config: dict, etat: dict, maintenant: datetime, mode: str) -> t
     # GDELT, API DOC 2.0
     n, detail, etat_doc = gdelt_doc(f, config, articles, maintenant, garde_media)
     noter("gdelt_doc", "GDELT, API DOC 2.0 (articles par thème)", "presse", etat_doc, f"{n} articles ; {detail}")
+    if config["gdelt"].get("secondaire"):
+        etats["gdelt_doc"]["secondaire"] = True
 
     # GDELT, fichiers d'événements à 15 minutes (géolocalisés) : tonalité et volume par pays
     fips = {p["fips"] for p in config["pays"].values()}
@@ -245,15 +260,20 @@ def publier(e: dict, config: dict, noms: dict, etat: dict, aujourdhui) -> dict:
             _, t = S.composante_tonalite(etat.get("gdelt_jours", {}), p["fips"], aujourdhui)
             if t is not None:
                 tons.append(t)
+    mondial = not pays and bool(a.get("mondial"))
     regions = sorted({(config["pays"].get(c) or config["autres_pays"].get(c) or {}).get("region", "monde") for c in pays}) or ["monde"]
     categorie = a.get("categorie") or e["categorie"]
+    langue = E.langue_reference(e)
+    # Titre : rédigé en français par Gemini ; sinon titre de l'article le plus repris, « non traduit »
+    # s'il n'est pas en français
+    titre_ia = a.get("titre")
     return {
-        "id": e["id"], "titre": E.titre_reference(e), "categorie": categorie,
-        # Titre d'origine (non traduit) : sa langue, et « non analysé » sans analyse par IA
-        "titre_langue": LANGUES.get(E.langue_reference(e) or "", E.langue_reference(e)),
-        "mention": None if a else "non analysé",
+        "id": e["id"], "titre": titre_ia or E.titre_reference(e), "titre_origine": E.titre_reference(e), "categorie": categorie,
+        "titre_langue": None if titre_ia else LANGUES.get(langue or "", langue),
+        "mention": None if (titre_ia or langue == "fr") else "non traduit",
         "categorie_libelle": config["categories"][categorie]["libelle"],
-        "pays": pays, "pays_noms": [noms.get(c, c) for c in pays], "pays_suivis": [c for c in pays if c in config["pays"]],
+        "pays": pays, "pays_noms": ["Monde"] if mondial else [noms.get(c, c) for c in pays], "mondial": mondial,
+        "pays_suivis": [c for c in pays if c in config["pays"]],
         "regions": regions, "gravite": e["gravite"], "note_gravite": a.get("note_gravite"),
         "ia": bool(a), "modele": a.get("modele"), "analyse_le": a.get("analyse_le"),
         "resume": a.get("resume", []), "actifs": a.get("actifs", []), "horizon": a.get("horizon"),
@@ -341,7 +361,7 @@ def recap_markdown(jour, evts: list[dict], scores: dict, sig: list[dict], etats:
     l += ["## Événements des dernières 24 heures (par gravité)", ""]
     recents = [e for e in evts if e["dernier"] >= E.iso(datetime.combine(jour, datetime.min.time(), timezone.utc) - timedelta(hours=18))]
     for e in recents[:15]:
-        suffixe = f" ({e['titre_langue']}, non analysé)" if e["mention"] else ""
+        suffixe = f" ({e['titre_langue']}, {e['mention']})" if e["mention"] else ""
         l.append(f"### [{e['gravite']}/5] {e['titre']}{suffixe}")
         l.append(f"- Catégorie : {e['categorie_libelle']} · pays : {', '.join(e['pays_noms']) or 'non déterminés'} · "
                  f"{'analyse Gemini, confiance ' + e['confiance'] if e['ia'] else 'sans IA'}")
@@ -385,7 +405,8 @@ def gemini_en_panne(rapport_ia: dict) -> bool:
 
 
 def sources_sante(etats: dict, rapport_ia: dict, quota: dict) -> list[dict]:
-    res = [{"nom": v["nom"], "etat": v["etat"], "detail": v.get("detail")} for v in etats.values()]
+    res = [{"nom": v["nom"], "etat": v["etat"], "detail": v.get("detail"), **({"secondaire": True} if v.get("secondaire") else {})}
+           for v in etats.values()]
     nom = "Gemini (analyse des événements)"
     if not rapport_ia["cle"]:
         res.append({"nom": nom, "etat": "non configurée", "detail": "secret GEMINI_API_KEY absent : version sans IA"})
@@ -403,15 +424,20 @@ def sources_sante(etats: dict, rapport_ia: dict, quota: dict) -> list[dict]:
     return res
 
 
-def indicateurs_sante(etats: dict) -> dict:
-    groupes = {"Événements · presse et GDELT": "presse", "Événements · sources officielles": "officiel",
-               "Tonalité par pays (GDELT)": "tonalite", "Indices GPR et EPU": "indices"}
-    ind = {}
-    for libelle, g in groupes.items():
-        membres = [v for v in etats.values() if v["groupe"] == g and v["etat"] != "non configurée"]
-        ind[libelle] = {"valides": [v["nom"] for v in membres if v["etat"] in ("ok", "partielle")],
-                        "configurees": [v["nom"] for v in membres]}
-    return ind
+def raisons_degradation(etats: dict, config: dict) -> list[str]:
+    """Règle propre à l'agent : dégradé si les fichiers d'événements GDELT ne répondent pas, ou si moins
+    de `sante.sources_min` autres sources répondent. Les sources secondaires (GDELT DOC) n'entrent pas
+    dans le compte ; une source isolée en échec est compensée par les autres."""
+    raisons = []
+    if etats.get("gdelt_evenements", {}).get("etat") not in ("ok", "partielle"):
+        raisons.append("Fichiers d'événements GDELT indisponibles (tonalité et volume par pays)")
+    autres = [v for c, v in etats.items() if c != "gdelt_evenements" and not v.get("secondaire") and v["etat"] != "non configurée"]
+    valides = [v for v in autres if v["etat"] in ("ok", "partielle")]
+    mini = config["sante"]["sources_min"]
+    if len(valides) < mini:
+        raisons.append(f"{len(valides)} source{'s' if len(valides) > 1 else ''} répond{'ent' if len(valides) > 1 else ''} "
+                       f"(hors GDELT), moins que le minimum de {mini}")
+    return raisons
 
 
 # ------------------------------------------------------------------ exécution
@@ -484,7 +510,8 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "hor
     # Scores par pays
     scores = S.scores(config, significatifs, etat, maintenant)
     S.enregistrer_historique(etat, scores, aujourdhui)
-    publics = sorted((publier(e, config, noms, etat, aujourdhui) for e in significatifs),
+    # Publiés : événements rattachés à au moins un pays, ou à portée mondiale explicite (affichés « Monde »)
+    publics = sorted((x for x in (publier(e, config, noms, etat, aujourdhui) for e in significatifs) if x["pays"] or x["mondial"]),
                      key=lambda x: (x["gravite"], x["dernier"]), reverse=True)[:80]
     par_pays = {}
     for code, s in scores.items():
@@ -503,7 +530,7 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "hor
         "mode_ia": "sans IA" if not any(x["ia"] for x in publics) else "gemini",
         "avertissement_ia": ("Analyse par IA indisponible pour cette mise à jour (" +
                              ("clé GEMINI_API_KEY absente" if not rapport_ia["cle"] else (rapport_ia["erreur"] or "")[:120]) +
-                             ") : les nouveaux événements sont présentés sans IA (titre d'origine et sa langue, mention « non analysé », "
+                             ") : les nouveaux événements sont présentés sans IA (titre de l'article le plus repris, avec sa langue et la mention « non traduit », "
                              "tonalité GDELT, gravité estimée par règles).")
         if sans_ia else None,
         "evenements": publics, "pays": par_pays, "indices": ind, "quota_ia": q,
@@ -561,7 +588,7 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "hor
     if gemini_en_panne(rapport_ia):
         raisons.append(f"Analyse sans IA : Gemini indisponible ({(rapport_ia['erreur'] or '')[:120]})")
     bloc = sante.bloc_sante("geopolitique", "Agent géopolitique", 6, WORKFLOW, sources_sante(etats, rapport_ia, q), maintenant,
-                            (j.get("meta") or {}).get("sante"), indicateurs=indicateurs_sante(etats), raisons_supplementaires=raisons)
+                            (j.get("meta") or {}).get("sante"), indicateurs={}, raisons_supplementaires=raisons_degradation(etats, config) + raisons)
     bloc["ia"] = {"modele": q["modele"], "appels_du_jour": q["appels"], "quota_jour": q["quota_jour"], "jour_quota": q["jour"],
                   "mode": donnees["mode_ia"], "modeles": q["modeles"]}
     sante.enregistrer_sante(chemin_journal, bloc, forcer=True)

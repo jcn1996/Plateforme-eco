@@ -6,7 +6,8 @@ Code : `agent.py` (étapes), `sources.py`, `evenements.py` (regroupement, sans I
 
 | Source | Usage | Rythme |
 |---|---|---|
-| GDELT, API DOC 2.0 | articles sur les sanctions, droits de douane, conflits, élections, coups d'État, routes maritimes : une requête groupée (tous les thèmes), ou une par thème si GDELT la refuse | chaque heure (au moins 6 s entre deux requêtes ; reprises sur 429 et 5xx après 10, 20 et 40 s ou Retry-After ; code exact journalisé ; 240 s au plus) |
+| GDELT, API DOC 2.0 | **source secondaire** : les adresses de GitHub, partagées, reçoivent presque toujours HTTP 429. Une seule requête groupée par exécution, un seul essai. Son échec est affiché pour information dans l'écran Santé et ne rend pas l'agent dégradé | chaque heure |
+| Google Actualités (RSS) | recherches par thème (sanctions, droits de douane, conflits, élections), en anglais et en français. Le domaine retenu est celui du site d'origine (balise `source`), pas celui de Google | chaque heure |
 | GDELT 2.0, fichiers d'événements (15 min) | événements géolocalisés : tonalité, volume, part des conflits par pays | chaque heure (les 4 derniers fichiers) |
 | Federal Register (API) | décrets et proclamations présidentiels ; mesures de l'OFAC, du BIS et de l'USTR | chaque heure |
 | OFAC, « Recent Actions » | sanctions américaines | chaque heure |
@@ -19,6 +20,14 @@ Code : `agent.py` (étapes), `sources.py`, `evenements.py` (regroupement, sans I
 
 Absentes, et indiquées « non configurée » dans l'écran Santé : Reuters et AP (plus de flux RSS public ; leurs articles arrivent par GDELT), le ministère chinois du Commerce (pas de flux public ; ses annonces arrivent par la presse). L'API GEO 2.0 de GDELT ne répond plus (404) : la géolocalisation vient des fichiers d'événements. Pas de réseaux sociaux : les déclarations des dirigeants sont captées par la presse et les communiqués officiels.
 
+### Santé de l'agent
+
+L'agent est **OK** tant que deux conditions sont remplies :
+- les fichiers d'événements GDELT répondent ;
+- au moins 5 autres sources répondent (`sante.sources_min`), hors sources secondaires.
+
+Une source isolée en échec (un flux RSS en 404, par exemple) est affichée, compensée par les autres. L'agent est aussi dégradé si Gemini ne répond pas, pour une autre raison que les quotas.
+
 ## 2. Événements
 
 - Un article est retenu s'il relève d'une catégorie (mots-clés de `config.json`). Les pays sont reconnus par leurs noms, en anglais et en français. Les sigles (US, UK, EU…) ne comptent qu'en majuscules.
@@ -30,7 +39,10 @@ Absentes, et indiquées « non configurée » dans l'écran Santé : Reuters et 
 
   Un article qui mélange deux sujets (« US strikes Iranian island ahead of midterm elections ») ne suffit donc pas à relier les frappes et les élections. Gemini peut aussi confirmer qu'un événement du lot est le même qu'un autre (« meme_que ») : ils sont fusionnés.
 - **Pays principaux** (affichés et comptés dans le score) : seuls les pays acteurs ou directement touchés sont retenus. Ce sont les pays cités dans le titre de référence ou dans le résumé, ou présents dans plus de la moitié des articles. Un pays cité une fois parmi d'autres n'est pas retenu.
-- **Titre de référence** : la source officielle s'il y en a une. Sinon, le titre le plus centré sur l'événement : celui qui a le plus de mots-clés, le moins de mots hors sujet et aucun pays seulement cité.
+- **Titre affiché** : Gemini rédige un titre en français, factuel, de 12 mots au plus. Il est refusé s'il n'est pas en français ou n'est pas sobre.
+- **Titre de référence**, utilisé sans IA : la source officielle s'il y en a une, sinon l'article le plus repris. En cas d'égalité, c'est le plus centré sur l'événement. Il porte sa langue et la mention « non traduit » s'il n'est pas en français.
+- **Formats exclus du titre de référence** (`titres_exclus`) : galeries photo, directs, pages « ce qu'il faut savoir » (« In Pictures », « Live », « What to know », « En direct »…).
+- **Publication** : un événement sans pays rattaché n'est pas publié dans l'appli. Seule exception : Gemini lui donne une portée mondiale explicite, et il est alors affiché « Monde ».
 - Les événements sont gardés 30 jours dans `data/geopolitique/etat.json`.
 - **Sources indépendantes** : domaines distincts. Une dépêche reprise mot pour mot sur plusieurs sites (syndication AP, NPR…) ne compte qu'une fois.
 - **Événement significatif** : score de sélection ≥ 6, avec au moins 3 sources indépendantes ou une source officielle. Le score de sélection est calculé ainsi :
@@ -48,6 +60,14 @@ Absentes, et indiquées « non configurée » dans l'écran Santé : Reuters et 
 
   Clé : secret `GEMINI_API_KEY`. Sur une erreur 5xx (dont 503, modèle surchargé) ou une erreur réseau, l'agent fait 3 essais, après 5 puis 15 s d'attente. Il passe ensuite au modèle suivant, qui est aussi utilisé pour le reste de l'exécution. Un 400 ou un 404 (modèle inconnu) fait passer directement au modèle suivant.
 - **Priorité** : les événements de gravité estimée 3 ou plus sont analysés en premier.
+- **Repères de gravité** (`gravite.reperes`, donnés à Gemini) :
+  - 1 = déclaration ou procédure de routine ;
+  - 2 = mesure ciblée ;
+  - 3 = mesure importante ou tension notable ;
+  - 4 = conflit armé, sanctions majeures, rupture commerciale ;
+  - 5 = choc systémique.
+
+  **Plafonds** (`gravite.plafonds`), appliqués après la réponse : une élection est au plus en 3. L'exception joue si les titres des sources ou le résumé mentionnent une contestation, une fraude, des violences ou une annulation.
 - **Langue** : tous les textes de Gemini doivent être en français. Une affirmation en anglais est supprimée.
 - Pour chaque événement significatif, l'agent produit :
   - un résumé factuel en 2 phrases ;

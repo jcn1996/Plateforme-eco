@@ -152,7 +152,7 @@ python -m agents.macro --capturer  # met à jour les données de test
 
 L'agent suit les événements géopolitiques et leur impact possible sur les marchés. Il tourne toutes les heures.
 
-**Sources** : GDELT (API DOC 2.0 et fichiers d'événements géolocalisés publiés toutes les 15 minutes), Federal Register, OFAC, flux officiels (Maison-Blanche, Élysée, Commission européenne, Conseil de l'UE, BRI), presse internationale (RSS), indice de risque géopolitique de Caldara et Iacoviello, indice d'incertitude de politique économique (FRED). Pas de réseaux sociaux.
+**Sources** : GDELT (fichiers d'événements géolocalisés publiés toutes les 15 minutes ; API DOC 2.0 en source secondaire), Google Actualités par thème, Federal Register, OFAC, flux officiels (Maison-Blanche, Élysée, Commission européenne, Conseil de l'UE, BRI), presse internationale (RSS), indice de risque géopolitique de Caldara et Iacoviello, indice d'incertitude de politique économique (FRED). Pas de réseaux sociaux.
 
 **Analyse** :
 - les articles sont regroupés par événement ;

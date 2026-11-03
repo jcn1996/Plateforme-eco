@@ -81,6 +81,14 @@ def en_francais(texte: str) -> bool:
     return fr >= 1 and fr > en
 
 
+def en_francais_titre(titre: str) -> bool:
+    """Titre court : peu de mots outils ; on accepte aussi les accents ou l'absence de mots outils anglais."""
+    mots = re.findall(r"[a-zàâçéèêëîïôûùüÿœ']+", titre.lower())
+    en = sum(1 for m in mots if m in MOTS_EN)
+    fr = sum(1 for m in mots if m in MOTS_FR or m.startswith(("l'", "d'", "qu'")))
+    return (fr > en) or (en == 0 and bool(re.search(r"[àâçéèêëîïôûùüÿœ]", titre))) or (en == 0 and fr == 0 and len(mots) <= 4)
+
+
 # ------------------------------------------------------------------ quotas
 
 def _jour(t: datetime, fuseau: str) -> str:
@@ -266,6 +274,8 @@ def consigne(lot: list[dict], config: dict, sources: dict) -> str:
         blocs.append({"evenement": e["id"], "categorie_detectee": e["categorie"], "pays_detectes": e["pays"], "sources": srcs})
     categories = ", ".join(config["categories"])
     actifs = ", ".join(config["actifs"])
+    reperes = " ; ".join(f"{k} = {v}" for k, v in config["gravite"]["reperes"].items())
+    regles_plafonds = " ".join(f"Catégorie « {c} » : {p['texte']}." for c, p in config["gravite"]["plafonds"].items())
     pays = ", ".join(sorted(set(config["pays"]) | {k for k in config["autres_pays"] if not k.startswith("_")}))
     return (
         "Tu es analyste géopolitique pour un suivi des marchés. Rédige TOUS les textes en français (les sources peuvent "
@@ -274,12 +284,16 @@ def consigne(lot: list[dict], config: dict, sources: dict) -> str:
         "Distingue les faits (résumé, tirés des sources) des interprétations (impact sur les marchés). "
         "Règle absolue : chaque affirmation cite au moins une source par son identifiant (S1, S2…) parmi celles fournies "
         "pour CET événement ; n'utilise aucune autre connaissance que ces titres. Une affirmation sans source sera supprimée. "
-        "Gravité de 1 (sans effet attendu sur les marchés) à 5 (choc majeur) ; 4 ou 5 seulement si au moins deux sources "
-        "de domaines différents le confirment. Pays : seulement les pays acteurs ou directement touchés, pas ceux "
-        "simplement cités. Si deux événements de la liste décrivent le même fait, indique pour le second "
-        "\"meme_que\": \"identifiant du premier\".\n"
+        "Gravité de 1 à 5, avec ces repères : " + reperes + ". 4 ou 5 seulement si au moins deux sources de domaines "
+        "différents le confirment. " + regles_plafonds + " "
+        "Titre : un titre en français, factuel, de 12 mots au plus, qui nomme l'acteur et le fait (pas de « en direct », "
+        "« en images », « ce qu'il faut savoir »). "
+        "Pays : seulement les pays acteurs ou directement touchés, pas ceux simplement cités ; s'il n'y en a pas et que le "
+        "thème est mondial (économie mondiale, climat, système financier international), indique \"portee\": \"mondiale\". "
+        "Si deux événements de la liste décrivent le même fait, indique pour le second \"meme_que\": \"identifiant du premier\".\n"
         f"Catégories possibles : {categories}. Actifs possibles : {actifs}. Codes pays possibles : {pays}.\n"
         "Réponds uniquement en JSON : {\"analyses\": [{\"evenement\": \"id\", \"meme_que\": null, "
+        "\"titre\": \"titre en français\", \"portee\": \"pays|mondiale\", "
         "\"resume\": [{\"texte\": \"phrase factuelle en français\", \"sources\": [\"S1\"]}, {\"texte\": \"2e phrase\", \"sources\": [\"S2\"]}], "
         "\"pays\": [\"US\"], \"categorie\": \"sanctions\", \"gravite\": 3, "
         "\"actifs\": [{\"actif\": \"pétrole\", \"sens\": \"hausse|baisse|incertain\", \"texte\": \"raison en une phrase\", \"sources\": [\"S1\"]}], "
@@ -341,9 +355,25 @@ def valider(brut: dict, e: dict, config: dict, sources: list[dict]) -> tuple[dic
     if gravite >= 4 and independantes < 2:
         note_gravite = f"gravité {gravite} proposée, plafonnée à 3 : une seule source indépendante citée"
         gravite = 3
+    # Plafonds par catégorie (ex. élection qui se déroule normalement : 3 au plus), sauf exception
+    # (contestation, violences…) présente dans les titres des sources ou dans le résumé
+    plafond = config["gravite"]["plafonds"].get(categorie)
+    if plafond and gravite > plafond["max"]:
+        texte = E.normaliser(" ".join([s["titre"] for s in sources] + [a["texte"] for a in resume]))
+        if not any(re.search(rf"\b{re.escape(m)}", texte) for m in plafond["exceptions"]):
+            note_gravite = f"gravité {gravite} proposée, ramenée à {plafond['max']} : {categorie} sans contestation ni violences"
+            gravite = plafond["max"]
+    titre = None
+    if isinstance(brut.get("titre"), str):
+        t = re.sub(r"\s*[\[(]S\d+(?:\s*[,;]\s*S\d+)*[\])]", "", brut["titre"]).strip().rstrip(".")
+        if 8 <= len(t) <= 160 and sobre(t) and en_francais_titre(t) and not E.format_exclu(t):
+            titre = t
+        else:
+            supprimees.append(f"titre refusé : {t[:80]}")
     for a in resume + actifs + contre:
         a.pop("_cites", None)
     analyse = {
+        "titre": titre, "mondial": brut.get("portee") == "mondiale",
         "resume": resume, "pays_ia": pays, "categorie": categorie, "gravite": gravite, "note_gravite": note_gravite,
         "actifs": [{"actif": a["actif"], "sens": a["sens"], "texte": a["texte"], "sources": a["sources"]} for a in actifs],
         "horizon": brut.get("horizon") if brut.get("horizon") in HORIZONS else "semaines",

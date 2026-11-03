@@ -220,7 +220,9 @@ function carteAgent(agent, maintenant) {
   const age = (maintenant - Date.parse(s.derniere_execution)) / 60_000;
   if (s.appel_externe) return cartePlanificateur(agent, s, statut, classe, enTete, age);
   const plan = situationPlanning(s, maintenant);
-  const problemes = (s.sources ?? []).filter((src) => ETATS_PROBLEME.has(src.etat));
+  // Sources secondaires (ex. GDELT DOC pour l'agent géopolitique) : affichées pour information
+  const secondaires = (s.sources ?? []).filter((src) => src.secondaire);
+  const problemes = (s.sources ?? []).filter((src) => ETATS_PROBLEME.has(src.etat) && !src.secondaire);
   // Clés facultatives absentes : affichées pour information, sans compter comme un échec
   const nonConfigurees = (s.sources ?? []).filter((src) => src.etat === 'non configurée');
   // Listes manuelles vérifiées (composition impossible à récupérer automatiquement) : information
@@ -289,6 +291,10 @@ function carteAgent(agent, maintenant) {
     nonConfigurees.length
       ? el('p', { class: 'sante-source-info' }, 'Non configurées (facultatives, non comptées) : ',
         nonConfigurees.map((src) => src.nom).join(', '), '.')
+      : null,
+    secondaires.length
+      ? el('p', { class: 'sante-source-info' }, 'Sources secondaires (information, sans effet sur le statut) : ',
+        secondaires.map((src) => `${src.nom} : ${LIBELLES_ETAT[src.etat] ?? src.etat}${src.detail ? ` (${src.detail})` : ''}`).join(' ; '), '.')
       : null,
   );
 }

@@ -21,16 +21,18 @@
   },
 
   "gdelt": {
-    "_commentaire": "API DOC 2.0 : d'abord une requête groupée (tous les thèmes en une requête : GDELT limite chaque adresse IP à une requête toutes les 5 s, et les adresses de GitHub sont partagées) ; si GDELT la refuse, une requête par thème. Au moins 6 s entre deux requêtes ; reprises sur 429 et 5xx (attentes croissantes, en-tête Retry-After respecté), dans la limite de budget_secondes. Fichiers d'événements GDELT 2.0 (géolocalisés, publiés toutes les 15 minutes) : tonalité et volume par pays. L'API GEO 2.0 ne répond plus (404) ; la géolocalisation vient de ces fichiers.",
+    "_commentaire": "API DOC 2.0 : source SECONDAIRE (les adresses de GitHub, partagées, reçoivent presque toujours HTTP 429) : une seule requête groupée par exécution, un seul essai ; son échec est affiché pour information et ne rend pas l'agent dégradé. Ancien fonctionnement (« secondaire » à false) : d'abord une requête groupée (tous les thèmes en une requête : GDELT limite chaque adresse IP à une requête toutes les 5 s, et les adresses de GitHub sont partagées) ; si GDELT la refuse, une requête par thème. Au moins 6 s entre deux requêtes ; reprises sur 429 et 5xx (attentes croissantes, en-tête Retry-After respecté), dans la limite de budget_secondes. Fichiers d'événements GDELT 2.0 (géolocalisés, publiés toutes les 15 minutes) : tonalité et volume par pays. L'API GEO 2.0 ne répond plus (404) ; la géolocalisation vient de ces fichiers.",
     "fenetre_doc": "3h",
-    "articles_max_par_requete": 75,
-    "articles_max_requete_groupee": 250,
+    "secondaire": true,
     "requete_groupee": true,
     "longueur_max_requete": 160,
+    "requete_secondaire": "(sanctions OR tariffs OR airstrike OR invasion OR ceasefire OR coup OR blockade OR embargo OR \"trade war\")",
+    "articles_max_requete_groupee": 250,
+    "articles_max_par_requete": 75,
     "delai_entre_requetes_secondes": 6,
-    "essais": 4,
-    "attentes_reprise_secondes": [10, 20, 40],
-    "budget_secondes": 240,
+    "essais": 1,
+    "attentes_reprise_secondes": [10],
+    "budget_secondes": 40,
     "fichiers_evenements_par_execution": 4,
     "requetes": {
       "sanctions": "(sanctions OR embargo OR \"export controls\" OR \"asset freeze\")",
@@ -53,6 +55,14 @@
     {"cle": "reuters", "langue": "en", "nom": "Reuters", "url": null, "type": "media", "_note": "plus de flux RSS public : captée par GDELT"},
     {"cle": "ap", "langue": "en", "nom": "Associated Press", "url": null, "type": "media", "_note": "pas de flux RSS public : captée par GDELT"},
     {"cle": "afp", "langue": "fr", "nom": "France 24 (dépêches AFP) (RSS)", "url": "https://www.france24.com/fr/rss", "type": "media"},
+    {"cle": "gnews_sanctions_en", "langue": "en", "nom": "Google Actualités : sanctions (anglais)", "url": "https://news.google.com/rss/search?q=sanctions+OR+embargo+when:1d&hl=en-US&gl=US&ceid=US:en", "type": "media", "agregateur": true},
+    {"cle": "gnews_douane_en", "langue": "en", "nom": "Google Actualités : droits de douane (anglais)", "url": "https://news.google.com/rss/search?q=tariffs+OR+%22trade+war%22+when:1d&hl=en-US&gl=US&ceid=US:en", "type": "media", "agregateur": true},
+    {"cle": "gnews_conflits_en", "langue": "en", "nom": "Google Actualités : conflits (anglais)", "url": "https://news.google.com/rss/search?q=airstrike+OR+invasion+OR+ceasefire+OR+%22military+offensive%22+when:1d&hl=en-US&gl=US&ceid=US:en", "type": "media", "agregateur": true},
+    {"cle": "gnews_elections_en", "langue": "en", "nom": "Google Actualités : élections (anglais)", "url": "https://news.google.com/rss/search?q=election+results+OR+%22disputed+election%22+when:1d&hl=en-US&gl=US&ceid=US:en", "type": "media", "agregateur": true},
+    {"cle": "gnews_sanctions_fr", "langue": "fr", "nom": "Google Actualités : sanctions (français)", "url": "https://news.google.com/rss/search?q=sanctions+OR+embargo+when:1d&hl=fr&gl=FR&ceid=FR:fr", "type": "media", "agregateur": true},
+    {"cle": "gnews_douane_fr", "langue": "fr", "nom": "Google Actualités : droits de douane (français)", "url": "https://news.google.com/rss/search?q=%22droits+de+douane%22+OR+%22guerre+commerciale%22+when:1d&hl=fr&gl=FR&ceid=FR:fr", "type": "media", "agregateur": true},
+    {"cle": "gnews_conflits_fr", "langue": "fr", "nom": "Google Actualités : conflits (français)", "url": "https://news.google.com/rss/search?q=frappes+OR+offensive+OR+%22cessez-le-feu%22+when:1d&hl=fr&gl=FR&ceid=FR:fr", "type": "media", "agregateur": true},
+    {"cle": "gnews_elections_fr", "langue": "fr", "nom": "Google Actualités : élections (français)", "url": "https://news.google.com/rss/search?q=%C3%A9lection+r%C3%A9sultats+OR+%22%C3%A9lection+contest%C3%A9e%22+when:1d&hl=fr&gl=FR&ceid=FR:fr", "type": "media", "agregateur": true},
     {"cle": "bbc", "langue": "en", "nom": "BBC News, monde (RSS)", "url": "https://feeds.bbci.co.uk/news/world/rss.xml", "type": "media"},
     {"cle": "le_monde", "langue": "fr", "nom": "Le Monde, international (RSS)", "url": "https://www.lemonde.fr/international/rss_full.xml", "type": "media"},
     {"cle": "ft", "langue": "en", "nom": "Financial Times, monde (RSS)", "url": "https://www.ft.com/world?format=rss", "type": "media"},
@@ -88,6 +98,28 @@
     "maritime": {"libelle": "Blocus et routes maritimes", "gravite_base": 3, "mots": ["blockade", "strait of hormuz", "hormuz", "red sea", "suez", "bab el-mandeb", "shipping", "tanker", "taiwan strait", "south china sea", "blocus", "detroit d'ormuz", "detroit de taiwan", "mer rouge", "mer de chine", "petrolier", "fret maritime"]},
     "diplomatie": {"libelle": "Diplomatie et sommets", "gravite_base": 1, "mots": ["summit", "talks", "negotiations", "treaty", "agreement", "sommet", "négociations", "accord", "traité", "visit", "visite"]},
     "monetaire": {"libelle": "Politique monétaire et banques centrales", "gravite_base": 1, "mots": ["central bank", "interest rate", "monetary policy", "inflation", "banque centrale", "taux directeur", "politique monétaire"]}
+  },
+
+  "gravite": {
+    "_commentaire": "Repères donnés à Gemini et appliqués après sa réponse.",
+    "reperes": {
+      "1": "déclaration ou procédure de routine (communiqué, réunion, avis technique, discours)",
+      "2": "mesure ciblée (sanction visant quelques personnes ou entreprises, droit de douane sur un produit, incident limité)",
+      "3": "mesure importante ou tension notable (sanctions sectorielles, hausse de droits de douane sur un pays, frappe ponctuelle, crise politique)",
+      "4": "conflit armé, sanctions majeures, rupture commerciale (embargo, fermeture d'une route maritime, offensive militaire)",
+      "5": "choc systémique (guerre entre grandes puissances, blocage durable d'une route vitale, crise financière mondiale)"
+    },
+    "plafonds": {
+      "election": {"max": 3, "exceptions": ["contest", "dispute", "fraud", "rigg", "violence", "riot", "unrest", "annul", "coup", "martial law", "contestation", "contestee", "fraude", "violences", "emeute", "annule", "troubles"],
+                   "texte": "une élection qui se déroule normalement est au plus en gravité 3 (2 le plus souvent), sauf contestation, violences, ou résultat qui change une politique économique majeure (dans ce dernier cas, l'expliquer dans le résumé)"}
+    }
+  },
+
+  "titres_exclus": ["in pictures", "in photos", "photos", "gallery", "live", "live updates", "as it happened", "what to know", "what we know", "what you need to know", "explainer", "your guide", "how it works", "minute by minute", "en direct", "en images", "en photos", "ce qu'il faut savoir", "ce que l'on sait", "decryptage", "carte interactive"],
+
+  "sante": {
+    "_commentaire": "Agent OK tant que les fichiers d'événements GDELT répondent et qu'au moins sources_min autres sources (hors sources secondaires) répondent ; une source isolée en échec est affichée, compensée par les autres.",
+    "sources_min": 5
   },
 
   "actifs": ["pétrole", "gaz", "or", "devises", "défense", "semi-conducteurs", "transport maritime", "agriculture", "métaux industriels", "actions", "obligations d'État", "énergie", "technologie", "automobile", "aéronautique", "banques", "cryptomonnaies"],
