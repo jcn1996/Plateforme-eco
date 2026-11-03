@@ -1,14 +1,14 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-03T16:16:11Z",
+    "genere_le": "2026-11-03T16:43:59Z",
     "source": "agent-geopolitique",
     "fictif": false,
     "version_agent": "1.0",
-    "mise_a_jour_precedente": "2026-11-03T15:16:07Z",
+    "mise_a_jour_precedente": "2026-11-03T16:16:11Z",
     "etat_des_sources": {
-      "GDELT, API DOC 2.0 (articles par thème)": "partielle",
-      "GDELT 2.0, fichiers d'événements géolocalisés (15 min)": "échec",
+      "GDELT, API DOC 2.0 (articles par thème)": "échec",
+      "GDELT 2.0, fichiers d'événements géolocalisés (15 min)": "ok",
       "Federal Register (API)": "ok",
       "OFAC, actions récentes (Trésor américain)": "ok",
       "Maison-Blanche, décisions présidentielles (RSS)": "ok",
@@ -32,186 +32,82 @@
   },
   "donnees": {
     "date": "2026-11-03",
-    "mode_ia": "sans IA",
-    "avertissement_ia": "Analyse par IA indisponible pour cette mise à jour (ReadTimeout: HTTPSConnectionPool(host='generativelanguage.googleapis.com', port=443): Read timed out. (read timeout=60)) : les nouveaux événements sont présentés sans IA (titres des sources, tonalité GDELT, gravité estimée par règles).",
+    "mode_ia": "gemini",
+    "avertissement_ia": null,
     "evenements": [
-      {
-        "id": "evt-3ba56f3fae09",
-        "titre": "US strikes Iranian island ahead of midterm elections",
-        "categorie": "maritime",
-        "categorie_libelle": "Blocus et routes maritimes",
-        "pays": [
-          "US",
-          "IR",
-          "QA"
-        ],
-        "pays_noms": [
-          "États-Unis",
-          "Iran",
-          "Qatar"
-        ],
-        "pays_suivis": [
-          "US"
-        ],
-        "regions": [
-          "amerique_nord",
-          "moyen_orient"
-        ],
-        "gravite": 3,
-        "note_gravite": null,
-        "ia": false,
-        "modele": null,
-        "analyse_le": null,
-        "resume": [],
-        "actifs": [],
-        "horizon": null,
-        "confiance": "faible",
-        "contre": [],
-        "sources_independantes": null,
-        "sources": [
-          {
-            "titre": "US strikes Iranian island ahead of midterm elections",
-            "url": "https://www.bbc.co.uk/news/articles/cx240mrm3g8vo?at_medium=RSS&at_campaign=rss",
-            "domaine": "bbc.co.uk",
-            "date": "2026-11-03T11:33:33Z",
-            "officiel": false,
-            "source": "BBC News, monde (RSS)"
-          },
-          {
-            "titre": "US strikes Iranian targets in the Strait of Hormuz , official says , leaving unclear what comes next",
-            "url": "http://www.bozemandailychronicle.com/wire/news/us-strikes-iranian-targets-in-the-strait-of-hormuz-official-says-leaving-unclear-what-comes/article_2a589236-cc8b-5ff3-b827-2e79217f4103.html",
-            "domaine": "bozemandailychronicle.com",
-            "date": "2026-11-03T11:15:00Z",
-            "officiel": false,
-            "source": "GDELT DOC 2.0"
-          },
-          {
-            "titre": "Negotiators ‘braced for worst’ over US-Iran talks to reopen strait of Hormuz",
-            "url": "https://www.theguardian.com/world/2026/nov/01/negotiators-braced-for-worst-over-us-iran-talks-to-reopen-strait-of-hormuz",
-            "domaine": "theguardian.com",
-            "date": "2026-11-01T17:49:28Z",
-            "officiel": false,
-            "source": "The Guardian, monde (RSS)"
-          }
-        ],
-        "nb_articles": 6,
-        "nb_domaines": 3,
-        "officiel": false,
-        "premier": "2026-11-01T17:49:28Z",
-        "dernier": "2026-11-03T11:33:33Z",
-        "tonalite_gdelt": -1.42,
-        "score_selection": 6.5
-      },
-      {
-        "id": "evt-87efcfd56daa",
-        "titre": "U . S . Carries Out Defensive Strike On Iranian Island",
-        "categorie": "conflit",
-        "categorie_libelle": "Conflit armé",
-        "pays": [
-          "US",
-          "IR"
-        ],
-        "pays_noms": [
-          "États-Unis",
-          "Iran"
-        ],
-        "pays_suivis": [
-          "US"
-        ],
-        "regions": [
-          "amerique_nord",
-          "moyen_orient"
-        ],
-        "gravite": 3,
-        "note_gravite": null,
-        "ia": false,
-        "modele": null,
-        "analyse_le": null,
-        "resume": [],
-        "actifs": [],
-        "horizon": null,
-        "confiance": "faible",
-        "contre": [],
-        "sources_independantes": null,
-        "sources": [
-          {
-            "titre": "U . S . Carries Out Defensive Strike On Iranian Island",
-            "url": "https://wdov.iheart.com/content/2026-11-03-us-carries-out-defensive-strike-on-iranian-island/",
-            "domaine": "iheart.com",
-            "date": "2026-11-03T11:15:00Z",
-            "officiel": false,
-            "source": "GDELT DOC 2.0"
-          },
-          {
-            "titre": "US hits Qeshm Island, Pezeshkian signals more diplomacy: Iran war latest",
-            "url": "https://www.aljazeera.com/news/2026/11/3/us-hits-qeshm-island-pezeshkian-signals-more-diplomacy-iran-war-latest?traffic_source=rss",
-            "domaine": "aljazeera.com",
-            "date": "2026-11-03T10:40:34Z",
-            "officiel": false,
-            "source": "Al Jazeera (RSS)"
-          },
-          {
-            "titre": "Iran : frappes \"défensives\" des États-Unis contre l'île de Qeshm",
-            "url": "https://www.france24.com/fr/vid%C3%A9o/20261103-iran-frappes-d%C3%A9fensives-des-%C3%A9tats-unis-contre-l-%C3%AEle-de-qeshm",
-            "domaine": "france24.com",
-            "date": "2026-11-03T10:28:06Z",
-            "officiel": false,
-            "source": "France 24 (dépêches AFP) (RSS)"
-          },
-          {
-            "titre": "US strikes Iran’s Qeshm Island as Vance voices optimism about a deal",
-            "url": "https://www.theguardian.com/world/2026/nov/03/us-strikes-irans-qeshm-island",
-            "domaine": "theguardian.com",
-            "date": "2026-11-03T08:13:46Z",
-            "officiel": false,
-            "source": "The Guardian, monde (RSS)"
-          }
-        ],
-        "nb_articles": 13,
-        "nb_domaines": 4,
-        "officiel": false,
-        "premier": "2026-11-03T08:13:46Z",
-        "dernier": "2026-11-03T11:15:00Z",
-        "tonalite_gdelt": -1.42,
-        "score_selection": 7.14
-      },
       {
         "id": "evt-3f36b36901be",
         "titre": "In Pictures: US midterm elections in 20 photos",
         "categorie": "election",
+        "titre_langue": "anglais",
+        "mention": null,
         "categorie_libelle": "Élections",
         "pays": [
-          "US",
-          "IR",
-          "FR",
-          "UA"
+          "US"
         ],
         "pays_noms": [
-          "États-Unis",
-          "Iran",
-          "France",
-          "Ukraine"
+          "États-Unis"
         ],
         "pays_suivis": [
-          "US",
-          "FR"
+          "US"
         ],
         "regions": [
-          "amerique_nord",
-          "europe",
-          "moyen_orient"
+          "amerique_nord"
         ],
-        "gravite": 2,
+        "gravite": 4,
         "note_gravite": null,
-        "ia": false,
-        "modele": null,
-        "analyse_le": null,
-        "resume": [],
-        "actifs": [],
-        "horizon": null,
-        "confiance": "faible",
-        "contre": [],
-        "sources_independantes": null,
+        "ia": true,
+        "modele": "gemini-3.5-flash-lite",
+        "analyse_le": "2026-11-03T16:43:59Z",
+        "resume": [
+          {
+            "texte": "Les électeurs américains se rendent aux urnes pour les élections de mi-mandat, perçues comme un référendum sur la politique du président Donald Trump.",
+            "sources": [
+              "https://www.theguardian.com/us-news/2026/nov/03/midterm-elections-americans-vote",
+              "https://www.brandonsun.com/business/2026/11/03/americans-head-to-the-polls-for-midterm-election-referendum-on-trumps-tenure",
+              "https://www.news8000.com/news/politics/national-politics/midterm-elections-coming-to-a-close-as-voters-pass-judgment-on-trumps-second-term/article_aacd17b2-93f5-5949-be6b-d8059e3628e7.html"
+            ]
+          },
+          {
+            "texte": "Ces scrutins interviennent dans un contexte marqué par des enjeux de politique étrangère incluant le dossier iranien.",
+            "sources": [
+              "https://www.dw.com/en/what-us-midterm-elections-mean-for-ukraine-iran-and-elsewhere/a-79836423?maca=en-rss-en-world-4025-rdf",
+              "https://nypost.com/2026/11/03/us-news/trump-calls-iran-conflict-a-soft-war-insists-us-holds-the-cards-ahead-of-midterm-elections/"
+            ]
+          }
+        ],
+        "actifs": [
+          {
+            "actif": "actions",
+            "sens": "incertain",
+            "texte": "L'incertitude sur la composition du Congrès engendre de la volatilité sur les marchés d'actions américains.",
+            "sources": [
+              "https://www.theguardian.com/us-news/2026/nov/03/midterm-elections-americans-vote",
+              "https://www.ft.com/content/c3be88d4-37bb-4eff-8e12-34ab019012e5?syn-25a6b1a6=1"
+            ]
+          },
+          {
+            "actif": "obligations d'État",
+            "sens": "incertain",
+            "texte": "Les investisseurs ajustent leurs positions sur la dette souveraine en fonction des équilibres politiques futurs.",
+            "sources": [
+              "https://www.lemonde.fr/les-decodeurs/article/2026/11/03/midterms-2026-decouvrez-en-temps-reel-les-cartes-des-resultats-aux-elections-de-mi-mandat_6805570_4355771.html",
+              "https://www.ft.com/content/c3be88d4-37bb-4eff-8e12-34ab019012e5?syn-25a6b1a6=1"
+            ]
+          }
+        ],
+        "horizon": "jours",
+        "confiance": "élevée",
+        "contre": [
+          {
+            "texte": "Un résultat électoral sans surprise majeure pourrait rapidement dissiper l'aversion au risque observée à court terme.",
+            "sources": [
+              "https://www.lemonde.fr/les-decodeurs/article/2026/11/03/midterms-2026-decouvrez-en-temps-reel-les-cartes-des-resultats-aux-elections-de-mi-mandat_6805570_4355771.html",
+              "https://www.news8000.com/news/politics/national-politics/midterm-elections-coming-to-a-close-as-voters-pass-judgment-on-trumps-second-term/article_aacd17b2-93f5-5949-be6b-d8059e3628e7.html"
+            ]
+          }
+        ],
+        "sources_independantes": 7,
         "sources": [
           {
             "titre": "In Pictures: US midterm elections in 20 photos",
@@ -230,20 +126,20 @@
             "source": "The Guardian, monde (RSS)"
           },
           {
+            "titre": "Midterms 2026: les cartes des résultats des élections de mi-mandat en temps réel",
+            "url": "https://www.lemonde.fr/les-decodeurs/article/2026/11/03/midterms-2026-decouvrez-en-temps-reel-les-cartes-des-resultats-aux-elections-de-mi-mandat_6805570_4355771.html",
+            "domaine": "lemonde.fr",
+            "date": "2026-11-03T15:14:12Z",
+            "officiel": false,
+            "source": "Le Monde, international (RSS)"
+          },
+          {
             "titre": "What US midterm elections mean for Ukraine, Iran and elsewhere",
             "url": "https://www.dw.com/en/what-us-midterm-elections-mean-for-ukraine-iran-and-elsewhere/a-79836423?maca=en-rss-en-world-4025-rdf",
             "domaine": "dw.com",
             "date": "2026-11-03T14:26:00Z",
             "officiel": false,
             "source": "Deutsche Welle, monde (RSS)"
-          },
-          {
-            "titre": "Donald Trump confirme des frappes contre une infrastructure antiaériennne en Iran",
-            "url": "https://www.lemonde.fr/international/article/2026/11/03/donald-trump-confirme-des-frappes-contre-une-infrastructure-anti-aeriennne-en-iran_6805599_3210.html",
-            "domaine": "lemonde.fr",
-            "date": "2026-11-03T14:23:18Z",
-            "officiel": false,
-            "source": "Le Monde, international (RSS)"
           },
           {
             "titre": "Your guide to US midterms election night",
@@ -254,7 +150,7 @@
             "source": "Financial Times, monde (RSS)"
           },
           {
-            "titre": "États-Unis : Donald Trump tente d’arracher des dernières voix avant les midterms",
+            "titre": "États-Unis: Donald Trump tente d’arracher des dernières voix avant les midterms",
             "url": "https://www.france24.com/fr/vid%C3%A9o/20261103-%C3%A9tats-unis-donald-trump-tente-d-arracher-des-derni%C3%A8res-voix-avant-les-midterms",
             "domaine": "france24.com",
             "date": "2026-11-03T11:48:43Z",
@@ -270,17 +166,17 @@
             "source": "GDELT DOC 2.0"
           },
           {
-            "titre": "If our people vote , we win in a landslide : Trump urges Republicans to turn out ahead of US midterms",
-            "url": "http://www.texasguardian.com/news/279408958/if-our-people-vote-we-win-in-a-landslide-trump-urges-republicans-to-turn-out-ahead-of-us-midterms",
-            "domaine": "texasguardian.com",
+            "titre": "Americans head to the polls for midterm election referendum on Trump tenure",
+            "url": "https://www.stcatharinesstandard.ca/business/americans-head-to-the-polls-for-midterm-election-referendum-on-trump-s-tenure/article_0afc0a70-bc58-5400-ac96-e1389236f644.html",
+            "domaine": "stcatharinesstandard.ca",
             "date": "2026-11-03T11:15:00Z",
             "officiel": false,
             "source": "GDELT DOC 2.0"
           },
           {
-            "titre": "Americans head to the polls for midterm election referendum on Trump tenure",
-            "url": "https://www.stcatharinesstandard.ca/business/americans-head-to-the-polls-for-midterm-election-referendum-on-trump-s-tenure/article_0afc0a70-bc58-5400-ac96-e1389236f644.html",
-            "domaine": "stcatharinesstandard.ca",
+            "titre": "Trump calls Iran conflict a soft war, insists US holds the cards ahead of midterm elections",
+            "url": "https://nypost.com/2026/11/03/us-news/trump-calls-iran-conflict-a-soft-war-insists-us-holds-the-cards-ahead-of-midterm-elections/",
+            "domaine": "nypost.com",
             "date": "2026-11-03T11:15:00Z",
             "officiel": false,
             "source": "GDELT DOC 2.0"
@@ -292,28 +188,309 @@
             "date": "2026-11-03T11:15:00Z",
             "officiel": false,
             "source": "GDELT DOC 2.0"
-          },
-          {
-            "titre": "Trump calls Iran conflict a  soft war , insists US holds the cards ahead of midterm elections",
-            "url": "https://nypost.com/2026/11/03/us-news/trump-calls-iran-conflict-a-soft-war-insists-us-holds-the-cards-ahead-of-midterm-elections/",
-            "domaine": "nypost.com",
-            "date": "2026-11-03T11:15:00Z",
-            "officiel": false,
-            "source": "GDELT DOC 2.0"
           }
         ],
-        "nb_articles": 27,
-        "nb_domaines": 11,
+        "nb_articles": 25,
+        "nb_domaines": 10,
         "officiel": false,
         "premier": "2026-11-02T15:41:00Z",
         "dernier": "2026-11-03T15:46:57Z",
-        "tonalite_gdelt": -2.17,
-        "score_selection": 11.17
+        "tonalite_gdelt": -1.27,
+        "score_selection": 10.92
+      },
+      {
+        "id": "evt-9024bdfb458f",
+        "titre": "U.S. Carries Out Defensive Strike On Iranian Island",
+        "categorie": "conflit",
+        "titre_langue": "anglais",
+        "mention": null,
+        "categorie_libelle": "Conflit armé",
+        "pays": [
+          "US",
+          "IR"
+        ],
+        "pays_noms": [
+          "États-Unis",
+          "Iran"
+        ],
+        "pays_suivis": [
+          "US"
+        ],
+        "regions": [
+          "amerique_nord",
+          "moyen_orient"
+        ],
+        "gravite": 4,
+        "note_gravite": null,
+        "ia": true,
+        "modele": "gemini-3.5-flash-lite",
+        "analyse_le": "2026-11-03T16:43:59Z",
+        "resume": [
+          {
+            "texte": "Les États-Unis ont mené des frappes qualifiées de défensives contre l'île de Qeshm en Iran à la veille des élections de mi-mandat.",
+            "sources": [
+              "https://www.bbc.co.uk/news/articles/cx240mrm3g8vo?at_medium=RSS&at_campaign=rss",
+              "https://wdov.iheart.com/content/2026-11-03-us-carries-out-defensive-strike-on-iranian-island/",
+              "https://www.france24.com/fr/vid%C3%A9o/20261103-iran-frappes-d%C3%A9fensives-des-%C3%A9tats-unis-contre-l-%C3%AEle-de-qeshm",
+              "https://www.ft.com/content/ebeaca62-8958-459a-be9d-d3d39e441a53?syn-25a6b1a6=1"
+            ]
+          },
+          {
+            "texte": "Donald Trump a confirmé ces opérations ciblant une infrastructure antiaérienne, tandis que des signaux diplomatiques ont également été émis par Téhéran.",
+            "sources": [
+              "https://www.lemonde.fr/international/article/2026/11/03/donald-trump-confirme-des-frappes-contre-une-infrastructure-anti-aeriennne-en-iran_6805599_3210.html",
+              "https://www.aljazeera.com/news/2026/11/3/us-hits-qeshm-island-pezeshkian-signals-more-diplomacy-iran-war-latest?traffic_source=rss",
+              "https://www.theguardian.com/world/2026/nov/03/us-strikes-irans-qeshm-island"
+            ]
+          }
+        ],
+        "actifs": [
+          {
+            "actif": "pétrole",
+            "sens": "hausse",
+            "texte": "Les tensions géopolitiques accrues au Moyen-Orient font craindre des perturbations de l'approvisionnement pétrolier.",
+            "sources": [
+              "https://www.lemonde.fr/international/article/2026/11/03/donald-trump-confirme-des-frappes-contre-une-infrastructure-anti-aeriennne-en-iran_6805599_3210.html",
+              "https://www.theguardian.com/world/2026/nov/03/us-strikes-irans-qeshm-island"
+            ]
+          },
+          {
+            "actif": "or",
+            "sens": "hausse",
+            "texte": "Le contexte d'affrontement militaire renforce la demande pour les valeurs refuges.",
+            "sources": [
+              "https://www.bbc.co.uk/news/articles/cx240mrm3g8vo?at_medium=RSS&at_campaign=rss",
+              "https://wdov.iheart.com/content/2026-11-03-us-carries-out-defensive-strike-on-iranian-island/"
+            ]
+          }
+        ],
+        "horizon": "jours",
+        "confiance": "élevée",
+        "contre": [
+          {
+            "texte": "Des déclarations officielles optimistes concernant un accord potentiel pourraient limiter la persistance de la prime de risque.",
+            "sources": [
+              "https://www.aljazeera.com/news/2026/11/3/us-hits-qeshm-island-pezeshkian-signals-more-diplomacy-iran-war-latest?traffic_source=rss",
+              "https://www.theguardian.com/world/2026/nov/03/us-strikes-irans-qeshm-island"
+            ]
+          }
+        ],
+        "sources_independantes": 7,
+        "sources": [
+          {
+            "titre": "Donald Trump confirme des frappes contre une infrastructure antiaériennne en Iran",
+            "url": "https://www.lemonde.fr/international/article/2026/11/03/donald-trump-confirme-des-frappes-contre-une-infrastructure-anti-aeriennne-en-iran_6805599_3210.html",
+            "domaine": "lemonde.fr",
+            "date": "2026-11-03T14:23:18Z",
+            "officiel": false,
+            "source": "Le Monde, international (RSS)"
+          },
+          {
+            "titre": "US strikes Iranian island ahead of midterm elections",
+            "url": "https://www.bbc.co.uk/news/articles/cx240mrm3g8vo?at_medium=RSS&at_campaign=rss",
+            "domaine": "bbc.co.uk",
+            "date": "2026-11-03T11:33:33Z",
+            "officiel": false,
+            "source": "BBC News, monde (RSS)"
+          },
+          {
+            "titre": "U.S. Carries Out Defensive Strike On Iranian Island",
+            "url": "https://wdov.iheart.com/content/2026-11-03-us-carries-out-defensive-strike-on-iranian-island/",
+            "domaine": "iheart.com",
+            "date": "2026-11-03T11:15:00Z",
+            "officiel": false,
+            "source": "GDELT DOC 2.0"
+          },
+          {
+            "titre": "US hits Qeshm Island, Pezeshkian signals more diplomacy: Iran war latest",
+            "url": "https://www.aljazeera.com/news/2026/11/3/us-hits-qeshm-island-pezeshkian-signals-more-diplomacy-iran-war-latest?traffic_source=rss",
+            "domaine": "aljazeera.com",
+            "date": "2026-11-03T10:40:34Z",
+            "officiel": false,
+            "source": "Al Jazeera (RSS)"
+          },
+          {
+            "titre": "Iran: frappes \"défensives\" des États-Unis contre l'île de Qeshm",
+            "url": "https://www.france24.com/fr/vid%C3%A9o/20261103-iran-frappes-d%C3%A9fensives-des-%C3%A9tats-unis-contre-l-%C3%AEle-de-qeshm",
+            "domaine": "france24.com",
+            "date": "2026-11-03T10:28:06Z",
+            "officiel": false,
+            "source": "France 24 (dépêches AFP) (RSS)"
+          },
+          {
+            "titre": "US strikes Iran’s Qeshm Island as Vance voices optimism about a deal",
+            "url": "https://www.theguardian.com/world/2026/nov/03/us-strikes-irans-qeshm-island",
+            "domaine": "theguardian.com",
+            "date": "2026-11-03T08:13:46Z",
+            "officiel": false,
+            "source": "The Guardian, monde (RSS)"
+          },
+          {
+            "titre": "US strikes Iran’s Qeshm Island on eve of election",
+            "url": "https://www.ft.com/content/ebeaca62-8958-459a-be9d-d3d39e441a53?syn-25a6b1a6=1",
+            "domaine": "ft.com",
+            "date": "2026-11-03T06:44:35Z",
+            "officiel": false,
+            "source": "Financial Times, monde (RSS)"
+          }
+        ],
+        "nb_articles": 16,
+        "nb_domaines": 7,
+        "officiel": false,
+        "premier": "2026-11-03T06:44:35Z",
+        "dernier": "2026-11-03T14:23:18Z",
+        "tonalite_gdelt": -1.27,
+        "score_selection": 8.5
+      },
+      {
+        "id": "evt-72de91684e21",
+        "titre": "It Election Day. Control of Congress is on the line, and what else you need to know",
+        "categorie": "election",
+        "titre_langue": "anglais",
+        "mention": null,
+        "categorie_libelle": "Élections",
+        "pays": [],
+        "pays_noms": [],
+        "pays_suivis": [],
+        "regions": [
+          "monde"
+        ],
+        "gravite": 3,
+        "note_gravite": null,
+        "ia": true,
+        "modele": "gemini-3.5-flash-lite",
+        "analyse_le": "2026-11-03T16:43:59Z",
+        "resume": [
+          {
+            "texte": "Les électeurs américains se rendent aux urnes pour déterminer le contrôle du Congrès.",
+            "sources": [
+              "https://www.ft.com/content/77c2eaca-4fe1-4c69-b3bd-c517b045ff37?syn-25a6b1a6=1"
+            ]
+          },
+          {
+            "texte": "Les investisseurs se préparent à d'éventuels changements politiques suite à ce scrutin.",
+            "sources": [
+              "https://www.theglobeandmail.com/investing/article-investors-ready-for-possible-shake-up-in-congress-as-election-day/"
+            ]
+          }
+        ],
+        "actifs": [
+          {
+            "actif": "actions",
+            "sens": "incertain",
+            "texte": "L'incertitude sur la composition future du Congrès peut induire de la volatilité sur les marchés boursiers.",
+            "sources": [
+              "https://www.theglobeandmail.com/investing/article-investors-ready-for-possible-shake-up-in-congress-as-election-day/"
+            ]
+          }
+        ],
+        "horizon": "semaines",
+        "confiance": "moyenne",
+        "contre": [
+          {
+            "texte": "Un statu quo politique rapide pourrait stabiliser les marchés sans heurt notable.",
+            "sources": [
+              "https://www.theglobeandmail.com/investing/article-investors-ready-for-possible-shake-up-in-congress-as-election-day/"
+            ]
+          }
+        ],
+        "sources_independantes": 2,
+        "sources": [
+          {
+            "titre": "It Election Day. Control of Congress is on the line, and what else you need to know",
+            "url": "https://www.ksfr.org/npr-news/2026-11-03/its-election-day-control-of-congress-is-on-the-line-and-what-else-you-need-to-know",
+            "domaine": "ksfr.org",
+            "date": "2026-11-03T11:15:00Z",
+            "officiel": false,
+            "source": "GDELT DOC 2.0"
+          },
+          {
+            "titre": "It Election Day. Control of Congress is on the line, and what else you need to know",
+            "url": "https://www.aspenpublicradio.org/2026-11-03/its-election-day-control-of-congress-is-on-the-line-and-what-else-you-need-to-know",
+            "domaine": "aspenpublicradio.org",
+            "date": "2026-11-03T11:15:00Z",
+            "officiel": false,
+            "source": "GDELT DOC 2.0"
+          },
+          {
+            "titre": "It Election Day. Control of Congress is on the line, and what else you need to know",
+            "url": "https://www.wcsufm.org/latest-from-npr/2026-11-03/its-election-day-control-of-congress-is-on-the-line-and-what-else-you-need-to-know",
+            "domaine": "wcsufm.org",
+            "date": "2026-11-03T11:15:00Z",
+            "officiel": false,
+            "source": "GDELT DOC 2.0"
+          },
+          {
+            "titre": "It Election Day. Control of Congress is on the line, and what else you need to know",
+            "url": "https://www.ksmu.org/2026-11-03/its-election-day-control-of-congress-is-on-the-line-and-what-else-you-need-to-know",
+            "domaine": "ksmu.org",
+            "date": "2026-11-03T11:15:00Z",
+            "officiel": false,
+            "source": "GDELT DOC 2.0"
+          },
+          {
+            "titre": "It Election Day. Control of Congress is on the line, and what else you need to know",
+            "url": "https://www.kunc.org/npr-news/2026-11-03/its-election-day-control-of-congress-is-on-the-line-and-what-else-you-need-to-know",
+            "domaine": "kunc.org",
+            "date": "2026-11-03T11:15:00Z",
+            "officiel": false,
+            "source": "GDELT DOC 2.0"
+          },
+          {
+            "titre": "It Election Day. Control of Congress is on the line, and what else you need to know",
+            "url": "https://www.northernpublicradio.org/2026-11-03/its-election-day-control-of-congress-is-on-the-line-and-what-else-you-need-to-know",
+            "domaine": "northernpublicradio.org",
+            "date": "2026-11-03T11:15:00Z",
+            "officiel": false,
+            "source": "GDELT DOC 2.0"
+          },
+          {
+            "titre": "What to know on Election Day",
+            "url": "http://www.dailyunion.com/news/local/what-to-know-on-election-day/article_a3050440-994f-4efc-b7b9-a1422e6943b1.html",
+            "domaine": "dailyunion.com",
+            "date": "2026-11-03T11:15:00Z",
+            "officiel": false,
+            "source": "GDELT DOC 2.0"
+          },
+          {
+            "titre": "Investors ready for possible shake - up in Congress as Election Day arrives",
+            "url": "https://www.theglobeandmail.com/investing/article-investors-ready-for-possible-shake-up-in-congress-as-election-day/",
+            "domaine": "theglobeandmail.com",
+            "date": "2026-11-03T11:15:00Z",
+            "officiel": false,
+            "source": "GDELT DOC 2.0"
+          },
+          {
+            "titre": "NYC Election Day live updates: Where to vote, when we know winner – NBC New York",
+            "url": "https://www.nbcnewyork.com/elections/live-updates-election-day-nyc-nj-poll-vote-governor-congress/6566156/",
+            "domaine": "nbcnewyork.com",
+            "date": "2026-11-03T11:15:00Z",
+            "officiel": false,
+            "source": "GDELT DOC 2.0"
+          },
+          {
+            "titre": "Americans begin voting in elections to decide control of Congress",
+            "url": "https://www.ft.com/content/77c2eaca-4fe1-4c69-b3bd-c517b045ff37?syn-25a6b1a6=1",
+            "domaine": "ft.com",
+            "date": "2026-11-03T10:52:57Z",
+            "officiel": false,
+            "source": "Financial Times, monde (RSS)"
+          }
+        ],
+        "nb_articles": 10,
+        "nb_domaines": 5,
+        "officiel": false,
+        "premier": "2026-11-03T10:52:57Z",
+        "dernier": "2026-11-03T11:15:00Z",
+        "tonalite_gdelt": null,
+        "score_selection": 6.17
       },
       {
         "id": "evt-89bfa1f7ceb2",
         "titre": "Adjusting Imports of Robotics, Industrial Machinery, and Their Parts and Components Into the United States",
         "categorie": "commerce",
+        "titre_langue": "anglais",
+        "mention": null,
         "categorie_libelle": "Commerce et droits de douane",
         "pays": [
           "US"
@@ -329,15 +506,44 @@
         ],
         "gravite": 2,
         "note_gravite": null,
-        "ia": false,
-        "modele": null,
-        "analyse_le": null,
-        "resume": [],
-        "actifs": [],
-        "horizon": null,
-        "confiance": "faible",
-        "contre": [],
-        "sources_independantes": null,
+        "ia": true,
+        "modele": "gemini-3.5-flash-lite",
+        "analyse_le": "2026-11-03T16:43:59Z",
+        "resume": [
+          {
+            "texte": "Le gouvernement américain a publié un ajustement concernant les importations de robotique et de machines industrielles sur son territoire.",
+            "sources": [
+              "https://www.federalregister.gov/documents/2026/11/02/2026-22385/adjusting-imports-of-robotics-industrial-machinery-and-their-parts-and-components-into-the-united"
+            ]
+          },
+          {
+            "texte": "Cette mesure réglementaire cible spécifiquement les composants et pièces détachées de machinerie étrangère.",
+            "sources": [
+              "https://www.federalregister.gov/documents/2026/11/02/2026-22385/adjusting-imports-of-robotics-industrial-machinery-and-their-parts-and-components-into-the-united"
+            ]
+          }
+        ],
+        "actifs": [
+          {
+            "actif": "technologie",
+            "sens": "incertain",
+            "texte": "Les modifications des conditions d'importation de matériel robotique peuvent impacter les coûts d'approvisionnement des entreprises industrielles.",
+            "sources": [
+              "https://www.federalregister.gov/documents/2026/11/02/2026-22385/adjusting-imports-of-robotics-industrial-machinery-and-their-parts-and-components-into-the-united"
+            ]
+          }
+        ],
+        "horizon": "semaines",
+        "confiance": "moyenne",
+        "contre": [
+          {
+            "texte": "L'impact sectoriel pourrait rester limité si les exemptions douanières s'avèrent larges pour les fabricants.",
+            "sources": [
+              "https://www.federalregister.gov/documents/2026/11/02/2026-22385/adjusting-imports-of-robotics-industrial-machinery-and-their-parts-and-components-into-the-united"
+            ]
+          }
+        ],
+        "sources_independantes": 1,
         "sources": [
           {
             "titre": "Adjusting Imports of Robotics, Industrial Machinery, and Their Parts and Components Into the United States",
@@ -353,41 +559,62 @@
         "officiel": true,
         "premier": "2026-11-02T12:00:00Z",
         "dernier": "2026-11-02T12:00:00Z",
-        "tonalite_gdelt": -1.42,
+        "tonalite_gdelt": -1.27,
         "score_selection": 6.5
       },
       {
         "id": "evt-d9976d106010",
         "titre": "Payments in a fragmenting world - sovereignty, strategy and system design",
         "categorie": "monetaire",
+        "titre_langue": "anglais",
+        "mention": null,
         "categorie_libelle": "Politique monétaire et banques centrales",
-        "pays": [
-          "FR",
-          "ZA"
-        ],
-        "pays_noms": [
-          "France",
-          "Afrique du Sud"
-        ],
-        "pays_suivis": [
-          "FR",
-          "ZA"
-        ],
+        "pays": [],
+        "pays_noms": [],
+        "pays_suivis": [],
         "regions": [
-          "afrique",
-          "europe"
+          "monde"
         ],
         "gravite": 1,
         "note_gravite": null,
-        "ia": false,
-        "modele": null,
-        "analyse_le": null,
-        "resume": [],
-        "actifs": [],
-        "horizon": null,
+        "ia": true,
+        "modele": "gemini-3.5-flash-lite",
+        "analyse_le": "2026-11-03T16:43:59Z",
+        "resume": [
+          {
+            "texte": "Les discussions sur les paiements internationaux soulignent les enjeux de souveraineté dans un contexte de fragmentation mondiale.",
+            "sources": [
+              "https://www.bis.org/speeches/20261103-payments-fragmenting-world-sovereignty-strategy-and-system-design"
+            ]
+          },
+          {
+            "texte": "Ces réflexions institutionnelles visent à adapter la conception des systèmes de paiement aux nouvelles stratégies mondiales.",
+            "sources": [
+              "https://www.bis.org/speeches/20261103-payments-fragmenting-world-sovereignty-strategy-and-system-design"
+            ]
+          }
+        ],
+        "actifs": [
+          {
+            "actif": "devises",
+            "sens": "incertain",
+            "texte": "Les débats sur la fragmentation des systèmes de paiement n'ont pas d'impact immédiat mesurable sur les devises.",
+            "sources": [
+              "https://www.bis.org/speeches/20261103-payments-fragmenting-world-sovereignty-strategy-and-system-design"
+            ]
+          }
+        ],
+        "horizon": "mois",
         "confiance": "faible",
-        "contre": [],
-        "sources_independantes": null,
+        "contre": [
+          {
+            "texte": "Une coordination internationale renforcée pourrait rendre ces craintes de fragmentation sans objet à court terme.",
+            "sources": [
+              "https://www.bis.org/speeches/20261103-payments-fragmenting-world-sovereignty-strategy-and-system-design"
+            ]
+          }
+        ],
+        "sources_independantes": 1,
         "sources": [
           {
             "titre": "Payments in a fragmenting world - sovereignty, strategy and system design",
@@ -403,22 +630,22 @@
         "officiel": true,
         "premier": "2026-11-03T00:00:00Z",
         "dernier": "2026-11-03T00:00:00Z",
-        "tonalite_gdelt": -2.6,
+        "tonalite_gdelt": null,
         "score_selection": 6.0
       }
     ],
     "pays": {
       "US": {
-        "score": 46,
+        "score": 54,
         "niveau": "modéré",
         "variation_7j": null,
         "composantes": {
-          "evenements": 62.0,
-          "tonalite": 20.6,
+          "evenements": 74.9,
+          "tonalite": 18.3,
           "tendance": null
         },
-        "tonalite_gdelt": -1.42,
-        "evenements_14j": 4,
+        "tonalite_gdelt": -1.27,
+        "evenements_14j": 3,
         "composantes_manquantes": [
           "tendance"
         ],
@@ -428,42 +655,48 @@
           {
             "id": "evt-3f36b36901be",
             "titre": "In Pictures: US midterm elections in 20 photos",
-            "gravite": 2,
+            "gravite": 4,
             "date": "2026-11-03T15:46:57Z",
             "categorie_libelle": "Élections",
-            "resume": null,
+            "titre_langue": "anglais",
+            "mention": null,
+            "resume": "Les électeurs américains se rendent aux urnes pour les élections de mi-mandat, perçues comme un référendum sur la politique du président Donald Trump.",
             "source": "https://www.aljazeera.com/gallery/2026/11/3/in-pictures-us-midterm-elections-in-20-photos?traffic_source=rss"
           },
           {
-            "id": "evt-3ba56f3fae09",
-            "titre": "US strikes Iranian island ahead of midterm elections",
-            "gravite": 3,
-            "date": "2026-11-03T11:33:33Z",
-            "categorie_libelle": "Blocus et routes maritimes",
-            "resume": null,
-            "source": "https://www.bbc.co.uk/news/articles/cx240mrm3g8vo?at_medium=RSS&at_campaign=rss"
+            "id": "evt-9024bdfb458f",
+            "titre": "U.S. Carries Out Defensive Strike On Iranian Island",
+            "gravite": 4,
+            "date": "2026-11-03T14:23:18Z",
+            "categorie_libelle": "Conflit armé",
+            "titre_langue": "anglais",
+            "mention": null,
+            "resume": "Les États-Unis ont mené des frappes qualifiées de défensives contre l'île de Qeshm en Iran à la veille des élections de mi-mandat.",
+            "source": "https://www.lemonde.fr/international/article/2026/11/03/donald-trump-confirme-des-frappes-contre-une-infrastructure-anti-aeriennne-en-iran_6805599_3210.html"
           },
           {
-            "id": "evt-87efcfd56daa",
-            "titre": "U . S . Carries Out Defensive Strike On Iranian Island",
-            "gravite": 3,
-            "date": "2026-11-03T11:15:00Z",
-            "categorie_libelle": "Conflit armé",
-            "resume": null,
-            "source": "https://wdov.iheart.com/content/2026-11-03-us-carries-out-defensive-strike-on-iranian-island/"
+            "id": "evt-89bfa1f7ceb2",
+            "titre": "Adjusting Imports of Robotics, Industrial Machinery, and Their Parts and Components Into the United States",
+            "gravite": 2,
+            "date": "2026-11-02T12:00:00Z",
+            "categorie_libelle": "Commerce et droits de douane",
+            "titre_langue": "anglais",
+            "mention": null,
+            "resume": "Le gouvernement américain a publié un ajustement concernant les importations de robotique et de machines industrielles sur son territoire.",
+            "source": "https://www.federalregister.gov/documents/2026/11/02/2026-22385/adjusting-imports-of-robotics-industrial-machinery-and-their-parts-and-components-into-the-united"
           }
         ]
       },
       "CA": {
-        "score": 6,
+        "score": 4,
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 17.1,
+          "tonalite": 11.2,
           "tendance": null
         },
-        "tonalite_gdelt": 0.19,
+        "tonalite_gdelt": 0.65,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -473,15 +706,15 @@
         "derniers_evenements": []
       },
       "MX": {
-        "score": 1,
+        "score": 4,
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 3.0,
+          "tonalite": 10.8,
           "tendance": null
         },
-        "tonalite_gdelt": -0.45,
+        "tonalite_gdelt": -0.74,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -491,15 +724,15 @@
         "derniers_evenements": []
       },
       "BR": {
-        "score": 17,
+        "score": 15,
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 44.4,
+          "tonalite": 39.7,
           "tendance": null
         },
-        "tonalite_gdelt": -3.57,
+        "tonalite_gdelt": -3.29,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -514,13 +747,12 @@
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": null,
+          "tonalite": 0.0,
           "tendance": null
         },
-        "tonalite_gdelt": null,
+        "tonalite_gdelt": -0.82,
         "evenements_14j": 0,
         "composantes_manquantes": [
-          "tonalite",
           "tendance"
         ],
         "nom": "Argentine",
@@ -528,15 +760,15 @@
         "derniers_evenements": []
       },
       "GB": {
-        "score": 11,
+        "score": 10,
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 29.6,
+          "tonalite": 26.2,
           "tendance": null
         },
-        "tonalite_gdelt": -2.46,
+        "tonalite_gdelt": -2.03,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -546,52 +778,33 @@
         "derniers_evenements": []
       },
       "FR": {
-        "score": 20,
+        "score": 7,
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
-          "evenements": 17.6,
-          "tonalite": 24.4,
+          "evenements": 0.0,
+          "tonalite": 19.6,
           "tendance": null
         },
-        "tonalite_gdelt": -2.91,
-        "evenements_14j": 2,
+        "tonalite_gdelt": -2.47,
+        "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
         ],
         "nom": "France",
         "region": "europe",
-        "derniers_evenements": [
-          {
-            "id": "evt-3f36b36901be",
-            "titre": "In Pictures: US midterm elections in 20 photos",
-            "gravite": 2,
-            "date": "2026-11-03T15:46:57Z",
-            "categorie_libelle": "Élections",
-            "resume": null,
-            "source": "https://www.aljazeera.com/gallery/2026/11/3/in-pictures-us-midterm-elections-in-20-photos?traffic_source=rss"
-          },
-          {
-            "id": "evt-d9976d106010",
-            "titre": "Payments in a fragmenting world - sovereignty, strategy and system design",
-            "gravite": 1,
-            "date": "2026-11-03T00:00:00Z",
-            "categorie_libelle": "Politique monétaire et banques centrales",
-            "resume": null,
-            "source": "https://www.bis.org/speeches/20261103-payments-fragmenting-world-sovereignty-strategy-and-system-design"
-          }
-        ]
+        "derniers_evenements": []
       },
       "DE": {
-        "score": 9,
+        "score": 8,
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 23.4,
+          "tonalite": 21.2,
           "tendance": null
         },
-        "tonalite_gdelt": -0.88,
+        "tonalite_gdelt": -0.77,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -609,7 +822,7 @@
           "tonalite": 0.0,
           "tendance": null
         },
-        "tonalite_gdelt": 1.7,
+        "tonalite_gdelt": 1.52,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -624,10 +837,10 @@
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 16.0,
+          "tonalite": 15.8,
           "tendance": null
         },
-        "tonalite_gdelt": -2.12,
+        "tonalite_gdelt": -1.26,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -637,43 +850,33 @@
         "derniers_evenements": []
       },
       "ZA": {
-        "score": 18,
+        "score": 15,
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
-          "evenements": 3.4,
-          "tonalite": 43.3,
+          "evenements": 0.0,
+          "tonalite": 41.3,
           "tendance": null
         },
-        "tonalite_gdelt": -2.29,
-        "evenements_14j": 1,
+        "tonalite_gdelt": -2.15,
+        "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
         ],
         "nom": "Afrique du Sud",
         "region": "afrique",
-        "derniers_evenements": [
-          {
-            "id": "evt-d9976d106010",
-            "titre": "Payments in a fragmenting world - sovereignty, strategy and system design",
-            "gravite": 1,
-            "date": "2026-11-03T00:00:00Z",
-            "categorie_libelle": "Politique monétaire et banques centrales",
-            "resume": null,
-            "source": "https://www.bis.org/speeches/20261103-payments-fragmenting-world-sovereignty-strategy-and-system-design"
-          }
-        ]
+        "derniers_evenements": []
       },
       "IN": {
-        "score": 6,
+        "score": 8,
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 17.2,
+          "tonalite": 22.1,
           "tendance": null
         },
-        "tonalite_gdelt": -1.03,
+        "tonalite_gdelt": -1.22,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -683,15 +886,15 @@
         "derniers_evenements": []
       },
       "CN": {
-        "score": 3,
+        "score": 2,
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 7.6,
+          "tonalite": 6.6,
           "tendance": null
         },
-        "tonalite_gdelt": 0.83,
+        "tonalite_gdelt": 0.35,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -709,7 +912,7 @@
           "tonalite": 0.0,
           "tendance": null
         },
-        "tonalite_gdelt": 1.96,
+        "tonalite_gdelt": 1.59,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -719,15 +922,15 @@
         "derniers_evenements": []
       },
       "JP": {
-        "score": 9,
+        "score": 2,
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 23.0,
+          "tonalite": 4.2,
           "tendance": null
         },
-        "tonalite_gdelt": -2.22,
+        "tonalite_gdelt": -0.78,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -742,10 +945,10 @@
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 17.2,
+          "tonalite": 15.4,
           "tendance": null
         },
-        "tonalite_gdelt": -0.7,
+        "tonalite_gdelt": -0.64,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -755,15 +958,15 @@
         "derniers_evenements": []
       },
       "IT": {
-        "score": 4,
+        "score": 6,
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 11.1,
+          "tonalite": 16.4,
           "tendance": null
         },
-        "tonalite_gdelt": -1.38,
+        "tonalite_gdelt": -1.72,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -773,15 +976,15 @@
         "derniers_evenements": []
       },
       "ES": {
-        "score": 14,
+        "score": 13,
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 37.2,
+          "tonalite": 35.2,
           "tendance": null
         },
-        "tonalite_gdelt": -2.77,
+        "tonalite_gdelt": -2.17,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -796,10 +999,10 @@
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 40.4,
+          "tonalite": 39.7,
           "tendance": null
         },
-        "tonalite_gdelt": -1.73,
+        "tonalite_gdelt": -2.3,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -809,15 +1012,15 @@
         "derniers_evenements": []
       },
       "SE": {
-        "score": 16,
+        "score": 9,
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 42.5,
+          "tonalite": 22.7,
           "tendance": null
         },
-        "tonalite_gdelt": 0.73,
+        "tonalite_gdelt": 0.65,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -827,15 +1030,15 @@
         "derniers_evenements": []
       },
       "PL": {
-        "score": 25,
+        "score": 23,
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 65.7,
+          "tonalite": 62.3,
           "tendance": null
         },
-        "tonalite_gdelt": -3.78,
+        "tonalite_gdelt": -3.08,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -850,13 +1053,12 @@
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": null,
+          "tonalite": 0.0,
           "tendance": null
         },
-        "tonalite_gdelt": null,
+        "tonalite_gdelt": -0.94,
         "evenements_14j": 0,
         "composantes_manquantes": [
-          "tonalite",
           "tendance"
         ],
         "nom": "Taïwan",
@@ -864,15 +1066,15 @@
         "derniers_evenements": []
       },
       "ID": {
-        "score": 22,
+        "score": 9,
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 58.6,
+          "tonalite": 23.1,
           "tendance": null
         },
-        "tonalite_gdelt": -3.15,
+        "tonalite_gdelt": -1.9,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -887,10 +1089,10 @@
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 10.8,
+          "tonalite": 11.2,
           "tendance": null
         },
-        "tonalite_gdelt": 2.75,
+        "tonalite_gdelt": 2.53,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -905,10 +1107,10 @@
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 9.7,
+          "tonalite": 11.1,
           "tendance": null
         },
-        "tonalite_gdelt": 0.28,
+        "tonalite_gdelt": 1.37,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -918,15 +1120,15 @@
         "derniers_evenements": []
       },
       "TH": {
-        "score": 0,
+        "score": 3,
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 0.4,
+          "tonalite": 7.9,
           "tendance": null
         },
-        "tonalite_gdelt": -1.05,
+        "tonalite_gdelt": -1.26,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -936,15 +1138,15 @@
         "derniers_evenements": []
       },
       "CL": {
-        "score": 9,
+        "score": 11,
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 24.8,
+          "tonalite": 28.5,
           "tendance": null
         },
-        "tonalite_gdelt": -3.25,
+        "tonalite_gdelt": -3.23,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -980,7 +1182,7 @@
           "tonalite": 0.0,
           "tendance": null
         },
-        "tonalite_gdelt": 2.13,
+        "tonalite_gdelt": 2.35,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -998,7 +1200,7 @@
           "tonalite": 0.0,
           "tendance": null
         },
-        "tonalite_gdelt": 3.03,
+        "tonalite_gdelt": 2.33,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -1008,15 +1210,15 @@
         "derniers_evenements": []
       },
       "EG": {
-        "score": 8,
+        "score": 6,
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 22.3,
+          "tonalite": 16.5,
           "tendance": null
         },
-        "tonalite_gdelt": -0.06,
+        "tonalite_gdelt": -0.23,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -1259,8 +1461,34 @@
     },
     "quota_ia": {
       "jour": "2026-11-03",
-      "appels": 2,
-      "quota_jour": 20,
+      "appels": 5,
+      "quota_jour": 1200,
+      "modeles": [
+        {
+          "modele": "gemini-flash-latest",
+          "appels": 3,
+          "limite_jour": 200,
+          "limite_minute": 8,
+          "epuise": false,
+          "limite_apprise": null
+        },
+        {
+          "modele": "gemini-3.5-flash-lite",
+          "appels": 2,
+          "limite_jour": 800,
+          "limite_minute": 12,
+          "epuise": false,
+          "limite_apprise": null
+        },
+        {
+          "modele": "gemini-3.6-flash",
+          "appels": 0,
+          "limite_jour": 200,
+          "limite_minute": 8,
+          "epuise": false,
+          "limite_apprise": null
+        }
+      ],
       "modele": "gemini-flash-latest"
     },
     "regions": {
