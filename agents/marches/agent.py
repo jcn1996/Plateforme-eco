@@ -21,12 +21,15 @@ from zoneinfo import ZoneInfo
 
 from agents.commun import sante
 from agents.commun.journal import journal
+from agents.commun.series import serie_graphique
 from agents.commun.sortie import enveloppe, ecrire_json, lire_json
 from agents.commun.telechargement import ErreurSource, Telechargeur
 
 LOG = journal("agent-marches")
 RACINE = Path(__file__).resolve().parents[2]
 FICHIER = RACINE / "data" / "marches.json"
+# Clôtures quotidiennes sur un an : graphique de secours de l'appli (Lightweight Charts), lu à la demande
+FICHIER_COURS = RACINE / "data" / "cours" / "marches.json"
 CACHE = RACINE / "agents" / ".cache" / "marches"
 
 # Ordre exact d'affichage dans le bandeau
@@ -233,8 +236,8 @@ def via_yahoo(actif: dict, maintenant: datetime) -> dict:
         except Exception as e:  # contrat à terme ou cours hors séance indisponible : dernière clôture
             LOG.warning("%s hors séance indisponible : %s", actif["nom"], str(e)[:100])
         # Hors séance, la variation du jour se lit par rapport à la dernière clôture : on la recalcule sur la série
-        return choisir_hors_seance(actif, entree, clotures, maintenant, future, barres)
-    return choisir_hors_seance(actif, entree, clotures, maintenant)
+        return {**choisir_hors_seance(actif, entree, clotures, maintenant, future, barres), "_serie": serie_graphique(clotures)}
+    return {**choisir_hors_seance(actif, entree, clotures, maintenant), "_serie": serie_graphique(clotures)}
 
 
 # --------------------------- Source 2 : Stooq (CSV) ---------------------------
@@ -266,7 +269,7 @@ def via_stooq(actif: dict, maintenant: datetime, t: Telechargeur) -> dict:
     debut = (maintenant - timedelta(days=400)).strftime("%Y%m%d")
     clotures = lire_stooq_quotidien(t.texte("https://stooq.com/q/d/l/", {"s": s, "i": "d", "d1": debut}))
     ouvert = est_ouvert(actif, heure, maintenant)
-    return calculer(actif, prix, heure, clotures, ouvert, "Stooq")
+    return {**calculer(actif, prix, heure, clotures, ouvert, "Stooq"), "_serie": serie_graphique(clotures)}
 
 
 # --------------------------- Assemblage ---------------------------
@@ -353,12 +356,29 @@ def enregistrer_sante(donnees: list[dict], maintenant: datetime, change: bool) -
         LOG.info("Journal de santé mis à jour : %d/%d sources répondent.", bloc["sources_ok"], bloc["sources_total"])
 
 
+def enregistrer_series(series: dict, chemin: Path = None) -> bool:
+    """data/cours/marches.json : clôtures quotidiennes sur un an par symbole Yahoo (graphique de secours).
+    Un symbole sans nouvelle série garde l'ancienne ; le fichier n'est réécrit que si une série a changé."""
+    chemin = chemin or FICHIER_COURS
+    ancien = (lire_json(chemin) or {}).get("donnees") or {}
+    nouveau = {**ancien, **series}
+    if not series or nouveau == ancien:
+        return False
+    ecrire_json(chemin, enveloppe(nouveau, source="Yahoo Finance (Stooq en secours)", fictif=False, producteur="agent-marches",
+                                  description="Clôtures quotidiennes sur un an (graphiques de secours de l'appli)"), compact=True)
+    LOG.info("%s mis à jour (%d séries).", chemin.relative_to(RACINE) if chemin.is_relative_to(RACINE) else chemin, len(series))
+    return True
+
+
 def main() -> int:
     maintenant = datetime.now(timezone.utc)
     precedent = lire_json(FICHIER, {}) or {}
     # Dernières valeurs connues (ignorées si le fichier contient encore les données fictives)
     anciennes = {d["nom"]: d for d in precedent.get("donnees", []) if not (precedent.get("meta") or {}).get("fictif")}
     donnees = collecter(maintenant, anciennes)
+    enregistrer_series({d["symbole"]: d.pop("_serie") for d in donnees if d.get("_serie")})
+    for d in donnees:
+        d.pop("_serie", None)
     if not donnees:
         LOG.error("Aucun cours récupéré : fichier inchangé.")
         return 1

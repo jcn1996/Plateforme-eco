@@ -68,6 +68,15 @@ PAYS_PAR_LOCALISATION = {
 }
 
 
+# Place de cotation américaine (colonne « Exchange ») → préfixe TradingView, utilisé par les graphiques de l'appli
+PLACES_US = [("nasdaq", "NASDAQ"), ("arca", "AMEX"), ("american", "AMEX"), ("new york", "NYSE"), ("nyse", "NYSE"), ("cboe", "CBOE")]
+
+
+def place_us(place: str | None) -> str | None:
+    p = (place or "").lower()
+    return next((v for cle, v in PLACES_US if cle in p), None)
+
+
 def secteur_gics(libelle: str | None) -> str | None:
     if not libelle:
         return None
@@ -114,8 +123,11 @@ def lire_ishares(texte: str, pays_defaut: str) -> list[dict]:
             poids = float(str(l.get("Weight (%)", "0")).replace(",", ""))
         except ValueError:
             poids = 0.0
-        res.append({"ticker": sym, "nom": (l.get("Name") or "").strip().title(), "pays": pays,
-                    "secteur": secteur_gics(l.get("Sector")), "poids": poids})
+        ligne = {"ticker": sym, "nom": (l.get("Name") or "").strip().title(), "pays": pays,
+                 "secteur": secteur_gics(l.get("Sector")), "poids": poids}
+        if "." not in sym and place_us(l.get("Exchange")):  # action américaine : NASDAQ ou NYSE (graphiques)
+            ligne["place"] = place_us(l.get("Exchange"))
+        res.append(ligne)
     if not res:
         raise ValueError("aucune action dans le fichier iShares")
     return sorted(res, key=lambda x: -x["poids"])

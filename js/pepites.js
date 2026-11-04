@@ -2,11 +2,13 @@
    Écran « Pépites » : pépites candidates de l'agent entreprises (data/pepites.json).
    Filtres par région et par secteur ; pour chaque société : note, ajustement de
    contexte (pays et cycle, affiché à part), 3 indicateurs clés, verdict.
-   Toucher une ligne ouvre la fiche entreprise.
+   Toucher une ligne ouvre la fiche entreprise. Mini-graphique TradingView sur 12 mois.
    ========================================================================== */
 
 import { el, nombre, variation, classeNote } from './outils.js';
 import { boutonAnalyser, pastilleReco } from './analyses.js';
+import { graphiqueMini } from './graphiques.js';
+import { historiqueEntreprise } from './panneau-entreprise.js';
 
 const FICHIER = 'data/pepites.json';
 const filtres = { liste: 'pepites', region: 'toutes', secteur: 'tous' }; // mémorisés pendant la session
@@ -112,7 +114,8 @@ function ligne(x, d, nav) {
   const pays = d.paysParCode.get(x.pays)?.nom ?? x.pays;
   const cles = Object.entries(x.cles ?? {}).slice(0, 3);
   const ctx = x.contexte?.ajustement ?? 0;
-  return el('button', { class: `ligne-pepite ${classeNote(x.note)}`, type: 'button', onclick: () => nav.ouvrirEntreprise(x.ticker),
+  const e = d.entrepriseParTicker?.get(x.ticker) ?? x;
+  const bouton = el('button', { class: `ligne-pepite ${classeNote(x.note)}`, type: 'button', onclick: () => nav.ouvrirEntreprise(x.ticker),
     'aria-label': `${x.nom}, ${pays}, ${x.secteur_nom}, note ${x.note} sur 100, ajustement de contexte ${variation(ctx, 1, ' point')}` },
   el('div', { class: 'ligne-pepite-tete' },
     el('span', { class: 'ligne-pepite-nom' }, x.nom),
@@ -126,4 +129,7 @@ function ligne(x, d, nav) {
     el('small', {}, 'Détenu'), pastilleReco(x.recommandation, true)) : null,
   el('div', { class: 'ligne-pepite-verdict' }, x.verdict),
   );
+  // Mini-graphique sur 12 mois, chargé quand la fiche apparaît à l'écran
+  return el('div', { class: `ligne-pepite-bloc ${classeNote(x.note)}` }, bouton,
+    graphiqueMini({ yahoo: x.ticker, place: e.place ?? x.place, historique: historiqueEntreprise(e) }));
 }

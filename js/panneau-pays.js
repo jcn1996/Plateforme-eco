@@ -8,6 +8,7 @@ import {
   complementIndicateur, badgeTendance, tendanceIndicateur, tendanceNote, texteFraicheur,
 } from './outils.js';
 import { sectionMacroPays } from './macro.js';
+import { graphiqueAvance, historiqueFichier } from './graphiques.js';
 import { sectionGeopolitiquePays } from './geopolitique.js';
 
 /* ------------------------------ Composants ------------------------------ */
@@ -246,6 +247,12 @@ export function fichePays(d, p, nav) {
       listeIndicateurs(p.indicateurs),
       detailRepliable(p.detail),
     ),
+
+    // Graphique de l'ETF du pays (le même que celui de l'agent pays : momentum et valorisation)
+    p.etf ? el('section', {},
+      titreSection(`ETF du pays : ${p.etf}`, 'celui de l’agent pays (momentum, valorisation)'),
+      graphiqueAvance({ yahoo: p.etf, historique: historiqueFichier('etf-pays', p.etf) }),
+    ) : null,
 
     // « Ce qui pourrait me donner tort » : contre-scénario de l'agent
     p.contre_scenario?.length ? el('section', {},

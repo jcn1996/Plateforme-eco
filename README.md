@@ -25,6 +25,15 @@ Prototype d'une application personnelle de suivi économique mondial, pensée d'
   - Chaque cotation porte une pastille « ouvert » ou « fermé ».
   - Il défile tout seul, se glisse au doigt ou à la souris avec inertie, et se met en pause au toucher (reprise 4 s après le relâchement) ou au survol.
   - Toucher une cotation affiche son cours, sa variation du jour, sa variation sur 1 an, l'heure du cours et la source.
+- **Graphiques interactifs TradingView** (widgets gratuits et officiels, sans compte ni clé) :
+  - fiche entreprise : graphique avancé sous les indicateurs clés (bougies, période de 1 jour à 5 ans, moyennes mobiles 50 et 200 jours, volume) ;
+  - bandeau des marchés : la bulle d'une cotation propose « Voir le graphique » (l'indice pendant les heures de marché, son contrat à terme en dehors) ;
+  - fiche pays : graphique de l'ETF du pays (le même que celui de l'agent pays) ;
+  - écrans Pépites et « Mes analyses » : mini-graphique sur 12 mois dans chaque fiche.
+
+  Réglages : thème sombre, français, fuseau Europe/Paris, hauteur adaptée au téléphone. Le script de TradingView n'est chargé qu'à l'affichage d'un graphique, jamais au démarrage, et le service worker ne le met pas en cache.
+  La correspondance des symboles Yahoo → TradingView se complète dans [`js/symboles-tradingview.js`](js/symboles-tradingview.js) (exceptions manuelles, places, symboles refusés par le widget gratuit).
+  Quand le widget gratuit n'affiche pas un symbole (Nasdaq 100, S&P 500, contrats à terme…), et toujours en mode ⚡, un graphique simple est tracé avec [Lightweight Charts](https://github.com/tradingview/lightweight-charts) à partir des cours de nos agents (`data/cours/`, fiches des entreprises), avec un lien « Ouvrir sur TradingView ».
 - **Indicateurs des pays** (6, données réelles) :
   - croissance du PIB (FMI) ;
   - indicateur avancé (OCDE, au-dessus de 100 = accélération) ;
@@ -58,7 +67,7 @@ Prototype d'une application personnelle de suivi économique mondial, pensée d'
 - **Classement** des pays et des 20 meilleures entreprises.
 - **Portefeuille démo** de 100 000 €.
 - **Netteté** : antialiasing, densité de pixels jusqu'à 3 sur les écrans haute résolution.
-- **Mode léger** (⚡) : densité de pixels limitée à 2, sans halo, sans animation des flux, 30 images/s.
+- **Mode léger** (⚡) : densité de pixels limitée à 2, sans halo, sans animation des flux, 30 images/s ; graphiques simples à la place des widgets TradingView.
 - **PWA** : l'appli s'installe sur l'écran d'accueil. Le service worker charge l'appli « réseau d'abord », donc la dernière version s'affiche dès l'ouverture ; elle reste utilisable hors ligne.
 
 ## Agent pays (données réelles)

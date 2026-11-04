@@ -23,6 +23,7 @@ from pathlib import Path
 
 from ..commun import sante
 from ..commun.journal import journal
+from ..commun.series import serie_graphique
 from ..commun.sortie import ecrire_json, enveloppe, lire_json
 from ..commun.telechargement import Telechargeur
 from . import analyse as A
@@ -215,6 +216,8 @@ def collecter_societe(f, s: dict, ancien: dict | None, seuil_ecart: float) -> di
         "devise_cours": devise_cours, "centimes": centimes, "devise_comptes": devise_comptes,
         "actions": info.get("sharesOutstanding") or (annuel[0].get("actions") if annuel else None),
         "cours": cours_compacts(y["cours"]), "annuel": annuel,
+        # Clôtures hebdomadaires sur un an : graphique de secours de l'appli (Lightweight Charts)
+        "cours_hebdo": serie_graphique(y["cours"], hebdo=True), "place": s.get("place") or (ancien or {}).get("place"),
         "trimestre": {"fin": trim[0]["fin"], "resultat_net_ttm": ttm} if trim else None,
         "officiel": officiel, "source_officielle": source_off, "verification": verification, "ids": ids,
         "surveillance": bool(s.get("surveillance")), "source_composition": s.get("source_composition"),
@@ -256,6 +259,7 @@ def mise_a_jour_quotidienne(f, base: dict, config: dict, aujourdhui: date) -> di
     cours = f.yahoo.cours_groupes(tickers)
     for t, c in cours.items():
         base[t]["cours"] = cours_compacts(c)
+        base[t]["cours_hebdo"] = serie_graphique(c, hebdo=True)
     a_revoir = []
     for t, r in base.items():
         pubs = (r.get("ids") or {}).get("publications") or []
@@ -293,7 +297,8 @@ def mise_a_jour_quotidienne(f, base: dict, config: dict, aujourdhui: date) -> di
                     LOG.debug("secteur Yahoo indisponible pour %s : %s", t, str(e)[:80])
     LOG.info("Nouvelles publications ou comptes anciens : %d sociétés révisées", len(a_revoir))
     revus, _ = reviser(f, [{"ticker": t, "nom": base[t]["nom"], "pays": base[t]["pays"], "secteur": base[t].get("secteur_gics"),
-                            "surveillance": base[t].get("surveillance"), "source_composition": base[t].get("source_composition")}
+                            "surveillance": base[t].get("surveillance"), "source_composition": base[t].get("source_composition"),
+                            "place": base[t].get("place")}
                            for t in a_revoir], base, config)
     base.update(revus)
     return {"cours": len(cours), "revues": len(a_revoir), "en_file_sec": file_sec}
@@ -546,6 +551,8 @@ def analyser_societe(s: dict, med: dict, config: dict, pays_json: dict, zones: d
         "agents": {"entreprises": {"note": g["note"], "texte": verdict}},
         "etude_complete": A.etude(s["nom"], m, ind, montants, s["devise_comptes"]),
         "surveillance": s.get("surveillance", False),
+        "place": s.get("place"),
+        "cours_hebdo": s.get("cours_hebdo") or [],
     }
     if revue:
         e["revue_critique"] = revue_c
@@ -570,7 +577,7 @@ def mesurer(r: dict, change: dict, cfg_u: dict) -> dict:
 
 CHAMPS_LEGERS = ("ticker", "nom", "pays", "region", "secteur", "secteur_gics", "secteur_nom", "financier", "devise",
                  "capitalisation_md", "note", "niveau", "verdict", "indicateurs", "pepite", "qpr", "precedent", "surveillance",
-                 "autres_cotations")
+                 "autres_cotations", "place")
 
 
 def fichier_fiche(ticker: str) -> str:
@@ -720,7 +727,8 @@ def main(argv=None) -> int:
         liste.sort(key=lambda x: 0 if (base.get(x["ticker"]) or {}).get("file_sec") else 1)
         LOG.info("Révision complète : %d sociétés (%s)", len(liste), args.lot or ("échantillon" if args.echantillon else "toutes"))
         revus, etats_rev = reviser(f, liste, base, config)
-        univers_lot = {"societes": [{k: s.get(k) for k in ("ticker", "nom", "pays", "secteur", "poids", "source_composition")} for s in liste
+        univers_lot = {"societes": [{k: s.get(k) for k in ("ticker", "nom", "pays", "secteur", "poids", "source_composition", "place")
+                                     if k != "place" or s.get("place")} for s in liste
                                     if s.get("source_composition") != "liste de surveillance"]}
         if args.sortie_lot:
             ecrire_json(Path(args.sortie_lot), {"lot": args.lot, "date": aujourdhui.isoformat(), "composition": etats_compo,
@@ -748,6 +756,10 @@ def main(argv=None) -> int:
         if not base:
             LOG.error("Aucune base de comptes : lancer d'abord une révision complète.")
             return 1
+        # Place de cotation (NASDAQ, NYSE) connue par la dernière composition : utilisée par les graphiques de l'appli
+        for s in ((lire_json(data / "entreprises" / "univers.json") or {}).get("societes") or []):
+            if s.get("place") and s["ticker"] in base:
+                base[s["ticker"]]["place"] = s["place"]
         LOG.info("Mise à jour quotidienne : %s", mise_a_jour_quotidienne(f, base, config, aujourdhui))
         etats_compo = ((lire_json(data / "entreprises" / "univers.json") or {}).get("meta") or {}).get("etats", {})
 

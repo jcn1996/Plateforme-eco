@@ -7,12 +7,15 @@
      les renouvelle). Le globe est 100 % vectoriel : aucune image de la Terre.
    - La carte détaillée data/countries-50m.json n'est pas préchargée : elle
      est mise en cache au premier zoom rapproché.
-   - Ressources externes (Three.js, lignes épaisses, polices) : cache dès le premier
-     chargement, mis à jour en arrière-plan.
+   - Ressources externes (Three.js, lignes épaisses, polices, Lightweight Charts) : cache dès
+     le premier chargement, mis à jour en arrière-plan.
+   - TradingView (scripts des widgets, cotations) : jamais mis en cache, le service
+     worker laisse passer ces requêtes telles quelles.
+   - Séries de cours des graphiques (data/cours/) : non préchargées, lues à la demande.
    Changer VERSION vide les anciens caches chez tous les utilisateurs.
    ========================================================================== */
 
-const VERSION = 'salle-controle-v24';
+const VERSION = 'salle-controle-v25';
 
 const FICHIERS_APPLI = [
   './',
@@ -38,6 +41,8 @@ const FICHIERS_APPLI = [
   'js/geopolitique.js',
   'js/pepites.js',
   'js/analyses.js',
+  'js/graphiques.js',
+  'js/symboles-tradingview.js',
   'assets/icone.svg',
   'assets/icone-192.png',
   'assets/icone-512.png',
@@ -75,6 +80,9 @@ self.addEventListener('fetch', (evenement) => {
   const requete = evenement.request;
   if (requete.method !== 'GET') return;
   const url = new URL(requete.url);
+
+  // TradingView : scripts et données jamais mis en cache (réseau direct, sans passer par le service worker)
+  if (/(^|\.)tradingview(-widget)?\.com$/.test(url.hostname)) return;
 
   if (url.origin !== location.origin) {
     evenement.respondWith(cacheEtMiseAJour(evenement, requete));
