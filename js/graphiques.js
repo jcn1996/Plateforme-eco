@@ -123,6 +123,7 @@ async function graphiqueSecours(zone, historique, { raison, mini = false, period
   if (!zone.isConnected) return null;
   const points = (serie ?? []).filter((p) => p && p[1] > 0).map(([d, c]) => ({ time: d, value: c }));
   if (!points.length || !window.LightweightCharts) {
+    zone.classList.add('graphique-zone--vide');
     zone.replaceChildren(el('p', { class: 'graphique-attente' },
       window.LightweightCharts ? 'Historique de cours pas encore disponible (il sera publié par la prochaine exécution de l’agent).'
         : 'Graphique indisponible hors connexion.'));

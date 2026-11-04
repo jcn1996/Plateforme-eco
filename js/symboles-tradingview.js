@@ -114,6 +114,7 @@ export const PLACES = {
  * TradingView ») : symboles exacts, ou places entières. Vérifié sur téléphone simulé ; à compléter.
  */
 export const NON_DISPONIBLES = {
+  // Vérifié le 04/11/2026 : « Symbole disponible uniquement sur TradingView »
   symboles: new Set([
     'NASDAQ:NDX',
     'SP:SPX',
@@ -121,9 +122,16 @@ export const NON_DISPONIBLES = {
     'CME_MINI:ES1!',
     'COMEX:GC1!',
     'NYMEX:CL1!',
-    'EURONEXT:FCE1!',
   ]),
-  places: new Set([]),
+  // Places entières refusées par le widget gratuit (vérifié le 04/11/2026 sur une action de chacune)
+  places: new Set([
+    'LSE', // Londres
+    'HKEX', 'TSE', 'KRX', 'TWSE', // Hong Kong, Tokyo, Corée, Taïwan
+    'NSE', 'BSE', // Inde
+    'SGX', 'SET', // Singapour, Bangkok
+    'TADAWUL', 'BIST', 'JSE', // Arabie saoudite, Istanbul, Johannesburg
+    'BMV', // Mexique
+  ]),
 };
 
 /**

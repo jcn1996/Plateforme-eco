@@ -1314,6 +1314,10 @@ body.alertes-ouvertes .barre-comparaison { display: none; }
 }
 .graphique-zone--secours { display: grid; grid-template-rows: 1fr auto; }
 .graphique-widget, .graphique-widget iframe { width: 100%; height: 100%; }
+/* Les iframes de TradingView ne déclarent pas de schéma de couleurs : sans ceci, Chromium les peint en blanc
+   sous le « color-scheme: dark » de l'appli (fond transparent du mini-graphique) */
+.graphique-zone iframe { color-scheme: normal; }
+.graphique-zone.graphique-zone--vide { height: auto; }
 .graphique-lwc { position: relative; min-height: 0; }
 .graphique-attente { margin: 0; padding: 18px 12px; font-size: 12px; color: var(--texte-3); text-align: center; align-self: center; }
 .graphique-note { margin: 0; padding: 4px 10px 6px; font-size: 11px; color: var(--texte-3); border-top: 1px solid var(--ligne); }
