@@ -115,6 +115,52 @@
     }
   },
 
+  "controle_gravite": {
+    "_commentaire": "Contrôle après Gemini : gravité recalculée par règles à partir des repères (type d'événement, pays impliqués, effet direct sur un marché). La gravité de Gemini ne peut dépasser ce niveau que d'un cran (relevement_max). Sans IA : niveau des règles, 3 au plus. Mots en minuscules sans accents.",
+    "base": {"diplomatie": 1, "monetaire": 1, "election": 1, "commerce": 2, "sanctions": 2, "conflit": 2, "maritime": 2, "coup": 3},
+    "niveau_3": {
+      "conflit": ["killed", "dead", "deaths", "morts", "tues", "victimes", "attack", "attaque", "clashes", "affrontements", "strike", "strikes", "airstrike", "airstrikes", "frappe", "frappes", "missile", "missiles", "bombing", "bombardement", "offensive", "invasion"],
+      "sanctions": ["sanctions on", "sanctions against", "new sanctions", "sanctionne", "nouvelles sanctions", "oil buyers", "acheteurs de petrole", "export controls", "controles a l'exportation"],
+      "commerce": ["tariffs on", "tariff on", "droits de douane sur", "adjusting imports", "section 232", "section 301", "export ban", "interdiction d'exporter", "quota"],
+      "maritime": ["strike", "strikes", "frappe", "frappes", "seized", "saisi", "attack", "attaque"],
+      "election": ["disputed result", "contested result", "fraud", "fraude", "violence", "violences", "riot", "emeute", "annulled", "annule"],
+      "coup": [],
+      "diplomatie": [],
+      "monetaire": []
+    },
+    "niveau_4": {
+      "conflit": ["invasion", "offensive", "airstrike", "airstrikes", "strikes", "missile", "frappes", "bombardement"],
+      "sanctions": ["embargo", "oil sanctions", "sanctions on oil", "swift", "central bank", "banque centrale", "sweeping sanctions", "sanctions sectorielles"],
+      "commerce": ["embargo", "trade war", "guerre commerciale", "suspends trade", "halts trade", "rupture"],
+      "maritime": ["closure", "closed", "blockade", "blocus", "fermeture", "mined", "mines"],
+      "coup": ["coup", "putsch", "martial law", "loi martiale"],
+      "election": [], "diplomatie": [], "monetaire": []
+    },
+    "_niveau_4": "le niveau 4 exige aussi un effet direct sur un marché (mots effet_marche dans les sources ou le résumé, ou actif touché parmi actifs_marche)",
+    "effet_marche": ["oil", "crude", "brent", "petrole", "gas", "gaz", "lng", "hormuz", "ormuz", "strait", "detroit", "suez", "red sea", "mer rouge", "shipping", "tanker", "petrolier", "semiconductor", "chips", "semi-conducteurs", "rare earth", "terres rares", "wheat", "ble", "grain"],
+    "actifs_marche": ["pétrole", "gaz", "transport maritime", "semi-conducteurs", "agriculture", "métaux industriels", "énergie"],
+    "sans_pays_suivi": -1,
+    "relevement_max": 1,
+    "distribution": {
+      "_commentaire": "Distribution cible sur 24 h : la majorité en 1-2, quelques-uns en 3, la gravité 4 rare. Au-delà de part_max_4 (au moins min_4 autorisés), les événements de gravité 4 les moins étayés (niveau des règles, sources indépendantes) sont ramenés à 3 ; de même pour la gravité 3 au-delà de part_max_3 (ramenés à 2).",
+      "part_max_4": 0.15, "min_4": 1, "part_max_3": 0.35, "min_3": 2
+    }
+  },
+
+  "themes": {
+    "_commentaire": "Thème en cours : événements des 7 derniers jours (glissants) avec les mêmes pays principaux, la même famille de catégories et des mots-clés proches ; confirmé par Gemini quand il est disponible. Publié comme un seul élément, avec la chronologie des faits.",
+    "jours": 7,
+    "familles": {"conflit": "securite", "maritime": "securite", "coup": "securite", "sanctions": "sanctions", "commerce": "commerce", "election": "politique", "diplomatie": "diplomatie", "monetaire": "monetaire"},
+    "mots_communs_min": 1,
+    "confirmation_par_appel": 6
+  },
+
+  "lieux": {
+    "_commentaire": "Pays seulement lieu d'une négociation, d'un sommet ou d'une réunion (« talks in Abu Dhabi », « pourparlers à Abou Dabi ») : affiché à part comme « lieu », pas comme pays principal.",
+    "mots_reunion": ["talks", "negotiations", "summit", "meeting", "mediation", "conference", "hosts", "hosted", "pourparlers", "negociations", "sommet", "reunion", "mediation", "conference", "accueille"],
+    "prepositions": ["in", "at", "a", "au", "aux", "en"]
+  },
+
   "titres_exclus": ["in pictures", "in photos", "photos", "gallery", "live", "live updates", "as it happened", "what to know", "what we know", "what you need to know", "explainer", "explained", "your guide", "why it matters", "why it's important", "races to watch", "key takeaways", "how it works", "minute by minute", "en direct", "en images", "en photos", "ce qu'il faut savoir", "ce que l'on sait", "decryptage", "carte interactive"],
 
   "sante": {
@@ -179,7 +225,7 @@
     "TH": {"fips": "TH", "region": "asie", "noms": ["thailand", "thai", "bangkok", "thailande", "thailandais", "thailandaise"]},
     "CL": {"fips": "CI", "region": "amerique_latine", "noms": ["chile", "chilean", "santiago", "chili", "chilien", "chilienne"]},
     "CO": {"fips": "CO", "region": "amerique_latine", "noms": ["colombia", "colombian", "bogota", "colombie", "colombien", "colombienne"]},
-    "AE": {"fips": "AE", "region": "moyen_orient", "noms": ["united arab emirates", "UAE", "emirati", "abu dhabi", "dubai", "emirats arabes unis", "emirats"]},
+    "AE": {"fips": "AE", "region": "moyen_orient", "noms": ["united arab emirates", "UAE", "emirati", "abu dhabi", "abou dabi", "abou dhabi", "dubai", "doubai", "emirats arabes unis", "emirats"]},
     "TR": {"fips": "TU", "region": "moyen_orient", "noms": ["turkey", "turkiye", "turkish", "ankara", "erdogan", "turquie", "turc", "turque"]},
     "EG": {"fips": "EG", "region": "moyen_orient", "noms": ["egypt", "egyptian", "cairo", "egypte", "egyptien", "egyptienne", "le caire", "suez"]}
   },

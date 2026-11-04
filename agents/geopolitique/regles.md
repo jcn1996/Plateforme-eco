@@ -38,6 +38,16 @@ Une source isolée en échec (un flux RSS en 404, par exemple) est affichée, co
   - leurs mots-clés sont proches. Les mots-clés sont les mots présents dans au moins 40 % des titres. Il faut 3 mots en commun et 35 %, ou 2 mots et 50 % si la catégorie ou les pays principaux sont les mêmes.
 
   Un article qui mélange deux sujets (« US strikes Iranian island ahead of midterm elections ») ne suffit donc pas à relier les frappes et les élections. Gemini peut aussi confirmer qu'un événement du lot est le même qu'un autre (« meme_que ») : ils sont fusionnés.
+- **Lieux** : le pays qui accueille une négociation, un sommet ou une réunion est affiché à part, comme « lieu », et n'est pas un pays principal. Exemple : pourparlers sur l'Ukraine à Abou Dabi → pays principaux Ukraine, Russie (et États-Unis s'ils participent), lieu Émirats.
+  - Avec Gemini, ce sont ses champs « pays » et « lieux ».
+  - Sans IA, des motifs simples : « talks … in Abu Dhabi », « pourparlers à Abou Dabi », « Abu Dhabi talks », « X hosts ».
+  - Un pays seulement commentateur (« …, Germany's Merz says ») n'est pas retenu.
+- **Thèmes en cours** (`themes`) : sur 7 jours glissants, les événements sont regroupés en un seul élément publié, avec la chronologie des faits, s'ils remplissent trois conditions :
+  - mêmes pays principaux (ou l'un contient l'autre, avec 2 pays communs) ;
+  - même famille de catégories (conflit, routes maritimes et coups d'État forment la famille « sécurité ») ;
+  - au moins un mot-clé commun.
+
+  Gemini confirme chaque regroupement : il écarte les événements hors sujet et rédige un titre de thème en français. Sans Gemini, le regroupement par règles est publié et signalé comme tel. Les pays d'un thème sont ceux qui sont principaux dans au moins la moitié de ses faits.
 - **Pays principaux** (affichés et comptés dans le score) : seuls les pays acteurs ou directement touchés sont retenus. Ce sont les pays cités dans le titre de référence ou dans le résumé, ou présents dans plus de la moitié des articles. Un pays cité une fois parmi d'autres n'est pas retenu.
 - **Titre affiché** : Gemini rédige un titre en français, factuel, de 12 mots au plus. Il est refusé s'il n'est pas en français ou n'est pas sobre.
 - **Titre de référence**, utilisé sans IA : la source officielle s'il y en a une, sinon l'article le plus repris. En cas d'égalité, c'est le plus centré sur l'événement. Il porte sa langue et la mention « non traduit » s'il n'est pas en français.
@@ -60,6 +70,14 @@ Une source isolée en échec (un flux RSS en 404, par exemple) est affichée, co
 
   Clé : secret `GEMINI_API_KEY`. Sur une erreur 5xx (dont 503, modèle surchargé) ou une erreur réseau, l'agent fait 3 essais, après 5 puis 15 s d'attente. Il passe ensuite au modèle suivant, qui est aussi utilisé pour le reste de l'exécution. Un 400 ou un 404 (modèle inconnu) fait passer directement au modèle suivant.
 - **Priorité** : les événements de gravité estimée 3 ou plus sont analysés en premier.
+- **Contrôle de la gravité** (`controle_gravite`, gravite.py). Après l'analyse, la gravité est recalculée par règles à partir des repères :
+  - le type d'événement donne la base ;
+  - le niveau 3 exige un marqueur de tension notable (frappes, morts, sanctions visant un pays, droits de douane sur un pays…) ;
+  - le niveau 4 exige un marqueur de conflit armé, de sanctions majeures ou de rupture commerciale, ET un effet direct sur un marché (pétrole, gaz, détroit, semi-conducteurs…) ;
+  - un cran de moins si aucun pays suivi n'est concerné et qu'il n'y a pas d'effet sur un marché.
+
+  La gravité de Gemini peut abaisser ce niveau, mais ne le relève que d'un cran. Sans IA, c'est le niveau des règles, 3 au plus. Les marqueurs sont recherchés dans le titre de référence, le titre français et le résumé, pas dans tous les articles.
+- **Distribution cible** sur 24 h : la majorité en 1-2, au plus 35 % en 3 et 15 % en 4 (au moins 2 et 1 permis). Au-delà, les moins étayés (niveau des règles, sources indépendantes) descendent d'un cran, avec une note.
 - **Repères de gravité** (`gravite.reperes`, donnés à Gemini) :
   - 1 = déclaration ou procédure de routine ;
   - 2 = mesure ciblée ;
@@ -68,7 +86,10 @@ Une source isolée en échec (un flux RSS en 404, par exemple) est affichée, co
   - 5 = choc systémique.
 
   **Plafonds** (`gravite.plafonds`), appliqués après la réponse : une élection est au plus en 3. L'exception joue si les titres des sources ou le résumé mentionnent une contestation, une fraude, des violences ou une annulation.
-- **Langue** : tous les textes de Gemini doivent être en français. Une affirmation en anglais est supprimée.
+- **Langue** : tous les titres et résumés sont en français, avec les accents.
+  - Une affirmation en anglais, ou en français sans aucun accent (6 mots ou plus), est supprimée.
+  - Un événement dont l'analyse est refusée est retenté 3 fois au plus.
+  - Les titres d'origine restés en langue étrangère sont traduits par Gemini (un appel pour 40 titres au plus, mis en cache). La mention « non traduit » ne reste que si Gemini est indisponible.
 - Pour chaque événement significatif, l'agent produit :
   - un résumé factuel en 2 phrases ;
   - les pays et la catégorie ;

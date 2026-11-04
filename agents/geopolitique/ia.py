@@ -93,6 +93,13 @@ def plafonner(gravite: int, categorie: str, textes: list[str], config: dict) -> 
     return plafond["max"], f"gravité {gravite} proposée, ramenée à {plafond['max']} : {categorie} sans contestation ni violences"
 
 
+def sans_accents(texte: str) -> bool:
+    """Français écrit sans accents (« Le president de la Cour penale… ») : refusé à partir de 6 mots,
+    car une phrase française de cette longueur contient presque toujours un accent."""
+    mots = re.findall(r"[A-Za-zÀ-ÿ']+", texte)
+    return len(mots) >= 6 and not re.search(r"[àâçéèêëîïôûùüÿœÀÂÇÉÈÊËÎÏÔÛÙÜŸŒ]", texte)
+
+
 def en_francais_titre(titre: str) -> bool:
     """Titre court : peu de mots outils ; on accepte aussi les accents ou l'absence de mots outils anglais."""
     mots = re.findall(r"[a-zàâçéèêëîïôûùüÿœ']+", titre.lower())
@@ -300,12 +307,16 @@ def consigne(lot: list[dict], config: dict, sources: dict) -> str:
         "différents le confirment. " + regles_plafonds + " "
         "Titre : un titre en français, factuel, de 12 mots au plus, qui nomme l'acteur et le fait (pas de « en direct », "
         "« en images », « ce qu'il faut savoir »). "
-        "Pays : seulement les pays acteurs ou directement touchés, pas ceux simplement cités ; s'il n'y en a pas et que le "
+        "Écris un français correct, avec tous les accents (é, è, à, ç…). "
+        "Pays (\"pays\") : seulement les pays ACTEURS ou DIRECTEMENT TOUCHÉS. Le pays qui accueille une négociation, un "
+        "sommet ou une réunion va dans \"lieux\" (ex. pourparlers sur l'Ukraine à Abou Dabi : pays UA, RU, et US s'ils "
+        "participent ; lieux AE) ; un pays dont un dirigeant commente seulement n'est ni l'un ni l'autre. "
+        "S'il n'y a pas de pays acteur et que le "
         "thème est mondial (économie mondiale, climat, système financier international), indique \"portee\": \"mondiale\". "
         "Si deux événements de la liste décrivent le même fait, indique pour le second \"meme_que\": \"identifiant du premier\".\n"
         f"Catégories possibles : {categories}. Actifs possibles : {actifs}. Codes pays possibles : {pays}.\n"
         "Réponds uniquement en JSON : {\"analyses\": [{\"evenement\": \"id\", \"meme_que\": null, "
-        "\"titre\": \"titre en français\", \"portee\": \"pays|mondiale\", "
+        "\"titre\": \"titre en français\", \"portee\": \"pays|mondiale\", \"lieux\": [], "
         "\"resume\": [{\"texte\": \"phrase factuelle en français\", \"sources\": [\"S1\"]}, {\"texte\": \"2e phrase\", \"sources\": [\"S2\"]}], "
         "\"pays\": [\"US\"], \"categorie\": \"sanctions\", \"gravite\": 3, "
         "\"actifs\": [{\"actif\": \"pétrole\", \"sens\": \"hausse|baisse|incertain\", \"texte\": \"raison en une phrase\", \"sources\": [\"S1\"]}], "
@@ -334,6 +345,9 @@ def _affirmations(liste, par_id: dict, maxi: int, supprimees: list) -> list[dict
         if not en_francais(texte):
             supprimees.append(f"pas en français : {texte[:80]}")
             continue
+        if sans_accents(texte):
+            supprimees.append(f"français sans accents : {texte[:80]}")
+            continue
         res.append({**{k: v for k, v in a.items() if k not in ("texte", "sources")}, "texte": texte,
                     "sources": [par_id[s.strip()]["url"] for s in dict.fromkeys(ids)],
                     "_cites": [par_id[s.strip()] for s in dict.fromkeys(ids)]})
@@ -361,6 +375,7 @@ def valider(brut: dict, e: dict, config: dict, sources: list[dict]) -> tuple[dic
         gravite = max(1, min(5, int(brut.get("gravite"))))
     except (TypeError, ValueError):
         gravite = E.gravite_regles(e, config)
+    gravite_ia = gravite  # avant les plafonds : le contrôle (gravite.py) part de la valeur de Gemini
     cites = {s["id"]: s for a in resume + actifs + contre for s in a["_cites"]}
     independantes = E.independantes(list(cites.values()))
     note_gravite = None
@@ -372,7 +387,7 @@ def valider(brut: dict, e: dict, config: dict, sources: list[dict]) -> tuple[dic
     titre = None
     if isinstance(brut.get("titre"), str):
         t = re.sub(r"\s*[\[(]S\d+(?:\s*[,;]\s*S\d+)*[\])]", "", brut["titre"]).strip().rstrip(".")
-        if 8 <= len(t) <= 160 and sobre(t) and en_francais_titre(t) and not E.format_exclu(t):
+        if 8 <= len(t) <= 160 and sobre(t) and en_francais_titre(t) and not sans_accents(t) and not E.format_exclu(t):
             titre = t
         else:
             supprimees.append(f"titre refusé : {t[:80]}")
@@ -380,6 +395,7 @@ def valider(brut: dict, e: dict, config: dict, sources: list[dict]) -> tuple[dic
         a.pop("_cites", None)
     analyse = {
         "titre": titre, "mondial": brut.get("portee") == "mondiale",
+        "lieux_ia": [p for p in (brut.get("lieux") or []) if p in connus], "gravite_ia": gravite_ia,
         "resume": resume, "pays_ia": pays, "categorie": categorie, "gravite": gravite, "note_gravite": note_gravite,
         "actifs": [{"actif": a["actif"], "sens": a["sens"], "texte": a["texte"], "sources": a["sources"]} for a in actifs],
         "horizon": brut.get("horizon") if brut.get("horizon") in HORIZONS else "semaines",
@@ -394,7 +410,9 @@ def valider(brut: dict, e: dict, config: dict, sources: list[dict]) -> tuple[dic
 def a_analyser(e: dict, config: dict, maintenant: datetime) -> bool:
     """Cache : un événement analysé n'est repris que s'il a beaucoup grossi, et pas avant le délai."""
     a = e.get("analyse")
-    if not a or "titre" not in a:  # analyse d'avant les titres en français : refaite une fois
+    if not a:
+        return e.get("essais_ia", 0) < ESSAIS_IA_MAX
+    if "titre" not in a or "lieux_ia" not in a:  # analyse d'avant les titres en français et les lieux : refaite une fois
         return True
     cfg = config["gemini"]
     age = maintenant - datetime.fromisoformat(a["analyse_le"].replace("Z", "+00:00"))
@@ -406,6 +424,29 @@ def priorite(e: dict, config: dict) -> tuple:
     """Ordre d'analyse : gravité estimée 3 ou plus d'abord, puis score de sélection, puis le plus récent."""
     gravite = (e.get("analyse") or {}).get("gravite") or E.gravite_regles(e, config)
     return (gravite >= 3, E.score_selection(e, config), e["dernier"])
+
+
+ESSAIS_IA_MAX = 3
+
+
+def appel_chaine(prompt: str, quotas: Quotas, cfg: dict, cle: str, poster, rapport: dict) -> tuple[str | None, str | None]:
+    """Un appel, en descendant la chaîne de modèles (quotas, pannes) ; (texte, modèle) ou (None, None)."""
+    for q in quotas.modeles:
+        if q.disponibles() <= 0 or quotas.appels_execution() >= cfg["appels_max_par_execution"]:
+            continue
+        avant = q.appels_execution
+        try:
+            return appeler(prompt, q, cfg, cle, poster), q.nom
+        except ErreurQuota as err:
+            q.epuise_jusqua_demain(apprendre=err.jour)
+            rapport["quota_atteint"] = True
+            rapport["erreurs"].append(f"{err} → {q.nom} suspendu jusqu'au lendemain (jour du Pacifique)")
+        except ErreurIA as err:
+            q.hors_service = True
+            rapport["erreurs"].append(str(err))
+        finally:
+            rapport["appels"] += q.appels_execution - avant
+    return None, None
 
 
 def former_lots(candidats: list[dict], n: int) -> list[list[dict]]:
@@ -443,25 +484,7 @@ def analyser(candidats: list[dict], config: dict, quotas: Quotas, maintenant: da
         if quotas.appels_execution() >= cfg["appels_max_par_execution"]:
             break
         sources = {e["id"]: sources_numerotees(e) for e in lot}
-        texte, modele = None, None
-        for q in quotas.modeles:
-            if q.disponibles() <= 0 or quotas.appels_execution() >= cfg["appels_max_par_execution"]:
-                continue
-            avant = q.appels_execution
-            try:
-                texte = appeler(consigne(lot, config, sources), q, cfg, cle, poster)
-                modele = q.nom
-            except ErreurQuota as err:
-                q.epuise_jusqua_demain(apprendre=err.jour)
-                rapport["quota_atteint"] = True
-                rapport["erreurs"].append(f"{err} → {q.nom} suspendu jusqu'au lendemain (jour du Pacifique)")
-            except ErreurIA as err:
-                q.hors_service = True
-                rapport["erreurs"].append(str(err))
-            finally:
-                rapport["appels"] += q.appels_execution - avant
-            if texte is not None:
-                break
+        texte, modele = appel_chaine(consigne(lot, config, sources), quotas, cfg, cle, poster, rapport)
         if texte is None:
             if not any(q.disponibles() > 0 for q in quotas.modeles):
                 break
@@ -483,9 +506,87 @@ def analyser(candidats: list[dict], config: dict, quotas: Quotas, maintenant: da
             rapport["suppressions"] += [f"{e['id']} : {s}" for s in supprimees]
             if analyse:
                 e["analyse"] = {**analyse, "analyse_le": E.iso(maintenant), "nb_articles": len(e["articles"]), "modele": modele}
+                e.pop("essais_ia", None)
                 rapport["analyses"] += 1
             else:
+                e["essais_ia"] = e.get("essais_ia", 0) + 1  # au plus ESSAIS_IA_MAX analyses refusées par événement
                 rapport["rejets"] += 1
     if rapport["erreurs"] and not rapport["reussites"]:
         rapport["erreur"] = rapport["erreurs"][-1][:240]
     return rapport
+
+
+# ------------------------------------------------------------------ thèmes et traductions
+
+def _valide_titre(t, supprimees: list) -> str | None:
+    if not isinstance(t, str):
+        return None
+    t = re.sub(r"\s*[\[(]S\d+(?:\s*[,;]\s*S\d+)*[\])]", "", t).strip().rstrip(".")
+    if 8 <= len(t) <= 160 and sobre(t) and en_francais_titre(t) and not sans_accents(t) and not E.format_exclu(t):
+        return t
+    supprimees.append(f"titre refusé : {t[:80]}")
+    return None
+
+
+def confirmer_themes(groupes: list[list[dict]], config: dict, quotas: Quotas, cle: str | None, poster, rapport: dict) -> dict:
+    """Demande à Gemini de confirmer les regroupements en thème (plusieurs thèmes par appel).
+    Renvoie {clé du thème : {"membres": [ids confirmés], "titre": titre français ou None}}."""
+    res: dict[str, dict] = {}
+    if not cle or not groupes:
+        return res
+    n = config["themes"]["confirmation_par_appel"]
+    for i in range(0, len(groupes), n):
+        lot = groupes[i:i + n]
+        blocs = [{"theme": k, "evenements": [{"id": e["id"], "date": e["dernier"][:10],
+                                              "titre": (e.get("analyse") or {}).get("titre") or E.titre_reference(e)} for e in g]}
+                 for k, g in enumerate(lot)]
+        prompt = ("Tu regroupes des événements géopolitiques en « thèmes en cours ». Pour chaque thème proposé ci-dessous, "
+                  "indique les événements qui relèvent bien du même sujet suivi dans le temps (mêmes acteurs, même situation : "
+                  "par exemple des frappes successives dans un même conflit), et écarte les autres. Donne aussi un titre de thème "
+                  "en français correct, avec les accents, factuel, de 10 mots au plus, sans superlatif. "
+                  "Réponds uniquement en JSON : {\"themes\": [{\"theme\": 0, \"membres\": [\"id\", \"id\"], \"titre\": \"…\"}]}\n"
+                  "Thèmes proposés :\n" + json.dumps(blocs, ensure_ascii=False))
+        texte, _ = appel_chaine(prompt, quotas, config["gemini"], cle, poster, rapport)
+        if texte is None:
+            break
+        try:
+            reponses = json.loads(texte).get("themes") or []
+        except (ValueError, AttributeError):
+            rapport["erreurs"].append("confirmation des thèmes : réponse illisible")
+            continue
+        rapport["reussites"] += 1
+        for r in reponses:
+            try:
+                g = lot[int(r.get("theme"))]
+            except (TypeError, ValueError, IndexError):
+                continue
+            ids = {e["id"] for e in g}
+            membres = [m for m in (r.get("membres") or []) if m in ids]
+            res[E.cle_theme(g)] = {"membres": membres, "titre": _valide_titre(r.get("titre"), rapport["suppressions"])}
+    return res
+
+
+def traduire_titres(titres: list[str], config: dict, quotas: Quotas, cle: str | None, poster, rapport: dict) -> dict:
+    """Traduit en français des titres d'articles (un appel pour 40 titres au plus). {titre : traduction}."""
+    res: dict[str, str] = {}
+    if not cle or not titres:
+        return res
+    for i in range(0, len(titres), 40):
+        lot = titres[i:i + 40]
+        prompt = ("Traduis ces titres d'articles en français correct, avec les accents, en gardant le sens exact, sans rien "
+                  "ajouter ni dramatiser. Réponds uniquement en JSON : {\"traductions\": [\"…\", …]} dans le même ordre.\n"
+                  + json.dumps(lot, ensure_ascii=False))
+        texte, _ = appel_chaine(prompt, quotas, config["gemini"], cle, poster, rapport)
+        if texte is None:
+            break
+        try:
+            traductions = json.loads(texte).get("traductions") or []
+        except (ValueError, AttributeError):
+            rapport["erreurs"].append("traduction des titres : réponse illisible")
+            continue
+        rapport["reussites"] += 1
+        for origine, t in zip(lot, traductions):
+            t = _valide_titre(t, rapport["suppressions"])
+            if t:
+                res[origine] = t
+    return res

@@ -124,8 +124,13 @@ function carteEvenement(e) {
           // Titre d'origine (sans titre français de Gemini) : sa langue et « non traduit »
           e.mention ? el('span', { class: 'geo-mention' }, ` ${e.titre_langue ? `(${e.titre_langue}) · ` : ''}${e.mention}`) : null),
         el('div', { class: 'geo-meta' },
+          e.theme ? el('span', { class: 'geo-theme', title: e.theme_confirme ? 'Regroupement confirmé par Gemini' : 'Regroupement par règles (Gemini indisponible)' },
+            `Thème en cours · ${e.nb_evenements} faits · `) : null,
           el('span', { class: 'geo-categorie' }, e.categorie_libelle),
-          ` · ${e.pays_noms?.length ? e.pays_noms.join(', ') : 'pays non déterminés'} · ${dateHeure(e.dernier)}`,
+          ` · ${e.pays_noms?.length ? e.pays_noms.join(', ') : 'pays non déterminés'}`,
+          // Pays seulement lieu d'une négociation ou d'un sommet : affiché à part
+          e.lieux_noms?.length ? el('span', { class: 'geo-lieu' }, ` · lieu : ${e.lieux_noms.join(', ')}`) : null,
+          ` · ${dateHeure(e.dernier)}`,
           e.ia ? null : el('span', { class: 'geo-sans-ia' }, 'sans IA'),
           e.ia && e.modele ? el('small', {}, ` · ${e.modele}`) : null)),
     ),
@@ -136,6 +141,15 @@ function carteEvenement(e) {
       : el('p', { class: 'geo-texte geo-texte--brut' }, `Événement repéré par ${e.nb_domaines} source${e.nb_domaines > 1 ? 's' : ''} distincte${e.nb_domaines > 1 ? 's' : ''} (${e.nb_articles} article${e.nb_articles > 1 ? 's' : ''})`,
         e.tonalite_gdelt != null ? ` ; tonalité GDELT des pays concernés : ${nombre(e.tonalite_gdelt, 1)}` : '',
         '. Gravité estimée par règles (au plus 3). Résumé non disponible : voir les sources.'),
+    e.chronologie?.length > 1
+      ? el('div', { class: 'geo-bloc' },
+        el('div', { class: 'geo-etiquette' }, 'Chronologie'),
+        el('ol', { class: 'geo-chronologie' }, e.chronologie.map((c) => el('li', {},
+          el('span', { class: 'mono geo-chrono-date' }, dateHeure(c.date)),
+          el('span', {}, badgeGravite(c.gravite), ' ',
+            c.source ? el('a', { href: c.source, target: '_blank', rel: 'noopener noreferrer' }, c.titre) : c.titre,
+            c.resume ? el('small', {}, ` — ${c.resume}`) : null)))))
+      : null,
     e.actifs?.length
       ? el('div', { class: 'geo-bloc' },
         el('div', { class: 'geo-etiquette' }, 'Interprétation · actifs potentiellement touchés'),
