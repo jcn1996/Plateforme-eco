@@ -100,3 +100,55 @@ class TestSante(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestHorsSeance(unittest.TestCase):
+    """Choix séance / hors séance avec des heures simulées (calendriers NYSE et Euronext Paris)."""
+    NDX = next(a for a in agent.ACTIFS if a["symbole"] == "^NDX")
+    CAC = next(a for a in agent.ACTIFS if a["symbole"] == "^FCHI")
+    URTH = next(a for a in agent.ACTIFS if a["symbole"] == "URTH")
+    CLOTURES = [(date(2025, 11, 3), 20000.0), (date(2026, 11, 2), 27000.0), (date(2026, 11, 3), 28000.0)]
+
+    def entree(self, actif):
+        return agent.calculer(actif, 28000.0, datetime(2026, 11, 3, 21, 0, tzinfo=UTC), self.CLOTURES, False, "Yahoo Finance")
+
+    def test_indice_en_seance(self):
+        r = agent.choisir_hors_seance(self.NDX, self.entree(self.NDX), self.CLOTURES, datetime(2026, 11, 4, 15, 0, tzinfo=UTC),
+                                      (28300.0, datetime(2026, 11, 4, 15, 0, tzinfo=UTC)))
+        self.assertEqual(r["statut"], "ouvert")
+        self.assertNotIn("contrat_a_terme", r)
+
+    def test_contrat_a_terme_hors_seance(self):
+        r = agent.choisir_hors_seance(self.NDX, self.entree(self.NDX), self.CLOTURES, datetime(2026, 11, 4, 23, 30, tzinfo=UTC),
+                                      (28280.0, datetime(2026, 11, 4, 23, 25, tzinfo=UTC)))
+        self.assertEqual(r["statut"], "fermé")
+        self.assertEqual(r["contrat_a_terme"]["symbole"], "NQ=F")
+        self.assertEqual(r["valeur"], 28280.0)
+        self.assertEqual(r["variation"], 1.0)  # 28 280 / 28 000 (clôture de l'indice)
+        self.assertEqual(r["variation_1an"], 41.4)
+
+    def test_jour_ferie(self):
+        # Jeudi 26/11/2026 (Thanksgiving) à 16 h UTC : NYSE fermé → contrat à terme
+        r = agent.choisir_hors_seance(self.NDX, self.entree(self.NDX), self.CLOTURES, datetime(2026, 11, 26, 16, 0, tzinfo=UTC),
+                                      (28100.0, datetime(2026, 11, 26, 15, 55, tzinfo=UTC)))
+        self.assertIn("contrat_a_terme", r)
+
+    def test_cac_ferme_sans_contrat(self):
+        r = agent.choisir_hors_seance(self.CAC, self.entree(self.CAC), self.CLOTURES, datetime(2026, 11, 4, 20, 0, tzinfo=UTC))
+        self.assertEqual(r["statut"], "fermé")
+        self.assertNotIn("contrat_a_terme", r)
+        self.assertEqual(agent.choisir_hors_seance(self.CAC, self.entree(self.CAC), self.CLOTURES,
+                                                   datetime(2026, 11, 4, 10, 0, tzinfo=UTC))["statut"], "ouvert")
+
+    def test_urth_apres_cloture(self):
+        barres = [(datetime(2026, 11, 4, 20, 55, tzinfo=UTC), 204.0), (datetime(2026, 11, 4, 22, 30, tzinfo=UTC), 204.4)]
+        r = agent.choisir_hors_seance(self.URTH, self.entree(self.URTH), [(date(2026, 11, 4), 204.0)],
+                                      datetime(2026, 11, 4, 22, 45, tzinfo=UTC), None, barres)
+        self.assertEqual((r["statut"], r["valeur"], r["variation"]), ("hors séance", 204.4, 0.2))
+
+    def test_urth_nuit_sans_cours_recent(self):
+        barres = [(datetime(2026, 11, 4, 21, 0, tzinfo=UTC), 204.0)]  # pas d'échange après la clôture
+        r = agent.choisir_hors_seance(self.URTH, self.entree(self.URTH), [(date(2026, 11, 4), 204.0)],
+                                      datetime(2026, 11, 5, 3, 0, tzinfo=UTC), None, barres)
+        self.assertEqual(r["statut"], "fermé")
+        self.assertNotIn("hors_seance", r)
