@@ -9,10 +9,12 @@ from pathlib import Path
 from agents.analyse_demande import agent as AG
 from agents.analyse_demande import reponse as T
 from agents.analyse_demande.resolution import pays_du_symbole, resoudre, saisie
+from agents.commun.essais import copier_donnees_test
 from agents.commun.sortie import lire_json
 from agents.pays.textes import ton_conforme
 
 RACINE = Path(__file__).resolve().parents[3]
+DONNEES = Path(__file__).resolve().parent / "donnees"
 SUFFIXES = AG.CFG["suffixes_pays"]
 
 
@@ -39,7 +41,7 @@ class TestSaisie(unittest.TestCase):
 
 
 class TestResolution(unittest.TestCase):
-    Q = json.loads((RACINE / "agents" / "analyse_demande" / "tests" / "donnees" / "recherche.json").read_text(encoding="utf-8"))
+    Q = json.loads((DONNEES / "recherche.json").read_text(encoding="utf-8"))
     COURS = {"MC.PA": ([("2026-10-01", 500.0, 1e6), ("2026-10-02", 510.0, 1e6)], "EUR"),
              "LVMUY": ([("2026-10-01", 100.0, 1e4)], "USD"), "AAPL": ([("2026-10-01", 200.0, 5e7)], "USD")}
 
@@ -84,8 +86,8 @@ class TestDeBoutEnBout(unittest.TestCase):
         self.dir = Path(tempfile.mkdtemp())
         self.data = self.dir / "data"
         (self.data / "journal").mkdir(parents=True)
-        for f in ("pays.json", "macro.json"):
-            shutil.copy(RACINE / "data" / f, self.data / f)
+        # Jamais les vrais data/ ni config/ : pays.json et macro.json de test, copie de test de la liste de surveillance
+        copier_donnees_test(self.data)
         medianes = {"Information Technology|monde": {"per": 28.0, "ev_ebitda": 19.0, "n": 50},
                     "Information Technology|amerique_nord": {"per": 30.0, "ev_ebitda": 21.0, "n": 30},
                     "Consumer Discretionary|monde": {"per": 18.0, "ev_ebitda": 11.0, "n": 60},
@@ -96,7 +98,7 @@ class TestDeBoutEnBout(unittest.TestCase):
                                              ("Consumer Discretionary", 70), ("Consumer Discretionary", 30), ("Consumer Discretionary", 55)])]
         (self.data / "entreprises.json").write_text(json.dumps({"meta": {"fictif": False, "medianes": medianes}, "donnees": pairs}), encoding="utf-8")
         self.surv = self.dir / "surveillance.json"
-        shutil.copy(RACINE / "config" / "surveillance.json", self.surv)
+        shutil.copy(DONNEES / "surveillance.json", self.surv)
 
     def tearDown(self):
         shutil.rmtree(self.dir)
@@ -174,7 +176,8 @@ class TestDeBoutEnBout(unittest.TestCase):
     def test_echec_enregistre(self):
         chemin = self.dir / "evenement.json"
         chemin.write_text(json.dumps(evenement("Analyse : Apple")), encoding="utf-8")
-        AG.main(["--evenement", str(chemin), "--sortie", str(self.dir / "s"), "--data", str(self.data), "--echec", "installation impossible"])
+        AG.main(["--evenement", str(chemin), "--sortie", str(self.dir / "s"), "--data", str(self.data),
+                 "--surveillance", str(self.surv), "--echec", "installation impossible"])
         s = lire_json(self.data / "journal" / "analyse-demande.json")["meta"]["sante"]
         self.assertTrue(s["degrade"])
         self.assertEqual(s["dernier_echec"]["detail"], "installation impossible")

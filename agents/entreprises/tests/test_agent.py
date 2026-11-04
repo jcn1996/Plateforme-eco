@@ -6,6 +6,7 @@ import unittest
 from datetime import date
 from pathlib import Path
 
+from agents.commun.essais import copier_donnees_test
 from agents.commun.sortie import lire_json
 from agents.entreprises import analyse as A
 from agents.entreprises import comptes as C
@@ -235,7 +236,8 @@ class TestCompositionsManquantes(unittest.TestCase):
             shutil.rmtree(d)
 
     def test_fichier_des_listes_manuelles(self):
-        m = json.loads((DOSSIER.parents[1] / "config" / "compositions_manuelles.json").read_text(encoding="utf-8"))["pays"]
+        # Copie de test (tests/donnees) : les tests ne lisent jamais le vrai config/compositions_manuelles.json
+        m = json.loads((DOSSIER / "tests" / "donnees" / "compositions_manuelles.json").read_text(encoding="utf-8"))["pays"]
         self.assertEqual(set(m), {"VN", "EG", "AE"})
         for code, v in m.items():
             date.fromisoformat(v["verifie_le"])
@@ -259,16 +261,17 @@ class TestComptes(unittest.TestCase):
 class TestAgent(unittest.TestCase):
     def setUp(self):
         self.dossier = Path(tempfile.mkdtemp())
-        racine = DOSSIER.parents[1]
-        for f in ("pays.json", "macro.json"):
-            shutil.copy(racine / "data" / f, self.dossier / f)
+        copier_donnees_test(self.dossier)  # pays.json et macro.json de test, jamais les vrais data/
+        donnees = DOSSIER / "tests" / "donnees"
+        self.fichiers = ["--surveillance", str(donnees / "surveillance.json"),
+                         "--compositions-manuelles", str(donnees / "compositions_manuelles.json")]
 
     def tearDown(self):
         shutil.rmtree(self.dossier)
 
     def test_execution_complete_puis_quotidienne(self):
         from agents.entreprises.agent import main
-        self.assertEqual(main(["--mode", "complet", "--test", "--data", str(self.dossier), "--date", "2026-11-02"]), 0)
+        self.assertEqual(main(["--mode", "complet", "--test", "--data", str(self.dossier), "--date", "2026-11-02", *self.fichiers]), 0)
         e = lire_json(self.dossier / "entreprises.json")
         self.assertFalse(e["meta"]["fictif"])
         self.assertGreater(len(e["donnees"]), 5)
@@ -290,7 +293,7 @@ class TestAgent(unittest.TestCase):
         sante = lire_json(self.dossier / "journal" / "agent-entreprises.json")["meta"]["sante"]
         self.assertEqual(sante["agent"], "entreprises")
         # Mise à jour quotidienne à partir de la base enregistrée
-        self.assertEqual(main(["--mode", "quotidien", "--test", "--data", str(self.dossier), "--date", "2026-11-03"]), 0)
+        self.assertEqual(main(["--mode", "quotidien", "--test", "--data", str(self.dossier), "--date", "2026-11-03", *self.fichiers]), 0)
 
 
 if __name__ == "__main__":

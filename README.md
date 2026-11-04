@@ -90,7 +90,7 @@ Pour lancer l'agent sur un ordinateur :
 pip install -r agents/requirements.txt
 python -m agents.pays            # vraies sources
 python -m agents.pays --test     # données de test, sans réseau
-python -m unittest discover -s agents -t .   # tests
+python -m unittest discover -s agents/pays -t .   # tests de l'agent
 ```
 
 ## Agent marchés (cours réels, sans IA)
@@ -336,6 +336,18 @@ GitHub retarde, voire saute, souvent les tâches planifiées aux minutes rondes.
 Le workflow `.github/workflows/rattrapage.yml` tourne toutes les heures (minute 29). Il lit `data/journal/*.json` et relance (`gh workflow run`, déclencheur `workflow_dispatch`) chaque agent dont une exécution prévue manque depuis plus d'une heure, au plus une fois par agent et par heure, et jamais si une exécution est déjà en cours ou en attente. Chaque relance est tracée dans `data/journal/rattrapage.json`.
 
 Chaque workflow a un groupe `concurrency` (jamais deux exécutions simultanées du même agent) et refait jusqu'à 3 tentatives de `git pull --rebase` + `git push` en cas de conflit de commit.
+
+## Tests
+
+Chaque agent ne lance, avant de tourner, que ses propres tests et ceux du module commun (`agents/commun`) : un test d'un autre agent ne peut pas le bloquer en production.
+
+Le workflow `.github/workflows/tests.yml` (« Tests ») lance l'ensemble des tests sur chaque pull request (et à la main). Il échoue aussi si un test modifie ou lit les vrais dossiers `config/` et `data/` : les tests sont relancés avec ces deux dossiers retirés.
+
+Règle : un test ne lit ni ne modifie jamais les vrais `config/` et `data/` (ils changent avec la production, par exemple la liste de surveillance). Il travaille dans un dossier temporaire, avec des copies de test (`agents/<agent>/tests/donnees/`) ; `agents/commun/essais.py` fournit des `pays.json` et `macro.json` de test, produits par les agents pays et macro en mode test.
+
+```
+python -m unittest discover -s agents -t .   # tous les tests
+```
 
 ## Maintien
 
