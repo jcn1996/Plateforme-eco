@@ -683,6 +683,10 @@ def main(argv=None) -> int:
     ap.add_argument("--test", action="store_true", help="données de test enregistrées, sans réseau")
     ap.add_argument("--capturer", type=int, help="enregistre les N premières sociétés comme données de test")
     ap.add_argument("--data", default=str(RACINE / "data"))
+    ap.add_argument("--surveillance", default=str(RACINE / "config" / "surveillance.json"),
+                    help="liste de surveillance (les tests passent une copie de test)")
+    ap.add_argument("--compositions-manuelles", default=str(RACINE / "config" / "compositions_manuelles.json"),
+                    help="listes manuelles de composition (les tests passent une copie de test)")
     ap.add_argument("--date")
     args = ap.parse_args(argv)
 
@@ -703,11 +707,11 @@ def main(argv=None) -> int:
         pays = lot["pays"] if lot else ([c.strip().upper() for c in args.pays.split(",")] if args.pays else None)
         connu = lire_json(data / "entreprises" / "univers.json")
         depart = json.loads((DOSSIER / "univers_depart.json").read_text(encoding="utf-8"))["societes"]
-        surveillance = U.lire_surveillance(RACINE / "config" / "surveillance.json")
+        surveillance = U.lire_surveillance(Path(args.surveillance))
         if args.test:
             depart = [s for s in depart if s["ticker"] in f.d["yahoo"]]
             surveillance = [s for s in surveillance if s["ticker"] in f.d["yahoo"]]
-        manuelles = (lire_json(RACINE / "config" / "compositions_manuelles.json") or {}).get("pays", {})
+        manuelles = (lire_json(Path(args.compositions_manuelles)) or {}).get("pays", {})
         liste, etats_compo = U.construire(f.composition, config, connu, depart, surveillance, pays, manuelles)
         if args.echantillon:
             liste = echantillon(liste, args.echantillon, config)

@@ -1,0 +1,66 @@
+# Tests : lance l'ensemble des tests du dépôt (tous les agents, données de test, sans réseau)
+# sur chaque pull request, pour repérer avant la fusion un test cassé ou mal isolé.
+# Ce workflow ne bloque jamais les agents en production : chaque agent ne lance que ses
+# propres tests (et ceux du module commun). Il n'a pas de planning : le planificateur l'ignore.
+# - automatiquement à chaque pull request (ouverture, nouveaux commits) ;
+# - à la main : onglet Actions → « Tests » → « Run workflow ».
+name: Tests
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: Installer Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: agents/requirements.txt
+
+      - name: Installer les dépendances
+        run: pip install -r agents/requirements.txt
+
+      - name: Lancer tous les tests
+        run: python -m unittest discover -s agents -t .
+
+      - name: Vérifier que les tests n'ont pas modifié config/ ni data/
+        run: |
+          if [ -n "$(git status --porcelain -- config data)" ]; then
+            echo "::error::Des tests ont modifié les vrais fichiers config/ ou data/ :"
+            git status --porcelain -- config data
+            exit 1
+          fi
+
+      # Les tests ne doivent jamais lire les vrais config/ et data/ (ils changent avec la
+      # production) : on les relance avec ces deux dossiers retirés.
+      - name: Vérifier que les tests ne lisent pas config/ ni data/
+        run: |
+          mkdir -p "$RUNNER_TEMP/reels"
+          mv config data "$RUNNER_TEMP/reels/"
+          statut=0
+          python -m unittest discover -s agents -t . || statut=$?
+          if [ -e config ] || [ -e data ]; then
+            echo "::error::Des tests ont écrit dans config/ ou data/."
+            statut=1
+          fi
+          rm -rf config data
+          mv "$RUNNER_TEMP/reels/config" "$RUNNER_TEMP/reels/data" .
+          if [ "$statut" -ne 0 ]; then
+            echo "::error::Des tests dépendent des vrais fichiers config/ ou data/ : utiliser une copie de test dans un dossier temporaire (agents/commun/essais.py)."
+          fi
+          exit $statut

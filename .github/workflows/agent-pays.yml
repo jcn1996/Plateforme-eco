@@ -40,8 +40,13 @@ jobs:
       - name: Installer les dépendances
         run: pip install -r agents/requirements.txt
 
+      # Uniquement les tests de l'agent pays et du module commun : un test d'un autre agent
+      # ne doit jamais bloquer cet agent en production. L'ensemble des tests tourne sur
+      # chaque pull request (workflow « Tests »).
       - name: Tester l'agent (données de test, sans réseau)
-        run: python -m unittest discover -s agents -t .
+        run: |
+          python -m unittest discover -s agents/pays -t .
+          python -m unittest discover -s agents/commun -t .
 
       - name: Lancer l'agent pays
         env:
