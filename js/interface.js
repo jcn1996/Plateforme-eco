@@ -51,6 +51,11 @@ function heureCours(iso) {
     ? heure : `${d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })} ${heure}`;
 }
 
+/** « 03/11 » à partir d'une date AAAA-MM-JJ. */
+function dateCourteMarche(d) {
+  return d ? `${d.slice(8, 10)}/${d.slice(5, 7)}` : '';
+}
+
 /* Réglages du bandeau */
 const VITESSE_AUTO = 32;      // défilement automatique, en pixels par seconde
 const REPRISE_APRES = 4000;   // reprise du défilement auto après un toucher (ms)
@@ -64,16 +69,19 @@ const REPRISE_APRES = 4000;   // reprise du défilement auto après un toucher (
  */
 export function remplirBandeau(piste, marches) {
   const bandeau = piste.parentElement;
-  const ouvert = (m) => m.statut === 'ouvert';
+  const classeStatut = { ouvert: ' cotation-statut--ouvert', 'hors séance': ' cotation-statut--hors-seance' };
   const cotation = (m, copie) => el('button', {
     class: 'cotation', type: 'button', tabindex: copie ? '-1' : undefined, 'aria-hidden': copie ? 'true' : undefined,
     'data-nom': m.nom,
-    'aria-label': `${m.nom} : ${valeurMarche(m)}, ${texteVariation(m.variation, 2)} aujourd'hui, ${texteVariation(m.variation_1an, 1)} sur un an`
+    'aria-label': `${m.nom}${m.contrat_a_terme ? ` (contrat à terme ${m.contrat_a_terme.symbole})` : ''} : ${valeurMarche(m)}, `
+      + `${texteVariation(m.variation, 2)} ${m.contrat_a_terme || m.hors_seance ? 'depuis la dernière clôture' : 'aujourd’hui'}, ${texteVariation(m.variation_1an, 1)} sur un an`
       + (m.statut ? `, marché ${m.statut}` : ''),
   },
     el('span', { class: 'cotation-cat' }, CATEGORIES[m.categorie] ?? ''),
     el('span', { class: 'cotation-nom' }, m.nom),
-    m.statut ? el('span', { class: `cotation-statut${ouvert(m) ? ' cotation-statut--ouvert' : ''}` }, ouvert(m) ? 'ouvert' : 'fermé') : null,
+    // Badge « F » : le cours affiché est celui du contrat à terme (indice fermé)
+    m.contrat_a_terme ? el('span', { class: 'cotation-f', title: `Contrat à terme ${m.contrat_a_terme.symbole}` }, 'F') : null,
+    m.statut ? el('span', { class: `cotation-statut${classeStatut[m.statut] ?? ''}` }, m.statut) : null,
     el('span', { class: 'cotation-valeur mono' }, valeurMarche(m)),
     m.variation == null ? null
       : el('span', { class: `mono ${m.variation >= 0 ? 'hausse' : 'baisse'}` }, `${m.variation >= 0 ? '▲' : '▼'} ${variation(m.variation, 2)}`),
@@ -156,8 +164,14 @@ export function remplirBandeau(piste, marches) {
     bulle = el('div', { class: 'bulle-marche', role: 'status' },
       el('div', { class: 'bulle-marche-nom' }, m.nom),
       el('div', { class: 'bulle-marche-valeur mono' }, valeurMarche(m)),
-      ligne('Aujourd’hui', m.variation, 2),
+      ligne(m.contrat_a_terme || m.hors_seance ? 'Depuis la clôture' : 'Aujourd’hui', m.variation, 2),
       ligne('Sur 1 an', m.variation_1an, 1),
+      m.contrat_a_terme ? el('div', { class: 'bulle-marche-note' },
+        `Contrat à terme ${m.contrat_a_terme.symbole}, marché fermé ; variation par rapport à la clôture de l’indice`
+        + (m.contrat_a_terme.cloture_indice != null ? ` (${nombre(m.contrat_a_terme.cloture_indice, 2)} le ${dateCourteMarche(m.contrat_a_terme.date_cloture)})` : '') + '.') : null,
+      m.hors_seance ? el('div', { class: 'bulle-marche-note' },
+        `Cours hors séance (avant ouverture ou après clôture) ; variation par rapport à la clôture`
+        + (m.hors_seance.cloture != null ? ` (${nombre(m.hors_seance.cloture, 2)} le ${dateCourteMarche(m.hors_seance.date_cloture)})` : '') + '.') : null,
       m.heure || m.source ? el('div', { class: 'bulle-marche-pied' },
         m.heure ? `Cours de ${heureCours(m.heure)}` : null,
         m.heure && m.source ? ' · ' : null,

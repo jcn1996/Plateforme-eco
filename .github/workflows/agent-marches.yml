@@ -1,7 +1,9 @@
 # Agent marchés (sans IA) : met à jour data/marches.json avec de vrais cours
 # (Yahoo Finance via yfinance ; Stooq en secours ; sinon dernière valeur marquée « ancienne »).
-# - toutes les 15 minutes du lundi au vendredi, de 7 h 07 à 22 h 07 UTC (puis pause la nuit) ;
+# - toutes les 15 minutes du lundi au vendredi, de 7 h 07 à 22 h 07 UTC ;
+# - toutes les heures en semaine le soir et la nuit (contrats à terme NQ=F et ES=F, Bitcoin) ;
 # - toutes les heures le week-end (pour le Bitcoin), à la minute 7 ;
+# - le dimanche à partir de 22 h UTC, toutes les 15 minutes (ouverture des contrats à terme) ;
 # Minutes décalées (7, 22, 37, 52) : GitHub retarde ou saute souvent les tâches aux minutes rondes.
 # Le workflow « Rattrapage » relance l'agent si une exécution prévue manque depuis plus d'une heure.
 # - à la main : onglet Actions → « Agent marchés » → « Run workflow ».
@@ -10,9 +12,11 @@ name: Agent marchés
 
 on:
   schedule:
-    - cron: "7,22,37,52 7-21 * * 1-5"   # 7 h 07 → 21 h 52 UTC, en semaine
+    - cron: "7,22,37,52 7-21 * * 1-5"   # 7 h 07 → 21 h 52 UTC, en semaine (toutes les 15 min)
     - cron: "7 22 * * 1-5"              # 22 h 07 UTC, en semaine
+    - cron: "7 0-6,23 * * 1-5"          # soir et nuit en semaine : toutes les heures (contrats à terme, Bitcoin)
     - cron: "7 * * * 0,6"               # toutes les heures (minute 7) le samedi et le dimanche
+    - cron: "22,37,52 22-23 * * 0"      # dimanche à partir de 22 h UTC : ouverture des contrats à terme, toutes les 15 min
   workflow_dispatch:
 
 permissions:

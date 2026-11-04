@@ -31,15 +31,22 @@ CACHE = RACINE / "agents" / ".cache" / "marches"
 
 # Ordre exact d'affichage dans le bandeau
 ACTIFS = [
-    {"symbole": "^NDX", "stooq": "^ndx", "nom": "Nasdaq 100", "categorie": "indices", "unite": "pts"},
-    {"symbole": "^GSPC", "stooq": "^spx", "nom": "S&P 500", "categorie": "indices", "unite": "pts"},
+    {"symbole": "^NDX", "stooq": "^ndx", "nom": "Nasdaq 100", "categorie": "indices", "unite": "pts",
+     "hors_seance": {"type": "future", "symbole": "NQ=F", "calendrier": "XNYS"}},
+    {"symbole": "^GSPC", "stooq": "^spx", "nom": "S&P 500", "categorie": "indices", "unite": "pts",
+     "hors_seance": {"type": "future", "symbole": "ES=F", "calendrier": "XNYS"}},
     {"symbole": "GC=F", "stooq": "gc.f", "nom": "Or", "categorie": "matieres_premieres", "unite": "$/once"},
     {"symbole": "CL=F", "stooq": "cl.f", "nom": "Pétrole WTI", "categorie": "matieres_premieres", "unite": "$/baril"},
     {"symbole": "BTC-USD", "stooq": "btcusd", "nom": "Bitcoin", "categorie": "crypto", "unite": "$", "continu": True},
     {"symbole": "EURUSD=X", "stooq": "eurusd", "nom": "EUR/USD", "categorie": "devises", "unite": ""},
-    {"symbole": "^FCHI", "stooq": "^cac", "nom": "CAC 40", "categorie": "indices", "unite": "pts"},
-    {"symbole": "URTH", "stooq": "urth.us", "nom": "MSCI World (ETF URTH)", "categorie": "indices", "unite": "$"},
+    # Pas de contrat à terme CAC 40 sur Yahoo (FCE=F vide ; CAFME.PA n'est calculé qu'en séance) : dernière clôture hors séance
+    {"symbole": "^FCHI", "stooq": "^cac", "nom": "CAC 40", "categorie": "indices", "unite": "pts",
+     "hors_seance": {"type": "cloture", "calendrier": "XPAR"}},
+    {"symbole": "URTH", "stooq": "urth.us", "nom": "MSCI World (ETF URTH)", "categorie": "indices", "unite": "$",
+     "hors_seance": {"type": "prepost", "calendrier": "XNYS"}},
 ]
+# Un cours avant ouverture / après clôture plus ancien que ceci n'est plus affiché (on revient à la dernière clôture)
+AGE_MAX_HORS_SEANCE = timedelta(hours=4)
 
 # Au-delà de cet âge, un cours n'est plus considéré comme « en direct » (cours différés d'environ 15 min)
 AGE_MAX_OUVERT = timedelta(minutes=45)
@@ -90,7 +97,110 @@ def est_ouvert(actif: dict, heure: datetime, maintenant: datetime, debut=None, f
     return maintenant - heure < AGE_MAX_OUVERT
 
 
+# --------------------------- Heures de séance (jours fériés compris) ---------------------------
+
+_CALENDRIERS = {}
+
+
+def calendrier(code: str):
+    """Calendrier d'une place (exchange_calendars : XNYS = New York, XPAR = Euronext Paris), ou None si indisponible."""
+    if code not in _CALENDRIERS:
+        try:
+            import exchange_calendars as xc
+            _CALENDRIERS[code] = xc.get_calendar(code)
+        except Exception as e:  # bibliothèque absente : on retombe sur les horaires renvoyés par Yahoo
+            LOG.warning("Calendrier %s indisponible (%s)", code, str(e)[:80])
+            _CALENDRIERS[code] = None
+    return _CALENDRIERS[code]
+
+
+def marche_ouvert(code: str, t: datetime) -> bool | None:
+    """Vrai pendant une séance de la place (jours fériés et demi-séances compris) ; None si inconnu."""
+    cal = calendrier(code)
+    if cal is None:
+        return None
+    import pandas as pd
+    try:
+        return bool(cal.is_open_on_minute(pd.Timestamp(t).tz_convert("UTC").floor("min"), ignore_breaks=True))
+    except Exception:
+        return None
+
+
+def derniere_cloture_seance(code: str, t: datetime) -> datetime | None:
+    """Heure de clôture de la dernière séance terminée avant t."""
+    cal = calendrier(code)
+    if cal is None:
+        return None
+    import pandas as pd
+    try:
+        return cal.previous_close(pd.Timestamp(t).tz_convert("UTC").floor("min")).to_pydatetime()
+    except Exception:
+        return None
+
+
+def avec_contrat_a_terme(entree: dict, actif: dict, prix: float, heure: datetime, clotures: list[tuple[date, float]]) -> dict:
+    """Hors séance : le contrat à terme remplace l'indice ; variations calculées par rapport à la dernière
+    clôture de l'indice (tendance attendue à l'ouverture)."""
+    clotures = sorted(clotures)
+    ref_jour, ref = clotures[-1]
+    an = [c for d, c in clotures if d <= ref_jour - timedelta(days=365)]
+    hs = actif["hors_seance"]
+    return {**entree, "valeur": round(float(prix), 2), "heure": iso(heure), "statut": "fermé",
+            "variation": round((prix / ref - 1) * 100, 2) if ref else None,
+            "variation_1an": round((prix / an[-1] - 1) * 100, 2) if an else None,
+            "contrat_a_terme": {"symbole": hs["symbole"], "cloture_indice": round(ref, 2), "date_cloture": ref_jour.isoformat()},
+            "source": "Yahoo Finance (contrat à terme)"}
+
+
+def avec_hors_seance(entree: dict, prix: float, heure: datetime, clotures: list[tuple[date, float]]) -> dict:
+    """Cours avant ouverture ou après clôture (URTH) : variation par rapport à la dernière clôture de séance."""
+    ref_jour, ref = sorted(clotures)[-1]
+    return {**entree, "valeur": round(float(prix), 2), "heure": iso(heure), "statut": "hors séance",
+            "variation": round((prix / ref - 1) * 100, 2) if ref else None,
+            "hors_seance": {"cloture": round(ref, 2), "date_cloture": ref_jour.isoformat()}}
+
+
+def choisir_hors_seance(actif: dict, entree: dict, clotures, maintenant: datetime, cotation_future=None, barres=None) -> dict:
+    """Décide l'affichage d'un indice selon l'heure : séance → indice ; hors séance → contrat à terme,
+    cours hors séance (prepost) ou dernière clôture « fermé ». Fonction pure (testée avec des heures simulées)."""
+    hs = actif.get("hors_seance")
+    if not hs:
+        return entree
+    ouvert = marche_ouvert(hs["calendrier"], maintenant)
+    if ouvert is None:
+        return entree  # calendrier indisponible : statut d'après les horaires Yahoo
+    if ouvert:
+        return {**entree, "statut": "ouvert"}
+    entree = {**entree, "statut": "fermé"}
+    if hs["type"] == "future" and cotation_future:
+        return avec_contrat_a_terme(entree, actif, cotation_future[0], cotation_future[1], clotures)
+    if hs["type"] == "prepost" and barres:
+        cloture = derniere_cloture_seance(hs["calendrier"], maintenant)
+        heure, prix = barres[-1]
+        if cloture and heure > cloture and maintenant - heure <= AGE_MAX_HORS_SEANCE:
+            return avec_hors_seance(entree, prix, heure, clotures)
+    return entree
+
+
 # --------------------------- Source 1 : Yahoo Finance ---------------------------
+
+def cotation_yahoo(symbole: str) -> tuple[float, datetime] | None:
+    """Dernier cours (5 min) d'un contrat à terme."""
+    import yfinance as yf
+    h = yf.Ticker(symbole).history(period="5d", interval="5m")
+    h = h["Close"].dropna() if not h.empty else h
+    return (float(h.iloc[-1]), h.index[-1].to_pydatetime()) if len(h) else None
+
+
+def barres_prepost(symbole: str) -> list[tuple[datetime, float]]:
+    """Cours de 5 min, séances étendues comprises (avant ouverture, après clôture)."""
+    import yfinance as yf
+    h = yf.Ticker(symbole).history(period="2d", interval="5m", prepost=True)
+    if h.empty:
+        return []
+    c = h["Close"].dropna()
+    return [(i.to_pydatetime(), float(v)) for i, v in c.items()]
+
 
 def via_yahoo(actif: dict, maintenant: datetime) -> dict:
     import warnings
@@ -111,7 +221,20 @@ def via_yahoo(actif: dict, maintenant: datetime) -> dict:
     ouvert = est_ouvert(actif, heure, maintenant,
                         debut.to_pydatetime() if debut is not None else None,
                         fin.to_pydatetime() if fin is not None else None)
-    return calculer(actif, float(prix), heure, clotures, ouvert, "Yahoo Finance")
+    entree = calculer(actif, float(prix), heure, clotures, ouvert, "Yahoo Finance")
+    hs = actif.get("hors_seance")
+    if hs and marche_ouvert(hs["calendrier"], maintenant) is False:
+        future, barres = None, None
+        try:
+            if hs["type"] == "future":
+                future = cotation_yahoo(hs["symbole"])
+            elif hs["type"] == "prepost":
+                barres = barres_prepost(actif["symbole"])
+        except Exception as e:  # contrat à terme ou cours hors séance indisponible : dernière clôture
+            LOG.warning("%s hors séance indisponible : %s", actif["nom"], str(e)[:100])
+        # Hors séance, la variation du jour se lit par rapport à la dernière clôture : on la recalcule sur la série
+        return choisir_hors_seance(actif, entree, clotures, maintenant, future, barres)
+    return choisir_hors_seance(actif, entree, clotures, maintenant)
 
 
 # --------------------------- Source 2 : Stooq (CSV) ---------------------------
