@@ -7,7 +7,8 @@
    ========================================================================== */
 
 import { el, nombre, AGENTS, tendanceNote, variation } from './outils.js';
-import { pastilleReco } from './analyses.js';
+import { pastilleReco, fichierAnalyse } from './analyses.js';
+import { graphiqueAvance } from './graphiques.js';
 import { enteteFiche, listeIndicateurs, titreSection, carteAgent, piedFraicheur } from './panneau-pays.js';
 
 /** Ordre d'affichage des onglets. */
@@ -43,6 +44,21 @@ export async function chargerFiche(e) {
   }
 }
 
+/** Clôtures hebdomadaires publiées par l'agent entreprises (fiche ou analyse à la demande), pour le graphique simple. */
+export function historiqueEntreprise(e) {
+  return async () => {
+    if (e.cours_hebdo?.length) return e.cours_hebdo;
+    const chemin = e.fiche ?? (e.analyseDemande || e.demande ? fichierAnalyse(e.ticker) : null);
+    if (!chemin) return null;
+    try {
+      const r = await fetch(chemin, { cache: 'no-cache' });
+      return r.ok ? ((await r.json()).donnees?.cours_hebdo ?? null) : null;
+    } catch {
+      return null;
+    }
+  };
+}
+
 export function ficheEntreprise(d, e, nav = {}) {
   const secteur = d.secteurParId.get(e.secteur);
   const pays = d.paysParCode.get(e.pays);
@@ -76,6 +92,12 @@ export function ficheEntreprise(d, e, nav = {}) {
     el('section', {},
       titreSection('Indicateurs clés', e.financier ? `critères adaptés (${e.financier === 'banque' ? 'banque' : e.financier === 'assurance' ? 'assurance' : 'société financière'})` : 'note sur 100 par indicateur'),
       listeIndicateurs(e.indicateurs),
+    ),
+
+    // Graphique TradingView (chargé quand il apparaît à l'écran, une fois le détail de la fiche lu)
+    e.fiche && !e.detailCharge ? null : el('section', {},
+      titreSection('Graphique', 'bougies · moyennes mobiles 50 et 200 jours · volume'),
+      graphiqueAvance({ yahoo: e.ticker, place: e.place, historique: historiqueEntreprise(e) }),
     ),
 
     blocMontants(e),

@@ -26,6 +26,7 @@ from statistics import median
 
 from ..commun import sante
 from ..commun.journal import journal
+from ..commun.series import serie_graphique
 from ..commun.sortie import ecrire_json, enveloppe, lire_json, maintenant_iso
 from . import croisement, notation, recap, textes
 from .croisement import LIBELLES_NIVEAUX, date_periode
@@ -510,11 +511,15 @@ def qualite(tentatives: list, seuil: float = 1 / 3) -> dict:
 # Programme principal
 # ---------------------------------------------------------------------------
 
-def executer(fournisseur, config: dict, ancien: dict | None, aujourdhui: date) -> tuple[list, dict, list]:
-    """Renvoie (pays, états des sources, échecs et rejets)."""
+def executer(fournisseur, config: dict, ancien: dict | None, aujourdhui: date, series: dict | None = None) -> tuple[list, dict, list]:
+    """Renvoie (pays, états des sources, échecs et rejets). Si `series` est fourni, il reçoit les clôtures
+    quotidiennes sur un an des ETF pays (graphique de secours de l'appli)."""
     ancien_reel = bool(ancien) and ancien.get("meta", {}).get("fictif") is False
     anciens = {p["code"]: p for p in (ancien or {}).get("donnees", [])} if ancien_reel else {}
     src, etats = collecter(fournisseur, config, aujourdhui)
+    if series is not None:
+        etfs = {cfg["etf"] for cfg in config["pays"].values() if cfg.get("etf")}
+        series.update({s: serie_graphique(v) for s, v in (src.get("yahoo_cours") or {}).items() if s in etfs and v})
 
     par_pays, tentatives = {}, {}
     for code, cfg in config["pays"].items():
@@ -554,6 +559,7 @@ def executer(fournisseur, config: dict, ancien: dict | None, aujourdhui: date) -
 
         p = {
             "code": code, "iso_num": cfg["iso_num"], "nom": cfg["nom"], "lat": cfg["lat"], "lon": cfg["lon"],
+            "etf": cfg.get("etf"),  # ETF pays (momentum, valorisation) : graphique de la fiche pays
             "note": note, "niveau": notation.niveau(note) if note is not None else None,
             "note_brute": globale["brute"], "note_ramenee_en_zone_neutre": globale["ramenee"],
             "verdict": verdict,
@@ -708,6 +714,7 @@ def main(argv=None) -> int:
     parser.add_argument("--flux", default=str(RACINE / "data" / "flux.json"))
     parser.add_argument("--journal", default=str(RACINE / "data" / "journal" / "agent-pays.json"))
     parser.add_argument("--recap", default=str(RACINE / "data" / "recap"))
+    parser.add_argument("--cours", help="clôtures des ETF pays pour les graphiques (défaut : cours/etf-pays.json à côté de --sortie)")
     parser.add_argument("--date", help="date du jour (AAAA-MM-JJ), utile pour les tests")
     args = parser.parse_args(argv)
 
@@ -719,7 +726,9 @@ def main(argv=None) -> int:
 
     fournisseur = FournisseurTest(Path(args.donnees_test)) if args.test else FournisseurReel(RACINE / "agents" / ".cache")
     LOG.info("Agent pays %s — %s — %d pays", VERSION_AGENT, "données de test" if args.test else "sources réelles", len(config["pays"]))
-    donnees, etats, echecs = executer(fournisseur, config, ancien, aujourdhui)
+    series = {}
+    donnees, etats, echecs = executer(fournisseur, config, ancien, aujourdhui, series)
+    enregistrer_series(Path(args.cours) if args.cours else Path(args.sortie).parent / "cours" / "etf-pays.json", series)
     ancien_reel = ancien if ancien and ancien.get("meta", {}).get("fictif") is False else None
 
     # Pas d'écriture si rien n'a changé (donc pas de commit)
@@ -754,6 +763,19 @@ def main(argv=None) -> int:
     if erreurs:
         LOG.warning("Sources en erreur : %s (dernières valeurs connues conservées)", ", ".join(erreurs))
     return 0
+
+
+def enregistrer_series(chemin: Path, series: dict) -> bool:
+    """Clôtures quotidiennes sur un an des ETF pays (graphique de secours de l'appli, lu à la demande).
+    Un ETF sans nouvelle série garde l'ancienne ; pas de réécriture si rien n'a changé."""
+    ancien = (lire_json(chemin) or {}).get("donnees") or {}
+    nouveau = {**ancien, **series}
+    if not series or nouveau == ancien:
+        return False
+    ecrire_json(chemin, enveloppe(nouveau, "Yahoo Finance", fictif=False, producteur="agent-pays",
+                                  description="Clôtures quotidiennes sur un an des ETF pays (graphiques de secours de l'appli)"), compact=True)
+    LOG.info("Séries des ETF pays écrites : %s (%d)", chemin, len(series))
+    return True
 
 
 def sources_publiees(config: dict) -> dict:

@@ -3,6 +3,7 @@
    bandeau des alertes du jour, bouton du mode léger.
    ========================================================================== */
 
+import { ouvrirGraphiqueMarche } from './graphiques.js';
 import { el, nombre, variation, classeNote, AGENTS } from './outils.js';
 
 /** Horloge en haut à droite, mise à jour chaque seconde. */
@@ -64,7 +65,8 @@ const REPRISE_APRES = 4000;   // reprise du défilement auto après un toucher (
  * Bandeau des marchés : défilement automatique, mais manipulable au doigt
  * (glisser à gauche ou à droite, avec inertie) et à la souris (pause au
  * survol, glisser possible). Toucher une cotation affiche une petite bulle
- * (cours, variation du jour, variation sur 1 an, heure, source et statut du marché).
+ * (cours, variation du jour, variation sur 1 an, heure, source et statut du marché)
+ * avec le bouton « Voir le graphique » (panneau TradingView).
  * Le contenu est dupliqué pour boucler sans à-coup.
  */
 export function remplirBandeau(piste, marches) {
@@ -179,15 +181,17 @@ export function remplirBandeau(piste, marches) {
         m.statut ? ` · marché ${m.statut}` : null,
         m.ancienne ? el('div', { class: 'bulle-marche-ancienne' }, 'Valeur ancienne : sources indisponibles') : null,
       ) : null,
+      el('button', { type: 'button', class: 'bouton bulle-marche-graphique', onclick: () => { fermerBulle(); ouvrirGraphiqueMarche(m); } },
+        el('span', { 'aria-hidden': 'true' }, '📈 '), 'Voir le graphique'),
     );
     document.body.append(bulle);
     const r = element.getBoundingClientRect();
     const largeur = bulle.offsetWidth;
     bulle.style.left = `${Math.min(Math.max(8, r.left + r.width / 2 - largeur / 2), innerWidth - largeur - 8)}px`;
     bulle.style.top = `${r.bottom + 6}px`;
-    minuterie = setTimeout(fermerBulle, 5000);
+    minuterie = setTimeout(fermerBulle, 8000);
   }
-  document.addEventListener('pointerdown', (e) => { if (bulle && !bandeau.contains(e.target)) fermerBulle(); });
+  document.addEventListener('pointerdown', (e) => { if (bulle && !bandeau.contains(e.target) && !bulle.contains(e.target)) fermerBulle(); });
 }
 
 /** Note « équivalente » à un niveau d'alerte, pour réutiliser les couleurs. */

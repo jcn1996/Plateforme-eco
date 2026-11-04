@@ -1294,3 +1294,56 @@ body.alertes-ouvertes .barre-comparaison { display: none; }
 .geo-chronologie small { color: var(--texte-2); }
 .geo-chrono-date { color: var(--texte-3); font-size: 11px; white-space: nowrap; }
 @media (max-width: 420px) { .geo-chronologie li { grid-template-columns: 1fr; gap: 2px; } }
+
+/* ==========================================================================
+   Graphiques TradingView (widgets gratuits) et graphique simple de secours
+   ========================================================================== */
+.graphique-tv { display: grid; gap: 6px; }
+.graphique-periodes { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+.graphique-periode {
+  flex: 1 0 auto; min-width: 40px; min-height: 32px; padding: 4px 8px;
+  border: 1px solid var(--ligne); border-radius: 8px; background: var(--fond-2);
+  color: var(--texte-2); font: 500 12px var(--police-mono); cursor: pointer;
+}
+.graphique-periode[aria-pressed="true"] { border-color: var(--cyan); background: var(--cyan-doux); color: var(--cyan); }
+.graphique-periode[hidden] { display: none; }
+/* Hauteur adaptée au téléphone : assez pour lire les bougies, sans masquer toute la fiche */
+.graphique-zone {
+  position: relative; height: clamp(260px, 46dvh, 440px); overflow: hidden;
+  border: 1px solid var(--ligne); border-radius: 10px; background: var(--fond-2);
+}
+.graphique-zone--secours { display: grid; grid-template-rows: 1fr auto; }
+.graphique-widget, .graphique-widget iframe { width: 100%; height: 100%; }
+.graphique-lwc { position: relative; min-height: 0; }
+.graphique-attente { margin: 0; padding: 18px 12px; font-size: 12px; color: var(--texte-3); text-align: center; align-self: center; }
+.graphique-note { margin: 0; padding: 4px 10px 6px; font-size: 11px; color: var(--texte-3); border-top: 1px solid var(--ligne); }
+.graphique-mention { margin: 0; font-size: 10.5px; color: var(--texte-3); text-align: right; }
+.graphique-mention a { color: inherit; text-decoration: none; }
+.graphique-mention a:hover, .graphique-mention a:focus-visible { color: var(--cyan); text-decoration: underline; }
+
+/* Mini-graphique sur 12 mois (Pépites, Mes analyses) */
+.graphique-tv--mini { gap: 2px; padding: 0 10px 6px; }
+.graphique-zone--mini { height: 150px; border: 0; background: transparent; }
+.graphique-zone--mini.graphique-zone--secours { grid-template-rows: 1fr; }
+.graphique-zone--mini .tradingview-widget-container,
+.graphique-zone--mini .tradingview-widget-container__widget { width: 100%; height: 100%; }
+.ligne-pepite-bloc {
+  border: 1px solid var(--ligne); border-left: 3px solid var(--c-note, var(--ligne)); border-radius: var(--rayon);
+  background: var(--fond-2); overflow: hidden;
+}
+.ligne-pepite-bloc > .ligne-pepite { border: 0; border-radius: 0; background: transparent; }
+
+/* Bouton de la bulle du bandeau des marchés */
+.bulle-marche-graphique { width: 100%; margin-top: 8px; min-height: 36px; justify-content: center; font-size: 12.5px; }
+
+/* Panneau du graphique d'une cotation du bandeau */
+.panneau-graphique {
+  width: min(760px, calc(100vw - 16px)); max-width: none; max-height: calc(100dvh - 16px);
+  padding: 12px; border: 1px solid var(--ligne-forte); border-radius: var(--rayon);
+  background: var(--fond); color: var(--texte); overflow: auto;
+}
+.panneau-graphique::backdrop { background: rgba(2, 6, 14, 0.75); }
+.panneau-graphique-tete { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+.panneau-graphique-nom { font-family: var(--police-titre); font-weight: 600; font-size: 17px; color: var(--ambre); }
+.panneau-graphique-sous { font-family: var(--police-mono); font-size: 11.5px; color: var(--texte-3); }
+.graphique-tv--panneau .graphique-zone { height: clamp(300px, 64dvh, 560px); }

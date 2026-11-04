@@ -11,6 +11,7 @@
    ========================================================================== */
 
 import { el, nombre, variation, classeNote } from './outils.js';
+import { graphiqueMini } from './graphiques.js';
 
 const DEPOT = 'jcn1996/Plateforme-eco';
 const INDEX = 'data/analyses/index.json';
@@ -140,8 +141,13 @@ export function pastilleReco(r, detenu = false) {
   return el('span', { class: `pastille-reco pastille-reco--${sens}`, title: detenu ? 'Si détenu' : 'Si non détenu' }, v);
 }
 
+/** Clôtures hebdomadaires d'une analyse à la demande (graphique simple). */
+function historiqueAnalyse(ticker) {
+  return async () => (await chargerAnalyse(ticker))?.cours_hebdo ?? null;
+}
+
 function ligneAnalyse(a, ouvrir) {
-  return el('button', { type: 'button', class: `ligne-pepite ${classeNote(a.note)}`, onclick: () => ouvrir(a.ticker),
+  const bouton = el('button', { type: 'button', class: `ligne-pepite ${classeNote(a.note)}`, onclick: () => ouvrir(a.ticker),
     'aria-label': `${a.nom}, note ${a.note} sur 100, ${a.recommandation?.n ?? ''}` },
   el('div', { class: 'ligne-pepite-tete' },
     el('span', { class: 'ligne-pepite-nom' }, a.nom),
@@ -151,6 +157,9 @@ function ligneAnalyse(a, ouvrir) {
     a.recommandation?.e != null ? el('small', { class: 'mono' }, `valeur estimée ${variation(a.recommandation.e, 1)}`) : null),
   el('div', { class: 'ligne-pepite-verdict' }, a.verdict),
   );
+  // Mini-graphique sur 12 mois, chargé quand la fiche apparaît à l'écran
+  return el('div', { class: `ligne-pepite-bloc ${classeNote(a.note)}` }, bouton,
+    graphiqueMini({ yahoo: a.ticker, place: a.place, historique: historiqueAnalyse(a.ticker) }));
 }
 
 /** etat : { analyses: {liste}, enCours: [..] | null | undefined (chargement) } */
