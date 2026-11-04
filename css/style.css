@@ -23,7 +23,7 @@
   --orange: #ffb547;
   --ambre: #ffc062;          /* noms du bandeau des marchés */
   --ambre-clair: #ffd79a;    /* cours du bandeau */
-  --ambre-discret: #c9944a;  /* badge « F », pastille ouvert / fermé */
+  --ambre-discret: #c9944a;  /* badge « F » des contrats à terme */
   --rouge: #ff4d6a;
 
   /* Couleurs du graphique du portefeuille (validées pour le daltonisme) */
@@ -237,20 +237,22 @@ button { font: inherit; color: inherit; }
   color: var(--texte-3); font-size: 9px; letter-spacing: 0.02em;
   pointer-events: none;
 }
-/* Pastille « ouvert » / « fermé » d'une cotation */
+/* Pastille de statut d'une cotation : vert ouvert, rouge fermé, orange hors séance
+   (le libellé écrit et la forme, pleine ou à moitié, distinguent aussi les états) */
 .cotation-statut {
+  --c-statut: var(--rouge);
   align-self: center;
   display: inline-flex; align-items: center; gap: 3px;
-  font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ambre-discret); opacity: 0.75;
+  font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--c-statut);
 }
 .cotation-statut::before {
-  content: ''; width: 6px; height: 6px; border-radius: 50%; border: 1px solid var(--ambre-discret); box-sizing: border-box;
+  content: ''; width: 6px; height: 6px; border-radius: 50%; border: 1px solid var(--c-statut); box-sizing: border-box;
+  background: var(--c-statut);
 }
-/* Ouvert : pastille pleine ; hors séance : à moitié pleine ; fermé : vide (la forme distingue aussi les états) */
-.cotation-statut--ouvert { opacity: 1; }
-.cotation-statut--ouvert::before { background: var(--ambre-discret); box-shadow: 0 0 4px rgba(255, 181, 71, 0.5); }
-.cotation-statut--hors-seance { opacity: 0.9; }
-.cotation-statut--hors-seance::before { background: linear-gradient(90deg, var(--ambre-discret) 50%, transparent 50%); }
+.cotation-statut--ouvert { --c-statut: var(--vert); }
+.cotation-statut--ouvert::before { box-shadow: 0 0 4px var(--vert); }
+.cotation-statut--hors-seance { --c-statut: var(--orange); }
+.cotation-statut--hors-seance::before { background: linear-gradient(90deg, var(--orange) 50%, transparent 50%); }
 .bulle-marche-note { margin-top: 6px; max-width: 240px; font-size: 11px; color: var(--ambre-discret); }
 .bulle-marche-pied { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--ligne); color: var(--texte-3); font-size: 11px; }
 .bulle-marche-ancienne { color: var(--orange); }
