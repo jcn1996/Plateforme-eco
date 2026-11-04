@@ -69,7 +69,7 @@ const REPRISE_APRES = 4000;   // reprise du défilement auto après un toucher (
  */
 export function remplirBandeau(piste, marches) {
   const bandeau = piste.parentElement;
-  const classeStatut = { ouvert: ' cotation-statut--ouvert', 'hors séance': ' cotation-statut--hors-seance' };
+  const classeStatut = { ouvert: ' cotation-statut--ouvert', fermé: ' cotation-statut--ferme', 'hors séance': ' cotation-statut--hors-seance' };
   const cotation = (m, copie) => el('button', {
     class: 'cotation', type: 'button', tabindex: copie ? '-1' : undefined, 'aria-hidden': copie ? 'true' : undefined,
     'data-nom': m.nom,
