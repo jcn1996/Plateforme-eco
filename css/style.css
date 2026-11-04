@@ -21,6 +21,9 @@
   /* Couleurs des notes */
   --vert: #2ee59d;
   --orange: #ffb547;
+  --ambre: #ffc062;          /* noms du bandeau des marchés */
+  --ambre-clair: #ffd79a;    /* cours du bandeau */
+  --ambre-discret: #c9944a;  /* badge « F », pastille ouvert / fermé */
   --rouge: #ff4d6a;
 
   /* Couleurs du graphique du portefeuille (validées pour le daltonisme) */
@@ -201,12 +204,17 @@ button { font: inherit; color: inherit; }
   font-size: 12.5px;
   animation: apparition 0.15s ease;
 }
-.bulle-marche-nom { font-family: var(--police-titre); font-weight: 600; font-size: 13px; }
-.bulle-marche-valeur { margin: 2px 0 6px; font-size: 17px; color: #eafcff; }
+.bulle-marche-nom { font-family: var(--police-titre); font-weight: 600; font-size: 13px; color: var(--ambre); }
+.bulle-marche-valeur { margin: 2px 0 6px; font-size: 17px; color: var(--ambre-clair); }
 .bulle-marche-ligne { display: flex; justify-content: space-between; gap: 16px; color: var(--texte-2); }
 .cotation-cat { color: var(--texte-3); font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.08em; }
-.cotation-nom { color: var(--texte-2); }
-.cotation-valeur { color: var(--texte); }
+/* Noms et cours en ambre (accent « salle de contrôle ») ; variations en vert / rouge */
+.cotation-nom { color: var(--ambre); }
+.cotation-valeur { color: var(--ambre-clair); }
+.cotation-f {
+  align-self: center; padding: 0 3px; border: 1px solid var(--ambre-discret); border-radius: 3px;
+  color: var(--ambre-discret); font-family: var(--police-mono); font-size: 8.5px; font-weight: 600; line-height: 12px;
+}
 .hausse { color: var(--vert); }
 .baisse { color: var(--rouge); }
 
@@ -233,13 +241,17 @@ button { font: inherit; color: inherit; }
 .cotation-statut {
   align-self: center;
   display: inline-flex; align-items: center; gap: 3px;
-  font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--texte-3);
+  font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ambre-discret); opacity: 0.75;
 }
 .cotation-statut::before {
-  content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--texte-3);
+  content: ''; width: 6px; height: 6px; border-radius: 50%; border: 1px solid var(--ambre-discret); box-sizing: border-box;
 }
-.cotation-statut--ouvert { color: var(--vert); }
-.cotation-statut--ouvert::before { background: var(--vert); box-shadow: 0 0 5px var(--vert); }
+/* Ouvert : pastille pleine ; hors séance : à moitié pleine ; fermé : vide (la forme distingue aussi les états) */
+.cotation-statut--ouvert { opacity: 1; }
+.cotation-statut--ouvert::before { background: var(--ambre-discret); box-shadow: 0 0 4px rgba(255, 181, 71, 0.5); }
+.cotation-statut--hors-seance { opacity: 0.9; }
+.cotation-statut--hors-seance::before { background: linear-gradient(90deg, var(--ambre-discret) 50%, transparent 50%); }
+.bulle-marche-note { margin-top: 6px; max-width: 240px; font-size: 11px; color: var(--ambre-discret); }
 .bulle-marche-pied { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--ligne); color: var(--texte-3); font-size: 11px; }
 .bulle-marche-ancienne { color: var(--orange); }
 /* Panneau ouvert : on libère de la place pour le globe */
