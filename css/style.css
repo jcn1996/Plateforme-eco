@@ -1105,6 +1105,13 @@ body.alertes-ouvertes .barre-comparaison { display: none; }
 .macro-marches { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 @media (min-width: 640px) { .macro-marches { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 .macro-marche { display: grid; gap: 3px; }
+.macro-taux-reels > :first-child { grid-column: 1 / -1; }  /* téléphone : taux réel passé sur toute la largeur */
+@media (min-width: 640px) {
+  .macro-taux-reels { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .macro-taux-reels > :first-child { grid-column: auto; }
+}
+.macro-taux-reel-note { display: block; margin-top: 2px; }
+.macro-taux-reel-aide { font-size: 10.5px; line-height: 1.35; color: var(--texte-3); }
 .macro-marche-nom { font-size: 12px; color: var(--texte-2); }
 .macro-marche-valeur { font-size: 16px; color: var(--texte); }
 .macro-marche-var { display: flex; justify-content: space-between; font-size: 12px; color: var(--texte-3); }

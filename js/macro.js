@@ -4,6 +4,8 @@
      depuis sa position du mois précédent ;
    - signaux de récession (pastilles vert, orange, rouge) ;
    - banques centrales (taux, dernier mouvement, prochaine réunion, compte à rebours) ;
+   - taux réels États-Unis (passé : Fed − inflation ; attendu : obligations indexées,
+     point mort d'inflation) ;
    - courbe des taux US sur 2 ans ;
    - marchés du cycle (cuivre, pétrole, dollar, or).
    Sources et dates sous chaque bloc.
@@ -216,6 +218,50 @@ function blocBanques(banques) {
   );
 }
 
+/* ------------------------------------------------------------------ taux réels États-Unis */
+
+/** Tendance sur 12 mois, en points (couleur neutre : une hausse n'est ni bonne ni mauvaise en soi). */
+function tendance12m(x) {
+  if (x?.variation_12m == null) return el('span', {}, 'n. d.');
+  const fleche = x.sens === 'hausse' ? '▲' : x.sens === 'baisse' ? '▼' : '▬';
+  return el('span', { class: 'mono' }, `${fleche} ${pts(x.variation_12m)}`);
+}
+
+function carteTauxReel(libelle, aide, x, complement) {
+  return el('div', { class: 'carte macro-marche macro-taux-reel' },
+    el('div', { class: 'macro-marche-nom' }, libelle),
+    el('div', { class: 'macro-marche-valeur mono' }, x ? `${nombre(x.valeur, 2)}\u00a0${aide.unite}` : 'n. d.'),
+    el('small', { class: 'macro-taux-reel-aide' }, aide.texte),
+    el('div', { class: 'macro-marche-var' }, el('span', {}, '12 mois'), tendance12m(x)),
+    complement ?? null,
+    el('div', { class: 'macro-source' }, x ? `${dateFr(x.date_inflation ? x.date_taux : x.date)}${x.ancienne ? ' · valeur ancienne' : ''}` : 'indisponible'),
+  );
+}
+
+function blocTauxReels(tr) {
+  const us = tr?.etats_unis ?? {};
+  const cinq = (x, libelle) => (x ? el('div', { class: 'macro-marche-var' }, el('span', {}, libelle), el('span', { class: 'mono' }, `${nombre(x.valeur, 2)} %`)) : null);
+  const p = us.passe;
+  const verif = us.attendu_10a?.verification;
+  const ze = tr?.zone_euro ?? {};
+  return [
+    el('div', { class: 'macro-marches macro-taux-reels' },
+      carteTauxReel('Taux réel passé', { unite: '%', texte: p ? `Fed ${nombre(p.taux_directeur, 2)} % − inflation ${nombre(p.inflation, 1)} % (${dateFr(p.date_inflation)})` : 'Fed − inflation sur 12 mois' }, p),
+      carteTauxReel('Taux réel attendu à 10 ans', { unite: '%', texte: 'obligations du Trésor indexées sur l’inflation' }, us.attendu_10a,
+        cinq(us.attendu_5a, 'à 5 ans')),
+      carteTauxReel('Point mort d’inflation à 10 ans', { unite: '%', texte: 'inflation moyenne anticipée par le marché' }, us.point_mort_10a,
+        cinq(us.point_mort_5a, 'à 5 ans')),
+    ),
+    us.texte ? el('p', { class: 'macro-texte' }, us.texte) : null,
+    el('p', { class: 'macro-texte' }, el('strong', {}, 'Zone euro · point mort à 5 ans dans 5 ans : '),
+      ze.disponible && ze.point_mort_5a5a != null ? `${nombre(ze.point_mort_5a5a.valeur, 2)} %` : 'non disponible',
+      ze.disponible ? '' : el('small', { class: 'macro-taux-reel-aide macro-taux-reel-note' }, ze.note ?? '')),
+    source([
+      p?.source, us.attendu_10a?.source, us.attendu_5a?.source, us.point_mort_10a?.source, us.point_mort_5a?.source,
+    ].filter(Boolean).join(' ; ') + (verif === 'concordant' ? `. Vérifié : ${us.attendu_10a.note_verification}.` : verif === 'divergent' ? `. Divergence : ${us.attendu_10a.note_verification}.` : '.')),
+  ];
+}
+
 /* ------------------------------------------------------------------ courbe des taux US */
 
 const SERIES_COURBE = [
@@ -349,6 +395,11 @@ export function ecranMacro(macro) {
       titre('Banques centrales', 'dernier mouvement · prochaine réunion'),
       blocBanques(macro.banques_centrales ?? []),
       source(`Taux : BRI (WS_CBPOL, quotidien) et sources nationales (FRED pour la Fed, BCE, Banque du Canada, Banco Central do Brasil), la plus récente des deux. Calendriers : sites officiels des banques centrales, relevés le ${dateFr(macro.meta?.calendrier_releve_le)}.`),
+    ),
+
+    el('section', {},
+      titre('Taux réels États-Unis', 'passé et attendu · tendance sur 12 mois'),
+      ...blocTauxReels(macro.taux_reels),
     ),
 
     el('section', {},

@@ -99,6 +99,29 @@ class TestBanques(unittest.TestCase):
         self.assertEqual(A.prochaine_reunion({"dates": ["2026-01-01"]}, JOUR)["note"], "aucune date future dans le calendrier")
 
 
+class TestTauxReels(unittest.TestCase):
+    def test_passe_attendu_et_verification(self):
+        fed = [("2025-11-01", 4.4), ("2026-11-02", 3.9)]
+        inflation = [(f"2025-{m:02d}", 2.9) for m in range(9, 13)] + [(f"2026-{m:02d}", 3.7) for m in range(1, 10)]
+        dfii10 = [("2025-10-31", 1.8), ("2026-11-02", 2.6)]
+        t10 = [("2025-10-31", 2.3), ("2026-11-02", 2.3)]
+        r = A.taux_reels_us(fed, "Fed", inflation, {"DFII10": dfii10, "T10YIE": t10}, {}, [("2026-11-02", 4.88)])
+        self.assertEqual(r["passe"]["valeur"], 0.2)  # 3,9 − 3,7
+        self.assertEqual(r["passe"]["variation_12m"], -1.3)  # (3,9 − 3,7) − (4,4 − 2,9)
+        self.assertEqual((r["attendu_10a"]["valeur"], r["attendu_10a"]["variation_12m"], r["attendu_10a"]["sens"]), (2.6, 0.8, "hausse"))
+        self.assertEqual(r["attendu_10a"]["verification"], "concordant")  # 4,88 − 2,3 = 2,58
+        self.assertEqual(r["point_mort_10a"]["sens"], "stable")
+        self.assertIsNone(r["attendu_5a"])
+        self.assertIn("supérieur de 2,4 pt", r["texte"])
+        self.assertTrue(A.ton_conforme(r["texte"]))
+        divergent = A.taux_reels_us(None, "", None, {"DFII10": dfii10, "T10YIE": t10}, {}, [("2026-11-02", 5.2)])
+        self.assertEqual(divergent["attendu_10a"]["verification"], "divergent")
+        self.assertIsNone(divergent["passe"])
+
+    def test_aucune_donnee(self):
+        self.assertIsNone(A.taux_reels_us(None, "", None, {}, {}))
+
+
 class TestCalendrier(unittest.TestCase):
     def test_structure(self):
         cal = json.loads((Path(__file__).resolve().parents[1] / "calendrier_banques_centrales.json").read_text(encoding="utf-8"))
@@ -133,6 +156,12 @@ class TestAgent(unittest.TestCase):
         self.assertEqual(len(donnees["banques_centrales"]), 11)
         self.assertEqual(len(donnees["recession"]["signaux"]), 6)
         self.assertEqual(len(donnees["lectures_pays"]), 31)
+        us = donnees["taux_reels"]["etats_unis"]
+        for cle in ("passe", "attendu_10a", "attendu_5a", "point_mort_10a", "point_mort_5a"):
+            self.assertIsNotNone(us[cle]["valeur"], cle)
+        self.assertEqual(us["attendu_10a"]["verification"], "concordant")
+        self.assertFalse(donnees["taux_reels"]["zone_euro"]["disponible"])
+        self.assertTrue(A.ton_conforme(us["texte"]))
         # Ton froid : aucun superlatif, et deux phrases par pays
         for l in donnees["lectures_pays"].values():
             self.assertTrue(A.ton_conforme(l["texte"]))
