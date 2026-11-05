@@ -328,6 +328,103 @@ def phrase_banque(b: dict, nom_banque: str) -> str:
     return t
 
 
+# ------------------------------------------------------------------ taux réels (États-Unis)
+
+NOTE_5A5A_ZONE_EURO = ("La BCE ne publie pas gratuitement le point mort d'inflation à 5 ans dans 5 ans "
+                       "(calculé à partir des swaps indexés sur l'inflation, données de marché sous licence) ; "
+                       "aucune série de ce type dans le BCE Data Portal.")
+
+
+def _sens(variation: float | None, seuil: float = 0.05) -> str | None:
+    if variation is None:
+        return None
+    return "hausse" if variation > seuil else "baisse" if variation < -seuil else "stable"
+
+
+def tendance_quotidienne(serie: Serie | None, source: str) -> dict | None:
+    """Dernière valeur d'une série quotidienne (en %) et variation sur 12 mois (en points)."""
+    if not serie:
+        return None
+    serie = sorted(serie)
+    d, v = serie[-1]
+    an = valeur_au(serie, jour(d) - timedelta(days=365))
+    var = round(v - an, 2) if an is not None else None
+    return {"valeur": round(v, 2), "date": d, "variation_12m": var, "sens": _sens(var), "source": source}
+
+
+def taux_reel_passe(fed: Serie | None, inflation: Serie | None, source: str) -> dict | None:
+    """Taux réel passé : taux de la Fed moins l'inflation des 12 derniers mois (dernier mois publié),
+    et le même calcul 12 mois plus tôt."""
+    if not fed or not inflation:
+        return None
+    fed, m = sorted(fed), mensuelle(inflation)
+    d_fed, taux = fed[-1]
+    mois, inf = m[-1]
+    v = taux - inf
+    var = None
+    if len(m) >= 13:
+        mois_12, inf_12 = m[-13]
+        taux_12 = valeur_au(fed, jour(d_fed) - timedelta(days=365))
+        if taux_12 is not None:
+            var = round(v - (taux_12 - inf_12), 2)
+    return {"valeur": round(v, 2), "taux_directeur": round(taux, 3), "date_taux": d_fed, "inflation": round(inf, 2),
+            "date_inflation": mois, "variation_12m": var, "sens": _sens(var), "source": source}
+
+
+def texte_taux_reels(passe: dict | None, attendu: dict | None, point_mort: dict | None) -> str:
+    """Phrase d'explication (ton factuel) du bloc « Taux réels États-Unis »."""
+    morceaux = []
+    if passe:
+        morceaux.append(f"Le taux réel passé ({nb(passe['taux_directeur'], 2)} % pour la Fed, milieu de la fourchette, moins {nb(passe['inflation'], 1)} % "
+                        f"d'inflation sur 12 mois) est de {nb(passe['valeur'], 2, signe=True)} % : il mesure la politique "
+                        "monétaire par rapport à l'inflation déjà constatée.")
+    if attendu and point_mort:
+        morceaux.append(f"Le taux réel attendu à 10 ans ({nb(attendu['valeur'], 2)} %) est le rendement des obligations du Trésor "
+                        f"indexées sur l'inflation ; le point mort ({nb(point_mort['valeur'], 2)} %) est l'inflation moyenne "
+                        "que le marché anticipe sur la même durée (rendement nominal moins rendement réel).")
+    elif attendu:
+        morceaux.append(f"Le taux réel attendu à 10 ans ({nb(attendu['valeur'], 2)} %) est le rendement des obligations "
+                        "du Trésor indexées sur l'inflation.")
+    if passe and attendu:
+        ecart = attendu["valeur"] - passe["valeur"]
+        if abs(ecart) < 0.25:
+            morceaux.append("Les deux mesures sont proches.")
+        else:
+            morceaux.append(f"Le taux réel attendu à 10 ans est {'supérieur' if ecart > 0 else 'inférieur'} de {nb(abs(ecart), 1)} pt "
+                            "au taux réel passé.")
+    if attendu and attendu.get("sens") in ("hausse", "baisse"):
+        morceaux.append(f"Sur 12 mois, le taux réel attendu est en {attendu['sens']} de {nb(abs(attendu['variation_12m']), 2)} pt : "
+                        f"{'les conditions financières se resserrent' if attendu['sens'] == 'hausse' else 'les conditions financières s’assouplissent'}.")
+    return " ".join(morceaux)
+
+
+def taux_reels_us(fed: Serie | None, nom_fed: str, inflation: Serie | None, series: dict, sources: dict,
+                  nominal_10a: Serie | None = None, tolerance: float = 0.1) -> dict | None:
+    """Bloc « Taux réels États-Unis » : taux réel passé, taux réel attendu à 5 et 10 ans (DFII5, DFII10),
+    points morts d'inflation à 5 et 10 ans (T5YIE, T10YIE). Vérification du taux réel à 10 ans :
+    rendement nominal à 10 ans (Yahoo ^TNX) moins le point mort à 10 ans, à la même date."""
+    passe = taux_reel_passe(fed, inflation, f"{nom_fed} ; OCDE, inflation des États-Unis (IPC, glissement annuel)")
+    attendu_10 = tendance_quotidienne(series.get("DFII10"), sources.get("DFII10", "FRED (DFII10)"))
+    attendu_5 = tendance_quotidienne(series.get("DFII5"), sources.get("DFII5", "FRED (DFII5)"))
+    pm_10 = tendance_quotidienne(series.get("T10YIE"), sources.get("T10YIE", "FRED (T10YIE)"))
+    pm_5 = tendance_quotidienne(series.get("T5YIE"), sources.get("T5YIE", "FRED (T5YIE)"))
+    if not any((passe, attendu_10, attendu_5, pm_10, pm_5)):
+        return None
+    if attendu_10:
+        attendu_10["verification"] = "source_unique"
+        if nominal_10a and series.get("T10YIE"):
+            j = jour(attendu_10["date"])
+            nom, pm = valeur_au(nominal_10a, j), valeur_au(series["T10YIE"], j)
+            if nom is not None and pm is not None:
+                calc = nom - pm
+                attendu_10["verification"] = verification(attendu_10["valeur"], calc, tolerance)
+                attendu_10["note_verification"] = f"Yahoo Finance ^TNX ({nb(nom, 2)} %) moins le point mort à 10 ans : {nb(calc, 2)} %"
+    return {
+        "passe": passe, "attendu_10a": attendu_10, "attendu_5a": attendu_5, "point_mort_10a": pm_10, "point_mort_5a": pm_5,
+        "texte": texte_taux_reels(passe, attendu_10, pm_10),
+    }
+
+
 # ------------------------------------------------------------------ marchés
 
 def marche(serie: Serie, cfg: dict) -> dict | None:

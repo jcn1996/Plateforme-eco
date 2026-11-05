@@ -36,6 +36,10 @@ NOMS_SOURCES = {
     "fred_UNRATE": "FRED, taux de chômage (UNRATE)",
     "fred_DFEDTARL": "FRED, borne basse de l'objectif de la Fed (DFEDTARL)",
     "fred_DFEDTARU": "FRED, borne haute de l'objectif de la Fed (DFEDTARU)",
+    "fred_DFII10": "FRED, rendement réel des obligations du Trésor indexées à 10 ans (DFII10)",
+    "fred_DFII5": "FRED, rendement réel des obligations du Trésor indexées à 5 ans (DFII5)",
+    "fred_T10YIE": "FRED, point mort d'inflation à 10 ans (T10YIE)",
+    "fred_T5YIE": "FRED, point mort d'inflation à 5 ans (T5YIE)",
     "bundesbank_R10XX": "Bundesbank, rendement de l'État fédéral à 10 ans",
     "bundesbank_R02XX": "Bundesbank, rendement de l'État fédéral à 2 ans",
     "bce_courbe_SR_10Y": "BCE Data Portal, courbe AAA de la zone euro, 10 ans",
@@ -54,6 +58,8 @@ NOMS_SOURCES = {
 NOMS_CYCLE = {"monde": "cycle mondial", "etats_unis": "cycle américain", "zone_euro": "cycle de la zone euro",
               "chine": "cycle chinois", "japon": "cycle japonais", "emergents": "cycle des pays émergents"}
 SYMBOLES_TAUX = ["^TNX", "^IRX"]
+SERIES_TAUX_REELS = ["DFII10", "DFII5", "T10YIE", "T5YIE"]
+TOLERANCE_TAUX_REEL = 0.1  # écart toléré (pt) entre DFII10 et ^TNX − T10YIE
 
 
 # ------------------------------------------------------------------ collecte
@@ -73,6 +79,7 @@ def collecter(f, config: dict, pays: dict, aujourdhui: date):
         "fred_UNRATE": lambda: f.fred("UNRATE", "2015-01-01"),
         "fred_DFEDTARL": lambda: f.fred("DFEDTARL", court.isoformat()),
         "fred_DFEDTARU": lambda: f.fred("DFEDTARU", court.isoformat()),
+        **{f"fred_{s}": (lambda s=s: f.fred(s, court.isoformat())) for s in SERIES_TAUX_REELS},
         "bundesbank_R10XX": lambda: f.bundesbank("R10XX", long),
         "bundesbank_R02XX": lambda: f.bundesbank("R02XX", long),
         "bce_courbe_SR_10Y": lambda: f.bce_courbe("SR_10Y", long),
@@ -273,6 +280,36 @@ def banques(res: dict, config: dict, calendrier: dict, aujourdhui: date, precede
     return liste
 
 
+def serie_fed(res: dict) -> tuple[list | None, str]:
+    """Taux de la Fed : milieu de la fourchette cible (FRED), sinon BRI."""
+    bas, haut = res.get("fred_DFEDTARL"), res.get("fred_DFEDTARU")
+    if bas and haut:
+        h = dict(haut)
+        return sorted((d, (v + h[d]) / 2) for d, v in bas if d in h), "FRED, milieu de la fourchette cible de la Fed (DFEDTARL, DFEDTARU)"
+    us = (res.get("bis_quotidien") or {}).get("US")
+    return (sorted(us), "BRI, taux directeur de la Fed (WS_CBPOL)") if us else (None, "")
+
+
+def taux_reels(res: dict, modes: dict, precedent: dict | None) -> dict:
+    """Bloc « Taux réels États-Unis » ; un élément absent reprend la valeur précédente, marquée « ancienne »."""
+    fed, nom_fed = serie_fed(res)
+    series = {s: res.get(f"fred_{s}") for s in SERIES_TAUX_REELS}
+    sources = {s: _fred_source(f"fred_{s}", modes) for s in SERIES_TAUX_REELS}
+    nominal = (res.get("yahoo_cours") or {}).get("^TNX")
+    us = A.taux_reels_us(fed, nom_fed, (res.get("ocde_inflation") or {}).get("USA"), series, sources, nominal, TOLERANCE_TAUX_REEL)
+    ancien = ((precedent or {}).get("taux_reels") or {}).get("etats_unis") or {}
+    if us is None:
+        us = {**ancien, "ancienne": True} if ancien else {}
+    else:
+        for cle in ("passe", "attendu_10a", "attendu_5a", "point_mort_10a", "point_mort_5a"):
+            if us.get(cle) is None and ancien.get(cle):
+                us[cle] = {**ancien[cle], "ancienne": True}
+    return {
+        "etats_unis": us,
+        "zone_euro": {"point_mort_5a5a": None, "disponible": False, "note": A.NOTE_5A5A_ZONE_EURO},
+    }
+
+
 def marches(res: dict, config: dict, precedent: dict | None) -> list[dict]:
     cours = res.get("yahoo_cours") or {}
     anciens = {m["symbole"]: m for m in (precedent or {}).get("marches", [])}
@@ -318,6 +355,9 @@ def recap_markdown(jour: date, d: dict, signaux_jour: list[dict], etats: dict) -
     l += ["", "## Signaux de récession", "", d["recession"]["synthese"], ""]
     for s in d["recession"]["signaux"]:
         l.append(f"- {s['libelle']} : {s.get('niveau', '?')} — {s.get('texte', '')}")
+    us = (d.get("taux_reels") or {}).get("etats_unis") or {}
+    if us.get("texte"):
+        l += ["", "## Taux réels (États-Unis)", "", us["texte"]]
     l += ["", "## Banques centrales", ""]
     for b in d["banques_centrales"]:
         pr = b["prochaine_reunion"]
@@ -355,6 +395,11 @@ def indicateurs_sante(d: dict) -> dict:
     for b in d["banques_centrales"]:
         ok = [] if b.get("ancienne") else (["BRI", "nationale"] if b.get("verification") != "source_unique" else ["principale"])
         ind[f"Banque centrale · {b['nom']}"] = {"valides": ok, "configurees": ["BRI", "nationale", "principale"]}
+    us = (d.get("taux_reels") or {}).get("etats_unis") or {}
+    for cle, libelle in (("passe", "taux réel passé"), ("attendu_10a", "taux réel attendu à 10 ans"), ("point_mort_10a", "point mort à 10 ans")):
+        x = us.get(cle)
+        valides = [] if not x or x.get("ancienne") or us.get("ancienne") else ["principale"] + (["vérification"] if x.get("verification") in ("concordant", "divergent") else [])
+        ind[f"Taux réels États-Unis · {libelle}"] = {"valides": valides, "configurees": ["principale", "vérification"] if cle == "attendu_10a" else ["principale"]}
     for m in d["marches"]:
         ind[f"Marché · {m['nom']}"] = {"valides": [] if m.get("ancienne") else ["Yahoo"], "configurees": ["Yahoo"]}
     return ind
@@ -411,6 +456,7 @@ def main(argv=None) -> int:
         "recession": rec,
         "banques_centrales": bcs,
         "courbe_us": courbe,
+        "taux_reels": taux_reels(res, modes, precedent),
         "marches": mch,
         "confiance": monde["confiance"] if monde else "faible",
         "contre_scenario": (monde["contre_scenario"] if monde else []) + [
@@ -420,7 +466,7 @@ def main(argv=None) -> int:
     donnees["lectures_pays"] = lectures_pays(res, config, pays, cyc, bcs, aujourdhui)
 
     # Contrôle du ton (pas de superlatifs) sur tous les textes produits
-    textes = [z.get("texte") for z in cyc["zones"]] + [l["texte"] for l in donnees["lectures_pays"].values()] + donnees["contre_scenario"]
+    textes = [z.get("texte") for z in cyc["zones"]] + [donnees["taux_reels"]["etats_unis"].get("texte") or ""] + [l["texte"] for l in donnees["lectures_pays"].values()] + donnees["contre_scenario"]
     if not A.conformes(textes):
         LOG.error("Un texte contient un mot interdit : vérifier les règles de rédaction.")
 
@@ -445,6 +491,7 @@ def main(argv=None) -> int:
         "donnees": {"phases": {z["cle"]: {"phase": z["phase"], "position": z.get("position"), "confiance": z.get("confiance")} for z in cyc["zones"]},
                     "recession": {s["cle"]: {"niveau": s.get("niveau"), "valeur": s.get("valeur")} for s in rec["signaux"]},
                     "taux": {b["cle"]: b["taux"] for b in bcs},
+                    "taux_reels_us": {k: (v or {}).get("valeur") for k, v in donnees["taux_reels"]["etats_unis"].items() if isinstance(v, dict)},
                     "marches": {m["symbole"]: m["valeur"] for m in mch}}})
     (data / "recap").mkdir(parents=True, exist_ok=True)
     (data / "recap" / f"macro-{aujourdhui.isoformat()}.md").write_text(recap_markdown(aujourdhui, donnees, nouveaux, etats), encoding="utf-8")
