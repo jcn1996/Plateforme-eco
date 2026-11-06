@@ -1,13 +1,42 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-06T19:31:41Z",
+    "genere_le": "2026-11-06T20:31:33Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "geopolitique|mesure_officielle|evt-cce5babecfca|2026-11-06",
+      "revu_le": "2026-11-06T20:31:18Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "mesure_officielle",
+        "cle": "evt-cce5babecfca",
+        "date": "2026-11-06",
+        "importance": "moyenne",
+        "titre": "Sanctions (source officielle) : Le Trésor américain met à jour les sanctions contre l'Iran et modifie les licences vénézuéliennes"
+      },
+      "objection": "L'indice SPY progresse de +0,7 % depuis la veille du signal [F1], suggérant une absence de réaction immédiate des marchés face à ces sanctions.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "ETF SPY (États-Unis) : +0,7 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "faible",
+      "version_regles": 2,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
     {
       "id": "macro|changement_de_phase|monde|2026-11-06",
       "revu_le": "2026-11-06T17:38:54Z",
