@@ -28,7 +28,7 @@ def _generer() -> Path:
     try:
         code = pays(["--test", "--donnees-test", str(RACINE / "agents" / "pays" / "tests" / "donnees"),
                      "--sortie", str(d / "pays.json"), "--historique", str(d / "historique" / "pays"),
-                     "--flux", str(d / "flux.json"), "--journal", str(d / "journal" / "agent-pays.json"),
+                     "--journal", str(d / "journal" / "agent-pays.json"),
                      "--recap", str(d / "recap"), "--date", JOUR_TEST])
         if code != 0:
             raise RuntimeError(f"agent pays (test) : code {code}")

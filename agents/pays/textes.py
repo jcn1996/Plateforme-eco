@@ -74,6 +74,11 @@ def description(cle: str, ind: dict) -> str:
         return f"devise à {nb(v, signe=True)} % contre le dollar sur 3 mois"
     if cle == "solde_courant":
         return f"solde courant de {nb(v, signe=True)} % du PIB"
+    if cle == "flux_etrangers":
+        periode = {"1m": "un mois", "1s": "une semaine"}.get(ind.get("periode_valeur"), "la période")
+        sens = "entrées" if v > 0 else "sorties"
+        texte = f"{sens} nettes sur l'ETF {ind.get('symbole', '')} de {nb(abs(v))} % de l'encours sur {periode} (ETF cotés aux États-Unis)"
+        return texte + (" ; position possiblement encombrée" if ind.get("encombrement") else "")
     return ind.get("libelle", cle)
 
 
@@ -119,7 +124,7 @@ def lecture(indicateurs: dict, detail: dict) -> dict:
     return {
         "activite_et_prix": phrase(["croissance_pib", "indicateur_avance", "inflation"], tout),
         "politique_monetaire_et_risques": phrase(["taux_reel", "devise_3m", "solde_courant"], tout),
-        "marches": phrase(["momentum", "valorisation"], tout),
+        "marches": phrase(["momentum", "valorisation", "flux_etrangers"], tout),
     }
 
 

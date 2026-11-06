@@ -92,6 +92,22 @@ class TestDecisions(Base):
         self.assertEqual(len(pays()), 3)
         self.assertTrue(r1["ecrit"])
 
+    def test_pays_flux_du_soir(self):
+        # Mode « flux » de l'agent pays : en soirée à New York (2 h 07 UTC, du mardi au samedi)
+        (self.wf / "agent-pays.yml").write_text('on:\n  schedule:\n    - cron: "11 6 * * *"\n    - cron: "7 2 * * 2-6"\n  workflow_dispatch:\n',
+                                                encoding="utf-8")
+        pays = lambda: [l for l in self.lances if l[0] == "agent-pays.yml"]
+        self.journal("agent-pays.yml", "2026-11-02T06:20:00Z")      # lundi, exécution complète faite
+        self.appel("2026-11-03T02:15:00Z")                          # mardi 2 h 15 UTC = lundi 21 h 15 à New York
+        self.assertEqual(pays(), [("agent-pays.yml", {"mode": "flux"})])
+        self.journal("agent-pays.yml", "2026-11-03T02:20:00Z")
+        self.appel("2026-11-03T06:15:00Z")                          # exécution complète du matin
+        self.assertEqual(pays()[-1], ("agent-pays.yml", {"mode": "complet"}))
+        self.lances.clear()
+        self.journal("agent-pays.yml", "2026-11-08T06:20:00Z")      # dimanche : pas de flux (marchés fermés la veille)
+        self.appel("2026-11-09T02:15:00Z")
+        self.assertEqual(pays(), [])
+
     def test_revision_complete_du_samedi(self):
         self.journal("agent-entreprises.yml", "2026-11-06T22:45:00Z")  # quotidienne de vendredi faite
         self.appel("2026-11-07T03:15:00Z")

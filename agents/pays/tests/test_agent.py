@@ -90,9 +90,8 @@ class TestAgent(unittest.TestCase):
     def setUp(self):
         self.dossier = Path(tempfile.mkdtemp())
         self.sortie = self.dossier / "pays.json"
-        # Point de départ : l'ancien fichier fictif (avec les flux de capitaux)
-        fictif = {"meta": {"fictif": True, "genere_le": "2026-11-01T07:00:00Z"},
-                  "donnees": [{"code": "FR", "note": 58, "flux": [{"vers": "US", "montant_md": 4.4}]}]}
+        # Point de départ : l'ancien fichier fictif
+        fictif = {"meta": {"fictif": True, "genere_le": "2026-11-01T07:00:00Z"}, "donnees": [{"code": "FR", "note": 58}]}
         self.sortie.write_text(json.dumps(fictif), encoding="utf-8")
 
     def tearDown(self):
@@ -100,7 +99,7 @@ class TestAgent(unittest.TestCase):
 
     def lancer(self, donnees=DONNEES, jour=JOUR):
         return main(["--test", "--donnees-test", str(donnees), "--sortie", str(self.sortie),
-                     "--historique", str(self.dossier / "historique"), "--flux", str(self.dossier / "flux.json"),
+                     "--historique", str(self.dossier / "historique" / "pays"),
                      "--journal", str(self.dossier / "journal.json"), "--recap", str(self.dossier / "recap"), "--date", jour])
 
     def copie_donnees(self):
@@ -122,8 +121,7 @@ class TestAgent(unittest.TestCase):
             for ind in {**p["indicateurs"], **p["detail"]}.values():
                 if ind.get("valeur") is not None:
                     self.assertTrue(ind["date"] and ind["source"], ind)   # date et source exactes
-            self.assertIsNone(p["detail"]["flux_etrangers"]["valeur"])   # non disponible
-        self.assertTrue((self.dossier / "historique" / f"{JOUR}.json").exists())
+        self.assertTrue((self.dossier / "historique" / "pays" / f"{JOUR}.json").exists())
         # Vérification croisée : chaque indicateur publié décrit ses sources et la valeur retenue
         for p in f["donnees"]:
             self.assertIn("qualite", p)
@@ -140,8 +138,7 @@ class TestAgent(unittest.TestCase):
         for titre in ("Ce qui a changé", "Divergences entre sources", "Données manquantes", "mouvements de notes", "Sources en échec"):
             self.assertIn(titre, recap)
         self.assertTrue(textes.ton_conforme(recap))
-        # Les flux fictifs ont été déplacés
-        self.assertEqual(lire_json(self.dossier / "flux.json")["donnees"][0]["de"], "FR")
+        self.assertFalse((self.dossier / "flux.json").exists())   # plus de flux commerciaux
 
     def test_aucun_changement_aucune_ecriture(self):
         self.lancer()

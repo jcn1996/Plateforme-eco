@@ -8,12 +8,11 @@
       (pays suivis colorés selon leur note, autres pays gris bleu), un seul
       trait de frontière jaune clair très fin, plus épais autour du pays
       sélectionné. Natural Earth 1:110m, puis 1:50m quand on zoome de près.
-   3. Colonnes, anneaux et étiquettes des pays ; arcs du commerce de biens
+   3. Colonnes, anneaux et étiquettes des pays
    4. Liseré et halo atmosphérique
 
    Gestes : rotation avec inertie, rotation automatique au repos, pincement,
-   molette, double-tap ; toucher un pays ouvre sa fiche, toucher un arc
-   affiche le détail du flux.
+   molette, double-tap ; toucher un pays ouvre sa fiche.
    ========================================================================== */
 
 // Three.js r160, version fixée. « three » et « three/addons/ » sont définis par
@@ -52,14 +51,6 @@ const ECLAIRCISSEMENT = 0.3; // pays sélectionné : couleur mélangée à 30 % 
 const FRONTIERE = 0xffe9a8;  // jaune clair
 const BLANC = new THREE.Color(0xffffff);
 
-/* Couleurs des flux commerciaux selon leur variation sur 12 mois (seuil fixé par l'agent flux) */
-const COULEURS_FLUX = {
-  hausse: 0x34e3a4,    // en hausse sur 12 mois
-  baisse: 0xff6b5b,    // en baisse sur 12 mois
-  stable: 0x7fe8ff,    // stable
-  inconnue: 0x8fa3bf,  // variation inconnue
-};
-
 /* Réglages généraux */
 const ROTATION_AUTO = 0.08;     // vitesse de rotation au repos (radians/seconde)
 const DELAI_REPOS = 2500;       // délai avant reprise de la rotation automatique (ms)
@@ -78,21 +69,19 @@ export class Globe {
    * @param {HTMLCanvasElement} toile  le canvas où dessiner
    * @param {HTMLElement} calqueEtiquettes  le conteneur des étiquettes HTML
    * @param {object} options
-   *   pays, frontieres, leger, afficherFlux,
-   *   metrique : { cle, lire(pays) → { note, texte, niveau? } }  (ce que représentent les couleurs)
+   *   pays, frontieres, leger,
+   *   metrique : { cle, lire(pays) → { note, texte, niveau?, couleur? } }  (ce que représentent les couleurs ;
+   *              « couleur » : teinte continue imposée, ex. flux d'investissement)
    *   surSelection(code) : appelé quand on touche un pays
-   *   formaterFlux(flux) : texte de la bulle d'un arc
    */
   constructor(toile, calqueEtiquettes, options) {
-    const { pays, frontieres, leger = false, afficherFlux = true, metrique, surSelection = () => {}, formaterFlux } = options;
+    const { pays, frontieres, leger = false, metrique, surSelection = () => {} } = options;
     this.toile = toile;
     this.calque = calqueEtiquettes;
     this.pays = pays;
     this.parCode = new Map(pays.map((p) => [p.code, p]));
     this.surSelection = surSelection;
-    this.formaterFlux = formaterFlux ?? ((f) => `${f.de.nom} → ${f.vers.nom}`);
     this.leger = leger;
-    this.afficherFlux = afficherFlux;
     this.metrique = metrique ?? { cle: 'note', lire: (p) => ({ note: p.note, texte: nombre(p.note) }) };
     this.actif = true;
     this.selection = null;
@@ -133,7 +122,6 @@ export class Globe {
     this.#creerCarte();
     this.#creerHalo();
     this.#creerPays();
-    this.#creerFlux();
     this.#brancherGestes();
 
     this.redimensionner();
@@ -347,8 +335,9 @@ export class Globe {
       const absente = !m || m.note === null || m.note === undefined; // donnée non disponible pour ce pays
       // Une métrique peut imposer son niveau de couleur (risque géopolitique : haut = rouge)
       const niveau = absente ? 'neutre' : (m.niveau ?? niveauNote(m.note));
-      o.couleurCible.set(absente ? NON_SUIVI : COULEURS[niveau]);
-      o.teinteCible = new THREE.Color(absente ? NON_SUIVI : TEINTES[niveau]);
+      const continue_ = !absente && m.couleur != null; // teinte continue (intensité selon l'ampleur)
+      o.couleurCible.set(absente ? NON_SUIVI : continue_ ? m.couleur : COULEURS[niveau]);
+      o.teinteCible = new THREE.Color(absente ? NON_SUIVI : continue_ ? m.couleur : TEINTES[niveau]);
       o.teinteEclaircie = o.teinteCible.clone().lerp(BLANC, ECLAIRCISSEMENT);
       o.hauteurCible = absente ? 0.01 : 0.02 + (m.note / 100) * 0.1;
       o.valeur.textContent = absente ? 'n.d.' : m.texte;
@@ -362,119 +351,6 @@ export class Globe {
         o.anneau.material.color.copy(o.couleurCible);
       }
     }
-  }
-
-  /** Arcs du commerce de biens : épaisseur et vitesse selon le montant, couleur selon la variation sur 12 mois. */
-  #creerFlux() {
-    this.groupeFlux = new THREE.Group();
-    this.groupe.add(this.groupeFlux);
-    this.arcs = [];
-    // Épaisseur relative au plus gros flux (racine carrée : les petits flux restent visibles)
-    const maximum = Math.max(1e-9, ...this.pays.flatMap((p) => (p.flux ?? []).map((f) => Math.abs(f.montant_md))));
-
-    for (const p of this.pays) {
-      for (const f of p.flux ?? []) {
-        const cible = this.parCode.get(f.vers);
-        if (!cible) continue;
-        const [de, vers] = [p, cible];
-        const montant = Math.abs(f.montant_md);
-        const sens = COULEURS_FLUX[f.tendance] !== undefined ? f.tendance : 'inconnue';
-        const a = versVecteur(de.lat, de.lon, 1.003);
-        const b = versVecteur(vers.lat, vers.lon, 1.003);
-        const altitude = 0.08 + a.angleTo(b) * 0.24; // les arcs longs montent plus haut
-        const milieu = a.clone().add(b).normalize().multiplyScalar(1 + altitude);
-        const courbe = new THREE.QuadraticBezierCurve3(a, milieu, b);
-        const t = Math.sqrt(montant / maximum);
-
-        // Tube visible (épaisseur selon le montant)
-        const tube = new THREE.Mesh(
-          new THREE.TubeGeometry(courbe, 48, 0.0015 + t * 0.005, 5, false),
-          new THREE.MeshBasicMaterial({ color: COULEURS_FLUX[sens], transparent: true, opacity: 0.5, depthWrite: false, blending: THREE.AdditiveBlending }),
-        );
-        // Tube invisible plus large pour faciliter le toucher
-        const zoneToucher = new THREE.Mesh(new THREE.TubeGeometry(courbe, 24, 0.035, 4, false), new THREE.MeshBasicMaterial());
-        zoneToucher.visible = false;
-        this.groupeFlux.add(tube, zoneToucher);
-
-        const arc = {
-          de, vers, montant, devise: f.devise ?? 'USD', periode: f.periode, sens,
-          variation: f.variation_12m_pct ?? null, mesure: f.mesure, declarant: this.parCode.get(f.declarant) ?? null,
-          // Lisibilité : sans sélection, les plus gros flux mondiaux ; un pays touché, ses principaux partenaires
-          mondial: f.mondial !== false, topDe: f.top_de !== false, topVers: f.top_vers !== false,
-          courbe, tube, zoneToucher,
-          vitesse: 0.08 + t * 0.22,
-          nbPoints: 1 + Math.round(t * 3),
-          couleur: new THREE.Color(COULEURS_FLUX[sens]),
-        };
-        zoneToucher.userData.arc = arc;
-        this.arcs.push(arc);
-      }
-    }
-
-    // Points lumineux qui circulent : une seule géométrie, couleurs par sommet
-    const total = this.arcs.reduce((s, a) => s + a.nbPoints, 0);
-    this.positionsFlux = new Float32Array(total * 3);
-    const couleurs = new Float32Array(total * 3);
-    let k = 0;
-    for (const arc of this.arcs) for (let i = 0; i < arc.nbPoints; i++) { couleurs.set([arc.couleur.r, arc.couleur.g, arc.couleur.b], k); k += 3; }
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(this.positionsFlux, 3));
-    geo.setAttribute('color', new THREE.BufferAttribute(couleurs, 3));
-    this.pointsFlux = new THREE.Points(geo, new THREE.PointsMaterial({
-      size: 0.04, map: this.texturePoint, vertexColors: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
-    }));
-    this.pointsFlux.frustumCulled = false;
-    this.pointsFlux.visible = !this.leger;
-    this.groupeFlux.add(this.pointsFlux);
-    this.#majVisibiliteFlux();
-    this.#placerPointsFlux(0);
-  }
-
-  /** Sans sélection : les plus gros flux mondiaux. Un pays sélectionné : seulement ses principaux clients et fournisseurs. */
-  #majVisibiliteFlux() {
-    this.groupeFlux.visible = this.afficherFlux;
-    for (const arc of this.arcs) {
-      arc.visible = this.selection
-        ? (arc.de.code === this.selection && arc.topDe) || (arc.vers.code === this.selection && arc.topVers)
-        : arc.mondial;
-      arc.tube.visible = arc.visible;
-    }
-    if (!this.afficherFlux) this.#masquerBulleFlux();
-  }
-
-  #placerPointsFlux(temps) {
-    const v = new THREE.Vector3();
-    let k = 0;
-    for (const arc of this.arcs) {
-      for (let i = 0; i < arc.nbPoints; i++) {
-        if (arc.visible) arc.courbe.getPoint((temps * arc.vitesse + i / arc.nbPoints) % 1, v);
-        else v.set(0, 0, 0); // caché au centre de la Terre
-        this.positionsFlux[k++] = v.x;
-        this.positionsFlux[k++] = v.y;
-        this.positionsFlux[k++] = v.z;
-      }
-    }
-    this.pointsFlux.geometry.attributes.position.needsUpdate = true;
-  }
-
-  /** Bulle d'information d'un flux, affichée à l'endroit touché. */
-  #afficherBulleFlux(arc, x, y) {
-    this.#masquerBulleFlux();
-    const texte = this.formaterFlux(arc);
-    const lignes = (Array.isArray(texte) ? texte : [texte]).map((l, i) => el('span', { class: i ? 'bulle-flux-detail' : 'bulle-flux-titre' }, l));
-    this.bulleFlux = el('div', { class: `bulle-flux bulle-flux--${arc.sens}`, role: 'status' }, ...lignes);
-    this.calque.append(this.bulleFlux);
-    const largeur = this.bulleFlux.offsetWidth;
-    const gauche = Math.min(Math.max(8, x - largeur / 2), this.largeur - largeur - 8);
-    const hauteur = this.bulleFlux.offsetHeight;
-    this.bulleFlux.style.transform = `translate(${gauche}px, ${Math.max(this.hautLibre + 4, y - hauteur - 14)}px)`;
-    clearTimeout(this.minuterieBulle);
-    this.minuterieBulle = setTimeout(() => this.#masquerBulleFlux(), 7000);
-  }
-
-  #masquerBulleFlux() {
-    this.bulleFlux?.remove();
-    this.bulleFlux = null;
   }
 
   /* ============================ Gestes tactiles ============================ */
@@ -572,20 +448,10 @@ export class Globe {
     this.toile.addEventListener('dblclick', (e) => e.preventDefault());
   }
 
-  /** Simple toucher : un arc de flux (bulle) ou un pays (fiche). */
+  /** Simple toucher : un pays (fiche). */
   #toucher(x, y) {
     this.#lancerRayon(x, y);
     const impactTerre = this.raycaster.intersectObject(this.terre, false)[0];
-    if (this.afficherFlux) {
-      const zones = this.arcs.filter((a) => a.visible).map((a) => a.zoneToucher);
-      const impactArc = this.raycaster.intersectObjects(zones, false)[0];
-      // L'arc doit être devant la surface de la Terre (pas caché derrière)
-      if (impactArc && (!impactTerre || impactArc.distance < impactTerre.distance + 0.01)) {
-        this.#afficherBulleFlux(impactArc.object.userData.arc, x, y);
-        return;
-      }
-    }
-    this.#masquerBulleFlux();
     const code = this.#paysTouche(x, y, impactTerre);
     if (code) this.surSelection(code);
   }
@@ -656,12 +522,6 @@ export class Globe {
     this.#appliquerMetriqueAuxPays(); // les couleurs glissent en douceur dans #majPays
   }
 
-  /** Affiche ou masque les flux commerciaux. */
-  definirAffichageFlux(afficher) {
-    this.afficherFlux = afficher;
-    this.#majVisibiliteFlux();
-  }
-
   /** Fait pivoter le globe vers un pays et le met en évidence. */
   focaliser(code) {
     const p = this.parCode.get(code);
@@ -685,9 +545,7 @@ export class Globe {
   }
 
   #selectionChangee() {
-    this.#masquerBulleFlux();
     this.#majContourSelection();
-    this.#majVisibiliteFlux();
   }
 
   definirCadrage({ cx, cy, rayon, hautLibre = 0, basLibre = innerHeight }) {
@@ -696,11 +554,10 @@ export class Globe {
     this.basLibre = basLibre;
   }
 
-  /** Mode léger : texture 1024 px, densité de pixels 2, pas de halo ni de points animés. */
+  /** Mode léger : texture 1024 px, densité de pixels 2, pas de halo. */
   definirLeger(leger) {
     if (leger === this.leger) return;
     this.leger = leger;
-    this.pointsFlux.visible = !leger;
     this.lisere.visible = !leger;
     this.halo.visible = !leger;
     this.redimensionner();
@@ -737,7 +594,6 @@ export class Globe {
     this.#majCadrage(dt);
     this.#majNiveauCarte();
     this.#majPays(temps, dt);
-    if (!this.leger && this.afficherFlux) this.#placerPointsFlux(temps);
 
     this.groupe.rotation.set(this.tangage, this.lacet, 0);
     this.groupe.updateMatrixWorld();

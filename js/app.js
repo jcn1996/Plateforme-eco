@@ -9,7 +9,7 @@
    ========================================================================== */
 
 import { chargerDonnees } from './donnees.js';
-import { el, nombre, lireMetrique, METRIQUES_PAYS } from './outils.js';
+import { el, lireMetrique, METRIQUES_PAYS } from './outils.js';
 import { demarrerHorloge, remplirBandeau, initialiserAlertes, initialiserFiltres, lireModeLeger, memoriserModeLeger } from './interface.js';
 import { initialiserComparateur, boutonComparer, majBarre, ecranComparaison } from './comparateur.js';
 import { evaluerRegles, ecranMesAlertes } from './mes-alertes.js';
@@ -23,6 +23,7 @@ import { chargerMacro, ecranMacro } from './macro.js';
 import { chargerGeopolitique, ecranGeopolitique, lireRisque, METRIQUE_RISQUE } from './geopolitique.js';
 import { chargerRisque, ecranRisque, lireRisquePays, majPastilleRisque, METRIQUE_RISQUE_PAYS } from './risque.js';
 import { chargerPepites, ecranPepites } from './pepites.js';
+import { METRIQUE_FLUX, lireFlux, initialiserPeriodeFlux } from './flux-investissement.js';
 import { chargerAnalyses, chargerEnCours, chargerAnalyse, chargerRecommandations, ecranAnalyses, ecranFiabilite } from './analyses.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -95,7 +96,7 @@ async function majSante() {
 function majBadgesFictifs(route) {
   const f = d.fictifPar ?? {};
   const fictif = {
-    globe: f.flux !== false || f.alertes !== false,
+    globe: f.alertes !== false,
     pays: f.pays !== false || f.secteurs !== false,
     secteur: f.secteurs !== false || f.entreprises !== false,
     entreprise: f.entreprises !== false,
@@ -104,29 +105,6 @@ function majBadgesFictifs(route) {
     comparaison: f.pays !== false || f.entreprises !== false,
   }[route.type] ?? false;
   document.querySelectorAll('.badge-fictif').forEach((b) => { b.hidden = !fictif; });
-}
-
-/**
- * Bulle d'un arc du globe (commerce de biens) : montant, date de la donnée, variation sur 12 mois, source.
- * Renvoie une ligne par élément.
- */
-function texteFlux(f) {
-  const meta = d.fluxMeta ?? {};
-  const montant = `${nombre(f.montant, f.montant < 10 ? 2 : 1)} Md${f.devise === 'EUR' ? '€' : '$'}`;
-  const [annee, mois] = (f.periode ?? '').split('-').map(Number);
-  const date = annee && mois
-    ? new Date(Date.UTC(annee, mois - 1, 1)).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric', timeZone: 'UTC' })
-    : null;
-  const variation = f.variation == null ? 'variation sur 12 mois inconnue'
-    : `${f.variation > 0 ? '+' : ''}${nombre(f.variation, 1)} % sur 12 mois`;
-  const mesure = f.mesure === 'importations' ? 'importations déclarées par le pays de destination'
-    : f.mesure === 'exportations' ? "exportations déclarées par le pays d'origine" : null;
-  return [
-    `${f.de.nom} → ${f.vers.nom}`,
-    `${montant}${date ? ` en ${date}` : ''} · ${variation}`,
-    `Source : ${meta.source_courte ?? meta.source ?? 'non précisée'}${mesure ? ` (${mesure})` : ''}`,
-    meta.mention ?? 'Données mensuelles, décalées de 1 à 2 mois',
-  ];
 }
 
 /* ============================== Démarrage ============================== */
@@ -159,19 +137,23 @@ async function demarrer() {
   initialiserComparateur(d, { barre: dom.barreComparaison, ouvrir: () => naviguer({ type: 'comparaison' }) });
 
   // Filtres : ce que représentent les couleurs du globe (choix mémorisé)
-  let metriqueInitiale = 'note', fluxInitiaux = true;
-  // Filtres « Risque » (agent risque) et « Risque géopolitique » : seulement pour le globe (pas dans le comparateur ni les alertes)
-  const metriquesGlobe = [...METRIQUES_PAYS, ...(risque ? [METRIQUE_RISQUE_PAYS] : []), ...(geopolitique ? [METRIQUE_RISQUE] : [])];
+  let metriqueInitiale = 'note';
+  // Filtres « Flux d'investissement » (ETF pays), « Risque » (agent risque) et « Risque géopolitique » :
+  // seulement pour le globe (pas dans le comparateur ni les alertes)
+  const avecFlux = d.pays.some((p) => p.detail?.flux_etrangers?.periodes);
+  const metriquesGlobe = [...METRIQUES_PAYS, ...(avecFlux ? [METRIQUE_FLUX] : []), ...(risque ? [METRIQUE_RISQUE_PAYS] : []), ...(geopolitique ? [METRIQUE_RISQUE] : [])];
   const estRisque = (cle) => cle === METRIQUE_RISQUE.cle || cle === METRIQUE_RISQUE_PAYS.cle;
-  initialiserFiltres({ puces: $('#filtres-puces'), boutonFlux: $('#btn-flux') }, metriquesGlobe, {
+  const estFlux = (cle) => cle === METRIQUE_FLUX.cle;
+  // Sélecteur 1 semaine / 1 mois / 3 mois, visible seulement avec le filtre « Flux d'investissement »
+  initialiserPeriodeFlux($('#flux-periode'), () => globe?.definirMetrique(objetMetrique(METRIQUE_FLUX.cle)));
+  initialiserFiltres({ puces: $('#filtres-puces') }, metriquesGlobe, {
     surMetrique: (cle, initial) => {
       $('#legende-metrique').textContent = metriquesGlobe.find((m) => m.cle === cle).libelle;
-      $('#legende-notes').hidden = estRisque(cle);
+      $('#legende-notes').hidden = estRisque(cle) || estFlux(cle);
       $('#legende-risque').hidden = !estRisque(cle);
+      $('#legende-flux').hidden = !estFlux(cle);
+      $('#flux-periode').hidden = !estFlux(cle);
       if (initial) metriqueInitiale = cle; else globe?.definirMetrique(objetMetrique(cle));
-    },
-    surFlux: (visibles, initial) => {
-      if (initial) fluxInitiaux = visibles; else globe?.definirAffichageFlux(visibles);
     },
   });
 
@@ -222,8 +204,6 @@ async function demarrer() {
       frontieres: d.frontieres,
       leger,
       metrique: objetMetrique(metriqueInitiale),
-      afficherFlux: fluxInitiaux,
-      formaterFlux: texteFlux,
       surSelection: (code) => naviguer({ type: 'pays', id: code }),
     });
   } catch (erreur) {
@@ -243,6 +223,7 @@ async function demarrer() {
 function objetMetrique(cle) {
   if (cle === METRIQUE_RISQUE.cle) return { cle, lire: (p) => lireRisque(geopolitique, p.code) };
   if (cle === METRIQUE_RISQUE_PAYS.cle) return { cle, lire: (p) => lireRisquePays(risque, p.code) };
+  if (cle === METRIQUE_FLUX.cle) return { cle, lire: (p) => lireFlux(p) };
   return { cle, lire: (p) => lireMetrique(p, cle) };
 }
 

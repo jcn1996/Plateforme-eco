@@ -40,6 +40,10 @@
     "solde_courant": [
       -12,
       15
+    ],
+    "flux_etrangers": [
+      -15,
+      15
     ]
   },
   "fraicheur_max_jours": {
@@ -766,5 +770,168 @@
         "nom": "Statistics Bureau of Japan via DBnomics, IPC ensemble"
       }
     ]
+  },
+  "flux_etf": {
+    "_commentaire": "Flux d'investissement des ETF pays cotés aux États-Unis : variation du nombre de parts en circulation × valeur liquidative (VL) du jour. Source principale : l'émetteur (page ou fichier du fonds) ; Yahoo Finance (yfinance) en secours et en vérification croisée. Égypte : aucun ETF pays coté aux États-Unis (VanEck EGPT liquidé en 2024). Colombie : Global X COLO (ex-GXG).",
+    "emetteurs": {
+      "ECH": {
+        "emetteur": "ishares",
+        "page": "/us/products/239618/ishares-msci-chile-etf"
+      },
+      "EIDO": {
+        "emetteur": "ishares",
+        "page": "/us/products/239661/ishares-msci-indonesia-etf"
+      },
+      "EPOL": {
+        "emetteur": "ishares",
+        "page": "/us/products/239676/ishares-msci-poland-etf"
+      },
+      "EWA": {
+        "emetteur": "ishares",
+        "page": "/us/products/239607/ishares-msci-australia-etf"
+      },
+      "EWC": {
+        "emetteur": "ishares",
+        "page": "/us/products/239615/ishares-msci-canada-etf"
+      },
+      "EWD": {
+        "emetteur": "ishares",
+        "page": "/us/products/239684/ishares-msci-sweden-etf"
+      },
+      "EWG": {
+        "emetteur": "ishares",
+        "page": "/us/products/239650/ishares-msci-germany-etf"
+      },
+      "EWI": {
+        "emetteur": "ishares",
+        "page": "/us/products/239664/ishares-msci-italy-etf"
+      },
+      "EWJ": {
+        "emetteur": "ishares",
+        "page": "/us/products/239665/ishares-msci-japan-etf"
+      },
+      "EWL": {
+        "emetteur": "ishares",
+        "page": "/us/products/239685/ishares-msci-switzerland-etf"
+      },
+      "EWN": {
+        "emetteur": "ishares",
+        "page": "/us/products/239671/ishares-msci-netherlands-etf"
+      },
+      "EWP": {
+        "emetteur": "ishares",
+        "page": "/us/products/239683/ishares-msci-spain-etf"
+      },
+      "EWQ": {
+        "emetteur": "ishares",
+        "page": "/us/products/239648/ishares-msci-france-etf"
+      },
+      "EWS": {
+        "emetteur": "ishares",
+        "page": "/us/products/239678/ishares-msci-singapore-etf"
+      },
+      "EWT": {
+        "emetteur": "ishares",
+        "page": "/us/products/239686/ishares-msci-taiwan-etf"
+      },
+      "EWU": {
+        "emetteur": "ishares",
+        "page": "/us/products/239690/ishares-msci-united-kingdom-etf"
+      },
+      "EWW": {
+        "emetteur": "ishares",
+        "page": "/us/products/239670/ishares-msci-mexico-etf"
+      },
+      "EWY": {
+        "emetteur": "ishares",
+        "page": "/us/products/239681/ishares-msci-south-korea-etf"
+      },
+      "EWZ": {
+        "emetteur": "ishares",
+        "page": "/us/products/239612/ishares-msci-brazil-etf"
+      },
+      "EZA": {
+        "emetteur": "ishares",
+        "page": "/us/products/239680/ishares-msci-south-africa-etf"
+      },
+      "INDA": {
+        "emetteur": "ishares",
+        "page": "/us/products/239659/ishares-msci-india-etf"
+      },
+      "KSA": {
+        "emetteur": "ishares",
+        "page": "/us/products/271542/ishares-msci-saudi-arabia-etf"
+      },
+      "MCHI": {
+        "emetteur": "ishares",
+        "page": "/us/products/239619/ishares-msci-china-etf"
+      },
+      "THD": {
+        "emetteur": "ishares",
+        "page": "/us/products/239688/ishares-msci-thailand-etf"
+      },
+      "TUR": {
+        "emetteur": "ishares",
+        "page": "/us/products/239689/ishares-msci-turkey-etf"
+      },
+      "UAE": {
+        "emetteur": "ishares",
+        "page": "/us/products/264275/ishares-msci-uae-etf"
+      },
+      "SPY": {
+        "emetteur": "ssga",
+        "fichier": "/library-content/products/fund-data/etfs/us/navhist-us-en-spy.xlsx"
+      },
+      "VNM": {
+        "emetteur": "vaneck",
+        "slug": "vietnam-etf-vnm"
+      },
+      "ARGT": {
+        "emetteur": "globalx",
+        "page": "/funds/argt/"
+      },
+      "COLO": {
+        "emetteur": "globalx",
+        "page": "/funds/colo/"
+      }
+    },
+    "periodes": {
+      "1s": {
+        "libelle": "1 semaine",
+        "jours": 7
+      },
+      "1m": {
+        "libelle": "1 mois",
+        "jours": 30
+      },
+      "3m": {
+        "libelle": "3 mois",
+        "jours": 91
+      }
+    },
+    "conservation_jours": 400,
+    "tolerance_parts_pct": 2.0,
+    "tolerance_encours_pct": 1.5,
+    "fraicheur_max_jours": 10,
+    "variation_parts_max_pct": 50,
+    "seuil_stable_pct": 0.25,
+    "encombrement": {
+      "_commentaire": "Afflux très fort sur une semaine : au-delà de moyenne + 2 écarts-types des semaines précédentes (au moins 40 relevés), et d'au moins seuil_min_pct de l'encours ; sans historique suffisant, seuil absolu.",
+      "ecarts_types": 2,
+      "releves_min": 40,
+      "seuil_min_pct": 2.0,
+      "seuil_absolu_pct": 5.0,
+      "plafond_note": 60
+    },
+    "signaux": {
+      "_commentaire": "Inversion : signe des flux de la dernière semaine opposé à celui des 3 semaines précédentes, chacun d'au moins inversion_min_pct de l'encours. Flux inhabituel : flux du dernier jour au-delà de moyenne + 3 écarts-types des jours précédents (au moins 20 relevés) et d'au moins jour_min_pct ; sans historique suffisant, seuil absolu.",
+      "inversion_min_pct": 0.5,
+      "inversion_jours_min": 28,
+      "jour_ecarts_types": 3,
+      "jour_releves_min": 20,
+      "jour_min_pct": 1.0,
+      "jour_absolu_pct": 3.0
+    },
+    "remplissage_jours": 100
   }
 }

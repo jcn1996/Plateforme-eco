@@ -259,7 +259,6 @@ export function initialiserAlertes({ bouton, liste, compte, apercu }, paysParCod
 
 /* ---------- Filtres du globe (ce que représentent les couleurs) ---------- */
 const CLE_METRIQUE = 'salle-controle:metrique';
-const CLE_FLUX = 'salle-controle:flux';
 
 export function lirePreference(cle, defaut) {
   try { return localStorage.getItem(cle) ?? defaut; } catch { return defaut; }
@@ -269,13 +268,12 @@ export function memoriserPreference(cle, valeur) {
 }
 
 /**
- * Puces horizontales défilantes : une par métrique, plus un bouton « Flux ».
+ * Puces horizontales défilantes : une par métrique.
  * Le choix est mémorisé sur l'appareil.
  */
-export function initialiserFiltres({ puces, boutonFlux }, metriques, { surMetrique, surFlux }) {
+export function initialiserFiltres({ puces }, metriques, { surMetrique }) {
   let active = lirePreference(CLE_METRIQUE, 'note');
   if (!metriques.some((m) => m.cle === active)) active = 'note';
-  let flux = lirePreference(CLE_FLUX, '1') === '1';
 
   const boutons = metriques.map((m) => el('button', {
     class: 'puce', type: 'button', role: 'radio', 'data-cle': m.cle,
@@ -292,15 +290,8 @@ export function initialiserFiltres({ puces, boutonFlux }, metriques, { surMetriq
     }
     surMetrique(cle, initial);
   }
-  function basculerFlux(initial = false) {
-    boutonFlux.setAttribute('aria-pressed', String(flux));
-    if (!initial) memoriserPreference(CLE_FLUX, flux ? '1' : '0');
-    surFlux(flux, initial);
-  }
-  boutonFlux.addEventListener('click', () => { flux = !flux; basculerFlux(); });
   choisir(active, true);
-  basculerFlux(true);
-  return { metriqueActive: () => active, fluxVisibles: () => flux };
+  return { metriqueActive: () => active };
 }
 
 /* ---------- Notification temporaire ---------- */

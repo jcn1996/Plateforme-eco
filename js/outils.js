@@ -116,6 +116,10 @@ export function complementIndicateur(cle, ind) {
   if (cle === 'pmi') return ind.valeur >= 50 ? 'expansion (> 50)' : 'contraction (< 50)';
   if (cle === 'momentum') return ind.symbole ? `ETF ${ind.symbole} sur 12 mois` : 'indice sur 12 mois';
   if (cle === 'croissance_pib') return 'sur un an';
+  if (cle === 'flux_etrangers') {
+    const periode = { '1m': '1 mois', '1s': '1 semaine' }[ind.periode_valeur] ?? '';
+    return `ETF ${ind.symbole ?? ''} · ${periode} · % de l’encours${ind.encombrement ? ' · position possiblement encombrée' : ''}`;
+  }
   return '';
 }
 

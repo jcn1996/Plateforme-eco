@@ -13,8 +13,14 @@ Déroulé :
    (data/journal/agent-pays.json) et le récapitulatif (data/recap/pays-AAAA-MM-JJ.md),
    seulement si quelque chose a changé.
 
-Lancement : python -m agents.pays            (vraies sources)
-            python -m agents.pays --test     (données de test, sans réseau)
+Flux d'investissement des ETF pays (indicateur « Flux étrangers », voir flux_etf.py) : relevé quotidien
+des parts en circulation et de la VL chez l'émetteur (Yahoo Finance en secours), historique jour par
+jour dans data/historique/flux_etf/, signaux dans data/signaux/pays.json. Le mode « flux » (lancé en
+soirée, heure de New York, après la publication des émetteurs) ne met à jour que cet indicateur.
+
+Lancement : python -m agents.pays                (vraies sources, tous les indicateurs)
+            python -m agents.pays --mode flux    (flux des ETF pays seulement)
+            python -m agents.pays --test         (données de test, sans réseau)
 """
 from __future__ import annotations
 
@@ -28,14 +34,15 @@ from ..commun import sante
 from ..commun.journal import journal
 from ..commun.series import serie_graphique
 from ..commun.sortie import ecrire_json, enveloppe, lire_json, maintenant_iso
-from . import croisement, notation, recap, textes
+from . import croisement, flux_etf, notation, recap, textes
 from .croisement import LIBELLES_NIVEAUX, date_periode
 from .sources import SOURCES, FournisseurReel, FournisseurTest
 
 LOG = journal("agent-pays")
 RACINE = Path(__file__).resolve().parents[2]
 DOSSIER_AGENT = Path(__file__).resolve().parent
-VERSION_AGENT = "1.1"
+VERSION_AGENT = "1.2"
+CONFIG_FLUX: dict = json.loads((DOSSIER_AGENT / "config.json").read_text(encoding="utf-8"))["flux_etf"]
 
 LIBELLES = {
     "croissance_pib": "Croissance du PIB",
@@ -118,6 +125,7 @@ def collecter(fournisseur, config: dict, aujourdhui: date) -> tuple[dict, dict]:
         "bce_change": lambda: fournisseur.bce_change(config["devises_bce"]),
         "yahoo_cours": lambda: fournisseur.cours(etfs + devises),
         "yahoo_per": lambda: fournisseur.per(etfs),
+        **appels_flux(fournisseur, config),
     }
     for nom, serie in BM_SERIES.items():
         appels[nom] = (lambda s: lambda: fournisseur.banque_mondiale(s, aujourdhui.year))(serie)
@@ -128,13 +136,42 @@ def collecter(fournisseur, config: dict, aujourdhui: date) -> tuple[dict, dict]:
             appels.setdefault(_cle_nationale(s), (lambda s: lambda: getattr(fournisseur, s["fournisseur"])(
                 *((s["serie"],) if s["fournisseur"] == "dbnomics" else (s["serie"], depuis))))(s))
 
+    return interroger(appels, {"yahoo_per": len(etfs), "yahoo_cours": len(etfs) + len(devises), **attendus_flux(config)})
+
+
+def appels_flux(fournisseur, config: dict) -> dict:
+    """Sources des flux des ETF pays : une par émetteur (tous ses fonds en une fois), plus Yahoo Finance."""
+    emetteurs = config["flux_etf"]["emetteurs"]
+    suivis = {p["etf"] for p in config["pays"].values() if p.get("etf")}
+    appels = {}
+    for nom in sorted({e["emetteur"] for e in emetteurs.values()}):
+        fonds = {etf: e for etf, e in emetteurs.items() if e["emetteur"] == nom and etf in suivis}
+        if fonds:
+            appels[f"flux_{nom}"] = (lambda n, f: lambda: fournisseur.emetteur(n, f))(nom, fonds)
+    appels["flux_yahoo_parts"] = lambda: fournisseur.yahoo_parts(sorted(suivis))
+    return appels
+
+
+def attendus_flux(config: dict) -> dict:
+    emetteurs = config["flux_etf"]["emetteurs"]
+    suivis = {p["etf"] for p in config["pays"].values() if p.get("etf")}
+    res = {"flux_yahoo_parts": len(suivis)}
+    for etf in suivis:
+        if etf in emetteurs:
+            cle = f"flux_{emetteurs[etf]['emetteur']}"
+            res[cle] = res.get(cle, 0) + 1
+    return res
+
+
+def interroger(appels: dict, attendus_par_source: dict) -> tuple[dict, dict]:
+    """Lance chaque appel ; une source en panne vaut None (les autres continuent)."""
     resultats, etats = {}, {}
     for nom, appel in appels.items():
         try:
             resultats[nom] = appel()
             vide = not resultats[nom]
             etats[nom] = "vide" if vide else "ok"
-            attendus = {"yahoo_per": len(etfs), "yahoo_cours": len(etfs) + len(devises)}.get(nom)
+            attendus = attendus_par_source.get(nom)
             if attendus and not vide and len(resultats[nom]) < attendus:
                 etats[nom] = f"partiel ({len(resultats[nom])}/{attendus})"
             (LOG.warning if vide else LOG.info)("Source %s : %s", nom, "aucune donnée" if vide else f"{len(resultats[nom])} séries ou valeurs")
@@ -378,7 +415,7 @@ def indicateurs_pays(code: str, cfg: dict, src: dict, aujourdhui: date, config: 
     ch = choix["per"]
     sortie["valorisation"] = ({"_per": ch["retenu"]["valeur"], "_etf": cfg["etf"], "_sources": ch["sources"]} if ch["retenu"] else
                               _absent("valorisation", "aucun ETF pays coté" if not cfg.get("etf") else _raison_absence(ch, "valorisation", cfg), ch["sources"]))
-    sortie["flux_etrangers"] = _absent("flux_etrangers", "non disponible : aucune source gratuite fiable identifiée pour l'instant")
+    sortie["flux_etrangers"] = _absent("flux_etrangers", "calculé ensuite (flux des ETF pays)")
     return sortie, tentatives
 
 
@@ -433,6 +470,8 @@ def noter(cle: str, ind: dict) -> int | None:
         return notation.note_devise(v)
     if cle == "solde_courant":
         return notation.note_solde_courant(v)
+    if cle == "flux_etrangers":
+        return flux_etf.noter(ind, CONFIG_FLUX)
     return None
 
 
@@ -511,9 +550,44 @@ def qualite(tentatives: list, seuil: float = 1 / 3) -> dict:
 # Programme principal
 # ---------------------------------------------------------------------------
 
-def executer(fournisseur, config: dict, ancien: dict | None, aujourdhui: date, series: dict | None = None) -> tuple[list, dict, list]:
+def calculer_flux(src: dict, config: dict, historique: dict, aujourdhui: date) -> tuple[dict, set, list, list]:
+    """Flux des ETF pays. Complète `historique` avec les relevés du jour.
+    Renvoie ({code: indicateur flux_etrangers}, dates modifiées, signaux, échecs et rejets)."""
+    cfg = config["flux_etf"]
+    resultats, modifiees, nouveaux, echecs = {}, set(), [], []
+    for code, p in config["pays"].items():
+        etf = p.get("etf")
+        emetteur = (cfg["emetteurs"].get(etf) or {}).get("emetteur") if etf else None
+        choix = flux_etf.choisir_releve(etf, emetteur, src, cfg, aujourdhui) if emetteur else None
+        if choix and choix["retenu"]:
+            modifiees |= set(flux_etf.completer_historique(historique, etf, choix["retenu"], choix["verification"],
+                                                           cfg["remplissage_jours"], aujourdhui))
+        serie = historique.get(etf, []) if etf else []
+        resultats[code] = flux_etf.indicateur(etf, emetteur, choix, serie, cfg, aujourdhui)
+        if etf and serie:
+            nouveaux += flux_etf.signaux(code, p["nom"], etf, serie, cfg, aujourdhui)
+        echecs += [{"pays": code, "indicateur": "flux_etrangers", "source": s["nom"], "statut": s["statut"], "raison": s.get("raison"),
+                    "date": s.get("date")} for s in (choix or {}).get("sources", []) if s["statut"] in ("échec", "rejetée")]
+    return resultats, modifiees, nouveaux, echecs
+
+
+def preparer(cle: str, nouveau: dict, ancien: dict | None, aujourdhui: date, config: dict) -> dict:
+    """Secours, note, contrôle « à vérifier », confiance et tendance d'un indicateur."""
+    ind = secours(cle, nouveau, ancien, aujourdhui)
+    ind["note"] = noter(cle, ind) if ind.get("valeur") is not None else None
+    verifier(cle, ind, config["seuils_a_verifier"])
+    if ind.get("valeur") is not None:
+        ind["confiance"] = confiance_indicateur(ind)
+    tendance(ind, ancien)
+    return ind
+
+
+def executer(fournisseur, config: dict, ancien: dict | None, aujourdhui: date, series: dict | None = None,
+             flux: dict | None = None) -> tuple[list, dict, list]:
     """Renvoie (pays, états des sources, échecs et rejets). Si `series` est fourni, il reçoit les clôtures
-    quotidiennes sur un an des ETF pays (graphique de secours de l'appli)."""
+    quotidiennes sur un an des ETF pays (graphique de secours de l'appli). `flux` : {"historique": {...}}
+    (relevés passés des ETF) ; il reçoit aussi les dates modifiées et les signaux du jour."""
+    flux = flux if flux is not None else {"historique": {}}
     ancien_reel = bool(ancien) and ancien.get("meta", {}).get("fictif") is False
     anciens = {p["code"]: p for p in (ancien or {}).get("donnees", [])} if ancien_reel else {}
     src, etats = collecter(fournisseur, config, aujourdhui)
@@ -525,21 +599,16 @@ def executer(fournisseur, config: dict, ancien: dict | None, aujourdhui: date, s
     for code, cfg in config["pays"].items():
         par_pays[code], tentatives[code] = indicateurs_pays(code, cfg, src, aujourdhui, config)
     completer_valorisation(par_pays, aujourdhui)
+    resultats_flux, flux["modifiees"], flux["signaux"], echecs_flux = calculer_flux(src, config, flux["historique"], aujourdhui)
+    for code, ind in resultats_flux.items():
+        par_pays[code]["flux_etrangers"] = ind
 
     ponderations = config["ponderations"]
     sortie, textes_gemini, echecs = [], 0, []
     for code, cfg in config["pays"].items():
         a = anciens.get(code, {})
         anciens_ind = {**a.get("indicateurs", {}), **a.get("detail", {})}
-        tous = {}
-        for cle in PRINCIPAUX + DETAIL:
-            ind = secours(cle, par_pays[code][cle], anciens_ind.get(cle), aujourdhui)
-            ind["note"] = noter(cle, ind) if ind.get("valeur") is not None else None
-            verifier(cle, ind, config["seuils_a_verifier"])
-            if ind.get("valeur") is not None:
-                ind["confiance"] = confiance_indicateur(ind)
-            tendance(ind, anciens_ind.get(cle))
-            tous[cle] = ind
+        tous = {cle: preparer(cle, par_pays[code][cle], anciens_ind.get(cle), aujourdhui, config) for cle in PRINCIPAUX + DETAIL}
         indicateurs = {k: tous[k] for k in PRINCIPAUX}
         detail = {k: tous[k] for k in DETAIL}
 
@@ -581,6 +650,7 @@ def executer(fournisseur, config: dict, ancien: dict | None, aujourdhui: date, s
                     "date": t.get("date")}
                    for t in tentatives[code] if t["statut"] in ("échec", "rejetée")]
 
+    echecs += echecs_flux
     etats["textes"] = f"Gemini pour {textes_gemini} pays" if textes_gemini else "règles (pas de clé GEMINI_API_KEY ou rédaction refusée)"
     return sortie, etats, echecs
 
@@ -694,42 +764,74 @@ def enregistrer_sante(chemin: Path, etats: dict, echecs: list, donnees: list) ->
              "dégradé : " + " ; ".join(bloc["raisons"]) if bloc["degrade"] else "aucun indicateur dégradé")
 
 
-def extraire_flux_fictifs(ancien: dict | None, chemin_flux: Path) -> None:
-    """Les arcs de flux de capitaux restent fictifs : on les déplace dans data/flux.json
-    (une seule fois), pour que data/pays.json ne contienne que des données réelles."""
-    if chemin_flux.exists() or not ancien:
-        return
-    flux = [{"de": p["code"], **f} for p in ancien.get("donnees", []) for f in p.get("flux", [])]
-    if flux:
-        ecrire_json(chemin_flux, enveloppe(flux, "fictive", fictif=True, producteur_futur="agent-macro"))
-        LOG.info("Flux de capitaux fictifs déplacés dans %s (%d arcs)", chemin_flux, len(flux))
+def executer_flux(fournisseur, config: dict, ancien: dict, aujourdhui: date, flux: dict) -> tuple[list, dict, list]:
+    """Mode « flux » : seul l'indicateur « Flux étrangers » est recalculé ; le reste de data/pays.json est repris tel quel.
+    Renvoie (pays, états des sources du jour, échecs et rejets du jour)."""
+    src, etats = interroger(appels_flux(fournisseur, config), attendus_flux(config))
+    resultats, flux["modifiees"], flux["signaux"], echecs = calculer_flux(src, config, flux["historique"], aujourdhui)
+    sortie = []
+    for p in json.loads(json.dumps(ancien.get("donnees", []))):  # copie profonde
+        if p["code"] in resultats:
+            p.setdefault("detail", {})
+            p["detail"]["flux_etrangers"] = preparer("flux_etrangers", resultats[p["code"]], p["detail"].get("flux_etrangers"), aujourdhui, config)
+            p["lecture"] = textes.lecture(p.get("indicateurs", {}), p["detail"])
+            for t in p["lecture"].values():
+                if not textes.ton_conforme(t):
+                    raise ValueError(f"Texte non conforme aux règles de conduite ({p['code']}) : {t}")
+        sortie.append(p)
+    return sortie, etats, echecs
+
+
+def ecrire_flux(args, flux: dict, aujourdhui: date, genere_le: str) -> None:
+    """Historique jour par jour des relevés et signaux pour le chef d'orchestre."""
+    ecrits = flux_etf.ecrire_historique(Path(args.historique_flux), flux["historique"], flux.get("modifiees") or set(),
+                                        genere_le, VERSION_AGENT)
+    if ecrits:
+        LOG.info("Historique des flux ETF : %d fichier(s) écrit(s) dans %s", len(ecrits), args.historique_flux)
+    for s in flux.get("signaux") or []:
+        if not textes.ton_conforme(s["titre"] + " " + s["explication"]):
+            raise ValueError(f"Signal non conforme aux règles de conduite : {s['titre']}")
+    if flux_etf.ecrire_signaux(Path(args.signaux), flux.get("signaux") or [], aujourdhui, VERSION_AGENT):
+        LOG.info("Signaux : %s (%d nouveau(x) candidat(s) du jour)", args.signaux, len(flux.get("signaux") or []))
 
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description="Agent pays : met à jour data/pays.json avec des données réelles.")
+    parser.add_argument("--mode", choices=["complet", "flux"], default="complet",
+                        help="complet : tous les indicateurs ; flux : flux des ETF pays seulement (soirée, heure de New York)")
     parser.add_argument("--test", action="store_true", help="utilise les données de test (agents/pays/tests/donnees), sans réseau")
     parser.add_argument("--donnees-test", default=str(DOSSIER_AGENT / "tests" / "donnees"))
     parser.add_argument("--sortie", default=str(RACINE / "data" / "pays.json"))
     parser.add_argument("--historique", default=str(RACINE / "data" / "historique" / "pays"))
-    parser.add_argument("--flux", default=str(RACINE / "data" / "flux.json"))
+    parser.add_argument("--historique-flux", help="relevés quotidiens des ETF pays (défaut : flux_etf/ à côté de --historique)")
+    parser.add_argument("--signaux", help="signaux pour le chef d'orchestre (défaut : signaux/pays.json à côté de --sortie)")
     parser.add_argument("--journal", default=str(RACINE / "data" / "journal" / "agent-pays.json"))
     parser.add_argument("--recap", default=str(RACINE / "data" / "recap"))
     parser.add_argument("--cours", help="clôtures des ETF pays pour les graphiques (défaut : cours/etf-pays.json à côté de --sortie)")
     parser.add_argument("--date", help="date du jour (AAAA-MM-JJ), utile pour les tests")
     args = parser.parse_args(argv)
+    # Les chemins dérivés suivent --sortie et --historique : un essai dans un dossier temporaire n'écrit rien dans data/
+    args.historique_flux = args.historique_flux or str(Path(args.historique).parent / "flux_etf")
+    args.signaux = args.signaux or str(Path(args.sortie).parent / "signaux" / "pays.json")
 
     config = json.loads((DOSSIER_AGENT / "config.json").read_text(encoding="utf-8"))
     aujourdhui = date.fromisoformat(args.date) if args.date else datetime.now(timezone.utc).date()
     sortie = Path(args.sortie)
     ancien = lire_json(sortie)
-    extraire_flux_fictifs(ancien, Path(args.flux))
+    ancien_reel = ancien if ancien and ancien.get("meta", {}).get("fictif") is False else None
+    flux = {"historique": flux_etf.lire_historique(Path(args.historique_flux), aujourdhui, config["flux_etf"]["conservation_jours"])}
 
     fournisseur = FournisseurTest(Path(args.donnees_test)) if args.test else FournisseurReel(RACINE / "agents" / ".cache")
+    if args.mode == "flux":
+        if not ancien_reel:
+            LOG.warning("Mode flux : pas encore de data/pays.json réel, exécution complète à la place.")
+        else:
+            return main_flux(args, fournisseur, config, ancien_reel, aujourdhui, flux)
     LOG.info("Agent pays %s — %s — %d pays", VERSION_AGENT, "données de test" if args.test else "sources réelles", len(config["pays"]))
     series = {}
-    donnees, etats, echecs = executer(fournisseur, config, ancien, aujourdhui, series)
+    donnees, etats, echecs = executer(fournisseur, config, ancien, aujourdhui, series, flux)
     enregistrer_series(Path(args.cours) if args.cours else Path(args.sortie).parent / "cours" / "etf-pays.json", series)
-    ancien_reel = ancien if ancien and ancien.get("meta", {}).get("fictif") is False else None
+    ecrire_flux(args, flux, aujourdhui, maintenant_iso())
 
     # Pas d'écriture si rien n'a changé (donc pas de commit)
     if ancien_reel and ancien_reel.get("donnees") == donnees:
@@ -750,6 +852,7 @@ def main(argv=None) -> int:
         etat_des_sources=etats,
         ponderations=config["ponderations"],
         alertes_qualite=[p["code"] for p in donnees if p["qualite"]["alerte"]],
+        flux_etf_mis_a_jour_le=maintenant_iso(),
     )
     ecrire_json(sortie, objet)
     chemin = historiser(Path(args.historique), donnees, aujourdhui, objet["meta"])
@@ -762,6 +865,29 @@ def main(argv=None) -> int:
     erreurs = [k for k, v in etats.items() if v.startswith("erreur")]
     if erreurs:
         LOG.warning("Sources en erreur : %s (dernières valeurs connues conservées)", ", ".join(erreurs))
+    return 0
+
+
+def main_flux(args, fournisseur, config: dict, ancien: dict, aujourdhui: date, flux: dict) -> int:
+    """Mode « flux » : met à jour l'indicateur « Flux étrangers », l'historique des relevés et les signaux.
+    Les états des autres sources (exécution complète du matin) sont conservés dans meta et dans le journal."""
+    LOG.info("Agent pays %s — mode flux — %s", VERSION_AGENT, "données de test" if args.test else "sources réelles")
+    donnees, etats_flux, echecs_flux = executer_flux(fournisseur, config, ancien, aujourdhui, flux)
+    genere_le = maintenant_iso()
+    ecrire_flux(args, flux, aujourdhui, genere_le)
+    meta = ancien.get("meta", {})
+    etats = {**{k: v for k, v in (meta.get("etat_des_sources") or {}).items() if not k.startswith("flux_")}, **etats_flux}
+    journal_existant = lire_json(Path(args.journal)) or {}
+    derniers = (journal_existant.get("donnees") or [{}])[-1].get("echecs_et_rejets") or []
+    echecs = [e for e in derniers if e.get("indicateur") != "flux_etrangers"] + echecs_flux
+    if donnees != ancien.get("donnees"):
+        ecrire_json(Path(args.sortie), {**ancien, "meta": {**meta, "etat_des_sources": etats, "flux_etf_mis_a_jour_le": genere_le},
+                                        "donnees": donnees})
+        LOG.info("Flux étrangers mis à jour dans %s", args.sortie)
+    else:
+        LOG.info("Flux étrangers inchangés.")
+    journaliser(Path(args.journal), genere_le, etats, echecs, donnees)
+    enregistrer_sante(Path(args.journal), etats, echecs, donnees)
     return 0
 
 
@@ -785,5 +911,6 @@ def sources_publiees(config: dict) -> dict:
         LIBELLES_NIVEAUX["nationale"]: nationales + ["BCE (taux de la facilité de dépôt, pour la zone euro)"],
         LIBELLES_NIVEAUX["internationale"]: ["FMI (DataMapper)", "OCDE (SDMX : CLI, prix, Perspectives économiques)", "BRI (WS_CBPOL)",
                                              "Banque mondiale (API v2)", "Eurostat (IPCH)", "BCE (cours de référence de l'euro)"],
-        LIBELLES_NIVEAUX["marche"]: ["Yahoo Finance (yfinance)"],
+        LIBELLES_NIVEAUX["marche"]: ["Yahoo Finance (yfinance)",
+                                     "Émetteurs des ETF pays : iShares, SSGA, VanEck, Global X (parts en circulation et VL, flux des ETF)"],
     }

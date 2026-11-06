@@ -35,7 +35,7 @@ class TestPlanification(unittest.TestCase):
     def test_lecture_des_workflows(self):
         self.assertEqual(sante.crons_du_workflow("agent-marches.yml"),
                          CRONS_MARCHES[:2] + ["7 0-6,23 * * 1-5", "7 * * * 0,6", "22,37,52 22-23 * * 0"])
-        self.assertEqual(sante.crons_du_workflow("agent-pays.yml"), ["11 6 * * *"])
+        self.assertEqual(sante.crons_du_workflow("agent-pays.yml"), ["11 6 * * *", "7 2 * * 2-6"])   # complet, puis flux des ETF (soirée à New York)
         self.assertEqual(sante.crons_du_workflow("agent-macro.yml"), ["41 6 * * *"])
         for fichier in ("agent-marches.yml", "agent-pays.yml", "agent-macro.yml", "rattrapage.yml", "maintien.yml"):
             # Aucune tâche à une minute ronde (souvent retardée ou sautée par GitHub)

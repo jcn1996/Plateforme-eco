@@ -3,7 +3,7 @@
 Prototype d'une application personnelle de suivi économique mondial, pensée d'abord pour le téléphone.
 **Les données des pays sont réelles** : elles sont produites chaque jour par l'**agent pays** (instituts statistiques nationaux, banques centrales, FMI, OCDE, BRI, Banque mondiale, Eurostat, BCE, Yahoo Finance, avec vérification croisée), qui tourne gratuitement avec GitHub Actions.
 **Les cours du bandeau des marchés sont réels** : l'**agent marchés** (sans IA) les met à jour toutes les 15 minutes en semaine.
-**Les secteurs et les entreprises sont réels** (agent entreprises). **Les flux du globe sont réels** : commerce de biens entre les pays suivis (agent flux, FMI). Le reste (alertes, portefeuille) est encore **fictif**, en attendant les autres agents.
+**Les secteurs et les entreprises sont réels** (agent entreprises). **Les flux d'investissement sont réels** : flux des ETF pays cotés aux États-Unis, relevés chaque soir chez les émetteurs (agent pays). Le reste (alertes, portefeuille) est encore **fictif**, en attendant les autres agents.
 
 ## Ce que fait le prototype
 
@@ -15,12 +15,10 @@ Prototype d'une application personnelle de suivi économique mondial, pensée d'
     - le pays sélectionné est éclairci.
   - Les frontières forment un seul trait jaune clair de 0,7 px (1,5 px autour du pays sélectionné).
   - Côtes et frontières détaillées : Natural Earth au 1:110m au démarrage, puis au 1:50m quand on zoome de près (chargé à la demande).
-- **Flux commerciaux** (commerce de biens réel entre les pays suivis, agent flux ; ni flux de capitaux, ni dette)
-  - Sans sélection : les 40 plus gros flux mondiaux ; quand on touche un pays, seulement ses flux à lui (ses 3 premiers clients et ses 3 premiers fournisseurs).
-  - Épaisseur et vitesse selon le montant mensuel.
-  - Couleur selon la variation sur 12 mois : vert en hausse (≥ +5 %), cyan stable, rouge en baisse (≤ −5 %).
-  - Toucher un arc affiche une bulle, par exemple « Mexique → États-Unis · 69,8 Md$ en juillet 2026 · +49,2 % sur 12 mois · Source : FMI, International Trade in Goods », avec la mention « Données mensuelles, décalées de 1 à 2 mois ».
-  - Bouton « Flux » pour les masquer ou les afficher.
+- **Flux d'investissement** (filtre « Flux d'investissement » du globe, agent pays) : flux nets de l'ETF pays coté aux États-Unis (EWJ, EWY, EWZ, INDA, MCHI, EWG, EWQ, ARGT, VNM, COLO… ; SPY pour les États-Unis).
+  - Couleur selon les flux nets en % de l'encours de l'ETF : vert = entrées, rouge = sorties, intensité selon l'ampleur.
+  - Sélecteur 1 semaine / 1 mois / 3 mois à côté des filtres ; une période dont l'historique est trop court apparaît « en constitution ».
+  - Ces flux ne couvrent que les ETF cotés aux États-Unis.
 - **Bandeau des marchés** (cours réels, différés d'environ 15 min) : Nasdaq 100, S&P 500, Or, Pétrole WTI, Bitcoin, EUR/USD, CAC 40, MSCI World (ETF URTH).
   - Chaque cotation porte une pastille « ouvert » ou « fermé ».
   - Il défile tout seul, se glisse au doigt ou à la souris avec inertie, et se met en pause au toucher (reprise 4 s après le relâchement) ou au survol.
@@ -42,8 +40,9 @@ Prototype d'une application personnelle de suivi économique mondial, pensée d'
   - valorisation relative (PER de l'ETF pays comparé à la médiane des pays suivis) ;
   - momentum boursier sur 12 mois (ETF pays).
 
-  La devise sur 3 mois, le solde courant et les flux étrangers (non disponibles pour l'instant) sont dans la section repliable « Détail ».
+  La devise sur 3 mois, le solde courant et les flux étrangers (flux de l'ETF pays, note /100 et tendance) sont dans la section repliable « Détail ».
   Chaque fiche pays affiche aussi :
+  - le bloc « Flux d'investissement » : flux nets sur 1 semaine, 1 mois et 3 mois (M$ et % de l'encours), série de jours consécutifs d'entrées ou de sorties, petit graphique des flux cumulés, source et date ;
   - le niveau de confiance de l'agent ;
   - la rubrique « Ce qui pourrait me donner tort » ;
   - la lecture de l'agent ;
@@ -51,7 +50,7 @@ Prototype d'une application personnelle de suivi économique mondial, pensée d'
 - **Tendances** : une flèche ↑ ↓ → indique l'évolution depuis la mise à jour précédente, sur chaque indicateur et chaque note (pays, secteur, entreprise). Le vert signale une note qui s'améliore, le rouge une note qui se dégrade.
 - **Recherche** (loupe dans l'en-tête) : pays, secteurs et entreprises, par nom ou ticker, sans tenir compte des accents. Toucher un résultat ouvre la fiche et centre le globe.
 - **Fraîcheur des données** : sous chaque fiche, « Mis à jour le … · Source : … », lu dans le bloc `meta` des JSON.
-- **Filtres du globe** (puces en bas de l'écran) : la note globale et les 6 indicateurs des pays.
+- **Filtres du globe** (puces en bas de l'écran) : la note globale, les 6 indicateurs des pays, les flux d'investissement et les risques.
   - Le globe se recolore en fondu, et les étiquettes affichent la valeur choisie.
   - Le choix est mémorisé sur l'appareil.
 - **Gestes** :
@@ -67,7 +66,7 @@ Prototype d'une application personnelle de suivi économique mondial, pensée d'
 - **Classement** des pays et des 20 meilleures entreprises.
 - **Portefeuille démo** de 100 000 €.
 - **Netteté** : antialiasing, densité de pixels jusqu'à 3 sur les écrans haute résolution.
-- **Mode léger** (⚡) : densité de pixels limitée à 2, sans halo, sans animation des flux, 30 images/s ; graphiques simples à la place des widgets TradingView.
+- **Mode léger** (⚡) : densité de pixels limitée à 2, sans halo, 30 images/s ; graphiques simples à la place des widgets TradingView.
 - **PWA** : l'appli s'installe sur l'écran d'accueil. Le service worker charge l'appli « réseau d'abord », donc la dernière version s'affiche dès l'ouverture ; elle reste utilisable hors ligne.
 
 ## Agent pays (données réelles)
@@ -79,11 +78,21 @@ L'agent pays se trouve dans `agents/`, en Python 3.12.
 - Il écrit des textes factuels et met à jour `data/pays.json`.
 - Les règles de notation et de conduite sont décrites dans [`agents/pays/regles.md`](agents/pays/regles.md). Les pondérations se modifient dans `agents/pays/config.json`.
 
-**Exécution** : le workflow `.github/workflows/agent-pays.yml` lance l'agent chaque jour à 6 h 11 UTC ; on peut aussi le lancer à la main.
+**Exécution** : le workflow `.github/workflows/agent-pays.yml` lance l'agent chaque jour à 6 h 11 UTC, et en mode « flux » du mardi au samedi à 2 h 07 UTC (soirée à New York) ; on peut aussi le lancer à la main.
 - Il commite sur `main` avec le message « Agent pays : mise à jour du JJ/MM/AAAA ». Même quand les données n'ont pas changé, la date de dernière exécution est enregistrée dans son journal (pour l'écran « Santé des agents »).
 - Chaque jour, il garde ses notes dans `data/historique/pays/AAAA-MM-JJ.json`.
 - Il écrit un récapitulatif factuel dans `data/recap/pays-AAAA-MM-JJ.md` : ce qui a changé, les divergences entre sources, les données manquantes et les mouvements de notes.
 - Il tient le journal des sources en échec dans `data/journal/agent-pays.json`.
+
+**Flux d'investissement des ETF pays** (indicateur « Flux étrangers », `agents/pays/flux_etf.py`) :
+- pour chaque pays, l'ETF pays déjà utilisé pour le momentum et la valorisation (SPY pour les États-Unis ; l'Égypte n'a plus d'ETF coté aux États-Unis depuis la liquidation de VanEck EGPT en 2024) ;
+- flux du jour = variation du nombre de parts en circulation × valeur liquidative (VL) du jour ;
+- sources : l'émetteur (page du fonds iShares et Global X ; fichier des VL quotidiennes de SSGA et VanEck), Yahoo Finance (yfinance) en secours. Quand les deux répondent pour la même date, les parts sont comparées (tolérance 2 %) : « concordant » ou « sources divergentes ». Un relevé dont parts × VL s'écarte de l'actif net publié est rejeté ;
+- historique jour par jour dans `data/historique/flux_etf/AAAA-MM-JJ.json` (date de la VL). Il n'existe pas d'historique gratuit des parts pour la plupart des ETF : l'agent l'accumule depuis sa mise en service. Seuls SSGA (SPY) et VanEck (VNM) publient un historique, qui sert à remplir les 100 derniers jours. Tant que l'historique ne remonte pas au début d'une période, ses cumuls sont « en cours de constitution » ;
+- indicateurs : flux nets sur 1 semaine, 1 mois et 3 mois en M$ et en % de l'encours, série de jours consécutifs d'entrées ou de sorties, note /100 et tendance (règles dans `regles.md`) ;
+- prudence : un afflux très fort par rapport aux semaines précédentes est signalé « position possiblement encombrée » (note plafonnée à 60) ; l'agent rappelle toujours que les flux ne couvrent que les ETF cotés aux États-Unis ;
+- signaux pour le futur chef d'orchestre dans `data/signaux/pays.json` : inversion de tendance des flux, entrées ou sorties inhabituelles ;
+- mise à jour une fois par jour, en soirée à New York après la publication des émetteurs (`python -m agents.pays --mode flux`, lancé par le planificateur) ; l'exécution complète du matin les recalcule aussi.
 
 **Pannes de source** : si une source ne répond pas, l'agent ne s'arrête pas. Il garde la dernière valeur connue avec sa date et la signale comme « ancienne ». Si plus d'un tiers des sources d'un pays échouent, l'appli affiche une alerte « Qualité des données » sur la fiche du pays et en tête du bandeau des alertes.
 
@@ -97,8 +106,9 @@ Pour lancer l'agent sur un ordinateur :
 
 ```
 pip install -r agents/requirements.txt
-python -m agents.pays            # vraies sources
-python -m agents.pays --test     # données de test, sans réseau
+python -m agents.pays                 # vraies sources
+python -m agents.pays --mode flux     # flux des ETF pays seulement
+python -m agents.pays --test          # données de test, sans réseau
 python -m unittest discover -s agents/pays -t .   # tests de l'agent
 ```
 
@@ -341,30 +351,6 @@ Chaque fiche (agent entreprises, pépites, analyses à la demande) porte une rec
 
 Suivi : `data/historique/recommandations.json` (date, cours, recommandation, fourchette), écrit par `python -m agents.entreprises.suivi`, lancé juste avant chaque poussée par les workflows « Agent entreprises » et « Analyse à la demande » (`outils/pousser_avec_suivi.sh`). Performance à 3, 6 et 12 mois comparée au MSCI World (ETF URTH) et taux de réussite par type, affichés dans l'écran **Fiabilité des recommandations** (depuis Mes analyses ou une fiche).
 
-## Agent flux commerciaux (commerce de biens, sans IA)
-
-L'agent flux se trouve dans `agents/flux/`. Il produit `data/flux.json`, les arcs du globe : uniquement le **commerce de marchandises** entre les pays suivis (ni flux de capitaux, ni dette).
-
-**Sources** (gratuites, sans clé) :
-1. FMI, **International Trade in Goods** (IMTS, ex-DOTS), API SDMX : exportations (FAB) et importations (CAF) mensuelles en dollars, par pays partenaire, en une seule requête ;
-2. **UN Comtrade** (aperçu public) en secours si le FMI ne répond pas : le mois le plus récent assez couvert, puis le même mois un an plus tôt ;
-3. sinon, `data/flux.json` est conservé tel quel et la panne apparaît dans l'écran Santé.
-
-**Calcul**, pour chaque couple orienté A → B :
-- montant du dernier mois disponible : exportations de A vers B déclarées par A ; à défaut, ou si elles sont plus anciennes, importations de B en provenance de A déclarées par B (« miroir » ; c'est le cas de Taïwan, qui ne déclare pas au FMI) ;
-- variation sur 12 mois : même mois un an plus tôt, même déclarant ; « hausse » à partir de +5 %, « baisse » à partir de −5 % (`seuil_variation_pct`) ;
-- lisibilité : seuls sont gardés les 3 premiers clients (`top_de`) et fournisseurs (`top_vers`) de chaque pays et les 40 plus gros flux mondiaux (`mondial`). Ces nombres se règlent dans `agents/flux/config.json`, qui donne aussi les codes FMI (ISO 3) et Comtrade (M49) des pays suivis : un pays ajouté à `data/pays.json` doit y être ajouté.
-
-**Santé** : `data/journal/agent-flux.json`. L'agent passe « dégradé » si le FMI ne répond pas (Comtrade en secours), si le dernier mois disponible a plus de 6 mois de retard, ou si moins de 80 % des pays suivis ont des flux.
-
-**Exécution** : le workflow `.github/workflows/agent-flux.yml` tourne une fois par semaine, le mardi à 5 h 23 UTC (lancé par le planificateur ; le planning GitHub reste en secours). Les données étant mensuelles et décalées de 1 à 2 mois, c'est suffisant. Il ne lance que ses propres tests et ceux du module commun, et ne commite que si les flux ont changé.
-
-```
-python -m agents.flux                                  # vraies sources
-python -m agents.flux --test --data /tmp/essai         # données de test (réponses réelles enregistrées), sans réseau
-python -m agents.flux.tests.capturer_donnees_test      # met à jour les données de test
-```
-
 ## Réveil externe (cron-job.org)
 
 Les tâches planifiées de GitHub (`schedule`) peuvent être retardées, voire sautées sans erreur. Un service externe appelle donc toutes les 15 minutes le workflow **Planificateur** (`.github/workflows/planificateur.yml`, déclenché uniquement par `workflow_dispatch`).
@@ -373,9 +359,8 @@ Les tâches planifiées de GitHub (`schedule`) peuvent être retardées, voire s
 - lit l'heure UTC et les plannings (lignes `cron`) des workflows des agents ;
 - lance (`gh workflow run`) chaque agent dont le dernier créneau prévu n'est pas encore fait :
   - agent marchés : selon son créneau ;
-  - agents pays, macro et entreprises : une fois par jour à leur heure ;
+  - agents pays, macro et entreprises : une fois par jour à leur heure ; agent pays en mode « flux » en soirée à New York (2 h 07 UTC, du mardi au samedi) ;
   - agent géopolitique : toutes les heures ; agent risque : toutes les heures en séance et analyse complète à 22 h 45 UTC ;
-  - agent flux commerciaux : chaque mardi à 5 h 23 UTC ;
   - révision complète du samedi ;
   - maintien du lundi.
 - ne lance jamais deux fois le même créneau : il se fonde sur `derniere_execution` des journaux. Une nouvelle tentative a lieu après 60 min sans résultat, deux tentatives au plus, et rien n'est lancé si une exécution est déjà en cours.
@@ -479,9 +464,10 @@ data/journal/         journal des sources en échec
 data/analyses/        analyses à la demande (index.json et une fiche par société)
 data/historique/recommandations.json  recommandations enregistrées et leur performance
 config/surveillance.json  liste de surveillance (complétée par les analyses à la demande)
-data/flux.json        commerce de biens entre les pays suivis (produit par l'agent flux)
+data/historique/flux_etf/  relevés quotidiens des ETF pays (parts en circulation, VL), flux d'investissement
+data/signaux/pays.json     signaux de l'agent pays (flux des ETF) pour le futur chef d'orchestre
 data/*.json           autres données (fictives pour l'instant)
-agents/               agents Python (agents/commun : téléchargement, cache, journal, écriture ; agents/pays : agent pays ; agents/marches : agent marchés ; agents/macro : agent macro ; agents/rattrapage : relance des exécutions manquées ; agents/entreprises : agent entreprises, recommandation et suivi ; agents/analyse_demande : analyse à la demande ; agents/risque : agent risque et contradicteur ; agents/flux : agent flux commerciaux)
+agents/               agents Python (agents/commun : téléchargement, cache, journal, écriture ; agents/pays : agent pays ; agents/marches : agent marchés ; agents/macro : agent macro ; agents/rattrapage : relance des exécutions manquées ; agents/entreprises : agent entreprises, recommandation et suivi ; agents/analyse_demande : analyse à la demande ; agents/risque : agent risque et contradicteur)
 .github/workflows/    exécution planifiée des agents (GitHub Actions)
 data/countries-110m.json, countries-50m.json  frontières des pays (voir data/LICENCE-countries-110m.txt)
 outils/generer_donnees_fictives.py  régénère les données fictives
@@ -541,7 +527,7 @@ Chaque pays porte aussi :
 
 Le bloc `detail` contient `devise_3m`, `solde_courant` et `flux_etrangers`. `marches.json` donne pour chaque cotation `symbole`, `valeur`, `variation` (jour, en %), `variation_1an`, `heure` (UTC), `statut` (« ouvert » ou « fermé »), `source` et `ancienne`.
 
-Les flux commerciaux sont dans `data/flux.json` (`de`, `vers`, `montant_md` en Md$ par mois, `devise`, `periode` AAAA-MM, `variation_12m_pct`, `tendance`, `mesure`, `declarant`, `top_de`, `top_vers`, `mondial` ; `meta.source_courte` et `meta.mention` pour la bulle).
+`detail.flux_etrangers` (flux de l'ETF pays) : `valeur` (flux nets sur 1 mois en % de l'encours, ou 1 semaine tant que le mois est en cours de constitution ; `periode_valeur`), `note`, `symbole`, `emetteur`, `date` (date de la VL), `periodes` (`1s`, `1m`, `3m` : `flux_musd`, `pct_encours`, `complet`, `statut`, `jours_disponibles`), `serie_consecutive`, `encours_musd`, `cumul` (flux cumulés en M$, jour par jour sur 3 mois), `tendance_flux`, `encombrement` (s'il y a lieu), `avertissement`, `sources` et `verification`.
 
 Chaque pays a aussi un champ `iso_num` : son code ISO numérique, qui le relie à sa forme dans `countries-110m.json`.
 Singapour, trop petit pour l'échelle 1:110m, est dessiné comme un disque.
