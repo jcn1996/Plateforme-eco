@@ -314,3 +314,9 @@ class FournisseurTest:
 
 
 _methodes_supplementaires(FournisseurReel)
+
+# Flux d'investissement des ETF pays : émetteurs (iShares, SSGA, VanEck, Global X) et Yahoo Finance
+from .sources_flux import _methodes_reelles, _methodes_test  # noqa: E402
+
+_methodes_reelles(FournisseurReel)
+_methodes_test(FournisseurTest)

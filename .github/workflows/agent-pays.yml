@@ -4,13 +4,24 @@
 # (données, journal des sources et récapitulatif du jour).
 # - automatiquement chaque jour à 6 h 11 UTC (minute décalée : GitHub retarde ou saute
 #   souvent les tâches aux minutes rondes ; le workflow « Rattrapage » relance si besoin) ;
+# - mode « flux » du mardi au samedi à 2 h 07 UTC (22 h 07 à New York en heure d'été, 21 h 07 en
+#   hiver), après la publication des parts en circulation et des VL par les émetteurs d'ETF :
+#   seul l'indicateur « Flux étrangers » (flux des ETF pays) est mis à jour ;
+# - lancé par le planificateur (réveil externe) ; ces plannings GitHub restent en secours ;
 # - à la main : onglet Actions → « Agent pays » → « Run workflow ».
 name: Agent pays
 
 on:
   schedule:
-    - cron: "11 6 * * *"
+    - cron: "11 6 * * *"               # exécution complète
+    - cron: "7 2 * * 2-6"              # flux des ETF pays, en soirée (heure de New York)
   workflow_dispatch:
+    inputs:
+      mode:
+        description: "complet (tous les indicateurs) ou flux (flux des ETF pays seulement)"
+        type: choice
+        options: [complet, flux]
+        default: complet
 
 permissions:
   contents: write
@@ -56,7 +67,10 @@ jobs:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
           # Facultatif : clé gratuite du BLS (API v2) ; sans elle, l'API v1 sans clé est utilisée
           BLS_API_KEY: ${{ secrets.BLS_API_KEY }}
-        run: python -m agents.pays
+        run: |
+          MODE="${{ inputs.mode }}"
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "${{ github.event.schedule }}" = "7 2 * * 2-6" ]; then MODE=flux; fi
+          python -m agents.pays --mode "${MODE:-complet}"
 
       - name: Commiter les données si elles ont changé
         run: |

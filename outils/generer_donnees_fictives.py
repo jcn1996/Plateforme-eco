@@ -173,12 +173,6 @@ TEXTES_AGENTS = {
         "Dette extérieure et besoins de financement élevés.", "Revenus du canal de Suez encore en baisse de 40 %."),
 }
 
-FLUX = [("US","IN",18.4),("US","JP",12.1),("US","MX",8.6),("CN","SA",6.2),("CN","BR",4.8),
-        ("CH","US",9.3),("GB","IN",5.1),("JP","US",7.7),("DE","CN",-3.0),("SA","IN",4.0),
-        ("FR","US",4.4),("KR","US",5.6),("AU","CN",3.1),("CA","US",6.8),("ZA","GB",2.2),
-        ("US","AR",1.6),("TW","US",9.8),("US","TW",6.4),("SG","ID",3.8),("AE","IN",4.6),
-        ("NL","US",3.9),("JP","VN",4.2),("KR","VN",3.1),("SA","EG",2.6),("ES","CO",1.2),("DE","PL",3.3)]
-
 def lecture(n, t):
     return {"note": n, "texte": t}
 
@@ -209,8 +203,6 @@ for code, nom, lat, lon, note, verdict, (pib, infl, per, dev, flux) in PAYS:
             "risque": lecture(rnd(12), ta[2]),
             "donnees_alternatives": lecture(rnd(8), ta[3]),
         },
-        # Flux de capitaux sortants (montant en milliards de dollars sur la période)
-        "flux": [{"vers": b, "montant_md": m, "devise": "USD", "periode": "1 mois"} for a, b, m in FLUX if a == code],
     })
 
 # ---------------------------------------------------------------- SECTEURS & ENTREPRISES

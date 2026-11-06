@@ -168,3 +168,15 @@ def confiance(indicateurs: dict, ponderations: dict, couverture: float) -> dict:
     if plafond and niveau == "élevé":
         niveau = "moyen"
     return {"niveau": niveau, "score": score, "raisons": raisons, "plafonnee": plafond and score >= 0.8}
+
+
+# Sensibilité de la note aux flux (points de note par point de % de l'encours), selon la période
+SENSIBILITE_FLUX = {"1m": 6, "1s": 12}
+
+
+def note_flux(pct_encours: float, periode: str = "1m") -> int:
+    """Flux nets de l'ETF pays (% de l'encours au début de la période). Entrées = mieux :
+    sur 1 mois, 0 % → 50 ; +5 % → 80 ; −5 % → 20. Sur 1 semaine (tant que le mois est en cours
+    de constitution), la sensibilité est doublée : +2,5 % → 80. Plafonnée à 60 si la position
+    est possiblement encombrée (voir flux_etf.py)."""
+    return borner(50 + SENSIBILITE_FLUX.get(periode, 6) * pct_encours)

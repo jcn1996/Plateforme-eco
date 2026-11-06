@@ -30,7 +30,12 @@ def main():
         "eurostat": ("eurostat", None), "bce_taux": ("bce_taux", None),
         "bce_change": ("bce_change", lambda d: {k: quotidien(v) for k, v in d.items()}),
         "cours": ("yahoo_cours", lambda d: {k: quotidien(v) for k, v in d.items()}), "per": ("yahoo_per", None),
+        "flux_yahoo_parts": ("flux_yahoo_parts", None),
     }
+    # Flux des ETF pays : relevés des émetteurs (historiques publiés limités aux 70 derniers relevés)
+    court = lambda d: {k: {**r, "historique": (r.get("historique") or [])[-70:]} if r.get("historique") else r for k, r in d.items()}
+    for emetteur in ("ishares", "ssga", "vaneck", "globalx"):
+        fichiers[f"flux_{emetteur}"] = (f"flux_{emetteur}", court)
     for nom, serie in BM_SERIES.items():
         fichiers[f"bm_{serie}"] = (nom, annuel)
     for code, liste in config["sources_nationales"].items():

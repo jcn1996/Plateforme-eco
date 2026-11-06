@@ -22,7 +22,7 @@ En résumé :
 | Momentum boursier | performance de l'ETF pays sur 12 mois (en dollars) | quotidienne |
 | Devise sur 3 mois (détail) | variation contre le dollar (BCE, sinon Yahoo Finance) ; indice DXY pour les États-Unis | quotidienne |
 | Solde courant (détail) | % du PIB, dernière année écoulée (FMI et Banque mondiale) | annuelle |
-| Flux étrangers (détail) | non disponible pour l'instant | — |
+| Flux étrangers (détail) | flux nets de l'ETF pays coté aux États-Unis : variation du nombre de parts en circulation × VL du jour, sur 1 mois en % de l'encours (1 semaine tant que le mois est en cours de constitution) | quotidienne (en soirée, heure de New York) |
 
 Chaque valeur publiée porte sa date, sa source exacte et la liste des sources consultées.
 
@@ -38,6 +38,7 @@ Chaque valeur publiée porte sa date, sa source exacte et la liste des sources c
 | Momentum 12 mois | `50 + 1,2 × performance` | 0 % → 50 ; +20 % → 74 ; −20 % → 26 |
 | Devise sur 3 mois | `55 + 4 × variation` (positif = appréciation contre le dollar) | — |
 | Solde courant | `55 + 4 × solde (% du PIB)` | un excédent protège des chocs |
+| Flux étrangers | `50 + 6 × flux sur 1 mois (% de l'encours)` ; sur 1 semaine : `50 + 12 × flux` ; plafond 60 si « position possiblement encombrée » | 0 % → 50 ; +5 % sur un mois → 80 ; −5 % → 20 |
 
 Toutes les notes sont bornées entre 0 et 100.
 
@@ -111,8 +112,26 @@ Si une seconde source indépendante confirme la valeur, elle n'est **pas** signa
   - une **lecture** en trois paragraphes : activité et prix, politique monétaire et risques, marchés.
 - **Rédaction** : la version 1 utilise des modèles de phrases à partir des chiffres. Si le secret GitHub `GEMINI_API_KEY` existe, l'API Gemini rédige le verdict et le contre-scénario, sous les mêmes contraintes. Un texte non conforme, une erreur ou une clé absente : on garde les textes par règles.
 
-## 8. Historique
+## 8. Flux d'investissement des ETF pays
+
+Calcul (`flux_etf.py`, seuils dans `config.json`, bloc `flux_etf`) :
+- flux du jour = (parts en circulation du jour − parts du relevé précédent) × VL du jour. Une division ou un regroupement de parts (parts et VL qui varient en sens inverse, actif stable) compte pour un flux nul ; une variation de plus de 50 % des parts sans explication est écartée ;
+- flux sur une période (1 semaine = 7 jours, 1 mois = 30 jours, 3 mois = 91 jours) : somme des flux depuis le dernier relevé à la date de début ou avant, en M$ et en % de l'encours à cette date. Si l'historique ne remonte pas jusque-là, la période est « en cours de constitution » ;
+- série : jours de bourse consécutifs d'entrées (ou de sorties) jusqu'au dernier flux. Les jours sans création ni rachat de parts ne comptent pas et n'interrompent pas la série ;
+- tendance : « entrées nettes », « sorties nettes » ou « stable » (moins de 0,25 % de l'encours).
+
+Règles de conduite :
+- **position possiblement encombrée** : entrées de la dernière semaine supérieures à la moyenne des semaines précédentes plus 2 écarts-types (au moins 40 relevés), et à 2 % de l'encours au minimum. Avec un historique plus court, le seuil est fixe : 5 % de l'encours en une semaine. La note est alors plafonnée à 60 et la fiche le signale ;
+- l'agent rappelle toujours que ces flux **ne couvrent que les ETF cotés aux États-Unis** (ni les ETF cotés ailleurs, ni les fonds non cotés, ni les achats directs d'actions).
+
+Signaux pour le futur chef d'orchestre (`data/signaux/pays.json`, 180 derniers jours) :
+- **inversion de tendance** (`inversion_flux`) : flux de la dernière semaine de signe opposé à ceux des trois semaines précédentes, chacun d'au moins 0,5 % de l'encours (28 jours d'historique au minimum) ;
+- **entrées ou sorties inhabituelles** (`entrees_inhabituelles`, `sorties_inhabituelles`) : flux du dernier jour au-delà de la moyenne des jours précédents plus 3 écarts-types (au moins 20 relevés) et d'au moins 1 % de l'encours ; avec moins de relevés, seuil fixe de 3 %. Importance « forte » au-delà du double du seuil.
+
+## 9. Historique
 
 Chaque exécution qui change les données écrit `data/historique/pays/AAAA-MM-JJ.json`. Ce fichier contient la note, le niveau, la confiance, le verdict, ainsi que la valeur, la note et la date de chaque indicateur.
 
 Il servira plus tard à mesurer si l'agent avait raison.
+
+Les relevés des ETF pays (parts en circulation, VL, actif net, flux du jour) sont conservés jour par jour dans `data/historique/flux_etf/AAAA-MM-JJ.json` (date de la VL) : c'est la seule source de l'historique des flux pour la plupart des ETF.

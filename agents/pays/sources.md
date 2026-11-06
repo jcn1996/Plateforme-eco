@@ -31,6 +31,7 @@ Règles de choix :
 | Momentum 12 mois | Yahoo Finance (ETF pays) | — |
 | Devise sur 3 mois | BCE (cours de référence, valeur en dollars recalculée) ; Yahoo Finance | oui (à 7 jours près) |
 | Valorisation relative | Yahoo Finance (PER de l'ETF pays) | — |
+| Flux étrangers (flux de l'ETF pays) | émetteur de l'ETF : iShares (page du fonds), SSGA (fichier des VL de SPY), VanEck (fichier des VL de VNM), Global X (page du fonds) ; Yahoo Finance (parts et VL) en secours | parts en circulation, à la même date (tolérance 2 %) ; parts × VL contre l'actif net publié (tolérance 1,5 %) |
 
 Accès techniques :
 - **BLS** (`api.bls.gov`, version 1 sans clé, série `CUUR0000SA0`, CPI-U) pour l'inflation américaine, en plus de FRED (`CPIAUCSL`, si `FRED_API_KEY` existe). La version 1 est limitée à 25 requêtes par jour et par adresse IP ; avec le secret facultatif `BLS_API_KEY`, l'agent passe à la version 2. La série BLS de DBnomics a été retirée : elle n'est plus mise à jour depuis 2025-01.
@@ -42,6 +43,7 @@ Accès techniques :
 - **Banco Central do Brasil** : API SGS.
 - **Banque du Canada** : API Valet.
 - **FRED** : clé gratuite dans le secret GitHub `FRED_API_KEY`.
+- **Émetteurs d'ETF** (flux d'investissement, `agents/pays/sources_flux.py`) : iShares, page du fonds (`www.ishares.com/us/products/…`, données `sharesOutstanding`, `navAmount`, `totalNetAssetsFundLevel`) ; SSGA, `navhist-us-en-spy.xlsx` (date, VL, parts, actif net) ; VanEck, `…/downloads/fundhistoprices/` (date, VL, actif net : parts = actif net / VL, arrondies au millier) ; Global X, page du fonds (`NAV … As of`, `Shares Outstanding`, `Net Assets`). Les adresses se règlent dans `config.json` (`flux_etf.emetteurs`). Un relevé de plus de 10 jours est rejeté.
 
 Les séries nationales se règlent dans `config.json` (`sources_nationales`). Pour ajouter un pays, il suffit d'y ajouter l'identifiant DBnomics de la série. Indiquez `"transformation": "glissement"` pour un indice, et `"direct"` pour une série déjà en %.
 

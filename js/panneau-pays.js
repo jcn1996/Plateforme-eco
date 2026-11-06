@@ -11,6 +11,7 @@ import { sectionMacroPays } from './macro.js';
 import { graphiqueAvance, historiqueFichier } from './graphiques.js';
 import { sectionGeopolitiquePays } from './geopolitique.js';
 import { sectionRisquePays } from './risque.js';
+import { sectionFluxPays } from './flux-investissement.js';
 
 /* ------------------------------ Composants ------------------------------ */
 
@@ -254,6 +255,9 @@ export function fichePays(d, p, nav) {
       titreSection(`ETF du pays : ${p.etf}`, 'celui de l’agent pays (momentum, valorisation)'),
       graphiqueAvance({ yahoo: p.etf, historique: historiqueFichier('etf-pays', p.etf) }),
     ) : null,
+
+    // Flux d'investissement de l'ETF pays (coté aux États-Unis) : 1 semaine, 1 mois, 3 mois, flux cumulés
+    sectionFluxPays(p),
 
     // « Ce qui pourrait me donner tort » : contre-scénario de l'agent
     p.contre_scenario?.length ? el('section', {},

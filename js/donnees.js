@@ -17,9 +17,6 @@ const FICHIERS = {
   marches: 'data/marches.json',
 };
 
-/** Commerce de biens entre pays suivis (arcs du globe), produit par l'agent flux. */
-const FICHIER_FLUX = 'data/flux.json';
-
 /** Frontières des pays (Natural Earth 1:110m via world-atlas, domaine public). */
 const FICHIER_FRONTIERES = 'data/countries-110m.json';
 
@@ -41,8 +38,6 @@ async function chargerFichier(nom, chemin) {
 export async function chargerDonnees() {
   const noms = Object.keys(FICHIERS);
   const promesseFrontieres = fetch(FICHIER_FRONTIERES).then((r) => (r.ok ? r.json() : null)).catch(() => null);
-  // Commerce de biens entre pays (arcs du globe, agent flux) : fichier séparé, facultatif
-  const promesseFlux = chargerFichier('flux', FICHIER_FLUX).catch(() => null);
   const resultats = await Promise.all(noms.map((nom) => chargerFichier(nom, FICHIERS[nom])));
   const brut = Object.fromEntries(noms.map((nom, i) => [nom, resultats[i]]));
 
@@ -51,11 +46,6 @@ export async function chargerDonnees() {
   const frontieres = await promesseFrontieres;
 
   const pays = brut.pays.donnees;
-  const flux = await promesseFlux;
-  if (flux) {
-    // Rattache à chaque pays ses flux sortants (format attendu par le globe)
-    for (const p of pays) p.flux = flux.donnees.filter((f) => f.de === p.code).map(({ de, ...reste }) => reste);
-  }
   const secteurs = brut.secteurs.donnees;
   const entreprises = brut.entreprises.donnees;
 
@@ -72,7 +62,6 @@ export async function chargerDonnees() {
   const fictif = resultats.some((r) => r.meta.fictif !== false);
   // Détail fichier par fichier (les pays sont réels, le reste encore fictif)
   const fictifPar = Object.fromEntries(noms.map((nom) => [nom, brut[nom].meta.fictif !== false]));
-  if (flux) fictifPar.flux = flux.meta.fictif !== false;
 
   return {
     meta: Object.fromEntries(noms.map((nom) => [nom, brut[nom].meta])),
@@ -85,7 +74,6 @@ export async function chargerDonnees() {
     alertes: brut.alertes.donnees,
     portefeuille: brut.portefeuille.donnees,
     marches: brut.marches.donnees,
-    fluxMeta: flux?.meta ?? null,
     paysParCode,
     secteurParId,
     entrepriseParTicker,

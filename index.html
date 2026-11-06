@@ -126,24 +126,19 @@
         <li><span class="pastille pastille--orange"></span>35 à 59 : modéré</li>
         <li><span class="pastille pastille--vert"></span>&lt; 35 : faible</li>
       </ul>
-      <p class="legende-titre">Commerce de biens (FMI)</p>
-      <ul class="legende legende--flux" aria-label="Légende des flux commerciaux">
-        <li><span class="trait-flux trait-flux--hausse"></span>en hausse sur 12 mois (≥ +5 %)</li>
-        <li><span class="trait-flux trait-flux--stable"></span>stable (entre −5 % et +5 %)</li>
-        <li><span class="trait-flux trait-flux--baisse"></span>en baisse sur 12 mois (≤ −5 %)</li>
-      </ul>
-      <p class="legende-aide">Épaisseur = montant mensuel. Sans sélection : les 40 plus gros flux ; un pays touché : ses 3 premiers clients et fournisseurs. Données mensuelles, décalées de 1 à 2 mois.</p>
-      <p class="legende-aide">Pour un indicateur, la couleur suit sa note sur 100 attribuée par les agents. Touchez un arc pour le détail d'un flux. Pincez ou double-touchez pour zoomer.</p>
+      <div id="legende-flux" hidden>
+        <span class="degrade-flux" aria-hidden="true"></span>
+        <div class="degrade-flux-reperes"><span>sorties</span><span>0</span><span>entrées</span></div>
+        <p class="legende-aide">Flux nets de l'ETF pays coté aux États-Unis sur la période choisie, en % de son encours (variation du nombre de parts × valeur liquidative). Intensité selon l'ampleur. Les flux ne couvrent que les ETF cotés aux États-Unis.</p>
+      </div>
+      <p class="legende-aide">Pour un indicateur, la couleur suit sa note sur 100 attribuée par les agents. Pincez ou double-touchez pour zoomer.</p>
     </div>
   </header>
 
   <!-- ===================== FILTRES DU GLOBE ===================== -->
   <nav id="filtres" class="filtres" aria-label="Ce que représentent les couleurs">
     <div id="filtres-puces" class="filtres-puces" role="radiogroup" aria-label="Couleurs des pays"></div>
-    <button id="btn-flux" class="puce puce--flux" type="button" aria-pressed="true" title="Afficher ou masquer les flux commerciaux">
-      <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 15c3-9 11-9 14 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="10" cy="8.3" r="1.8" fill="currentColor"/></svg>
-      <span>Flux</span>
-    </button>
+    <div id="flux-periode" class="flux-periode" role="radiogroup" aria-label="Période des flux d'investissement" hidden></div>
   </nav>
 
   <!-- ===================== ALERTES DU JOUR ===================== -->
