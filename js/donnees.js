@@ -17,7 +17,7 @@ const FICHIERS = {
   marches: 'data/marches.json',
 };
 
-/** Flux de capitaux entre pays (arcs du globe). */
+/** Commerce de biens entre pays suivis (arcs du globe), produit par l'agent flux. */
 const FICHIER_FLUX = 'data/flux.json';
 
 /** Frontières des pays (Natural Earth 1:110m via world-atlas, domaine public). */
@@ -41,7 +41,7 @@ async function chargerFichier(nom, chemin) {
 export async function chargerDonnees() {
   const noms = Object.keys(FICHIERS);
   const promesseFrontieres = fetch(FICHIER_FRONTIERES).then((r) => (r.ok ? r.json() : null)).catch(() => null);
-  // Flux de capitaux (arcs du globe), encore fictifs : fichier séparé, facultatif
+  // Commerce de biens entre pays (arcs du globe, agent flux) : fichier séparé, facultatif
   const promesseFlux = chargerFichier('flux', FICHIER_FLUX).catch(() => null);
   const resultats = await Promise.all(noms.map((nom) => chargerFichier(nom, FICHIERS[nom])));
   const brut = Object.fromEntries(noms.map((nom, i) => [nom, resultats[i]]));
@@ -85,6 +85,7 @@ export async function chargerDonnees() {
     alertes: brut.alertes.donnees,
     portefeuille: brut.portefeuille.donnees,
     marches: brut.marches.donnees,
+    fluxMeta: flux?.meta ?? null,
     paysParCode,
     secteurParId,
     entrepriseParTicker,

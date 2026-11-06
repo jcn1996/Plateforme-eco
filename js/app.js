@@ -90,7 +90,7 @@ async function majSante() {
 
 /**
  * Mention « Données fictives » : affichée seulement là où l'écran montre des données fictives
- * (portefeuille démo, alertes, flux de capitaux), et plus là où les agents produisent des données réelles.
+ * (portefeuille démo, alertes), et plus là où les agents produisent des données réelles.
  */
 function majBadgesFictifs(route) {
   const f = d.fictifPar ?? {};
@@ -104,6 +104,29 @@ function majBadgesFictifs(route) {
     comparaison: f.pays !== false || f.entreprises !== false,
   }[route.type] ?? false;
   document.querySelectorAll('.badge-fictif').forEach((b) => { b.hidden = !fictif; });
+}
+
+/**
+ * Bulle d'un arc du globe (commerce de biens) : montant, date de la donnée, variation sur 12 mois, source.
+ * Renvoie une ligne par élément.
+ */
+function texteFlux(f) {
+  const meta = d.fluxMeta ?? {};
+  const montant = `${nombre(f.montant, f.montant < 10 ? 2 : 1)} Md${f.devise === 'EUR' ? '€' : '$'}`;
+  const [annee, mois] = (f.periode ?? '').split('-').map(Number);
+  const date = annee && mois
+    ? new Date(Date.UTC(annee, mois - 1, 1)).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric', timeZone: 'UTC' })
+    : null;
+  const variation = f.variation == null ? 'variation sur 12 mois inconnue'
+    : `${f.variation > 0 ? '+' : ''}${nombre(f.variation, 1)} % sur 12 mois`;
+  const mesure = f.mesure === 'importations' ? 'importations déclarées par le pays de destination'
+    : f.mesure === 'exportations' ? "exportations déclarées par le pays d'origine" : null;
+  return [
+    `${f.de.nom} → ${f.vers.nom}`,
+    `${montant}${date ? ` en ${date}` : ''} · ${variation}`,
+    `Source : ${meta.source_courte ?? meta.source ?? 'non précisée'}${mesure ? ` (${mesure})` : ''}`,
+    meta.mention ?? 'Données mensuelles, décalées de 1 à 2 mois',
+  ];
 }
 
 /* ============================== Démarrage ============================== */
@@ -200,7 +223,7 @@ async function demarrer() {
       leger,
       metrique: objetMetrique(metriqueInitiale),
       afficherFlux: fluxInitiaux,
-      formaterFlux: (f) => `${f.de.nom} → ${f.vers.nom} : ${nombre(f.montant, 1)} Md${f.devise === 'USD' ? '$' : '€'} sur ${f.periode}`,
+      formaterFlux: texteFlux,
       surSelection: (code) => naviguer({ type: 'pays', id: code }),
     });
   } catch (erreur) {

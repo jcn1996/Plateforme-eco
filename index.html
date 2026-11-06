@@ -126,12 +126,13 @@
         <li><span class="pastille pastille--orange"></span>35 à 59 : modéré</li>
         <li><span class="pastille pastille--vert"></span>&lt; 35 : faible</li>
       </ul>
-      <p class="legende-titre">Flux de capitaux (fictifs)</p>
-      <ul class="legende legende--flux" aria-label="Légende des flux">
-        <li><span class="trait-flux trait-flux--entree"></span>entrées vers un pays bien noté</li>
-        <li><span class="trait-flux trait-flux--sortie"></span>sorties d'un pays mal noté</li>
-        <li><span class="trait-flux trait-flux--autre"></span>autres flux · épaisseur = montant</li>
+      <p class="legende-titre">Commerce de biens (FMI)</p>
+      <ul class="legende legende--flux" aria-label="Légende des flux commerciaux">
+        <li><span class="trait-flux trait-flux--hausse"></span>en hausse sur 12 mois (≥ +5 %)</li>
+        <li><span class="trait-flux trait-flux--stable"></span>stable (entre −5 % et +5 %)</li>
+        <li><span class="trait-flux trait-flux--baisse"></span>en baisse sur 12 mois (≤ −5 %)</li>
       </ul>
+      <p class="legende-aide">Épaisseur = montant mensuel. Sans sélection : les 40 plus gros flux ; un pays touché : ses 3 premiers clients et fournisseurs. Données mensuelles, décalées de 1 à 2 mois.</p>
       <p class="legende-aide">Pour un indicateur, la couleur suit sa note sur 100 attribuée par les agents. Touchez un arc pour le détail d'un flux. Pincez ou double-touchez pour zoomer.</p>
     </div>
   </header>
@@ -139,7 +140,7 @@
   <!-- ===================== FILTRES DU GLOBE ===================== -->
   <nav id="filtres" class="filtres" aria-label="Ce que représentent les couleurs">
     <div id="filtres-puces" class="filtres-puces" role="radiogroup" aria-label="Couleurs des pays"></div>
-    <button id="btn-flux" class="puce puce--flux" type="button" aria-pressed="true" title="Afficher ou masquer les flux de capitaux">
+    <button id="btn-flux" class="puce puce--flux" type="button" aria-pressed="true" title="Afficher ou masquer les flux commerciaux">
       <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 15c3-9 11-9 14 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="10" cy="8.3" r="1.8" fill="currentColor"/></svg>
       <span>Flux</span>
     </button>
