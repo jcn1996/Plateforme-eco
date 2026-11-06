@@ -1,13 +1,80 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-06T21:31:36Z",
+    "genere_le": "2026-11-06T23:02:14Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "entreprises|nouvelle_pepite|NEM|2026-11-06",
+      "revu_le": "2026-11-06T23:01:31Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "NEM",
+        "date": "2026-11-06",
+        "importance": "moyenne",
+        "titre": "Newmont Corporation entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Malgré une croissance du bénéfice de +111,6 % [F1], la pérennité de cette marge opérationnelle reste exposée à la volatilité des cours des métaux précieux.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Newmont Corporation : croissance du bénéfice +111,6 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "faible",
+      "version_regles": 2,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|PTC|2026-11-06",
+      "revu_le": "2026-11-06T23:01:31Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "PTC",
+        "date": "2026-11-06",
+        "importance": "moyenne",
+        "titre": "PTC Inc. entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 2
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|8725.T|2026-11-06",
+      "revu_le": "2026-11-06T23:01:31Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "8725.T",
+        "date": "2026-11-06",
+        "importance": "moyenne",
+        "titre": "MS&AD Insurance Group Holdings, Inc. entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 2
+    },
     {
       "id": "geopolitique|mesure_officielle|evt-cce5babecfca|2026-11-06",
       "revu_le": "2026-11-06T20:31:18Z",
@@ -92,6 +159,35 @@
       "version_regles": 2
     },
     {
+      "id": "pays|sorties_inhabituelles|VN|2026-11-05",
+      "revu_le": "2026-11-06T23:01:31Z",
+      "signal": {
+        "agent": "pays",
+        "type": "sorties_inhabituelles",
+        "cle": "VN",
+        "date": "2026-11-05",
+        "importance": "moyenne",
+        "titre": "Vietnam : sorties inhabituelles sur l'ETF VNM"
+      },
+      "objection": "Ces sorties de capitaux fragilisent une économie dont les réserves ne couvrent que 2,1 mois d'importations [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Vietnam : réserves de 2,1 mois d'importations",
+          "source": "Banque mondiale (FI.RES.TOTL.MO)"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "faible",
+      "version_regles": 2,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
       "id": "geopolitique|evenement_grave|theme-evt-d40435d5b052|2026-11-05",
       "revu_le": "2026-11-06T17:38:54Z",
       "signal": {
@@ -174,36 +270,6 @@
       "version_regles": 2
     },
     {
-      "id": "entreprises|nouvelle_pepite|2345.TW|2026-11-05",
-      "revu_le": "2026-11-06T17:38:54Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "nouvelle_pepite",
-        "cle": "2345.TW",
-        "date": "2026-11-05",
-        "importance": "moyenne",
-        "titre": "Accton Technology Corporation entre dans la liste « Qualité à prix raisonnable »"
-      },
-      "objection": "Objections spécifiques : cours à −47,2 % sur 6 mois [F1] ; bénéfice en hausse de 120 % sur un exercice, difficilement reproductible [F2].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Accton Technology Corporation : cours −43,8 % sur 3 mois, −47,2 % sur 6 mois, +18,9 % sur 12 mois",
-          "source": "agent entreprises (fiche)"
-        },
-        {
-          "id": "F2",
-          "texte": "Accton Technology Corporation : croissance du bénéfice +119,5 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 2
-    },
-    {
       "id": "entreprises|nouvelle_pepite|RR.L|2026-11-05",
       "revu_le": "2026-11-06T17:38:54Z",
       "signal": {
@@ -230,86 +296,6 @@
           "id": "F3",
           "texte": "Rolls-Royce Holdings plc : conversion du bénéfice en cash de 61,3 %",
           "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F4",
-          "texte": "Zone Monde : phase « Ralentissement inflationniste » (agent macro)",
-          "source": "agent macro (data/macro.json)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 2
-    },
-    {
-      "id": "entreprises|nouvelle_pepite|K.TO|2026-11-05",
-      "revu_le": "2026-11-06T17:38:54Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "nouvelle_pepite",
-        "cle": "K.TO",
-        "date": "2026-11-05",
-        "importance": "moyenne",
-        "titre": "Kinross Gold Corporation entre dans la liste « Qualité à prix raisonnable »"
-      },
-      "objection": "Objections spécifiques : cours à −27,1 % sur 6 mois [F1] ; bénéfice en hausse de 152 % sur un exercice, difficilement reproductible [F2] ; piège de valeur possible : décote marquée associée à un cours ou à un bénéfice en recul [F3] ; secteur cyclique (matériaux) alors que la zone Monde est en phase « Ralentissement inflationniste » [F4].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Kinross Gold Corporation : cours −15,7 % sur 3 mois, −27,1 % sur 6 mois, −10,5 % sur 12 mois",
-          "source": "agent entreprises (fiche)"
-        },
-        {
-          "id": "F2",
-          "texte": "Kinross Gold Corporation : croissance du bénéfice +151,9 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F3",
-          "texte": "Kinross Gold Corporation : piège de valeur possible : décote marquée associée à un cours ou à un bénéfice en recul (revue critique)",
-          "source": "agent entreprises (data/pepites.json)"
-        },
-        {
-          "id": "F4",
-          "texte": "Zone Monde : phase « Ralentissement inflationniste » (agent macro)",
-          "source": "agent macro (data/macro.json)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 2
-    },
-    {
-      "id": "entreprises|nouvelle_pepite|PRU.L|2026-11-05",
-      "revu_le": "2026-11-06T17:38:54Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "nouvelle_pepite",
-        "cle": "PRU.L",
-        "date": "2026-11-05",
-        "importance": "moyenne",
-        "titre": "Prudential plc entre dans la liste « Qualité à prix raisonnable »"
-      },
-      "objection": "Objections spécifiques : cours à −18,5 % sur 6 mois [F1] ; chiffre d'affaires en hausse de 69 % sur un exercice : à vérifier (acquisition, élément non récurrent) [F2] ; piège de valeur possible : décote marquée associée à un cours ou à un bénéfice en recul [F3] ; secteur cyclique (finance) alors que la zone Monde est en phase « Ralentissement inflationniste » [F4].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Prudential plc : cours −5,8 % sur 3 mois, −18,5 % sur 6 mois, −9,7 % sur 12 mois",
-          "source": "agent entreprises (fiche)"
-        },
-        {
-          "id": "F2",
-          "texte": "Prudential plc : croissance du CA +69,0 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F3",
-          "texte": "Prudential plc : piège de valeur possible : décote marquée associée à un cours ou à un bénéfice en recul (revue critique)",
-          "source": "agent entreprises (data/pepites.json)"
         },
         {
           "id": "F4",
