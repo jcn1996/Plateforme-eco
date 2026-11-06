@@ -3,7 +3,7 @@
 Prototype d'une application personnelle de suivi économique mondial, pensée d'abord pour le téléphone.
 **Les données des pays sont réelles** : elles sont produites chaque jour par l'**agent pays** (instituts statistiques nationaux, banques centrales, FMI, OCDE, BRI, Banque mondiale, Eurostat, BCE, Yahoo Finance, avec vérification croisée), qui tourne gratuitement avec GitHub Actions.
 **Les cours du bandeau des marchés sont réels** : l'**agent marchés** (sans IA) les met à jour toutes les 15 minutes en semaine.
-**Les secteurs et les entreprises sont réels** (agent entreprises). Le reste (alertes, flux de capitaux, portefeuille) est encore **fictif**, en attendant les autres agents.
+**Les secteurs et les entreprises sont réels** (agent entreprises). **Les flux du globe sont réels** : commerce de biens entre les pays suivis (agent flux, FMI). Le reste (alertes, portefeuille) est encore **fictif**, en attendant les autres agents.
 
 ## Ce que fait le prototype
 
@@ -15,11 +15,11 @@ Prototype d'une application personnelle de suivi économique mondial, pensée d'
     - le pays sélectionné est éclairci.
   - Les frontières forment un seul trait jaune clair de 0,7 px (1,5 px autour du pays sélectionné).
   - Côtes et frontières détaillées : Natural Earth au 1:110m au démarrage, puis au 1:50m quand on zoome de près (chargé à la demande).
-- **Flux de capitaux (fictifs)**
-  - Épaisseur et vitesse selon le montant.
-  - Couleur selon le sens : vert pour les entrées vers un pays bien noté, rouge pour les sorties d'un pays mal noté.
-  - Toucher un arc affiche une bulle, par exemple « États-Unis → Brésil : 4,2 Md$ sur 1 mois ».
-  - Quand un pays est sélectionné, seuls ses flux restent visibles.
+- **Flux commerciaux** (commerce de biens réel entre les pays suivis, agent flux ; ni flux de capitaux, ni dette)
+  - Sans sélection : les 40 plus gros flux mondiaux ; quand on touche un pays, seulement ses flux à lui (ses 3 premiers clients et ses 3 premiers fournisseurs).
+  - Épaisseur et vitesse selon le montant mensuel.
+  - Couleur selon la variation sur 12 mois : vert en hausse (≥ +5 %), cyan stable, rouge en baisse (≤ −5 %).
+  - Toucher un arc affiche une bulle, par exemple « Mexique → États-Unis · 69,8 Md$ en juillet 2026 · +49,2 % sur 12 mois · Source : FMI, International Trade in Goods », avec la mention « Données mensuelles, décalées de 1 à 2 mois ».
   - Bouton « Flux » pour les masquer ou les afficher.
 - **Bandeau des marchés** (cours réels, différés d'environ 15 min) : Nasdaq 100, S&P 500, Or, Pétrole WTI, Bitcoin, EUR/USD, CAC 40, MSCI World (ETF URTH).
   - Chaque cotation porte une pastille « ouvert » ou « fermé ».
@@ -341,6 +341,30 @@ Chaque fiche (agent entreprises, pépites, analyses à la demande) porte une rec
 
 Suivi : `data/historique/recommandations.json` (date, cours, recommandation, fourchette), écrit par `python -m agents.entreprises.suivi`, lancé juste avant chaque poussée par les workflows « Agent entreprises » et « Analyse à la demande » (`outils/pousser_avec_suivi.sh`). Performance à 3, 6 et 12 mois comparée au MSCI World (ETF URTH) et taux de réussite par type, affichés dans l'écran **Fiabilité des recommandations** (depuis Mes analyses ou une fiche).
 
+## Agent flux commerciaux (commerce de biens, sans IA)
+
+L'agent flux se trouve dans `agents/flux/`. Il produit `data/flux.json`, les arcs du globe : uniquement le **commerce de marchandises** entre les pays suivis (ni flux de capitaux, ni dette).
+
+**Sources** (gratuites, sans clé) :
+1. FMI, **International Trade in Goods** (IMTS, ex-DOTS), API SDMX : exportations (FAB) et importations (CAF) mensuelles en dollars, par pays partenaire, en une seule requête ;
+2. **UN Comtrade** (aperçu public) en secours si le FMI ne répond pas : le mois le plus récent assez couvert, puis le même mois un an plus tôt ;
+3. sinon, `data/flux.json` est conservé tel quel et la panne apparaît dans l'écran Santé.
+
+**Calcul**, pour chaque couple orienté A → B :
+- montant du dernier mois disponible : exportations de A vers B déclarées par A ; à défaut, ou si elles sont plus anciennes, importations de B en provenance de A déclarées par B (« miroir » ; c'est le cas de Taïwan, qui ne déclare pas au FMI) ;
+- variation sur 12 mois : même mois un an plus tôt, même déclarant ; « hausse » à partir de +5 %, « baisse » à partir de −5 % (`seuil_variation_pct`) ;
+- lisibilité : seuls sont gardés les 3 premiers clients (`top_de`) et fournisseurs (`top_vers`) de chaque pays et les 40 plus gros flux mondiaux (`mondial`). Ces nombres se règlent dans `agents/flux/config.json`, qui donne aussi les codes FMI (ISO 3) et Comtrade (M49) des pays suivis : un pays ajouté à `data/pays.json` doit y être ajouté.
+
+**Santé** : `data/journal/agent-flux.json`. L'agent passe « dégradé » si le FMI ne répond pas (Comtrade en secours), si le dernier mois disponible a plus de 6 mois de retard, ou si moins de 80 % des pays suivis ont des flux.
+
+**Exécution** : le workflow `.github/workflows/agent-flux.yml` tourne une fois par semaine, le mardi à 5 h 23 UTC (lancé par le planificateur ; le planning GitHub reste en secours). Les données étant mensuelles et décalées de 1 à 2 mois, c'est suffisant. Il ne lance que ses propres tests et ceux du module commun, et ne commite que si les flux ont changé.
+
+```
+python -m agents.flux                                  # vraies sources
+python -m agents.flux --test --data /tmp/essai         # données de test (réponses réelles enregistrées), sans réseau
+python -m agents.flux.tests.capturer_donnees_test      # met à jour les données de test
+```
+
 ## Réveil externe (cron-job.org)
 
 Les tâches planifiées de GitHub (`schedule`) peuvent être retardées, voire sautées sans erreur. Un service externe appelle donc toutes les 15 minutes le workflow **Planificateur** (`.github/workflows/planificateur.yml`, déclenché uniquement par `workflow_dispatch`).
@@ -351,6 +375,7 @@ Les tâches planifiées de GitHub (`schedule`) peuvent être retardées, voire s
   - agent marchés : selon son créneau ;
   - agents pays, macro et entreprises : une fois par jour à leur heure ;
   - agent géopolitique : toutes les heures ; agent risque : toutes les heures en séance et analyse complète à 22 h 45 UTC ;
+  - agent flux commerciaux : chaque mardi à 5 h 23 UTC ;
   - révision complète du samedi ;
   - maintien du lundi.
 - ne lance jamais deux fois le même créneau : il se fonde sur `derniere_execution` des journaux. Une nouvelle tentative a lieu après 60 min sans résultat, deux tentatives au plus, et rien n'est lancé si une exécution est déjà en cours.
@@ -454,9 +479,9 @@ data/journal/         journal des sources en échec
 data/analyses/        analyses à la demande (index.json et une fiche par société)
 data/historique/recommandations.json  recommandations enregistrées et leur performance
 config/surveillance.json  liste de surveillance (complétée par les analyses à la demande)
-data/flux.json        flux de capitaux entre pays (fictifs)
+data/flux.json        commerce de biens entre les pays suivis (produit par l'agent flux)
 data/*.json           autres données (fictives pour l'instant)
-agents/               agents Python (agents/commun : téléchargement, cache, journal, écriture ; agents/pays : agent pays ; agents/marches : agent marchés ; agents/macro : agent macro ; agents/rattrapage : relance des exécutions manquées ; agents/entreprises : agent entreprises, recommandation et suivi ; agents/analyse_demande : analyse à la demande ; agents/risque : agent risque et contradicteur)
+agents/               agents Python (agents/commun : téléchargement, cache, journal, écriture ; agents/pays : agent pays ; agents/marches : agent marchés ; agents/macro : agent macro ; agents/rattrapage : relance des exécutions manquées ; agents/entreprises : agent entreprises, recommandation et suivi ; agents/analyse_demande : analyse à la demande ; agents/risque : agent risque et contradicteur ; agents/flux : agent flux commerciaux)
 .github/workflows/    exécution planifiée des agents (GitHub Actions)
 data/countries-110m.json, countries-50m.json  frontières des pays (voir data/LICENCE-countries-110m.txt)
 outils/generer_donnees_fictives.py  régénère les données fictives
@@ -516,7 +541,7 @@ Chaque pays porte aussi :
 
 Le bloc `detail` contient `devise_3m`, `solde_courant` et `flux_etrangers`. `marches.json` donne pour chaque cotation `symbole`, `valeur`, `variation` (jour, en %), `variation_1an`, `heure` (UTC), `statut` (« ouvert » ou « fermé »), `source` et `ancienne`.
 
-Les flux de capitaux (fictifs) sont dans `data/flux.json` (`de`, `vers`, `montant_md`, `devise`, `periode`).
+Les flux commerciaux sont dans `data/flux.json` (`de`, `vers`, `montant_md` en Md$ par mois, `devise`, `periode` AAAA-MM, `variation_12m_pct`, `tendance`, `mesure`, `declarant`, `top_de`, `top_vers`, `mondial` ; `meta.source_courte` et `meta.mention` pour la bulle).
 
 Chaque pays a aussi un champ `iso_num` : son code ISO numérique, qui le relie à sa forme dans `countries-110m.json`.
 Singapour, trop petit pour l'échelle 1:110m, est dessiné comme un disque.

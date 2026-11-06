@@ -8,7 +8,7 @@
       (pays suivis colorés selon leur note, autres pays gris bleu), un seul
       trait de frontière jaune clair très fin, plus épais autour du pays
       sélectionné. Natural Earth 1:110m, puis 1:50m quand on zoome de près.
-   3. Colonnes, anneaux et étiquettes des pays ; arcs des flux de capitaux
+   3. Colonnes, anneaux et étiquettes des pays ; arcs du commerce de biens
    4. Liseré et halo atmosphérique
 
    Gestes : rotation avec inertie, rotation automatique au repos, pincement,
@@ -52,11 +52,12 @@ const ECLAIRCISSEMENT = 0.3; // pays sélectionné : couleur mélangée à 30 % 
 const FRONTIERE = 0xffe9a8;  // jaune clair
 const BLANC = new THREE.Color(0xffffff);
 
-/* Couleurs des flux selon leur sens */
+/* Couleurs des flux commerciaux selon leur variation sur 12 mois (seuil fixé par l'agent flux) */
 const COULEURS_FLUX = {
-  entree: 0x34e3a4,  // entrées vers un pays bien noté
-  sortie: 0xff6b5b,  // sorties d'un pays mal noté
-  autre: 0x7fe8ff,   // autres flux
+  hausse: 0x34e3a4,    // en hausse sur 12 mois
+  baisse: 0xff6b5b,    // en baisse sur 12 mois
+  stable: 0x7fe8ff,    // stable
+  inconnue: 0x8fa3bf,  // variation inconnue
 };
 
 /* Réglages généraux */
@@ -363,26 +364,27 @@ export class Globe {
     }
   }
 
-  /** Arcs de flux de capitaux : épaisseur, vitesse et couleur selon montant et sens. */
+  /** Arcs du commerce de biens : épaisseur et vitesse selon le montant, couleur selon la variation sur 12 mois. */
   #creerFlux() {
     this.groupeFlux = new THREE.Group();
     this.groupe.add(this.groupeFlux);
     this.arcs = [];
+    // Épaisseur relative au plus gros flux (racine carrée : les petits flux restent visibles)
+    const maximum = Math.max(1e-9, ...this.pays.flatMap((p) => (p.flux ?? []).map((f) => Math.abs(f.montant_md))));
 
     for (const p of this.pays) {
       for (const f of p.flux ?? []) {
         const cible = this.parCode.get(f.vers);
         if (!cible) continue;
-        // Montant négatif = flux dans l'autre sens
-        const [de, vers] = f.montant_md >= 0 ? [p, cible] : [cible, p];
+        const [de, vers] = [p, cible];
         const montant = Math.abs(f.montant_md);
-        const sens = vers.note >= 65 ? 'entree' : de.note < 50 ? 'sortie' : 'autre';
+        const sens = COULEURS_FLUX[f.tendance] !== undefined ? f.tendance : 'inconnue';
         const a = versVecteur(de.lat, de.lon, 1.003);
         const b = versVecteur(vers.lat, vers.lon, 1.003);
         const altitude = 0.08 + a.angleTo(b) * 0.24; // les arcs longs montent plus haut
         const milieu = a.clone().add(b).normalize().multiplyScalar(1 + altitude);
         const courbe = new THREE.QuadraticBezierCurve3(a, milieu, b);
-        const t = Math.min(montant, 20) / 20;
+        const t = Math.sqrt(montant / maximum);
 
         // Tube visible (épaisseur selon le montant)
         const tube = new THREE.Mesh(
@@ -395,7 +397,10 @@ export class Globe {
         this.groupeFlux.add(tube, zoneToucher);
 
         const arc = {
-          de, vers, montant, devise: f.devise ?? 'USD', periode: f.periode ?? '1 mois', sens,
+          de, vers, montant, devise: f.devise ?? 'USD', periode: f.periode, sens,
+          variation: f.variation_12m_pct ?? null, mesure: f.mesure, declarant: this.parCode.get(f.declarant) ?? null,
+          // Lisibilité : sans sélection, les plus gros flux mondiaux ; un pays touché, ses principaux partenaires
+          mondial: f.mondial !== false, topDe: f.top_de !== false, topVers: f.top_vers !== false,
           courbe, tube, zoneToucher,
           vitesse: 0.08 + t * 0.22,
           nbPoints: 1 + Math.round(t * 3),
@@ -425,11 +430,13 @@ export class Globe {
     this.#placerPointsFlux(0);
   }
 
-  /** Quand un pays est sélectionné, seuls ses flux restent visibles. */
+  /** Sans sélection : les plus gros flux mondiaux. Un pays sélectionné : seulement ses principaux clients et fournisseurs. */
   #majVisibiliteFlux() {
     this.groupeFlux.visible = this.afficherFlux;
     for (const arc of this.arcs) {
-      arc.visible = !this.selection || arc.de.code === this.selection || arc.vers.code === this.selection;
+      arc.visible = this.selection
+        ? (arc.de.code === this.selection && arc.topDe) || (arc.vers.code === this.selection && arc.topVers)
+        : arc.mondial;
       arc.tube.visible = arc.visible;
     }
     if (!this.afficherFlux) this.#masquerBulleFlux();
@@ -453,13 +460,16 @@ export class Globe {
   /** Bulle d'information d'un flux, affichée à l'endroit touché. */
   #afficherBulleFlux(arc, x, y) {
     this.#masquerBulleFlux();
-    this.bulleFlux = el('div', { class: `bulle-flux bulle-flux--${arc.sens}`, role: 'status' }, this.formaterFlux(arc));
+    const texte = this.formaterFlux(arc);
+    const lignes = (Array.isArray(texte) ? texte : [texte]).map((l, i) => el('span', { class: i ? 'bulle-flux-detail' : 'bulle-flux-titre' }, l));
+    this.bulleFlux = el('div', { class: `bulle-flux bulle-flux--${arc.sens}`, role: 'status' }, ...lignes);
     this.calque.append(this.bulleFlux);
     const largeur = this.bulleFlux.offsetWidth;
     const gauche = Math.min(Math.max(8, x - largeur / 2), this.largeur - largeur - 8);
-    this.bulleFlux.style.transform = `translate(${gauche}px, ${Math.max(this.hautLibre + 4, y - 56)}px)`;
+    const hauteur = this.bulleFlux.offsetHeight;
+    this.bulleFlux.style.transform = `translate(${gauche}px, ${Math.max(this.hautLibre + 4, y - hauteur - 14)}px)`;
     clearTimeout(this.minuterieBulle);
-    this.minuterieBulle = setTimeout(() => this.#masquerBulleFlux(), 4500);
+    this.minuterieBulle = setTimeout(() => this.#masquerBulleFlux(), 7000);
   }
 
   #masquerBulleFlux() {
@@ -646,7 +656,7 @@ export class Globe {
     this.#appliquerMetriqueAuxPays(); // les couleurs glissent en douceur dans #majPays
   }
 
-  /** Affiche ou masque les flux de capitaux. */
+  /** Affiche ou masque les flux commerciaux. */
   definirAffichageFlux(afficher) {
     this.afficherFlux = afficher;
     this.#majVisibiliteFlux();

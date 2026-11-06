@@ -661,9 +661,9 @@ body.mode-leger .barre span, body.mode-leger .jauge-valeur, body.mode-leger .bul
 .legende-titre strong { color: var(--cyan); font-weight: 600; text-transform: none; letter-spacing: 0; font-size: 12.5px; }
 .legende + .legende-titre { margin-top: 12px; }
 .trait-flux { display: inline-block; flex: none; width: 18px; height: 3px; border-radius: 2px; }
-.trait-flux--entree { background: #34e3a4; box-shadow: 0 0 6px #34e3a4; }
-.trait-flux--sortie { background: #ff6b5b; box-shadow: 0 0 6px #ff6b5b; }
-.trait-flux--autre { background: #7fe8ff; box-shadow: 0 0 6px #7fe8ff; }
+.trait-flux--hausse { background: #34e3a4; box-shadow: 0 0 6px #34e3a4; }
+.trait-flux--baisse { background: #ff6b5b; box-shadow: 0 0 6px #ff6b5b; }
+.trait-flux--stable { background: #7fe8ff; box-shadow: 0 0 6px #7fe8ff; }
 
 /* ---------- Puces (filtres, exemples) ---------- */
 .filtres {
@@ -698,21 +698,26 @@ body.panneau-ouvert .filtres { opacity: 0; transform: translateY(30px); pointer-
 .puce--flux[aria-pressed="false"] { opacity: 0.7; text-decoration: line-through; }
 body.mode-leger .puce { backdrop-filter: none; -webkit-backdrop-filter: none; }
 
-/* ---------- Bulle d'un flux de capitaux ---------- */
+/* ---------- Bulle d'un flux commercial (arc du globe) ---------- */
 .bulle-flux {
   position: absolute; left: 0; top: 0; z-index: 3;
-  max-width: calc(100vw - 16px);
+  display: flex; flex-direction: column; gap: 2px;
+  width: max-content; max-width: min(330px, calc(100vw - 16px));
   padding: 8px 12px;
   border: 1px solid var(--c-flux, var(--cyan)); border-radius: 10px;
   background: rgba(5, 11, 24, 0.94);
   box-shadow: 0 0 14px color-mix(in srgb, var(--c-flux, var(--cyan)) 40%, transparent);
-  font-size: 13px; font-weight: 500; white-space: nowrap;
+  font-size: 13px; font-weight: 500;
   pointer-events: none;
   animation: apparition 0.2s ease;
 }
-.bulle-flux--entree { --c-flux: #34e3a4; }
-.bulle-flux--sortie { --c-flux: #ff6b5b; }
-.bulle-flux--autre { --c-flux: #7fe8ff; }
+.bulle-flux-titre { font-weight: 600; }
+.bulle-flux-detail { font-size: 12px; font-weight: 400; color: var(--texte-2, #b9c6d8); }
+.bulle-flux-detail:last-child { font-size: 11px; opacity: 0.85; }
+.bulle-flux--hausse { --c-flux: #34e3a4; }
+.bulle-flux--baisse { --c-flux: #ff6b5b; }
+.bulle-flux--stable { --c-flux: #7fe8ff; }
+.bulle-flux--inconnue { --c-flux: #8fa3bf; }
 
 /* ---------- Boutons supplémentaires ---------- */
 .bouton--petit { min-height: 30px; padding: 0 10px; font-size: 12px; }
