@@ -1,13 +1,2485 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-06T17:14:06Z",
+    "genere_le": "2026-11-06T17:28:08Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "entreprises|nouvelle_pepite|INVE-A.ST|2026-11-03",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "INVE-A.ST",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Investor AB (publ) entre dans les pépites candidates"
+      },
+      "objection": "Le contexte macroéconomique présente un score de stress de 67/100 et un VIX à 24,4 [F1, F2].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +3,2 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        }
+      ],
+      "faits_cites": [
+        "F1",
+        "F2"
+      ],
+      "ajustement": "maintenir",
+      "methode": "gemini",
+      "confiance": "moyen",
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|2020.SR|2026-11-03",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "2020.SR",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "SABIC Agri-Nutrients Company entre dans les pépites candidates"
+      },
+      "objection": "Le palier de risque mondial est en mode Vigilance avec un score de stress de 67/100 et un VIX à 24,4 [F1, F2].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +3,2 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "Momentum sur 12 mois de −2,0 % (explication du signal)",
+          "source": "data/signaux/entreprises.json"
+        },
+        {
+          "id": "F5",
+          "texte": "ETF KSA (Arabie saoudite) : +2,3 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, KSA"
+        },
+        {
+          "id": "F6",
+          "texte": "Arabie saoudite : score de risque de l'agent risque 22/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "faits_cites": [
+        "F1",
+        "F2"
+      ],
+      "ajustement": "maintenir",
+      "methode": "gemini",
+      "confiance": "moyen",
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|ANG.JO|2026-11-03",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "ANG.JO",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "AngloGold Ashanti plc entre dans les pépites candidates"
+      },
+      "objection": "Le score de stress mondial atteint 67/100 et le VIX s'établit à 24,4 [F1, F2].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +3,2 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF EZA (Afrique du Sud) : +6,6 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EZA"
+        },
+        {
+          "id": "F5",
+          "texte": "Afrique du Sud : score de risque de l'agent risque 40/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "faits_cites": [
+        "F1",
+        "F2"
+      ],
+      "ajustement": "maintenir",
+      "methode": "gemini",
+      "confiance": "moyen",
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|GFI.JO|2026-11-03",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "GFI.JO",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Gold Fields Limited entre dans les pépites candidates"
+      },
+      "objection": "Le score de stress mondial est fixé à 67/100 tandis que le VIX atteint 24,4 [F1, F2].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +3,2 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "Momentum sur 12 mois de −17,8 % (explication du signal)",
+          "source": "data/signaux/entreprises.json"
+        },
+        {
+          "id": "F5",
+          "texte": "ETF EZA (Afrique du Sud) : +6,6 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EZA"
+        },
+        {
+          "id": "F6",
+          "texte": "Afrique du Sud : score de risque de l'agent risque 40/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "faits_cites": [
+        "F1",
+        "F2"
+      ],
+      "ajustement": "maintenir",
+      "methode": "gemini",
+      "confiance": "moyen",
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|NFLX|2026-11-03",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "NFLX",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Netflix, Inc. entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Le dossier affiche un momentum sur 12 mois de −44,3 % [F4] dans un contexte de palier de risque mondial « Vigilance » avec un score de stress de 67/100 [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +3,2 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "Momentum sur 12 mois de −44,3 % (explication du signal)",
+          "source": "data/signaux/entreprises.json"
+        },
+        {
+          "id": "F5",
+          "texte": "ETF SPY (États-Unis) : −1,7 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F6",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "faits_cites": [
+        "F1",
+        "F4"
+      ],
+      "ajustement": "abaisser",
+      "methode": "gemini",
+      "confiance": "moyen",
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|BKNG|2026-11-03",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "BKNG",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Booking Holdings Inc. entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Le momentum sur 12 mois s'établit à −23,6 % [F4] alors que le VIX atteint 24,4 au percentile 84 sur 10 ans [F2].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +3,2 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "Momentum sur 12 mois de −23,6 % (explication du signal)",
+          "source": "data/signaux/entreprises.json"
+        },
+        {
+          "id": "F5",
+          "texte": "ETF SPY (États-Unis) : −1,7 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F6",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "faits_cites": [
+        "F2",
+        "F4"
+      ],
+      "ajustement": "abaisser",
+      "methode": "gemini",
+      "confiance": "moyen",
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|APP|2026-11-03",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "APP",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "AppLovin Corporation entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "On relève un momentum sur 12 mois négatif de −64,1 % [F4] et un écart high yield américain en hausse de 0,33 pt sur 20 séances [F3].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +3,2 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "Momentum sur 12 mois de −64,1 % (explication du signal)",
+          "source": "data/signaux/entreprises.json"
+        },
+        {
+          "id": "F5",
+          "texte": "ETF SPY (États-Unis) : −1,7 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F6",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "faits_cites": [
+        "F3",
+        "F4"
+      ],
+      "ajustement": "abaisser",
+      "methode": "gemini",
+      "confiance": "moyen",
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|BSX|2026-11-03",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "BSX",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Boston Scientific Corporation entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Le titre présente un momentum sur 12 mois de −56,0 % [F4] tandis que l'ETF SPY recule de −1,7 % depuis la veille du signal [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +3,2 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "Momentum sur 12 mois de −56,0 % (explication du signal)",
+          "source": "data/signaux/entreprises.json"
+        },
+        {
+          "id": "F5",
+          "texte": "ETF SPY (États-Unis) : −1,7 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F6",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "faits_cites": [
+        "F4",
+        "F5"
+      ],
+      "ajustement": "abaisser",
+      "methode": "gemini",
+      "confiance": "moyen",
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|FIX|2026-11-03",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "FIX",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Comfort Systems USA, Inc. entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Le palier de risque mondial est en « Vigilance » avec un score de stress de 67/100 [F1], tandis que le VIX atteint 24,4, soit un percentile de 84 sur 10 ans [F2].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +3,2 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −1,7 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "faits_cites": [
+        "F1",
+        "F2"
+      ],
+      "ajustement": "maintenir",
+      "methode": "gemini",
+      "confiance": "moyen",
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|EQT|2026-11-03",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "EQT",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "EQT Corporation entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "L'écart high yield américain s'établit à 3,48 pt avec une hausse de 0,33 pt sur 20 séances [F3], et l'ETF SPY enregistre une baisse de −1,7 % depuis la veille du signal [F4].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +3,2 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −1,7 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "faits_cites": [
+        "F3",
+        "F4"
+      ],
+      "ajustement": "maintenir",
+      "methode": "gemini",
+      "confiance": "moyen",
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|EME|2026-11-03",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "EME",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "EMCOR Group, Inc. entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Le VIX s'établit à 24,4, en progression de 3,2 pts depuis la veille du signal [F2], dans un contexte de palier de risque mondial de « Vigilance » (score de stress 67/100) [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +3,2 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −1,7 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "faits_cites": [
+        "F1",
+        "F2"
+      ],
+      "ajustement": "maintenir",
+      "methode": "gemini",
+      "confiance": "moyen",
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|EXE|2026-11-03",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "EXE",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Expand Energy Corporation entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Le dossier affiche un momentum sur 12 mois de −11,5 % [F4], tandis que le VIX atteint 24,4 au percentile 84 sur 10 ans [F2].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +3,2 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "Momentum sur 12 mois de −11,5 % (explication du signal)",
+          "source": "data/signaux/entreprises.json"
+        },
+        {
+          "id": "F5",
+          "texte": "ETF SPY (États-Unis) : −1,7 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F6",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "faits_cites": [
+        "F2",
+        "F4"
+      ],
+      "ajustement": "maintenir",
+      "methode": "gemini",
+      "confiance": "moyen",
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|0700.HK|2026-11-03",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "0700.HK",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Tencent Holdings Limited entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Nuance : le cours a baissé de 36,0 % sur 12 mois [F4] : le marché ne valide pas la qualité affichée.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +3,2 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "Momentum sur 12 mois de −36,0 % (explication du signal)",
+          "source": "data/signaux/entreprises.json"
+        },
+        {
+          "id": "F5",
+          "texte": "ETF MCHI (Chine) : +4,7 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, MCHI"
+        },
+        {
+          "id": "F6",
+          "texte": "Chine : score de risque de l'agent risque 24/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "abaisser",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|2914.T|2026-11-03",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "2914.T",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Japan Tobacco Inc. entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 15/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +3,2 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF EWJ (Japon) : −4,4 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWJ"
+        },
+        {
+          "id": "F5",
+          "texte": "Japon : score de risque de l'agent risque 15/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|000333.SZ|2026-11-03",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "000333.SZ",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Midea Group Co., Ltd. entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 24/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +3,2 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF MCHI (Chine) : +4,7 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, MCHI"
+        },
+        {
+          "id": "F5",
+          "texte": "Chine : score de risque de l'agent risque 24/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|688235.SS|2026-11-03",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "688235.SS",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "BeOne Medicines AG entre dans la liste « Pépites »"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], momentum sur 12 mois de −14,6 % [F4], score de risque du pays de 24/100 [F6].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +3,2 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "Momentum sur 12 mois de −14,6 % (explication du signal)",
+          "source": "data/signaux/entreprises.json"
+        },
+        {
+          "id": "F5",
+          "texte": "ETF MCHI (Chine) : +4,7 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, MCHI"
+        },
+        {
+          "id": "F6",
+          "texte": "Chine : score de risque de l'agent risque 24/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|RR.L|2026-11-03",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "RR.L",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Rolls-Royce Holdings plc entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 21/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +3,2 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF EWU (Royaume-Uni) : −1,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWU"
+        },
+        {
+          "id": "F5",
+          "texte": "Royaume-Uni : score de risque de l'agent risque 21/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|ABX.TO|2026-11-03",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "ABX.TO",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Barrick Mining Corporation entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 23/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +3,2 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF EWC (Canada) : −1,0 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWC"
+        },
+        {
+          "id": "F5",
+          "texte": "Canada : score de risque de l'agent risque 23/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|K.TO|2026-11-03",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "K.TO",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Kinross Gold Corporation entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], momentum sur 12 mois de −11,4 % [F4], score de risque du pays de 23/100 [F6].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +3,2 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "Momentum sur 12 mois de −11,4 % (explication du signal)",
+          "source": "data/signaux/entreprises.json"
+        },
+        {
+          "id": "F5",
+          "texte": "ETF EWC (Canada) : −1,0 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWC"
+        },
+        {
+          "id": "F6",
+          "texte": "Canada : score de risque de l'agent risque 23/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|PE&OLES.MX|2026-11-03",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "PE&OLES.MX",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Industrias Peñoles, S.A.B. de C.V. entre dans la liste « Pépites »"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 37/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +3,2 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF EWW (Mexique) : +1,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWW"
+        },
+        {
+          "id": "F5",
+          "texte": "Mexique : score de risque de l'agent risque 37/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|PRU.L|2026-11-03",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "PRU.L",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Prudential plc entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], momentum sur 12 mois de −13,3 % [F4], score de risque du pays de 21/100 [F6].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +3,2 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "Momentum sur 12 mois de −13,3 % (explication du signal)",
+          "source": "data/signaux/entreprises.json"
+        },
+        {
+          "id": "F5",
+          "texte": "ETF EWU (Royaume-Uni) : −1,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWU"
+        },
+        {
+          "id": "F6",
+          "texte": "Royaume-Uni : score de risque de l'agent risque 21/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|NEM|2026-11-03",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "NEM",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Newmont Corporation entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 27/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +3,2 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −1,7 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|PAYX|2026-11-03",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "PAYX",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Paychex, Inc. entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 27/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +3,2 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −1,7 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|PTC|2026-11-03",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "PTC",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "PTC Inc. entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], momentum sur 12 mois de −2,1 % [F4], score de risque du pays de 27/100 [F6].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +3,2 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "Momentum sur 12 mois de −2,1 % (explication du signal)",
+          "source": "data/signaux/entreprises.json"
+        },
+        {
+          "id": "F5",
+          "texte": "ETF SPY (États-Unis) : −1,7 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F6",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|2628.HK|2026-11-03",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "2628.HK",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "China Life Insurance Company Limited entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 24/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +3,2 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF MCHI (Chine) : +4,7 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, MCHI"
+        },
+        {
+          "id": "F5",
+          "texte": "Chine : score de risque de l'agent risque 24/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|207940.KS|2026-11-03",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "207940.KS",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Samsung Biologics Co.,Ltd. entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Nuance : le cours a baissé de 22,7 % sur 12 mois [F4] : le marché ne valide pas la qualité affichée.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +3,2 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "Momentum sur 12 mois de −22,7 % (explication du signal)",
+          "source": "data/signaux/entreprises.json"
+        },
+        {
+          "id": "F5",
+          "texte": "ETF EWY (Corée du Sud) : −9,0 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWY"
+        },
+        {
+          "id": "F6",
+          "texte": "Corée du Sud : score de risque de l'agent risque 35/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "abaisser",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|NXT.L|2026-11-03",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "NXT.L",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "NEXT plc entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 21/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +3,2 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF EWU (Royaume-Uni) : −1,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWU"
+        },
+        {
+          "id": "F5",
+          "texte": "Royaume-Uni : score de risque de l'agent risque 21/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|9633.HK|2026-11-03",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "9633.HK",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Nongfu Spring Co., Ltd. entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], momentum sur 12 mois de −12,0 % [F4], score de risque du pays de 24/100 [F6].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +3,2 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "Momentum sur 12 mois de −12,0 % (explication du signal)",
+          "source": "data/signaux/entreprises.json"
+        },
+        {
+          "id": "F5",
+          "texte": "ETF MCHI (Chine) : +4,7 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, MCHI"
+        },
+        {
+          "id": "F6",
+          "texte": "Chine : score de risque de l'agent risque 24/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|DXCM|2026-11-03",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "DXCM",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "DexCom, Inc. entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 27/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +3,2 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −1,7 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|NFLX|2026-11-02",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "NFLX",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "Netflix, Inc. entre dans les pépites candidates"
+      },
+      "objection": "Nuance : le cours a baissé de 44,3 % sur 12 mois [F4] : le marché ne valide pas la qualité affichée.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +5,0 pts depuis la veille du signal (30/10/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "Momentum sur 12 mois de −44,3 % (explication du signal)",
+          "source": "data/signaux/entreprises.json"
+        },
+        {
+          "id": "F5",
+          "texte": "ETF SPY (États-Unis) : −2,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F6",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "abaisser",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|PGR|2026-11-02",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "PGR",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "The Progressive Corporation entre dans les pépites candidates"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 27/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +5,0 pts depuis la veille du signal (30/10/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −2,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|NEM|2026-11-02",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "NEM",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "Newmont Corporation entre dans les pépites candidates"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 27/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +5,0 pts depuis la veille du signal (30/10/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −2,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|ADBE|2026-11-02",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "ADBE",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "Adobe Inc. entre dans les pépites candidates"
+      },
+      "objection": "Nuance : le cours a baissé de 26,1 % sur 12 mois [F4] : le marché ne valide pas la qualité affichée.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +5,0 pts depuis la veille du signal (30/10/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "Momentum sur 12 mois de −26,1 % (explication du signal)",
+          "source": "data/signaux/entreprises.json"
+        },
+        {
+          "id": "F5",
+          "texte": "ETF SPY (États-Unis) : −2,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F6",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "abaisser",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|INTU|2026-11-02",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "INTU",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "Intuit Inc. entre dans les pépites candidates"
+      },
+      "objection": "Nuance : le cours a baissé de 46,5 % sur 12 mois [F4] : le marché ne valide pas la qualité affichée.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +5,0 pts depuis la veille du signal (30/10/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "Momentum sur 12 mois de −46,5 % (explication du signal)",
+          "source": "data/signaux/entreprises.json"
+        },
+        {
+          "id": "F5",
+          "texte": "ETF SPY (États-Unis) : −2,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F6",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "abaisser",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|APP|2026-11-02",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "APP",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "AppLovin Corporation entre dans les pépites candidates"
+      },
+      "objection": "Nuance : le cours a baissé de 64,1 % sur 12 mois [F4] : le marché ne valide pas la qualité affichée.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +5,0 pts depuis la veille du signal (30/10/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "Momentum sur 12 mois de −64,1 % (explication du signal)",
+          "source": "data/signaux/entreprises.json"
+        },
+        {
+          "id": "F5",
+          "texte": "ETF SPY (États-Unis) : −2,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F6",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "abaisser",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|GRMN|2026-11-02",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "GRMN",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "Garmin Ltd. entre dans les pépites candidates"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 27/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +5,0 pts depuis la veille du signal (30/10/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −2,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|FIX|2026-11-02",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "FIX",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "Comfort Systems USA, Inc. entre dans les pépites candidates"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 27/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +5,0 pts depuis la veille du signal (30/10/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −2,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|ACGL|2026-11-02",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "ACGL",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "Arch Capital Group Ltd. entre dans les pépites candidates"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 27/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +5,0 pts depuis la veille du signal (30/10/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −2,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|EQT|2026-11-02",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "EQT",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "EQT Corporation entre dans les pépites candidates"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 27/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +5,0 pts depuis la veille du signal (30/10/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −2,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|EME|2026-11-02",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "EME",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "EMCOR Group, Inc. entre dans les pépites candidates"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 27/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +5,0 pts depuis la veille du signal (30/10/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −2,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|TPR|2026-11-02",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "TPR",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "Tapestry, Inc. entre dans les pépites candidates"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 27/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +5,0 pts depuis la veille du signal (30/10/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −2,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|PTC|2026-11-02",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "PTC",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "PTC Inc. entre dans les pépites candidates"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], momentum sur 12 mois de −2,1 % [F4], score de risque du pays de 27/100 [F6].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +5,0 pts depuis la veille du signal (30/10/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "Momentum sur 12 mois de −2,1 % (explication du signal)",
+          "source": "data/signaux/entreprises.json"
+        },
+        {
+          "id": "F5",
+          "texte": "ETF SPY (États-Unis) : −2,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F6",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|EXE|2026-11-02",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "EXE",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "Expand Energy Corporation entre dans les pépites candidates"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], momentum sur 12 mois de −11,5 % [F4], score de risque du pays de 27/100 [F6].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +5,0 pts depuis la veille du signal (30/10/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "Momentum sur 12 mois de −11,5 % (explication du signal)",
+          "source": "data/signaux/entreprises.json"
+        },
+        {
+          "id": "F5",
+          "texte": "ETF SPY (États-Unis) : −2,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F6",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|CF|2026-11-02",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "CF",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "CF Industries Holdings, Inc. entre dans les pépites candidates"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 27/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +5,0 pts depuis la veille du signal (30/10/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −2,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|RL|2026-11-02",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "RL",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "Ralph Lauren Corporation entre dans les pépites candidates"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 27/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +5,0 pts depuis la veille du signal (30/10/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −2,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|JLL|2026-11-02",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "JLL",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "Jones Lang LaSalle Incorporated entre dans les pépites candidates"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 27/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +5,0 pts depuis la veille du signal (30/10/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −2,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|EHC|2026-11-02",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "EHC",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "Encompass Health Corporation entre dans les pépites candidates"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 27/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +5,0 pts depuis la veille du signal (30/10/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −2,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|RRC|2026-11-02",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "RRC",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "Range Resources Corporation entre dans les pépites candidates"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 27/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +5,0 pts depuis la veille du signal (30/10/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −2,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|MLI|2026-11-02",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "MLI",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "Mueller Industries, Inc. entre dans les pépites candidates"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 27/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +5,0 pts depuis la veille du signal (30/10/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −2,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|INVE-B.ST|2026-11-02",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "INVE-B.ST",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "Investor AB (publ) entre dans les pépites candidates"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 14/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +5,0 pts depuis la veille du signal (30/10/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF EWD (Suède) : −0,3 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWD"
+        },
+        {
+          "id": "F5",
+          "texte": "Suède : score de risque de l'agent risque 14/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|000660.KS|2026-11-02",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "000660.KS",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "SK hynix Inc. entre dans les pépites candidates"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 35/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +5,0 pts depuis la veille du signal (30/10/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF EWY (Corée du Sud) : −9,8 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWY"
+        },
+        {
+          "id": "F5",
+          "texte": "Corée du Sud : score de risque de l'agent risque 35/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|BHP.AX|2026-11-02",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "BHP.AX",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "BHP Group Limited entre dans les pépites candidates"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 21/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +5,0 pts depuis la veille du signal (30/10/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF EWA (Australie) : −0,6 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWA"
+        },
+        {
+          "id": "F5",
+          "texte": "Australie : score de risque de l'agent risque 21/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|EMAAR.AE|2026-11-02",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "EMAAR.AE",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "Emaar Properties PJSC entre dans les pépites candidates"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], momentum sur 12 mois de −15,0 % [F4], score de risque du pays de 14/100 [F6].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +5,0 pts depuis la veille du signal (30/10/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "Momentum sur 12 mois de −15,0 % (explication du signal)",
+          "source": "data/signaux/entreprises.json"
+        },
+        {
+          "id": "F5",
+          "texte": "ETF UAE (Émirats arabes unis) : +4,5 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, UAE"
+        },
+        {
+          "id": "F6",
+          "texte": "Émirats arabes unis : score de risque de l'agent risque 14/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|COMI.CA|2026-11-02",
+      "revu_le": "2026-11-06T17:26:05Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "COMI.CA",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "Commercial International Bank Egypt (CIB) S.A.E. entre dans les pépites candidates"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 41/100 [F4].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 24,4 (percentile 84 sur 10 ans), +5,0 pts depuis la veille du signal (30/10/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "Égypte : score de risque de l'agent risque 41/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
     {
       "id": "macro|changement_de_phase|monde|2026-11-06",
       "revu_le": "2026-11-06T17:13:50Z",
