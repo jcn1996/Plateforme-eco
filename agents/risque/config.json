@@ -1,0 +1,113 @@
+{
+  "_commentaire": "Configuration de l'agent risque. Indicateurs du stress financier mondial (pondérations, sens, sources), paliers, score par pays, signaux et contradicteur. Les pondérations n'ont pas besoin de faire 100 : elles sont ramenées aux indicateurs disponibles.",
+  "historique_annees": 10,
+  "indicateurs": {
+    "vix": {"nom": "VIX (volatilité implicite du S&P 500)", "famille": "volatilite", "poids": 15, "unite": "pts", "decimales": 1,
+            "sources": [{"type": "yahoo", "symbole": "^VIX", "nom": "Yahoo Finance via yfinance, ^VIX"},
+                        {"type": "fred", "serie": "VIXCLS", "nom": "FRED, CBOE Volatility Index (VIXCLS)"}], "tolerance": 1.5},
+    "vstoxx": {"nom": "VSTOXX (volatilité implicite de l'Euro Stoxx 50)", "famille": "volatilite", "poids": 5, "unite": "pts", "decimales": 1, "facultatif": true,
+               "sources": [{"type": "yahoo", "symbole": "^V2TX", "nom": "Yahoo Finance via yfinance, ^V2TX"}],
+               "_note": "Souvent absent de Yahoo Finance : l'indicateur est alors ignoré (non compté comme une panne)."},
+    "move": {"nom": "Indice MOVE (volatilité des taux américains)", "famille": "volatilite", "poids": 10, "unite": "pts", "decimales": 0,
+             "sources": [{"type": "yahoo", "symbole": "^MOVE", "nom": "Yahoo Finance via yfinance, ^MOVE"}]},
+    "hy_us": {"nom": "Écart high yield américain", "famille": "credit", "poids": 15, "unite": "pt", "decimales": 2,
+              "sources": [{"type": "fred", "serie": "BAMLH0A0HYM2", "nom": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"}]},
+    "ig_us": {"nom": "Écart investment grade américain", "famille": "credit", "poids": 10, "unite": "pt", "decimales": 2,
+              "sources": [{"type": "fred", "serie": "BAMLC0A0CM", "nom": "FRED, ICE BofA US Corporate OAS (BAMLC0A0CM)"}]},
+    "hy_eu": {"nom": "Écart high yield européen", "famille": "credit", "poids": 10, "unite": "pt", "decimales": 2,
+              "sources": [{"type": "fred", "serie": "BAMLHE00EHYIOAS", "nom": "FRED, ICE BofA Euro High Yield OAS (BAMLHE00EHYIOAS)"}]},
+    "stlfsi": {"nom": "Indice de stress financier de la Fed de Saint-Louis", "famille": "stress", "poids": 10, "unite": "", "decimales": 2,
+               "sources": [{"type": "fred", "serie": "STLFSI4", "nom": "FRED, St. Louis Fed Financial Stress Index (STLFSI4), hebdomadaire"}]},
+    "nfci": {"nom": "Conditions financières de la Fed de Chicago (NFCI)", "famille": "stress", "poids": 5, "unite": "", "decimales": 2,
+             "sources": [{"type": "fred", "serie": "NFCI", "nom": "FRED, Chicago Fed National Financial Conditions Index (NFCI), hebdomadaire"}]},
+    "ciss": {"nom": "CISS de la BCE (stress systémique, zone euro)", "famille": "stress", "poids": 10, "unite": "", "decimales": 3,
+             "sources": [{"type": "bce", "flux": "CISS", "cle": "D.U2.Z0Z.4F.EC.SS_CIN.IDX", "nom": "BCE Data Portal, CISS composite (D.U2.Z0Z.4F.EC.SS_CIN.IDX)"}]},
+    "spread_it": {"nom": "Écart Italie – Allemagne à 10 ans", "famille": "souverain", "poids": 5, "unite": "pt", "decimales": 2,
+                  "sources": [{"type": "ecart_souverain", "pays": "IT", "nom": "OCDE via FRED (IRLTLT01ITM156N − IRLTLT01DEM156N), mensuel"}]},
+    "dollar_3m": {"nom": "Indice dollar, variation sur 3 mois", "famille": "devises", "poids": 5, "unite": "%", "decimales": 1, "transformation": "variation_3m",
+                  "sources": [{"type": "yahoo", "symbole": "DX-Y.NYB", "nom": "Yahoo Finance via yfinance, DX-Y.NYB"},
+                              {"type": "fred", "serie": "DTWEXBGS", "nom": "FRED, dollar pondéré des échanges (DTWEXBGS)"}], "tolerance": 2.0}
+  },
+  "familles": {"volatilite": "volatilité", "credit": "crédit", "stress": "indices officiels de stress", "souverain": "écarts souverains", "devises": "devises"},
+  "paliers": ["Calme", "Vigilance", "Tension", "Crise"],
+  "seuils": {
+    "_commentaire": "Seuils du score mondial pour entrer dans chaque palier. Avec au moins `annees_min` années d'historique, ils sont calés sur les percentiles de la distribution historique du score (sur 10 ans) ; sinon, valeurs fixes.",
+    "percentiles": {"Vigilance": 60, "Tension": 85, "Crise": 97},
+    "fixes": {"Vigilance": 55, "Tension": 72, "Crise": 85},
+    "annees_min": 5
+  },
+  "changement_palier": {
+    "_commentaire": "Deux signaux concordants minimum pour changer de palier : au moins `concordance_min` indicateurs de familles différentes doivent être eux-mêmes au niveau du nouveau palier.",
+    "concordance_min": 2
+  },
+  "pays": {
+    "ponderations": {"marche": 25, "devise": 20, "souverain": 20, "macro": 20, "geopolitique": 15},
+    "_bornes": "Chaque mesure est ramenée sur 0-100 entre deux bornes (0 = risque faible, 100 = risque élevé).",
+    "bornes": {
+      "baisse_plus_haut_12m": [0, -30],
+      "volatilite_3m": [12, 45],
+      "devise_volatilite_1m": [3, 25],
+      "devise_variation_3m": [2, -20],
+      "ecart_10a": [0, 6],
+      "dette_pib": [40, 150],
+      "solde_courant": [2, -7],
+      "ecart_inflation_cible": [0, 12],
+      "reserves_mois_importations": [12, 2]
+    },
+    "reference_euro": "DE",
+    "reference_autres": "US",
+    "euro": ["FR", "DE", "IT", "ES", "NL"],
+    "taux_10a_fred": {"US": "IRLTLT01USM156N", "CA": "IRLTLT01CAM156N", "MX": "IRLTLT01MXM156N", "GB": "IRLTLT01GBM156N",
+                      "FR": "IRLTLT01FRM156N", "DE": "IRLTLT01DEM156N", "CH": "IRLTLT01CHM156N", "ZA": "IRLTLT01ZAM156N",
+                      "IN": "INDIRLTLT01STM", "KR": "IRLTLT01KRM156N", "JP": "IRLTLT01JPM156N", "AU": "IRLTLT01AUM156N",
+                      "IT": "IRLTLT01ITM156N", "ES": "IRLTLT01ESM156N", "NL": "IRLTLT01NLM156N", "SE": "IRLTLT01SEM156N",
+                      "PL": "IRLTLT01PLM156N", "CL": "IRLTLT01CLM156N"},
+    "souverains_bce": {"FR": "M.FR.L.L40.CI.0000.EUR.N.Z", "DE": "M.DE.L.L40.CI.0000.EUR.N.Z", "IT": "M.IT.L.L40.CI.0000.EUR.N.Z",
+                       "ES": "M.ES.L.L40.CI.0000.EUR.N.Z", "NL": "M.NL.L.L40.CI.0000.EUR.N.Z"},
+    "tolerance_taux_10a": 0.25,
+    "seuil_eleve": 60,
+    "seuil_modere": 35
+  },
+  "correlations": {
+    "actifs": {"actions": {"symbole": "ACWI", "nom": "actions mondiales (ACWI)"}, "obligations": {"symbole": "TLT", "nom": "Trésor américain 20 ans et plus (TLT)"},
+               "or": {"symbole": "GLD", "nom": "or (GLD)"}, "dollar": {"symbole": "DX-Y.NYB", "nom": "indice dollar (DXY)"}},
+    "jours_court": 63,
+    "jours_long": 252
+  },
+  "signaux": {
+    "credit_hausse_pts_20j": 0.75,
+    "credit_hausse_forte_pts_20j": 1.5,
+    "devise_baisse_3m": -10,
+    "devise_baisse_1m": -6,
+    "rupture_correlation_ecart": 0.6,
+    "garde_jours": 180
+  },
+  "contradicteur": {
+    "_commentaire": "Revue des signaux des autres agents (data/signaux/*.json) d'importance moyenne ou forte, sur les `fenetre_jours` derniers jours. Gemini a son propre budget d'appels (séparé de celui de l'agent géopolitique) ; sans Gemini, objections par règles.",
+    "fenetre_jours": 7,
+    "importances": ["moyenne", "forte", "haute"],
+    "ignores": ["risque.json", "revues.json"],
+    "garde_jours": 60,
+    "reaction_vix_pts": 2.0,
+    "reaction_etf_pct": -2.0,
+    "alternance_jours": 30,
+    "momentum_pepite_min": -20,
+    "revues_max_par_execution": 60
+  },
+  "gemini": {
+    "_commentaire": "Budget propre à l'agent risque (compté à part de celui de l'agent géopolitique, même jour du Pacifique) : rpd = appels autorisés par jour à ce modèle pour l'agent risque.",
+    "modeles": [
+      {"nom": "gemini-3.5-flash-lite", "libelle": "Flash-Lite", "rpm": 10, "rpd": 40},
+      {"nom": "gemini-flash-latest", "libelle": "Flash le plus récent (alias)", "rpm": 5, "rpd": 10}
+    ],
+    "marge": 0.0,
+    "appels_max_par_execution": 4,
+    "signaux_par_appel": 4,
+    "essais": 2,
+    "attentes_reprise_secondes": [5],
+    "attente_429_minute_max_secondes": 30,
+    "fuseau_quota": "America/Los_Angeles",
+    "delai_reponse_secondes": 60
+  },
+  "sante": {"sources_min": 6}
+}

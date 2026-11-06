@@ -200,6 +200,54 @@ python -m agents.geopolitique.tests.capturer_donnees_test # met à jour les donn
 
 **Essai d'une correction** : onglet **Actions** → **Agent géopolitique** → **Run workflow**, choisir la branche et cocher « essai ». Le code de la branche tourne alors sur une copie des données de `main`, avec les vrais secrets, sans rien commiter. Le statut santé est affiché à la fin du journal.
 
+## Agent risque (stress financier et contradicteur)
+
+L'agent mesure le stress financier mondial et par pays, et joue le rôle de **contradicteur** des signaux des autres agents. Il tourne toutes les heures pendant les heures de marché, et fait une analyse complète chaque jour à 22 h 45 UTC.
+
+**Sources** (gratuites, croisées quand c'est possible) :
+- volatilité : VIX (vérifié avec FRED `VIXCLS`), VSTOXX (si Yahoo le publie), indice MOVE ;
+- crédit : écarts high yield et investment grade américains, high yield européen (FRED) ;
+- indices officiels de stress : STLFSI4 et NFCI (FRED), CISS de la BCE ;
+- écarts souverains : taux à 10 ans de l'OCDE via FRED, vérifiés avec la BCE pour la zone euro ;
+- devises : volatilité à 1 mois et variation sur 3 mois des devises suivies par l'agent pays ; indice dollar (vérifié avec FRED `DTWEXBGS`) ;
+- vulnérabilité : dette publique / PIB, solde courant et inflation (FMI ; inflation de l'agent pays en priorité), réserves de change (Banque mondiale) ;
+- géopolitique : score par pays de `data/geopolitique.json` ;
+- marchés : baisse depuis le plus haut sur 12 mois et volatilité des ETF pays ; corrélations à 3 mois entre actions, obligations, or et dollar.
+
+**Analyse** :
+- score mondial /100 : moyenne pondérée des percentiles des indicateurs sur 10 ans (pondérations dans `agents/risque/config.json`) ;
+- 4 paliers : « Calme », « Vigilance », « Tension », « Crise ». Les seuils sont calés sur les percentiles 60, 85 et 97 du score sur 10 ans ;
+- il faut deux familles d'indicateurs concordantes pour changer de palier ; sinon le changement est affiché « en attente » ;
+- l'appli affiche le palier précédent, la date du changement et les 3 indicateurs qui pèsent le plus ;
+- score /100 par pays (marché, devise, souverain, vulnérabilité macro, géopolitique), avec sa variation sur 7 jours et un texte de deux phrases.
+
+**Contradicteur** : à chaque exécution, il lit `data/signaux/*.json`. Pour chaque signal d'importance moyenne ou forte des 7 derniers jours, il écrit une objection chiffrée et sourcée, avec un ajustement de confiance proposé (« maintenir », « abaisser », « signal fragile »), dans `data/signaux/revues.json`. Les objections sont rédigées par règles, ou par Gemini si la clé existe. Gemini a un budget d'appels propre à l'agent risque, séparé de celui de l'agent géopolitique (section `gemini` de la config). Une réponse de Gemini qui cite un chiffre absent des faits est rejetée.
+
+Détails : [`agents/risque/regles.md`](agents/risque/regles.md).
+
+**Sorties** :
+- `data/risque.json` ;
+- `data/signaux/risque.json` : changement de palier, écart de crédit en forte hausse, devise en décrochage, rupture de corrélation ;
+- `data/signaux/revues.json` : objections du contradicteur ;
+- `data/historique/risque/AAAA-MM-JJ.json` ;
+- `data/recap/risque-AAAA-MM-JJ.md` : récapitulatif de l'analyse complète ;
+- `data/risque/etat.json` : séries des sources lentes, palier, historique, budget Gemini ;
+- `data/journal/agent-risque.json` : écran « Santé ».
+
+**Appli** :
+- pastille permanente du palier dans l'en-tête, qui ouvre l'écran « Risque ». Cet écran affiche la jauge, le palier et l'explication (faits et interprétations), la confiance, « Ce qui pourrait me donner tort », les indicateurs (valeur, percentile, tendance), le graphique sur 12 mois, les pays les plus à risque et les dernières objections ;
+- filtre du globe « Risque » ;
+- rubrique « Agent risque » dans la fiche pays, avec la décomposition du score.
+
+**Exécution** : le workflow `.github/workflows/agent-risque.yml` est lancé par le planificateur. Il tourne toutes les heures à la minute 17, de 7 h à 21 h UTC en semaine (mode « horaire » : marchés, score, signaux, objections), et à 22 h 45 UTC (mode « complet » : toutes les sources et le récapitulatif). Le workflow ne lance que ses propres tests et ceux du module commun.
+
+```
+python -m agents.risque                      # vraies sources (Gemini si GEMINI_API_KEY existe)
+python -m agents.risque --mode complet       # toutes les sources et récapitulatif du jour
+python -m agents.risque --test --data /tmp/essai   # données de test, sans réseau ni Gemini
+python -m agents.risque.tests.capturer_donnees_test # met à jour les données de test
+```
+
 ## Agent entreprises (environ 1 200 sociétés, sans IA)
 
 L'agent entreprises se trouve dans `agents/entreprises/`. Les règles de conduite sont les mêmes que pour l'agent pays.
@@ -293,6 +341,7 @@ Les tâches planifiées de GitHub (`schedule`) peuvent être retardées, voire s
 - lance (`gh workflow run`) chaque agent dont le dernier créneau prévu n'est pas encore fait :
   - agent marchés : selon son créneau ;
   - agents pays, macro et entreprises : une fois par jour à leur heure ;
+  - agent géopolitique : toutes les heures ; agent risque : toutes les heures en séance et analyse complète à 22 h 45 UTC ;
   - révision complète du samedi ;
   - maintien du lundi.
 - ne lance jamais deux fois le même créneau : il se fonde sur `derniere_execution` des journaux. Une nouvelle tentative a lieu après 60 min sans résultat, deux tentatives au plus, et rien n'est lancé si une exécution est déjà en cours.
@@ -378,6 +427,7 @@ js/interface.js       horloge, bandeau des marchés, alertes, mode léger
 js/sante.js           écran « Santé des agents »
 js/planning.js        planning cron des agents : statut (OK, en pause, en retard, en panne)
 js/macro.js           écran « Vue macro » et rubrique « Agent macro » de la fiche pays
+js/risque.js          pastille et écran « Risque », rubrique « Agent risque » de la fiche pays, filtre du globe
 js/pepites.js         écran « Pépites »
 js/analyses.js        analyse à la demande (bouton, « Mes analyses »), écran « Fiabilité des recommandations »
 js/panneau-pays.js    fiches pays et secteur
@@ -397,7 +447,7 @@ data/historique/recommandations.json  recommandations enregistrées et leur perf
 config/surveillance.json  liste de surveillance (complétée par les analyses à la demande)
 data/flux.json        flux de capitaux entre pays (fictifs)
 data/*.json           autres données (fictives pour l'instant)
-agents/               agents Python (agents/commun : téléchargement, cache, journal, écriture ; agents/pays : agent pays ; agents/marches : agent marchés ; agents/macro : agent macro ; agents/rattrapage : relance des exécutions manquées ; agents/entreprises : agent entreprises, recommandation et suivi ; agents/analyse_demande : analyse à la demande)
+agents/               agents Python (agents/commun : téléchargement, cache, journal, écriture ; agents/pays : agent pays ; agents/marches : agent marchés ; agents/macro : agent macro ; agents/rattrapage : relance des exécutions manquées ; agents/entreprises : agent entreprises, recommandation et suivi ; agents/analyse_demande : analyse à la demande ; agents/risque : agent risque et contradicteur)
 .github/workflows/    exécution planifiée des agents (GitHub Actions)
 data/countries-110m.json, countries-50m.json  frontières des pays (voir data/LICENCE-countries-110m.txt)
 outils/generer_donnees_fictives.py  régénère les données fictives

@@ -1358,3 +1358,58 @@ body.alertes-ouvertes .barre-comparaison { display: none; }
 .panneau-graphique-nom { font-family: var(--police-titre); font-weight: 600; font-size: 17px; color: var(--ambre); }
 .panneau-graphique-sous { font-family: var(--police-mono); font-size: 11.5px; color: var(--texte-3); }
 .graphique-tv--panneau .graphique-zone { height: clamp(300px, 64dvh, 560px); }
+
+/* ---------- Agent risque ---------- */
+/* Couleur des paliers : Calme (vert), Vigilance (ambre), Tension (orange), Crise (rouge) */
+.risque-palier--calme { --c-palier: var(--vert); --c-note: var(--vert); }
+.risque-palier--vigilance { --c-palier: var(--ambre); --c-note: var(--ambre); }
+.risque-palier--tension { --c-palier: var(--orange); --c-note: var(--orange); }
+.risque-palier--crise { --c-palier: var(--rouge); --c-note: var(--rouge); }
+.risque-palier--inconnu { --c-palier: var(--texte-3); --c-note: var(--texte-3); }
+
+/* Pastille permanente de l'en-tête */
+.entete .pastille-risque { min-height: 32px; padding: 0 8px; gap: 5px; border-color: color-mix(in srgb, var(--c-palier) 60%, transparent);
+  background: color-mix(in srgb, var(--c-palier) 12%, transparent); color: var(--c-palier); font-size: 11.5px; letter-spacing: 0.05em; text-transform: uppercase; }
+.pastille-risque[hidden] { display: none; }
+.pastille-risque-point { width: 8px; height: 8px; border-radius: 50%; background: var(--c-palier); box-shadow: 0 0 6px var(--c-palier); flex: none; }
+/* Jusqu'à 1099 px, la ligne des boutons est pleine : la pastille passe sous l'en-tête, à droite
+   (à hauteur de la mention « Cours différés »), toujours visible */
+@media (max-width: 1099px) {
+  .entete .pastille-risque { position: absolute; top: 100%; right: var(--marge); margin-top: 2px;
+    min-height: 22px; padding: 0 8px; font-size: 10px; border-radius: 999px; }
+}
+body.mode-leger .pastille-risque-point { box-shadow: none; }
+
+/* Écran « Risque » */
+.risque-tete { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center; }
+.risque-jauge { width: 74px; height: 74px; }
+.risque-palier { font-family: var(--police-titre); font-size: 22px; font-weight: 600; color: var(--c-palier); letter-spacing: 0.04em; }
+.risque-attente { margin: 4px 0 0; font-size: 12.5px; color: var(--orange); }
+.risque-echelle { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; list-style: none; margin: 12px 0 0; padding: 0; }
+.risque-echelle li { display: grid; gap: 1px; padding: 5px 6px; border-radius: 6px; border-top: 3px solid var(--c-palier);
+  background: var(--fond-2); font-size: 11.5px; color: var(--texte-2); opacity: 0.6; }
+.risque-echelle li.est-actif { opacity: 1; color: var(--c-palier); background: color-mix(in srgb, var(--c-palier) 12%, var(--fond-2)); }
+.risque-echelle small { font-size: 10px; color: var(--texte-3); }
+.risque-tableau td small { display: block; font-size: 10.5px; color: var(--texte-3); }
+.risque-ligne--absente td { color: var(--texte-3); }
+.risque-percentile { color: var(--c-palier); font-weight: 600; }
+.tendance--hausse-risque { color: var(--rouge); }
+.tendance--baisse-risque { color: var(--vert); }
+.risque-seuil { stroke: var(--c-palier); stroke-width: 1; stroke-dasharray: 4 3; opacity: 0.7; }
+.risque-seuil-texte { fill: var(--c-palier); font-family: var(--police-mono); font-size: 9.5px; }
+.risque-pays .lien { color: var(--texte); text-decoration: none; }
+.risque-pays .lien:hover { text-decoration: underline; }
+.risque-objection { display: grid; gap: 6px; border-left: 3px solid var(--c-ajust, var(--ligne)); }
+.risque-objection--maintenir { --c-ajust: var(--texte-3); }
+.risque-objection--abaisser { --c-ajust: var(--orange); }
+.risque-objection--fragile { --c-ajust: var(--rouge); }
+.risque-ajustement { margin: 0; font-size: 12px; color: var(--texte-2); }
+.risque-ajustement strong { color: var(--c-ajust); }
+
+/* Fiche pays : décomposition du score de risque */
+.risque-decomposition { display: grid; gap: 8px; list-style: none; margin: 8px 0 0; padding: 0; }
+.risque-composante-tete { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: baseline; font-size: 13px; }
+.risque-composante-tete small { color: var(--texte-3); font-size: 11px; }
+.risque-composante-note { color: var(--c-note); }
+.risque-composante-texte { display: block; margin-top: 3px; font-size: 11.5px; color: var(--texte-3); line-height: 1.4; }
+.risque-composante--absente { opacity: 0.6; }

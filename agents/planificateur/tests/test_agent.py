@@ -168,5 +168,34 @@ class TestGeopolitique(Base):
         self.assertEqual(self.geo(), [("agent-geopolitique.yml", {"mode": "horaire"})])
 
 
+class TestRisque(Base):
+    """Agent risque : planning réel, toutes les heures en séance (en semaine), analyse complète à 22 h 45."""
+
+    def setUp(self):
+        super().setUp()
+        reel = Path(__file__).resolve().parents[3] / ".github" / "workflows" / "agent-risque.yml"
+        shutil.copy(reel, self.wf / "agent-risque.yml")
+        for w in ("agent-marches.yml", "agent-pays.yml", "agent-entreprises.yml", "maintien.yml"):
+            (self.wf / w).unlink()
+
+    def risque(self):
+        return [l for l in self.lances if l[0] == "agent-risque.yml"]
+
+    def test_horaire_en_seance(self):
+        self.journal("agent-risque.yml", "2026-11-03T13:18:00Z")  # mardi
+        self.appel("2026-11-03T14:20:00Z")
+        self.assertEqual(self.risque(), [("agent-risque.yml", {"mode": "horaire"})])
+
+    def test_analyse_complete_du_soir(self):
+        self.journal("agent-risque.yml", "2026-11-03T21:18:00Z")
+        self.appel("2026-11-03T22:48:00Z")
+        self.assertEqual(self.risque(), [("agent-risque.yml", {"mode": "complet"})])
+
+    def test_rien_le_week_end_sauf_le_soir(self):
+        self.journal("agent-risque.yml", "2026-11-06T22:46:00Z")  # vendredi soir, analyse complète faite
+        self.appel("2026-11-07T14:20:00Z")  # samedi
+        self.assertEqual(self.risque(), [])
+
+
 if __name__ == "__main__":
     unittest.main()
