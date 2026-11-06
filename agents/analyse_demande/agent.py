@@ -29,6 +29,7 @@ from ..commun.sortie import ecrire_json, enveloppe, lire_json
 from ..entreprises import agent as E
 from ..entreprises import analyse as A
 from ..entreprises import comptes as C
+from ..entreprises import dynamique as D
 from ..entreprises import recommandation as R
 from ..entreprises import univers as U
 from . import reponse as T
@@ -285,7 +286,8 @@ def analyser(texte: str, demande: dict, data: Path, surveillance: Path, f, resea
     macro = (lire_json(data / "macro.json") or {}).get("donnees") or {}
     zones = {z["cle"]: z["phase"] for z in (macro.get("cycle") or {}).get("zones", [])}
     zone_par_pays = json.loads((RACINE / "agents" / "macro" / "config.json").read_text(encoding="utf-8"))["zone_par_pays"]
-    a = E.analyser_societe(s, med, CFG_E, pays_json, zones, zone_par_pays, aujourdhui, revue=True)
+    dyn = D.donnees_demande(f.yahoo, ticker, s["pays"], data, aujourdhui)  # dynamique des résultats (analystes, guidance connue)
+    a = E.analyser_societe(s, med, CFG_E, pays_json, zones, zone_par_pays, aujourdhui, revue=True, dyn=dyn)
     if not a:
         return "insuffisant", T.reponse_insuffisant(texte, ticker, "trop peu d'indicateurs calculables pour une note"), ticker, {}
     e = a[0]

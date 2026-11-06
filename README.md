@@ -267,7 +267,7 @@ python -m agents.risque --test --data /tmp/essai   # données de test, sans rés
 python -m agents.risque.tests.capturer_donnees_test # met à jour les données de test
 ```
 
-## Agent entreprises (environ 1 200 sociétés, sans IA)
+## Agent entreprises (environ 1 200 sociétés ; Gemini seulement pour lire la guidance)
 
 L'agent entreprises se trouve dans `agents/entreprises/`. Les règles de conduite sont les mêmes que pour l'agent pays.
 
@@ -308,6 +308,12 @@ Quand la source officielle et Yahoo s'écartent de plus de 5 %, la source offici
 
 Chaque société reçoit une note sur 100 (pondérations dans `config.json`), un verdict, un niveau de confiance et une rubrique « Ce qui pourrait me donner tort ».
 
+**Dynamique des résultats** (règles : [`agents/entreprises/dynamique.md`](agents/entreprises/dynamique.md)) :
+- guidance de la direction (États-Unis) : à chaque nouveau 8-K « Item 2.02 » déposé à la SEC, le communiqué de résultats (EX-99.1) est lu et Gemini en extrait la guidance (chiffre d'affaires, BPA, marge, autre), sa période et son évolution (relevée, maintenue, abaissée, initiée, retirée) ; chaque élément cite mot pour mot le communiqué, citation vérifiée dans le texte de la SEC, sinon il est écarté ; sans Gemini (secret `GEMINI_API_KEY` absent, quota atteint), « guidance non analysée », reprise le lendemain ; hors États-Unis, « guidance non disponible » ; historique dans `data/historique/guidance/TICKER.json` ;
+- analystes (Yahoo Finance, toutes régions) : estimations de BPA et leur évolution sur 7, 30, 60 et 90 jours, révisions à la hausse et à la baisse, objectifs de cours, surprises des 4 derniers trimestres ; moins de 3 analystes : affichage à titre indicatif, hors note ;
+- note du bloc sur 100, qui pèse 8 % dans la note globale et compte comme cinquième signal de la recommandation ; une guidance abaissée ou retirée depuis moins de 90 jours interdit « Acheter » (sauf baisse déjà intégrée dans la valorisation, justifiée) ;
+- budget Gemini propre à l'agent entreprises, à l'intérieur des quotas gratuits partagés avec les agents géopolitique et risque.
+
 **Pépites candidates** (`data/pepites.json`) : sociétés qui remplissent tous les critères de `config.json`, réparties en deux listes :
 - « Pépites » : capitalisation de 300 M$ à 20 Md$, peu suivies (au plus 8 analystes quand Yahoo le fournit) ;
 - « Qualité à prix raisonnable » : grandes sociétés.
@@ -315,8 +321,8 @@ Chaque société reçoit une note sur 100 (pondérations dans `config.json`), un
 Au plus 3 sociétés par secteur dans chaque liste ; un avertissement apparaît quand une industrie ou un secteur est surreprésenté parmi les candidates. Les holdings et sociétés d'investissement sont exclues. Elles sont classées par note ajustée selon le contexte : note du pays et phase du cycle de sa zone, un ajustement modéré affiché à part. Chacune a une revue critique : risques, piège de valeur possible, risque de change, risque pays, points à vérifier soi-même et lien vers le dernier rapport officiel.
 
 **Exécution** (`.github/workflows/agent-entreprises.yml`) :
-- en semaine à 22 h 30 UTC : cours, momentum, valorisation, et révision des sociétés ayant publié ;
-- le samedi : révision complète en 6 lots parallèles, puis assemblage ;
+- en semaine à 22 h 30 UTC : cours, momentum, valorisation, révision des sociétés ayant publié, nouveaux communiqués de résultats (guidance) et révisions des analystes ;
+- le samedi : révision complète en 6 lots parallèles, puis assemblage (qui recalcule aussi la dynamique des résultats) ;
 - à la main : onglet **Actions** → **Agent entreprises** → **Run workflow** (mode `quotidien`, `complet` ou `echantillon`).
 
 ```
@@ -347,7 +353,7 @@ Test sans réseau, avec des événements simulés : `python -m unittest agents.a
 
 ## Recommandations et fiabilité
 
-Chaque fiche (agent entreprises, pépites, analyses à la demande) porte une recommandation à 12 mois, en deux lectures : **si non détenu** (Acheter / Acheter sur repli / Attendre / Éviter) et **si détenu** (Renforcer / Conserver / Alléger / Vendre), avec une fourchette de valeur estimée par deux méthodes (multiples comparés à la médiane du secteur ; flux de trésorerie disponibles actualisés, hypothèses affichées), l'écart au cours, le prix de repli, 2 ou 3 conditions précises qui invalideraient la recommandation et les principaux risques. « Acheter » ou « Vendre » exigent une confiance « moyen » ou « élevé » et au moins 3 signaux concordants (note, valorisation, momentum, qualité comptable) ; un signal d'alerte comptable interdit « Acheter ». Règles et seuils : `agents/entreprises/recommandation.md` et section `recommandation` de `agents/entreprises/config.json`.
+Chaque fiche (agent entreprises, pépites, analyses à la demande) porte une recommandation à 12 mois, en deux lectures : **si non détenu** (Acheter / Acheter sur repli / Attendre / Éviter) et **si détenu** (Renforcer / Conserver / Alléger / Vendre), avec une fourchette de valeur estimée par deux méthodes (multiples comparés à la médiane du secteur ; flux de trésorerie disponibles actualisés, hypothèses affichées), l'écart au cours, le prix de repli, 2 ou 3 conditions précises qui invalideraient la recommandation et les principaux risques. « Acheter » ou « Vendre » exigent une confiance « moyen » ou « élevé » et au moins 3 signaux concordants (note, valorisation, momentum, qualité comptable, dynamique des résultats) ; un signal d'alerte comptable interdit « Acheter », de même qu'une guidance abaissée ou retirée depuis moins de 90 jours (sauf baisse déjà intégrée dans la valorisation, justifiée). Règles et seuils : `agents/entreprises/recommandation.md` et section `recommandation` de `agents/entreprises/config.json`.
 
 Suivi : `data/historique/recommandations.json` (date, cours, recommandation, fourchette), écrit par `python -m agents.entreprises.suivi`, lancé juste avant chaque poussée par les workflows « Agent entreprises » et « Analyse à la demande » (`outils/pousser_avec_suivi.sh`). Performance à 3, 6 et 12 mois comparée au MSCI World (ETF URTH) et taux de réussite par type, affichés dans l'écran **Fiabilité des recommandations** (depuis Mes analyses ou une fiche).
 
@@ -463,6 +469,7 @@ data/recap/           récapitulatif de chaque exécution de l'agent pays
 data/journal/         journal des sources en échec
 data/analyses/        analyses à la demande (index.json et une fiche par société)
 data/historique/recommandations.json  recommandations enregistrées et leur performance
+data/historique/guidance/  guidances extraites des communiqués de résultats (8-K Item 2.02), une fiche par société
 config/surveillance.json  liste de surveillance (complétée par les analyses à la demande)
 data/historique/flux_etf/  relevés quotidiens des ETF pays (parts en circulation, VL), flux d'investissement
 data/signaux/pays.json     signaux de l'agent pays (flux des ETF) pour le futur chef d'orchestre

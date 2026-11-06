@@ -1166,6 +1166,34 @@ body.alertes-ouvertes .barre-comparaison { display: none; }
 .pepites-avertissement { padding: 8px 12px; border: 1px solid var(--orange); border-radius: var(--rayon); background: rgba(255, 181, 71, 0.08); font-size: 12.5px; color: var(--texte); }
 .entreprise-cotations { font-size: 11.5px; color: var(--texte-3); }
 
+/* ---------- Dynamique des résultats (guidance, analystes) ---------- */
+.dynamique h4 { margin: 12px 0 4px; font-size: 13px; color: var(--texte-2); }
+.dynamique h4 small { font-weight: 400; color: var(--texte-3); }
+.badge-guidance { display: inline-block; padding: 1px 8px; border: 1px solid var(--c-guid, var(--texte-3)); border-radius: 999px;
+  color: var(--c-guid, var(--texte-2)); font-size: 11px; font-weight: 500; white-space: nowrap; vertical-align: middle; }
+.badge-guidance--pos { --c-guid: var(--vert); }
+.badge-guidance--neg { --c-guid: var(--rouge); }
+.badge-guidance--neutre { --c-guid: var(--texte-2); }
+.liste-guidances { list-style: none; margin: 6px 0; padding: 0; display: grid; gap: 8px; font-size: 12.5px; }
+.liste-guidances small { display: block; color: var(--texte-3); font-size: 11px; }
+.guidance-ligne { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 4px; }
+.guidance-citation { margin: 4px 0 0; padding: 4px 10px; border-left: 2px solid var(--ligne-forte); color: var(--texte-2); font-size: 12px;
+  font-style: italic; overflow-wrap: anywhere; }
+.liens-sec { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; }
+.dynamique-graphique { margin: 4px 0 8px; }
+.dynamique-graphique svg { width: 100%; height: auto; display: block; }
+.dyn-grille { stroke: var(--ligne); stroke-width: 1; }
+.dyn-zero { stroke: var(--ligne-forte); stroke-width: 1; stroke-dasharray: 3 3; }
+.dyn-axe { fill: var(--texte-3); font-size: 9px; font-family: var(--police-mono); }
+.dyn-ligne { fill: none; stroke-width: 2; stroke: currentColor; }
+.dyn-point { fill: currentColor; }
+.dyn-ligne--0q { color: #7fb6ff; }
+.dyn-ligne--p1q { color: #9a78ee; }
+.dyn-ligne--0y { color: var(--cyan); }
+.dyn-ligne--p1y { color: var(--orange); }
+.dynamique td.mono { white-space: nowrap; }
+.dyn-legende { display: flex; flex-wrap: wrap; gap: 2px 12px; font-size: 11px; color: var(--texte-2); }
+
 /* ---------- Analyse à la demande, recommandation, fiabilité ---------- */
 .analyses-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .bouton-analyser { min-height: 40px; }

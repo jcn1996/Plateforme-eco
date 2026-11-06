@@ -39,7 +39,7 @@ Les hypothèses retenues sont affichées sur la fiche. Banques et assurances : m
 valorisation (mais reste affichée) quand les deux méthodes divergent de plus d'un facteur
 `divergence_max` (3) ou quand l'écart sort de la plage `ecart_plausible` (−80 % à +300 %).
 
-## 2. Quatre signaux
+## 2. Cinq signaux
 
 | Signal | Favorable | Défavorable | Seuils |
 |---|---|---|---|
@@ -47,6 +47,7 @@ valorisation (mais reste affichée) quand les deux méthodes divergent de plus d
 | Valorisation | valeur estimée ≥ cours + 15 % | ≤ cours − 15 % | `valorisation_positive`, `valorisation_negative` |
 | Momentum 12 mois | ≥ +5 % | ≤ −10 % | `momentum_positif`, `momentum_negatif` |
 | Qualité comptable | F-score ≥ 6 sans alerte (financières : ROE ≥ 10 % sans alerte) | signal d'alerte comptable, ou F-score ≤ 3 | `fscore_positif`, `fscore_negatif`, `roe_financier_min` |
+| Dynamique des résultats | note du bloc ≥ 65/100 | < 40/100 | section `dynamique` (voir `dynamique.md`) |
 
 Un signal non calculable est neutre.
 
@@ -57,7 +58,10 @@ Section `regles` ; « concordants » = de même sens.
 **Si non détenu**
 
 - **Acheter** : au moins `signaux_concordants_min` (3) signaux favorables, aucun défavorable, confiance
-  « moyen » ou « élevé » (`confiances_tranchees`), **aucun signal d'alerte comptable**.
+  « moyen » ou « élevé » (`confiances_tranchees`), **aucun signal d'alerte comptable**, **aucune guidance
+  abaissée ou retirée depuis moins de 90 jours** (sauf si la valorisation intègre déjà une forte baisse :
+  valeur estimée au moins 30 % au-dessus du cours et momentum 12 mois ≤ −15 %, exception justifiée en
+  chiffres ; section `dynamique.exception_guidance`).
 - **Acheter sur repli** : toutes les conditions d'« Acheter » sont réunies sauf la valorisation
   (2 autres signaux favorables, aucun défavorable, confiance suffisante, pas d'alerte, estimation
   exploitable). Le **prix de repli** est le cours à partir duquel la valorisation deviendrait favorable,
