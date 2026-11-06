@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-06T17:39:08Z",
+    "genere_le": "2026-11-06T18:31:47Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
@@ -1527,6 +1527,165 @@
       "methode": "règles",
       "confiance": "faible",
       "version_regles": 2
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|PGR|2026-11-02",
+      "revu_le": "2026-11-06T18:31:25Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "PGR",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "The Progressive Corporation entre dans les pépites candidates"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 2
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|TPR|2026-11-02",
+      "revu_le": "2026-11-06T18:31:25Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "TPR",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "Tapestry, Inc. entre dans les pépites candidates"
+      },
+      "objection": "Malgré la croissance du bénéfice de +733,9% [F2], le cours affiche un recul de −16,9% sur 3 mois [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Tapestry, Inc. : cours −16,9 % sur 3 mois, +3,5 % sur 6 mois, +24,3 % sur 12 mois",
+          "source": "agent entreprises (fiche)"
+        },
+        {
+          "id": "F2",
+          "texte": "Tapestry, Inc. : croissance du bénéfice +733,9 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 2,
+      "faits_cites": [
+        "F1",
+        "F2"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|MLI|2026-11-02",
+      "revu_le": "2026-11-06T18:31:25Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "MLI",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "Mueller Industries, Inc. entre dans les pépites candidates"
+      },
+      "objection": "Malgré l'absence de charges d'intérêts, le titre présente un piège de valeur possible avec une décote marquée associée à un cours en recul [F2], affichant −24,3% sur 3 mois et −23,5% sur 6 mois [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Mueller Industries, Inc. : cours −24,3 % sur 3 mois, −23,5 % sur 6 mois, −1,8 % sur 12 mois",
+          "source": "agent entreprises (fiche)"
+        },
+        {
+          "id": "F2",
+          "texte": "Mueller Industries, Inc. : piège de valeur possible : décote marquée associée à un cours ou à un bénéfice en recul (revue critique)",
+          "source": "agent entreprises (data/pepites.json)"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 2,
+      "faits_cites": [
+        "F1",
+        "F2"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|000660.KS|2026-11-02",
+      "revu_le": "2026-11-06T18:31:25Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "000660.KS",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "SK hynix Inc. entre dans les pépites candidates"
+      },
+      "objection": "En dépit d'une forte croissance du bénéfice de +116,9% [F2] et d'une marge opérationnelle de 48,6%, le cours enregistre une baisse de −16,7% sur 3 mois et −29,7% sur 6 mois [F1], pour une conversion du bénéfice en cash de 57,8% [F3].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "SK hynix Inc. : cours −16,7 % sur 3 mois, −29,7 % sur 6 mois, +100,3 % sur 12 mois",
+          "source": "agent entreprises (fiche)"
+        },
+        {
+          "id": "F2",
+          "texte": "SK hynix Inc. : croissance du bénéfice +116,9 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F3",
+          "texte": "SK hynix Inc. : conversion du bénéfice en cash de 57,8 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 2,
+      "faits_cites": [
+        "F1",
+        "F2",
+        "F3"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|EMAAR.AE|2026-11-02",
+      "revu_le": "2026-11-06T18:31:25Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "EMAAR.AE",
+        "date": "2026-11-02",
+        "importance": "moyenne",
+        "titre": "Emaar Properties PJSC entre dans les pépites candidates"
+      },
+      "objection": "Malgré de solides comptes, le dossier présente un risque de piège de valeur potentiel [F1] ainsi qu'un momentum négatif de −15,0% sur 12 mois.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Emaar Properties PJSC : piège de valeur possible : décote marquée associée à un cours ou à un bénéfice en recul (revue critique)",
+          "source": "agent entreprises (data/pepites.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "faible",
+      "version_regles": 2,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
     }
   ]
 }
