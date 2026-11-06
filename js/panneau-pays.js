@@ -10,6 +10,7 @@ import {
 import { sectionMacroPays } from './macro.js';
 import { graphiqueAvance, historiqueFichier } from './graphiques.js';
 import { sectionGeopolitiquePays } from './geopolitique.js';
+import { sectionRisquePays } from './risque.js';
 
 /* ------------------------------ Composants ------------------------------ */
 
@@ -280,8 +281,9 @@ export function fichePays(d, p, nav) {
     ) : el('section', {},
       titreSection('Lecture des agents'),
       el('div', { class: 'agents' },
+        // La lecture « risque » fictive est remplacée par la rubrique réelle de l'agent risque
         ['macro', 'sentiment', 'risque', 'donnees_alternatives']
-          .filter((cle) => p.lectures_agents?.[cle])
+          .filter((cle) => p.lectures_agents?.[cle] && !(cle === 'risque' && d.risque?.pays?.[p.code]))
           .map((cle) => carteAgent(cle, p.lectures_agents[cle])),
       ),
     ),
@@ -291,6 +293,9 @@ export function fichePays(d, p, nav) {
 
     // Rubrique « Géopolitique » : score de risque, variation sur 7 jours, 3 derniers événements
     sectionGeopolitiquePays(d.geopolitique, p.code),
+
+    // Rubrique « Agent risque » : score de risque réel, texte de deux phrases et décomposition
+    sectionRisquePays(d.risque, p.code),
 
     p.indicateurs && p.confiance ? listeSources(p) : null,
     piedFraicheur(d.meta.pays),

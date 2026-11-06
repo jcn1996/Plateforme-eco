@@ -21,6 +21,7 @@ import { ecranClassement } from './classement.js';
 import { chargerSante, ecranSante, problemeDetecte } from './sante.js';
 import { chargerMacro, ecranMacro } from './macro.js';
 import { chargerGeopolitique, ecranGeopolitique, lireRisque, METRIQUE_RISQUE } from './geopolitique.js';
+import { chargerRisque, ecranRisque, lireRisquePays, majPastilleRisque, METRIQUE_RISQUE_PAYS } from './risque.js';
 import { chargerPepites, ecranPepites } from './pepites.js';
 import { chargerAnalyses, chargerEnCours, chargerAnalyse, chargerRecommandations, ecranAnalyses, ecranFiabilite } from './analyses.js';
 
@@ -69,6 +70,7 @@ function estLarge() {
 let agentsSante = [];
 let macro = null; // données de l'agent macro (data/macro.json), ou null
 let geopolitique = null; // données de l'agent géopolitique (data/geopolitique.json), ou null
+let risque = null; // données de l'agent risque (data/risque.json), ou null
 let pepites = null; // pépites candidates de l'agent entreprises (data/pepites.json), ou null
 let analyses = { liste: [] }; // analyses à la demande (data/analyses/index.json)
 let enCours; // demandes d'analyse en cours (issues ouvertes) : undefined = pas encore lues, null = GitHub injoignable
@@ -112,9 +114,10 @@ async function demarrer() {
 
   try {
     // data/macro.json est facultatif : son absence n'empêche pas l'appli de démarrer
-    [d, macro, pepites, analyses, geopolitique] = await Promise.all([chargerDonnees(), chargerMacro(), chargerPepites(), chargerAnalyses(), chargerGeopolitique()]);
+    [d, macro, pepites, analyses, geopolitique, risque] = await Promise.all([chargerDonnees(), chargerMacro(), chargerPepites(), chargerAnalyses(), chargerGeopolitique(), chargerRisque()]);
     d.macro = macro;
     d.geopolitique = geopolitique;
+    d.risque = risque;
     d.analyses = analyses.liste;
   } catch (erreur) {
     console.error(erreur);
@@ -134,13 +137,14 @@ async function demarrer() {
 
   // Filtres : ce que représentent les couleurs du globe (choix mémorisé)
   let metriqueInitiale = 'note', fluxInitiaux = true;
-  // Filtre « Risque géopolitique » : seulement pour le globe (pas dans le comparateur ni les alertes)
-  const metriquesGlobe = geopolitique ? [...METRIQUES_PAYS, METRIQUE_RISQUE] : METRIQUES_PAYS;
+  // Filtres « Risque » (agent risque) et « Risque géopolitique » : seulement pour le globe (pas dans le comparateur ni les alertes)
+  const metriquesGlobe = [...METRIQUES_PAYS, ...(risque ? [METRIQUE_RISQUE_PAYS] : []), ...(geopolitique ? [METRIQUE_RISQUE] : [])];
+  const estRisque = (cle) => cle === METRIQUE_RISQUE.cle || cle === METRIQUE_RISQUE_PAYS.cle;
   initialiserFiltres({ puces: $('#filtres-puces'), boutonFlux: $('#btn-flux') }, metriquesGlobe, {
     surMetrique: (cle, initial) => {
       $('#legende-metrique').textContent = metriquesGlobe.find((m) => m.cle === cle).libelle;
-      $('#legende-notes').hidden = cle === METRIQUE_RISQUE.cle;
-      $('#legende-risque').hidden = cle !== METRIQUE_RISQUE.cle;
+      $('#legende-notes').hidden = estRisque(cle);
+      $('#legende-risque').hidden = !estRisque(cle);
       if (initial) metriqueInitiale = cle; else globe?.definirMetrique(objetMetrique(cle));
     },
     surFlux: (visibles, initial) => {
@@ -162,6 +166,9 @@ async function demarrer() {
   $('#btn-sante').addEventListener('click', () => naviguer({ type: 'sante' }));
   $('#btn-macro').addEventListener('click', () => naviguer({ type: 'macro' }));
   $('#btn-geopolitique').addEventListener('click', () => naviguer({ type: 'geopolitique' }));
+  // Pastille permanente du palier de risque mondial : ouvre l'écran « Risque »
+  majPastilleRisque($('#btn-risque'), risque);
+  $('#btn-risque').addEventListener('click', () => naviguer({ type: 'risque' }));
   $('#btn-pepites').addEventListener('click', () => naviguer({ type: 'pepites' }));
   $('#btn-analyses').addEventListener('click', () => naviguer({ type: 'analyses' }));
   // Santé des agents : chargée à part (un journal manquant ne bloque pas l'appli),
@@ -212,6 +219,7 @@ async function demarrer() {
 /** Métrique au format attendu par le globe : note et texte de chaque pays. */
 function objetMetrique(cle) {
   if (cle === METRIQUE_RISQUE.cle) return { cle, lire: (p) => lireRisque(geopolitique, p.code) };
+  if (cle === METRIQUE_RISQUE_PAYS.cle) return { cle, lire: (p) => lireRisquePays(risque, p.code) };
   return { cle, lire: (p) => lireMetrique(p, cle) };
 }
 
@@ -327,6 +335,7 @@ function filAriane(route) {
     case 'sante': return [racine, { libelle: 'Santé des agents', route }];
     case 'macro': return [racine, { libelle: 'Vue macro', route }];
     case 'geopolitique': return [racine, { libelle: 'Géopolitique', route }];
+    case 'risque': return [racine, { libelle: 'Risque', route }];
     case 'pepites': return [racine, { libelle: 'Pépites', route }];
     case 'analyses': return [racine, { libelle: 'Mes analyses', route }];
     case 'fiabilite': return [racine, { libelle: 'Mes analyses', route: { type: 'analyses' } }, { libelle: 'Fiabilité', route }];
@@ -352,7 +361,7 @@ function majAriane(route) {
 /** Vérifie qu'une route désigne bien un élément existant. */
 function routeValide(route) {
   switch (route.type) {
-    case 'globe': case 'portefeuille': case 'classement': case 'comparaison': case 'mes-alertes': case 'sante': case 'macro': case 'geopolitique': case 'pepites':
+    case 'globe': case 'portefeuille': case 'classement': case 'comparaison': case 'mes-alertes': case 'sante': case 'macro': case 'geopolitique': case 'risque': case 'pepites':
     case 'analyses': case 'fiabilite': return true;
     case 'analyse': return Boolean(route.id);
     case 'pays': return d.paysParCode.has(route.id);
@@ -441,6 +450,7 @@ function afficher(route) {
     sante: { section: '#ecran-sante', contenu: '#sante-contenu', titre: 'Santé des agents', rendu: () => ecranSante(agentsSante) },
     macro: { section: '#ecran-macro', contenu: '#macro-contenu', titre: 'Vue macro', rendu: () => ecranMacro(macro) },
     geopolitique: { section: '#ecran-geopolitique', contenu: '#geopolitique-contenu', titre: 'Géopolitique', rendu: () => ecranGeopolitique(geopolitique) },
+    risque: { section: '#ecran-risque', contenu: '#risque-contenu', titre: 'Risque', rendu: () => ecranRisque(risque, navigateurPanneau) },
     pepites: { section: '#ecran-pepites', contenu: '#pepites-contenu', titre: 'Pépites', rendu: () => ecranPepites(pepites, d, navigateurPanneau) },
     analyses: { section: '#ecran-analyses', contenu: '#analyses-contenu', titre: 'Mes analyses', rendu: () => ecranAnalyses({ analyses, enCours }, navigateurPanneau) },
     fiabilite: { section: '#ecran-fiabilite', contenu: '#fiabilite-contenu', titre: 'Fiabilité des recommandations', rendu: () => ecranFiabilite(recommandations, navigateurPanneau) },
@@ -486,7 +496,7 @@ function afficher(route) {
 
 /** Le globe ne se dessine que s'il est visible (économie de batterie). */
 function majActiviteGlobe() {
-  const masque = ['portefeuille', 'classement', 'comparaison', 'mes-alertes', 'sante', 'macro', 'geopolitique', 'pepites', 'analyses', 'fiabilite'].includes(routeActuelle.type)
+  const masque = ['portefeuille', 'classement', 'comparaison', 'mes-alertes', 'sante', 'macro', 'geopolitique', 'risque', 'pepites', 'analyses', 'fiabilite'].includes(routeActuelle.type)
     || (dom.panneau.classList.contains('est-ouvert') && etatPanneau === 'plein' && !estLarge());
   globe?.definirActif(!masque);
 }

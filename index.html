@@ -72,6 +72,8 @@
           <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2.5 10h15M10 2.5c2.4 2.2 2.4 12.8 0 15M10 2.5c-2.4 2.2-2.4 12.8 0 15" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M14.5 3.2 16.8 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
           <span class="bouton-libelle">Géopolitique</span>
         </button>
+        <!-- Pastille permanente du palier de risque mondial (agent risque) : ouvre l'écran « Risque » -->
+        <button id="btn-risque" class="bouton pastille-risque" type="button" title="Risque mondial" hidden></button>
         <button id="btn-sante" class="bouton bouton--icone bouton-sante" type="button" title="Santé des agents">
           <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2 10.5h3.5l2-4.5 3 9 2.2-6 1.3 1.5H18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <span class="pastille-probleme" aria-hidden="true"></span>
@@ -119,7 +121,7 @@
         <li><span class="pastille pastille--orange"></span>50 à 64 : neutre</li>
         <li><span class="pastille pastille--rouge"></span>&lt; 50 : défavorable</li>
       </ul>
-      <ul id="legende-risque" class="legende" aria-label="Légende du risque géopolitique" hidden>
+      <ul id="legende-risque" class="legende" aria-label="Légende du risque (agent risque et risque géopolitique)" hidden>
         <li><span class="pastille pastille--rouge"></span>≥ 60 : risque élevé</li>
         <li><span class="pastille pastille--orange"></span>35 à 59 : modéré</li>
         <li><span class="pastille pastille--vert"></span>&lt; 35 : faible</li>
@@ -249,6 +251,14 @@
       <ol class="ariane js-ariane"></ol>
     </nav>
     <div id="geopolitique-contenu" class="ecran-contenu"></div>
+  </section>
+
+  <section id="ecran-risque" class="ecran" hidden aria-label="Risque">
+    <nav class="navigation navigation--ecran" aria-label="Fil d'Ariane">
+      <button class="bouton bouton--icone js-retour" type="button" title="Retour"><span aria-hidden="true">‹</span><span class="visuellement-cache">Retour</span></button>
+      <ol class="ariane js-ariane"></ol>
+    </nav>
+    <div id="risque-contenu" class="ecran-contenu"></div>
   </section>
 
   <!-- ===================== ÉCRAN SANTÉ DES AGENTS ===================== -->

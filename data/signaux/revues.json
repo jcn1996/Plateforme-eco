@@ -1,0 +1,2437 @@
+{
+  "meta": {
+    "version": 1,
+    "genere_le": "2026-11-06T17:14:06Z",
+    "source": "agent-risque",
+    "fictif": false,
+    "version_agent": "1.0",
+    "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
+  },
+  "donnees": [
+    {
+      "id": "macro|changement_de_phase|monde|2026-11-06",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "macro",
+        "type": "changement_de_phase",
+        "cle": "monde",
+        "date": "2026-11-06",
+        "importance": "forte",
+        "titre": "Monde : passage de « Expansion sans inflation » à « Ralentissement inflationniste »"
+      },
+      "objection": "La phase a changé 4 fois en 30 jours [F4], sur une pente de l'indicateur avancé de seulement −0,06 pt sur 3 mois [F5] : le signal alterne autour d'un seuil.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), −4,5 pts depuis la veille du signal (05/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "4 changement(s) de phase pour « monde » en 30 jours (03/11/2026, 04/11/2026, 05/11/2026, 06/11/2026)",
+          "source": "data/signaux/macro.json"
+        },
+        {
+          "id": "F5",
+          "texte": "Indicateur avancé : −0,06 pt sur 3 mois (explication du signal)",
+          "source": "data/signaux/macro.json"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "geopolitique|evenement_grave|theme-evt-d3cbffbc9212|2026-11-06",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "evenement_grave",
+        "cle": "theme-evt-d3cbffbc9212",
+        "date": "2026-11-06",
+        "importance": "haute",
+        "titre": "Événement de gravité 4 : Frappes russes et attaques énergétiques en Ukraine"
+      },
+      "objection": "Les marchés ne confirment pas l'impact financier : le VIX a varié de −4,5 pts [F2] depuis le signal ; l'environnement reste au palier « Vigilance » [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), −4,5 pts depuis la veille du signal (05/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "3 sources citées par le signal",
+          "source": "data/signaux/geopolitique.json"
+        }
+      ],
+      "ajustement": "abaisser",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "macro|changement_de_phase|monde|2026-11-05",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "macro",
+        "type": "changement_de_phase",
+        "cle": "monde",
+        "date": "2026-11-05",
+        "importance": "forte",
+        "titre": "Monde : passage de « Ralentissement inflationniste » à « Expansion sans inflation »"
+      },
+      "objection": "La phase a changé 3 fois en 30 jours [F4], sur une pente de l'indicateur avancé de seulement −0,08 pt sur 3 mois [F5] : le signal alterne autour d'un seuil.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +7,1 pts depuis la veille du signal (04/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "3 changement(s) de phase pour « monde » en 30 jours (03/11/2026, 04/11/2026, 05/11/2026)",
+          "source": "data/signaux/macro.json"
+        },
+        {
+          "id": "F5",
+          "texte": "Indicateur avancé : −0,08 pt sur 3 mois (explication du signal)",
+          "source": "data/signaux/macro.json"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "geopolitique|evenement_grave|theme-evt-d40435d5b052|2026-11-05",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "evenement_grave",
+        "cle": "theme-evt-d40435d5b052",
+        "date": "2026-11-05",
+        "importance": "haute",
+        "titre": "Événement de gravité 4 : Tensions militaires et diplomatiques entre les États-Unis et l'Iran"
+      },
+      "objection": "Les marchés réagissent dans le sens du signal (VIX +7,1 pts [F2], ETF le plus touché −3,6 % [F4]) : pas d'objection sur le fond, l'ampleur reste à suivre.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +7,1 pts depuis la veille du signal (04/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −3,6 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F6",
+          "texte": "3 sources citées par le signal",
+          "source": "data/signaux/geopolitique.json"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "geopolitique|evenement_grave|evt-84574808e622|2026-11-05",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "evenement_grave",
+        "cle": "evt-84574808e622",
+        "date": "2026-11-05",
+        "importance": "haute",
+        "titre": "Événement de gravité 4 : Frappes aériennes russes à Komyshuvakha : le bilan humain s'alourdit"
+      },
+      "objection": "Les marchés réagissent dans le sens du signal (VIX +7,1 pts [F2]) : pas d'objection sur le fond, l'ampleur reste à suivre.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +7,1 pts depuis la veille du signal (04/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "3 sources citées par le signal",
+          "source": "data/signaux/geopolitique.json"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "geopolitique|evenement_grave|theme-evt-6b9906d3de52|2026-11-05",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "evenement_grave",
+        "cle": "theme-evt-6b9906d3de52",
+        "date": "2026-11-05",
+        "importance": "haute",
+        "titre": "Événement de gravité 4 : Tensions et frappes militaires américaines contre l'Iran"
+      },
+      "objection": "Les marchés réagissent dans le sens du signal (VIX +7,1 pts [F2], ETF le plus touché −3,6 % [F4]) : pas d'objection sur le fond, l'ampleur reste à suivre.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +7,1 pts depuis la veille du signal (04/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −3,6 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F6",
+          "texte": "3 sources citées par le signal",
+          "source": "data/signaux/geopolitique.json"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|PAYX|2026-11-05",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "PAYX",
+        "date": "2026-11-05",
+        "importance": "moyenne",
+        "titre": "Paychex, Inc. entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 27/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +7,1 pts depuis la veille du signal (04/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −3,6 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|0700.HK|2026-11-05",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "0700.HK",
+        "date": "2026-11-05",
+        "importance": "moyenne",
+        "titre": "Tencent Holdings Limited entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Nuance : le cours a baissé de 32,0 % sur 12 mois [F4] : le marché ne valide pas la qualité affichée.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +7,1 pts depuis la veille du signal (04/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "Momentum sur 12 mois de −32,0 % (explication du signal)",
+          "source": "data/signaux/entreprises.json"
+        },
+        {
+          "id": "F5",
+          "texte": "ETF MCHI (Chine) : +0,8 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, MCHI"
+        },
+        {
+          "id": "F6",
+          "texte": "Chine : score de risque de l'agent risque 25/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "abaisser",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|2345.TW|2026-11-05",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "2345.TW",
+        "date": "2026-11-05",
+        "importance": "moyenne",
+        "titre": "Accton Technology Corporation entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 32/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +7,1 pts depuis la veille du signal (04/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF EWT (Taïwan) : −7,5 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWT"
+        },
+        {
+          "id": "F5",
+          "texte": "Taïwan : score de risque de l'agent risque 32/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|RR.L|2026-11-05",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "RR.L",
+        "date": "2026-11-05",
+        "importance": "moyenne",
+        "titre": "Rolls-Royce Holdings plc entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 21/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +7,1 pts depuis la veille du signal (04/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF EWU (Royaume-Uni) : −2,9 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWU"
+        },
+        {
+          "id": "F5",
+          "texte": "Royaume-Uni : score de risque de l'agent risque 21/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|K.TO|2026-11-05",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "K.TO",
+        "date": "2026-11-05",
+        "importance": "moyenne",
+        "titre": "Kinross Gold Corporation entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], momentum sur 12 mois de −10,5 % [F4], score de risque du pays de 23/100 [F6].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +7,1 pts depuis la veille du signal (04/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "Momentum sur 12 mois de −10,5 % (explication du signal)",
+          "source": "data/signaux/entreprises.json"
+        },
+        {
+          "id": "F5",
+          "texte": "ETF EWC (Canada) : −2,6 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWC"
+        },
+        {
+          "id": "F6",
+          "texte": "Canada : score de risque de l'agent risque 23/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|PRU.L|2026-11-05",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "PRU.L",
+        "date": "2026-11-05",
+        "importance": "moyenne",
+        "titre": "Prudential plc entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], momentum sur 12 mois de −14,2 % [F4], score de risque du pays de 21/100 [F6].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +7,1 pts depuis la veille du signal (04/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "Momentum sur 12 mois de −14,2 % (explication du signal)",
+          "source": "data/signaux/entreprises.json"
+        },
+        {
+          "id": "F5",
+          "texte": "ETF EWU (Royaume-Uni) : −2,9 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWU"
+        },
+        {
+          "id": "F6",
+          "texte": "Royaume-Uni : score de risque de l'agent risque 21/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|NXT.L|2026-11-05",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "NXT.L",
+        "date": "2026-11-05",
+        "importance": "moyenne",
+        "titre": "NEXT plc entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 21/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +7,1 pts depuis la veille du signal (04/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF EWU (Royaume-Uni) : −2,9 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWU"
+        },
+        {
+          "id": "F5",
+          "texte": "Royaume-Uni : score de risque de l'agent risque 21/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "macro|changement_de_phase|monde|2026-11-04",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "macro",
+        "type": "changement_de_phase",
+        "cle": "monde",
+        "date": "2026-11-04",
+        "importance": "forte",
+        "titre": "Monde : passage de « Ralentissement inflationniste » à « Expansion sans inflation »"
+      },
+      "objection": "La phase a changé 2 fois en 30 jours [F4], sur une pente de l'indicateur avancé de seulement −0,08 pt sur 3 mois [F5] : le signal alterne autour d'un seuil.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,9 pts depuis la veille du signal (03/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "2 changement(s) de phase pour « monde » en 30 jours (03/11/2026, 04/11/2026)",
+          "source": "data/signaux/macro.json"
+        },
+        {
+          "id": "F5",
+          "texte": "Indicateur avancé : −0,08 pt sur 3 mois (explication du signal)",
+          "source": "data/signaux/macro.json"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "geopolitique|evenement_grave|evt-b9ac585d42a7|2026-11-04",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "evenement_grave",
+        "cle": "evt-b9ac585d42a7",
+        "date": "2026-11-04",
+        "importance": "haute",
+        "titre": "Événement de gravité 4 : Baisse des cours pétroliers face à une perspective de cessez-le-feu"
+      },
+      "objection": "Les marchés réagissent dans le sens du signal (VIX +2,9 pts [F2], ETF le plus touché −2,0 % [F4]) : pas d'objection sur le fond, l'ampleur reste à suivre.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,9 pts depuis la veille du signal (03/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −2,0 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F6",
+          "texte": "3 sources citées par le signal",
+          "source": "data/signaux/geopolitique.json"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "geopolitique|evenement_grave|theme-evt-eb4a649fce51|2026-11-04",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "evenement_grave",
+        "cle": "theme-evt-eb4a649fce51",
+        "date": "2026-11-04",
+        "importance": "haute",
+        "titre": "Événement de gravité 4 : Les États-Unis mènent des frappes limitées sur l'île iranienne de Qeshm"
+      },
+      "objection": "Les marchés réagissent dans le sens du signal (VIX +2,9 pts [F2], ETF le plus touché −2,0 % [F4]) : pas d'objection sur le fond, l'ampleur reste à suivre.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,9 pts depuis la veille du signal (03/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −2,0 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F6",
+          "texte": "3 sources citées par le signal",
+          "source": "data/signaux/geopolitique.json"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "geopolitique|evenement_grave|theme-evt-6b62f0830533|2026-11-04",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "evenement_grave",
+        "cle": "theme-evt-6b62f0830533",
+        "date": "2026-11-04",
+        "importance": "haute",
+        "titre": "Événement de gravité 4 : Guerre en Ukraine: une frappe russe fait au moins 29 morts dans le sud-est du pays"
+      },
+      "objection": "Les marchés réagissent dans le sens du signal (VIX +2,9 pts [F2]) : pas d'objection sur le fond, l'ampleur reste à suivre.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,9 pts depuis la veille du signal (03/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "3 sources citées par le signal",
+          "source": "data/signaux/geopolitique.json"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "geopolitique|evenement_grave|theme-evt-3ba56f3fae09|2026-11-04",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "evenement_grave",
+        "cle": "theme-evt-3ba56f3fae09",
+        "date": "2026-11-04",
+        "importance": "haute",
+        "titre": "Événement de gravité 4 : Frappes militaires américaines en Iran et tensions dans le Golfe"
+      },
+      "objection": "Les marchés réagissent dans le sens du signal (VIX +2,9 pts [F2], ETF le plus touché −2,0 % [F4]) : pas d'objection sur le fond, l'ampleur reste à suivre.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,9 pts depuis la veille du signal (03/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −2,0 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F6",
+          "texte": "3 sources citées par le signal",
+          "source": "data/signaux/geopolitique.json"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "geopolitique|evenement_grave|theme-evt-0c81dddb3429|2026-11-04",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "evenement_grave",
+        "cle": "theme-evt-0c81dddb3429",
+        "date": "2026-11-04",
+        "importance": "haute",
+        "titre": "Événement de gravité 4 : Guerre en Ukraine: une frappe russe fait au moins 29 morts dans le sud-est du pays"
+      },
+      "objection": "Les marchés réagissent dans le sens du signal (VIX +2,9 pts [F2]) : pas d'objection sur le fond, l'ampleur reste à suivre.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,9 pts depuis la veille du signal (03/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "3 sources citées par le signal",
+          "source": "data/signaux/geopolitique.json"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|RR.L|2026-11-04",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "RR.L",
+        "date": "2026-11-04",
+        "importance": "moyenne",
+        "titre": "Rolls-Royce Holdings plc entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 21/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,9 pts depuis la veille du signal (03/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF EWU (Royaume-Uni) : +0,5 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWU"
+        },
+        {
+          "id": "F5",
+          "texte": "Royaume-Uni : score de risque de l'agent risque 21/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|NXT.L|2026-11-04",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "NXT.L",
+        "date": "2026-11-04",
+        "importance": "moyenne",
+        "titre": "NEXT plc entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 21/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,9 pts depuis la veille du signal (03/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF EWU (Royaume-Uni) : +0,5 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWU"
+        },
+        {
+          "id": "F5",
+          "texte": "Royaume-Uni : score de risque de l'agent risque 21/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "macro|changement_de_phase|monde|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "macro",
+        "type": "changement_de_phase",
+        "cle": "monde",
+        "date": "2026-11-03",
+        "importance": "forte",
+        "titre": "Monde : passage de « Expansion sans inflation » à « Ralentissement inflationniste »"
+      },
+      "objection": "Pas de contradiction dans les données de marché [F1, F3] ; nuance : pente de l'indicateur avancé faible (−0,06 pt sur 3 mois) [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "1 changement(s) de phase pour « monde » en 30 jours (03/11/2026)",
+          "source": "data/signaux/macro.json"
+        },
+        {
+          "id": "F5",
+          "texte": "Indicateur avancé : −0,06 pt sur 3 mois (explication du signal)",
+          "source": "data/signaux/macro.json"
+        }
+      ],
+      "ajustement": "abaisser",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "geopolitique|mesure_officielle|evt-89bfa1f7ceb2|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "mesure_officielle",
+        "cle": "evt-89bfa1f7ceb2",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Commerce et droits de douane (source officielle) : Adjusting Imports of Robotics, Industrial Machinery, and Their Parts and Components Into the United States"
+      },
+      "objection": "Le signal ne repose que sur 1 source [F6].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −1,7 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F6",
+          "texte": "1 source citée par le signal",
+          "source": "data/signaux/geopolitique.json"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "geopolitique|evenement_grave|evt-3f36b36901be|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "evenement_grave",
+        "cle": "evt-3f36b36901be",
+        "date": "2026-11-03",
+        "importance": "haute",
+        "titre": "Événement de gravité 4 : In Pictures: US midterm elections in 20 photos"
+      },
+      "objection": "Les marchés réagissent dans le sens du signal (VIX +2,5 pts [F2], ETF le plus touché −1,7 % [F4]) : pas d'objection sur le fond, l'ampleur reste à suivre.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −1,7 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F6",
+          "texte": "3 sources citées par le signal",
+          "source": "data/signaux/geopolitique.json"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "geopolitique|evenement_grave|evt-9024bdfb458f|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "evenement_grave",
+        "cle": "evt-9024bdfb458f",
+        "date": "2026-11-03",
+        "importance": "haute",
+        "titre": "Événement de gravité 4 : U.S. Carries Out Defensive Strike On Iranian Island"
+      },
+      "objection": "Les marchés réagissent dans le sens du signal (VIX +2,5 pts [F2], ETF le plus touché −1,7 % [F4]) : pas d'objection sur le fond, l'ampleur reste à suivre.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −1,7 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F6",
+          "texte": "3 sources citées par le signal",
+          "source": "data/signaux/geopolitique.json"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "geopolitique|evenement_grave|evt-98fddb85990a|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "evenement_grave",
+        "cle": "evt-98fddb85990a",
+        "date": "2026-11-03",
+        "importance": "haute",
+        "titre": "Événement de gravité 4 : La Maison Blanche recoit des responsables pour le cessez-le-feu en Ukraine"
+      },
+      "objection": "Les marchés réagissent dans le sens du signal (VIX +2,5 pts [F2], ETF le plus touché −1,7 % [F4]) : pas d'objection sur le fond, l'ampleur reste à suivre.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −1,7 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F6",
+          "texte": "3 sources citées par le signal",
+          "source": "data/signaux/geopolitique.json"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "geopolitique|evenement_grave|evt-eb4a649fce51|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "evenement_grave",
+        "cle": "evt-eb4a649fce51",
+        "date": "2026-11-03",
+        "importance": "haute",
+        "titre": "Événement de gravité 4 : Les États-Unis mènent des frappes en Iran tandis que les tensions persistent"
+      },
+      "objection": "Les marchés réagissent dans le sens du signal (VIX +2,5 pts [F2], ETF le plus touché −1,7 % [F4]) : pas d'objection sur le fond, l'ampleur reste à suivre.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −1,7 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F6",
+          "texte": "3 sources citées par le signal",
+          "source": "data/signaux/geopolitique.json"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "geopolitique|evenement_grave|evt-6b62f0830533|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "evenement_grave",
+        "cle": "evt-6b62f0830533",
+        "date": "2026-11-03",
+        "importance": "haute",
+        "titre": "Événement de gravité 4 : Reprise des frappes russes en Ukraine après la fin d'un cessez-le-feu"
+      },
+      "objection": "Les marchés réagissent dans le sens du signal (VIX +2,5 pts [F2]) : pas d'objection sur le fond, l'ampleur reste à suivre.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "3 sources citées par le signal",
+          "source": "data/signaux/geopolitique.json"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "geopolitique|evenement_grave|evt-3ba56f3fae09|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "evenement_grave",
+        "cle": "evt-3ba56f3fae09",
+        "date": "2026-11-03",
+        "importance": "haute",
+        "titre": "Événement de gravité 4 : Frappes américaines et tensions autour du détroit d'Ormuz"
+      },
+      "objection": "Les marchés réagissent dans le sens du signal (VIX +2,5 pts [F2], ETF le plus touché −1,7 % [F4]) : pas d'objection sur le fond, l'ampleur reste à suivre.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −1,7 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F6",
+          "texte": "3 sources citées par le signal",
+          "source": "data/signaux/geopolitique.json"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "geopolitique|evenement_grave|evt-646dd36f97c7|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "evenement_grave",
+        "cle": "evt-646dd36f97c7",
+        "date": "2026-11-03",
+        "importance": "haute",
+        "titre": "Événement de gravité 4 : Préparatifs de négociations de cessez-le-feu à Abou Dabi pour l'Ukraine"
+      },
+      "objection": "Les marchés réagissent dans le sens du signal (VIX +2,5 pts [F2], ETF le plus touché −0,9 % [F4]) : pas d'objection sur le fond, l'ampleur reste à suivre.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF EWG (Allemagne) : −0,9 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWG"
+        },
+        {
+          "id": "F5",
+          "texte": "Allemagne : score de risque de l'agent risque 15/100",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F6",
+          "texte": "ETF UAE (Émirats arabes unis) : +3,3 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, UAE"
+        },
+        {
+          "id": "F7",
+          "texte": "Émirats arabes unis : score de risque de l'agent risque 14/100",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F8",
+          "texte": "3 sources citées par le signal",
+          "source": "data/signaux/geopolitique.json"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "geopolitique|evenement_grave|evt-0c81dddb3429|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "evenement_grave",
+        "cle": "evt-0c81dddb3429",
+        "date": "2026-11-03",
+        "importance": "haute",
+        "titre": "Événement de gravité 4 : Intensification des frappes militaires entre la Russie et l'Ukraine"
+      },
+      "objection": "Les marchés réagissent dans le sens du signal (VIX +2,5 pts [F2]) : pas d'objection sur le fond, l'ampleur reste à suivre.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "3 sources citées par le signal",
+          "source": "data/signaux/geopolitique.json"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|alerte_comptable|BRK-B|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "alerte_comptable",
+        "cle": "BRK-B",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Berkshire Hathaway Inc. : hausse anormale des créances"
+      },
+      "objection": "Contexte de risque : palier « Vigilance » [F1, F2] : rien ne contredit ce signal dans les données suivies.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|alerte_comptable|BA|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "alerte_comptable",
+        "cle": "BA",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "The Boeing Company : bénéfice peu converti en cash"
+      },
+      "objection": "Contexte de risque : palier « Vigilance » [F1, F2] : rien ne contredit ce signal dans les données suivies.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|alerte_comptable|CEG|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "alerte_comptable",
+        "cle": "CEG",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Constellation Energy Corporation : hausse anormale des créances"
+      },
+      "objection": "Contexte de risque : palier « Vigilance » [F1, F2] : rien ne contredit ce signal dans les données suivies.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|alerte_comptable|URI|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "alerte_comptable",
+        "cle": "URI",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "United Rentals, Inc. : hausse anormale des créances"
+      },
+      "objection": "Contexte de risque : palier « Vigilance » [F1, F2] : rien ne contredit ce signal dans les données suivies.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|alerte_comptable|VST|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "alerte_comptable",
+        "cle": "VST",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Vistra Corp. : hausse anormale des créances"
+      },
+      "objection": "Contexte de risque : palier « Vigilance » [F1, F2] : rien ne contredit ce signal dans les données suivies.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|alerte_comptable|ADM|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "alerte_comptable",
+        "cle": "ADM",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Archer-Daniels-Midland Company : hausse anormale des créances"
+      },
+      "objection": "Contexte de risque : palier « Vigilance » [F1, F2] : rien ne contredit ce signal dans les données suivies.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|alerte_comptable|HIG|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "alerte_comptable",
+        "cle": "HIG",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "The Hartford Insurance Group, Inc. : hausse anormale des créances"
+      },
+      "objection": "Contexte de risque : palier « Vigilance » [F1, F2] : rien ne contredit ce signal dans les données suivies.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|alerte_comptable|EXR|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "alerte_comptable",
+        "cle": "EXR",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Extra Space Storage Inc. : hausse anormale des créances"
+      },
+      "objection": "Contexte de risque : palier « Vigilance » [F1, F2] : rien ne contredit ce signal dans les données suivies.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|alerte_comptable|CFG|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "alerte_comptable",
+        "cle": "CFG",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Citizens Financial Group, Inc. : hausse anormale des créances"
+      },
+      "objection": "Contexte de risque : palier « Vigilance » [F1, F2] : rien ne contredit ce signal dans les données suivies.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|alerte_comptable|SBAC|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "alerte_comptable",
+        "cle": "SBAC",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "SBA Communications Corporation : hausse anormale des créances"
+      },
+      "objection": "Contexte de risque : palier « Vigilance » [F1, F2] : rien ne contredit ce signal dans les données suivies.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|alerte_comptable|KEY|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "alerte_comptable",
+        "cle": "KEY",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "KeyCorp : hausse anormale des créances"
+      },
+      "objection": "Contexte de risque : palier « Vigilance » [F1, F2] : rien ne contredit ce signal dans les données suivies.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|alerte_comptable|SNA|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "alerte_comptable",
+        "cle": "SNA",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Snap-on Incorporated : hausse anormale des créances"
+      },
+      "objection": "Contexte de risque : palier « Vigilance » [F1, F2] : rien ne contredit ce signal dans les données suivies.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|alerte_comptable|L|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "alerte_comptable",
+        "cle": "L",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Loews Corporation : hausse anormale des créances"
+      },
+      "objection": "Contexte de risque : palier « Vigilance » [F1, F2] : rien ne contredit ce signal dans les données suivies.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|alerte_comptable|ESS|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "alerte_comptable",
+        "cle": "ESS",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Essex Property Trust, Inc. : hausse anormale des créances"
+      },
+      "objection": "Contexte de risque : palier « Vigilance » [F1, F2] : rien ne contredit ce signal dans les données suivies.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|alerte_comptable|DOC|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "alerte_comptable",
+        "cle": "DOC",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Healthpeak Properties, Inc. : hausse anormale des créances"
+      },
+      "objection": "Contexte de risque : palier « Vigilance » [F1, F2] : rien ne contredit ce signal dans les données suivies.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|alerte_comptable|UDR|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "alerte_comptable",
+        "cle": "UDR",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "UDR, Inc. : hausse anormale des créances"
+      },
+      "objection": "Contexte de risque : palier « Vigilance » [F1, F2] : rien ne contredit ce signal dans les données suivies.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|alerte_comptable|CPT|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "alerte_comptable",
+        "cle": "CPT",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Camden Property Trust : hausse anormale des créances"
+      },
+      "objection": "Contexte de risque : palier « Vigilance » [F1, F2] : rien ne contredit ce signal dans les données suivies.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|RNR|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "RNR",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "RenaissanceRe Holdings Ltd. entre dans les pépites candidates"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 27/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF SPY (États-Unis) : −1,7 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, SPY"
+        },
+        {
+          "id": "F5",
+          "texte": "États-Unis : score de risque de l'agent risque 27/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|alerte_comptable|ALLY|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "alerte_comptable",
+        "cle": "ALLY",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Ally Financial Inc. : hausse anormale des créances"
+      },
+      "objection": "Contexte de risque : palier « Vigilance » [F1, F2] : rien ne contredit ce signal dans les données suivies.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|alerte_comptable|CNH|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "alerte_comptable",
+        "cle": "CNH",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "CNH Industrial N.V. : hausse anormale des créances"
+      },
+      "objection": "Contexte de risque : palier « Vigilance » [F1, F2] : rien ne contredit ce signal dans les données suivies.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|alerte_comptable|ZION|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "alerte_comptable",
+        "cle": "ZION",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Zions Bancorporation, National Association : hausse anormale des créances"
+      },
+      "objection": "Contexte de risque : palier « Vigilance » [F1, F2] : rien ne contredit ce signal dans les données suivies.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|2330.TW|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "2330.TW",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Taiwan Semiconductor Manufacturing Company Limited entre dans les pépites candidates"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 32/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF EWT (Taïwan) : −10,8 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWT"
+        },
+        {
+          "id": "F5",
+          "texte": "Taïwan : score de risque de l'agent risque 32/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|8725.T|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "8725.T",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "MS&AD Insurance Group Holdings, Inc. entre dans les pépites candidates"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], momentum sur 12 mois de +69,6 % [F4], score de risque du pays de 15/100 [F6].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "Momentum sur 12 mois de +69,6 % (explication du signal)",
+          "source": "data/signaux/entreprises.json"
+        },
+        {
+          "id": "F5",
+          "texte": "ETF EWJ (Japon) : −4,4 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWJ"
+        },
+        {
+          "id": "F6",
+          "texte": "Japon : score de risque de l'agent risque 15/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|4503.T|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "4503.T",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Astellas Pharma Inc. entre dans les pépites candidates"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 15/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF EWJ (Japon) : −4,4 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWJ"
+        },
+        {
+          "id": "F5",
+          "texte": "Japon : score de risque de l'agent risque 15/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|300502.SZ|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "300502.SZ",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Eoptolink Technology Inc., Ltd. entre dans les pépites candidates"
+      },
+      "objection": "Nuance : le cours a baissé de 30,3 % sur 12 mois [F4] : le marché ne valide pas la qualité affichée.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "Momentum sur 12 mois de −30,3 % (explication du signal)",
+          "source": "data/signaux/entreprises.json"
+        },
+        {
+          "id": "F5",
+          "texte": "ETF MCHI (Chine) : +4,8 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, MCHI"
+        },
+        {
+          "id": "F6",
+          "texte": "Chine : score de risque de l'agent risque 25/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "abaisser",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|HCLTECH.NS|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "HCLTECH.NS",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "HCL Technologies Limited entre dans les pépites candidates"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 28/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF INDA (Inde) : +5,2 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, INDA"
+        },
+        {
+          "id": "F5",
+          "texte": "Inde : score de risque de l'agent risque 28/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|2345.TW|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "2345.TW",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Accton Technology Corporation entre dans les pépites candidates"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1], score de risque du pays de 32/100 [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        },
+        {
+          "id": "F4",
+          "texte": "ETF EWT (Taïwan) : −10,8 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWT"
+        },
+        {
+          "id": "F5",
+          "texte": "Taïwan : score de risque de l'agent risque 32/100",
+          "source": "agent risque (data/risque.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|NEM.AX|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "NEM.AX",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "Newmont Corporation entre dans les pépites candidates"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|BHPL.XC|2026-11-03",
+      "revu_le": "2026-11-06T17:13:50Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "BHPL.XC",
+        "date": "2026-11-03",
+        "importance": "moyenne",
+        "titre": "BHP Group Limited entre dans les pépites candidates"
+      },
+      "objection": "Pas de contradiction dans l'environnement de risque : palier « Vigilance » [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palier de risque mondial « Vigilance » (score de stress 67/100)",
+          "source": "agent risque (data/risque.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "VIX à 23,7 (percentile 82 sur 10 ans), +2,5 pts depuis la veille du signal (02/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX"
+        },
+        {
+          "id": "F3",
+          "texte": "Écart high yield américain à 3,48 pt, +0,33 pt sur 20 séances",
+          "source": "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "methode": "règles",
+      "confiance": "moyen"
+    }
+  ]
+}
