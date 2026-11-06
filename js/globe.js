@@ -399,6 +399,9 @@ export class Globe {
         const arc = {
           de, vers, montant, devise: f.devise ?? 'USD', periode: f.periode, sens,
           variation: f.variation_12m_pct ?? null, mesure: f.mesure, declarant: this.parCode.get(f.declarant) ?? null,
+          // Contrôles croisés de l'agent flux : état, sources comparées, forte variation à vérifier
+          controle: f.controle ?? null, ecart: f.ecart_max_pct ?? null, raisons: f.raisons ?? [], sources: f.sources ?? [],
+          aVerifier: Boolean(f.a_verifier), variationConfirmee: f.variation_confirmee ?? null,
           // Lisibilité : sans sélection, les plus gros flux mondiaux ; un pays touché, ses principaux partenaires
           mondial: f.mondial !== false, topDe: f.top_de !== false, topVers: f.top_vers !== false,
           courbe, tube, zoneToucher,
@@ -461,7 +464,8 @@ export class Globe {
   #afficherBulleFlux(arc, x, y) {
     this.#masquerBulleFlux();
     const texte = this.formaterFlux(arc);
-    const lignes = (Array.isArray(texte) ? texte : [texte]).map((l, i) => el('span', { class: i ? 'bulle-flux-detail' : 'bulle-flux-titre' }, l));
+    const lignes = (Array.isArray(texte) ? texte : [texte]).filter(Boolean).map((l, i) =>
+      el('span', { class: l.classe ?? (i ? 'bulle-flux-detail' : 'bulle-flux-titre') }, typeof l === 'string' ? l : l.texte));
     this.bulleFlux = el('div', { class: `bulle-flux bulle-flux--${arc.sens}`, role: 'status' }, ...lignes);
     this.calque.append(this.bulleFlux);
     const largeur = this.bulleFlux.offsetWidth;

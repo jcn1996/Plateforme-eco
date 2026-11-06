@@ -15,7 +15,7 @@
    Changer VERSION vide les anciens caches chez tous les utilisateurs.
    ========================================================================== */
 
-const VERSION = 'salle-controle-v29';
+const VERSION = 'salle-controle-v30';
 
 const FICHIERS_APPLI = [
   './',

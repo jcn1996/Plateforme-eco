@@ -11,7 +11,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from agents.commun.sortie import ecrire_json, lire_json
-from agents.flux import agent
+from agents.flux import agent, controles
 
 DATE_TEST = "2026-08-20"
 MAINTENANT = datetime(2026, 8, 20, 12, tzinfo=timezone.utc)
@@ -44,25 +44,85 @@ class TestCalcul(unittest.TestCase):
     def test_exportations_puis_miroir(self):
         series = {
             ("X", "FR", "DE"): {"2025-07": 8e9, "2026-07": 10e9},   # exportations de la France
-            ("M", "DE", "FR"): {"2025-07": 9e9, "2026-07": 11e9},   # miroir, même mois : ignoré
-            ("M", "US", "TW"): {"2025-07": 20e9, "2026-07": 19e9},  # Taïwan ne déclare pas : miroir américain
-            ("X", "US", "MX"): {"2025-06": 30e9, "2026-06": 30e9},
-            ("M", "MX", "US"): {"2025-07": 25e9, "2026-07": 26e9},  # miroir plus récent : retenu
+            ("M", "DE", "FR"): {"2025-07": 9e9, "2026-07": 10.5e9},  # miroir, même mois : comparé (écart 5 %)
+            ("M", "JP", "TW"): {"2025-07": 20e9, "2026-07": 19e9},  # Taïwan ne déclare pas : miroir japonais
+            ("X", "KR", "MX"): {"2025-06": 30e9, "2026-06": 30e9},
+            ("M", "MX", "KR"): {"2025-07": 25e9, "2026-07": 26e9},  # miroir plus récent : retenu
         }
-        flux = {(f["de"], f["vers"]): f for f in agent.calculer_flux(series, ["FR", "DE", "US", "TW", "MX"], 5)}
+        flux = {(f["de"], f["vers"]): f for f in agent.calculer_flux(series, ["FR", "DE", "JP", "TW", "MX", "KR"])}
         fr = flux[("FR", "DE")]
         self.assertEqual((fr["montant_md"], fr["periode"], fr["mesure"], fr["declarant"]), (10.0, "2026-07", "exportations", "FR"))
         self.assertEqual((fr["variation_12m_pct"], fr["tendance"]), (25.0, "hausse"))
-        tw = flux[("TW", "US")]
-        self.assertEqual((tw["mesure"], tw["declarant"], tw["variation_12m_pct"], tw["tendance"]), ("importations", "US", -5.0, "baisse"))
-        us = flux[("US", "MX")]
-        self.assertEqual((us["periode"], us["mesure"], us["tendance"]), ("2026-07", "importations", "stable"))
+        self.assertEqual((fr["controle"], fr["ecart_max_pct"]), ("concordantes", 5.0))
+        self.assertEqual([s["retenue"] for s in fr["sources"]], [True, False])
+        tw = flux[("TW", "JP")]
+        self.assertEqual((tw["mesure"], tw["declarant"], tw["variation_12m_pct"], tw["tendance"]), ("importations", "JP", -5.0, "baisse"))
+        self.assertEqual(tw["controle"], "une seule source")
+        kr = flux[("KR", "MX")]
+        self.assertEqual((kr["periode"], kr["mesure"], kr["tendance"]), ("2026-07", "importations", "stable"))
         self.assertNotIn(("DE", "FR"), flux)  # aucune donnée dans ce sens
 
     def test_variation_inconnue(self):
-        f = agent.calculer_flux({("X", "FR", "DE"): {"2026-07": 1e9}}, ["FR", "DE"], 5)[0]
+        f = agent.calculer_flux({("X", "FR", "DE"): {"2026-07": 1e9}}, ["FR", "DE"])[0]
         self.assertIsNone(f["variation_12m_pct"])
         self.assertEqual(f["tendance"], "inconnue")
+        self.assertFalse(f["a_verifier"])
+
+
+class TestControles(unittest.TestCase):
+    SERIES = {
+        ("X", "MX", "US"): {"2025-07": 46.75e9, "2026-07": 69.75e9},   # déclaration du Mexique
+        ("M", "US", "MX"): {"2025-07": 45.37e9, "2026-07": 60.55e9},   # déclaration des États-Unis (FMI)
+    }
+
+    def test_etats_unis_sans_census(self):
+        """Sans clé Census : la déclaration des États-Unis relayée par le FMI est la source officielle retenue."""
+        f = agent.calculer_flux(self.SERIES, ["MX", "US"])[0]
+        self.assertEqual((f["montant_md"], f["declarant"], f["source"]), (60.55, "US", agent.SOURCE_FMI))
+        self.assertEqual(f["controle"], "sources divergentes")  # 69,75 contre 60,55 : 15,2 %
+        self.assertEqual(f["ecart_max_pct"], 15.2)
+        self.assertEqual(f["variation_12m_pct"], 33.5)
+        self.assertFalse(f["a_verifier"])
+
+    def test_census_retenu(self):
+        census = {("M", "US", "MX"): {"2025-07": 45.7e9, "2026-07": 60.9e9}}
+        f = agent.calculer_flux(self.SERIES, ["MX", "US"], census=census)[0]
+        self.assertEqual((f["montant_md"], f["source"], f["declarant"]), (60.9, agent.SOURCE_CENSUS, "US"))
+        # La déclaration américaine du FMI (même origine que le Census) n'est pas comptée comme seconde source
+        self.assertEqual([s["nom"] for s in f["sources"]], [agent.SOURCE_CENSUS, agent.SOURCE_FMI])
+        self.assertEqual(f["sources"][1]["declarant"], "MX")
+
+    def test_forte_variation(self):
+        series = {("X", "VN", "JP"): {"2025-07": 10e9, "2026-07": 15e9},   # +50 %
+                  ("M", "JP", "VN"): {"2025-07": 10e9, "2026-07": 14.5e9}}  # +45 % : confirme
+        f = agent.calculer_flux(series, ["VN", "JP"])[0]
+        self.assertEqual((f["a_verifier"], f["variation_confirmee"]), (False, True))
+        series[("M", "JP", "VN")] = {"2025-07": 14e9, "2026-07": 14.5e9}   # +3,6 % : ne confirme pas
+        f = agent.calculer_flux(series, ["VN", "JP"])[0]
+        self.assertEqual((f["a_verifier"], f["variation_confirmee"]), (True, False))
+        del series[("M", "JP", "VN")]                                        # une seule source
+        self.assertTrue(agent.calculer_flux(series, ["VN", "JP"])[0]["a_verifier"])
+
+    def test_somme_et_total(self):
+        series = {("X", "FR", "DE"): {"2026-07": 6e9}, ("X", "FR", "IT"): {"2026-07": 5e9},
+                  ("X", "FR", controles.MONDE): {"2026-07": 10e9}}
+        totaux = controles.controler_totaux(series, ["FR", "DE", "IT"])
+        self.assertEqual(totaux[0]["statut"], "somme supérieure au total")
+        self.assertEqual((totaux[0]["somme_partenaires_md"], totaux[0]["total_md"]), (11.0, 10.0))
+        flux = agent.calculer_flux(series, ["FR", "DE", "IT"], totaux=totaux)
+        self.assertTrue(all(f["controle"] == "sources divergentes" for f in flux))
+        self.assertIn("supérieures au total", flux[0]["raisons"][0])
+        series[("X", "FR", controles.MONDE)] = {"2026-07": 50e9}
+        self.assertEqual(controles.controler_totaux(series, ["FR", "DE", "IT"])[0]["statut"], "ok")
+
+    def test_total_banque_mondiale(self):
+        mois = [f"2025-{m:02d}" for m in range(1, 13)]
+        series = {("X", "TW", "JP"): {m: 1e9 for m in mois}}  # pas de total FMI
+        self.assertEqual(controles.controler_totaux(series, ["TW", "JP"])[0]["statut"], "total indisponible")
+        t = controles.controler_totaux(series, ["TW", "JP"], {"TW": {"2025": 10e9}})[0]
+        self.assertEqual((t["statut"], t["somme_partenaires_md"], t["source_total"]), ("somme supérieure au total", 12.0,
+                                                                                         "Banque mondiale (total annuel)"))
+
 
     def test_selection(self):
         codes = ["A", "B", "C", "D", "E"]
@@ -111,12 +171,23 @@ class TestAgent(Base):
             self.assertLessEqual(sum(x["top_de"] for x in flux if x["de"] == c), agent.CONFIG["partenaires_par_pays"])
         self.assertTrue(any(x["de"] == "TW" for x in flux))
         self.assertTrue(all(x["tendance"] in ("hausse", "baisse", "stable", "inconnue") for x in flux))
+        self.assertTrue(all(x["controle"] in ("concordantes", "sources divergentes", "une seule source") for x in flux))
+        # Flux des États-Unis : source officielle américaine (Census Bureau, données de test)
+        mx = next(x for x in flux if (x["de"], x["vers"]) == ("MX", "US"))
+        self.assertEqual((mx["source"], mx["declarant"], mx["controle"]), (agent.SOURCE_CENSUS, "US", "sources divergentes"))
+        self.assertLess(mx["montant_md"], 69.75)  # la déclaration mexicaine (69,75 Md$) n'est plus retenue
+        # Somme des exportations vers les partenaires suivis ≤ total, pour chaque pays déclarant
+        totaux = lire_json(self.d / "journal" / "agent-flux.json")["controles"]["totaux"]
+        self.assertTrue(all(t["statut"] == "ok" for t in totaux if t["pays"] != "TW"), totaux)
 
         j = lire_json(self.d / "journal" / "agent-flux.json")
         s = j["meta"]["sante"]
-        self.assertEqual((s["agent"], s["workflow"], s["sources_ok"], s["degrade"]), ("flux", "agent-flux.yml", 1, False))
+        self.assertEqual((s["agent"], s["workflow"], s["sources_ok"], s["degrade"]), ("flux", "agent-flux.yml", 2, False))
         self.assertEqual(s["planning"]["crons"], ["23 5 * * 2"])
         self.assertEqual(s["prochaine_prevue"], "2026-08-25T05:23:00Z")  # mardi suivant
+        self.assertEqual([x["nom"] for x in s["sources"]], [agent.SOURCE_FMI, agent.SOURCE_CENSUS])
+        self.assertIn("resume", j["controles"])
+        self.assertEqual(j["donnees"][-1]["flux"], len(flux))  # résumé des contrôles journalisé
         index = lire_json(self.d / "journal" / "index.json")["donnees"]
         self.assertIn("agent-flux.json", [e["fichier"] for e in index])
 
@@ -125,18 +196,33 @@ class TestAgent(Base):
         lancer(self.d)
         self.assertEqual(lire_json(self.d / "flux.json")["meta"]["genere_le"], genere)
 
+    def test_sans_cle_census(self):
+        agent.main(["--test", "--data", str(self.d), "--date", DATE_TEST, "--census-cle", ""])
+        s = lire_json(self.d / "journal" / "agent-flux.json")["meta"]["sante"]
+        census = next(x for x in s["sources"] if x["nom"] == agent.SOURCE_CENSUS)
+        self.assertEqual(census["etat"], "non configurée")
+        self.assertFalse(s["degrade"])  # clé facultative : ni comptée, ni en échec
+        mx = next(x for x in lire_json(self.d / "flux.json")["donnees"] if (x["de"], x["vers"]) == ("MX", "US"))
+        self.assertEqual((mx["source"], mx["declarant"], mx["montant_md"]), (agent.SOURCE_FMI, "US", 60.55))
+
     def test_secours_comtrade(self):
         donnees = self.d / "donnees"
         donnees.mkdir()
-        for p in agent.DONNEES_TEST.glob("comtrade_*.json"):
-            shutil.copy(p, donnees)  # pas de réponse du FMI
+        for motif in ("comtrade_*.json", "census_*.json", "banque_mondiale.json"):
+            for p in agent.DONNEES_TEST.glob(motif):
+                shutil.copy(p, donnees)  # pas de réponse du FMI
         self.assertEqual(lancer(self.d / "data", donnees), 0)
         f = lire_json(self.d / "data" / "flux.json")
         self.assertEqual(f["meta"]["source"], agent.SOURCE_COMTRADE)
-        self.assertEqual(f["meta"]["periode_recente"], "2026-06")
+        # Comtrade : juin 2026 ; les flux des États-Unis prennent le Census Bureau, plus récent (juillet)
+        self.assertEqual({x["periode"] for x in f["donnees"] if "US" not in (x["de"], x["vers"])}, {"2026-06"})
+        self.assertEqual({x["source"] for x in f["donnees"] if "US" in (x["de"], x["vers"])}, {agent.SOURCE_CENSUS})
         s = lire_json(self.d / "data" / "journal" / "agent-flux.json")["meta"]["sante"]
-        self.assertEqual([x["etat"] for x in s["sources"]], ["échec", "secours"])
+        self.assertEqual([x["etat"] for x in s["sources"]], ["échec", "secours", "ok", "ok"])  # FMI, Comtrade, Census, Banque mondiale
         self.assertTrue(s["degrade"])
+        # Sans total « Monde » dans ces réponses Comtrade, le total annuel de la Banque mondiale sert au contrôle
+        totaux = lire_json(self.d / "data" / "journal" / "agent-flux.json")["controles"]["totaux"]
+        self.assertTrue(all(t["statut"] == "total indisponible" or t["source_total"].startswith("Banque") for t in totaux))
 
     def test_toutes_sources_en_panne(self):
         ancien = {"meta": {"fictif": False, "source": "x"}, "donnees": [{"de": "US", "vers": "CA", "montant_md": 1.0}]}
@@ -146,7 +232,7 @@ class TestAgent(Base):
         self.assertEqual(lancer(self.d / "data", vide), 0)
         self.assertEqual(lire_json(self.d / "data" / "flux.json"), ancien)  # dernier fichier conservé
         s = lire_json(self.d / "data" / "journal" / "agent-flux.json")["meta"]["sante"]
-        self.assertEqual([x["etat"] for x in s["sources"]], ["échec", "échec"])
+        self.assertEqual([x["etat"] for x in s["sources"]][:2], ["échec", "échec"])
         self.assertEqual(s["sources_ok"], 0)
 
     def test_donnees_perimees(self):

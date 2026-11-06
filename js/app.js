@@ -106,27 +106,47 @@ function majBadgesFictifs(route) {
   document.querySelectorAll('.badge-fictif').forEach((b) => { b.hidden = !fictif; });
 }
 
+/** Nom court d'une source de l'agent flux. */
+const SOURCES_FLUX = { 'FMI — International Trade in Goods (IMTS)': 'FMI', 'Census Bureau (États-Unis)': 'Census Bureau', 'UN Comtrade (secours)': 'UN Comtrade' };
+const montantFlux = (v, devise = 'USD') => `${nombre(v, v < 10 ? 2 : 1)} Md${devise === 'EUR' ? '€' : '$'}`;
+const variationFlux = (v) => (v == null ? null : `${v > 0 ? '+' : ''}${nombre(v, 1)} %`);
+
+/** Une source comparée : « Census Bureau, importations déclarées par États-Unis : 60,9 Md$ (+33,2 %) ». */
+function ligneSourceFlux(s) {
+  const pays = d.paysParCode.get(s.declarant)?.nom ?? s.declarant;
+  const variation = variationFlux(s.variation_12m_pct);
+  return `${SOURCES_FLUX[s.nom] ?? s.nom}, ${s.mesure} déclarées par ${pays} : ${montantFlux(s.montant_md)}${variation ? ` (${variation})` : ''}`;
+}
+
 /**
- * Bulle d'un arc du globe (commerce de biens) : montant, date de la donnée, variation sur 12 mois, source.
- * Renvoie une ligne par élément.
+ * Bulle d'un arc du globe (commerce de biens) : montant, date de la donnée, variation sur 12 mois,
+ * contrôles croisés et sources comparées. Renvoie une ligne par élément.
  */
 function texteFlux(f) {
   const meta = d.fluxMeta ?? {};
-  const montant = `${nombre(f.montant, f.montant < 10 ? 2 : 1)} Md${f.devise === 'EUR' ? '€' : '$'}`;
   const [annee, mois] = (f.periode ?? '').split('-').map(Number);
   const date = annee && mois
     ? new Date(Date.UTC(annee, mois - 1, 1)).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric', timeZone: 'UTC' })
     : null;
-  const variation = f.variation == null ? 'variation sur 12 mois inconnue'
-    : `${f.variation > 0 ? '+' : ''}${nombre(f.variation, 1)} % sur 12 mois`;
-  const mesure = f.mesure === 'importations' ? 'importations déclarées par le pays de destination'
-    : f.mesure === 'exportations' ? "exportations déclarées par le pays d'origine" : null;
-  return [
+  const variation = variationFlux(f.variation);
+  const lignes = [
     `${f.de.nom} → ${f.vers.nom}`,
-    `${montant}${date ? ` en ${date}` : ''} · ${variation}`,
-    `Source : ${meta.source_courte ?? meta.source ?? 'non précisée'}${mesure ? ` (${mesure})` : ''}`,
-    meta.mention ?? 'Données mensuelles, décalées de 1 à 2 mois',
+    `${montantFlux(f.montant, f.devise)}${date ? ` en ${date}` : ''} · ${variation ? `${variation} sur 12 mois` : 'variation sur 12 mois inconnue'}`,
   ];
+  if (f.controle === 'sources divergentes') {
+    lignes.push({ classe: 'bulle-flux-alerte', texte: `⚠ Sources divergentes${f.ecart != null ? ` (écart ${nombre(f.ecart, 0)} %)` : ''} : source officielle nationale retenue` });
+  }
+  if (f.aVerifier) lignes.push({ classe: 'bulle-flux-alerte', texte: '⚠ Variation à vérifier : non confirmée par une seconde source' });
+  else if (f.variationConfirmee) lignes.push('Forte variation confirmée par une seconde source');
+  const [retenue, ...autres] = f.sources ?? [];
+  if (retenue) {
+    lignes.push(`Source retenue : ${ligneSourceFlux(retenue)}`);
+    for (const s of autres) lignes.push(`Autre source : ${ligneSourceFlux(s)}`);
+  } else {
+    lignes.push(`Source : ${meta.source_courte ?? meta.source ?? 'non précisée'}`);
+  }
+  lignes.push(meta.mention ?? 'Données mensuelles, décalées de 1 à 2 mois');
+  return lignes;
 }
 
 /* ============================== Démarrage ============================== */

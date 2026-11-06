@@ -43,6 +43,10 @@ jobs:
           python -m unittest discover -s agents/commun -t .
 
       - name: Lancer l'agent flux commerciaux
+        env:
+          # Facultatif : clé gratuite du Census Bureau (api.census.gov/data/key_signup.html) pour contrôler les flux
+          # des États-Unis avec l'API « International Trade ». Sans clé, la déclaration américaine relayée par le FMI sert.
+          CENSUS_API_KEY: ${{ secrets.CENSUS_API_KEY }}
         run: python -m agents.flux
 
       - name: Commiter les données si elles ont changé

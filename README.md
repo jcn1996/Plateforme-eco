@@ -19,7 +19,7 @@ Prototype d'une application personnelle de suivi économique mondial, pensée d'
   - Sans sélection : les 40 plus gros flux mondiaux ; quand on touche un pays, seulement ses flux à lui (ses 3 premiers clients et ses 3 premiers fournisseurs).
   - Épaisseur et vitesse selon le montant mensuel.
   - Couleur selon la variation sur 12 mois : vert en hausse (≥ +5 %), cyan stable, rouge en baisse (≤ −5 %).
-  - Toucher un arc affiche une bulle, par exemple « Mexique → États-Unis · 69,8 Md$ en juillet 2026 · +49,2 % sur 12 mois · Source : FMI, International Trade in Goods », avec la mention « Données mensuelles, décalées de 1 à 2 mois ».
+  - Toucher un arc affiche une bulle : montant, mois de la donnée, variation sur 12 mois, résultat des contrôles (« sources divergentes », « à vérifier ») et sources comparées, par exemple « Mexique → États-Unis · 60,6 Md$ en juillet 2026 · +33,5 % sur 12 mois · ⚠ Sources divergentes (écart 15 %) · Source retenue : FMI, importations déclarées par États-Unis · Autre source : FMI, exportations déclarées par Mexique : 69,8 Md$ », avec la mention « Données mensuelles, décalées de 1 à 2 mois ».
   - Bouton « Flux » pour les masquer ou les afficher.
 - **Bandeau des marchés** (cours réels, différés d'environ 15 min) : Nasdaq 100, S&P 500, Or, Pétrole WTI, Bitcoin, EUR/USD, CAC 40, MSCI World (ETF URTH).
   - Chaque cotation porte une pastille « ouvert » ou « fermé ».
@@ -350,19 +350,29 @@ L'agent flux se trouve dans `agents/flux/`. Il produit `data/flux.json`, les arc
 2. **UN Comtrade** (aperçu public) en secours si le FMI ne répond pas : le mois le plus récent assez couvert, puis le même mois un an plus tôt ;
 3. sinon, `data/flux.json` est conservé tel quel et la panne apparaît dans l'écran Santé.
 
+**Série utilisée** : exportations `XG_FOB_USD` et importations `MG_CIF_USD`, fréquence mensuelle (pas de cumul), valeurs en dollars (l'attribut `SCALE` du FMI n'est qu'une indication d'affichage), une seule série par sens (pas de double comptage), plus le total « Monde » (`G001`) pour les contrôles.
+
 **Calcul**, pour chaque couple orienté A → B :
-- montant du dernier mois disponible : exportations de A vers B déclarées par A ; à défaut, ou si elles sont plus anciennes, importations de B en provenance de A déclarées par B (« miroir » ; c'est le cas de Taïwan, qui ne déclare pas au FMI) ;
+- montant du dernier mois disponible :
+  - flux des États-Unis : source officielle américaine, le **Census Bureau** (API « International Trade », secret facultatif `CENSUS_API_KEY`, clé gratuite sur api.census.gov/data/key_signup.html) ; sans clé, la déclaration des États-Unis relayée par le FMI, tirée du Census Bureau ;
+  - autres flux : exportations de A vers B déclarées par A ; à défaut, ou si elles sont plus anciennes, importations de B en provenance de A déclarées par B (« miroir » ; c'est le cas de Taïwan, qui ne déclare pas au FMI) ;
+  - un couple dont le dernier mois a plus de 3 mois de retard sur le mois le plus récent est écarté ;
 - variation sur 12 mois : même mois un an plus tôt, même déclarant ; « hausse » à partir de +5 %, « baisse » à partir de −5 % (`seuil_variation_pct`) ;
+- **contrôles croisés** (`agents/flux/controles.py`) :
+  - chaque flux est comparé aux autres déclarations du même mois (le pays partenaire ; le Census Bureau pour les États-Unis). Écart supérieur à 10 % : flux marqué « sources divergentes », la source officielle nationale est retenue ;
+  - pour chaque pays, la somme de ses exportations déclarées vers les pays suivis ne doit jamais dépasser ses exportations totales (FMI, partenaire « Monde » ; à défaut Banque mondiale, total annuel comparé à la somme des 12 mois) : sinon ses flux sont « sources divergentes » ;
+  - variation sur 12 mois au-delà de ±40 % : « à vérifier », sauf si une seconde source donne une variation de même sens, elle aussi au-delà de ±40 % ;
+  - les comparaisons ne corrigent pas l'écart CAF/FAB : appliqué ici, le facteur conventionnel du FMI (1,06) augmentait le nombre de divergences, les exportateurs déclarant souvent davantage que les importateurs ;
 - lisibilité : seuls sont gardés les 3 premiers clients (`top_de`) et fournisseurs (`top_vers`) de chaque pays et les 40 plus gros flux mondiaux (`mondial`). Ces nombres se règlent dans `agents/flux/config.json`, qui donne aussi les codes FMI (ISO 3) et Comtrade (M49) des pays suivis : un pays ajouté à `data/pays.json` doit y être ajouté.
 
-**Santé** : `data/journal/agent-flux.json`. L'agent passe « dégradé » si le FMI ne répond pas (Comtrade en secours), si le dernier mois disponible a plus de 6 mois de retard, ou si moins de 80 % des pays suivis ont des flux.
+**Santé et journal** : `data/journal/agent-flux.json`. L'agent passe « dégradé » si le FMI ne répond pas (Comtrade en secours), si le Census Bureau ou la Banque mondiale échouent, si le dernier mois disponible a plus de 6 mois de retard, si moins de 80 % des pays suivis ont des flux ou si la somme des exportations d'un pays dépasse son total. Sans clé, le Census Bureau apparaît « non configuré », sans dégrader l'agent. Le journal garde aussi les contrôles : détail de la dernière exécution (`controles` : totaux par pays, flux divergents et à vérifier avec leurs sources) et un résumé par exécution sur un an (`donnees`).
 
 **Exécution** : le workflow `.github/workflows/agent-flux.yml` tourne une fois par semaine, le mardi à 5 h 23 UTC (lancé par le planificateur ; le planning GitHub reste en secours). Les données étant mensuelles et décalées de 1 à 2 mois, c'est suffisant. Il ne lance que ses propres tests et ceux du module commun, et ne commite que si les flux ont changé.
 
 ```
 python -m agents.flux                                  # vraies sources
 python -m agents.flux --test --data /tmp/essai         # données de test (réponses réelles enregistrées), sans réseau
-python -m agents.flux.tests.capturer_donnees_test      # met à jour les données de test
+python -m agents.flux.tests.capturer_donnees_test      # met à jour les données de test (Census : vraies réponses avec CENSUS_API_KEY)
 ```
 
 ## Réveil externe (cron-job.org)
@@ -541,7 +551,7 @@ Chaque pays porte aussi :
 
 Le bloc `detail` contient `devise_3m`, `solde_courant` et `flux_etrangers`. `marches.json` donne pour chaque cotation `symbole`, `valeur`, `variation` (jour, en %), `variation_1an`, `heure` (UTC), `statut` (« ouvert » ou « fermé »), `source` et `ancienne`.
 
-Les flux commerciaux sont dans `data/flux.json` (`de`, `vers`, `montant_md` en Md$ par mois, `devise`, `periode` AAAA-MM, `variation_12m_pct`, `tendance`, `mesure`, `declarant`, `top_de`, `top_vers`, `mondial` ; `meta.source_courte` et `meta.mention` pour la bulle).
+Les flux commerciaux sont dans `data/flux.json` (`de`, `vers`, `montant_md` en Md$ par mois, `devise`, `periode` AAAA-MM, `variation_12m_pct`, `tendance`, `mesure`, `declarant`, `source`, `controle`, `ecart_max_pct`, `raisons`, `a_verifier`, `variation_confirmee`, `sources`, `top_de`, `top_vers`, `mondial` ; `meta.source_courte` et `meta.mention` pour la bulle).
 
 Chaque pays a aussi un champ `iso_num` : son code ISO numérique, qui le relie à sa forme dans `countries-110m.json`.
 Singapour, trop petit pour l'échelle 1:110m, est dessiné comme un disque.
