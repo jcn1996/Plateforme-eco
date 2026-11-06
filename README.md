@@ -221,7 +221,16 @@ L'agent mesure le stress financier mondial et par pays, et joue le rôle de **co
 - l'appli affiche le palier précédent, la date du changement et les 3 indicateurs qui pèsent le plus ;
 - score /100 par pays (marché, devise, souverain, vulnérabilité macro, géopolitique), avec sa variation sur 7 jours et un texte de deux phrases.
 
-**Contradicteur** : à chaque exécution, il lit `data/signaux/*.json`. Pour chaque signal d'importance moyenne ou forte des 7 derniers jours, il écrit une objection chiffrée et sourcée, avec un ajustement de confiance proposé (« maintenir », « abaisser », « signal fragile »), dans `data/signaux/revues.json`. Les objections sont rédigées par règles, ou par Gemini si la clé existe. Gemini a un budget d'appels propre à l'agent risque, séparé de celui de l'agent géopolitique (section `gemini` de la config). Une réponse de Gemini qui cite un chiffre absent des faits est rejetée.
+**Contradicteur** : à chaque exécution, il lit `data/signaux/*.json` et n'examine que les signaux **encore valides** : importance moyenne ou forte, moins de 7 jours, toujours présents dans les données de l'agent émetteur (pépite toujours dans la liste, alerte toujours dans la fiche, phase toujours en cours, événement toujours suivi). Les revues des autres signaux sont retirées de `data/signaux/revues.json`.
+
+Chaque objection est **propre au signal** :
+- pour une entreprise, ses risques : valorisation, dette, cours, qualité du bénéfice, devise, risque pays, sensibilité du secteur, signaux d'alerte ;
+- pour un pays, ses vulnérabilités ;
+- pour une zone, la robustesse du changement de phase.
+
+Le contexte mondial tient en une phrase au plus. Sans objection spécifique, la revue l'indique : « Pas d'objection spécifique ».
+
+L'ajustement proposé est « maintenir », « abaisser » ou « signal fragile ». Les objections sont rédigées par règles, ou par Gemini avec un budget d'appels propre à l'agent risque. Une réponse de Gemini qui cite un chiffre absent des faits est rejetée.
 
 Détails : [`agents/risque/regles.md`](agents/risque/regles.md).
 

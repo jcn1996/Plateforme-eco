@@ -60,24 +60,48 @@ d'après l'historique de l'agent. Texte de deux phrases, factuel : composante la
 
 ## Contradicteur (`data/signaux/revues.json`)
 
-Chaque signal d'importance moyenne ou forte des 7 derniers jours est revu une fois :
-- faits numérotés (F1, F2…), chacun avec sa source ; l'objection cite ses faits ;
-- ajustement proposé : « maintenir », « abaisser » ou « signal fragile ».
+**Signaux examinés** : importance moyenne ou forte, moins de 7 jours, et **toujours présents dans les données
+de l'agent émetteur** :
+- pépite : toujours dans `data/pepites.json` ;
+- alerte comptable : toujours dans la fiche de l'entreprise ;
+- changement de phase : la zone est toujours dans la phase annoncée (`data/macro.json`) ;
+- mouvement de banque centrale : toujours le dernier mouvement ;
+- événement géopolitique : toujours suivi dans `data/geopolitique.json` ; hausse de score : toujours en hausse sur 7 jours.
 
-Règles :
-- géopolitique : une seule source → « signal fragile » ; VIX en hausse de moins de 2 pts et ETF des pays
-  concernés en baisse de moins de 2 % depuis la veille du signal → « abaisser » (le marché ne confirme pas) ;
-- macro (changement de phase) : deux changements ou plus en 30 jours → « signal fragile » ; ralentissement
-  annoncé alors que le palier est « Calme » et que le high yield ne monte pas → « abaisser » ; pente de
-  l'indicateur avancé inférieure à 0,1 pt sur 3 mois → « abaisser » ;
-- entreprises (nouvelle pépite) : momentum sur 12 mois inférieur à −20 %, palier « Tension » ou « Crise »,
-  ou pays de l'entreprise à risque élevé → « abaisser » ;
-- autres : contexte de risque, « maintenir ».
+Un signal répété (même agent, type et clé) n'est revu que dans sa version la plus récente.
+Les revues des autres signaux sont **retirées** de `revues.json` à chaque exécution.
 
-Gemini (facultatif, secret `GEMINI_API_KEY`) rédige l'objection à partir des mêmes faits, avec un budget
-d'appels propre à l'agent risque (`gemini` dans `config.json`, compté dans `data/risque/etat.json`,
-séparé de celui de l'agent géopolitique). Une réponse rejetée (chiffre absent des faits, aucun fait cité,
-ajustement inconnu) est remplacée par la version par règles.
+**Objections propres au signal** (faits numérotés F1, F2…, chacun avec sa source) :
+- **entreprise** (pépite, hausse de note) : ses propres risques.
+  - Valorisation : PER ou VE/EBITDA nettement au-dessus du secteur.
+  - Dette : dette nette / EBITDA, couverture des intérêts.
+  - Cours : momentum sur 12 mois, ou repli sur 3 ou 6 mois.
+  - Bénéfice : croissance exceptionnelle difficilement reproductible, faible conversion en cash.
+  - Signaux d'alerte de la fiche, piège de valeur de la revue critique.
+  - Devise de cotation en baisse ou volatile, risque du pays.
+  - Secteur cyclique dans une zone en ralentissement.
+- **alerte comptable** : ce qui la nuance (conversion en cash, F-score, entreprise financière) ;
+- **pays** : ses vulnérabilités (dette, déficit courant, inflation, réserves, devise, écart souverain, marché) ;
+- **événement géopolitique** : non-confirmation par le marché des pays concernés, amortisseurs de ces pays,
+  source unique ;
+- **zone** (changement de phase) : alternance des phases sur 6 mois, pente faible de l'indicateur avancé,
+  votes discordants ;
+- **banque centrale** : mouvement isolé par rapport à la tendance sur 12 mois.
+
+Le contexte mondial (palier, VIX) n'est ajouté qu'en complément, en une phrase au plus.
+**Sans objection spécifique**, la revue l'indique (« Pas d'objection spécifique. »), avec l'ajustement « maintenir ».
+
+**Ajustement proposé** : nuance = 1, point sérieux = 2.
+- Total de 4 ou plus, ou signal reposant sur une seule source : « signal fragile ».
+- Total de 2 ou 3 : « abaisser ».
+- Sinon : « maintenir ».
+
+**Gemini** (facultatif, secret `GEMINI_API_KEY`) reformule les objections spécifiques à partir des mêmes faits.
+Il a un budget d'appels propre à l'agent risque (`gemini` dans `config.json`, compté dans `data/risque/etat.json`).
+Une réponse est rejetée et remplacée par la version par règles dans trois cas :
+- elle contient un chiffre absent des faits ;
+- elle ne cite aucun fait propre au signal ;
+- l'ajustement est inconnu.
 
 ## Règles de conduite
 
