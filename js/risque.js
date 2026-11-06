@@ -158,13 +158,13 @@ const AJUSTEMENTS = { maintenir: 'maintenir', abaisser: 'abaisser', 'signal frag
 
 function carteObjection(o) {
   const cles = { maintenir: 'maintenir', abaisser: 'abaisser', 'signal fragile': 'fragile' };
-  return el('article', { class: `carte risque-objection risque-objection--${cles[o.ajustement] ?? 'maintenir'}` },
+  return el('article', { class: `carte risque-objection risque-objection--${cles[o.ajustement] ?? 'maintenir'}${o.specifique === false ? ' risque-objection--aucune' : ''}` },
     el('div', { class: 'geo-meta' },
       `${AGENTS[o.signal.agent] ?? o.signal.agent} · signal du ${dateCourte(o.signal.date)} · importance ${o.signal.importance}`,
       o.methode === 'gemini' ? el('small', {}, ` · rédigée par Gemini${o.modele ? ` (${o.modele})` : ''}`) : el('small', {}, ' · règles')),
     el('h4', { class: 'geo-titre' }, o.signal.titre),
     el('div', { class: 'geo-bloc' },
-      el('div', { class: 'geo-etiquette' }, 'Objection'),
+      el('div', { class: 'geo-etiquette' }, o.specifique === false ? 'Revue' : 'Objection spécifique'),
       el('p', { class: 'geo-texte' }, o.objection)),
     el('p', { class: 'risque-ajustement' }, 'Ajustement de confiance proposé : ', el('strong', {}, AJUSTEMENTS[o.ajustement] ?? o.ajustement)),
     o.faits?.length ? el('details', { class: 'geo-sources' },
@@ -228,7 +228,7 @@ export function ecranRisque(r, { ouvrirPays } = {}) {
         badgeScore(p.score), el('small', {}, variationTexte(p.variation_7j)))))) : null,
     el('section', {},
       el('h3', { class: 'section-titre' }, 'Dernières objections du contradicteur',
-        el('small', {}, `${r.contradicteur?.revues_7j ?? 0} signal(aux) revu(s) sur 7 jours`)),
+        el('small', {}, `${r.contradicteur?.revues_7j ?? 0} signal(aux) encore valide(s), dont ${r.contradicteur?.sans_objection ?? 0} sans objection spécifique`)),
       r.objections?.length
         ? el('div', { class: 'geo-liste' }, r.objections.slice(0, 8).map(carteObjection))
         : el('p', { class: 'sante-ligne' }, 'Aucun signal récent d’importance moyenne ou forte à revoir.'),

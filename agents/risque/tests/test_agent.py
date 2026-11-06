@@ -26,19 +26,50 @@ def ecrire(chemin: Path, objet) -> None:
     chemin.write_text(json.dumps(objet, ensure_ascii=False), encoding="utf-8")
 
 
+def entreprise(ticker, pays, secteur_gics="Health Care", financier=None, **ind):
+    """Entrée de data/entreprises.json : indicateurs {cle: (valeur, affichage)}."""
+    return {"ticker": ticker, "nom": f"Société {ticker}", "pays": pays, "secteur_gics": secteur_gics, "financier": financier, "devise": "USD",
+            "fiche": f"data/entreprises/fiches/{ticker}.json",
+            "indicateurs": {k: {"valeur": v, "affichage": a, "complement": ""} for k, (v, a) in ind.items()}}
+
+
 def preparer_data(dossier: Path) -> None:
-    """data/ de test : pays.json et macro.json produits par les agents en mode test, plus
-    geopolitique.json, entreprises.json et des signaux d'autres agents écrits ici."""
+    """data/ de test : pays.json produit par l'agent pays en mode test, plus les données des agents
+    émetteurs (entreprises, pépites, macro, géopolitique) et leurs signaux, écrits ici."""
     copier_donnees_test(dossier, ("pays.json",))
-    ecrire(dossier / "geopolitique.json", {"meta": {}, "donnees": {"pays": {
-        "US": {"score": 72}, "FR": {"score": 20}, "DE": {"score": 18}, "IT": {"score": 15}, "BR": {"score": 6},
-        "TR": {"score": 55}, "JP": {"score": 12}, "MX": {"score": 30}, "ES": {"score": 10}}}})
-    ecrire(dossier / "entreprises.json", {"meta": {}, "donnees": [{"ticker": "0700.HK", "pays": "CN"}, {"ticker": "PAYX", "pays": "US"}]})
+    ecrire(dossier / "geopolitique.json", {"meta": {}, "donnees": {
+        "pays": {"US": {"score": 72, "variation_7j": 4}, "FR": {"score": 20}, "DE": {"score": 18}, "IT": {"score": 15}, "BR": {"score": 6},
+                 "TR": {"score": 55}, "JP": {"score": 12}, "MX": {"score": 30}, "ES": {"score": 10}},
+        "evenements": [{"id": "evt-1", "chronologie": []}, {"id": "theme-evt-9", "chronologie": [{"id": "evt-9"}, {"id": "evt-2"}]}]}})
+    ecrire(dossier / "entreprises.json", {"meta": {}, "donnees": [
+        entreprise("0700.HK", "CN", momentum_12m=(-33.0, "−33,0 %")),
+        entreprise("CHER", "US", per_secteur=(62.0, "+62,0 %"), dette_ebitda=(4.6, "4,6×"), momentum_12m=(12.0, "+12,0 %")),
+        entreprise("SAIN", "JP", per_secteur=(-15.0, "−15,0 %"), dette_ebitda=(0.4, "0,4×"), momentum_12m=(9.0, "+9,0 %"),
+                   conversion_cash=(105.0, "105,0 %")),
+        entreprise("INV", "SE", momentum_12m=(5.0, "+5,0 %")),
+        entreprise("BRK-B", "US", secteur_gics="Financials", financier="assurance", conversion_cash=(120.0, "120,0 %")),
+        entreprise("GONE", "US"),
+    ]})
+    for ticker, fiche in {"0700.HK": {"momentum": {"m3": -5, "m6": -12, "m12": -33}, "alertes": []},
+                          "CHER": {"momentum": {"m3": 2, "m6": 5, "m12": 12}, "alertes": []},
+                          "SAIN": {"momentum": {"m3": 1, "m6": 4, "m12": 9}, "alertes": []},
+                          "BRK-B": {"alertes": [{"titre": "Hausse anormale des créances", "texte": "créances +1 %"}]},
+                          "GONE": {"alertes": []}}.items():
+        ecrire(dossier / "entreprises" / "fiches" / f"{ticker}.json", {"meta": {}, "donnees": fiche})
+    ecrire(dossier / "pepites.json", {"meta": {}, "donnees": [{"ticker": "0700.HK"}, {"ticker": "CHER"}, {"ticker": "SAIN"}]})
+    ecrire(dossier / "macro.json", {"meta": {}, "donnees": {"cycle": {"zones": [{
+        "cle": "monde", "nom": "Monde", "phase": "Ralentissement inflationniste",
+        "historique": [["2026-04", "Surchauffe"], ["2026-05", "Ralentissement inflationniste"], ["2026-06", "Expansion sans inflation"],
+                       ["2026-07", "Ralentissement inflationniste"], ["2026-08", "Expansion sans inflation"], ["2026-09", "Ralentissement inflationniste"]],
+        "croissance": {"cli": 100.1, "cli_3m": -0.06, "votes": [-1, -1, -1], "concordants": 3},
+        "inflation": {"votes": [1, -1, 1], "concordants": 2}}]}, "banques_centrales": []}})
     ecrire(dossier / "signaux" / "geopolitique.json", {"meta": {}, "donnees": [
         {"type": "evenement_grave", "cle": "evt-1", "date": "2026-11-04", "importance": "haute",
          "titre": "Événement de gravité 4 : tensions au Moyen-Orient", "pays": ["US"], "sources": ["https://a.example/1"]},
         {"type": "evenement_grave", "cle": "evt-2", "date": "2026-11-03", "importance": "haute",
          "titre": "Événement de gravité 4 : frappes", "pays": ["FR"], "sources": ["https://a.example/2", "https://b.example/3"]},
+        {"type": "evenement_grave", "cle": "evt-3", "date": "2026-11-05", "importance": "haute",
+         "titre": "Événement de gravité 4 : plus suivi", "pays": ["US"], "sources": ["https://a.example/4", "https://b.example/5"]},
     ]})
     ecrire(dossier / "signaux" / "macro.json", {"meta": {}, "donnees": [
         {"date": "2026-11-06", "type": "changement_de_phase", "cle": "monde", "importance": "forte",
@@ -50,9 +81,22 @@ def preparer_data(dossier: Path) -> None:
     ]})
     ecrire(dossier / "signaux" / "entreprises.json", {"meta": {}, "donnees": [
         {"date": "2026-11-05", "type": "nouvelle_pepite", "cle": "0700.HK", "importance": "moyenne",
-         "titre": "Tencent entre dans la liste", "explication": "point faible : momentum 12 mois : −32,0 %."},
+         "titre": "Tencent entre dans la liste", "explication": "point faible : momentum 12 mois : −33,0 %."},
+        {"date": "2026-11-03", "type": "nouvelle_pepite", "cle": "0700.HK", "importance": "moyenne", "titre": "Tencent entre dans la liste (doublon)"},
+        {"date": "2026-11-05", "type": "nouvelle_pepite", "cle": "CHER", "importance": "moyenne", "titre": "CHER entre dans la liste"},
+        {"date": "2026-11-05", "type": "nouvelle_pepite", "cle": "SAIN", "importance": "moyenne", "titre": "SAIN entre dans la liste"},
+        {"date": "2026-11-03", "type": "nouvelle_pepite", "cle": "INV", "importance": "moyenne", "titre": "Investor AB entre dans les pépites candidates"},
+        {"date": "2026-11-03", "type": "alerte_comptable", "cle": "BRK-B", "importance": "moyenne", "titre": "Berkshire : hausse anormale des créances"},
+        {"date": "2026-11-03", "type": "alerte_comptable", "cle": "GONE", "importance": "moyenne", "titre": "Gone : hausse anormale des créances"},
         {"date": "2026-11-05", "type": "variation_de_note", "cle": "AAPL", "importance": "faible", "titre": "Note en baisse"},
-        {"date": "2026-10-01", "type": "nouvelle_pepite", "cle": "OLD", "importance": "moyenne", "titre": "Trop ancien"},
+        {"date": "2026-10-30", "type": "nouvelle_pepite", "cle": "SAIN", "importance": "moyenne", "titre": "Trop ancien (7 jours)"},
+    ]})
+    # Revues d'une exécution précédente : signal périmé (Investor AB) et ancienne version des règles
+    ecrire(dossier / "signaux" / "revues.json", {"meta": {}, "donnees": [
+        {"id": "entreprises|nouvelle_pepite|INV|2026-11-03", "revu_le": "2026-11-05T10:00:00Z", "version_regles": 2, "ajustement": "maintenir",
+         "objection": "Contexte : score de stress 67/100 et VIX 24,4.", "faits": [], "signal": {"agent": "entreprises", "date": "2026-11-03"}},
+        {"id": "geopolitique|evenement_grave|evt-2|2026-11-03", "revu_le": "2026-11-05T10:00:00Z", "ajustement": "maintenir",
+         "objection": "générique", "faits": [], "signal": {"agent": "geopolitique", "date": "2026-11-03"}},
     ]})
 
 
@@ -182,25 +226,65 @@ class TestContradicteur(BaseRisque):
     def revues(self):
         return {r["id"]: r for r in json.loads((self.data / "signaux" / "revues.json").read_text(encoding="utf-8"))["donnees"]}
 
-    def test_objections_par_regles(self):
+    def test_seuls_les_signaux_encore_valides(self):
+        r = self.lancer()
+        rv = self.revues()
+        attendus = {"geopolitique|evenement_grave|evt-1|2026-11-04", "geopolitique|evenement_grave|evt-2|2026-11-03",
+                    "macro|changement_de_phase|monde|2026-11-06", "entreprises|nouvelle_pepite|0700.HK|2026-11-05",
+                    "entreprises|nouvelle_pepite|CHER|2026-11-05", "entreprises|nouvelle_pepite|SAIN|2026-11-05",
+                    "entreprises|alerte_comptable|BRK-B|2026-11-03"}
+        self.assertEqual(set(rv), attendus)
+        # Écartés : n'est plus pépite (et sa revue est purgée), alerte disparue, phase changée, événement plus suivi,
+        # doublon plus ancien, plus de 7 jours, importance faible
+        ec = r["rapport"]["ecartes"]
+        self.assertEqual(ec["entreprises|nouvelle_pepite|INV|2026-11-03"], "n'est plus dans la liste des pépites")
+        self.assertEqual(ec["entreprises|alerte_comptable|GONE|2026-11-03"], "alerte absente de la fiche actuelle")
+        self.assertIn("phase actuelle", ec["macro|changement_de_phase|monde|2026-11-05"])
+        self.assertIn("plus suivi", ec["geopolitique|evenement_grave|evt-3|2026-11-05"])
+        self.assertEqual(ec["entreprises|nouvelle_pepite|0700.HK|2026-11-03"], "remplacé par un signal plus récent")
+        self.assertIn("plus de 7 jours", ec["entreprises|nouvelle_pepite|SAIN|2026-10-30"])
+        # La revue générique d'une ancienne version des règles est refaite
+        self.assertNotEqual(rv["geopolitique|evenement_grave|evt-2|2026-11-03"]["objection"], "générique")
+        # Une revue n'est pas refaite à l'exécution suivante ; un signal devenu invalide est purgé
+        r2 = self.lancer(mode="horaire", maintenant=MAINTENANT.replace(hour=23, minute=17))
+        self.assertEqual(r2["revues"], [])
+        pep = json.loads((self.data / "pepites.json").read_text(encoding="utf-8"))
+        pep["donnees"] = [x for x in pep["donnees"] if x["ticker"] != "CHER"]
+        ecrire(self.data / "pepites.json", pep)
+        self.lancer(mode="horaire", maintenant=MAINTENANT.replace(hour=23, minute=40))
+        self.assertNotIn("entreprises|nouvelle_pepite|CHER|2026-11-05", self.revues())
+
+    def test_objections_specifiques(self):
         self.lancer()
         rv = self.revues()
-        # Seuls les signaux d'importance moyenne ou forte, des 7 derniers jours
-        self.assertNotIn("entreprises|variation_de_note|AAPL|2026-11-05", rv)
-        self.assertNotIn("entreprises|nouvelle_pepite|OLD|2026-10-01", rv)
+        cher = rv["entreprises|nouvelle_pepite|CHER|2026-11-05"]
+        self.assertIn("dette nette de 4,6×", cher["objection"])
+        self.assertIn("valorisation supérieure de 62 % à la médiane du secteur", cher["objection"])
+        self.assertEqual(cher["ajustement"], "signal fragile")
+        self.assertTrue(cher["specifique"])
+        self.assertEqual(rv["entreprises|nouvelle_pepite|0700.HK|2026-11-05"]["ajustement"], "abaisser")  # cours −33 % sur 12 mois
+        self.assertIn("−33,0 %", rv["entreprises|nouvelle_pepite|0700.HK|2026-11-05"]["objection"])
+        # Aucune faiblesse propre à l'entreprise : pas d'objection générique
+        sain = rv["entreprises|nouvelle_pepite|SAIN|2026-11-05"]
+        self.assertEqual((sain["objection"], sain["ajustement"], sain["specifique"]), (K.PAS_D_OBJECTION, "maintenir", False))
+        brk = rv["entreprises|alerte_comptable|BRK-B|2026-11-03"]
+        self.assertIn("entreprise financière (assurance)", brk["objection"])
         self.assertEqual(rv["geopolitique|evenement_grave|evt-1|2026-11-04"]["ajustement"], "signal fragile")  # une seule source
-        self.assertEqual(rv["macro|changement_de_phase|monde|2026-11-06"]["ajustement"], "signal fragile")  # alternance
-        self.assertEqual(rv["entreprises|nouvelle_pepite|0700.HK|2026-11-05"]["ajustement"], "abaisser")  # momentum −32 %
+        monde = rv["macro|changement_de_phase|monde|2026-11-06"]
+        self.assertIn("changements de phase en 6 mois", monde["objection"])
+        self.assertIn("2 sources sur 3", monde["objection"])
         for r in rv.values():
             self.assertIn(r["ajustement"], K.AJUSTEMENTS)
             self.assertEqual(r["methode"], "règles")
-            self.assertTrue(r["faits"] and all(x["source"] for x in r["faits"]))
-            self.assertRegex(r["objection"], r"\[F\d")  # objection sourcée
-        # Une revue n'est pas refaite à l'exécution suivante
-        r2 = self.lancer(mode="horaire", maintenant=MAINTENANT.replace(hour=23, minute=17))
-        self.assertEqual(r2["revues"], [])
+            # Contexte mondial : une phrase au plus, jamais seul
+            self.assertLessEqual(r["objection"].count("Contexte"), 1)
+            self.assertNotRegex(r["objection"].split("Contexte")[0], r"score de stress|VIX|palier")
+            if r["specifique"]:
+                self.assertTrue(all(x["source"] for x in r["faits"]))
+                self.assertRegex(r["objection"], r"\[F\d")  # objection sourcée
         d = json.loads((self.data / "risque.json").read_text(encoding="utf-8"))["donnees"]
-        self.assertTrue(d["objections"])
+        self.assertEqual(d["contradicteur"]["revues_7j"], len(rv))
+        self.assertEqual(d["contradicteur"]["sans_objection"], sum(1 for r in rv.values() if not r["specifique"]))
 
     def test_gemini_valide_et_rejet(self):
         appels = []
@@ -221,6 +305,7 @@ class TestContradicteur(BaseRisque):
             blocs = j.loads(consigne.split("\n\n")[-1])
             revues = []
             for b in blocs:
+                self.assertNotEqual(b["titre"], "SAIN entre dans la liste")  # sans objection spécifique : pas envoyé à Gemini
                 if b["agent"] == "entreprises":  # chiffre inventé : rejeté
                     revues.append({"id": b["id"], "objection": "Baisse de 57 % [F1].", "faits": ["F1"], "ajustement": "abaisser"})
                 else:
@@ -238,6 +323,7 @@ class TestContradicteur(BaseRisque):
         rv = self.revues()
         self.assertEqual(rv["macro|changement_de_phase|monde|2026-11-06"]["methode"], "gemini")
         self.assertEqual(rv["entreprises|nouvelle_pepite|0700.HK|2026-11-05"]["methode"], "règles")
+        self.assertEqual(rv["entreprises|nouvelle_pepite|SAIN|2026-11-05"]["objection"], K.PAS_D_OBJECTION)
         self.assertTrue(any("chiffres absents" in x for x in r["rapport"]["rejets"]))
         # Budget propre à l'agent risque : compteur dans data/risque/etat.json
         etat = json.loads((self.data / "risque" / "etat.json").read_text(encoding="utf-8"))

@@ -10,7 +10,8 @@ Agent risque : stress financier mondial et par pays, et contradicteur des signau
    « Tension », « Crise »), deux signaux concordants minimum pour en changer (mondial.py) ;
 3. score de risque /100 par pays et variation sur 7 jours (pays_risque.py) ;
 4. signaux pour le chef d'orchestre (data/signaux/risque.json) ;
-5. contradicteur : objections aux signaux des autres agents (data/signaux/revues.json, contradicteur.py) ;
+5. contradicteur : objections propres à chaque signal encore valide des autres agents
+   (data/signaux/revues.json, purgé des signaux périmés ; contradicteur.py) ;
 6. écrit data/risque.json, data/historique/risque/AAAA-MM-JJ.json, le journal
    data/journal/agent-risque.json (santé) et, en mode « complet » (22 h 45 UTC), le récapitulatif
    data/recap/risque-AAAA-MM-JJ.md.
@@ -289,7 +290,7 @@ def recap_markdown(jour: str, donnees: dict, sig: list, revues: list, etats: dic
         v = s["variation_7j"]
         l.append(f"| {s['nom']} | {s['score'] if s['score'] is not None else 'n. d.'} | {'n. d.' if v is None else C.fr(v, 1, True)} |")
     l += ["", "## Signaux", ""] + ([f"- [{s['importance']}] {s['titre']}" for s in sig] or ["- aucun"])
-    l += ["", "## Objections du contradicteur (du jour)", ""]
+    l += ["", "## Objections du contradicteur (signaux encore valides)", ""]
     for r in revues:
         l.append(f"- {r['signal']['agent']} · {r['signal']['titre']} → **{r['ajustement']}** ({r['methode']}) : {r['objection']}")
     if not revues:
@@ -378,18 +379,27 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "hor
     ecrire_json(fichier_signaux, enveloppe(tous, "agent-risque", fictif=False, version_agent=VERSION_AGENT,
                                            description="Signaux candidats pour le chef d'orchestre (180 derniers jours)"))
 
-    # Contradicteur
+    # Contradicteur : seulement les signaux encore valides, objections propres à chaque signal
     signaux_autres = K.lire_signaux(data / "signaux", config, aujourdhui)
-    entreprises = {e["ticker"]: e.get("pays") for e in ((lire_json(data / "entreprises.json") or {}).get("donnees") or []) if isinstance(e, dict) and e.get("ticker")}
+    sources_agents = K.Sources(data)
+    macro = sources_agents.macro()
+    zones = {z.get("cle"): z for z in ((macro or {}).get("cycle") or {}).get("zones", [])}
+    zone_par_pays = json.loads((RACINE / "agents" / "macro" / "config.json").read_text(encoding="utf-8")).get("zone_par_pays", {})
+    phase_zone = {c: (zones[z].get("nom") or z, zones[z].get("phase")) for c, z in zone_par_pays.items() if z in zones and zones[z].get("phase")}
+    if zones.get("monde", {}).get("phase"):  # pays sans zone propre : zone « Monde »
+        phase_zone["*"] = (zones["monde"].get("nom") or "Monde", zones["monde"]["phase"])
+    pep = (lire_json(data / "pepites.json") or {}).get("donnees") or []
+    revues_critiques = {c.get("ticker"): c.get("revue_critique") for c in pep if isinstance(c, dict) and c.get("revue_critique")}
     chemin_revues = data / "signaux" / "revues.json"
     revues_existantes = (lire_json(chemin_revues) or {}).get("donnees") or []
     mondial_ctx = {"score": score, "palier": etat_palier["actuel"]}
     ctx_k = {**ctx, "aujourdhui": aujourdhui, "maintenant_iso": iso(maintenant), "mondial": mondial_ctx, "indicateurs": inds,
-             "pays_scores": scores_pays, "signaux": signaux_autres, "entreprises_pays": entreprises}
+             "pays_scores": scores_pays, "signaux": signaux_autres, "sources": sources_agents,
+             "entreprises": sources_agents.entreprises(), "macro": macro, "phase_zone": phase_zone,
+             "revues_critiques": revues_critiques}
     cle = cle_gemini if cle_gemini is not None else os.environ.get("GEMINI_API_KEY", "")
-    nouvelles, rapport = K.revoir(signaux_autres, revues_existantes, ctx_k, config, etat, cle, poster, horloge, dormir)
-    lim_r = (maintenant.date() - timedelta(days=config["contradicteur"]["garde_jours"])).isoformat()
-    revues = sorted((r for r in revues_existantes + nouvelles if (r["revu_le"] or "")[:10] >= lim_r), key=lambda r: r["revu_le"], reverse=True)
+    revues, nouvelles, rapport = K.revoir(signaux_autres, revues_existantes, ctx_k, config, etat, cle, poster, horloge, dormir)
+    revues = sorted(revues, key=lambda r: (r["signal"].get("date") or "", r["revu_le"]), reverse=True)
     ecrire_json(chemin_revues, enveloppe(revues, "agent-risque", fictif=False, version_agent=VERSION_AGENT,
                                          description="Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"))
 
@@ -413,7 +423,7 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "hor
         "correlations": corr,
         "pays": pays_publics,
         "objections": revues[:12],
-        "contradicteur": {"revues_7j": sum(1 for r in revues if r["revu_le"][:10] >= (maintenant.date() - timedelta(days=7)).isoformat()),
+        "contradicteur": {"revues_7j": len(revues), "sans_objection": sum(1 for r in revues if not r.get("specifique")),
                           "par_ajustement": {a: sum(1 for r in revues[:50] if r["ajustement"] == a) for a in K.AJUSTEMENTS},
                           "mode": "gemini" if any(r["methode"] == "gemini" for r in nouvelles) else "règles"},
         "methode": ("Score mondial /100 : moyenne pondérée des percentiles sur 10 ans de la volatilité (VIX, VSTOXX, MOVE), des écarts de crédit "
@@ -439,14 +449,14 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "hor
         (data / "recap").mkdir(parents=True, exist_ok=True)
         (data / "recap" / f"risque-{aujourdhui}.md").write_text(
             recap_markdown(aujourdhui, donnees, [x for x in tous if x["date"] == aujourdhui],
-                           [r for r in revues if r["revu_le"][:10] == aujourdhui], etats, config), encoding="utf-8")
+                           revues, etats, config), encoding="utf-8")
 
     # Journal et santé
     chemin_journal = data / "journal" / "agent-risque.json"
     j = lire_json(chemin_journal) or {"meta": {}, "donnees": []}
     entree = {"genere_le": iso(maintenant), "mode": mode, "recap": recap, "score": score, "palier": etat_palier["actuel"],
               "palier_brut": brut, "indicateurs_disponibles": len(actifs), "signaux": [x["titre"] for x in sig],
-              "revues": len(nouvelles), "contradicteur": {k: rapport.get(k) for k in ("appels", "reussites", "quota_atteint", "candidats")}
+              "revues": len(nouvelles), "contradicteur": {k: rapport.get(k) for k in ("appels", "reussites", "quota_atteint", "candidats", "valides", "retirees")}
               | {"rejets": rapport["rejets"][:10], "erreurs": [e[:200] for e in rapport["erreurs"]][:5]},
               "etat_des_sources": {v["nom"]: v["etat"] for v in etats.values()}}
     j["donnees"] = (j.get("donnees", []) + [entree])[-200:]
