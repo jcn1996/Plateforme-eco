@@ -32,8 +32,8 @@ Prototype d'une application personnelle de suivi économique mondial, pensée d'
   - Toucher une cotation affiche son cours, sa variation du jour, sa variation sur 1 an, l'heure du cours et la source.
 - **Graphiques interactifs TradingView** (widgets gratuits et officiels, sans compte ni clé) :
   - fiche entreprise : graphique avancé sous les indicateurs clés (bougies, période de 1 jour à 5 ans, moyennes mobiles 50 et 200 jours, volume) ;
-  - bandeau des marchés : la bulle d'une cotation propose « Voir le graphique » (l'indice pendant les heures de marché, son contrat à terme en dehors) ;
-  - fiche pays : graphique de l'ETF du pays (le même que celui de l'agent pays) ;
+  - bandeau des marchés : la bulle d'une cotation propose « Voir le graphique ». Pour les indices, même ordre de tentative que les fiches pays (`INDICES_BANDEAU`) : CAC 40 = EURONEXT:PX1 ; S&P 500 et Nasdaq 100 = CFD OANDA (les symboles officiels et TVC sont refusés par le widget gratuit). Les autres cotations affichent l'actif pendant les heures de marché, son contrat à terme en dehors ;
+  - fiche pays : graphique de l'**indice national de référence** (CAC 40, Nikkei 225, Ibovespa…). Ordre de tentative, vérifié pays par pays sur téléphone simulé et enregistré dans `INDICES_PAYS` (`js/symboles-tradingview.js`) : a) l'indice officiel sur sa place (EURONEXT:PX1, XETR:DAX, BMFBOVESPA:IBOV…) ; b) la version TradingView de l'indice (TVC:, INDEX: — INDEX:NKY pour le Nikkei) ; c) un CFD équivalent accepté (S&P 500, FTSE 100, ASX 200), avec la mention « graphique : équivalent CFD de l'indice » ; d) un graphique simplifié tracé avec l'historique Yahoo de l'indice (KOSPI, Nifty 50, JSE Top 40, BIST 100). Si Yahoo ne publie pas non plus d'historique utilisable (TASI, ADX, SET, VN-Index, Merval en ce moment), l'ETF pays est affiché avec la mention « indice indisponible, ETF affiché » ;
   - écrans Pépites et « Mes analyses » : mini-graphique sur 12 mois dans chaque fiche.
 
   Réglages : thème sombre, français, fuseau Europe/Paris, hauteur adaptée au téléphone. Le script de TradingView n'est chargé qu'à l'affichage d'un graphique, jamais au démarrage, et le service worker ne le met pas en cache.
@@ -45,7 +45,9 @@ Prototype d'une application personnelle de suivi économique mondial, pensée d'
   - inflation, avec la cible de la banque centrale ;
   - taux réel (taux directeur de la BIS moins l'inflation), avec la direction de la banque centrale ;
   - valorisation relative (PER de l'ETF pays comparé à la médiane des pays suivis) ;
-  - momentum boursier sur 12 mois (ETF pays).
+  - momentum boursier sur 12 mois : indice national en monnaie locale, avec à côté la performance convertie en euros et l'effet de change ; à défaut d'historique de l'indice chez Yahoo, l'ETF pays (« indice indisponible, ETF affiché »).
+
+  L'indice de référence de chaque pays et son symbole Yahoo se modifient dans [`config/indices_pays.json`](config/indices_pays.json). La valorisation relative reste calculée avec le PER de l'ETF pays (le PER des indices n'est pas disponible gratuitement), source indiquée sous la valeur. Les ETF pays ne sont plus affichés comme référence de la fiche pays : ils n'apparaissent que dans le bloc « Flux d'investissement ».
 
   La devise sur 3 mois, le solde courant et les flux étrangers (flux de l'ETF pays, note /100 et tendance) sont dans la section repliable « Détail ».
   Chaque fiche pays affiche aussi :
@@ -92,7 +94,7 @@ L'agent pays se trouve dans `agents/`, en Python 3.12.
 - Il tient le journal des sources en échec dans `data/journal/agent-pays.json`.
 
 **Flux d'investissement des ETF pays** (indicateur « Flux étrangers », `agents/pays/flux_etf.py`) :
-- pour chaque pays, l'ETF pays déjà utilisé pour le momentum et la valorisation (SPY pour les États-Unis ; l'Égypte n'a plus d'ETF coté aux États-Unis depuis la liquidation de VanEck EGPT en 2024) ;
+- pour chaque pays, l'ETF pays déjà utilisé pour la valorisation (et pour le momentum quand l'indice national n'a pas d'historique) (SPY pour les États-Unis ; l'Égypte n'a plus d'ETF coté aux États-Unis depuis la liquidation de VanEck EGPT en 2024) ;
 - flux du jour = variation du nombre de parts en circulation × valeur liquidative (VL) du jour ;
 - sources : l'émetteur (page du fonds iShares et Global X ; fichier des VL quotidiennes de SSGA et VanEck), Yahoo Finance (yfinance) en secours. Quand les deux répondent pour la même date, les parts sont comparées (tolérance 2 %) : « concordant » ou « sources divergentes ». Un relevé dont parts × VL s'écarte de l'actif net publié est rejeté ;
 - historique jour par jour dans `data/historique/flux_etf/AAAA-MM-JJ.json` (date de la VL). Il n'existe pas d'historique gratuit des parts pour la plupart des ETF : l'agent l'accumule depuis sa mise en service. Seuls SSGA (SPY) et VanEck (VNM) publient un historique, qui sert à remplir les 100 derniers jours. Tant que l'historique ne remonte pas au début d'une période, ses cumuls sont « en cours de constitution » ;
@@ -532,7 +534,10 @@ Les pays ont 6 indicateurs (`croissance_pib`, `indicateur_avance`, `inflation`, 
 Un indicateur indisponible a `"valeur": null` et une `raison`.
 - `inflation` porte en plus la `cible` de la banque centrale et sa `frequence` ;
 - `taux_reel` porte le `taux_directeur` et la `direction` (« baisse », « stable » ou « hausse ») ;
-- `valorisation` porte le `per` de l'ETF et la `mediane` des pays suivis.
+- `valorisation` porte le `per` de l'ETF, la `mediane` des pays suivis et `mention_source` ;
+- `momentum` porte `base` (« indice » ou « etf »), `indice`, `symbole`, `monnaie`, `performance_eur`, `effet_change` (en points) et, pour l'ETF de secours, `mention` (« indice indisponible, ETF affiché ») et `raison_indice`.
+
+Chaque pays porte aussi `indice` (`nom`, `yahoo`, `monnaie`, `historique` : l'indice a-t-il servi au momentum du jour, sinon `raison`). Les clôtures des indices utilisables sont dans `data/cours/indices-pays.json` (graphique simplifié).
 
 Chaque pays porte aussi :
 - `confiance` (`niveau`, `score`, `raisons`) ;

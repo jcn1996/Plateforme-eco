@@ -108,19 +108,30 @@ export function complementIndicateur(cle, ind) {
   }
   if (cle === 'taux_reel') return `taux directeur ${nombre(ind.taux_directeur, 2)} % · BC : ${ind.direction}`;
   if (cle === 'valorisation') {
-    if (ind.mediane != null) return `PER ${nombre(ind.per, 1)} vs médiane ${nombre(ind.mediane, 1)}`;
+    if (ind.mediane != null) {
+      return `PER ${nombre(ind.per, 1)} vs médiane ${nombre(ind.mediane, 1)}${ind.symbole ? ` · source : ETF ${ind.symbole} (PER des indices non disponible gratuitement)` : ''}`;
+    }
     return `PER ${nombre(ind.per, 1)} vs ${nombre(ind.moyenne_10ans, 1)} (10 ans)`;
   }
   if (cle === 'indicateur_avance') return 'base 100 · au-dessus = accélération';
   if (cle === 'devise_3m' && ind.devise) return `${ind.devise} contre le dollar`;
   if (cle === 'pmi') return ind.valeur >= 50 ? 'expansion (> 50)' : 'contraction (< 50)';
-  if (cle === 'momentum') return ind.symbole ? `ETF ${ind.symbole} sur 12 mois` : 'indice sur 12 mois';
+  if (cle === 'momentum') return complementMomentum(ind);
   if (cle === 'croissance_pib') return 'sur un an';
   if (cle === 'flux_etrangers') {
     const periode = { '1m': '1 mois', '1s': '1 semaine' }[ind.periode_valeur] ?? '';
     return `ETF ${ind.symbole ?? ''} · ${periode} · % de l’encours${ind.encombrement ? ' · position possiblement encombrée' : ''}`;
   }
   return '';
+}
+
+/** Momentum 12 mois : indice national en monnaie locale et performance en euros (effet de change), ou ETF de secours. */
+function complementMomentum(ind) {
+  const enEuros = ind.performance_eur != null && ind.monnaie !== 'EUR'
+    ? ` · en euros : ${variation(ind.performance_eur, 1)} (change : ${variation(ind.effet_change, 1, ' pt')})` : '';
+  if (ind.base === 'indice') return `${ind.indice} en ${ind.monnaie ?? 'monnaie locale'}${enEuros}`;
+  if (ind.mention) return `${ind.mention} : ETF ${ind.symbole} en $${enEuros}`;
+  return ind.symbole ? `ETF ${ind.symbole} sur 12 mois` : 'indice sur 12 mois';
 }
 
 /**

@@ -28,7 +28,7 @@ Règles de choix :
 | Indicateur avancé | OCDE (CLI), seule source | — |
 | Taux directeur (taux réel) | banque centrale nationale (BCE pour la zone euro) ; BRI | séries mensuelles entre elles |
 | Solde courant | FMI et Banque mondiale, dernière année écoulée | oui (même année) |
-| Momentum 12 mois | Yahoo Finance (ETF pays) | — |
+| Momentum 12 mois | Yahoo Finance (indice national, `config/indices_pays.json` ; ETF pays si l'indice n'a pas d'historique) ; conversion en euros : Yahoo Finance (EURxxx=X) | — |
 | Devise sur 3 mois | BCE (cours de référence, valeur en dollars recalculée) ; Yahoo Finance | oui (à 7 jours près) |
 | Valorisation relative | Yahoo Finance (PER de l'ETF pays) | — |
 | Flux étrangers (flux de l'ETF pays) | émetteur de l'ETF : iShares (page du fonds), SSGA (fichier des VL de SPY), VanEck (fichier des VL de VNM), Global X (page du fonds) ; Yahoo Finance (parts et VL) en secours | parts en circulation, à la même date (tolérance 2 %) ; parts × VL contre l'actif net publié (tolérance 1,5 %) |

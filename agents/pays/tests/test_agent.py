@@ -11,7 +11,7 @@ from pathlib import Path
 
 from agents.commun.sortie import lire_json
 from agents.pays import croisement, notation, textes
-from agents.pays.agent import main, qualite, sources_sante
+from agents.pays.agent import main, performance_euros, qualite, sources_sante
 
 DONNEES = Path(__file__).resolve().parent / "donnees"
 JOUR = "2026-11-02"
@@ -139,6 +139,47 @@ class TestAgent(unittest.TestCase):
             self.assertIn(titre, recap)
         self.assertTrue(textes.ton_conforme(recap))
         self.assertFalse((self.dossier / "flux.json").exists())   # plus de flux commerciaux
+
+    def test_momentum_indice_national(self):
+        self.assertEqual(self.lancer(), 0)
+        pays = {p["code"]: p for p in lire_json(self.sortie)["donnees"]}
+        # France : CAC 40 en euros (pas d'effet de change)
+        m = pays["FR"]["indicateurs"]["momentum"]
+        self.assertEqual((m["base"], m["symbole"], m["indice"], m["monnaie"]), ("indice", "^FCHI", "CAC 40", "EUR"))
+        self.assertIn("CAC 40", m["source"])
+        self.assertAlmostEqual(m["performance_eur"], m["valeur"], places=1)
+        self.assertAlmostEqual(m["effet_change"], 0, places=1)
+        self.assertNotIn("mention", m)
+        self.assertEqual(pays["FR"]["indice"], {"nom": "CAC 40", "yahoo": "^FCHI", "monnaie": "EUR", "historique": True})
+        # Japon : Nikkei 225 en yens, performance convertie en euros avec EURJPY=X
+        m = pays["JP"]["indicateurs"]["momentum"]
+        self.assertEqual((m["base"], m["symbole"], m["monnaie"]), ("indice", "^N225", "JPY"))
+        self.assertAlmostEqual(m["effet_change"], m["performance_eur"] - m["valeur"], places=1)
+        self.assertIn("EURJPY=X", m["source_change"])
+        # Vietnam (pas d'historique), Argentine (cours arrêtés), Colombie (inconnu de Yahoo) : ETF en secours
+        for code, etf, raison in (("VN", "VNM", "aucun cours"), ("AR", "ARGT", "cours arrêtés"), ("CO", "COLO", "non publié")):
+            m = pays[code]["indicateurs"]["momentum"]
+            self.assertEqual((m["base"], m["symbole"], m["monnaie"]), ("etf", etf, "USD"), code)
+            self.assertEqual(m["mention"], "indice indisponible, ETF affiché")
+            self.assertIn(raison, m["raison_indice"])
+            self.assertFalse(pays[code]["indice"]["historique"])
+            self.assertIsNotNone(m["performance_eur"])                       # dollars convertis en euros
+        # Égypte : ni historique de l'EGX 30 ni ETF pays
+        self.assertIsNone(pays["EG"]["indicateurs"]["momentum"]["valeur"])
+        # Valorisation : toujours l'ETF, avec la mention de la source
+        v = pays["FR"]["indicateurs"]["valorisation"]
+        self.assertIn("ETF EWQ", v["mention_source"])
+        # Séries du graphique simple : seulement les indices utilisables
+        series = lire_json(self.dossier / "cours" / "indices-pays.json")["donnees"]
+        self.assertIn("^N225", series)
+        self.assertNotIn("^MERV", series)
+
+    def test_performance_euros(self):
+        serie = [("2025-11-01", 100.0), ("2026-11-02", 120.0)]
+        change = {"EURJPY=X": [("2025-11-01", 160.0), ("2026-11-02", 176.0)]}   # le yen perd 10 % contre l'euro
+        self.assertAlmostEqual(performance_euros(serie, "JPY", change), (120 / 176) / (100 / 160) * 100 - 100)
+        self.assertAlmostEqual(performance_euros(serie, "EUR", {}), 20.0)
+        self.assertIsNone(performance_euros(serie, "KRW", change))           # cours de change absent
 
     def test_aucun_changement_aucune_ecriture(self):
         self.lancer()
