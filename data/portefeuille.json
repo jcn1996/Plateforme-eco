@@ -1,324 +1,965 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-02T07:00:00Z",
-    "mise_a_jour_precedente": "2026-11-01T07:00:00Z",
-    "source": "fictive",
-    "producteur_futur": "agent-trader",
-    "fictif": true
+    "genere_le": "2026-11-07T22:44:02Z",
+    "source": "agent-trader",
+    "fictif": false,
+    "version_agent": "1.0",
+    "demo": true,
+    "mise_a_jour_precedente": "2026-11-02T07:00:00Z",
+    "description": "Portefeuille virtuel de l'agent trader (démo) : aucun ordre réel"
   },
   "donnees": {
     "capital_initial": 100000,
-    "valeur_actuelle": 114410,
     "devise": "EUR",
-    "date_debut": "2026-01-02",
+    "date_debut": "2026-11-07",
+    "maj": "2026-11-07T22:44:02Z",
+    "valeur_actuelle": 100000.0,
+    "liquidites": 100000.0,
+    "liquidites_pct": 100.0,
+    "investi": 0.0,
+    "gain_eur": 0.0,
+    "statut": {
+      "etat": "démarrage",
+      "texte": "24 ordre(s) en attente de l'ouverture des marchés concernés."
+    },
+    "profil": "equilibre",
+    "profil_libelle": "Équilibré",
+    "palier": "Vigilance",
+    "liquidites_min": 10,
+    "indice": {
+      "nom": "MSCI World (ETF URTH, en euros)",
+      "source": "agent marchés",
+      "reference": {
+        "date": "2026-11-07",
+        "cours_eur": 179.188728,
+        "parts": 558.0708168477989,
+        "note": "MSCI World (ETF URTH) converti en euros, base 100 000 € à la première valorisation."
+      }
+    },
     "statistiques": {
-      "performance_totale": 14.41,
-      "performance_msci_world": 2.09,
-      "sharpe": 1.19,
-      "sharpe_msci_world": 0.07,
-      "perte_max": -11.1,
-      "perte_max_msci_world": -14.6
+      "performance": {
+        "depuis_debut": 0.0,
+        "un_mois": null,
+        "trois_mois": null
+      },
+      "performance_msci_world": {
+        "depuis_debut": 0.0,
+        "un_mois": null,
+        "trois_mois": null
+      },
+      "risque": {
+        "volatilite": null,
+        "sharpe": null,
+        "perte_max": 0.0,
+        "points": 1,
+        "raison": "historique trop court (1 jour(s), 20 requis)"
+      },
+      "risque_msci_world": {
+        "volatilite": null,
+        "sharpe": null,
+        "perte_max": 0.0,
+        "points": 1,
+        "raison": "historique trop court (1 jour(s), 20 requis)"
+      },
+      "operations": {
+        "cloturees": 0,
+        "gagnantes": 0,
+        "perdantes": 0,
+        "taux_reussite": null,
+        "gain_moyen_pct": null,
+        "perte_moyenne_pct": null,
+        "achats": 0,
+        "ventes": 0,
+        "definition": "Opération clôturée : chaque vente (totale ou partielle), comparée au prix de revient frais compris."
+      },
+      "attribution": {
+        "poches": [],
+        "classes": [],
+        "familles": [],
+        "frais_eur": 0.0,
+        "ecarts_eur": 0.0,
+        "methode": "Plus-values réalisées et latentes de chaque ligne (frais compris), réparties entre les familles de signaux favorables du chef d'orchestre au moment de l'achat, au prorata de (note − 50). Approximation destinée à l'agent calibrateur."
+      }
     },
-    "allocation": {
-      "coeur": 70,
-      "satellite": 30
+    "repartition": {
+      "poches": [
+        {
+          "cle": "liquidites",
+          "libelle": "Liquidités",
+          "eur": 100000.0,
+          "pct": 100.0
+        }
+      ],
+      "classes": [
+        {
+          "cle": "liquidites",
+          "libelle": "Liquidités",
+          "eur": 100000.0,
+          "pct": 100.0
+        }
+      ],
+      "pays": [
+        {
+          "cle": "Liquidités (euros)",
+          "libelle": "Liquidités (euros)",
+          "eur": 100000.0,
+          "pct": 100.0
+        }
+      ],
+      "secteurs": [
+        {
+          "cle": "Liquidités (euros)",
+          "libelle": "Liquidités (euros)",
+          "eur": 100000.0,
+          "pct": 100.0
+        }
+      ]
     },
-    "positions": [
+    "cibles": {
+      "coeur": 64.73,
+      "satellite": 25.27,
+      "liquidites": 10
+    },
+    "positions": [],
+    "ordres_en_attente": [
       {
-        "nom": "ETF MSCI World",
-        "ticker": null,
+        "id": "o00001",
+        "sens": "achat",
+        "symbole": "5108.T",
+        "nom": "Bridgestone Corporation",
+        "poche": "satellite",
+        "motif": "entrée satellite",
+        "montant_eur": 3266.62,
+        "quantite": null,
+        "cree_le": "2026-11-07T22:44:02Z",
+        "imposee": false,
+        "texte": "Entrée satellite : Bridgestone Corporation (5108.T). Verdict « Renforcer », conviction forte, score 64/100 ; signaux favorables de 2 agents indépendants (entreprises, macro). Taille 3,3 % : conviction forte, volatilité 26 % sur 3 mois. Stop initial à −15 %.",
+        "donner_tort": [
+          "Une baisse de 15 % déclencherait le stop : la perte serait alors réalisée.",
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "La décote de valorisation peut refléter un risque que les comptes ne montrent pas (secteur en déclin, gouvernance, réglementation).",
+          "Données manquantes : Flux d'investissement, Initiés et super-investisseurs (non prises en compte, pas d'estimation)."
+        ]
+      },
+      {
+        "id": "o00002",
+        "sens": "achat",
+        "symbole": "ACGL",
+        "nom": "Arch Capital Group Ltd.",
+        "poche": "satellite",
+        "motif": "entrée satellite",
+        "montant_eur": 4016.71,
+        "quantite": null,
+        "cree_le": "2026-11-07T22:44:02Z",
+        "imposee": false,
+        "texte": "Entrée satellite : Arch Capital Group Ltd. (ACGL). Verdict « Renforcer fortement », conviction forte, score 70/100 ; signaux favorables de 2 agents indépendants (entreprises, macro). Taille 4,0 % : conviction forte, volatilité 21 % sur 3 mois. Stop initial à −15 %.",
+        "donner_tort": [
+          "Une baisse de 15 % déclencherait le stop : la perte serait alors réalisée.",
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Géopolitique (14/100) : États-Unis : Risque géopolitique 73/100, 52 événement(s) en 14 jours (agent géopolitique)",
+          "La croissance du chiffre d'affaires repose sur le dernier exercice : un ralentissement au prochain rapport annuel ferait baisser la note."
+        ]
+      },
+      {
+        "id": "o00003",
+        "sens": "achat",
+        "symbole": "ALL",
+        "nom": "The Allstate Corporation",
+        "poche": "satellite",
+        "motif": "entrée satellite",
+        "montant_eur": 3029.27,
+        "quantite": null,
+        "cree_le": "2026-11-07T22:44:02Z",
+        "imposee": false,
+        "texte": "Entrée satellite : The Allstate Corporation (ALL). Verdict « Renforcer fortement », conviction forte, score 70/100 ; signaux favorables de 2 agents indépendants (entreprises, macro). Taille 3,0 % : conviction forte, volatilité 28 % sur 3 mois. Stop initial à −15 %.",
+        "donner_tort": [
+          "Une baisse de 15 % déclencherait le stop : la perte serait alors réalisée.",
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Géopolitique (14/100) : États-Unis : Risque géopolitique 73/100, 52 événement(s) en 14 jours (agent géopolitique)",
+          "La décote de valorisation peut refléter un risque que les comptes ne montrent pas (secteur en déclin, gouvernance, réglementation)."
+        ]
+      },
+      {
+        "id": "o00004",
+        "sens": "achat",
+        "symbole": "BNO",
+        "nom": "United States Brent Oil Fund",
         "poche": "coeur",
-        "poids": 40,
-        "valeur": 45764,
-        "performance": 9.1
+        "motif": "entrée cœur",
+        "montant_eur": 1596.23,
+        "quantite": null,
+        "cree_le": "2026-11-07T22:44:02Z",
+        "imposee": false,
+        "texte": "Entrée cœur : United States Brent Oil Fund pour la ligne « Pétrole Brent » de l'allocation modèle « Équilibré » du chef d'orchestre. Cible 1,6 % (poids actuel 0,0 %). Verdict « Renforcer », conviction faible, score 61/100. Support adossé à des contrats à terme : coût de renouvellement (contango) à prévoir.",
+        "donner_tort": [
+          "Fonds adossé à des contrats à terme : quand les échéances suivantes coûtent plus cher (contango), le renouvellement des contrats retranche du rendement chaque mois, même à cours du pétrole inchangé.",
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Valorisation (24/100) : Cours corrigé de l’inflation américaine au percentile 78 de sa plage sur 10 ans (plus bas 21,44, plus haut 122,01 en valeur nominale)",
+          "Contradicteur : Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 91) : Cours +17,7 % sur 3 mois, +55,1 % sur 12 mois, au-dessus de sa moyenne 200 jours (93,34) ; valorisation tendue (24/100) : Cours corrigé de l’inflation américaine au percentile 78 de sa plage sur 10 ans (plus bas 21,44, plus haut 122,01 en valeur nominale) ; positionnement vérifié (49/100) ; hausse liée en partie au contexte géopolitique, réversible en cas de détente. Une forte hausse passée ne suffit pas à porter une conviction forte."
+        ]
       },
       {
-        "nom": "ETF S&P 500",
-        "ticker": null,
+        "id": "o00005",
+        "sens": "achat",
+        "symbole": "COLO",
+        "nom": "ETF Colombie (COLO)",
         "poche": "coeur",
-        "poids": 15,
-        "valeur": 17162,
-        "performance": 11.4
+        "motif": "entrée cœur",
+        "montant_eur": 3420.49,
+        "quantite": null,
+        "cree_le": "2026-11-07T22:44:02Z",
+        "imposee": false,
+        "texte": "Entrée cœur : ETF Colombie (COLO) pour la ligne « Colombie » de l'allocation modèle « Équilibré » du chef d'orchestre. Cible 3,4 % (poids actuel 0,0 %). Verdict « Renforcer », conviction faible, score 58/100.",
+        "donner_tort": [
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Fondamentaux (35/100) : Croissance du pib 2,2 % (53/100) ; inflation 6,3 % (41/100) ; taux réel 6,0 % (52/100)",
+          "Contradicteur : Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 95) : MSCI COLCAP +34,6 % sur 12 mois en monnaie locale (92/100) ; valorisation vérifiée (89/100). Une forte hausse passée ne suffit pas à porter une conviction forte."
+        ]
       },
       {
-        "nom": "ETF Obligations euro",
-        "ticker": null,
+        "id": "o00006",
+        "sens": "achat",
+        "symbole": "DECK",
+        "nom": "Deckers Outdoor Corporation",
+        "poche": "satellite",
+        "motif": "entrée satellite",
+        "montant_eur": 2436.11,
+        "quantite": null,
+        "cree_le": "2026-11-07T22:44:02Z",
+        "imposee": false,
+        "texte": "Entrée satellite : Deckers Outdoor Corporation (DECK). Verdict « Renforcer », conviction forte, score 67/100 ; signaux favorables de 2 agents indépendants (entreprises, macro). Taille 2,4 % : conviction forte, volatilité 35 % sur 3 mois. Stop initial à −15 %.",
+        "donner_tort": [
+          "Une baisse de 15 % déclencherait le stop : la perte serait alors réalisée.",
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Géopolitique (14/100) : États-Unis : Risque géopolitique 73/100, 52 événement(s) en 14 jours (agent géopolitique)",
+          "La décote de valorisation peut refléter un risque que les comptes ne montrent pas (secteur en déclin, gouvernance, réglementation)."
+        ]
+      },
+      {
+        "id": "o00007",
+        "sens": "achat",
+        "symbole": "DLTR",
+        "nom": "Dollar Tree, Inc.",
+        "poche": "satellite",
+        "motif": "entrée satellite",
+        "montant_eur": 1947.68,
+        "quantite": null,
+        "cree_le": "2026-11-07T22:44:02Z",
+        "imposee": false,
+        "texte": "Entrée satellite : Dollar Tree, Inc. (DLTR). Verdict « Renforcer », conviction forte, score 67/100 ; signaux favorables de 2 agents indépendants (entreprises, macro). Taille 1,9 % : conviction forte, volatilité 44 % sur 3 mois. Stop initial à −15 %.",
+        "donner_tort": [
+          "Une baisse de 15 % déclencherait le stop : la perte serait alors réalisée.",
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Géopolitique (14/100) : États-Unis : Risque géopolitique 73/100, 52 événement(s) en 14 jours (agent géopolitique)",
+          "La croissance du chiffre d'affaires repose sur le dernier exercice : un ralentissement au prochain rapport annuel ferait baisser la note."
+        ]
+      },
+      {
+        "id": "o00008",
+        "sens": "achat",
+        "symbole": "EPOL",
+        "nom": "ETF Pologne (EPOL)",
         "poche": "coeur",
-        "poids": 15,
-        "valeur": 17162,
-        "performance": 2.3
+        "motif": "entrée cœur",
+        "montant_eur": 4209.84,
+        "quantite": null,
+        "cree_le": "2026-11-07T22:44:02Z",
+        "imposee": false,
+        "texte": "Entrée cœur : ETF Pologne (EPOL) pour la ligne « Pologne » de l'allocation modèle « Équilibré » du chef d'orchestre. Cible 4,2 % (poids actuel 0,0 %). Verdict « Renforcer », conviction faible, score 63/100.",
+        "donner_tort": [
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Contradicteur : Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 92) : WIG20 +31,2 % sur 12 mois en monnaie locale (88/100) ; valorisation vérifiée (62/100). Une forte hausse passée ne suffit pas à porter une conviction forte.",
+          "Un repli du marché qui effacerait la performance des 12 derniers mois."
+        ]
       },
       {
-        "nom": "ETF Inde",
-        "ticker": null,
-        "poche": "satellite",
-        "poids": 8,
-        "valeur": 9153,
-        "performance": 14.6
+        "id": "o00009",
+        "sens": "achat",
+        "symbole": "EWD",
+        "nom": "ETF Suède (EWD)",
+        "poche": "coeur",
+        "motif": "entrée cœur",
+        "montant_eur": 3595.9,
+        "quantite": null,
+        "cree_le": "2026-11-07T22:44:02Z",
+        "imposee": false,
+        "texte": "Entrée cœur : ETF Suède (EWD) pour la ligne « Suède » de l'allocation modèle « Équilibré » du chef d'orchestre. Cible 3,6 % (poids actuel 0,0 %). Verdict « Renforcer », conviction moyenne, score 59/100.",
+        "donner_tort": [
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Dynamique des résultats (47/100) : Dynamique des résultats médiane de 53/100 sur 21 sociétés du pays (révisions des analystes, surprises, guidance)",
+          "Un retournement de la politique de la banque centrale."
+        ]
       },
       {
-        "nom": "ETF Japon",
-        "ticker": null,
-        "poche": "satellite",
-        "poids": 7,
-        "valeur": 8009,
-        "performance": 12.2
+        "id": "o00010",
+        "sens": "achat",
+        "symbole": "EWJ",
+        "nom": "ETF Japon (EWJ)",
+        "poche": "coeur",
+        "motif": "entrée cœur",
+        "montant_eur": 3157.38,
+        "quantite": null,
+        "cree_le": "2026-11-07T22:44:02Z",
+        "imposee": false,
+        "texte": "Entrée cœur : ETF Japon (EWJ) pour la ligne « Japon » de l'allocation modèle « Équilibré » du chef d'orchestre. Cible 3,2 % (poids actuel 0,0 %). Verdict « Renforcer », conviction forte, score 57/100.",
+        "donner_tort": [
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Un nouvel écart de l'inflation par rapport à la cible.",
+          "Un repli du marché qui effacerait la performance des 12 derniers mois."
+        ]
       },
       {
-        "nom": "Maison Aurèle",
-        "ticker": "MAIS",
-        "poche": "satellite",
-        "poids": 5,
-        "valeur": 5720,
-        "performance": -3.8
+        "id": "o00011",
+        "sens": "achat",
+        "symbole": "EWS",
+        "nom": "ETF Singapour (EWS)",
+        "poche": "coeur",
+        "motif": "entrée cœur",
+        "montant_eur": 3245.08,
+        "quantite": null,
+        "cree_le": "2026-11-07T22:44:02Z",
+        "imposee": false,
+        "texte": "Entrée cœur : ETF Singapour (EWS) pour la ligne « Singapour » de l'allocation modèle « Équilibré » du chef d'orchestre. Cible 3,2 % (poids actuel 0,0 %). Verdict « Renforcer », conviction moyenne, score 57/100.",
+        "donner_tort": [
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Valorisation (26/100) : PER de l'ETF EWS 18,2 contre une médiane de 14,0 pour les pays suivis (30/100)",
+          "Un nouvel écart de l'inflation par rapport à la cible."
+        ]
       },
       {
-        "nom": "Hanbit Semicon",
-        "ticker": "HANB",
-        "poche": "satellite",
-        "poids": 5,
-        "valeur": 5720,
-        "performance": 27.5
+        "id": "o00012",
+        "sens": "achat",
+        "symbole": "EWT",
+        "nom": "ETF Taïwan (EWT)",
+        "poche": "coeur",
+        "motif": "entrée cœur",
+        "montant_eur": 4122.13,
+        "quantite": null,
+        "cree_le": "2026-11-07T22:44:02Z",
+        "imposee": false,
+        "texte": "Entrée cœur : ETF Taïwan (EWT) pour la ligne « Taïwan » de l'allocation modèle « Équilibré » du chef d'orchestre. Cible 4,1 % (poids actuel 0,0 %). Verdict « Renforcer », conviction faible, score 62/100.",
+        "donner_tort": [
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Valorisation (3/100) : PER de l'ETF EWT 23,9 contre une médiane de 14,0 pour les pays suivis (0/100) — valeur à vérifier selon l'agent pays",
+          "Contradicteur : Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 98) : TAIEX +42,3 % sur 12 mois en monnaie locale (100/100) ; valorisation tendue (3/100) : PER de l'ETF EWT 23,9 contre une médiane de 14,0 pour les pays suivis (0/100) — valeur à vérifier selon l'agent pays. Une forte hausse passée ne suffit pas à porter une conviction forte."
+        ]
       },
       {
-        "nom": "Liquidités",
-        "ticker": null,
+        "id": "o00013",
+        "sens": "achat",
+        "symbole": "EWW",
+        "nom": "ETF Mexique (EWW)",
+        "poche": "coeur",
+        "motif": "entrée cœur",
+        "montant_eur": 2981.97,
+        "quantite": null,
+        "cree_le": "2026-11-07T22:44:02Z",
+        "imposee": false,
+        "texte": "Entrée cœur : ETF Mexique (EWW) pour la ligne « Mexique » de l'allocation modèle « Équilibré » du chef d'orchestre. Cible 3,0 % (poids actuel 0,0 %). Verdict « Neutre », conviction faible, score 56/100.",
+        "donner_tort": [
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Dynamique des résultats (30/100) : Dynamique des résultats médiane de 47/100 sur 21 sociétés du pays (révisions des analystes, surprises, guidance)",
+          "Un retournement de la politique de la banque centrale."
+        ]
+      },
+      {
+        "id": "o00014",
+        "sens": "achat",
+        "symbole": "EWY",
+        "nom": "ETF Corée du Sud (EWY)",
+        "poche": "coeur",
+        "motif": "entrée cœur",
+        "montant_eur": 4297.54,
+        "quantite": null,
+        "cree_le": "2026-11-07T22:44:02Z",
+        "imposee": false,
+        "texte": "Entrée cœur : ETF Corée du Sud (EWY) pour la ligne « Corée du Sud » de l'allocation modèle « Équilibré » du chef d'orchestre. Cible 4,3 % (poids actuel 0,0 %). Verdict « Renforcer », conviction forte, score 63/100.",
+        "donner_tort": [
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Dynamique des résultats (27/100) : Dynamique des résultats médiane de 46/100 sur 50 sociétés du pays (révisions des analystes, surprises, guidance)",
+          "Les sources divergent sur « croissance du PIB » (OCDE : 2,1) : la valeur retenue (3,3) pourrait être révisée."
+        ]
+      },
+      {
+        "id": "o00015",
+        "sens": "achat",
+        "symbole": "GLD",
+        "nom": "SPDR Gold Shares",
+        "poche": "coeur",
+        "motif": "entrée cœur",
+        "montant_eur": 3157.38,
+        "quantite": null,
+        "cree_le": "2026-11-07T22:44:02Z",
+        "imposee": false,
+        "texte": "Entrée cœur : SPDR Gold Shares pour la ligne « Or » de l'allocation modèle « Équilibré » du chef d'orchestre. Cible 3,2 % (poids actuel 0,0 %). Verdict « Neutre », conviction faible, score 46/100.",
+        "donner_tort": [
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Fondamentaux (27/100) : Taux réel attendu à 10 ans aux États-Unis 2,60 % (+0,73 pt sur 12 mois) : un taux réel en hausse pèse sur l'or",
+          "une clôture au-dessus du plus haut de 3 mois (4 697,80 $/once) avec au moins deux sous-notes favorables"
+        ]
+      },
+      {
+        "id": "o00016",
+        "sens": "achat",
+        "symbole": "IEF",
+        "nom": "iShares 7-10 Year Treasury Bond ETF",
+        "poche": "coeur",
+        "motif": "entrée cœur",
+        "montant_eur": 10963.11,
+        "quantite": null,
+        "cree_le": "2026-11-07T22:44:02Z",
+        "imposee": false,
+        "texte": "Entrée cœur : iShares 7-10 Year Treasury Bond ETF pour la ligne « Obligations d'État américaines longues (10 ans) » de l'allocation modèle « Équilibré » du chef d'orchestre. Cible 11,0 % (poids actuel 0,0 %). Verdict « Neutre », conviction faible, score 53/100.",
+        "donner_tort": [
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Adéquation au cycle (25/100) : États-Unis en phase « Surchauffe » (agent macro) : historiquement défavorable aux obligations longues (25/100)",
+          "Une remontée de l'inflation sous-jacente ou du point mort d'inflation pousserait les taux longs à la hausse."
+        ]
+      },
+      {
+        "id": "o00017",
+        "sens": "achat",
+        "symbole": "JLL",
+        "nom": "Jones Lang LaSalle Incorporated",
         "poche": "satellite",
-        "poids": 5,
-        "valeur": 5720,
-        "performance": 0.0
+        "motif": "entrée satellite",
+        "montant_eur": 2085.84,
+        "quantite": null,
+        "cree_le": "2026-11-07T22:44:02Z",
+        "imposee": false,
+        "texte": "Entrée satellite : Jones Lang LaSalle Incorporated (JLL). Verdict « Renforcer », conviction forte, score 68/100 ; signaux favorables de 2 agents indépendants (entreprises, macro). Taille 2,1 % : conviction forte, volatilité 41 % sur 3 mois. Stop initial à −15 %.",
+        "donner_tort": [
+          "Une baisse de 15 % déclencherait le stop : la perte serait alors réalisée.",
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Géopolitique (14/100) : États-Unis : Risque géopolitique 73/100, 52 événement(s) en 14 jours (agent géopolitique)",
+          "La croissance du chiffre d'affaires repose sur le dernier exercice : un ralentissement au prochain rapport annuel ferait baisser la note."
+        ]
+      },
+      {
+        "id": "o00018",
+        "sens": "achat",
+        "symbole": "RL",
+        "nom": "Ralph Lauren Corporation",
+        "poche": "satellite",
+        "motif": "entrée satellite",
+        "montant_eur": 2712.54,
+        "quantite": null,
+        "cree_le": "2026-11-07T22:44:02Z",
+        "imposee": false,
+        "texte": "Entrée satellite : Ralph Lauren Corporation (RL). Verdict « Renforcer », conviction forte, score 68/100 ; signaux favorables de 2 agents indépendants (entreprises, macro). Taille 2,7 % : conviction forte, volatilité 31 % sur 3 mois. Stop initial à −15 %.",
+        "donner_tort": [
+          "Une baisse de 15 % déclencherait le stop : la perte serait alors réalisée.",
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Géopolitique (14/100) : États-Unis : Risque géopolitique 73/100, 52 événement(s) en 14 jours (agent géopolitique)",
+          "La croissance du chiffre d'affaires repose sur le dernier exercice : un ralentissement au prochain rapport annuel ferait baisser la note."
+        ]
+      },
+      {
+        "id": "o00019",
+        "sens": "achat",
+        "symbole": "RNR",
+        "nom": "RenaissanceRe Holdings Ltd.",
+        "poche": "satellite",
+        "motif": "entrée satellite",
+        "montant_eur": 3941.64,
+        "quantite": null,
+        "cree_le": "2026-11-07T22:44:02Z",
+        "imposee": false,
+        "texte": "Entrée satellite : RenaissanceRe Holdings Ltd. (RNR). Verdict « Renforcer », conviction forte, score 70/100 ; signaux favorables de 2 agents indépendants (entreprises, macro). Taille 3,9 % : conviction forte, volatilité 22 % sur 3 mois. Stop initial à −15 %.",
+        "donner_tort": [
+          "Une baisse de 15 % déclencherait le stop : la perte serait alors réalisée.",
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Géopolitique (14/100) : États-Unis : Risque géopolitique 73/100, 52 événement(s) en 14 jours (agent géopolitique)",
+          "La croissance du chiffre d'affaires repose sur le dernier exercice : un ralentissement au prochain rapport annuel ferait baisser la note."
+        ]
+      },
+      {
+        "id": "o00020",
+        "sens": "achat",
+        "symbole": "RRC",
+        "nom": "Range Resources Corporation",
+        "poche": "satellite",
+        "motif": "entrée satellite",
+        "montant_eur": 1837.38,
+        "quantite": null,
+        "cree_le": "2026-11-07T22:44:02Z",
+        "imposee": false,
+        "texte": "Entrée satellite : Range Resources Corporation (RRC). Verdict « Renforcer », conviction forte, score 67/100 ; signaux favorables de 2 agents indépendants (entreprises, macro). Taille 1,8 % : conviction forte, volatilité 46 % sur 3 mois. Stop initial à −15 %.",
+        "donner_tort": [
+          "Une baisse de 15 % déclencherait le stop : la perte serait alors réalisée.",
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Géopolitique (14/100) : États-Unis : Risque géopolitique 73/100, 52 événement(s) en 14 jours (agent géopolitique)",
+          "La croissance du chiffre d'affaires repose sur le dernier exercice : un ralentissement au prochain rapport annuel ferait baisser la note."
+        ]
+      },
+      {
+        "id": "o00021",
+        "sens": "achat",
+        "symbole": "THD",
+        "nom": "ETF Thaïlande (THD)",
+        "poche": "coeur",
+        "motif": "entrée cœur",
+        "montant_eur": 3683.61,
+        "quantite": null,
+        "cree_le": "2026-11-07T22:44:02Z",
+        "imposee": false,
+        "texte": "Entrée cœur : ETF Thaïlande (THD) pour la ligne « Thaïlande » de l'allocation modèle « Équilibré » du chef d'orchestre. Cible 3,7 % (poids actuel 0,0 %). Verdict « Renforcer », conviction moyenne, score 60/100.",
+        "donner_tort": [
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Un nouvel écart de l'inflation par rapport à la cible.",
+          "Un repli du marché qui effacerait la performance des 12 derniers mois."
+        ]
+      },
+      {
+        "id": "o00022",
+        "sens": "achat",
+        "symbole": "TLT",
+        "nom": "iShares 20+ Year Treasury Bond ETF",
+        "poche": "coeur",
+        "motif": "entrée cœur",
+        "montant_eur": 10963.11,
+        "quantite": null,
+        "cree_le": "2026-11-07T22:44:02Z",
+        "imposee": false,
+        "texte": "Entrée cœur : iShares 20+ Year Treasury Bond ETF pour la ligne « Obligations d'État américaines longues (10 ans) » de l'allocation modèle « Équilibré » du chef d'orchestre. Cible 11,0 % (poids actuel 0,0 %). Verdict « Neutre », conviction faible, score 53/100.",
+        "donner_tort": [
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Adéquation au cycle (25/100) : États-Unis en phase « Surchauffe » (agent macro) : historiquement défavorable aux obligations longues (25/100)",
+          "Une remontée de l'inflation sous-jacente ou du point mort d'inflation pousserait les taux longs à la hausse."
+        ]
+      },
+      {
+        "id": "o00023",
+        "sens": "achat",
+        "symbole": "USO",
+        "nom": "United States Oil Fund",
+        "poche": "coeur",
+        "motif": "entrée cœur",
+        "montant_eur": 1473.44,
+        "quantite": null,
+        "cree_le": "2026-11-07T22:44:02Z",
+        "imposee": false,
+        "texte": "Entrée cœur : United States Oil Fund pour la ligne « Pétrole WTI » de l'allocation modèle « Équilibré » du chef d'orchestre. Cible 1,5 % (poids actuel 0,0 %). Verdict « Renforcer », conviction faible, score 60/100. Support adossé à des contrats à terme : coût de renouvellement (contango) à prévoir.",
+        "donner_tort": [
+          "Fonds adossé à des contrats à terme : quand les échéances suivantes coûtent plus cher (contango), le renouvellement des contrats retranche du rendement chaque mois, même à cours du pétrole inchangé.",
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Valorisation (31/100) : Cours corrigé de l’inflation américaine au percentile 75 de sa plage sur 10 ans (plus bas 16,94, plus haut 120,67 en valeur nominale)",
+          "Contradicteur : Momentum extrême : hausse passée de +52,8 % sur 12 mois (seuil : +40 %) : Cours +16,2 % sur 3 mois, +52,8 % sur 12 mois, au-dessus de sa moyenne 200 jours (87,16) ; valorisation tendue (31/100) : Cours corrigé de l’inflation américaine au percentile 75 de sa plage sur 10 ans (plus bas 16,94, plus haut 120,67 en valeur nominale) ; positionnement vérifié (61/100) ; hausse liée en partie au contexte géopolitique, réversible en cas de détente. Une forte hausse passée ne suffit pas à porter une conviction forte."
+        ]
+      },
+      {
+        "id": "o00024",
+        "sens": "achat",
+        "symbole": "VNM",
+        "nom": "ETF Vietnam (VNM)",
+        "poche": "coeur",
+        "motif": "entrée cœur",
+        "montant_eur": 3859.02,
+        "quantite": null,
+        "cree_le": "2026-11-07T22:44:02Z",
+        "imposee": false,
+        "texte": "Entrée cœur : ETF Vietnam (VNM) pour la ligne « Vietnam » de l'allocation modèle « Équilibré » du chef d'orchestre. Cible 3,9 % (poids actuel 0,0 %). Verdict « Renforcer », conviction faible, score 60/100.",
+        "donner_tort": [
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Tendance et momentum (34/100) : VN-Index −0,9 % sur 12 mois en monnaie locale (49/100)",
+          "Contradicteur : Ces sorties de capitaux fragilisent une économie dont les réserves ne couvrent que 2,1 mois d'importations."
+        ]
       }
     ],
+    "operations": [],
+    "derniere_decision": {
+      "date": "2026-11-07",
+      "le": "2026-11-07T22:44:02Z",
+      "palier": "Vigilance",
+      "profil": "equilibre",
+      "liquidites_min": 10,
+      "cibles": {
+        "poches": {
+          "coeur": 64.73,
+          "satellite": 25.27,
+          "liquidites": 10
+        },
+        "classes": {
+          "obligations": 21.93,
+          "actions": 61.85,
+          "or": 3.16,
+          "matieres": 3.07,
+          "liquidites": 10
+        },
+        "lignes": [
+          {
+            "symbole": "IEF",
+            "nom": "iShares 7-10 Year Treasury Bond ETF",
+            "poche": "coeur",
+            "classe": "obligations",
+            "cible": 10.96,
+            "ligne_id": "oblig-us-longues",
+            "tenue": false
+          },
+          {
+            "symbole": "TLT",
+            "nom": "iShares 20+ Year Treasury Bond ETF",
+            "poche": "coeur",
+            "classe": "obligations",
+            "cible": 10.96,
+            "ligne_id": "oblig-us-longues",
+            "tenue": false
+          },
+          {
+            "symbole": "EWY",
+            "nom": "ETF Corée du Sud (EWY)",
+            "poche": "coeur",
+            "classe": "actions",
+            "cible": 4.3,
+            "ligne_id": "pays-KR",
+            "tenue": false
+          },
+          {
+            "symbole": "EPOL",
+            "nom": "ETF Pologne (EPOL)",
+            "poche": "coeur",
+            "classe": "actions",
+            "cible": 4.21,
+            "ligne_id": "pays-PL",
+            "tenue": false
+          },
+          {
+            "symbole": "EWT",
+            "nom": "ETF Taïwan (EWT)",
+            "poche": "coeur",
+            "classe": "actions",
+            "cible": 4.12,
+            "ligne_id": "pays-TW",
+            "tenue": false
+          },
+          {
+            "symbole": "ACGL",
+            "nom": "Arch Capital Group Ltd.",
+            "poche": "satellite",
+            "classe": "actions",
+            "cible": 4.02,
+            "ligne_id": "entreprise-ACGL",
+            "tenue": false
+          },
+          {
+            "symbole": "RNR",
+            "nom": "RenaissanceRe Holdings Ltd.",
+            "poche": "satellite",
+            "classe": "actions",
+            "cible": 3.94,
+            "ligne_id": "entreprise-RNR",
+            "tenue": false
+          },
+          {
+            "symbole": "VNM",
+            "nom": "ETF Vietnam (VNM)",
+            "poche": "coeur",
+            "classe": "actions",
+            "cible": 3.86,
+            "ligne_id": "pays-VN",
+            "tenue": false
+          },
+          {
+            "symbole": "THD",
+            "nom": "ETF Thaïlande (THD)",
+            "poche": "coeur",
+            "classe": "actions",
+            "cible": 3.68,
+            "ligne_id": "pays-TH",
+            "tenue": false
+          },
+          {
+            "symbole": "EWD",
+            "nom": "ETF Suède (EWD)",
+            "poche": "coeur",
+            "classe": "actions",
+            "cible": 3.6,
+            "ligne_id": "pays-SE",
+            "tenue": false
+          },
+          {
+            "symbole": "COLO",
+            "nom": "ETF Colombie (COLO)",
+            "poche": "coeur",
+            "classe": "actions",
+            "cible": 3.42,
+            "ligne_id": "pays-CO",
+            "tenue": false
+          },
+          {
+            "symbole": "5108.T",
+            "nom": "Bridgestone Corporation",
+            "poche": "satellite",
+            "classe": "actions",
+            "cible": 3.27,
+            "ligne_id": "entreprise-5108.T",
+            "tenue": false
+          },
+          {
+            "symbole": "EWS",
+            "nom": "ETF Singapour (EWS)",
+            "poche": "coeur",
+            "classe": "actions",
+            "cible": 3.25,
+            "ligne_id": "pays-SG",
+            "tenue": false
+          },
+          {
+            "symbole": "GLD",
+            "nom": "SPDR Gold Shares",
+            "poche": "coeur",
+            "classe": "or",
+            "cible": 3.16,
+            "ligne_id": "or",
+            "tenue": false
+          },
+          {
+            "symbole": "EWJ",
+            "nom": "ETF Japon (EWJ)",
+            "poche": "coeur",
+            "classe": "actions",
+            "cible": 3.16,
+            "ligne_id": "pays-JP",
+            "tenue": false
+          },
+          {
+            "symbole": "ALL",
+            "nom": "The Allstate Corporation",
+            "poche": "satellite",
+            "classe": "actions",
+            "cible": 3.03,
+            "ligne_id": "entreprise-ALL",
+            "tenue": false
+          },
+          {
+            "symbole": "EWW",
+            "nom": "ETF Mexique (EWW)",
+            "poche": "coeur",
+            "classe": "actions",
+            "cible": 2.98,
+            "ligne_id": "pays-MX",
+            "tenue": false
+          },
+          {
+            "symbole": "RL",
+            "nom": "Ralph Lauren Corporation",
+            "poche": "satellite",
+            "classe": "actions",
+            "cible": 2.71,
+            "ligne_id": "entreprise-RL",
+            "tenue": false
+          },
+          {
+            "symbole": "DECK",
+            "nom": "Deckers Outdoor Corporation",
+            "poche": "satellite",
+            "classe": "actions",
+            "cible": 2.44,
+            "ligne_id": "entreprise-DECK",
+            "tenue": false
+          },
+          {
+            "symbole": "JLL",
+            "nom": "Jones Lang LaSalle Incorporated",
+            "poche": "satellite",
+            "classe": "actions",
+            "cible": 2.09,
+            "ligne_id": "entreprise-JLL",
+            "tenue": false
+          },
+          {
+            "symbole": "DLTR",
+            "nom": "Dollar Tree, Inc.",
+            "poche": "satellite",
+            "classe": "actions",
+            "cible": 1.95,
+            "ligne_id": "entreprise-DLTR",
+            "tenue": false
+          },
+          {
+            "symbole": "RRC",
+            "nom": "Range Resources Corporation",
+            "poche": "satellite",
+            "classe": "actions",
+            "cible": 1.84,
+            "ligne_id": "entreprise-RRC",
+            "tenue": false
+          },
+          {
+            "symbole": "BNO",
+            "nom": "United States Brent Oil Fund",
+            "poche": "coeur",
+            "classe": "matieres",
+            "cible": 1.6,
+            "ligne_id": "matiere-brent",
+            "tenue": false
+          },
+          {
+            "symbole": "USO",
+            "nom": "United States Oil Fund",
+            "poche": "coeur",
+            "classe": "matieres",
+            "cible": 1.47,
+            "ligne_id": "matiere-wti",
+            "tenue": false
+          }
+        ]
+      },
+      "ordres": [
+        "o00001",
+        "o00002",
+        "o00003",
+        "o00004",
+        "o00005",
+        "o00006",
+        "o00007",
+        "o00008",
+        "o00009",
+        "o00010",
+        "o00011",
+        "o00012",
+        "o00013",
+        "o00014",
+        "o00015",
+        "o00016",
+        "o00017",
+        "o00018",
+        "o00019",
+        "o00020",
+        "o00021",
+        "o00022",
+        "o00023",
+        "o00024"
+      ],
+      "achats": 24,
+      "ventes": 0,
+      "annules": 0,
+      "resume": "Décision du 07/11/2026 : palier « Vigilance », liquidités minimales 10 %. Cibles : cœur 64,7 %, satellites 25,3 % (9 ligne(s)), liquidités 10,0 %. 24 achat(s) et 0 vente(s) à exécuter au premier cours disponible.",
+      "notes": [],
+      "avertissements": [
+        "United States Natural Gas Fund : cible de 0,88 % sous le minimum de 1,0 % par ligne ; part redistribuée.",
+        "The Progressive Corporation : taille ramenée de 3,4 à 0,4 % (plafond secteur « Financials » de 12 %).",
+        "Satellites : 26,6 % placés sur 30 % ; le solde (3,4 pt) est reversé au cœur."
+      ],
+      "satellites_ecartes": [
+        {
+          "id": "entreprise-2357.TW",
+          "nom": "ASUSTeK Computer Inc.",
+          "raison": "signaux favorables de moins de 2 agents indépendants (une seule source)"
+        },
+        {
+          "id": "entreprise-VHM.VN",
+          "nom": "Vinhomes Joint Stock Company",
+          "raison": "signaux favorables de moins de 2 agents indépendants (une seule source)"
+        },
+        {
+          "id": "entreprise-BS6.SI",
+          "nom": "Yangzijiang Shipbuilding (Holdings) Ltd.",
+          "raison": "signaux favorables de moins de 2 agents indépendants (une seule source)"
+        },
+        {
+          "id": "entreprise-ADVANC.BK",
+          "nom": "Advanced Info Service Public Company Limited",
+          "raison": "signaux favorables de moins de 2 agents indépendants (une seule source)"
+        },
+        {
+          "id": "entreprise-086280.KS",
+          "nom": "Hyundai Glovis Co., Ltd.",
+          "raison": "signaux favorables de moins de 2 agents indépendants (une seule source)"
+        },
+        {
+          "id": "entreprise-EVO.ST",
+          "nom": "Evolution AB (publ)",
+          "raison": "signaux favorables de moins de 2 agents indépendants (une seule source)"
+        },
+        {
+          "id": "entreprise-PZU.WA",
+          "nom": "Powszechny Zaklad Ubezpieczen SA",
+          "raison": "signaux favorables de moins de 2 agents indépendants (une seule source)"
+        },
+        {
+          "id": "entreprise-028260.KS",
+          "nom": "Samsung C&T Corporation",
+          "raison": "signaux favorables de moins de 2 agents indépendants (une seule source)"
+        },
+        {
+          "id": "entreprise-ATD.TO",
+          "nom": "Alimentation Couche-Tard Inc.",
+          "raison": "signaux favorables de moins de 2 agents indépendants (une seule source)"
+        },
+        {
+          "id": "entreprise-VOD.JO",
+          "nom": "Vodacom Group Limited",
+          "raison": "signaux favorables de moins de 2 agents indépendants (une seule source)"
+        },
+        {
+          "id": "entreprise-MTN.JO",
+          "nom": "MTN Group Limited",
+          "raison": "signaux favorables de moins de 2 agents indépendants (une seule source)"
+        },
+        {
+          "id": "entreprise-000333.SZ",
+          "nom": "Midea Group Co., Ltd.",
+          "raison": "signaux favorables de moins de 2 agents indépendants (une seule source)"
+        },
+        {
+          "id": "entreprise-688235.SS",
+          "nom": "BeOne Medicines AG",
+          "raison": "nombre maximal de satellites atteint (10)"
+        },
+        {
+          "id": "entreprise-GOOGL",
+          "nom": "Alphabet Inc.",
+          "raison": "nombre maximal de satellites atteint (10)"
+        },
+        {
+          "id": "entreprise-DXCM",
+          "nom": "DexCom, Inc.",
+          "raison": "nombre maximal de satellites atteint (10)"
+        },
+        {
+          "id": "entreprise-DEWA.AE",
+          "nom": "Dubai Electricity and Water Authority (PJSC)",
+          "raison": "nombre maximal de satellites atteint (10)"
+        },
+        {
+          "id": "entreprise-NOVN.SW",
+          "nom": "Novartis AG",
+          "raison": "nombre maximal de satellites atteint (10)"
+        },
+        {
+          "id": "entreprise-PGR",
+          "nom": "The Progressive Corporation",
+          "raison": "taille inférieure au minimum après les plafonds"
+        }
+      ],
+      "donner_tort": [
+        "Le palier de risque peut monter : en « Tension », la part minimale de liquidités passerait à 20 % et des ventes seraient imposées.",
+        "Arch Capital Group Ltd. (premier satellite) : Géopolitique (14/100) : États-Unis : Risque géopolitique 73/100, 52 événement(s) en 14 jours (agent géopolitique)",
+        "Le cœur suit l'allocation modèle du chef d'orchestre : si ses verdicts se révèlent mal calibrés (écran « Fiabilité du chef d'orchestre »), l'écart au MSCI World le montrera."
+      ],
+      "erreurs": [],
+      "chef_date": "2026-11-07",
+      "chef_maj": "2026-11-07T22:18:25Z"
+    },
     "historique": [
       {
-        "date": "2026-01-02",
-        "portefeuille": 100000,
-        "msci_world": 100000
-      },
-      {
-        "date": "2026-01-09",
-        "portefeuille": 100980,
-        "msci_world": 99406
-      },
-      {
-        "date": "2026-01-16",
-        "portefeuille": 104161,
-        "msci_world": 102398
-      },
-      {
-        "date": "2026-01-23",
-        "portefeuille": 103950,
-        "msci_world": 102640
-      },
-      {
-        "date": "2026-01-30",
-        "portefeuille": 104090,
-        "msci_world": 101483
-      },
-      {
-        "date": "2026-02-06",
-        "portefeuille": 103308,
-        "msci_world": 100420
-      },
-      {
-        "date": "2026-02-13",
-        "portefeuille": 106121,
-        "msci_world": 102944
-      },
-      {
-        "date": "2026-02-20",
-        "portefeuille": 106234,
-        "msci_world": 102789
-      },
-      {
-        "date": "2026-02-27",
-        "portefeuille": 109097,
-        "msci_world": 105710
-      },
-      {
-        "date": "2026-03-06",
-        "portefeuille": 110990,
-        "msci_world": 107689
-      },
-      {
-        "date": "2026-03-13",
-        "portefeuille": 114269,
-        "msci_world": 110531
-      },
-      {
-        "date": "2026-03-20",
-        "portefeuille": 116529,
-        "msci_world": 113623
-      },
-      {
-        "date": "2026-03-27",
-        "portefeuille": 115138,
-        "msci_world": 111808
-      },
-      {
-        "date": "2026-04-03",
-        "portefeuille": 113631,
-        "msci_world": 108899
-      },
-      {
-        "date": "2026-04-10",
-        "portefeuille": 110023,
-        "msci_world": 103934
-      },
-      {
-        "date": "2026-04-17",
-        "portefeuille": 107770,
-        "msci_world": 101351
-      },
-      {
-        "date": "2026-04-24",
-        "portefeuille": 105169,
-        "msci_world": 98652
-      },
-      {
-        "date": "2026-05-01",
-        "portefeuille": 104167,
-        "msci_world": 98808
-      },
-      {
-        "date": "2026-05-08",
-        "portefeuille": 103547,
-        "msci_world": 97631
-      },
-      {
-        "date": "2026-05-15",
-        "portefeuille": 104994,
-        "msci_world": 99127
-      },
-      {
-        "date": "2026-05-22",
-        "portefeuille": 106111,
-        "msci_world": 99105
-      },
-      {
-        "date": "2026-05-29",
-        "portefeuille": 106344,
-        "msci_world": 100115
-      },
-      {
-        "date": "2026-06-05",
-        "portefeuille": 106635,
-        "msci_world": 101143
-      },
-      {
-        "date": "2026-06-12",
-        "portefeuille": 106879,
-        "msci_world": 100855
-      },
-      {
-        "date": "2026-06-19",
-        "portefeuille": 109575,
-        "msci_world": 103093
-      },
-      {
-        "date": "2026-06-26",
-        "portefeuille": 106593,
-        "msci_world": 99248
-      },
-      {
-        "date": "2026-07-03",
-        "portefeuille": 107181,
-        "msci_world": 99053
-      },
-      {
-        "date": "2026-07-10",
-        "portefeuille": 107384,
-        "msci_world": 98860
-      },
-      {
-        "date": "2026-07-17",
-        "portefeuille": 107578,
-        "msci_world": 98229
-      },
-      {
-        "date": "2026-07-24",
-        "portefeuille": 109930,
-        "msci_world": 99742
-      },
-      {
-        "date": "2026-07-31",
-        "portefeuille": 110057,
-        "msci_world": 101278
-      },
-      {
-        "date": "2026-08-07",
-        "portefeuille": 108298,
-        "msci_world": 99662
-      },
-      {
-        "date": "2026-08-14",
-        "portefeuille": 108882,
-        "msci_world": 99625
-      },
-      {
-        "date": "2026-08-21",
-        "portefeuille": 110846,
-        "msci_world": 101187
-      },
-      {
-        "date": "2026-08-28",
-        "portefeuille": 112795,
-        "msci_world": 102625
-      },
-      {
-        "date": "2026-09-04",
-        "portefeuille": 111298,
-        "msci_world": 101291
-      },
-      {
-        "date": "2026-09-11",
-        "portefeuille": 110752,
-        "msci_world": 100059
-      },
-      {
-        "date": "2026-09-18",
-        "portefeuille": 107862,
-        "msci_world": 96987
-      },
-      {
-        "date": "2026-09-25",
-        "portefeuille": 109001,
-        "msci_world": 98262
-      },
-      {
-        "date": "2026-10-02",
-        "portefeuille": 110584,
-        "msci_world": 99323
-      },
-      {
-        "date": "2026-10-09",
-        "portefeuille": 113356,
-        "msci_world": 100915
-      },
-      {
-        "date": "2026-10-16",
-        "portefeuille": 110863,
-        "msci_world": 98973
-      },
-      {
-        "date": "2026-10-23",
-        "portefeuille": 112744,
-        "msci_world": 101129
-      },
-      {
-        "date": "2026-10-30",
-        "portefeuille": 114410,
-        "msci_world": 102092
+        "date": "2026-11-07",
+        "portefeuille": 100000.0,
+        "msci_world": 100000.0
       }
     ],
-    "derniere_decision": {
-      "date": "2026-10-30",
-      "heure": "17:45",
-      "agent": "trader",
-      "action": "Renforcement",
-      "titre": "Renforcement de la poche Inde (+2 %)",
-      "texte": "Suite à l'alerte macro sur le PIB indien, l'agent trader fictif renforce l'ETF Inde de 2 points, financés par les liquidités. Taille limitée par l'agent risque en raison des valorisations élevées."
-    }
+    "cours_manquants": [],
+    "regles": [
+      "Cœur ≈ 70 % : allocation modèle « Équilibré » du chef d'orchestre, rééquilibrée au-delà de 3 points d'écart.",
+      "Satellites ≈ 30 % : convictions fortes et moyennes, 8 % maximum par ligne, taille selon la conviction et la volatilité.",
+      "Liquidités minimales selon le palier de risque : Calme 5 %, Vigilance 10 %, Tension 20 %, Crise 35 %.",
+      "Stop −15 % sur les satellites (suiveur dès +20 %), prise de bénéfices partielle à +30 %.",
+      "Exécution au premier cours après la décision ; frais 0,1 % et écart achat/vente estimé ; change du jour.",
+      "Aucune décision sur données périmées ou dégradées ; aucune décision fondée sur une seule source."
+    ],
+    "methode": "agents/trader/regles.md",
+    "mention": "Portefeuille fictif à but de démonstration, aucun ordre réel."
   }
 }
