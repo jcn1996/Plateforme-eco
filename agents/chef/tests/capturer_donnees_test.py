@@ -16,7 +16,7 @@ from pathlib import Path
 RACINE = Path(__file__).resolve().parents[3]
 SOURCE = RACINE / "data"
 CIBLE = Path(__file__).resolve().parent / "donnees" / "data"
-CHAMPS_FICHE = ("dynamique", "recommandation", "alertes", "contre_scenario", "industrie")
+CHAMPS_FICHE = ("dynamique", "recommandation", "alertes", "contre_scenario", "industrie", "holding")
 
 
 def lire(chemin):

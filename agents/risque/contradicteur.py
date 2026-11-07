@@ -37,7 +37,7 @@ from . import calculs as C
 
 LOG = journal("agent-risque")
 AJUSTEMENTS = ("maintenir", "abaisser", "signal fragile")
-VERSION_REGLES = 2  # revues d'une version antérieure : refaites
+VERSION_REGLES = 3  # revues d'une version antérieure : refaites (v3 : objections par entité)
 PAS_D_OBJECTION = "Pas d'objection spécifique."
 NEGATIFS = re.compile(r"ralentissement|récession|recession|contraction|stagflation|repli", re.I)
 SECTEURS_CYCLIQUES = {"Energy": "énergie", "Materials": "matériaux", "Industrials": "industrie", "Consumer Discretionary": "consommation discrétionnaire",
@@ -232,10 +232,25 @@ class Objections:
     def __init__(self, faits: Faits):
         self.f = faits
         self.points = []
+        self.entites = []  # entité (code pays, ticker) de chaque point ; None = point commun à tout le signal
+        self.entite = None
 
     def ajouter(self, texte: str, fait: str, source: str, gravite: int = 1) -> None:
         i = self.f.ajouter(fait, source)
         self.points.append((f"{texte} [{i}]", gravite))
+        self.entites.append(self.entite)
+
+    def par_entite(self) -> dict[str, dict]:
+        """Objection propre à chaque entité d'un signal qui en concerne plusieurs (ex. événement touchant deux pays) :
+        ses points à elle et les points communs, pour qu'une objection ne soit jamais attachée à la mauvaise entité."""
+        codes = [e for e in dict.fromkeys(self.entites) if e]
+        res = {}
+        for c in codes:
+            pts = [(p, g) for (p, g), e in zip(self.points, self.entites) if e in (c, None)]
+            total = sum(g for _, g in pts)
+            res[c] = {"objection": "Objections spécifiques : " + " ; ".join(p for p, _ in pts) + ".",
+                      "ajustement": "signal fragile" if total >= 4 or any(g >= 3 for _, g in pts) else "abaisser" if total >= 2 else "maintenir"}
+        return res
 
 
 def reaction(serie, date_signal: str):
@@ -423,6 +438,7 @@ def objections_evenement(o: Objections, s: dict, ctx: dict, config: dict) -> Non
         p = ctx["pays_config"].get(code)
         if not p:
             continue
+        o.entite = code
         r = reaction(ctx["cours"].get(p.get("etf")), s["date"])
         if r:
             perf = round(100 * (r[1][1] / r[0][1] - 1), 2)
@@ -478,6 +494,7 @@ def regles(fichier: str, s: dict, ctx: dict, config: dict) -> dict:
     else:
         codes = s.get("pays") or ([s["cle"]] if s.get("cle") in ctx["pays_config"] else [])
         for code in codes[:2]:
+            o.entite = code
             vulnerabilites_pays(o, code, ctx, config)
     total = sum(g for _, g in o.points)
     if not o.points:
@@ -488,7 +505,9 @@ def regles(fichier: str, s: dict, ctx: dict, config: dict) -> dict:
     phrase = contexte(f, ctx, s, config, positif) if o.points else None
     if phrase:
         texte += " " + phrase
+    res_entites = o.par_entite()
     return {"objection": texte, "faits": f.liste, "ajustement": ajust, "specifique": bool(o.points), "methode": "règles",
+            **({"par_entite": res_entites} if res_entites else {}),
             "confiance": "moyen" if len(o.points) >= 2 else "faible" if o.points else "moyen", "version_regles": VERSION_REGLES}
 
 

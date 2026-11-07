@@ -376,3 +376,27 @@ class TestCalculs(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestObjectionParEntite(unittest.TestCase):
+    """Un signal qui touche plusieurs pays : l'objection attachée à chaque pays ne parle que de lui (et des points communs)."""
+
+    def test_evenement_deux_pays(self):
+        config = charger_config()
+        serie = lambda a, b: [("2026-11-01", a), ("2026-11-02", a), ("2026-11-05", b)]  # noqa: E731
+        ctx = {"pays_config": {"DE": {"nom": "Allemagne", "etf": "EWG"}, "AE": {"nom": "Émirats arabes unis", "etf": "UAE"}},
+               "cours": {"EWG": serie(100, 98.9), "UAE": serie(100, 103)}, "pays_scores": {}}
+        s = {"type": "evenement_grave", "cle": "evt-x", "date": "2026-11-03", "pays": ["DE", "AE"], "sources": ["https://a.example/1"]}
+        f = K.Faits()
+        o = K.Objections(f)
+        K.objections_evenement(o, s, ctx, config)
+        par = o.par_entite()
+        self.assertEqual(set(par), {"DE", "AE"})
+        self.assertIn("Émirats arabes unis", par["AE"]["objection"])
+        self.assertNotIn("Allemagne", par["AE"]["objection"])
+        self.assertNotIn("EWG", par["AE"]["objection"])
+        self.assertIn("Allemagne", par["DE"]["objection"])
+        self.assertNotIn("Émirats", par["DE"]["objection"])
+        # le point commun au signal (une seule source) figure pour les deux
+        self.assertIn("1 source", par["AE"]["objection"])
+        self.assertIn("1 source", par["DE"]["objection"])

@@ -630,7 +630,7 @@
   },
   "ecart_officiel_max_pct": 5.0,
   "pepites": {
-    "_commentaire": "Deux listes. « pepites » : capitalisation entre cap_min et cap_max (Md$), peu suivies (analystes ≤ analystes_max quand Yahoo le fournit). « qualite_prix_raisonnable » : grandes sociétés (au-dessus de cap_max) qui remplissent les mêmes critères. plafond_par_secteur : au plus N sociétés d'un même secteur GICS par liste. Holdings et sociétés d'investissement exclues. Holding = industrie exclue, ou « Asset Management » avec un mot de holdings_mots dans le nom.",
+    "_commentaire": "Deux listes. « pepites » : capitalisation entre cap_min et cap_max (Md$), peu suivies (analystes ≤ analystes_max quand Yahoo le fournit). « qualite_prix_raisonnable » : grandes sociétés (au-dessus de cap_max) qui remplissent les mêmes critères. plafond_par_secteur : au plus N sociétés d'un même secteur GICS par liste. Holdings, sociétés d'investissement, fonds fermés, BDC et SPAC exclus (et jamais « Acheter » sur une valorisation PER). Holding = industrie exclue, ou « Asset Management » avec un mot de holdings_mots dans le nom ; fonds fermé ou BDC = un mot de fonds_mots dans le nom et une industrie de fonds_industries (ou secteur Finance, industrie inconnue) ; SPAC = industrie « Shell Companies » ou un mot de spac_mots dans le nom.",
     "croissance_ca_min": 10.0,
     "fscore_min": 7,
     "dette_ebitda_max": 2.0,
@@ -661,7 +661,10 @@
       "sofina",
       "gbl",
       "berkshire"
-    ]
+    ],
+    "fonds_mots": [" fund", "income trust", "capital corp", "capital corporation", "bdc", "credit solutions", "credit fund", "lending", "private credit", "senior income"],
+    "fonds_industries": ["Asset Management", "Credit Services", "Capital Markets"],
+    "spac_mots": ["acquisition corp", "acquisition co.", "acquisition company", "acquisition limited", "acquisition inc"]
   },
   "contexte": {
     "_commentaire": "Ajustement modéré de la note selon le pays et la phase du cycle de sa zone ; plafonné et affiché à part.",

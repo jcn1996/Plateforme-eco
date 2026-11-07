@@ -14,7 +14,7 @@ import { el, nombre, classeNote } from './outils.js';
 const FICHIER = 'data/chef.json';
 const MENTION = 'Avis indicatif généré automatiquement, sans prise en compte d’un profil ou d’une situation personnelle.';
 export const ONGLETS_INVESTIR = {
-  pays: 'Pays', matieres: 'Matières premières', obligations: 'Obligations et liquidités', entreprises: 'Entreprises', allocation: 'Allocation',
+  panorama: 'Panorama', pays: 'Pays', matieres: 'Matières premières', obligations: 'Obligations et liquidités', entreprises: 'Entreprises', allocation: 'Allocation',
 };
 const TYPES = { pays: 'Actions · pays', matieres: 'Matière première', or: 'Or · valeur refuge', obligations: 'Obligations', liquidites: 'Liquidités', entreprises: 'Entreprise' };
 const AGENTS = {
@@ -195,10 +195,15 @@ function briefingComplet(b, aller) {
   return el('div', { class: 'chef-briefing' },
     el('p', { class: 'chef-briefing-tete' }, `Briefing du ${dateFr(b.date)} · rédaction : ${b.mode === 'gemini' ? 'Gemini (affirmations vérifiées contre les données)' : 'règles'}`),
     section('L’essentiel', liste((b.essentiel ?? []).map((x) => x.texte))),
-    section('Où investir', b.ou_investir?.length ? el('ol', {}, b.ou_investir.map((x) => el('li', {},
+    section('Où investir : top 5', b.ou_investir?.length ? el('ol', {}, b.ou_investir.map((x) => el('li', {},
       el('button', { class: 'lien', type: 'button', onclick: () => aller({ type: 'investir', id: `o-${x.id}` }) }, x.nom), ' ',
       pastilleVerdict(x.verdict), ' ', pastilleConviction(x.conviction), ' ', badgeScore(x.score),
-      x.argument ? el('div', { class: 'chef-petit' }, x.argument) : null))) : el('p', {}, 'Aucune opportunité à verdict positif.')),
+      x.argument ? el('div', { class: 'chef-petit' }, x.argument) : null))) : el('p', {}, 'Aucune opportunité à verdict positif sans objection à lever.')),
+    b.panorama ? section('Panorama par catégorie', el('ul', {}, [
+      ['Pays', b.panorama.pays], ['Matières premières', b.panorama.matieres], ['Or', b.panorama.or ? [b.panorama.or] : []],
+      ['Obligations et liquidités', [...(b.panorama.obligations ?? []), ...(b.panorama.liquidites ?? [])]], ['Entreprises', b.panorama.entreprises],
+    ].map(([t, xs]) => el('li', {}, el('strong', {}, `${t} : `), (xs ?? []).map((x) => `${x.nom} (${x.verdict.toLowerCase()})`).join(', ') || 'aucune donnée'))),
+    b.panorama.a_surveiller?.length ? el('p', { class: 'chef-petit' }, `À surveiller : ${b.panorama.a_surveiller.map((x) => x.nom).join(', ')}`) : null) : null,
     section('Ce qui a changé depuis hier', liste(b.changements?.length ? b.changements.map((c) => c.texte) : ['Aucun verdict modifié.'])),
     section('Points de vigilance', liste(b.vigilance?.length ? b.vigilance.map((v) => v.texte) : ['Aucun.'])),
     ...['central', 'alternatif'].map((k) => {
@@ -262,9 +267,10 @@ export function ecranInvestir(chef, nav, id) {
     const l = toutes(chef).find((x) => x.id === id.slice(2));
     if (l) return ficheOpportunite(l, chef, nav);
   }
-  const onglet = ONGLETS_INVESTIR[id] ? id : 'pays';
+  const onglet = ONGLETS_INVESTIR[id] ? id : 'panorama';
   let corps;
-  if (onglet === 'pays') corps = [titre('Actions par pays', `${chef.pays?.length ?? 0} pays suivis`), liste(chef.pays, nav)];
+  if (onglet === 'panorama') corps = ongletPanorama(chef, nav);
+  else if (onglet === 'pays') corps = [titre('Actions par pays', `${chef.pays?.length ?? 0} pays suivis`), liste(chef.pays, nav)];
   else if (onglet === 'matieres') {
     corps = [titre('Or', 'valeur refuge, traité à part'), liste(chef.or ? [chef.or] : [], nav),
       titre('Matières premières', 'agent matières premières, horizon 3 à 12 mois'), liste(chef.matieres, nav)];
@@ -293,6 +299,34 @@ function blocEntrees(chef) {
     el('p', { class: 'chef-petit' }, chef.methode ?? ''));
 }
 
+/* ------------------------------------------------------------------ panorama */
+
+/** Ligne compacte du panorama : nom, score, verdict, conviction, justification ; ouvre la fiche. */
+function lignePanorama(x, nav, raison) {
+  return el('li', {}, el('button', { class: `chef-ligne chef-ligne--compacte ${classeVerdict(x.verdict)}`, type: 'button', onclick: () => nav.ouvrir({ type: 'investir', id: `o-${x.id}` }) },
+    el('div', { class: 'chef-ligne-tete' }, el('strong', { class: 'chef-ligne-nom' }, x.nom), badgeScore(x.score), fleche(x.fleche), pastilleVerdict(x.verdict), pastilleConviction(x.conviction)),
+    raison ? el('div', { class: 'chef-petit chef-attente' }, raison) : null,
+    !raison && x.argument ? el('div', { class: 'chef-petit' }, `+ ${resume(x.argument, 140)}`) : null,
+    !raison && x.contre ? el('div', { class: 'chef-petit' }, `− ${resume(x.contre, 140)}`) : null));
+}
+
+function ongletPanorama(chef, nav) {
+  const p = chef.panorama;
+  if (!p) return [el('p', { class: 'sante-ligne' }, 'Panorama pas encore calculé (prochaine analyse complète).')];
+  const bloc = (t, sous, xs, vide) => [titre(t, sous), xs?.length ? el('ul', { class: 'chef-liste' }, xs.map((x) => lignePanorama(x, nav))) : el('p', { class: 'chef-petit' }, vide ?? 'Aucune donnée.')];
+  return [
+    ...bloc('Top 5', 'verdict positif au-dessus du seuil, sans objection à lever ; une ligne par catégorie d’abord', p.top, 'Aucune opportunité à verdict positif sans objection à lever.'),
+    ...bloc('Pays', 'top 5', p.pays),
+    ...bloc('Matières premières', 'top 3', p.matieres),
+    ...bloc('Or', 'valeur refuge', p.or ? [p.or] : []),
+    ...bloc('Obligations et liquidités', 'position sur chaque ligne', [...(p.obligations ?? []), ...(p.liquidites ?? [])]),
+    ...bloc('Entreprises', p.entreprises_bilan?.texte, p.entreprises),
+    titre('À surveiller', 'proches du seuil, ou bien notées avec une objection à lever'),
+    p.a_surveiller?.length ? el('ul', { class: 'chef-liste' }, p.a_surveiller.map((x) => lignePanorama(x, nav, x.raison))) : el('p', { class: 'chef-petit' }, 'Rien de proche du seuil.'),
+    chef.exclues?.length ? el('p', { class: 'chef-petit' }, `Écartées (holdings, sociétés d’investissement, fonds, BDC, SPAC : la décote sur l’actif net n’est pas mesurable avec des sources gratuites) : ${chef.exclues.map((x) => x.nom).join(', ')}.`) : null,
+  ];
+}
+
 /* ------------------------------------------------------------------ fiche détaillée */
 
 function lienSource(l, nav) {
@@ -315,6 +349,8 @@ function ficheOpportunite(l, chef, nav) {
     l.changement ? el('p', { class: 'chef-changement' }, l.changement.explication) : null,
     l.en_attente ? el('p', { class: 'chef-changement chef-attente' }, l.en_attente.texte) : null,
     l.plafond ? el('p', { class: 'chef-changement' }, l.plafond) : null,
+    l.verification_momentum ? el('section', {}, titre('Vérification du momentum', l.verification_momentum.ok ? 'valorisation et positionnement vérifiés' : 'points à lever'),
+      el('ul', { class: 'chef-texte' }, l.verification_momentum.points.map((x) => el('li', {}, x)))) : null,
     el('section', {}, titre('Conviction', l.conviction), el('ul', { class: 'chef-texte' }, (l.conviction_raisons ?? []).map((r) => el('li', {}, r)))),
     el('section', {}, titre('Familles de signaux', 'score /100 · poids effectif dans le score'),
       el('ul', { class: 'chef-familles' }, familles.map(([cle, f]) => el('li', {},

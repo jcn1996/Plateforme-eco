@@ -124,34 +124,156 @@ def scenarios(macro: dict, risque: dict) -> dict:
 
 # ------------------------------------------------------------------ briefing par règles
 
+RANGS = {"forte": 2, "moyenne": 1, "faible": 0}
+CATEGORIES = {"pays": "Pays", "entreprises": "Entreprises", "matieres": "Matières premières", "or": "Or",
+              "obligations": "Obligations", "liquidites": "Liquidités"}
+
+
+def _argument(l: dict, sens: str = "pour") -> str | None:
+    a = (l.get(sens) or [None])[0]
+    return (l.get("familles") or {}).get(a["cle"], {}).get("texte") if a else None
+
+
+def resume_ligne(l: dict) -> dict:
+    return {"id": l["id"], "nom": l["nom"], "type": l["type"], "verdict": l["verdict"], "conviction": l["conviction"], "score": l.get("score"),
+            "fleche": l.get("fleche"), "pays": l.get("pays"), "secteur": l.get("secteur_nom") or l.get("secteur"),
+            "argument": _argument(l, "pour"), "contre": _argument(l, "contre"),
+            "objection": (l.get("objection") or {}).get("objection") if (l.get("objection") or {}).get("serieuse") else None}
+
+
+def _cle_tri(l: dict):
+    return (-DIRECTION.get(l["verdict"], 0), -RANGS.get(l["conviction"], 0), -(l.get("score") or 0))
+
+
+def selection_entreprises(lignes: list[dict], cp: dict) -> tuple[list[dict], dict]:
+    """Entreprises du panorama : verdicts positifs d'abord (conviction puis score), au plus `max_par_secteur` par secteur
+    et `max_par_pays` par pays ; complétées par les meilleurs « Neutre » si les verdicts positifs ne suffisent pas."""
+    cands = sorted((l for l in lignes if l["type"] == "entreprises" and l.get("score") is not None and DIRECTION.get(l["verdict"]) >= 0), key=_cle_tri)
+    choix, par_s, par_p = [], {}, {}
+    for l in cands:
+        s, p = l.get("secteur") or "?", l.get("pays") or "?"
+        if par_s.get(s, 0) >= cp["max_par_secteur"] or par_p.get(p, 0) >= cp["max_par_pays"]:
+            continue
+        if DIRECTION.get(l["verdict"]) == 0 and len(choix) >= cp["entreprises_min"]:
+            break
+        choix.append(l)
+        par_s[s] = par_s.get(s, 0) + 1
+        par_p[p] = par_p.get(p, 0) + 1
+        if len(choix) >= cp["entreprises_max"]:
+            break
+    bilan = {"nombre": len(choix), "secteurs": len(par_s), "pays": len(par_p), "positifs": sum(1 for l in choix if DIRECTION.get(l["verdict"]) == 1)}
+    manques = []
+    if bilan["nombre"] < cp["entreprises_min"]:
+        manques.append(f"{bilan['nombre']} entreprises seulement (minimum visé : {cp['entreprises_min']})")
+    if bilan["secteurs"] < cp["min_secteurs"]:
+        manques.append(f"{bilan['secteurs']} secteurs (minimum visé : {cp['min_secteurs']})")
+    if bilan["pays"] < cp["min_pays"]:
+        manques.append(f"{bilan['pays']} pays (minimum visé : {cp['min_pays']})")
+    bilan["respecte"] = not manques
+    bilan["texte"] = (f"{bilan['nombre']} entreprises sur {bilan['secteurs']} secteurs et {bilan['pays']} pays "
+                      f"(au plus {cp['max_par_secteur']} par secteur et {cp['max_par_pays']} par pays)"
+                      + (" ; données insuffisantes : " + ", ".join(manques) if manques else ""))
+    return choix, bilan
+
+
+def panorama(lignes: list[dict], config: dict) -> dict:
+    """Tour d'horizon par catégorie, top 5 diversifié et liste « À surveiller »."""
+    cp = config["panorama"]
+    seuil = config["verdicts"]["seuils"]["Renforcer"]
+    # Listes par catégorie : par score (le verdict et la conviction sont affichés à côté)
+    par = {t: sorted((l for l in lignes if l["type"] == t and l.get("score") is not None), key=lambda l: -l["score"]) for t in CATEGORIES}
+    ent, bilan = selection_entreprises(lignes, cp)
+    # Top 5 : verdicts positifs ; d'abord une ligne par catégorie, puis les suivantes (au plus 2 par catégorie)
+    # Top 5 : verdict positif, score au-dessus du seuil (pas seulement maintenu par l'hystérésis), aucune objection
+    # sérieuse à lever ni hausse passée extrême (celles-là vont dans « À surveiller »)
+    positifs = sorted((l for l in lignes if DIRECTION.get(l["verdict"]) == 1 and l.get("score") is not None and l["score"] >= seuil
+                       and not (l.get("objection") or {}).get("serieuse") and not l.get("momentum_extreme")
+                       and (l["type"] != "entreprises" or l in ent)), key=_cle_tri)
+    top5, compte = [], {}
+    for limite in (1, 2, 3):  # une ligne par catégorie d'abord, puis deux, puis trois en dernier recours
+        for l in positifs:
+            if len(top5) >= cp["top"]:
+                break
+            if l in top5 or compte.get(l["type"], 0) >= limite:
+                continue
+            top5.append(l)
+            compte[l["type"]] = compte.get(l["type"], 0) + 1
+    top5.sort(key=_cle_tri)
+    ids_top = {l["id"] for l in top5}
+    surveiller = []
+    for l in sorted(lignes, key=lambda l: -(l.get("score") or 0)):
+        if l["id"] in ids_top or l.get("score") is None:
+            continue
+        raison = None
+        if DIRECTION.get(l["verdict"]) == 1 and l["score"] < seuil:
+            raison = f"verdict « {l['verdict']} » maintenu par l'hystérésis, mais score repassé sous le seuil ({ent_(l['score'])}/100 pour {seuil})"
+        elif l["verdict"] == "Neutre" and l["score"] >= seuil - cp["ecart_seuil"]:
+            raison = f"proche du seuil « Renforcer » ({ent_(l['score'])}/100 pour un seuil de {seuil})"
+            if l.get("en_attente"):
+                raison += f", changement en attente vers « {l['en_attente']['vers']} »"
+        elif DIRECTION.get(l["verdict"]) == 1 and (l.get("objection") or {}).get("serieuse"):
+            raison = f"bien noté ({ent_(l['score'])}/100) mais objection à lever : {l['objection']['objection'][:220]}"
+        elif DIRECTION.get(l["verdict"]) == 1 and l.get("momentum_extreme"):
+            raison = f"bien noté ({ent_(l['score'])}/100) mais hausse passée extrême : valorisation et positionnement à vérifier"
+        elif l.get("plafond") and DIRECTION.get(l.get("verdict_brut")) == 1:
+            raison = f"score de {ent_(l['score'])}/100, mais {l['plafond']}"
+        if raison and sum(1 for x in surveiller if x["type"] == l["type"]) < cp["a_surveiller_par_type"]:
+            surveiller.append({**resume_ligne(l), "raison": raison})
+        if len(surveiller) >= cp["a_surveiller_max"]:
+            break
+    return {"top": [resume_ligne(l) for l in top5],
+            "pays": [resume_ligne(l) for l in par["pays"][:cp["pays"]]],
+            "matieres": [resume_ligne(l) for l in par["matieres"][:cp["matieres"]]],
+            "or": resume_ligne(par["or"][0]) if par["or"] else None,
+            "obligations": [resume_ligne(l) for l in par["obligations"]],
+            "liquidites": [resume_ligne(l) for l in par["liquidites"]],
+            "entreprises": [resume_ligne(l) for l in ent], "entreprises_bilan": bilan,
+            "a_surveiller": surveiller}
+
+
+def ent_(x) -> str:
+    return ent(x)
+
+
+def _liste_courte(items: list[dict], n: int) -> str:
+    return ", ".join(f"{x['nom']} ({x['verdict'].lower()}, {ent(x['score'])}/100)" for x in items[:n])
+
+
 def briefing_regles(ctx: dict) -> dict:
     f = Faits()
-    lignes = ctx["lignes"]
+    pano = ctx["panorama"]
     pal = ctx["palier"]
     mondial = ctx["risque_mondial"]
     phase = ctx["phase_monde"]
     i_pal = f.ajouter(f"Palier de risque mondial « {pal} » (score de stress {fr(mondial.get('score'), 0)}/100)", "agent risque")
     i_phase = f.ajouter(f"Phase du cycle mondial : « {phase or 'n. d.'} »", "agent macro")
-    tops = top(lignes)
-    bas = top(lignes, 3, positif=False)
-    i_top = [f.ajouter(libelle_ligne(l), "chef d'orchestre") for l in tops]
-    i_bas = [f.ajouter(libelle_ligne(l), "chef d'orchestre") for l in bas]
+    i_pays = [f.ajouter(f"Pays : {x['nom']} « {x['verdict']} », conviction {x['conviction']}, {ent(x['score'])}/100", "chef d'orchestre") for x in pano["pays"][:3]]
+    i_mat = [f.ajouter(f"Matière première : {x['nom']} « {x['verdict']} », conviction {x['conviction']}, {ent(x['score'])}/100", "chef d'orchestre") for x in pano["matieres"]]
+    i_or = [f.ajouter(f"Or : « {pano['or']['verdict']} », {ent(pano['or']['score'])}/100", "chef d'orchestre")] if pano.get("or") else []
+    i_obl = [f.ajouter(f"{x['nom']} : « {x['verdict']} », {ent(x['score'])}/100", "chef d'orchestre") for x in pano["obligations"] + pano["liquidites"]]
+    b = pano["entreprises_bilan"]
+    i_ent = [f.ajouter(f"Entreprises : {b['texte']}", "chef d'orchestre")] + [
+        f.ajouter(f"Entreprise : {x['nom']} « {x['verdict']} », conviction {x['conviction']}, {ent(x['score'])}/100", "chef d'orchestre") for x in pano["entreprises"][:3]]
     chg = ctx["changements"]
     i_chg = [f.ajouter(c["texte"], "chef d'orchestre") for c in chg[:8]]
     vig = ctx["vigilance"]
     i_vig = [f.ajouter(v, "chef d'orchestre") for v in vig[:6]]
+    obl_pos = [x for x in pano["obligations"] + pano["liquidites"] if DIRECTION.get(x["verdict"]) == 1]
+    obl_neg = [x for x in pano["obligations"] + pano["liquidites"] if DIRECTION.get(x["verdict"]) == -1]
+    texte_obl = "Obligations et liquidités : " + ("; ".join(
+        x for x in (("à privilégier : " + _liste_courte(obl_pos, 3)) if obl_pos else None,
+                    ("à alléger : " + ", ".join(x["nom"] for x in obl_neg)) if obl_neg else None) if x) or "positions neutres") + "."
     essentiel = [
         {"texte": f"Risque mondial « {pal} » (stress {fr(mondial.get('score'), 0)}/100) ; cycle mondial en « {phase or 'n. d.'} ».", "faits": [i_pal, i_phase]},
-        {"texte": ("Où investir : " + " ; ".join(f"{l['nom']} ({l['verdict'].lower()}, conviction {l['conviction']})" for l in tops[:3]) + ".") if tops
-         else "Aucune opportunité ne ressort avec un verdict positif aujourd'hui.", "faits": i_top[:3]},
-        {"texte": ("À alléger ou éviter : " + " ; ".join(f"{l['nom']} ({l['verdict'].lower()})" for l in bas) + ".") if bas
-         else "Aucune opportunité n'est à alléger ou à éviter.", "faits": i_bas},
-        {"texte": (f"{len(chg)} verdict(s) modifié(s) depuis la dernière analyse complète ; " + chg[0]["texte"]) if chg
-         else "Aucun verdict modifié depuis la dernière analyse complète.", "faits": i_chg[:1]},
-        {"texte": ("Vigilance : " + vig[0]) if vig else "Pas de point de vigilance particulier dans les données disponibles.", "faits": i_vig[:1]},
+        {"texte": "Pays : " + (_liste_courte(pano["pays"], 3) or "aucune donnée") + ".", "faits": i_pays},
+        {"texte": "Matières premières : " + (_liste_courte(pano["matieres"], 3) or "aucune donnée")
+         + (f" ; or : {pano['or']['verdict'].lower()} ({ent(pano['or']['score'])}/100)" if pano.get("or") else "") + ".", "faits": i_mat + i_or},
+        {"texte": texte_obl, "faits": i_obl},
+        {"texte": f"Entreprises : {b['nombre']} retenues sur {b['secteurs']} secteurs et {b['pays']} pays, dont " + (_liste_courte(pano["entreprises"], 3) or "aucune") + ".",
+         "faits": i_ent},
     ]
     return {"essentiel": essentiel, "vigilance": [{"texte": v, "faits": [i]} for v, i in zip(vig, i_vig)],
-            "faits": f.liste, "mode": "règles"}
+            "faits": f.liste, "faits_changements": i_chg, "mode": "règles"}
 
 
 # ------------------------------------------------------------------ Gemini
@@ -182,7 +304,9 @@ def consigne(regles: dict, sc: dict) -> str:
         "Tu es le chef d'orchestre d'une plateforme personnelle de suivi économique. Rédige en français le briefing du jour, "
         "sur un ton froid et factuel, sans euphorie ni alarmisme, en distinguant les faits des interprétations. "
         "N'utilise QUE les faits fournis : chaque phrase cite au moins un fait par son id entre crochets, par exemple [F2], et ne contient "
-        "aucun chiffre absent des faits cités. Signale une donnée manquante au lieu de l'inventer.\n"
+        "aucun chiffre absent des faits cités. Signale une donnée manquante au lieu de l'inventer. "
+        "« L'essentiel » résume le panorama PAR CATÉGORIE (1 : risque et cycle ; 2 : pays ; 3 : matières premières et or ; "
+        "4 : obligations et liquidités ; 5 : entreprises), sans mettre en avant une seule société.\n"
         "Réponds uniquement en JSON : {\"essentiel\": [{\"texte\": \"…\", \"faits\": [\"F1\"]}, … exactement 5 phrases], "
         "\"vigilance\": [{\"texte\": \"…\", \"faits\": [\"F7\"]}]}\n\n"
         + json.dumps({"faits": regles["faits"], "scenarios": sc}, ensure_ascii=False)
@@ -223,15 +347,30 @@ def briefing_gemini(regles: dict, sc: dict, quotas, cfg: dict, cle: str, poster,
 
 def briefing_markdown(b: dict) -> str:
     l = [f"# Briefing du chef d'orchestre — {date_fr(b['date'])}", "",
-         f"Rédaction : {'Gemini (affirmations vérifiées contre les données sources)' if b['mode'] == 'gemini' else 'règles'} · "
+         f"Rédaction : {'Gemini (affirmations vérifiées contre les données sources)' if b['mode'] == 'gemini' else 'règles (' + (b.get('raison_regles') or 'n. d.') + ')'} · "
          f"palier de risque « {b['palier']} » · cycle mondial « {b.get('phase_monde') or 'n. d.'} »", "",
          "## L'essentiel", ""]
     l += [f"- {x['texte']}" for x in b["essentiel"]]
-    l += ["", "## Où investir (top 5)", "", "| Opportunité | Verdict | Conviction | Score | Principal argument |", "|---|---|---|---|---|"]
-    for x in b["ou_investir"]:
-        l.append(f"| {x['nom']} | {x['verdict']} | {x['conviction']} | {ent(x['score'])}/100 | {x.get('argument') or ''} |")
-    if not b["ou_investir"]:
-        l.append("| Aucune opportunité à verdict positif | | | | |")
+    pano = b["panorama"]
+
+    def tableau(titre, items, avec_argument=True):
+        lignes = ["", f"### {titre}", "", "| Opportunité | Verdict | Conviction | Score | Justification |", "|---|---|---|---|---|"]
+        for x in items:
+            just = x.get("argument") or ""
+            if x.get("contre"):
+                just += f" — à surveiller : {x['contre']}"
+            lignes.append(f"| {x['nom']} | {x['verdict']} | {x['conviction']} | {ent(x['score'])}/100 | {just if avec_argument else ''} |")
+        if not items:
+            lignes.append("| Aucune donnée | | | | |")
+        return lignes
+    l += ["", "## Où investir : panorama"]
+    l += tableau("Top 5 (au plus une ligne par catégorie, puis deux)", pano["top"])
+    l += tableau("Pays (top 5)", pano["pays"])
+    l += tableau("Matières premières (top 3)", pano["matieres"])
+    l += tableau("Or (valeur refuge)", [pano["or"]] if pano.get("or") else [])
+    l += tableau("Obligations et liquidités", pano["obligations"] + pano["liquidites"])
+    l += tableau(f"Entreprises ({pano['entreprises_bilan']['texte']})", pano["entreprises"])
+    l += ["", "### À surveiller", ""] + ([f"- {x['nom']} ({x['verdict'].lower()}) : {x['raison']}" for x in pano["a_surveiller"]] or ["- Rien de proche du seuil."])
     l += ["", "## Ce qui a changé depuis hier", ""] + ([f"- {c['texte']}" for c in b["changements"]] or ["- Aucun verdict modifié."])
     l += ["", "## Points de vigilance", ""] + ([f"- {v['texte']}" for v in b["vigilance"]] or ["- Aucun."])
     for cle, nom in (("central", "Scénario central"), ("alternatif", "Scénario alternatif")):
@@ -248,7 +387,9 @@ def briefing_markdown(b: dict) -> str:
 
 # ------------------------------------------------------------------ alertes
 
-def alertes(signaux: dict[str, list[dict]], revues: list[dict], changements: list[dict], maintenant: datetime, config: dict, tickers_appli: set) -> list[dict]:
+def alertes(signaux: dict[str, list[dict]], revues: list[dict], changements: list[dict], maintenant: datetime, config: dict, tickers_appli: set,
+            admissible=None) -> list[dict]:
+    """`admissible(agent, signal)` : (bool, raison) — écarte les signaux hors univers, fonds, holdings, déclarations internes."""
     ca = config["alertes"]
     lim = (maintenant - timedelta(hours=ca["fenetre_heures"])).date().isoformat()
     ajust = {r.get("id"): r for r in revues or []}
@@ -256,6 +397,8 @@ def alertes(signaux: dict[str, list[dict]], revues: list[dict], changements: lis
     for agent, liste in signaux.items():
         for s in liste:
             if (s.get("date") or "") < lim:
+                continue
+            if admissible and not admissible(agent, s)[0]:
                 continue
             imp = ca["importances"].get(s.get("importance"), 1)
             r = ajust.get(f"{agent}|{s.get('type')}|{s.get('cle')}|{s.get('date')}")

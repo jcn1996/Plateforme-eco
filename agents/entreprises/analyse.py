@@ -531,16 +531,25 @@ def regrouper_cotations(societes: list[dict], cle) -> list[dict]:
 
 
 def est_holding(nom: str, industrie: str | None, ticker: str, cfg: dict, secteur: str | None = None) -> bool:
-    """Holding ou société d'investissement (ex. Investor AB) : exclue des pépites, faute de pouvoir mesurer
-    la décote sur l'actif net avec des sources gratuites."""
+    """Holding, société d'investissement (ex. Investor AB), fonds fermé, BDC, véhicule de crédit ou SPAC : exclus des
+    pépites et du chef d'orchestre, et jamais « Acheter » sur une valorisation PER, faute de pouvoir mesurer la décote
+    sur l'actif net avec des sources gratuites."""
     ind = (industrie or "").lower()
     if ticker in cfg.get("tickers_exclus", []):
         return True
     if any(x.lower() in ind for x in cfg.get("industries_exclues", [])):
         return True
-    nom_holding = any(m in (nom or "").lower() for m in cfg.get("holdings_mots", []))
+    n = f" {(nom or '').lower()} "
+    nom_holding = any(m in n for m in cfg.get("holdings_mots", []))
     # Industrie inconnue (.info refusé) : le nom suffit pour une société du secteur Finance
     if nom_holding and ("asset management" in ind or (not ind and secteur == "Financials")):
+        return True
+    # Fonds fermés, BDC, véhicules de crédit : leur valeur se lit sur l'actif net, pas sur un PER
+    nom_fonds = any(m in n for m in cfg.get("fonds_mots", []))
+    if nom_fonds and (any(x.lower() in ind for x in cfg.get("fonds_industries", [])) or (not ind and secteur == "Financials")):
+        return True
+    # SPAC (sociétés d'acquisition sans activité propre)
+    if any(m in n for m in cfg.get("spac_mots", [])):
         return True
     return False
 
