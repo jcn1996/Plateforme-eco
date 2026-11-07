@@ -131,6 +131,15 @@
         <div class="degrade-flux-reperes"><span>sorties</span><span>0</span><span>entrées</span></div>
         <p class="legende-aide">Flux nets de l'ETF pays coté aux États-Unis sur la période choisie, en % de son encours (variation du nombre de parts × valeur liquidative). Intensité selon l'ampleur. Les flux ne couvrent que les ETF cotés aux États-Unis.</p>
       </div>
+      <div id="legende-pulsations" hidden>
+        <p class="legende-titre">Flux d'investissement (ETF)</p>
+        <ul class="legende" aria-label="Légende des pulsations des flux d'investissement">
+          <li><span class="halo-legende halo-legende--entrees" aria-hidden="true"></span>halo qui s'étend : entrées nettes</li>
+          <li><span class="halo-legende halo-legende--sorties" aria-hidden="true"></span>halo qui se contracte : sorties nettes</li>
+        </ul>
+        <p class="legende-aide">Amplitude et vitesse selon les flux nets de l'ETF pays coté aux États-Unis, en % de son encours, sur la période du filtre « Flux d'investissement » (1 semaine tant que la période choisie est en cours de constitution). Seuls les 10 flux les plus marqués pulsent. Touchez un halo pour le détail.</p>
+        <p id="legende-pulsations-etat" class="legende-aide"></p>
+      </div>
       <p class="legende-aide">Pour un indicateur, la couleur suit sa note sur 100 attribuée par les agents. Pincez ou double-touchez pour zoomer.</p>
     </div>
   </header>
@@ -139,6 +148,10 @@
   <nav id="filtres" class="filtres" aria-label="Ce que représentent les couleurs">
     <div id="filtres-puces" class="filtres-puces" role="radiogroup" aria-label="Couleurs des pays"></div>
     <div id="flux-periode" class="flux-periode" role="radiogroup" aria-label="Période des flux d'investissement" hidden></div>
+    <button id="btn-pulsations" class="puce puce--pulsations" type="button" aria-pressed="true" hidden title="Masquer les pulsations des flux d'investissement">
+      <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="2.2" fill="currentColor"/><circle cx="10" cy="10" r="5.2" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.75"/><circle cx="10" cy="10" r="8.2" fill="none" stroke="currentColor" stroke-width="1.3" opacity="0.4"/></svg>
+      <span>Flux ETF</span>
+    </button>
   </nav>
 
   <!-- ===================== ALERTES DU JOUR ===================== -->

@@ -9,8 +9,10 @@
    ========================================================================== */
 
 import { chargerDonnees } from './donnees.js';
-import { el, lireMetrique, METRIQUES_PAYS } from './outils.js';
-import { demarrerHorloge, remplirBandeau, initialiserAlertes, initialiserFiltres, lireModeLeger, memoriserModeLeger } from './interface.js';
+import { el, nombre, variation, lireMetrique, METRIQUES_PAYS } from './outils.js';
+import {
+  demarrerHorloge, remplirBandeau, initialiserAlertes, initialiserFiltres, lireModeLeger, memoriserModeLeger, lirePreference, memoriserPreference,
+} from './interface.js';
 import { initialiserComparateur, boutonComparer, majBarre, ecranComparaison } from './comparateur.js';
 import { evaluerRegles, ecranMesAlertes } from './mes-alertes.js';
 import { initialiserRecherche } from './recherche.js';
@@ -23,7 +25,8 @@ import { chargerMacro, ecranMacro } from './macro.js';
 import { chargerGeopolitique, ecranGeopolitique, lireRisque, METRIQUE_RISQUE } from './geopolitique.js';
 import { chargerRisque, ecranRisque, lireRisquePays, majPastilleRisque, METRIQUE_RISQUE_PAYS } from './risque.js';
 import { chargerPepites, ecranPepites } from './pepites.js';
-import { METRIQUE_FLUX, lireFlux, initialiserPeriodeFlux } from './flux-investissement.js';
+import { METRIQUE_FLUX, lireFlux, initialiserPeriodeFlux, periodeFlux } from './flux-investissement.js';
+import { choisirPulsations, bilanPulsations, libellePeriode } from './pulsations.js';
 import { chargerAnalyses, chargerEnCours, chargerAnalyse, chargerRecommandations, ecranAnalyses, ecranFiabilite } from './analyses.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -144,8 +147,14 @@ async function demarrer() {
   const metriquesGlobe = [...METRIQUES_PAYS, ...(avecFlux ? [METRIQUE_FLUX] : []), ...(risque ? [METRIQUE_RISQUE_PAYS] : []), ...(geopolitique ? [METRIQUE_RISQUE] : [])];
   const estRisque = (cle) => cle === METRIQUE_RISQUE.cle || cle === METRIQUE_RISQUE_PAYS.cle;
   const estFlux = (cle) => cle === METRIQUE_FLUX.cle;
-  // Sélecteur 1 semaine / 1 mois / 3 mois, visible seulement avec le filtre « Flux d'investissement »
-  initialiserPeriodeFlux($('#flux-periode'), () => globe?.definirMetrique(objetMetrique(METRIQUE_FLUX.cle)));
+  // Sélecteur 1 semaine / 1 mois / 3 mois, visible seulement avec le filtre « Flux d'investissement » ;
+  // il règle aussi la période des pulsations du globe
+  initialiserPeriodeFlux($('#flux-periode'), () => {
+    globe?.definirMetrique(objetMetrique(METRIQUE_FLUX.cle));
+    globe?.definirPulsations(choisirPulsations(d.pays, periodeFlux()));
+    majLegendePulsations();
+  });
+  initialiserBoutonPulsations(avecFlux);
   initialiserFiltres({ puces: $('#filtres-puces') }, metriquesGlobe, {
     surMetrique: (cle, initial) => {
       $('#legende-metrique').textContent = metriquesGlobe.find((m) => m.cle === cle).libelle;
@@ -204,6 +213,9 @@ async function demarrer() {
       frontieres: d.frontieres,
       leger,
       metrique: objetMetrique(metriqueInitiale),
+      pulsations: avecFlux ? choisirPulsations(d.pays, periodeFlux()) : [],
+      afficherPulsations: pulsationsVisibles,
+      formaterPulsation: textePulsation,
       surSelection: (code) => naviguer({ type: 'pays', id: code }),
     });
   } catch (erreur) {
@@ -246,6 +258,63 @@ function appliquerModeLeger(actif) {
   dom.btnLeger.setAttribute('aria-pressed', String(actif));
   dom.btnLeger.title = actif ? 'Mode léger activé (cliquer pour le désactiver)' : 'Activer le mode léger (économie de batterie)';
   globe?.definirLeger(actif);
+  majLegendePulsations();
+}
+
+/* ================= Pulsations du globe : flux d'investissement des ETF pays ================= */
+
+const CLE_PULSATIONS = 'salle-controle:pulsations';
+let pulsationsVisibles = lirePreference(CLE_PULSATIONS, '1') === '1';
+const mouvementReduit = matchMedia('(prefers-reduced-motion: reduce)');
+
+/** Bouton « Flux ETF » (à côté des filtres) : masque ou affiche les pulsations ; choix mémorisé. */
+function initialiserBoutonPulsations(avecFlux) {
+  const bouton = $('#btn-pulsations');
+  bouton.hidden = !avecFlux;
+  $('#legende-pulsations').hidden = !avecFlux;
+  const maj = () => {
+    bouton.setAttribute('aria-pressed', String(pulsationsVisibles));
+    bouton.title = pulsationsVisibles ? 'Masquer les pulsations des flux d’investissement' : 'Afficher les pulsations des flux d’investissement';
+  };
+  bouton.addEventListener('click', () => {
+    pulsationsVisibles = !pulsationsVisibles;
+    memoriserPreference(CLE_PULSATIONS, pulsationsVisibles ? '1' : '0');
+    maj();
+    globe?.definirAffichagePulsations(pulsationsVisibles);
+    majLegendePulsations();
+  });
+  mouvementReduit.addEventListener?.('change', majLegendePulsations);
+  maj();
+  majLegendePulsations();
+}
+
+/** Ligne d'état de la légende : nombre de pays qui pulsent, historique en cours de constitution, désactivation. */
+function majLegendePulsations() {
+  const noeud = $('#legende-pulsations-etat');
+  if (!noeud || !d) return;
+  const periode = periodeFlux();
+  const n = choisirPulsations(d.pays, periode).length;
+  const { constitution } = bilanPulsations(d.pays, periode);
+  const morceaux = [];
+  if (document.body.classList.contains('mode-leger')) morceaux.push('Pulsations désactivées en mode ⚡.');
+  else if (mouvementReduit.matches) morceaux.push('Pulsations désactivées : l’appareil demande de réduire les animations.');
+  else if (!pulsationsVisibles) morceaux.push('Pulsations masquées (bouton « Flux ETF »).');
+  else morceaux.push(n ? `${n} pays pulse${n > 1 ? 'nt' : ''} (${libellePeriode(periode)}).` : 'Aucun flux assez marqué pour pulser.');
+  if (constitution) morceaux.push(`${constitution} pays en cours de constitution (historique insuffisant).`);
+  noeud.textContent = morceaux.join(' ');
+}
+
+/** Bulle d'un pays qui pulse : montant, % de l'encours, période et date de la donnée. */
+function textePulsation(x) {
+  const date = x.date ? new Date(`${x.date}T12:00:00Z`).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }) : null;
+  const m = x.flux_musd;
+  const montant = `${m > 0 ? '+' : m < 0 ? '−' : ''}${nombre(Math.abs(m), Math.abs(m) >= 100 ? 0 : 1)} M$`;
+  return [
+    `${x.nom} · ETF ${x.symbole}`,
+    `${x.sens === 'entrees' ? 'Entrées' : 'Sorties'} nettes : ${montant} · ${variation(x.pct, 2)} de l’encours`,
+    `Sur ${libellePeriode(x.periode)}${x.repli ? ` (${libellePeriode(x.demandee)} en cours de constitution)` : ''} · donnée du ${date ?? 'n.d.'}`,
+    'ETF cotés aux États-Unis uniquement',
+  ];
 }
 
 /* ============================== Navigation ============================== */
