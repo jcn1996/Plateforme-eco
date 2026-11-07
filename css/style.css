@@ -1459,3 +1459,43 @@ body.mode-leger .pastille-risque-point { box-shadow: none; }
 .flux-graphique-point { fill: var(--fond); stroke: var(--texte); stroke-width: 2; vector-effect: non-scaling-stroke; }
 .flux-graphique-bulle { position: absolute; top: -4px; padding: 3px 8px; border: 1px solid var(--ligne-forte); border-radius: 8px;
   background: rgba(5, 11, 24, 0.94); color: var(--texte); font-size: 11px; white-space: nowrap; pointer-events: none; }
+
+/* ==========================================================================
+   Pulsations du globe : flux d'investissement des ETF pays
+   ========================================================================== */
+.puce--pulsations svg { width: 16px; height: 16px; }
+.puce--pulsations[aria-pressed="true"] { border-color: var(--vert); color: #c9fbe8; }
+.puce--pulsations[aria-pressed="false"] { opacity: 0.7; text-decoration: line-through; }
+body.mode-leger .puce--pulsations { opacity: 0.55; }
+.halo-legende { position: relative; display: inline-block; flex: none; width: 16px; height: 16px; border-radius: 50%; }
+.halo-legende::before, .halo-legende::after { content: ""; position: absolute; border-radius: 50%; border: 1.5px solid var(--c-halo); }
+.halo-legende::before { inset: 5px; background: var(--c-halo); }
+.halo-legende::after { inset: 0; opacity: 0.55; }
+.halo-legende--entrees { --c-halo: var(--vert); }
+.halo-legende--sorties { --c-halo: var(--rouge); }
+
+.bulle-pulsation {
+  position: absolute; left: 0; top: 0; z-index: 3;
+  display: flex; flex-direction: column; gap: 2px;
+  width: max-content; max-width: min(320px, calc(100vw - 16px));
+  padding: 8px 12px;
+  border: 1px solid var(--c-halo, var(--cyan)); border-radius: 10px;
+  background: rgba(5, 11, 24, 0.94);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--c-halo, var(--cyan)) 35%, transparent);
+  color: var(--texte); font-size: 13px;
+  pointer-events: auto;
+  animation: fondu-pulsation 0.2s ease; /* opacité seule : la position est fixée par transform */
+}
+@keyframes fondu-pulsation { from { opacity: 0; } }
+.bulle-pulsation--entrees { --c-halo: var(--vert); }
+.bulle-pulsation--sorties { --c-halo: var(--rouge); }
+.bulle-pulsation-titre { font-weight: 600; }
+.bulle-pulsation-detail { font-size: 12px; color: var(--texte-2); }
+.bulle-pulsation-detail:last-of-type { font-size: 11px; color: var(--texte-3); }
+.bulle-pulsation-fiche { align-self: flex-start; margin-top: 6px; }
+#legende-pulsations { margin-top: 12px; }
+@media (max-width: 479px) {
+  /* Téléphone : bouton en icône seule, pour laisser la place aux filtres */
+  .puce--pulsations { padding: 0 9px; }
+  .puce--pulsations span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}

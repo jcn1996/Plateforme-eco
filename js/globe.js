@@ -8,11 +8,13 @@
       (pays suivis colorés selon leur note, autres pays gris bleu), un seul
       trait de frontière jaune clair très fin, plus épais autour du pays
       sélectionné. Natural Earth 1:110m, puis 1:50m quand on zoome de près.
-   3. Colonnes, anneaux et étiquettes des pays
+   3. Colonnes, anneaux et étiquettes des pays ; pulsations des flux d'investissement
+      (ETF pays) : halo vert qui s'étend (entrées nettes), halo rouge qui se contracte (sorties)
    4. Liseré et halo atmosphérique
 
    Gestes : rotation avec inertie, rotation automatique au repos, pincement,
-   molette, double-tap ; toucher un pays ouvre sa fiche.
+   molette, double-tap ; toucher un pays ouvre sa fiche ; toucher le halo d'un
+   pays qui pulse affiche une bulle (montant, % de l'encours, période, date).
    ========================================================================== */
 
 // Three.js r160, version fixée. « three » et « three/addons/ » sont définis par
@@ -47,6 +49,11 @@ const TEINTES = {
   neutre: 0xf2a93b,          // ambre
   defavorable: 0xf0564a,     // rouge corail
 };
+/* Halos des flux d'investissement : vert émeraude (entrées), rouge corail (sorties) */
+const COULEUR_ENTREES = 0x2ee59d;
+const COULEUR_SORTIES = 0xff4d6a;
+const HALO_MIN = 0.012, HALO_MAX = 0.03, HALO_AMPLITUDE = 0.07; // rayons (rayon de la Terre = 1)
+const ANNEAUX_PAR_HALO = 2;     // deux anneaux décalés d'un demi-cycle
 const ECLAIRCISSEMENT = 0.3; // pays sélectionné : couleur mélangée à 30 % de blanc
 const FRONTIERE = 0xffe9a8;  // jaune clair
 const BLANC = new THREE.Color(0xffffff);
@@ -73,9 +80,14 @@ export class Globe {
    *   metrique : { cle, lire(pays) → { note, texte, niveau?, couleur? } }  (ce que représentent les couleurs ;
    *              « couleur » : teinte continue imposée, ex. flux d'investissement)
    *   surSelection(code) : appelé quand on touche un pays
+   *   pulsations : [{ code, sens: 'entrees' | 'sorties', amplitude (0 à 1), vitesse (cycles/s), … }]
+   *                (flux d'investissement des ETF pays, voir js/pulsations.js)
+   *   afficherPulsations : pulsations visibles (bouton de l'appli)
+   *   formaterPulsation(pulsation) : lignes de texte de la bulle d'un pays qui pulse
    */
   constructor(toile, calqueEtiquettes, options) {
-    const { pays, frontieres, leger = false, metrique, surSelection = () => {} } = options;
+    const { pays, frontieres, leger = false, metrique, surSelection = () => {},
+      pulsations = [], afficherPulsations = true, formaterPulsation } = options;
     this.toile = toile;
     this.calque = calqueEtiquettes;
     this.pays = pays;
@@ -85,6 +97,11 @@ export class Globe {
     this.metrique = metrique ?? { cle: 'note', lire: (p) => ({ note: p.note, texte: nombre(p.note) }) };
     this.actif = true;
     this.selection = null;
+    this.afficherPulsations = afficherPulsations;
+    this.formaterPulsation = formaterPulsation ?? ((x) => [x.nom ?? x.code]);
+    // Réglage « réduire les animations » de l'appareil : pas de pulsations
+    this.mouvementReduit = matchMedia('(prefers-reduced-motion: reduce)');
+    this.mouvementReduit.addEventListener?.('change', () => this.#majVisibilitePulsations());
 
     // Carte vectorielle : 1:110m tout de suite, 1:50m chargée à la demande
     this.topo110 = frontieres;
@@ -122,6 +139,9 @@ export class Globe {
     this.#creerCarte();
     this.#creerHalo();
     this.#creerPays();
+    this.groupePulsations = new THREE.Group();
+    this.groupe.add(this.groupePulsations);
+    this.definirPulsations(pulsations);
     this.#brancherGestes();
 
     this.redimensionner();
@@ -448,12 +468,139 @@ export class Globe {
     this.toile.addEventListener('dblclick', (e) => e.preventDefault());
   }
 
-  /** Simple toucher : un pays (fiche). */
+  /** Simple toucher : le halo d'un pays qui pulse (bulle), sinon un pays (fiche). */
   #toucher(x, y) {
+    const bulleOuverte = Boolean(this.bulle);
+    this.#masquerBulle();
+    const halo = this.#haloTouche(x, y);
+    if (halo) {
+      if (!bulleOuverte || this.bulleCode !== halo.code) this.#afficherBulle(halo, x, y);
+      return;
+    }
     this.#lancerRayon(x, y);
     const impactTerre = this.raycaster.intersectObject(this.terre, false)[0];
     const code = this.#paysTouche(x, y, impactTerre);
     if (code) this.surSelection(code);
+  }
+
+  /* ======================= Pulsations des flux d'investissement ======================= */
+
+  /** Pulsations actives : bouton activé, ni mode léger, ni « réduire les animations ». */
+  pulsationsActives() {
+    return this.afficherPulsations && !this.leger && !this.mouvementReduit.matches && this.halos.length > 0;
+  }
+
+  /** Remplace les pays qui pulsent (changement de période du filtre). */
+  definirPulsations(liste) {
+    for (const h of this.halos ?? []) for (const a of h.anneaux) a.material.dispose(); // géométrie commune conservée
+    this.groupePulsations.clear();
+    this.#masquerBulle();
+    const avant = new THREE.Vector3(0, 0, 1);
+    this.geoHalo ??= new THREE.RingGeometry(0.8, 1, 64);
+    this.halos = (liste ?? []).filter((x) => this.parCode.has(x.code)).map((x, i) => {
+      const p = this.parCode.get(x.code);
+      const normale = versVecteur(p.lat, p.lon).normalize();
+      const anneaux = Array.from({ length: ANNEAUX_PAR_HALO }, () => {
+        const m = new THREE.Mesh(this.geoHalo, new THREE.MeshBasicMaterial({
+          color: x.sens === 'entrees' ? COULEUR_ENTREES : COULEUR_SORTIES, transparent: true, opacity: 0,
+          // Mélange normal : le vert reste vert sur un pays orange (l'additif le ferait virer au jaune)
+          side: THREE.DoubleSide, depthWrite: false,
+        }));
+        m.position.copy(normale).multiplyScalar(1.003);
+        m.quaternion.setFromUnitVectors(avant, normale);
+        this.groupePulsations.add(m);
+        return m;
+      });
+      // Rayon extérieur : selon l'amplitude (flux en % de l'encours)
+      return { ...x, normale, anneaux, rayon: HALO_MAX + HALO_AMPLITUDE * x.amplitude, phase: (i * 0.29) % 1 };
+    });
+    this.#majVisibilitePulsations();
+  }
+
+  /** Bouton « pulsations » de l'appli. */
+  definirAffichagePulsations(afficher) {
+    this.afficherPulsations = afficher;
+    this.#majVisibilitePulsations();
+  }
+
+  #majVisibilitePulsations() {
+    this.groupePulsations.visible = this.pulsationsActives();
+    if (!this.groupePulsations.visible) this.#masquerBulle();
+  }
+
+  /**
+   * Animation d'un halo : entrées = anneau qui naît au centre et s'étend en s'effaçant ;
+   * sorties = anneau qui naît au bord et se contracte vers le centre.
+   */
+  #majPulsations(temps) {
+    if (!this.groupePulsations.visible) return;
+    const echelleZoom = 1 / Math.sqrt(this.zoom);
+    for (const h of this.halos) {
+      const attenue = this.selection && this.selection !== h.code ? 0.4 : 1;
+      h.anneaux.forEach((a, k) => {
+        const c = (temps * h.vitesse + h.phase + k / ANNEAUX_PAR_HALO) % 1;
+        let r, opacite;
+        if (h.sens === 'entrees') {
+          const e = 1 - Math.pow(1 - c, 2); // ralentit en s'éloignant
+          r = HALO_MIN + (h.rayon - HALO_MIN) * e;
+          opacite = Math.pow(1 - c, 1.3);
+        } else {
+          const e = c * c; // accélère vers le centre
+          r = h.rayon - (h.rayon - HALO_MIN) * e;
+          opacite = c < 0.8 ? 0.3 + 0.7 * (c / 0.8) : (1 - c) / 0.2;
+        }
+        a.scale.setScalar(r * echelleZoom);
+        a.material.opacity = 0.85 * opacite * attenue;
+      });
+    }
+  }
+
+  /** Halo sous le doigt : distance au centre du pays inférieure au rayon du halo à l'écran (22 px au moins). */
+  #haloTouche(x, y) {
+    if (!this.pulsationsActives()) return null;
+    const centre = new THREE.Vector3(), bord = new THREE.Vector3(), tangente = new THREE.Vector3();
+    const normaleMonde = new THREE.Vector3(), versCamera = new THREE.Vector3();
+    const ecran = (v) => [((v.x + 1) / 2) * this.largeur, ((1 - v.y) / 2) * this.hauteur];
+    let meilleur = null, distanceMin = Infinity;
+    for (const h of this.halos) {
+      normaleMonde.copy(h.normale).applyQuaternion(this.groupe.quaternion);
+      centre.copy(h.normale).applyMatrix4(this.groupe.matrixWorld);
+      versCamera.copy(this.camera.position).sub(centre).normalize();
+      if (normaleMonde.dot(versCamera) < 0.15) continue; // face cachée de la Terre
+      tangente.set(0, 1, 0).cross(h.normale).normalize();
+      if (tangente.lengthSq() < 0.5) tangente.set(1, 0, 0);
+      bord.copy(h.normale).addScaledVector(tangente, h.rayon / Math.sqrt(this.zoom)).applyMatrix4(this.groupe.matrixWorld).project(this.camera);
+      const [cx, cy] = ecran(centre.clone().project(this.camera));
+      const [bx, by] = ecran(bord);
+      const rayon = Math.max(22, Math.hypot(bx - cx, by - cy));
+      const d = Math.hypot(x - cx, y - cy);
+      if (d <= rayon && d < distanceMin) { distanceMin = d; meilleur = h; }
+    }
+    return meilleur;
+  }
+
+  /** Bulle d'un pays qui pulse : montant, % de l'encours, période, date ; bouton vers la fiche. */
+  #afficherBulle(halo, x, y) {
+    const lignes = this.formaterPulsation(halo);
+    this.bulle = el('div', { class: `bulle-pulsation bulle-pulsation--${halo.sens}`, role: 'status' },
+      ...(Array.isArray(lignes) ? lignes : [lignes]).map((l, i) => el('span', { class: i ? 'bulle-pulsation-detail' : 'bulle-pulsation-titre' }, l)),
+      el('button', { type: 'button', class: 'bouton bouton--petit bulle-pulsation-fiche', onclick: () => { this.#masquerBulle(); this.surSelection(halo.code); } },
+        'Voir la fiche'),
+    );
+    this.bulleCode = halo.code;
+    this.calque.append(this.bulle);
+    const largeur = this.bulle.offsetWidth, hauteur = this.bulle.offsetHeight;
+    const gauche = Math.min(Math.max(8, x - largeur / 2), this.largeur - largeur - 8);
+    const haut = y - hauteur - 16 < this.hautLibre + 4 ? y + 16 : y - hauteur - 16;
+    this.bulle.style.transform = `translate(${gauche.toFixed(0)}px, ${haut.toFixed(0)}px)`;
+    this.minuterieBulle = setTimeout(() => this.#masquerBulle(), 8000);
+  }
+
+  #masquerBulle() {
+    clearTimeout(this.minuterieBulle);
+    this.bulle?.remove();
+    this.bulle = null;
+    this.bulleCode = null;
   }
 
   #lancerRayon(x, y) {
@@ -545,6 +692,7 @@ export class Globe {
   }
 
   #selectionChangee() {
+    this.#masquerBulle();
     this.#majContourSelection();
   }
 
@@ -560,6 +708,7 @@ export class Globe {
     this.leger = leger;
     this.lisere.visible = !leger;
     this.halo.visible = !leger;
+    this.#majVisibilitePulsations(); // pas de pulsations en mode léger
     this.redimensionner();
   }
 
@@ -594,6 +743,7 @@ export class Globe {
     this.#majCadrage(dt);
     this.#majNiveauCarte();
     this.#majPays(temps, dt);
+    this.#majPulsations(temps);
 
     this.groupe.rotation.set(this.tangage, this.lacet, 0);
     this.groupe.updateMatrixWorld();
@@ -653,6 +803,7 @@ export class Globe {
     const croissance = 1 - Math.pow(1 - intro, 3);
     const lissage = 1 - Math.exp(-dt * 5); // transitions douces de couleur et de hauteur
     const echelleZoom = 1 / Math.sqrt(this.zoom);
+    const pulsations = this.groupePulsations?.visible;
     for (const o of this.objetsPays) {
       const choisi = o.code === this.selection;
       const attenue = this.selection && !choisi;
@@ -666,7 +817,8 @@ export class Globe {
       o.sommet.material.opacity = attenue ? 0.35 : 1;
       o.sommet.position.copy(o.normale).multiplyScalar(1 + h);
       o.haut.copy(o.normale).multiplyScalar(1 + h + 0.015);
-      if (this.leger) {
+      // Anneau immobile en mode léger, ou quand les halos des flux pulsent (pour ne pas les confondre)
+      if (this.leger || pulsations) {
         o.anneau.scale.setScalar((choisi ? 1.6 : 1) * echelleZoom);
         o.anneau.material.opacity = attenue ? 0.25 : 0.7;
       } else {

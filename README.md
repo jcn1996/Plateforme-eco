@@ -19,6 +19,13 @@ Prototype d'une application personnelle de suivi économique mondial, pensée d'
   - Couleur selon les flux nets en % de l'encours de l'ETF : vert = entrées, rouge = sorties, intensité selon l'ampleur.
   - Sélecteur 1 semaine / 1 mois / 3 mois à côté des filtres ; une période dont l'historique est trop court apparaît « en constitution ».
   - Ces flux ne couvrent que les ETF cotés aux États-Unis.
+- **Pulsations des flux d'investissement**, visibles sur la vue par défaut du globe (`js/pulsations.js`) :
+  - entrées nettes : halo vert qui s'étend ; sorties nettes : halo rouge qui se contracte vers le centre ;
+  - amplitude et vitesse proportionnelles aux flux nets en % de l'encours de l'ETF, sur la période du filtre « Flux d'investissement » (1 semaine tant que la période choisie est en cours de constitution) ;
+  - seuil minimal (0,3 % sur une semaine, 0,75 % sur un mois, 1,5 % sur 3 mois) et seulement les 10 flux les plus marqués, pour garder le globe lisible ;
+  - toucher un halo affiche une bulle (montant, % de l'encours, période, date) avec un bouton vers la fiche ;
+  - bouton « Flux ETF » pour les masquer (choix mémorisé) ; légende « Flux d'investissement (ETF) », avec le nombre de pays encore en cours de constitution ;
+  - désactivées en mode ⚡ et quand l'appareil demande de réduire les animations ; tant qu'elles sont actives, l'anneau habituel des pays reste immobile, pour ne pas les confondre.
 - **Bandeau des marchés** (cours réels, différés d'environ 15 min) : Nasdaq 100, S&P 500, Or, Pétrole WTI, Bitcoin, EUR/USD, CAC 40, MSCI World (ETF URTH).
   - Chaque cotation porte une pastille « ouvert » ou « fermé ».
   - Il défile tout seul, se glisse au doigt ou à la souris avec inertie, et se met en pause au toucher (reprise 4 s après le relâchement) ou au survol.
