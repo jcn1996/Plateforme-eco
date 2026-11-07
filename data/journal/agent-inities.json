@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genere_le": "2026-11-07T17:43:40Z",
+    "genere_le": "2026-11-07T18:22:58Z",
     "source": "agent-inities",
     "version_agent": "1.0",
     "description": "État des sources et signaux, à chaque exécution",
@@ -9,7 +9,7 @@
       "libelle": "Agent initiés",
       "ordre": 9,
       "workflow": "agent-inities.yml",
-      "derniere_execution": "2026-11-07T17:43:40Z",
+      "derniere_execution": "2026-11-07T18:22:59Z",
       "prochaine_prevue": "2026-11-08T06:35:00Z",
       "intervalle_min": 1440,
       "planning": {
@@ -19,92 +19,99 @@
         ],
         "fuseau": "UTC"
       },
-      "sources_total": 12,
-      "sources_ok": 11,
+      "sources_total": 14,
+      "sources_ok": 14,
       "sources": [
         {
           "nom": "SEC EDGAR, correspondance ticker ↔ CIK",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-07T17:43:40Z"
+          "derniere_donnee_valide": "2026-11-07T18:22:59Z"
         },
         {
           "nom": "SEC EDGAR, index quotidiens des dépôts",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-07T17:43:40Z"
+          "derniere_donnee_valide": "2026-11-07T18:22:59Z"
         },
         {
           "nom": "SEC EDGAR, formulaires 4 (dirigeants)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-07T17:43:40Z"
+          "derniere_donnee_valide": "2026-11-07T18:22:59Z"
         },
         {
           "nom": "SEC EDGAR, formulaires 13D (activistes)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-07T17:43:40Z"
+          "derniere_donnee_valide": "2026-11-07T18:22:59Z"
         },
         {
           "nom": "AMF, base BDIF : déclarations des dirigeants",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-07T17:43:40Z"
+          "derniere_donnee_valide": "2026-11-07T18:22:59Z"
         },
         {
           "nom": "BaFin, base des « Directors' Dealings »",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-07T17:43:40Z"
+          "derniere_donnee_valide": "2026-11-07T18:22:59Z"
         },
         {
-          "nom": "AMF, base BDIF : franchissements de seuil",
+          "nom": "NSE (Inde), déclarations SAST (franchissements de 5 %)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-07T17:43:40Z"
+          "derniere_donnee_valide": "2026-11-07T18:22:59Z"
+        },
+        {
+          "nom": "NSE (Inde), répartition de l'actionnariat (actionnaires de plus de 1 %)",
+          "etat": "ok",
+          "detail": null,
+          "derniere_donnee_valide": "2026-11-07T18:22:59Z"
         },
         {
           "nom": "DART (Corée), déclarations de participation (clé DART_API_KEY)",
           "etat": "non configurée",
-          "detail": "secret DART_API_KEY absent : source ignorée",
+          "detail": "clé non configurée (secret DART_API_KEY absent) : source ignorée",
           "derniere_donnee_valide": null
         },
         {
           "nom": "EDINET (Japon), déclarations de grands actionnaires (clé EDINET_API_KEY)",
           "etat": "non configurée",
-          "detail": "secret EDINET_API_KEY absent : source ignorée",
+          "detail": "clé non configurée (secret EDINET_API_KEY absent) : source ignorée",
           "derniere_donnee_valide": null
         },
         {
-          "nom": "KAP (Turquie), annonces des sociétés",
-          "etat": "échec",
-          "detail": "HTTPSConnectionPool(host='www.kap.org.tr', port=443): Max retries exceeded with url: /tr/api/memberDisclosureQuery (Caused by ProxyError('Unable to connect to p",
-          "derniere_donnee_valide": null
+          "nom": "KAP (Turquie), notifications de franchissement de seuil (source secondaire)",
+          "etat": "ok",
+          "detail": null,
+          "secondaire": true,
+          "derniere_donnee_valide": "2026-11-07T18:22:59Z"
         },
         {
-          "nom": "BSE (Inde), actionnaires de plus de 1 %",
-          "etat": "non configurée",
-          "detail": "aucune société indienne listée dans config/super_investisseurs.json",
-          "derniere_donnee_valide": null
+          "nom": "AMF, base BDIF : franchissements de seuil",
+          "etat": "ok",
+          "detail": null,
+          "derniere_donnee_valide": "2026-11-07T18:22:59Z"
         },
         {
           "nom": "SEC EDGAR, rapports 13F (super-investisseurs)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-07T17:43:40Z"
+          "derniere_donnee_valide": "2026-11-07T18:22:59Z"
         },
         {
           "nom": "OpenFIGI (CUSIP → ticker des 13F)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-07T17:43:40Z"
+          "derniere_donnee_valide": "2026-11-07T18:22:59Z"
         },
         {
           "nom": "Chambre des représentants, déclarations de transactions",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-07T17:43:40Z"
+          "derniere_donnee_valide": "2026-11-07T18:22:59Z"
         },
         {
           "nom": "Sénat, déclarations de transactions (efdsearch)",
@@ -116,7 +123,7 @@
           "nom": "Yahoo Finance via yfinance (cours sur 6 mois des sociétés achetées)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-07T17:43:40Z"
+          "derniere_donnee_valide": "2026-11-07T18:22:59Z"
         }
       ],
       "degrade": false,
@@ -140,10 +147,15 @@
         "BaFin, base des « Directors' Dealings »": [
           "bafin"
         ],
+        "NSE (Inde), déclarations SAST (franchissements de 5 %)": [
+          "nse_sast"
+        ],
+        "NSE (Inde), répartition de l'actionnariat (actionnaires de plus de 1 %)": [
+          "nse_actionnariat"
+        ],
         "AMF, base BDIF : franchissements de seuil": [
           "amf_seuils"
         ],
-        "KAP (Turquie), annonces des sociétés": [],
         "SEC EDGAR, rapports 13F (super-investisseurs)": [
           "edgar_13f"
         ],
@@ -187,9 +199,200 @@
         "Strickland Paul déclare 2,7 % de SDR Drone, Inc. (13D, intention d'influencer)",
         "Main Street Capital CORP déclare plus de 5 % de MSC INCOME FUND, INC. (13D, intention d'influencer)"
       ]
+    },
+    {
+      "genere_le": "2026-11-07T18:22:58Z",
+      "mode": "complet",
+      "etat_des_sources": {
+        "sec_tickers": "ok",
+        "edgar_index": "ok",
+        "edgar_form4": "ok",
+        "edgar_13d": "ok",
+        "amf_dirigeants": "ok",
+        "bafin": "ok",
+        "nse_sast": "ok",
+        "nse_actionnariat": "ok",
+        "dart": "non configurée",
+        "edinet": "non configurée",
+        "kap": "ok",
+        "amf_seuils": "ok",
+        "edgar_13f": "ok",
+        "openfigi": "ok",
+        "chambre": "ok",
+        "senat": "non configurée",
+        "yahoo_cours": "ok"
+      },
+      "achats_retenus": 92,
+      "signaux": [
+        "Matador Resources Co : 4 dirigeants achètent sur le marché en 30 jours (score 76/100)",
+        "Carlyle Credit Solutions : 3 dirigeants achètent sur le marché en 30 jours (score 82/100)",
+        "UPBOUND GROUP, INC. : 4 dirigeants achètent sur le marché en 30 jours (score 82/100)",
+        "Universities Superannuation Scheme Ltd as sole corporate trustee for Universities Superannuation Scheme déclare 63,6 % de Constitution Capital Access Fund, LLC (13D, intention d'influencer)",
+        "Akretive Holdings LLC déclare 15,9 % de cbdMD, Inc. (13D, intention d'influencer)",
+        "Nant Capital, LLC déclare 20,0 % de Peraso Inc. (13D, intention d'influencer)",
+        "BHAV Partners II LLC déclare 28,2 % de BHAV Acquisition Corp II (13D, intention d'influencer)",
+        "Third Point LLC déclare 100,0 % de Third Point Private Capital Income Fund (13D, intention d'influencer)",
+        "MJG Polo LLC déclare 45,2 % de Stark Focus Group, Inc. (13D, intention d'influencer)",
+        "ORBIMED ADVISORS LLC déclare 12,3 % de Aspen Neuroscience, Inc. (13D, intention d'influencer)",
+        "HELU CARLOS SLIM déclare 4,0 % de BRASKEM SA (13D, intention d'influencer)",
+        "Adler Bo Niclas déclare 48,8 % de VISIUM TECHNOLOGIES, INC. (13D, intention d'influencer)",
+        "RA CAPITAL MANAGEMENT, L.P. déclare 14,6 % de Bambusa Therapeutics, Inc. (13D, intention d'influencer)",
+        "Zhang Zack déclare 56,1 % de AIFU INC. (13D, intention d'influencer)",
+        "Mangrove Coast Investment Ltd déclare 48,0 % de X Financial (13D, intention d'influencer)",
+        "AMTD Group Inc. déclare 95,7 % de The Generation Essentials Group (13D, intention d'influencer)",
+        "Manieu Alexandre Weinstein déclare 50,0 % de GAUZY LTD (13D, intention d'influencer)",
+        "Tang Heng déclare 9,4 % de NIP Group Inc. (13D, intention d'influencer)",
+        "Seventh Hokage Management Ltd déclare 15,2 % de NIP Group Inc. (13D, intention d'influencer)",
+        "BW Altor Pte. Ltd. déclare 30,8 % de Cadeler plc (13D, intention d'influencer)",
+        "Noor Shain déclare 5,6 % de Silvia, Inc. (13D, intention d'influencer)"
+      ],
+      "recherche_hors_us": {
+        "noms_cherches": {
+          "pabrai": [
+            "Pabrai",
+            "Dalal Street, LLC",
+            "Dalal Street LLC",
+            "Dhandho India Zero Fee Fund",
+            "Dhandho",
+            "파브라이",
+            "パブライ"
+          ],
+          "buffett": [
+            "Berkshire Hathaway",
+            "National Indemnity"
+          ],
+          "li-lu": [
+            "Himalaya Capital"
+          ],
+          "ackman": [
+            "Pershing Square"
+          ],
+          "klarman": [
+            "Baupost"
+          ],
+          "tepper": [
+            "Appaloosa"
+          ],
+          "burry": [
+            "Scion Asset Management"
+          ],
+          "einhorn": [
+            "Greenlight Capital",
+            "DME Capital",
+            "Greenlight Masters"
+          ],
+          "loeb": [
+            "Third Point"
+          ],
+          "akre": [
+            "Akre Capital"
+          ],
+          "gayner": [
+            "Markel"
+          ],
+          "berkowitz": [
+            "Fairholme"
+          ],
+          "tweedy": [
+            "Tweedy, Browne",
+            "Tweedy Browne"
+          ],
+          "pzena": [
+            "Pzena"
+          ],
+          "marks": [
+            "Oaktree Capital"
+          ]
+        },
+        "sources": {
+          "nse_sast": {
+            "source": "NSE, déclarations SAST (franchissements de 5 %, nom de l'acquéreur)",
+            "etat": "ok",
+            "periodes": [
+              "2021-01-01",
+              "2026-11-07"
+            ],
+            "documents_examines": 27003,
+            "trouves": [
+              "Mohnish Pabrai : Edelweiss Financial Services Limited 3,78 % (Pabrai Investment funds along with pac, 08/04/2024)",
+              "Mohnish Pabrai : Edelweiss Financial Services Limited 8,24 % (Pabrai Investment funds along with pac, 13/02/2024)",
+              "Mohnish Pabrai : Sunteck Realty Limited 4,35 % (Pabrai Investments Funds, 24/01/2024)",
+              "Mohnish Pabrai : Rain Industries Limited 3,96 % (Pabrai Investment Funds, 09/01/2024)",
+              "Mohnish Pabrai : Sunteck Realty Limited 6,58 % (Pabrai Investment Funds, 09/01/2024)",
+              "Mohnish Pabrai : Rain Industries Limited 6,00 % (Pabrai Investment Fund II LP, Pabrai Investment Fund 3 Ltd, Dhandho India Zero Fee Fund LP, Dhandho India Zero Fee Fund Offshore Limited, 08/12/2023)",
+              "Mohnish Pabrai : Edelweiss Financial Services Limited 9,09 % (Pabrai Investment Funds alongwith PAC, 26/06/2023)",
+              "Mohnish Pabrai : Rain Industries Limited 8,00 % (Pabrai Investment Fund 3 Ltd along with PAC, 08/12/2021)",
+              "Mohnish Pabrai : Kolte - Patil Developers Limited 4,89 % (Pabrai Investment Fund II LP, Dhandho India Zero Fee Fund LP, Dhandho India Zero Fee Offshore Limited, 15/06/2021)",
+              "Mohnish Pabrai : Kolte - Patil Developers Limited 7,00 % (Pabrai Investment Fund II LP Dhandho India Zero Fee Fund LP and Dhandho India Zero Fee Offshore Ltd, 27/05/2021)",
+              "Mohnish Pabrai : Rain Industries Limited 5,95 % (Pabrai Investment Fund II LP Pabrai Investment Fund 3 Ltd Dhandho India Zero Fee Fund LP and Dhandho India Zero Fee Offshore Ltd, 27/05/2021)"
+            ],
+            "detail": null,
+            "nb_periodes": 13
+          },
+          "nse_actionnariat": {
+            "source": "NSE, répartition trimestrielle de l'actionnariat (actionnaires de plus de 1 %)",
+            "etat": "ok",
+            "periodes": [
+              "2026-11-07",
+              "2026-11-07"
+            ],
+            "documents_examines": 62,
+            "trouves": [
+              "Mohnish Pabrai : Edelweiss Financial Services Limited 1,54 % (Pabrai Wagons Fund, 30/09/2026)",
+              "Mohnish Pabrai : Sunteck Realty Limited (None, 30/09/2026)",
+              "Mohnish Pabrai : Rain Industries Limited (None, 30/09/2026)",
+              "Mohnish Pabrai : Kolte - Patil Developers Limited (None, 30/09/2026)"
+            ],
+            "detail": "62 société(s) suivie(s) (repérées par SAST : 4) ; 62 nouvelle(s) répartition(s) lue(s)",
+            "nb_periodes": 1
+          },
+          "dart": {
+            "source": "DART (Corée), déclarations de participation (règle des 5 %)",
+            "etat": "non configurée",
+            "periodes": null,
+            "documents_examines": 0,
+            "trouves": [],
+            "detail": "clé non configurée (secret DART_API_KEY absent) : aucune recherche",
+            "nb_periodes": 0
+          },
+          "edinet": {
+            "source": "EDINET (Japon), déclarations de grands actionnaires (5 %)",
+            "etat": "non configurée",
+            "periodes": null,
+            "documents_examines": 0,
+            "trouves": [],
+            "detail": "clé non configurée (secret EDINET_API_KEY absent) : aucune recherche",
+            "nb_periodes": 0
+          },
+          "kap": {
+            "source": "KAP (Turquie), notifications « Pay Alım Satım Bildirimi » (source secondaire)",
+            "etat": "ok",
+            "periodes": [
+              "2026-11-03",
+              "2026-11-07"
+            ],
+            "documents_examines": 50,
+            "trouves": [],
+            "detail": null,
+            "nb_periodes": 5
+          },
+          "amf_seuils": {
+            "source": "AMF, franchissements de seuil",
+            "etat": "ok",
+            "periodes": [
+              "2026-10-28",
+              "2026-11-07"
+            ],
+            "documents_examines": 0,
+            "trouves": [],
+            "detail": null,
+            "nb_periodes": 1
+          }
+        }
+      }
     }
   ],
-  "derniere_execution": "2026-11-07T17:43:40Z",
+  "derniere_execution": "2026-11-07T18:22:59Z",
   "prochaine_prevue": "2026-11-08T06:35:00Z",
   "intervalle_min": 1440,
   "planning": {
