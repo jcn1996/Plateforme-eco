@@ -13,7 +13,11 @@ from statistics import mean, pstdev
 
 MOTS_INTERDITS = re.compile(r"\b(incroyable|exceptionnel\w*|énorme|explos\w*|flambée|euphori\w*|spectaculaire|"
                             r"fantastique|massi\w+|effondrement|krach|à ne pas manquer|immanquable)\b", re.I)
-VERDICTS = ("Surpondérer", "Neutre", "Sous-pondérer")
+SURPONDERER, SOUS_PONDERER = "Surpondérer", "Sous-pondérer"
+NEUTRE, NEUTRE_POSITIF, NEUTRE_NEGATIF = "Neutre", "Neutre (biais positif)", "Neutre (biais négatif)"
+VERDICTS = (SURPONDERER, NEUTRE_POSITIF, NEUTRE, NEUTRE_NEGATIF, SOUS_PONDERER)
+DIRECTIONNELS = (SURPONDERER, SOUS_PONDERER)
+CONFIANCES_SUFFISANTES = ("moyen", "élevé")
 
 
 # ------------------------------------------------------------------ outils
@@ -434,22 +438,49 @@ def note_globale(sous: dict[str, dict | None], ponderations: dict[str, float]) -
     return round(total / poids, 1) if poids else None
 
 
-def verdict(note: float | None, sous: dict, cfg: dict, precedent: str | None = None) -> tuple[str, list[str], list[str]]:
-    """Renvoie (verdict, signaux favorables, signaux défavorables). Deux signaux concordants au minimum
-    pour « Surpondérer » ou « Sous-pondérer » ; hystérésis autour des seuils pour éviter les allers-retours."""
+def verdict(note: float | None, sous: dict, cfg: dict, conf: str, precedent: str | None = None) -> tuple[str, list[str], list[str], str | None]:
+    """Renvoie (verdict, signaux favorables, signaux défavorables, raison si la recommandation est retenue en neutre).
+    « Surpondérer » ou « Sous-pondérer » exigent les trois conditions : note au-delà du seuil (hystérésis autour
+    des seuils pour éviter les allers-retours), au moins deux signaux concordants et une confiance « moyen » ou
+    « élevé ». Si le seuil est atteint sans les deux autres conditions : « Neutre (biais positif / négatif) »."""
     if note is None:
-        return "Neutre", [], []
+        return NEUTRE, [], [], None
     fav = [k for k, s in sous.items() if s and s.get("note") is not None and s["note"] >= cfg["signal_favorable"]]
     defav = [k for k, s in sous.items() if s and s.get("note") is not None and s["note"] <= cfg["signal_defavorable"]]
     h = cfg["hysteresis"]
     haut = cfg["surponderer"] - (h if precedent == "Surpondérer" else 0)
     bas = cfg["sous_ponderer"] + (h if precedent == "Sous-pondérer" else 0)
     n = cfg["signaux_concordants_min"]
-    if note >= haut and len(fav) >= n:
-        return "Surpondérer", fav, defav
-    if note <= bas and len(defav) >= n:
-        return "Sous-pondérer", fav, defav
-    return "Neutre", fav, defav
+    for atteint, signaux_, direction, biais in ((note >= haut, fav, SURPONDERER, NEUTRE_POSITIF),
+                                                (note <= bas, defav, SOUS_PONDERER, NEUTRE_NEGATIF)):
+        if not atteint:
+            continue
+        manques = []
+        if len(signaux_) < n:
+            manques.append(f"{len(signaux_)} signal concordant au lieu de {n} au minimum")
+        if conf not in CONFIANCES_SUFFISANTES:
+            manques.append(f"confiance « {conf} » (« moyen » ou « élevé » requis)")
+        if not manques:
+            return direction, fav, defav, None
+        return biais, fav, defav, f"« {direction} » non retenu : " + " et ".join(manques)
+    return NEUTRE, fav, defav, None
+
+
+def controler_verdict(m: dict, cfg: dict) -> list[str]:
+    """Contrôle final d'une fiche : une recommandation directionnelle doit respecter la règle
+    (confiance suffisante, deux signaux concordants). Renvoie les anomalies (liste vide si conforme)."""
+    v = m.get("verdict")
+    if v not in VERDICTS:
+        return [f"{m.get('nom')} : verdict inconnu « {v} »"]
+    if v not in DIRECTIONNELS:
+        return []
+    anomalies = []
+    signaux_ = m.get("signaux_favorables" if v == SURPONDERER else "signaux_defavorables") or []
+    if m.get("confiance") not in CONFIANCES_SUFFISANTES:
+        anomalies.append(f"{m.get('nom')} : « {v} » avec une confiance « {m.get('confiance')} »")
+    if len(signaux_) < cfg["signaux_concordants_min"]:
+        anomalies.append(f"{m.get('nom')} : « {v} » avec {len(signaux_)} signal concordant")
+    return anomalies
 
 
 def confiance(sous: dict, note: float | None, indirect: bool = False) -> str:
@@ -486,7 +517,7 @@ def invalidations(v: str, m: dict, sous: dict, serie, seuils: dict) -> list[str]
     haut3, bas3 = (max(trois_mois), min(trois_mois)) if trois_mois else (None, None)
     c, s, p = sous.get("courbe"), sous.get("stocks"), sous.get("positionnement")
     res = []
-    if v == "Surpondérer":
+    if v == SURPONDERER:
         if mm:
             res.append(f"une clôture sous la moyenne 200 jours ({fr(mm, 2)} {u})")
         if c:
@@ -495,7 +526,7 @@ def invalidations(v: str, m: dict, sous: dict, serie, seuils: dict) -> list[str]
             res.append(f"une position nette des gérants au-delà du percentile {seuils['percentile_encombre']} sur 3 ans (aujourd'hui {fr(p['percentile'], 0)})")
         if s and s.get("type") == "eia":
             res.append(f"des stocks repassant au-dessus de leur moyenne sur 5 ans (écart actuel {pct(s['ecart_moyen_pct'])})")
-    elif v == "Sous-pondérer":
+    elif v == SOUS_PONDERER:
         if mm:
             res.append(f"une clôture au-dessus de la moyenne 200 jours ({fr(mm, 2)} {u})")
         if s and s.get("type") == "eia":
@@ -518,25 +549,35 @@ def invalidations(v: str, m: dict, sous: dict, serie, seuils: dict) -> list[str]
 
 def donner_tort(v: str, m: dict, sous: dict, contre: list[str], pour: list[str]) -> str:
     risque = m.get("risque_specifique")
-    if v == "Surpondérer":
+    if v == SURPONDERER:
         base = f"Le principal point faible : {contre[0][0].lower() + contre[0][1:]}" if contre else ""
         return f"{base} Le scénario serait contredit par {risque}.".strip()
-    if v == "Sous-pondérer":
+    if v == SOUS_PONDERER:
         base = f"Le principal point fort : {pour[0][0].lower() + pour[0][1:]}" if pour else ""
         return f"{base} Un choc d'offre ou une reprise de la demande contredirait cette lecture prudente.".strip()
+    if v in (NEUTRE_POSITIF, NEUTRE_NEGATIF):
+        sens = "favorable" if v == NEUTRE_POSITIF else "défavorable"
+        return (f"La note est {sens}, mais la recommandation n'est pas retenue (confiance ou signaux concordants insuffisants) : "
+                f"la lecture reste fragile. Risque propre : {risque}.")
     return f"Les signaux se compensent ; une rupture nette dans un sens (cours, stocks ou positionnement) suffirait à trancher. Risque propre : {risque}."
 
 
 def verdict_famille(notes: list[float], verdicts: list[str], cfg: dict) -> str:
+    """Les verdicts de famille ne comptent que les recommandations retenues (confiance et signaux suffisants) ;
+    une note moyenne au-delà du seuil sans assez de recommandations retenues donne un neutre avec biais."""
     if not notes:
-        return "Neutre"
+        return NEUTRE
     moy = mean(notes)
-    sur, sous_ = verdicts.count("Surpondérer"), verdicts.count("Sous-pondérer")
+    sur, sous_ = verdicts.count(SURPONDERER), verdicts.count(SOUS_PONDERER)
     if moy >= cfg["surponderer"] - 5 and sur >= max(2, len(verdicts) / 2):
-        return "Surpondérer"
+        return SURPONDERER
     if moy <= cfg["sous_ponderer"] + 5 and sous_ >= max(2, len(verdicts) / 2):
-        return "Sous-pondérer"
-    return "Neutre"
+        return SOUS_PONDERER
+    if moy >= cfg["surponderer"]:
+        return NEUTRE_POSITIF
+    if moy <= cfg["sous_ponderer"]:
+        return NEUTRE_NEGATIF
+    return NEUTRE
 
 
 # ------------------------------------------------------------------ signaux

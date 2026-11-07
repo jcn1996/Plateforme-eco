@@ -40,7 +40,10 @@ function dateFr(d) {
 }
 const titre = (texte, complement) => el('h3', { class: 'section-titre' }, texte, complement ? el('small', {}, complement) : null);
 const source = (texte) => el('p', { class: 'macro-source' }, texte);
-const CLASSE_VERDICT = { 'Surpondérer': 'mp-verdict--sur', 'Neutre': 'mp-verdict--neutre', 'Sous-pondérer': 'mp-verdict--sous' };
+const CLASSE_VERDICT = {
+  'Surpondérer': 'mp-verdict--sur', 'Neutre (biais positif)': 'mp-verdict--neutre mp-verdict--biais-pos',
+  'Neutre': 'mp-verdict--neutre', 'Neutre (biais négatif)': 'mp-verdict--neutre mp-verdict--biais-neg', 'Sous-pondérer': 'mp-verdict--sous',
+};
 const badgeVerdict = (v) => el('span', { class: `mp-verdict ${CLASSE_VERDICT[v] ?? ''}` }, v ?? 'n. d.');
 const classeNoteMp = (n) => (n == null ? '' : n >= 60 ? 'hausse' : n <= 40 ? 'baisse' : '');
 const decimales = (v) => (v == null ? 0 : Math.abs(v) >= 1000 ? 0 : Math.abs(v) >= 100 ? 1 : 2);
@@ -229,6 +232,8 @@ function ficheMatiere(m, donnees, nav) {
       el('h2', { class: 'fiche-titre' }, m.nom),
       m.mention ? el('p', { class: 'mp-alerte' }, `Mention : ${m.mention}.`) : null,
     ),
+    // Recommandation non retenue (confiance « faible » ou moins de deux signaux concordants)
+    m.verdict_non_retenu ? el('p', { class: 'mp-alerte' }, `${m.verdict_non_retenu}.`) : null,
     el('div', { class: 'mp-resume' },
       el('div', {}, el('small', {}, 'Cours'), el('strong', { class: 'mono' }, m.cours == null ? 'n. d.' : `${nombre(m.cours, decimales(m.cours))} ${m.unite ?? ''}`), el('small', {}, dateFr(m.date_cours))),
       el('div', {}, el('small', {}, 'Note'), el('strong', { class: `mono ${classeNoteMp(m.note)}` }, m.note == null ? 'n. d.' : `${nombre(m.note, 0)}/100`),
