@@ -17,11 +17,11 @@ Horizon : 3 à 12 mois.
 - Palladium : « Neutre », note 52/100, confiance moyen
 - Cuivre : « Neutre », note 44/100, confiance moyen
 - Aluminium : « Neutre », note 49/100, confiance moyen
-- Uranium : « Neutre », note 35/100, confiance faible
+- Uranium : « Neutre (biais négatif) » (précédent : « Neutre »), note 35/100, confiance faible
 - Pétrole WTI : « Surpondérer », note 64/100, confiance élevé
 - Pétrole Brent : « Surpondérer », note 70/100, confiance élevé
-- Gaz naturel américain : « Neutre » (précédent : « Surpondérer »), note 58/100, confiance moyen
-- Gaz européen (TTF) : « Surpondérer », note 68/100, confiance faible
+- Gaz naturel américain : « Neutre », note 58/100, confiance moyen
+- Gaz européen (TTF) : « Neutre (biais positif) » (précédent : « Surpondérer »), note 68/100, confiance faible
 - Blé : « Neutre », note 50/100, confiance moyen
 - Maïs : « Neutre », note 52/100, confiance moyen
 - Soja : « Neutre », note 46/100, confiance moyen
@@ -32,14 +32,15 @@ Horizon : 3 à 12 mois.
 
 ## Publications prises en compte
 
-- EIA, stocks pétroliers hebdomadaires : donnée du 30/10/2026 (nouvelle)
-- EIA, stocks de gaz naturel : donnée du 30/10/2026 (nouvelle)
+- EIA, stocks pétroliers hebdomadaires : donnée du 30/10/2026
+- EIA, stocks de gaz naturel : donnée du 30/10/2026
 - CFTC, Commitments of Traders : donnée du 03/11/2026
 - USDA, WASDE et base PSD : donnée du 10/2026
 
 ## Signaux détectés aujourd'hui
 
-- [forte] Gaz naturel américain : passage de « Surpondérer » à « Neutre »
+- [forte] Uranium : passage de « Neutre » à « Neutre (biais négatif) »
+- [forte] Gaz européen (TTF) : passage de « Surpondérer » à « Neutre (biais positif) »
 
 ## Sources en échec
 
