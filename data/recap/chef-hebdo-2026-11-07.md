@@ -4,9 +4,7 @@ Bilan factuel : verdicts modifiés, performance mesurée des verdicts passés, �
 
 ## Verdicts modifiés dans la semaine
 
-- 07/11/2026 : Evolution AB (publ) : « Renforcer fortement » → « Renforcer »
-- 07/11/2026 : Advanced Info Service Public Company Limited : « Renforcer fortement » → « Renforcer »
-- 07/11/2026 : Thai Oil Public Company Limited : « Renforcer » → « Neutre »
+- Aucun.
 
 ## Verdicts actuels (positifs)
 
