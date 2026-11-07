@@ -4,12 +4,20 @@ objections du contradicteur et concentrations thématiques. Méthode : agents/ch
 """
 from __future__ import annotations
 
+import math
 import re
 
 from ..risque.calculs import date_fr, fr
 
 DIRECTION = {"Renforcer fortement": 1, "Renforcer": 1, "Neutre": 0, "Alléger": -1, "Éviter": -1}
 NIVEAUX_CONVICTION = ["faible", "moyenne", "forte"]
+GROUPES = {"fondamentaux": "fondamentaux", "valorisation": "valorisation", "marche": "tendance", "flux": "flux", "cycle": "cycle",
+           "risque": "risque", "inities": "initiés"}
+
+
+def ent(x) -> str:
+    """Score arrondi à l'entier le plus proche (0,5 vers le haut, comme dans l'appli)."""
+    return "n. d." if x is None else fr(math.floor(x + 0.5), 0)
 
 
 # ------------------------------------------------------------------ score
@@ -84,7 +92,7 @@ def conviction(o: dict, verdict: str, objections: list[dict], fraicheur_min: flo
     confiance_ok = o.get("qualite", 0) >= 0.6
     fraiche = fraicheur_min >= cc["fraicheur_min_forte"]
     serieuses = [x for x in objections if x.get("serieuse")]
-    raisons = [f"{len(groupes)} groupe(s) de signaux indépendants concordants ({', '.join(groupes) or 'aucun'})"]
+    raisons = [f"{len(groupes)} groupe(s) de signaux indépendants concordants ({', '.join(GROUPES.get(g, g) for g in groupes) or 'aucun'})"]
     if d == 0:
         niveau = 1 if len(groupes) >= cc["groupes_forte"] else 0
         raisons.append("verdict neutre : conviction au plus moyenne")
@@ -125,13 +133,15 @@ def appliquer_hysteresis(o: dict, v_brut: str, etat: dict, jour: str, config: di
     score = o["score"]
     if not e:
         o["verdict"] = v_brut
-        o["changement"] = {"date": jour, "de": None, "vers": v_brut, "explication": f"Premier verdict : score {fr(score, 0)}/100."}
+        o["changement"] = {"date": jour, "de": None, "vers": v_brut, "explication": f"Premier verdict : score {ent(score)}/100."}
+        o["depuis"] = jour
         etat[o["id"]] = {"verdict": v_brut, "depuis": jour, "score": score, "candidat": None, "historique": [[jour, v_brut]]}
         return
     actuel = e["verdict"]
     if v_brut == actuel:
         e["candidat"] = None
         o["verdict"], o["changement"] = actuel, None
+        o["depuis"] = e.get("depuis")
         e["score"] = score
         return
     monte = rang(v_brut, config) > rang(actuel, config)
@@ -146,14 +156,14 @@ def appliquer_hysteresis(o: dict, v_brut: str, etat: dict, jour: str, config: di
                   else f"le score reste au-delà du seuil depuis {len(jours)} jours")
         o["verdict"] = cible
         o["changement"] = {"date": jour, "de": actuel, "vers": cible,
-                           "explication": f"De « {actuel} » à « {cible} » : score {fr(e.get('score'), 0)} → {fr(score, 0)}/100, {raison}."}
+                           "explication": f"De « {actuel} » à « {cible} » : score {ent(e.get('score'))} → {ent(score)}/100, {raison}."}
         e.update({"verdict": cible, "depuis": jour, "score": score, "candidat": None})
         e["historique"] = (e.get("historique") or [])[-30:] + [[jour, cible]]
     else:
         e["candidat"] = {"verdict": v_brut, "jours": jours}
         o["verdict"], o["changement"] = actuel, None
         o["en_attente"] = {"vers": v_brut, "jours": len(jours),
-                           "texte": f"Score {fr(score, 0)}/100 compatible avec « {v_brut} » : changement en attente de confirmation (marge de {fr(cv['marge'], 0)} pts ou {cv['jours_confirmation']} jours de suite)."}
+                           "texte": f"Score {ent(score)}/100 compatible avec « {v_brut} » : changement en attente de confirmation (marge de {fr(cv['marge'], 0)} pts ou {cv['jours_confirmation']} jours de suite)."}
         e["score"] = score
     o["depuis"] = e["depuis"]
 
@@ -165,9 +175,10 @@ def arguments(o: dict, config: dict) -> tuple[list[dict], list[dict]]:
     pe = o.get("poids_effectifs") or {}
     contribution = lambda kv: (kv[1]["note"] - 50) * pe.get(kv[0], 1)  # noqa: E731
     fams = sorted(o["familles"].items(), key=contribution, reverse=True)
-    item = lambda f, x: {"famille": config["familles"][f]["libelle"], "note": x["note"], "texte": x["texte"], "source": x["source"]}  # noqa: E731
-    pour = [item(f, x) for f, x in fams if x["note"] >= 55][:3]
-    contre = [item(f, x) for f, x in reversed(fams) if x["note"] <= 45][:3]
+    # Le texte et la source restent dans « familles » (référence par `cle`, pour ne pas dupliquer les textes)
+    item = lambda f, x: {"cle": f, "famille": config["familles"][f]["libelle"], "note": x["note"]}  # noqa: E731
+    pour = [item(f, x) for f, x in fams if x["note"] > 50][:3]
+    contre = [item(f, x) for f, x in reversed(fams) if x["note"] < 50][:3]
     return pour, contre
 
 
@@ -176,7 +187,7 @@ def donner_tort(o: dict, contre: list[dict], pour: list[dict], objections: list[
     res = []
     opposes = contre if d >= 0 else pour
     if opposes:
-        res.append(f"{opposes[0]['famille']} ({fr(opposes[0]['note'], 0)}/100) : {opposes[0]['texte']}")
+        res.append(f"{opposes[0]['famille']} ({ent(opposes[0]['note'])}/100) : {o['familles'][opposes[0]['cle']]['texte']}")
     if objections:
         res.append(f"Contradicteur : {objections[0]['objection']}")
     res += [x for x in (o.get("invalidations") or []) if x][:2]

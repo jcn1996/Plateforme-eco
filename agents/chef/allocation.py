@@ -11,6 +11,7 @@ Allocation modèle indicative (trois profils, structure cœur-satellite). Métho
 from __future__ import annotations
 
 from ..risque.calculs import fr
+from .moteur import ent
 
 CLASSE_DE = {"pays": "actions", "entreprises": "actions", "obligations": "obligations", "or": "or", "matieres": "matieres", "liquidites": "liquidites"}
 LIBELLES = {"actions": "Actions", "obligations": "Obligations", "or": "Or", "matieres": "Matières premières", "liquidites": "Liquidités"}
@@ -178,12 +179,12 @@ def profil(cle: str, prof: dict, par_classe: dict, scores_classe: dict, liq_min:
         ancien = anciens.get(k)
         var = None if ancien is None else round(v - ancien, 1)
         if ancien is None:
-            just = f"Nouvelle ligne : verdict « {l['verdict']} », score {fr(l['score'], 0)}/100, conviction {l.get('conviction')}."
+            just = f"Nouvelle ligne : verdict « {l['verdict']} », score {ent(l['score'])}/100, conviction {l.get('conviction')}."
         elif abs(v - ancien) < 0.05:
             just = "Inchangée (écart inférieur au seuil de rotation)."
         else:
-            just = f"{'Renforcée' if var > 0 else 'Allégée'} : verdict « {l['verdict']} », score {fr(l['score'], 0)}/100" + (
-                f" (précédent {fr(l.get('score_precedent'), 0)})" if l.get("score_precedent") is not None else "") + "."
+            just = f"{'Renforcée' if var > 0 else 'Allégée'} : verdict « {l['verdict']} », score {ent(l['score'])}/100" + (
+                f" (précédent {ent(l.get('score_precedent'))})" if l.get("score_precedent") is not None else "") + "."
         sortie.append({"id": k, "nom": l["nom"], "type": l["type"], "classe": CLASSE_DE[l["type"]], "poche": "satellite" if k in poids_sat else "cœur",
                        "poids": round(v, 1), "variation": var, "verdict": l["verdict"], "conviction": l.get("conviction"), "justification": just})
     for k, ancien in anciens.items():

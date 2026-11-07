@@ -13,7 +13,7 @@ import re
 from datetime import date, datetime, timedelta
 
 from ..risque.calculs import date_fr, fr
-from .moteur import DIRECTION
+from .moteur import DIRECTION, ent
 
 PHASES = {("accélère", "ralentit"): "Reprise", ("accélère", "accélère"): "Surchauffe",
           ("ralentit", "accélère"): "Ralentissement inflationniste", ("ralentit", "ralentit"): "Expansion sans inflation"}
@@ -32,7 +32,7 @@ class Faits:
 
 
 def libelle_ligne(l: dict) -> str:
-    return f"{l['nom']} : « {l['verdict']} », conviction {l['conviction']}, {fr(l['score'], 0)}/100"
+    return f"{l['nom']} : « {l['verdict']} », conviction {l['conviction']}, {ent(l['score'])}/100"
 
 
 def top(lignes: list[dict], n: int = 5, positif: bool = True, par_type: int = 2) -> list[dict]:
@@ -229,7 +229,7 @@ def briefing_markdown(b: dict) -> str:
     l += [f"- {x['texte']}" for x in b["essentiel"]]
     l += ["", "## Où investir (top 5)", "", "| Opportunité | Verdict | Conviction | Score | Principal argument |", "|---|---|---|---|---|"]
     for x in b["ou_investir"]:
-        l.append(f"| {x['nom']} | {x['verdict']} | {x['conviction']} | {fr(x['score'], 0)}/100 | {x.get('argument') or ''} |")
+        l.append(f"| {x['nom']} | {x['verdict']} | {x['conviction']} | {ent(x['score'])}/100 | {x.get('argument') or ''} |")
     if not b["ou_investir"]:
         l.append("| Aucune opportunité à verdict positif | | | | |")
     l += ["", "## Ce qui a changé depuis hier", ""] + ([f"- {c['texte']}" for c in b["changements"]] or ["- Aucun verdict modifié."])
@@ -313,7 +313,7 @@ def alertes(signaux: dict[str, list[dict]], revues: list[dict], changements: lis
         elif agent == "macro":
             route = {"type": "macro"}
         elif agent == "chef":
-            route = {"type": "investir", "id": cle}
+            route = {"type": "investir", "id": f"o-{cle}"}
         elif not pays:
             route = {"type": "investir"}
         texte = (s.get("explication") or "")[:300]

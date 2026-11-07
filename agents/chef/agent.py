@@ -297,7 +297,7 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
                     "essentiel": b["essentiel"], "vigilance": b["vigilance"], "rubriques_regles": b.get("rubriques_regles", []),
                     "affirmations_supprimees": b.get("supprimees", []),
                     "ou_investir": [{"id": l["id"], "nom": l["nom"], "type": l["type"], "verdict": l["verdict"], "conviction": l["conviction"], "score": l["score"],
-                                     "argument": (l["pour"][0]["texte"] if l.get("pour") else None)} for l in tops],
+                                     "argument": (l["familles"][l["pour"][0]["cle"]]["texte"] if l.get("pour") else None)} for l in tops],
                     "changements": chg, "scenarios": sc, "agenda": Y.agenda(maintenant.date(), ctx.macro, config, resultats),
                     "donner_tort": ([tops[0]["donner_tort"][0]] if tops and tops[0].get("donner_tort") else []) + sc["alternatif"]["declencheurs"][:2],
                     "donnees": donnees_b, "faits": regles["faits"], "mention": config["mention"]}
@@ -340,7 +340,7 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
     ancien_meta = (precedent or {}).get("meta") or {}
     objet = enveloppe(donnees, "agent-chef", fictif=False, version_agent=VERSION_AGENT, mise_a_jour_precedente=ancien_meta.get("genere_le"))
     objet["meta"]["genere_le"] = iso(maintenant)
-    ecrire_json(data / "chef.json", objet)
+    ecrire_json(data / "chef.json", objet, compact=True)  # fichier lu au démarrage de l'appli : sans indentation
     if mode == "complet":
         ecrire_json(data / "historique" / "chef" / f"{jour}.json", {
             "meta": {"genere_le": iso(maintenant), "source": "agent-chef", "version_agent": VERSION_AGENT},

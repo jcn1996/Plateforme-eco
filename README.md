@@ -3,7 +3,7 @@
 Prototype d'une application personnelle de suivi économique mondial, pensée d'abord pour le téléphone.
 **Les données des pays sont réelles** : elles sont produites chaque jour par l'**agent pays** (instituts statistiques nationaux, banques centrales, FMI, OCDE, BRI, Banque mondiale, Eurostat, BCE, Yahoo Finance, avec vérification croisée), qui tourne gratuitement avec GitHub Actions.
 **Les cours du bandeau des marchés sont réels** : l'**agent marchés** (sans IA) les met à jour toutes les 15 minutes en semaine.
-**Les secteurs et les entreprises sont réels** (agent entreprises). **Les flux d'investissement sont réels** : flux des ETF pays cotés aux États-Unis, relevés chaque soir chez les émetteurs (agent pays). Le reste (alertes, portefeuille) est encore **fictif**, en attendant les autres agents.
+**Les secteurs et les entreprises sont réels** (agent entreprises). **Les flux d'investissement sont réels** : flux des ETF pays cotés aux États-Unis, relevés chaque soir chez les émetteurs (agent pays). **Les alertes du jour sont réelles** : le **chef d'orchestre** retient les signaux les plus importants de tous les agents. Seul le portefeuille démo est encore **fictif**, en attendant l'agent trader.
 
 ## Ce que fait le prototype
 
@@ -70,7 +70,9 @@ Prototype d'une application personnelle de suivi économique mondial, pensée d'
 - **Comparateur** : le bouton « + Comparer » des fiches permet de sélectionner 2 ou 3 pays, ou 2 ou 3 entreprises.
   - Une barre flottante montre la sélection, avec le bouton « Voir la comparaison ».
   - L'écran de comparaison place les éléments côte à côte ; la meilleure valeur de chaque ligne est mise en évidence.
-- **Mes alertes**, accessible depuis le bandeau des alertes : règles personnelles vérifiées à chaque chargement des données.
+- **Panneau « Synthèse »** (chef d'orchestre), repliable en bas du globe : palier de risque, phase du cycle, top 3 « Où investir », alertes du jour ; le déplier donne accès au briefing complet.
+- **Écran « Où investir »** (bouton boussole de l'en-tête) et filtre du globe **« Attractivité »** : voir la section « Chef d'orchestre » plus bas.
+- **Mes alertes**, accessible depuis le panneau « Synthèse » : règles personnelles vérifiées à chaque chargement des données.
   - Les alertes déclenchées apparaissent en tête du bandeau, avec le badge « Mon alerte ».
 - **Classement** des pays et des 20 meilleures entreprises.
 - **Portefeuille démo** de 100 000 €.
@@ -347,6 +349,48 @@ python -m agents.inities --mode leger                     # 13F et élus seuleme
 python -m agents.inities --test --data /tmp/essai         # données de test, sans réseau
 ```
 
+## Chef d'orchestre (« Où investir maintenant, et avec quelle conviction ? »)
+
+Le chef d'orchestre réunit les sorties de tous les agents. Méthode complète : [`agents/chef/methode.md`](agents/chef/methode.md) ; tous les poids et seuils : [`agents/chef/config.json`](agents/chef/config.json).
+
+**Entrées** : `data/pays.json`, `macro.json`, `marches.json`, `risque.json`, `geopolitique.json`, `matieres_premieres.json`, `entreprises.json` (et fiches), `pepites.json`, `inities.json`, flux des ETF (dans `pays.json`), analyses à la demande, `data/signaux/*.json` et `revues.json` (objections du contradicteur). Chaque entrée est pondérée par sa fraîcheur, la santé de son agent et sa confiance ; une donnée périmée ou d'un agent dégradé pèse moins, et c'est signalé.
+
+**Univers** : actions des 31 pays suivis (avec les 3 meilleures sociétés de chaque pays attractif), matières premières, or (à part, valeur refuge), obligations d'État américaines et de la zone euro (courtes et longues), liquidités en dollars et en euros (rendement réel), entreprises (pépites, qualité à prix raisonnable, liste de surveillance, analyses à la demande, meilleures sociétés des pays attractifs).
+
+**Moteur** :
+- familles de signaux normalisées (percentiles dans la classe, mélangés à la note absolue de l'agent) : fondamentaux, valorisation, tendance, flux, adéquation au cycle (tableau des phases), risque, géopolitique, initiés, dynamique des résultats ;
+- pondérations selon le palier de risque (en « Tension » ou « Crise », le risque et la qualité pèsent plus, le momentum moins ; l'inverse en « Calme ») ;
+- score /100 (ramené vers 50 quand les données manquent ou sont peu fiables) et verdict : « Renforcer fortement », « Renforcer », « Neutre », « Alléger », « Éviter » ;
+- conviction faible, moyenne ou forte (forte : 3 groupes de signaux indépendants concordants, données fiables et fraîches, aucune objection sérieuse ; chaque objection retenue du contradicteur l'abaisse d'un cran) ;
+- anti-girouette : un verdict ne change que si le score franchit le seuil de 3 points ou y reste 2 jours de suite ; chaque changement est expliqué ;
+- concentrations thématiques (IA, semi-conducteurs, or, pétrole) signalées.
+
+**Allocation modèle** (indicative) : profils prudent, équilibré et dynamique, cœur-satellite (satellites = convictions fortes), plafonds par pays, secteur, thème et ligne, liquidités minimales selon le palier de risque, rotation limitée (écart minimal de 1,5 point), variations justifiées. Base du futur agent trader démo.
+
+**Synthèse et alertes** :
+- briefing quotidien `data/chef/briefing-AAAA-MM-JJ.md` et `.json` : l'essentiel en 5 lignes, « Où investir » (top 5 avec conviction), ce qui a changé depuis hier, points de vigilance, scénarios central et alternatif avec leurs déclencheurs, agenda des 7 prochains jours (banques centrales, résultats des sociétés de la liste de surveillance, EIA, WASDE, grandes statistiques ; dates tirées d'une règle de calendrier marquées « indicatives »). Rédigé par règles ; avec `GEMINI_API_KEY`, Gemini reformule l'essentiel et la vigilance sous contrôle (budget propre ; toute phrase sans fait cité ou avec un chiffre absent des faits est supprimée) ;
+- `data/alertes.json` (remplace le fichier fictif) : les 3 ou 4 signaux les plus importants de moins de 48 h, filtrés par les objections du contradicteur ; « Aucune alerte notable » sinon ;
+- dépôt facultatif du briefing sur Google Drive : secrets `GOOGLE_SERVICE_ACCOUNT_JSON` (clé JSON d'un compte de service) et `DRIVE_FOLDER_ID` (dossier partagé avec l'adresse du compte de service, en éditeur). Sans eux, le dépôt est ignoré.
+
+**Suivi de performance** : `data/chef/suivi.json` enregistre chaque verdict (date, score, conviction, symbole suivi, prix de référence) et mesure sa performance à 1, 3, 6 et 12 mois contre l'indice de sa classe (MSCI World, indice large des matières premières DBC, obligations AGG ou IEAG) ; taux de réussite par type, verdict et conviction, et calibration (une conviction forte doit réussir plus souvent qu'une faible). Écran « Fiabilité du chef d'orchestre ». Ces résultats alimenteront l'agent calibrateur.
+
+**Sorties** : `data/chef.json`, `data/chef/` (briefings, suivi, état de l'hystérésis et du budget Gemini), `data/alertes.json`, `data/historique/chef/AAAA-MM-JJ.json`, `data/recap/chef-hebdo-AAAA-MM-JJ.md` (le samedi), `data/journal/agent-chef.json` (écran « Santé »).
+
+**Appli** :
+- le globe reste le premier écran ; le panneau « Synthèse » remplace le bandeau des alertes ;
+- écran « Où investir » à onglets (Pays, Matières premières, Obligations et liquidités, Entreprises, Allocation) : pour chaque ligne, score, verdict, conviction, flèche de tendance, 3 arguments pour, 3 contre, objection du contradicteur et date du dernier changement ; toucher une ligne ouvre sa fiche détaillée (familles de signaux et leurs sources, conviction, objections, « Ce qui pourrait me donner tort ») ;
+- filtre du globe « Attractivité » ;
+- sous chaque recommandation : « Avis indicatif généré automatiquement, sans prise en compte d'un profil ou d'une situation personnelle. »
+
+**Exécution** : `.github/workflows/agent-chef.yml`, lancé par le planificateur : analyse complète chaque jour à 7 h 15 UTC (après les agents du matin ; le samedi, revue hebdomadaire) ; mise à jour légère toutes les heures (minute 50) de 8 h à 21 h UTC en semaine : alertes, et recalcul seulement des verdicts touchés par un changement de palier de risque, un choc de marché (variation du jour d'au moins 3 %) ou un événement géopolitique de gravité 4 ou plus. Le workflow ne lance que ses propres tests et ceux du module commun.
+
+```
+python -m agents.chef                                   # analyse complète (Gemini si GEMINI_API_KEY existe)
+python -m agents.chef --mode leger                      # mise à jour légère
+python -m agents.chef --test --data /tmp/essai          # sans réseau ni Gemini (copie de data/ à fournir)
+python -m agents.chef.tests.capturer_donnees_test       # met à jour les données de test
+```
+
 ## Agent entreprises (environ 1 200 sociétés ; Gemini seulement pour lire la guidance)
 
 L'agent entreprises se trouve dans `agents/entreprises/`. Les règles de conduite sont les mêmes que pour l'agent pays.
@@ -534,6 +578,7 @@ js/planning.js        planning cron des agents : statut (OK, en pause, en retard
 js/macro.js           écran « Vue macro » et rubrique « Agent macro » de la fiche pays
 js/risque.js          pastille et écran « Risque », rubrique « Agent risque » de la fiche pays, filtre du globe
 js/matieres-premieres.js  écran « Matières premières » (liste, fiches, pays producteurs sur le globe)
+js/chef.js            chef d'orchestre : panneau « Synthèse », écran « Où investir », fiche d'opportunité, allocation, écran « Fiabilité du chef d'orchestre », filtre « Attractivité »
 js/inities.js         écran « Initiés » (dirigeants, super-investisseurs, activistes, élus) et bloc de la fiche entreprise
 js/pepites.js         écran « Pépites »
 js/analyses.js        analyse à la demande (bouton, « Mes analyses »), écran « Fiabilité des recommandations »
@@ -556,8 +601,10 @@ config/surveillance.json  liste de surveillance (complétée par les analyses à
 config/super_investisseurs.json  super-investisseurs suivis par l'agent initiés (CIK, noms des entités hors États-Unis)
 data/historique/flux_etf/  relevés quotidiens des ETF pays (parts en circulation, VL), flux d'investissement
 data/signaux/pays.json     signaux de l'agent pays (flux des ETF) pour le futur chef d'orchestre
-data/*.json           autres données (fictives pour l'instant)
-agents/               agents Python (agents/commun : téléchargement, cache, journal, écriture ; agents/pays : agent pays ; agents/marches : agent marchés ; agents/macro : agent macro ; agents/rattrapage : relance des exécutions manquées ; agents/entreprises : agent entreprises, recommandation et suivi ; agents/analyse_demande : analyse à la demande ; agents/risque : agent risque et contradicteur ; agents/matieres_premieres : agent matières premières ; agents/inities : agent initiés)
+data/chef.json        sortie du chef d'orchestre (opportunités, verdicts, allocation) ; data/chef/ : briefings, suivi de performance, état
+data/alertes.json     alertes du jour (chef d'orchestre)
+data/*.json           autres données (portefeuille démo : fictif)
+agents/               agents Python (agents/commun : téléchargement, cache, journal, écriture ; agents/pays : agent pays ; agents/marches : agent marchés ; agents/macro : agent macro ; agents/rattrapage : relance des exécutions manquées ; agents/entreprises : agent entreprises, recommandation et suivi ; agents/analyse_demande : analyse à la demande ; agents/risque : agent risque et contradicteur ; agents/matieres_premieres : agent matières premières ; agents/inities : agent initiés ; agents/chef : chef d'orchestre)
 .github/workflows/    exécution planifiée des agents (GitHub Actions)
 data/countries-110m.json, countries-50m.json  frontières des pays (voir data/LICENCE-countries-110m.txt)
 outils/generer_donnees_fictives.py  régénère les données fictives
