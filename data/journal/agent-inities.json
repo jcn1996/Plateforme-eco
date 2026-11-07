@@ -1,0 +1,202 @@
+{
+  "meta": {
+    "genere_le": "2026-11-07T17:43:40Z",
+    "source": "agent-inities",
+    "version_agent": "1.0",
+    "description": "État des sources et signaux, à chaque exécution",
+    "sante": {
+      "agent": "inities",
+      "libelle": "Agent initiés",
+      "ordre": 9,
+      "workflow": "agent-inities.yml",
+      "derniere_execution": "2026-11-07T17:43:40Z",
+      "prochaine_prevue": "2026-11-08T06:35:00Z",
+      "intervalle_min": 1440,
+      "planning": {
+        "crons": [
+          "35 6 * * 2-6",
+          "35 6 * * 0,1"
+        ],
+        "fuseau": "UTC"
+      },
+      "sources_total": 12,
+      "sources_ok": 11,
+      "sources": [
+        {
+          "nom": "SEC EDGAR, correspondance ticker ↔ CIK",
+          "etat": "ok",
+          "detail": null,
+          "derniere_donnee_valide": "2026-11-07T17:43:40Z"
+        },
+        {
+          "nom": "SEC EDGAR, index quotidiens des dépôts",
+          "etat": "ok",
+          "detail": null,
+          "derniere_donnee_valide": "2026-11-07T17:43:40Z"
+        },
+        {
+          "nom": "SEC EDGAR, formulaires 4 (dirigeants)",
+          "etat": "ok",
+          "detail": null,
+          "derniere_donnee_valide": "2026-11-07T17:43:40Z"
+        },
+        {
+          "nom": "SEC EDGAR, formulaires 13D (activistes)",
+          "etat": "ok",
+          "detail": null,
+          "derniere_donnee_valide": "2026-11-07T17:43:40Z"
+        },
+        {
+          "nom": "AMF, base BDIF : déclarations des dirigeants",
+          "etat": "ok",
+          "detail": null,
+          "derniere_donnee_valide": "2026-11-07T17:43:40Z"
+        },
+        {
+          "nom": "BaFin, base des « Directors' Dealings »",
+          "etat": "ok",
+          "detail": null,
+          "derniere_donnee_valide": "2026-11-07T17:43:40Z"
+        },
+        {
+          "nom": "AMF, base BDIF : franchissements de seuil",
+          "etat": "ok",
+          "detail": null,
+          "derniere_donnee_valide": "2026-11-07T17:43:40Z"
+        },
+        {
+          "nom": "DART (Corée), déclarations de participation (clé DART_API_KEY)",
+          "etat": "non configurée",
+          "detail": "secret DART_API_KEY absent : source ignorée",
+          "derniere_donnee_valide": null
+        },
+        {
+          "nom": "EDINET (Japon), déclarations de grands actionnaires (clé EDINET_API_KEY)",
+          "etat": "non configurée",
+          "detail": "secret EDINET_API_KEY absent : source ignorée",
+          "derniere_donnee_valide": null
+        },
+        {
+          "nom": "KAP (Turquie), annonces des sociétés",
+          "etat": "échec",
+          "detail": "HTTPSConnectionPool(host='www.kap.org.tr', port=443): Max retries exceeded with url: /tr/api/memberDisclosureQuery (Caused by ProxyError('Unable to connect to p",
+          "derniere_donnee_valide": null
+        },
+        {
+          "nom": "BSE (Inde), actionnaires de plus de 1 %",
+          "etat": "non configurée",
+          "detail": "aucune société indienne listée dans config/super_investisseurs.json",
+          "derniere_donnee_valide": null
+        },
+        {
+          "nom": "SEC EDGAR, rapports 13F (super-investisseurs)",
+          "etat": "ok",
+          "detail": null,
+          "derniere_donnee_valide": "2026-11-07T17:43:40Z"
+        },
+        {
+          "nom": "OpenFIGI (CUSIP → ticker des 13F)",
+          "etat": "ok",
+          "detail": null,
+          "derniere_donnee_valide": "2026-11-07T17:43:40Z"
+        },
+        {
+          "nom": "Chambre des représentants, déclarations de transactions",
+          "etat": "ok",
+          "detail": null,
+          "derniere_donnee_valide": "2026-11-07T17:43:40Z"
+        },
+        {
+          "nom": "Sénat, déclarations de transactions (efdsearch)",
+          "etat": "non configurée",
+          "detail": "désactivée (elus.senat_actif) : le site impose d'accepter ses conditions d'utilisation",
+          "derniere_donnee_valide": null
+        },
+        {
+          "nom": "Yahoo Finance via yfinance (cours sur 6 mois des sociétés achetées)",
+          "etat": "ok",
+          "detail": null,
+          "derniere_donnee_valide": "2026-11-07T17:43:40Z"
+        }
+      ],
+      "degrade": false,
+      "raisons": [],
+      "references": {
+        "SEC EDGAR, correspondance ticker ↔ CIK": [
+          "sec_tickers"
+        ],
+        "SEC EDGAR, index quotidiens des dépôts": [
+          "edgar_index"
+        ],
+        "SEC EDGAR, formulaires 4 (dirigeants)": [
+          "edgar_form4"
+        ],
+        "SEC EDGAR, formulaires 13D (activistes)": [
+          "edgar_13d"
+        ],
+        "AMF, base BDIF : déclarations des dirigeants": [
+          "amf_dirigeants"
+        ],
+        "BaFin, base des « Directors' Dealings »": [
+          "bafin"
+        ],
+        "AMF, base BDIF : franchissements de seuil": [
+          "amf_seuils"
+        ],
+        "KAP (Turquie), annonces des sociétés": [],
+        "SEC EDGAR, rapports 13F (super-investisseurs)": [
+          "edgar_13f"
+        ],
+        "OpenFIGI (CUSIP → ticker des 13F)": [
+          "openfigi"
+        ],
+        "Chambre des représentants, déclarations de transactions": [
+          "chambre"
+        ],
+        "Yahoo Finance via yfinance (cours sur 6 mois des sociétés achetées)": [
+          "yahoo_cours"
+        ]
+      }
+    }
+  },
+  "donnees": [
+    {
+      "genere_le": "2026-11-07T17:43:40Z",
+      "mode": "complet",
+      "etat_des_sources": {
+        "sec_tickers": "ok",
+        "edgar_index": "ok",
+        "edgar_form4": "ok",
+        "edgar_13d": "ok",
+        "amf_dirigeants": "ok",
+        "bafin": "ok",
+        "amf_seuils": "ok",
+        "dart": "non configurée",
+        "edinet": "non configurée",
+        "kap": "erreur : HTTPSConnectionPool(host='www.kap.org.tr', port=443): Max retries exceeded with url: /tr/api/memberDisclosureQuery (Caused by ProxyError('Unable to connect to p",
+        "bse": "non configurée",
+        "edgar_13f": "ok",
+        "openfigi": "ok",
+        "chambre": "ok",
+        "senat": "non configurée",
+        "yahoo_cours": "ok"
+      },
+      "achats_retenus": 75,
+      "signaux": [
+        "Saba Capital Management, L.P. déclare 5,2 % de Invesco Senior Income Trust (13D, intention d'influencer)",
+        "Strickland Paul déclare 2,7 % de SDR Drone, Inc. (13D, intention d'influencer)",
+        "Main Street Capital CORP déclare plus de 5 % de MSC INCOME FUND, INC. (13D, intention d'influencer)"
+      ]
+    }
+  ],
+  "derniere_execution": "2026-11-07T17:43:40Z",
+  "prochaine_prevue": "2026-11-08T06:35:00Z",
+  "intervalle_min": 1440,
+  "planning": {
+    "crons": [
+      "35 6 * * 2-6",
+      "35 6 * * 0,1"
+    ],
+    "fuseau": "UTC"
+  }
+}

@@ -10,8 +10,11 @@ Fourchette de valeur estimée par deux méthodes : multiples (PER et VE/EBITDA) 
 du secteur, et actualisation simplifiée des flux de trésorerie disponibles (hypothèses affichées).
 
 Cinq signaux : note globale, valorisation (écart au cours), momentum 12 mois, qualité comptable, dynamique
-des résultats (guidance, révisions des analystes, surprises).
-« Acheter » ou « Vendre » exigent une confiance « moyen » ou « élevé » et au moins 3 signaux concordants ;
+des résultats (guidance, révisions des analystes, surprises) ; deux signaux de l'agent initiés, de pondération
+modérée (section « inities ») : achats d'initiés (ventes massives et groupées des dirigeants en négatif) et
+conviction des super-investisseurs.
+« Acheter » ou « Vendre » exigent une confiance « moyen » ou « élevé » et au moins 3 signaux concordants
+(somme des pondérations : 1 par signal, `inities.poids` pour les deux signaux de l'agent initiés) ;
 un signal d'alerte comptable interdit « Acheter » (et « Renforcer ») ; une guidance abaissée ou retirée depuis
 moins de 90 jours aussi, sauf si la valorisation intègre déjà une forte baisse (exception justifiée).
 """
@@ -23,7 +26,8 @@ MENTION = "Avis indicatif généré automatiquement, sans prise en compte d'un p
 NON_DETENU = ("Acheter", "Acheter sur repli", "Attendre", "Éviter")
 DETENU = ("Renforcer", "Conserver", "Alléger", "Vendre")
 LIBELLES_SIGNAUX = {"note": "Note globale", "valorisation": "Valorisation", "momentum": "Momentum 12 mois",
-                    "qualite": "Qualité comptable", "dynamique": "Dynamique des résultats"}
+                    "qualite": "Qualité comptable", "dynamique": "Dynamique des résultats",
+                    "inities": "Achats d'initiés", "super_investisseurs": "Super-investisseurs"}
 
 
 def _moyenne(v):
@@ -132,7 +136,36 @@ def valeur_estimee(m: dict, s: dict, cfg: dict) -> dict | None:
 
 # ------------------------------------------------------------------ signaux
 
-def signaux(note: int, m: dict, valeur: dict | None, financier, cfg: dict, dynamique: dict | None = None) -> list[dict]:
+def signaux_inities(ini: dict, cfg: dict) -> list[dict]:
+    """Deux signaux de l'agent initiés (data/inities.json, « societes »), de pondération modérée. Les ventes des
+    dirigeants ne sont un signal négatif qu'en cas de ventes massives et groupées."""
+    c = cfg["inities"]
+    res = []
+    sc = ini.get("score_achats")
+    if ini.get("ventes_massives"):
+        res.append({"cle": "inities", "sens": -1, "texte": "ventes massives et groupées : " + ini["ventes_massives"]["texte"].rstrip(".")})
+    elif sc is not None:
+        res.append({"cle": "inities", "sens": 1 if sc >= c["score_favorable"] else 0, "texte": f"score {sc}/100 ({ini.get('texte_achats', '').rstrip('.')})"})
+    else:
+        res.append({"cle": "inities", "sens": 0, "texte": "aucun achat de dirigeant sur le marché ces 60 derniers jours"})
+    cv = ini.get("conviction")
+    if cv is None:
+        res.append({"cle": "super_investisseurs", "sens": 0, "texte": "aucun super-investisseur suivi ne détient le titre (13F, seuils hors États-Unis)"})
+    else:
+        res.append({"cle": "super_investisseurs", "sens": 1 if cv >= c["conviction_favorable"] else 0,
+                    "texte": f"conviction {cv}/100 : {ini.get('texte_conviction', '').rstrip('.')}"})
+    for x in res:
+        x["poids"] = c["poids"]
+    return res
+
+
+def poids(liste: list[dict]) -> float:
+    """Somme des pondérations des signaux (1 par défaut ; pondération modérée pour l'agent initiés)."""
+    return round(sum(x.get("poids", 1) for x in liste), 2)
+
+
+def signaux(note: int, m: dict, valeur: dict | None, financier, cfg: dict, dynamique: dict | None = None,
+            inities: dict | None = None) -> list[dict]:
     s = cfg["signaux"]
     res = []
     sens = 1 if note >= s["note_positive"] else -1 if note < s["note_negative"] else 0
@@ -165,6 +198,8 @@ def signaux(note: int, m: dict, valeur: dict | None, financier, cfg: dict, dynam
         else:
             res.append({"cle": "dynamique", "sens": dynamique["sens"], "texte": dynamique["texte"]
                         + (" (données indicatives : peu d'analystes)" if dynamique.get("fiabilite") == "indicative" else "")})
+    if inities is not None and cfg.get("inities"):
+        res += signaux_inities(inities, cfg)
     for x in res:
         x["libelle"] = LIBELLES_SIGNAUX[x["cle"]]
     return res
@@ -215,6 +250,16 @@ def _condition(sig: dict, but: str, note: int, m: dict, valeur: dict | None, pri
         if but == "retourner":
             return "Guidance relevée ou maintenue au prochain communiqué de résultats, et estimations de BPA stabilisées sur 30 jours."
         return "Guidance relevée ou estimations de BPA révisées en hausse sur 30 et 90 jours."
+    if c == "inities":
+        if but == "annuler":
+            return f"Score d'achats d'initiés retombé sous {cfg['inities']['score_favorable']}/100 (achats sortis de la fenêtre de 60 jours)."
+        if but == "retourner":
+            return "Fin des ventes massives et groupées des dirigeants sur 30 jours."
+        return f"Achats de dirigeants sur le marché portant le score d'achats d'initiés à {cfg['inities']['score_favorable']}/100 ou plus."
+    if c == "super_investisseurs":
+        if but == "annuler":
+            return "Allègement ou sortie des super-investisseurs au prochain rapport 13F."
+        return "Entrée ou renforcement d'un super-investisseur au prochain rapport 13F (ou franchissement de seuil hors États-Unis)."
     return None
 
 
@@ -234,17 +279,19 @@ def exception_guidance(gn: dict | None, valeur: dict | None, m: dict, exc: dict 
 
 
 def recommander(s: dict, m: dict, note: int | None, confiance: str, risques: list[str], cfg: dict,
-                dynamique: dict | None = None, exc_guidance: dict | None = None) -> dict | None:
+                dynamique: dict | None = None, exc_guidance: dict | None = None, inities: dict | None = None) -> dict | None:
     """s : société (prix, devise_cours, actions, annuel, fx_comptes, fx_cours, region, financier) ;
     m : mesures après comparaison sectorielle ; note : note globale ; confiance : « élevé », « moyen » ou « faible » ;
-    dynamique : bloc « Dynamique des résultats » (dynamique.bloc) ; exc_guidance : config dynamique.exception_guidance."""
+    dynamique : bloc « Dynamique des résultats » (dynamique.bloc) ; exc_guidance : config dynamique.exception_guidance ;
+    inities : données de l'agent initiés pour cette société ({} si absente de ses données ; None si l'agent n'a rien publié)."""
     if note is None or not s.get("prix"):
         return None
     prix, devise = s["prix"], s.get("devise_cours")
     valeur = valeur_estimee(m, s, cfg)
-    sig = signaux(note, m, valeur, s.get("financier"), cfg, dynamique)
+    sig = signaux(note, m, valeur, s.get("financier"), cfg, dynamique, inities)
     pos = [x for x in sig if x["sens"] > 0]
     neg = [x for x in sig if x["sens"] < 0]
+    n_pos, n_neg = poids(pos), poids(neg)  # signaux concordants, pondérés
     r = cfg["regles"]
     conf_ok = confiance in r["confiances_tranchees"]
     alerte = bool(m.get("alertes"))
@@ -256,13 +303,13 @@ def recommander(s: dict, m: dict, note: int | None, confiance: str, risques: lis
     gn = (dynamique or {}).get("guidance_negative")
     exception = exception_guidance(gn, valeur, m, exc_guidance)
     bloque_guidance = bool(gn) and not exception
-    achat = len(pos) >= r["signaux_concordants_min"] and not neg and conf_ok and not alerte and not bloque_guidance
-    if len(pos) >= r["signaux_concordants_min"] and not neg and not achat:
+    achat = n_pos >= r["signaux_concordants_min"] and not neg and conf_ok and not alerte and not bloque_guidance
+    if n_pos >= r["signaux_concordants_min"] and not neg and not achat:
         exclusions.append("« Acheter » exclu : " + ("signal d'alerte comptable" if alerte else f"confiance {confiance}" if not conf_ok
                                                      else f"guidance {gn['evolution']} le {gn['date'][8:10]}/{gn['date'][5:7]}/{gn['date'][:4]} (moins de 90 jours)"))
     # « Acheter sur repli » : tout est réuni sauf la valorisation, qui deviendrait favorable plus bas
     repli = (not achat and conf_ok and not alerte and valeur and valeur["fiable"] and valeur.get("ecart_pct") is not None
-             and v["sens"] <= 0 and sum(1 for x in autres if x["sens"] > 0) >= r["signaux_concordants_min"] - 1
+             and v["sens"] <= 0 and poids([x for x in autres if x["sens"] > 0]) >= r["signaux_concordants_min"] - 1
              and not any(x["sens"] < 0 for x in autres))
     if repli:
         prix_repli = round(valeur["centrale"] / (1 + cfg["signaux"]["valorisation_positive"] / 100), 4)
@@ -273,18 +320,18 @@ def recommander(s: dict, m: dict, note: int | None, confiance: str, risques: lis
         nd = "Acheter"
     elif repli:
         nd = "Acheter sur repli"
-    elif len(neg) >= r["eviter_negatifs_min"] and len(neg) > len(pos):
+    elif n_neg >= r["eviter_negatifs_min"] and n_neg > n_pos:
         nd = "Éviter"
     else:
         nd = "Attendre"
-    vente = len(neg) >= r["signaux_concordants_min"] and not pos and conf_ok
-    if len(neg) >= r["signaux_concordants_min"] and not pos and not conf_ok:
+    vente = n_neg >= r["signaux_concordants_min"] and not pos and conf_ok
+    if n_neg >= r["signaux_concordants_min"] and not pos and not conf_ok:
         exclusions.append(f"« Vendre » exclu : confiance {confiance}")
     if achat:
         d = "Renforcer"
     elif vente:
         d = "Vendre"
-    elif (len(neg) >= r["alleger_negatifs_min"] and len(neg) > len(pos)) or (
+    elif (n_neg >= r["alleger_negatifs_min"] and n_neg > n_pos) or (
             ecart is not None and valeur["fiable"] and ecart <= -r["alleger_survalorisation_pct"]
             and note < cfg["signaux"]["note_positive"]):
         d = "Alléger"
@@ -310,7 +357,10 @@ def recommander(s: dict, m: dict, note: int | None, confiance: str, risques: lis
     conditions = conditions[:3]
 
     def compte(liste, mot):
-        return f"{len(liste)} {mot}{'s' if len(liste) > 1 else ''}" + (f" ({', '.join(x['libelle'].lower() for x in liste)})" if liste else "")
+        texte = f"{len(liste)} {mot}{'s' if len(liste) > 1 else ''}" + (f" ({', '.join(x['libelle'].lower() for x in liste)})" if liste else "")
+        if poids(liste) != len(liste):  # signal de l'agent initiés : pondération modérée
+            texte += f", soit {nb(poids(liste), 1)} en pondération"
+        return texte
     justif = f"Signaux sur {len(sig)} : {compte(pos, 'favorable')}, {compte(neg, 'défavorable')} ; niveau de confiance : {confiance}."
     if exclusions:
         justif += " " + " ; ".join(exclusions) + "."
@@ -331,7 +381,7 @@ def recommander(s: dict, m: dict, note: int | None, confiance: str, risques: lis
         "horizon_mois": cfg["horizon_mois"], "si_non_detenu": nd, "si_detenu": d,
         "cours": arrondi(prix), "devise": devise, "date_cours": s.get("date_cours"),
         "valeur": valeur, "ecart_pct": ecart, "prix_repli": prix_repli,
-        "signaux": sig, "concordants": {"favorables": len(pos), "defavorables": len(neg)},
+        "signaux": sig, "concordants": {"favorables": len(pos), "defavorables": len(neg), "favorables_ponderes": n_pos, "defavorables_ponderes": n_neg},
         "confiance": confiance, "justification": justif, "exception_guidance": exception,
         "conditions_invalidation": conditions, "risques": risques[:3], "mention": MENTION,
     }

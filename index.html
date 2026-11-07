@@ -77,6 +77,11 @@
           <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 15.5 6 9.5h8l3 6z M7.5 9.5 9 6.5h2l1.5 3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M10 3v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
           <span class="bouton-libelle">Matières</span>
         </button>
+        <!-- Initiés : achats des dirigeants, super-investisseurs, activistes, élus (en attendant la refonte de la navigation) -->
+        <button id="btn-inities" class="bouton bouton--icone-texte" type="button" title="Initiés : achats des dirigeants, super-investisseurs, activistes, élus">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="7.5" cy="6.5" r="2.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2.5 16.5c.4-3 2.4-4.8 5-4.8s4.6 1.8 5 4.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M13 9.5l2 2 3.5-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="bouton-libelle">Initiés</span>
+        </button>
         <!-- Pastille permanente du palier de risque mondial (agent risque) : ouvre l'écran « Risque » -->
         <button id="btn-risque" class="bouton pastille-risque" type="button" title="Risque mondial" hidden></button>
         <button id="btn-sante" class="bouton bouton--icone bouton-sante" type="button" title="Santé des agents">
@@ -286,6 +291,15 @@
       <ol class="ariane js-ariane"></ol>
     </nav>
     <div id="matieres-contenu" class="ecran-contenu"></div>
+  </section>
+
+  <!-- ===================== ÉCRAN INITIÉS ===================== -->
+  <section id="ecran-inities" class="ecran" hidden aria-label="Initiés">
+    <nav class="navigation navigation--ecran" aria-label="Fil d'Ariane">
+      <button class="bouton bouton--icone js-retour" type="button" title="Retour"><span aria-hidden="true">‹</span><span class="visuellement-cache">Retour</span></button>
+      <ol class="ariane js-ariane"></ol>
+    </nav>
+    <div id="inities-contenu" class="ecran-contenu"></div>
   </section>
 
   <!-- ===================== ÉCRAN SANTÉ DES AGENTS ===================== -->

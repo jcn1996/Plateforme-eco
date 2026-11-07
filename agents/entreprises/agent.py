@@ -338,6 +338,7 @@ def echantillon(liste: list[dict], n: int, config: dict) -> list[dict]:
 def publier(base: dict, config: dict, change: dict, data: Path, aujourdhui: date, etats_sources: dict) -> dict:
     cfg_u = config["univers"]
     stock_dyn = D.lire_stock(data)  # dynamique des résultats (guidance, analystes), mise à jour juste avant
+    ini = lire_inities(data, config["recommandation"].get("inities"), aujourdhui)  # agent initiés (None : rien de récent)
     pays_json = {p["code"]: p for p in ((lire_json(data / "pays.json") or {}).get("donnees") or [])}
     macro = (lire_json(data / "macro.json") or {}).get("donnees") or {}
     zones = {z["cle"]: z["phase"] for z in (macro.get("cycle") or {}).get("zones", [])}
@@ -370,7 +371,8 @@ def publier(base: dict, config: dict, change: dict, data: Path, aujourdhui: date
     # 2. Notes, textes, pépites
     entreprises, candidats = [], []
     for s in societes:
-        r = analyser_societe(s, med, config, pays_json, zones, zone_par_pays, aujourdhui, dyn=stock_dyn.get(s["ticker"]))
+        r = analyser_societe(s, med, config, pays_json, zones, zone_par_pays, aujourdhui, dyn=stock_dyn.get(s["ticker"]),
+                             inities=None if ini is None else ini.get(s["ticker"], {}))
         if not r:
             continue
         e, m, ind, crit = r
@@ -505,6 +507,22 @@ def publier(base: dict, config: dict, change: dict, data: Path, aujourdhui: date
             "divergences": sum(1 for e in entreprises if (e["sources"]["verification"] or {}).get("statut") == "divergent")}
 
 
+def lire_inities(data: Path, cfg: dict | None, aujourdhui: date) -> dict | None:
+    """Vue par ticker de l'agent initiés (data/inities.json, « societes »), ou None si le fichier manque ou date
+    de plus de fraicheur_jours jours (les deux signaux de l'agent initiés sont alors absents de la recommandation)."""
+    if not cfg:
+        return None
+    j = lire_json(data / "inities.json") or {}
+    d = j.get("donnees") or {}
+    try:
+        age = (aujourdhui - date.fromisoformat(str(d.get("date"))[:10])).days
+    except ValueError:
+        return None
+    if age > cfg["fraicheur_jours"] or not isinstance(d.get("societes"), dict):
+        return None
+    return d["societes"]
+
+
 def note_avec_dynamique(n: dict, ponderations: dict, note_dyn: int | None, poids_dyn: float) -> dict:
     """Note globale ; le bloc « Dynamique des résultats » y pèse `poids_dyn` (part des pondérations disponibles).
     La couverture reste celle des indicateurs comptables et de marché."""
@@ -519,10 +537,12 @@ def note_avec_dynamique(n: dict, ponderations: dict, note_dyn: int | None, poids
 
 
 def analyser_societe(s: dict, med: dict, config: dict, pays_json: dict, zones: dict, zone_par_pays: dict,
-                     aujourdhui: date, revue: bool = False, dyn: dict | None = None) -> tuple[dict, dict, dict, dict] | None:
+                     aujourdhui: date, revue: bool = False, dyn: dict | None = None,
+                     inities: dict | None = None) -> tuple[dict, dict, dict, dict] | None:
     """Analyse complète d'une société (mesures déjà calculées dans s["mesures"]) : comparaison sectorielle, notes,
     verdict, confiance, contexte, critères de pépite, dynamique des résultats, recommandation. Partagée avec
-    l'analyse à la demande. dyn : données de data/entreprises/dynamique.json pour cette société (ou None).
+    l'analyse à la demande. dyn : données de data/entreprises/dynamique.json pour cette société (ou None) ;
+    inities : données de l'agent initiés pour cette société ({} si absente ; None si l'agent n'a rien publié de récent).
     Renvoie (fiche, mesures, indicateurs affichés, critères de pépite), ou None si la société ne peut être notée."""
     m = s["mesures"]
     m.update(A.comparer(m, s.get("secteur_gics"), s["region"], med))
@@ -554,7 +574,7 @@ def analyser_societe(s: dict, med: dict, config: dict, pays_json: dict, zones: d
     devise_3m = (((pays_j or {}).get("detail") or {}).get("devise_3m") or {}).get("valeur")
     revue_c = A.revue_critique(s, m, ind, pays_j, devise_3m)
     reco = R.recommander(s, m, g["note"], conf["niveau"], revue_c["risques"] + contre, config["recommandation"],
-                         dynamique=bloc_dyn, exc_guidance=cfg_d["exception_guidance"])
+                         dynamique=bloc_dyn, exc_guidance=cfg_d["exception_guidance"], inities=inities)
     e = {
         "ticker": s["ticker"], "nom": s["nom"], "pays": s["pays"], "region": s["region"],
         "secteur": f"{s['pays']}-{slug}", "secteur_gics": secteur_gics, "secteur_nom": nom_s,

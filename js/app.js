@@ -26,6 +26,7 @@ import { chargerGeopolitique, ecranGeopolitique, lireRisque, METRIQUE_RISQUE } f
 import { chargerRisque, ecranRisque, lireRisquePays, majPastilleRisque, METRIQUE_RISQUE_PAYS } from './risque.js';
 import { chargerPepites, ecranPepites } from './pepites.js';
 import { chargerMatieres, ecranMatieres, matieresChargees, metriqueProducteurs } from './matieres-premieres.js';
+import { chargerInities, ecranInities, initiesCharges, ONGLETS_INITIES } from './inities.js';
 import { METRIQUE_FLUX, lireFlux, initialiserPeriodeFlux, periodeFlux } from './flux-investissement.js';
 import { choisirPulsations, bilanPulsations, libellePeriode } from './pulsations.js';
 import { chargerAnalyses, chargerEnCours, chargerAnalyse, chargerRecommandations, ecranAnalyses, ecranFiabilite } from './analyses.js';
@@ -185,6 +186,7 @@ async function demarrer() {
   $('#btn-macro').addEventListener('click', () => naviguer({ type: 'macro' }));
   $('#btn-geopolitique').addEventListener('click', () => naviguer({ type: 'geopolitique' }));
   $('#btn-matieres').addEventListener('click', () => naviguer({ type: 'matieres' }));
+  $('#btn-inities').addEventListener('click', () => naviguer({ type: 'inities' }));
   $('#btn-producteurs').addEventListener('click', masquerProducteurs);
   // Pastille permanente du palier de risque mondial : ouvre l'écran « Risque »
   majPastilleRisque($('#btn-risque'), risque);
@@ -440,6 +442,15 @@ function filAriane(route) {
       const m = route.id && matieresChargees()?.matieres?.find((x) => x.cle === route.id);
       return route.id ? [racine, liste, { libelle: m?.nom ?? route.id, route }] : [racine, liste];
     }
+    case 'inities': {
+      const ecran = { libelle: 'Initiés', route: { type: 'inities' } };
+      if (!route.id) return [racine, ecran];
+      if (route.id.startsWith('si-')) {
+        const inv = initiesCharges()?.super_investisseurs?.find((x) => x.cle === route.id.slice(3));
+        return [racine, ecran, { libelle: 'Super-investisseurs', route: { type: 'inities', id: 'super' } }, { libelle: inv?.nom ?? route.id.slice(3), route }];
+      }
+      return [racine, ecran, { libelle: ONGLETS_INITIES[route.id] ?? route.id, route }];
+    }
     case 'pepites': return [racine, { libelle: 'Pépites', route }];
     case 'analyses': return [racine, { libelle: 'Mes analyses', route }];
     case 'fiabilite': return [racine, { libelle: 'Mes analyses', route: { type: 'analyses' } }, { libelle: 'Fiabilité', route }];
@@ -466,7 +477,7 @@ function majAriane(route) {
 function routeValide(route) {
   switch (route.type) {
     case 'globe': case 'portefeuille': case 'classement': case 'comparaison': case 'mes-alertes': case 'sante': case 'macro': case 'geopolitique': case 'risque': case 'pepites':
-    case 'analyses': case 'fiabilite': case 'matieres': return true;
+    case 'analyses': case 'fiabilite': case 'matieres': case 'inities': return true;
     case 'analyse': return Boolean(route.id);
     case 'pays': return d.paysParCode.has(route.id);
     case 'secteur': return d.secteurParId.has(route.id);
@@ -558,6 +569,7 @@ function afficher(route) {
     geopolitique: { section: '#ecran-geopolitique', contenu: '#geopolitique-contenu', titre: 'Géopolitique', rendu: () => ecranGeopolitique(geopolitique) },
     risque: { section: '#ecran-risque', contenu: '#risque-contenu', titre: 'Risque', rendu: () => ecranRisque(risque, navigateurPanneau) },
     matieres: { section: '#ecran-matieres', contenu: '#matieres-contenu', titre: 'Matières premières', rendu: () => ecranMatieres(matieresChargees(), navigateurPanneau, route.id) },
+    inities: { section: '#ecran-inities', contenu: '#inities-contenu', titre: 'Initiés', rendu: () => ecranInities(initiesCharges(), navigateurPanneau, route.id) },
     pepites: { section: '#ecran-pepites', contenu: '#pepites-contenu', titre: 'Pépites', rendu: () => ecranPepites(pepites, d, navigateurPanneau) },
     analyses: { section: '#ecran-analyses', contenu: '#analyses-contenu', titre: 'Mes analyses', rendu: () => ecranAnalyses({ analyses, enCours }, navigateurPanneau) },
     fiabilite: { section: '#ecran-fiabilite', contenu: '#fiabilite-contenu', titre: 'Fiabilité des recommandations', rendu: () => ecranFiabilite(recommandations, navigateurPanneau) },
@@ -572,6 +584,19 @@ function afficher(route) {
   // Matières premières : fichier chargé à la première ouverture de l'écran
   if (route.type === 'matieres' && matieresChargees() === undefined) {
     chargerMatieres().then(() => { if (routeActuelle.type === 'matieres') afficher(routeActuelle); });
+  }
+  // Initiés : fichier chargé à la première ouverture de l'écran ou d'une fiche entreprise (bloc « Initiés »)
+  if (['inities', 'entreprise', 'analyse'].includes(route.type) && initiesCharges() === undefined) {
+    chargerInities().then((ini) => {
+      if (routeActuelle.type !== route.type || routeActuelle.id !== route.id) return;
+      if (route.type !== 'entreprise') { afficher(routeActuelle); return; }
+      // Fiche entreprise : le bloc « Initiés » apparaît sans changer la position de lecture
+      const e = d.entrepriseParTicker.get(route.id);
+      if (!ini || !e) return;
+      const defilement = dom.panneauContenu.scrollTop;
+      dom.panneauContenu.replaceChildren(...ficheEntreprise(d, e, navigateurPanneau).filter(Boolean));
+      dom.panneauContenu.scrollTop = defilement;
+    });
   }
   if (route.type === 'fiabilite' && recommandations === undefined) {
     chargerRecommandations().then((h) => {
@@ -607,7 +632,7 @@ function afficher(route) {
 
 /** Le globe ne se dessine que s'il est visible (économie de batterie). */
 function majActiviteGlobe() {
-  const masque = ['portefeuille', 'classement', 'comparaison', 'mes-alertes', 'sante', 'macro', 'geopolitique', 'risque', 'pepites', 'analyses', 'fiabilite', 'matieres'].includes(routeActuelle.type)
+  const masque = ['portefeuille', 'classement', 'comparaison', 'mes-alertes', 'sante', 'macro', 'geopolitique', 'risque', 'pepites', 'analyses', 'fiabilite', 'matieres', 'inities'].includes(routeActuelle.type)
     || (dom.panneau.classList.contains('est-ouvert') && etatPanneau === 'plein' && !estLarge());
   globe?.definirActif(!masque);
 }

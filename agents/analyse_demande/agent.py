@@ -287,7 +287,9 @@ def analyser(texte: str, demande: dict, data: Path, surveillance: Path, f, resea
     zones = {z["cle"]: z["phase"] for z in (macro.get("cycle") or {}).get("zones", [])}
     zone_par_pays = json.loads((RACINE / "agents" / "macro" / "config.json").read_text(encoding="utf-8"))["zone_par_pays"]
     dyn = D.donnees_demande(f.yahoo, ticker, s["pays"], data, aujourdhui)  # dynamique des résultats (analystes, guidance connue)
-    a = E.analyser_societe(s, med, CFG_E, pays_json, zones, zone_par_pays, aujourdhui, revue=True, dyn=dyn)
+    ini = E.lire_inities(data, CFG_E["recommandation"].get("inities"), aujourdhui)  # agent initiés (achats des dirigeants, super-investisseurs)
+    a = E.analyser_societe(s, med, CFG_E, pays_json, zones, zone_par_pays, aujourdhui, revue=True, dyn=dyn,
+                           inities=None if ini is None else ini.get(ticker, {}))
     if not a:
         return "insuffisant", T.reponse_insuffisant(texte, ticker, "trop peu d'indicateurs calculables pour une note"), ticker, {}
     e = a[0]

@@ -102,6 +102,32 @@ class TestRegles(unittest.TestCase):
         self.assertEqual(r["si_non_detenu"], "Attendre")
         self.assertIn("trop éloigné", r["justification"])
 
+    def test_signaux_inities_ponderation_moderee(self):
+        # Deux signaux pleins (note, valorisation) : il manque 1 ; les deux signaux de l'agent initiés pèsent 0,5 chacun
+        m = mesures(momentum_12m=2.0, fscore={"score": 5})
+        ini = {"score_achats": 82, "texte_achats": "3 acheteurs distincts en 30 jours", "conviction": 60,
+               "texte_conviction": "2 super-investisseurs : Mohnish Pabrai (30,0 %)"}
+        r = R.recommander(societe(prix=15.0), m, 70, "élevé", [], CFG, inities=ini)
+        self.assertEqual(r["si_non_detenu"], "Acheter")
+        self.assertEqual(r["concordants"]["favorables_ponderes"], 3.0)
+        self.assertIn("en pondération", r["justification"])
+        un_seul = R.recommander(societe(prix=15.0), m, 70, "élevé", [], CFG, inities={**ini, "conviction": None})
+        self.assertNotEqual(un_seul["si_non_detenu"], "Acheter")  # 2,5 signaux pondérés : insuffisant
+        sans = R.recommander(societe(prix=15.0), m, 70, "élevé", [], CFG)
+        self.assertNotIn("inities", [x["cle"] for x in sans["signaux"]])  # agent initiés absent : signaux inchangés
+        for t in [r["justification"], *r["conditions_invalidation"], *(x["texte"] for x in r["signaux"])]:
+            self.assertTrue(ton_conforme(t), t)
+
+    def test_ventes_massives_seul_cas_negatif(self):
+        ventes = {"ventes_massives": {"texte": "3 dirigeants ont vendu 7,2 M$ en 30 jours."}}
+        r = R.recommander(societe(prix=15.0), mesures(), 70, "élevé", [], CFG, inities=ventes)
+        s = next(x for x in r["signaux"] if x["cle"] == "inities")
+        self.assertEqual(s["sens"], -1)
+        self.assertNotEqual(r["si_non_detenu"], "Acheter")  # un signal défavorable interdit « Acheter »
+        neutre = R.recommander(societe(prix=15.0), mesures(), 70, "élevé", [], CFG, inities={})
+        self.assertEqual(neutre["si_non_detenu"], "Acheter")
+        self.assertEqual({x["cle"]: x["sens"] for x in neutre["signaux"]}["inities"], 0)
+
     def test_textes_conformes(self):
         for prix, note, m in ((15.0, 70, mesures()), (60.0, 40, mesures(momentum_12m=-30.0)), (22.0, 55, mesures(momentum_12m=None))):
             r = R.recommander(societe(prix=prix), m, note, "moyen", [], CFG)
@@ -153,6 +179,20 @@ class TestSuivi(unittest.TestCase):
             self.assertEqual(S.enregistrer(h, data, date(2026, 11, 5), self.CFG_S), 0)  # moins de 7 jours
             self.assertEqual(S.enregistrer(h, data, date(2026, 11, 12), self.CFG_S), 1)
             self.assertEqual(h[0]["cours"], 15.0)
+
+
+class TestLectureInities(unittest.TestCase):
+    """data/inities.json n'est lu que s'il est récent (sinon les deux signaux de l'agent initiés sont absents)."""
+
+    def test_fraicheur(self):
+        from agents.entreprises.agent import lire_inities
+        cfg = json.loads((DOSSIER / "config.json").read_text(encoding="utf-8"))["recommandation"]["inities"]
+        with tempfile.TemporaryDirectory() as d:
+            d = Path(d)
+            self.assertIsNone(lire_inities(d, cfg, date(2026, 11, 6)))
+            (d / "inities.json").write_text(json.dumps({"donnees": {"date": "2026-11-05", "societes": {"X": {"score_achats": 70}}}}), encoding="utf-8")
+            self.assertEqual(lire_inities(d, cfg, date(2026, 11, 6))["X"]["score_achats"], 70)
+            self.assertIsNone(lire_inities(d, cfg, date(2026, 12, 6)))
 
 
 if __name__ == "__main__":

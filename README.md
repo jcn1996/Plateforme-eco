@@ -315,6 +315,38 @@ python -m agents.matieres_premieres --test --data /tmp/essai   # données de tes
 python -m agents.matieres_premieres --capturer --data /tmp/essai   # met à jour les données de test
 ```
 
+## Agent initiés (sans IA)
+
+L'agent suit les achats des dirigeants, les activistes et les super-investisseurs, comme signal supplémentaire pour l'agent entreprises, et les transactions des élus du Congrès pour information. Règles détaillées : [`agents/inities/regles.md`](agents/inities/regles.md).
+
+**Sources** (gratuites) :
+- dirigeants : formulaires 4 de la SEC (index quotidien EDGAR ; secret `SEC_USER_AGENT`, déjà utilisé par l'agent entreprises), déclarations des dirigeants de l'AMF (base BDIF) et de la BaFin ; pas de source gratuite exploitable pour le Royaume-Uni ;
+- activistes : formulaires 13D (EDGAR) ;
+- super-investisseurs : rapports 13F (EDGAR) des investisseurs de `config/super_investisseurs.json` (CIK vérifiés ; Scion ne dépose plus de 13F depuis fin 2025, signalé), tickers par OpenFIGI ; hors États-Unis, franchissements de seuil : AMF, DART (Corée, `DART_API_KEY` facultatif), EDINET (Japon, `EDINET_API_KEY` facultatif), KAP (Turquie), BSE (Inde, sociétés à lister dans la config) ;
+- élus : déclarations de transactions de la Chambre (index et PDF du greffe) ; Sénat désactivé par défaut (le site impose d'accepter ses conditions d'utilisation : `elus.senat_actif` dans `agents/inities/config.json`).
+
+**Analyse** : achats sur le marché seulement (code P ; exercices d'options, donations et opérations programmées 10b5-1 exclus) ; score « achats d'initiés » /100 par société (achat opportuniste plutôt que routinier, achats groupés sur 30 jours, fonction, montant par rapport à ce que le dirigeant détient déjà, taille de la société) ; ventes massives et groupées (seul cas négatif) ; pour chaque super-investisseur, nouvelles positions, renforcements, allègements et principales positions ; signal « conviction des super-investisseurs » /100 par société.
+
+**Intégration** : les deux signaux « Achats d'initiés » et « Super-investisseurs » entrent dans la recommandation de l'agent entreprises avec une pondération modérée (0,5 chacun dans la règle des 3 signaux concordants, section `recommandation.inities` de `agents/entreprises/config.json`). Signaux pour le chef d'orchestre : achats groupés de dirigeants, nouvelle position d'un super-investisseur, nouveau 13D.
+
+**Sorties** :
+- `data/inities.json` (lu par l'appli et par l'agent entreprises) ;
+- `data/signaux/inities.json` ;
+- `data/inities/etat.json` : dépôts déjà lus, file d'attente, historique des achats, derniers 13F, tickers des CUSIP ;
+- `data/historique/inities/AAAA-MM-JJ.json` : scores du jour ;
+- `data/recap/inities-AAAA-MM-JJ.md` ;
+- `data/journal/agent-inities.json` : écran « Santé ».
+
+**Appli** : bouton « Initiés » dans l'en-tête → écran « Initiés » avec quatre onglets : « Dirigeants » (scores, achats récents, ventes massives), « Super-investisseurs » (une page par investisseur : dernières opérations, principales positions, positions hors États-Unis ; conviction par société), « Activistes » (13D), « Élus » (opération, déclaration, retard). La fiche entreprise affiche un bloc « Initiés » (achats récents des dirigeants, super-investisseurs présents, 13D éventuel).
+
+**Exécution** : `.github/workflows/agent-inities.yml`, lancé par le planificateur : du mardi au samedi à 6 h 35 UTC (mode « complet » : formulaires 4, 13D, AMF, BaFin de la veille, 13F, élus) ; dimanche et lundi (mode « leger » : 13F et élus). Le workflow ne lance que ses propres tests et ceux du module commun.
+
+```
+python -m agents.inities                                  # vraies sources (EDGAR si SEC_USER_AGENT existe)
+python -m agents.inities --mode leger                     # 13F et élus seulement
+python -m agents.inities --test --data /tmp/essai         # données de test, sans réseau
+```
+
 ## Agent entreprises (environ 1 200 sociétés ; Gemini seulement pour lire la guidance)
 
 L'agent entreprises se trouve dans `agents/entreprises/`. Les règles de conduite sont les mêmes que pour l'agent pays.
@@ -401,7 +433,7 @@ Test sans réseau, avec des événements simulés : `python -m unittest agents.a
 
 ## Recommandations et fiabilité
 
-Chaque fiche (agent entreprises, pépites, analyses à la demande) porte une recommandation à 12 mois, en deux lectures : **si non détenu** (Acheter / Acheter sur repli / Attendre / Éviter) et **si détenu** (Renforcer / Conserver / Alléger / Vendre), avec une fourchette de valeur estimée par deux méthodes (multiples comparés à la médiane du secteur ; flux de trésorerie disponibles actualisés, hypothèses affichées), l'écart au cours, le prix de repli, 2 ou 3 conditions précises qui invalideraient la recommandation et les principaux risques. « Acheter » ou « Vendre » exigent une confiance « moyen » ou « élevé » et au moins 3 signaux concordants (note, valorisation, momentum, qualité comptable, dynamique des résultats) ; un signal d'alerte comptable interdit « Acheter », de même qu'une guidance abaissée ou retirée depuis moins de 90 jours (sauf baisse déjà intégrée dans la valorisation, justifiée). Règles et seuils : `agents/entreprises/recommandation.md` et section `recommandation` de `agents/entreprises/config.json`.
+Chaque fiche (agent entreprises, pépites, analyses à la demande) porte une recommandation à 12 mois, en deux lectures : **si non détenu** (Acheter / Acheter sur repli / Attendre / Éviter) et **si détenu** (Renforcer / Conserver / Alléger / Vendre), avec une fourchette de valeur estimée par deux méthodes (multiples comparés à la médiane du secteur ; flux de trésorerie disponibles actualisés, hypothèses affichées), l'écart au cours, le prix de repli, 2 ou 3 conditions précises qui invalideraient la recommandation et les principaux risques. « Acheter » ou « Vendre » exigent une confiance « moyen » ou « élevé » et au moins 3 signaux concordants (note, valorisation, momentum, qualité comptable, dynamique des résultats ; achats d'initiés et super-investisseurs, de pondération modérée) ; un signal d'alerte comptable interdit « Acheter », de même qu'une guidance abaissée ou retirée depuis moins de 90 jours (sauf baisse déjà intégrée dans la valorisation, justifiée). Règles et seuils : `agents/entreprises/recommandation.md` et section `recommandation` de `agents/entreprises/config.json`.
 
 Suivi : `data/historique/recommandations.json` (date, cours, recommandation, fourchette), écrit par `python -m agents.entreprises.suivi`, lancé juste avant chaque poussée par les workflows « Agent entreprises » et « Analyse à la demande » (`outils/pousser_avec_suivi.sh`). Performance à 3, 6 et 12 mois comparée au MSCI World (ETF URTH) et taux de réussite par type, affichés dans l'écran **Fiabilité des recommandations** (depuis Mes analyses ou une fiche).
 
@@ -502,6 +534,7 @@ js/planning.js        planning cron des agents : statut (OK, en pause, en retard
 js/macro.js           écran « Vue macro » et rubrique « Agent macro » de la fiche pays
 js/risque.js          pastille et écran « Risque », rubrique « Agent risque » de la fiche pays, filtre du globe
 js/matieres-premieres.js  écran « Matières premières » (liste, fiches, pays producteurs sur le globe)
+js/inities.js         écran « Initiés » (dirigeants, super-investisseurs, activistes, élus) et bloc de la fiche entreprise
 js/pepites.js         écran « Pépites »
 js/analyses.js        analyse à la demande (bouton, « Mes analyses »), écran « Fiabilité des recommandations »
 js/panneau-pays.js    fiches pays et secteur
@@ -520,10 +553,11 @@ data/analyses/        analyses à la demande (index.json et une fiche par socié
 data/historique/recommandations.json  recommandations enregistrées et leur performance
 data/historique/guidance/  guidances extraites des communiqués de résultats (8-K Item 2.02), une fiche par société
 config/surveillance.json  liste de surveillance (complétée par les analyses à la demande)
+config/super_investisseurs.json  super-investisseurs suivis par l'agent initiés (CIK, noms des entités hors États-Unis)
 data/historique/flux_etf/  relevés quotidiens des ETF pays (parts en circulation, VL), flux d'investissement
 data/signaux/pays.json     signaux de l'agent pays (flux des ETF) pour le futur chef d'orchestre
 data/*.json           autres données (fictives pour l'instant)
-agents/               agents Python (agents/commun : téléchargement, cache, journal, écriture ; agents/pays : agent pays ; agents/marches : agent marchés ; agents/macro : agent macro ; agents/rattrapage : relance des exécutions manquées ; agents/entreprises : agent entreprises, recommandation et suivi ; agents/analyse_demande : analyse à la demande ; agents/risque : agent risque et contradicteur ; agents/matieres_premieres : agent matières premières)
+agents/               agents Python (agents/commun : téléchargement, cache, journal, écriture ; agents/pays : agent pays ; agents/marches : agent marchés ; agents/macro : agent macro ; agents/rattrapage : relance des exécutions manquées ; agents/entreprises : agent entreprises, recommandation et suivi ; agents/analyse_demande : analyse à la demande ; agents/risque : agent risque et contradicteur ; agents/matieres_premieres : agent matières premières ; agents/inities : agent initiés)
 .github/workflows/    exécution planifiée des agents (GitHub Actions)
 data/countries-110m.json, countries-50m.json  frontières des pays (voir data/LICENCE-countries-110m.txt)
 outils/generer_donnees_fictives.py  régénère les données fictives
