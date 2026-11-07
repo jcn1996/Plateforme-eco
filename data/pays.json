@@ -1,10 +1,10 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-07T09:47:01Z",
+    "genere_le": "2026-11-07T12:55:11Z",
     "source": "agent-pays",
     "fictif": false,
-    "mise_a_jour_precedente": "2026-11-07T06:17:48Z",
+    "mise_a_jour_precedente": "2026-11-07T09:47:01Z",
     "version_agent": "1.2",
     "sources": {
       "source nationale officielle": [
@@ -47,7 +47,7 @@
       "ocde_inflation": "ok",
       "ocde_eo": "ok",
       "bis": "ok",
-      "eurostat": "erreur : https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr : HTTP 404",
+      "eurostat": "ok",
       "bce_taux": "ok",
       "bce_change": "ok",
       "yahoo_cours": "ok",
@@ -56,7 +56,7 @@
       "flux_ishares": "ok",
       "flux_ssga": "ok",
       "flux_vaneck": "ok",
-      "flux_yahoo_parts": "partiel (21/30)",
+      "flux_yahoo_parts": "partiel (11/30)",
       "bm_croissance": "ok",
       "bm_inflation": "ok",
       "bm_solde_courant": "ok",
@@ -82,7 +82,7 @@
       "momentum": 0.15
     },
     "alertes_qualite": [],
-    "flux_etf_mis_a_jour_le": "2026-11-07T09:47:01Z"
+    "flux_etf_mis_a_jour_le": "2026-11-07T12:55:11Z"
   },
   "donnees": [
     {
@@ -1181,10 +1181,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWC",
-              "valeur": 94.8,
-              "date": "2026-11-06",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWC"
             }
           ],
           "verification": "source_unique",
@@ -1970,14 +1968,14 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours BRL=X",
               "niveau": "marche",
-              "valeur": -6.94,
-              "date": "2026-11-06",
+              "valeur": -6.81,
+              "date": "2026-11-07",
               "statut": "concorde",
-              "ecart": 0.4
+              "ecart": 0.53
             }
           ],
           "verification": "concordant",
-          "ecart_max": 0.4,
+          "ecart_max": 0.53,
           "devise": "BRL",
           "note": 26,
           "confiance": "élevé",
@@ -2894,10 +2892,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWU",
-              "valeur": 67.8,
-              "date": "2026-11-06",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWU"
             }
           ],
           "verification": "source_unique",
@@ -2983,26 +2979,23 @@
       "verdict": "France : signaux partagés, avec d'un côté inflation à 2,9 % pour une cible de 2,0 %, de l'autre PER supérieur de 23 % à la médiane des pays suivis.",
       "confiance": {
         "niveau": "moyen",
-        "score": 0.9,
+        "score": 0.7,
         "raisons": [
-          "sources divergentes : croissance du PIB (écart de 0,63 pt)",
-          "confiance plafonnée à « moyen » tant que les sources divergent"
+          "sources divergentes : croissance du PIB (écart de 0,63 pt), inflation (écart de 0,90 pt), taux réel (écart de 0,00 pt)"
         ],
-        "plafonnee": true
+        "plafonnee": false
       },
       "qualite": {
         "sources_consultees": 12,
-        "sources_en_echec": 1,
-        "part_en_echec": 0.08,
+        "sources_en_echec": 0,
+        "part_en_echec": 0.0,
         "alerte": false,
-        "details": [
-          "Eurostat : source indisponible lors de cette exécution"
-        ]
+        "details": []
       },
       "contre_scenario": [
-        "Les sources divergent sur « croissance du PIB » (OCDE : 1,0) : la valeur retenue (0,4) pourrait être révisée.",
-        "Un nouvel écart de l'inflation par rapport à la cible.",
-        "Un retournement de la politique de la banque centrale."
+        "Les sources divergent sur « taux réel » : la valeur retenue (−0,4) pourrait être révisée.",
+        "Les sources divergent sur « inflation » (Eurostat : 3,8) : la valeur retenue (2,9) pourrait être révisée.",
+        "Les sources divergent sur « croissance du PIB » (OCDE : 1,0) : la valeur retenue (0,4) pourrait être révisée."
       ],
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 0,4 % en 2026 selon le FMI ; indicateur avancé de l'OCDE au-dessus de 100 (100,7 et en hausse) ; inflation à 2,9 % pour une cible de 2,0 %.",
@@ -3098,6 +3091,15 @@
               "statut": "retenue"
             },
             {
+              "source": "eurostat",
+              "nom": "Eurostat, IPCH (prc_hicp_minr, glissement annuel), mensuel",
+              "niveau": "internationale",
+              "valeur": 3.8,
+              "date": "2026-10",
+              "statut": "diverge",
+              "ecart": 0.9
+            },
+            {
               "source": "ocde_inflation",
               "nom": "OCDE, indice des prix à la consommation (DF_PRICES_C2018_ALL ou DF_PRICES_ALL, la plus récente), glissement annuel mensuel",
               "niveau": "internationale",
@@ -3123,22 +3125,13 @@
               "date": "2025",
               "statut": "non comparable",
               "raison": "période ou nature différente"
-            },
-            {
-              "source": "eurostat",
-              "nom": "Eurostat, IPCH (prc_hicp_minr, glissement annuel), mensuel",
-              "niveau": "internationale",
-              "valeur": null,
-              "date": null,
-              "statut": "échec",
-              "raison": "source indisponible lors de cette exécution"
             }
           ],
-          "verification": "concordant",
-          "ecart_max": 0.18,
+          "verification": "divergent",
+          "ecart_max": 0.9,
           "cible": 2.0,
           "note": 76,
-          "confiance": "élevé",
+          "confiance": "faible",
           "precedent": {
             "valeur": 2.4,
             "note": 84,
@@ -3173,15 +3166,15 @@
               "ecart": 0.0
             }
           ],
-          "verification": "concordant",
+          "verification": "divergent",
           "ecart_max": 0.0,
           "taux_directeur": 2.5,
           "direction": "hausse",
           "variation_6_mois": 0.5,
           "verification_taux_directeur": "concordant",
-          "verification_inflation": "concordant",
+          "verification_inflation": "divergent",
           "note": 65,
-          "confiance": "élevé",
+          "confiance": "faible",
           "precedent": {
             "valeur": 0.1,
             "note": 71,
@@ -3357,10 +3350,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWQ",
-              "valeur": 28.8,
-              "date": "2026-11-06",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWQ"
             }
           ],
           "verification": "source_unique",
@@ -3454,12 +3445,10 @@
       },
       "qualite": {
         "sources_consultees": 12,
-        "sources_en_echec": 1,
-        "part_en_echec": 0.08,
+        "sources_en_echec": 0,
+        "part_en_echec": 0.0,
         "alerte": false,
-        "details": [
-          "Eurostat : source indisponible lors de cette exécution"
-        ]
+        "details": []
       },
       "contre_scenario": [
         "Un nouvel écart de l'inflation par rapport à la cible.",
@@ -3560,6 +3549,15 @@
               "statut": "retenue"
             },
             {
+              "source": "eurostat",
+              "nom": "Eurostat, IPCH (prc_hicp_minr, glissement annuel), mensuel",
+              "niveau": "internationale",
+              "valeur": 2.8,
+              "date": "2026-10",
+              "statut": "concorde",
+              "ecart": 0.46
+            },
+            {
               "source": "ocde_inflation",
               "nom": "OCDE, indice des prix à la consommation (DF_PRICES_C2018_ALL ou DF_PRICES_ALL, la plus récente), glissement annuel mensuel",
               "niveau": "internationale",
@@ -3585,19 +3583,10 @@
               "date": "2025",
               "statut": "non comparable",
               "raison": "période ou nature différente"
-            },
-            {
-              "source": "eurostat",
-              "nom": "Eurostat, IPCH (prc_hicp_minr, glissement annuel), mensuel",
-              "niveau": "internationale",
-              "valeur": null,
-              "date": null,
-              "statut": "échec",
-              "raison": "source indisponible lors de cette exécution"
             }
           ],
           "verification": "concordant",
-          "ecart_max": 0.0,
+          "ecart_max": 0.46,
           "cible": 2.0,
           "note": 71,
           "confiance": "élevé"
@@ -3913,12 +3902,10 @@
       },
       "qualite": {
         "sources_consultees": 9,
-        "sources_en_echec": 1,
-        "part_en_echec": 0.11,
+        "sources_en_echec": 0,
+        "part_en_echec": 0.0,
         "alerte": false,
-        "details": [
-          "Eurostat : source indisponible lors de cette exécution"
-        ]
+        "details": []
       },
       "contre_scenario": [
         "La valeur « valorisation relative » (71,6) est inhabituelle et reste à vérifier.",
@@ -4003,6 +3990,15 @@
               "statut": "retenue"
             },
             {
+              "source": "eurostat",
+              "nom": "Eurostat, IPCH (prc_hicp_minr, glissement annuel), mensuel",
+              "niveau": "internationale",
+              "valeur": 1.2,
+              "date": "2026-09",
+              "statut": "concorde",
+              "ecart": 0.21
+            },
+            {
               "source": "fmi",
               "nom": "FMI, World Economic Outlook (API DataMapper, série PCPIPCH), année 2026",
               "niveau": "internationale",
@@ -4019,22 +4015,13 @@
               "date": "2025",
               "statut": "non comparable",
               "raison": "période ou nature différente"
-            },
-            {
-              "source": "eurostat",
-              "nom": "Eurostat, IPCH (prc_hicp_minr, glissement annuel), mensuel",
-              "niveau": "internationale",
-              "valeur": null,
-              "date": null,
-              "statut": "échec",
-              "raison": "source indisponible lors de cette exécution"
             }
           ],
-          "verification": "source_unique",
-          "ecart_max": null,
+          "verification": "concordant",
+          "ecart_max": 0.21,
           "cible": 1.0,
           "note": 90,
-          "confiance": "moyen",
+          "confiance": "élevé",
           "precedent": {
             "valeur": 1.2,
             "note": 87,
@@ -4066,7 +4053,7 @@
           "direction": "stable",
           "variation_6_mois": 0.0,
           "verification_taux_directeur": "source_unique",
-          "verification_inflation": "source_unique",
+          "verification_inflation": "concordant",
           "note": 62,
           "confiance": "moyen",
           "precedent": {
@@ -6336,10 +6323,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWY",
-              "valeur": 75.6,
-              "date": "2026-11-06",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWY"
             }
           ],
           "verification": "source_unique",
@@ -6774,10 +6759,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWJ",
-              "valeur": 227.85,
-              "date": "2026-11-06",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWJ"
             }
           ],
           "verification": "source_unique",
@@ -7203,10 +7186,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWA",
-              "valeur": 63.6,
-              "date": "2026-11-06",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWA"
             }
           ],
           "verification": "source_unique",
@@ -7285,35 +7266,35 @@
         "monnaie": "EUR",
         "historique": true
       },
-      "note": 54,
-      "niveau": "neutre",
-      "note_brute": 54.1,
+      "note": 47,
+      "niveau": "defavorable",
+      "note_brute": 47.4,
       "note_ramenee_en_zone_neutre": false,
-      "verdict": "Italie : signaux partagés, avec d'un côté FTSE MIB à +16,2 % sur 12 mois en monnaie locale, de l'autre croissance du PIB de 0,8 % en 2026 selon le FMI.",
+      "verdict": "Italie : taux réel de −3,1 pt (banque centrale qui relève ses taux) et inflation à 5,6 % pour une cible de 2,0 % pèsent sur la note ; appui : FTSE MIB à +16,2 % sur 12 mois en monnaie locale.",
       "confiance": {
         "niveau": "moyen",
-        "score": 1.0,
+        "score": 0.8,
         "raisons": [
-          "confiance plafonnée à « moyen » : une seule source pour indicateur avancé (OCDE), inflation, taux réel, valorisation relative, momentum boursier 12 mois"
+          "sources divergentes : inflation (écart de 1,42 pt), taux réel (écart de 0,00 pt)",
+          "confiance plafonnée à « moyen » tant que les sources divergent"
         ],
         "plafonnee": true
       },
       "qualite": {
         "sources_consultees": 11,
-        "sources_en_echec": 1,
-        "part_en_echec": 0.09,
+        "sources_en_echec": 0,
+        "part_en_echec": 0.0,
         "alerte": false,
-        "details": [
-          "Eurostat : source indisponible lors de cette exécution"
-        ]
+        "details": []
       },
       "contre_scenario": [
-        "Un repli du marché qui effacerait la performance des 12 derniers mois.",
-        "Une reprise de l'activité plus rapide que les prévisions du FMI."
+        "Les sources divergent sur « taux réel » : la valeur retenue (−3,1) pourrait être révisée.",
+        "Les sources divergent sur « inflation » (OCDE : 4,2) : la valeur retenue (5,6) pourrait être révisée.",
+        "Un ajustement de la politique monétaire qui ramènerait le taux réel en zone neutre."
       ],
       "lecture": {
-        "activite_et_prix": "Croissance du PIB de 0,8 % en 2026 selon le FMI ; indicateur avancé de l'OCDE au-dessus de 100 (100,3 et en hausse) ; inflation à 4,2 % pour une cible de 2,0 %.",
-        "politique_monetaire_et_risques": "Taux réel de −1,7 pt (banque centrale qui relève ses taux) ; devise à −3,2 % contre le dollar sur 3 mois ; solde courant de +1,1 % du PIB.",
+        "activite_et_prix": "Croissance du PIB de 0,8 % en 2026 selon le FMI ; indicateur avancé de l'OCDE au-dessus de 100 (100,3 et en hausse) ; inflation à 5,6 % pour une cible de 2,0 %.",
+        "politique_monetaire_et_risques": "Taux réel de −3,1 pt (banque centrale qui relève ses taux) ; devise à −3,2 % contre le dollar sur 3 mois ; solde courant de +1,1 % du PIB.",
         "marches": "FTSE MIB à +16,2 % sur 12 mois en monnaie locale ; PER supérieur de 5 % à la médiane des pays suivis."
       },
       "textes": "règles",
@@ -7388,21 +7369,30 @@
         },
         "inflation": {
           "libelle": "Inflation",
-          "valeur": 4.18,
+          "valeur": 5.6,
           "unite": "%",
-          "date": "2026-09",
-          "source": "OCDE, indice des prix à la consommation (DF_PRICES_C2018_ALL ou DF_PRICES_ALL, la plus récente), glissement annuel mensuel",
-          "source_courte": "l'OCDE",
+          "date": "2026-10",
+          "source": "Eurostat, IPCH (prc_hicp_minr, glissement annuel), mensuel",
+          "source_courte": "Eurostat",
           "niveau_source": "internationale",
           "frequence": "mensuelle",
           "sources": [
+            {
+              "source": "eurostat",
+              "nom": "Eurostat, IPCH (prc_hicp_minr, glissement annuel), mensuel",
+              "niveau": "internationale",
+              "valeur": 5.6,
+              "date": "2026-10",
+              "statut": "retenue"
+            },
             {
               "source": "ocde_inflation",
               "nom": "OCDE, indice des prix à la consommation (DF_PRICES_C2018_ALL ou DF_PRICES_ALL, la plus récente), glissement annuel mensuel",
               "niveau": "internationale",
               "valeur": 4.18,
               "date": "2026-09",
-              "statut": "retenue"
+              "statut": "diverge",
+              "ecart": 1.42
             },
             {
               "source": "fmi",
@@ -7421,31 +7411,22 @@
               "date": "2025",
               "statut": "non comparable",
               "raison": "période ou nature différente"
-            },
-            {
-              "source": "eurostat",
-              "nom": "Eurostat, IPCH (prc_hicp_minr, glissement annuel), mensuel",
-              "niveau": "internationale",
-              "valeur": null,
-              "date": null,
-              "statut": "échec",
-              "raison": "source indisponible lors de cette exécution"
             }
           ],
-          "verification": "source_unique",
-          "ecart_max": null,
+          "verification": "divergent",
+          "ecart_max": 1.42,
           "cible": 2.0,
-          "note": 57,
-          "confiance": "moyen",
+          "note": 36,
+          "confiance": "faible",
           "precedent": {
-            "valeur": 5.6,
-            "note": 36,
-            "date": "2026-10"
+            "valeur": 4.18,
+            "note": 57,
+            "date": "2026-09"
           }
         },
         "taux_reel": {
           "libelle": "Taux réel",
-          "valeur": -1.68,
+          "valeur": -3.1,
           "unite": "%",
           "date": "2026-11",
           "source": "BCE, taux de la facilité de dépôt (FM, Data Portal) ; inflation : voir ci-dessus",
@@ -7471,18 +7452,18 @@
               "ecart": 0.0
             }
           ],
-          "verification": "source_unique",
+          "verification": "divergent",
           "ecart_max": 0.0,
           "taux_directeur": 2.5,
           "direction": "hausse",
           "variation_6_mois": 0.5,
           "verification_taux_directeur": "concordant",
-          "verification_inflation": "source_unique",
-          "note": 50,
-          "confiance": "moyen",
+          "verification_inflation": "divergent",
+          "note": 33,
+          "confiance": "faible",
           "precedent": {
-            "valeur": -3.1,
-            "note": 33,
+            "valeur": -1.68,
+            "note": 50,
             "date": "2026-11"
           }
         },
@@ -7655,10 +7636,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWI",
-              "valeur": 8.55,
-              "date": "2026-11-06",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWI"
             }
           ],
           "verification": "source_unique",
@@ -7720,7 +7699,7 @@
         }
       },
       "precedent": {
-        "note": 47,
+        "note": 54,
         "date": "2026-11-07"
       }
     },
@@ -7743,21 +7722,19 @@
       "note_ramenee_en_zone_neutre": false,
       "verdict": "Espagne : indicateur avancé de l'OCDE en dessous de 100 (99,6 et en baisse) et taux réel de −2,4 pt (banque centrale qui relève ses taux) pèsent sur la note ; appui : IBEX 35 à +20,2 % sur 12 mois en monnaie locale.",
       "confiance": {
-        "niveau": "moyen",
+        "niveau": "élevé",
         "score": 1.0,
         "raisons": [
-          "confiance plafonnée à « moyen » : une seule source pour indicateur avancé (OCDE), inflation, taux réel, valorisation relative, momentum boursier 12 mois"
+          "données complètes, récentes et confirmées par plusieurs sources"
         ],
-        "plafonnee": true
+        "plafonnee": false
       },
       "qualite": {
         "sources_consultees": 11,
-        "sources_en_echec": 1,
-        "part_en_echec": 0.09,
+        "sources_en_echec": 0,
+        "part_en_echec": 0.0,
         "alerte": false,
-        "details": [
-          "Eurostat : source indisponible lors de cette exécution"
-        ]
+        "details": []
       },
       "contre_scenario": [
         "Un redressement de l'indicateur avancé au-dessus de 100.",
@@ -7840,21 +7817,30 @@
         },
         "inflation": {
           "libelle": "Inflation",
-          "valeur": 4.92,
+          "valeur": 4.9,
           "unite": "%",
-          "date": "2026-09",
-          "source": "OCDE, indice des prix à la consommation (DF_PRICES_C2018_ALL ou DF_PRICES_ALL, la plus récente), glissement annuel mensuel",
-          "source_courte": "l'OCDE",
+          "date": "2026-10",
+          "source": "Eurostat, IPCH (prc_hicp_minr, glissement annuel), mensuel",
+          "source_courte": "Eurostat",
           "niveau_source": "internationale",
           "frequence": "mensuelle",
           "sources": [
+            {
+              "source": "eurostat",
+              "nom": "Eurostat, IPCH (prc_hicp_minr, glissement annuel), mensuel",
+              "niveau": "internationale",
+              "valeur": 4.9,
+              "date": "2026-10",
+              "statut": "retenue"
+            },
             {
               "source": "ocde_inflation",
               "nom": "OCDE, indice des prix à la consommation (DF_PRICES_C2018_ALL ou DF_PRICES_ALL, la plus récente), glissement annuel mensuel",
               "niveau": "internationale",
               "valeur": 4.92,
               "date": "2026-09",
-              "statut": "retenue"
+              "statut": "concorde",
+              "ecart": 0.02
             },
             {
               "source": "fmi",
@@ -7873,31 +7859,22 @@
               "date": "2025",
               "statut": "non comparable",
               "raison": "période ou nature différente"
-            },
-            {
-              "source": "eurostat",
-              "nom": "Eurostat, IPCH (prc_hicp_minr, glissement annuel), mensuel",
-              "niveau": "internationale",
-              "valeur": null,
-              "date": null,
-              "statut": "échec",
-              "raison": "source indisponible lors de cette exécution"
             }
           ],
-          "verification": "source_unique",
-          "ecart_max": null,
+          "verification": "concordant",
+          "ecart_max": 0.02,
           "cible": 2.0,
           "note": 46,
-          "confiance": "moyen",
+          "confiance": "élevé",
           "precedent": {
-            "valeur": 4.9,
+            "valeur": 4.92,
             "note": 46,
-            "date": "2026-10"
+            "date": "2026-09"
           }
         },
         "taux_reel": {
           "libelle": "Taux réel",
-          "valeur": -2.42,
+          "valeur": -2.4,
           "unite": "%",
           "date": "2026-11",
           "source": "BCE, taux de la facilité de dépôt (FM, Data Portal) ; inflation : voir ci-dessus",
@@ -7923,17 +7900,17 @@
               "ecart": 0.0
             }
           ],
-          "verification": "source_unique",
+          "verification": "concordant",
           "ecart_max": 0.0,
           "taux_directeur": 2.5,
           "direction": "hausse",
           "variation_6_mois": 0.5,
           "verification_taux_directeur": "concordant",
-          "verification_inflation": "source_unique",
+          "verification_inflation": "concordant",
           "note": 41,
-          "confiance": "moyen",
+          "confiance": "élevé",
           "precedent": {
-            "valeur": -2.4,
+            "valeur": -2.42,
             "note": 41,
             "date": "2026-11"
           }
@@ -8195,35 +8172,32 @@
       },
       "note": 56,
       "niveau": "neutre",
-      "note_brute": 55.5,
+      "note_brute": 55.9,
       "note_ramenee_en_zone_neutre": false,
-      "verdict": "Pays-Bas : signaux partagés, avec d'un côté AEX à +16,6 % sur 12 mois en monnaie locale, de l'autre PER supérieur de 29 % à la médiane des pays suivis.",
+      "verdict": "Pays-Bas : signaux partagés, avec d'un côté inflation à 3,3 % pour une cible de 2,0 %, de l'autre PER supérieur de 29 % à la médiane des pays suivis.",
       "confiance": {
-        "niveau": "moyen",
+        "niveau": "élevé",
         "score": 0.85,
         "raisons": [
-          "données manquantes : indicateur avancé (OCDE)",
-          "confiance plafonnée à « moyen » : une seule source pour inflation, taux réel, valorisation relative, momentum boursier 12 mois"
+          "données manquantes : indicateur avancé (OCDE)"
         ],
-        "plafonnee": true
+        "plafonnee": false
       },
       "qualite": {
         "sources_consultees": 10,
-        "sources_en_echec": 1,
-        "part_en_echec": 0.1,
+        "sources_en_echec": 0,
+        "part_en_echec": 0.0,
         "alerte": false,
-        "details": [
-          "Eurostat : source indisponible lors de cette exécution"
-        ]
+        "details": []
       },
       "contre_scenario": [
-        "Un repli du marché qui effacerait la performance des 12 derniers mois.",
         "Un nouvel écart de l'inflation par rapport à la cible.",
+        "Un repli du marché qui effacerait la performance des 12 derniers mois.",
         "Des bénéfices supérieurs aux attentes qui justifieraient la prime de valorisation."
       ],
       "lecture": {
-        "activite_et_prix": "Croissance du PIB de 1,5 % en 2026 selon le FMI ; inflation à 3,4 % pour une cible de 2,0 %.",
-        "politique_monetaire_et_risques": "Taux réel de −0,9 pt (banque centrale qui relève ses taux) ; devise à −3,2 % contre le dollar sur 3 mois ; solde courant de +7,6 % du PIB.",
+        "activite_et_prix": "Croissance du PIB de 1,5 % en 2026 selon le FMI ; inflation à 3,3 % pour une cible de 2,0 %.",
+        "politique_monetaire_et_risques": "Taux réel de −0,8 pt (banque centrale qui relève ses taux) ; devise à −3,2 % contre le dollar sur 3 mois ; solde courant de +7,6 % du PIB.",
         "marches": "AEX à +16,6 % sur 12 mois en monnaie locale ; PER supérieur de 29 % à la médiane des pays suivis."
       },
       "textes": "règles",
@@ -8282,21 +8256,30 @@
         },
         "inflation": {
           "libelle": "Inflation",
-          "valeur": 3.43,
+          "valeur": 3.3,
           "unite": "%",
-          "date": "2026-09",
-          "source": "OCDE, indice des prix à la consommation (DF_PRICES_C2018_ALL ou DF_PRICES_ALL, la plus récente), glissement annuel mensuel",
-          "source_courte": "l'OCDE",
+          "date": "2026-10",
+          "source": "Eurostat, IPCH (prc_hicp_minr, glissement annuel), mensuel",
+          "source_courte": "Eurostat",
           "niveau_source": "internationale",
           "frequence": "mensuelle",
           "sources": [
+            {
+              "source": "eurostat",
+              "nom": "Eurostat, IPCH (prc_hicp_minr, glissement annuel), mensuel",
+              "niveau": "internationale",
+              "valeur": 3.3,
+              "date": "2026-10",
+              "statut": "retenue"
+            },
             {
               "source": "ocde_inflation",
               "nom": "OCDE, indice des prix à la consommation (DF_PRICES_C2018_ALL ou DF_PRICES_ALL, la plus récente), glissement annuel mensuel",
               "niveau": "internationale",
               "valeur": 3.43,
               "date": "2026-09",
-              "statut": "retenue"
+              "statut": "concorde",
+              "ecart": 0.13
             },
             {
               "source": "fmi",
@@ -8315,31 +8298,22 @@
               "date": "2025",
               "statut": "non comparable",
               "raison": "période ou nature différente"
-            },
-            {
-              "source": "eurostat",
-              "nom": "Eurostat, IPCH (prc_hicp_minr, glissement annuel), mensuel",
-              "niveau": "internationale",
-              "valeur": null,
-              "date": null,
-              "statut": "échec",
-              "raison": "source indisponible lors de cette exécution"
             }
           ],
-          "verification": "source_unique",
-          "ecart_max": null,
+          "verification": "concordant",
+          "ecart_max": 0.13,
           "cible": 2.0,
-          "note": 69,
-          "confiance": "moyen",
+          "note": 70,
+          "confiance": "élevé",
           "precedent": {
-            "valeur": 3.3,
-            "note": 70,
-            "date": "2026-10"
+            "valeur": 3.43,
+            "note": 69,
+            "date": "2026-09"
           }
         },
         "taux_reel": {
           "libelle": "Taux réel",
-          "valeur": -0.93,
+          "valeur": -0.8,
           "unite": "%",
           "date": "2026-11",
           "source": "BCE, taux de la facilité de dépôt (FM, Data Portal) ; inflation : voir ci-dessus",
@@ -8365,18 +8339,18 @@
               "ecart": 0.0
             }
           ],
-          "verification": "source_unique",
+          "verification": "concordant",
           "ecart_max": 0.0,
           "taux_directeur": 2.5,
           "direction": "hausse",
           "variation_6_mois": 0.5,
           "verification_taux_directeur": "concordant",
-          "verification_inflation": "source_unique",
-          "note": 59,
-          "confiance": "moyen",
+          "verification_inflation": "concordant",
+          "note": 60,
+          "confiance": "élevé",
           "precedent": {
-            "valeur": -0.8,
-            "note": 60,
+            "valeur": -0.93,
+            "note": 59,
             "date": "2026-11"
           }
         },
@@ -8641,18 +8615,16 @@
         "score": 0.85,
         "raisons": [
           "données manquantes : indicateur avancé (OCDE)",
-          "confiance plafonnée à « moyen » : une seule source pour inflation, taux réel, valorisation relative, momentum boursier 12 mois"
+          "confiance plafonnée à « moyen » : une seule source pour taux réel, valorisation relative, momentum boursier 12 mois"
         ],
         "plafonnee": true
       },
       "qualite": {
         "sources_consultees": 9,
-        "sources_en_echec": 1,
-        "part_en_echec": 0.11,
+        "sources_en_echec": 0,
+        "part_en_echec": 0.0,
         "alerte": false,
-        "details": [
-          "Eurostat : source indisponible lors de cette exécution"
-        ]
+        "details": []
       },
       "contre_scenario": [
         "Un retournement de la politique de la banque centrale.",
@@ -8737,6 +8709,15 @@
               "statut": "retenue"
             },
             {
+              "source": "eurostat",
+              "nom": "Eurostat, IPCH (prc_hicp_minr, glissement annuel), mensuel",
+              "niveau": "internationale",
+              "valeur": 1.0,
+              "date": "2026-09",
+              "statut": "concorde",
+              "ecart": 0.15
+            },
+            {
               "source": "fmi",
               "nom": "FMI, World Economic Outlook (API DataMapper, série PCPIPCH), année 2026",
               "niveau": "internationale",
@@ -8753,22 +8734,13 @@
               "date": "2025",
               "statut": "non comparable",
               "raison": "période ou nature différente"
-            },
-            {
-              "source": "eurostat",
-              "nom": "Eurostat, IPCH (prc_hicp_minr, glissement annuel), mensuel",
-              "niveau": "internationale",
-              "valeur": null,
-              "date": null,
-              "statut": "échec",
-              "raison": "source indisponible lors de cette exécution"
             }
           ],
-          "verification": "source_unique",
-          "ecart_max": null,
+          "verification": "concordant",
+          "ecart_max": 0.15,
           "cible": 2.0,
           "note": 77,
-          "confiance": "moyen",
+          "confiance": "élevé",
           "precedent": {
             "valeur": 1.0,
             "note": 75,
@@ -8800,7 +8772,7 @@
           "direction": "stable",
           "variation_6_mois": 0.0,
           "verification_taux_directeur": "source_unique",
-          "verification_inflation": "source_unique",
+          "verification_inflation": "concordant",
           "note": 80,
           "confiance": "moyen",
           "precedent": {
@@ -8979,10 +8951,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWD",
-              "valeur": 7.65,
-              "date": "2026-11-06",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWD"
             }
           ],
           "verification": "source_unique",
@@ -9076,18 +9046,16 @@
         "score": 0.85,
         "raisons": [
           "données manquantes : indicateur avancé (OCDE)",
-          "confiance plafonnée à « moyen » : une seule source pour inflation, taux réel, valorisation relative, momentum boursier 12 mois"
+          "confiance plafonnée à « moyen » : une seule source pour taux réel, valorisation relative, momentum boursier 12 mois"
         ],
         "plafonnee": true
       },
       "qualite": {
         "sources_consultees": 9,
-        "sources_en_echec": 1,
-        "part_en_echec": 0.11,
+        "sources_en_echec": 0,
+        "part_en_echec": 0.0,
         "alerte": false,
-        "details": [
-          "Eurostat : source indisponible lors de cette exécution"
-        ]
+        "details": []
       },
       "contre_scenario": [
         "Un repli du marché qui effacerait la performance des 12 derniers mois.",
@@ -9172,6 +9140,15 @@
               "statut": "retenue"
             },
             {
+              "source": "eurostat",
+              "nom": "Eurostat, IPCH (prc_hicp_minr, glissement annuel), mensuel",
+              "niveau": "internationale",
+              "valeur": 4.0,
+              "date": "2026-09",
+              "statut": "concorde",
+              "ecart": 0.1
+            },
+            {
               "source": "fmi",
               "nom": "FMI, World Economic Outlook (API DataMapper, série PCPIPCH), année 2026",
               "niveau": "internationale",
@@ -9188,22 +9165,13 @@
               "date": "2025",
               "statut": "non comparable",
               "raison": "période ou nature différente"
-            },
-            {
-              "source": "eurostat",
-              "nom": "Eurostat, IPCH (prc_hicp_minr, glissement annuel), mensuel",
-              "niveau": "internationale",
-              "valeur": null,
-              "date": null,
-              "statut": "échec",
-              "raison": "source indisponible lors de cette exécution"
             }
           ],
-          "verification": "source_unique",
-          "ecart_max": null,
+          "verification": "concordant",
+          "ecart_max": 0.1,
           "cible": 2.5,
           "note": 66,
-          "confiance": "moyen",
+          "confiance": "élevé",
           "precedent": {
             "valeur": 4.0,
             "note": 68,
@@ -9235,7 +9203,7 @@
           "direction": "stable",
           "variation_6_mois": 0.0,
           "verification_taux_directeur": "source_unique",
-          "verification_inflation": "source_unique",
+          "verification_inflation": "concordant",
           "note": 70,
           "confiance": "moyen",
           "precedent": {
@@ -9769,10 +9737,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWT",
-              "valeur": 85.0,
-              "date": "2026-11-06",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWT"
             }
           ],
           "verification": "source_unique",
@@ -11222,10 +11188,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWS",
-              "valeur": 24.7,
-              "date": "2026-11-06",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWS"
             }
           ],
           "verification": "source_unique",
@@ -11727,7 +11691,7 @@
       ],
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 0,6 % en 2026 selon le FMI ; inflation à 3,7 % pour une cible de 3,0 %.",
-        "politique_monetaire_et_risques": "Taux réel de +0,8 pt (banque centrale aux taux stables) ; devise à −6,4 % contre le dollar sur 3 mois ; solde courant de −1,2 % du PIB.",
+        "politique_monetaire_et_risques": "Taux réel de +0,8 pt (banque centrale aux taux stables) ; devise à −6,2 % contre le dollar sur 3 mois ; solde courant de −1,2 % du PIB.",
         "marches": "Marché à +3,4 % sur 12 mois (ETF en dollars) ; PER inférieur de 9 % à la médiane des pays suivis."
       },
       "textes": "règles",
@@ -11927,9 +11891,9 @@
       "detail": {
         "devise_3m": {
           "libelle": "Devise sur 3 mois",
-          "valeur": -6.37,
+          "valeur": -6.19,
           "unite": "%",
-          "date": "2026-11-06",
+          "date": "2026-11-07",
           "source": "Yahoo Finance via yfinance, cours CLP=X",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -11939,8 +11903,8 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours CLP=X",
               "niveau": "marche",
-              "valeur": -6.37,
-              "date": "2026-11-06",
+              "valeur": -6.19,
+              "date": "2026-11-07",
               "statut": "retenue"
             }
           ],
@@ -11950,7 +11914,7 @@
           "note": 30,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -6.19,
+            "valeur": -6.37,
             "note": 30,
             "date": "2026-11-06"
           }
@@ -12339,9 +12303,9 @@
       "detail": {
         "devise_3m": {
           "libelle": "Devise sur 3 mois",
-          "valeur": -2.46,
+          "valeur": -2.5,
           "unite": "%",
-          "date": "2026-11-06",
+          "date": "2026-11-07",
           "source": "Yahoo Finance via yfinance, cours COP=X",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -12351,8 +12315,8 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours COP=X",
               "niveau": "marche",
-              "valeur": -2.46,
-              "date": "2026-11-06",
+              "valeur": -2.5,
+              "date": "2026-11-07",
               "statut": "retenue"
             }
           ],
@@ -12362,7 +12326,7 @@
           "note": 45,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -2.5,
+            "valeur": -2.46,
             "note": 45,
             "date": "2026-11-06"
           }
@@ -12898,12 +12862,10 @@
       },
       "qualite": {
         "sources_consultees": 10,
-        "sources_en_echec": 1,
-        "part_en_echec": 0.1,
+        "sources_en_echec": 0,
+        "part_en_echec": 0.0,
         "alerte": false,
-        "details": [
-          "Eurostat : source indisponible lors de cette exécution"
-        ]
+        "details": []
       },
       "contre_scenario": [
         "Les sources divergent sur « croissance du PIB » (OCDE : 4,0) : la valeur retenue (2,7) pourrait être révisée.",
@@ -13004,6 +12966,15 @@
               "statut": "retenue"
             },
             {
+              "source": "eurostat",
+              "nom": "Eurostat, IPCH (prc_hicp_minr, glissement annuel), mensuel",
+              "niveau": "internationale",
+              "valeur": 29.7,
+              "date": "2026-09",
+              "statut": "concorde",
+              "ecart": 0.03
+            },
+            {
               "source": "fmi",
               "nom": "FMI, World Economic Outlook (API DataMapper, série PCPIPCH), année 2026",
               "niveau": "internationale",
@@ -13020,23 +12991,14 @@
               "date": "2025",
               "statut": "non comparable",
               "raison": "période ou nature différente"
-            },
-            {
-              "source": "eurostat",
-              "nom": "Eurostat, IPCH (prc_hicp_minr, glissement annuel), mensuel",
-              "niveau": "internationale",
-              "valeur": null,
-              "date": null,
-              "statut": "échec",
-              "raison": "source indisponible lors de cette exécution"
             }
           ],
-          "verification": "source_unique",
-          "ecart_max": null,
+          "verification": "concordant",
+          "ecart_max": 0.03,
           "cible": 5.0,
           "note": 0,
-          "confirmee": "valeur inhabituelle mais confirmée par une seconde source (FMI)",
-          "confiance": "moyen",
+          "confirmee": "valeur inhabituelle mais confirmée par une seconde source (Eurostat)",
+          "confiance": "élevé",
           "precedent": {
             "valeur": 29.7,
             "note": 0,
@@ -13068,7 +13030,7 @@
           "direction": "baisse",
           "variation_6_mois": -1.0,
           "verification_taux_directeur": "source_unique",
-          "verification_inflation": "source_unique",
+          "verification_inflation": "concordant",
           "note": 58,
           "confiance": "moyen",
           "precedent": {
