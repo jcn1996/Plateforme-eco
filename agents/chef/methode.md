@@ -148,7 +148,8 @@ Cette allocation servira de base au futur agent trader démo.
 ## 5. Synthèse et alertes
 
 **Panorama « Où investir »** (`panorama`) : un tour d'horizon large et équilibré plutôt qu'une seule pépite.
-- Top 5 : verdicts positifs dont le score dépasse le seuil « Renforcer » (pas seulement maintenus par l'hystérésis), sans objection sérieuse à lever ni momentum extrême ; d'abord une ligne par catégorie (pays, entreprises, matières premières, or, obligations, liquidités), puis deux au plus.
+- Top 5 : verdicts positifs dont le score dépasse le seuil « Renforcer » (pas seulement maintenus par l'hystérésis), sans objection sérieuse à lever ni momentum extrême ; d'abord une ligne par catégorie (pays, entreprises, matières premières, or, obligations, liquidités), puis deux, puis trois en dernier recours quand les autres catégories n'ont aucune ligne éligible.
+- Listes par catégorie triées par score.
 - Par catégorie : top 5 des pays, top 3 des matières premières, position sur l'or, sur chaque ligne obligataire et sur les liquidités.
 - Entreprises : au moins 10 quand les données le permettent (verdicts positifs d'abord, puis meilleurs « Neutre »), au plus 2 par secteur et 3 par pays, au moins 4 secteurs et 4 pays ; un écart à ces objectifs est signalé.
 - « À surveiller » (8 au plus, 3 par catégorie) : opportunités à moins de 4 points du seuil « Renforcer », verdict maintenu par l'hystérésis sous le seuil, ou bien notées mais avec une objection sérieuse à lever ou un momentum extrême.

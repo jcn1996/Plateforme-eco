@@ -315,7 +315,7 @@ function ongletPanorama(chef, nav) {
   if (!p) return [el('p', { class: 'sante-ligne' }, 'Panorama pas encore calculé (prochaine analyse complète).')];
   const bloc = (t, sous, xs, vide) => [titre(t, sous), xs?.length ? el('ul', { class: 'chef-liste' }, xs.map((x) => lignePanorama(x, nav))) : el('p', { class: 'chef-petit' }, vide ?? 'Aucune donnée.')];
   return [
-    ...bloc('Top 5', 'verdict positif, sans objection à lever ; une ligne par catégorie d’abord', p.top, 'Aucune opportunité à verdict positif sans objection à lever.'),
+    ...bloc('Top 5', 'verdict positif au-dessus du seuil, sans objection à lever ; une ligne par catégorie d’abord', p.top, 'Aucune opportunité à verdict positif sans objection à lever.'),
     ...bloc('Pays', 'top 5', p.pays),
     ...bloc('Matières premières', 'top 3', p.matieres),
     ...bloc('Or', 'valeur refuge', p.or ? [p.or] : []),

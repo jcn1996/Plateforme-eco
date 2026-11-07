@@ -180,7 +180,8 @@ def panorama(lignes: list[dict], config: dict) -> dict:
     """Tour d'horizon par catégorie, top 5 diversifié et liste « À surveiller »."""
     cp = config["panorama"]
     seuil = config["verdicts"]["seuils"]["Renforcer"]
-    par = {t: sorted((l for l in lignes if l["type"] == t and l.get("score") is not None), key=_cle_tri) for t in CATEGORIES}
+    # Listes par catégorie : par score (le verdict et la conviction sont affichés à côté)
+    par = {t: sorted((l for l in lignes if l["type"] == t and l.get("score") is not None), key=lambda l: -l["score"]) for t in CATEGORIES}
     ent, bilan = selection_entreprises(lignes, cp)
     # Top 5 : verdicts positifs ; d'abord une ligne par catégorie, puis les suivantes (au plus 2 par catégorie)
     # Top 5 : verdict positif, score au-dessus du seuil (pas seulement maintenu par l'hystérésis), aucune objection
@@ -189,7 +190,7 @@ def panorama(lignes: list[dict], config: dict) -> dict:
                        and not (l.get("objection") or {}).get("serieuse") and not l.get("momentum_extreme")
                        and (l["type"] != "entreprises" or l in ent)), key=_cle_tri)
     top5, compte = [], {}
-    for limite in (1, 2):
+    for limite in (1, 2, 3):  # une ligne par catégorie d'abord, puis deux, puis trois en dernier recours
         for l in positifs:
             if len(top5) >= cp["top"]:
                 break
