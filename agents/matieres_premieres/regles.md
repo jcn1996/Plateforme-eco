@@ -39,12 +39,14 @@ Une sous-note sans donnée n'est pas comptée : sa pondération est répartie su
 ## Note globale et verdict
 
 - Pondérations par famille dans `config.json` (les stocks pèsent plus pour l'énergie et les agricoles, les moteurs macro — taux réels et dollar — pour les métaux précieux).
-- **Surpondérer** : note ≥ 60 **et** au moins 2 sous-notes ≥ 60 (deux signaux concordants minimum).
-- **Sous-pondérer** : note ≤ 40 **et** au moins 2 sous-notes ≤ 40.
-- Sinon **Neutre**. Hystérésis de 2 points pour éviter les allers-retours autour des seuils.
+- **Surpondérer** : note ≥ 60 **et** au moins 2 sous-notes ≥ 60 (deux signaux concordants minimum) **et** une confiance « moyen » ou « élevé ».
+- **Sous-pondérer** : note ≤ 40 **et** au moins 2 sous-notes ≤ 40 **et** une confiance « moyen » ou « élevé ».
+- Seuil atteint sans l'une de ces deux conditions : **Neutre (biais positif)** ou **Neutre (biais négatif)**, avec la raison (`verdict_non_retenu`), affichée dans la fiche.
+- Sinon **Neutre**. Hystérésis de 2 points pour éviter les allers-retours autour des seuils (elle ne lève jamais la condition de confiance).
+- Contrôle final : avant d'écrire, l'agent vérifie la règle sur toutes les matières premières ; une anomalie arrête l'exécution sans rien écrire.
 - **Confiance** : « élevé » avec au moins 6 sous-notes, une note éloignée d'au moins 12 points de 50 et des sous-notes peu dispersées (écart type < 20) ; « faible » avec 3 sous-notes ou moins, ou pour un indicateur indirect (uranium) ; sinon « moyen ».
 - Chaque fiche donne 3 arguments pour, 3 arguments contre, « Ce qui pourrait me donner tort » et 2 conditions précises d'invalidation (moyenne 200 jours, structure de la courbe, percentile de positionnement, stocks, plus haut ou plus bas de 3 mois).
-- Synthèse par famille : note moyenne ; « Surpondérer » ou « Sous-pondérer » si la moyenne est à moins de 5 points du seuil et que la moitié au moins des matières premières (2 au minimum) a ce verdict.
+- Synthèse par famille : note moyenne ; « Surpondérer » ou « Sous-pondérer » si la moyenne est à moins de 5 points du seuil et que la moitié au moins des matières premières (2 au minimum) a ce verdict ; moyenne au-delà du seuil sans assez de recommandations retenues : neutre avec biais.
 
 ## Moyens de s'exposer (à titre informatif)
 
@@ -60,6 +62,6 @@ Types de supports (ETC physique, ETF ou ETC de contrats à terme avec le coût d
 ## Règles de conduite
 
 - Ton froid et factuel, sans euphorie (contrôle automatique des mots interdits).
-- Deux signaux concordants au minimum pour un verdict autre que « Neutre ».
+- Deux signaux concordants au minimum et une confiance « moyen » ou « élevé » pour « Surpondérer » ou « Sous-pondérer ».
 - Toujours citer la source et la date de chaque donnée ; l'uranium porte la mention « indicateur indirect ».
 - Une source en panne n'arrête pas l'agent : la sous-note concernée est absente et l'écran Santé le signale.

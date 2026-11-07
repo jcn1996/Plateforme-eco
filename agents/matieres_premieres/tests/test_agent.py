@@ -122,14 +122,46 @@ class TestCalculs(unittest.TestCase):
     def test_verdict_deux_signaux_concordants(self):
         cfg = CFG["verdicts"]
         un_seul = {"tendance": {"note": 95}, "courbe": {"note": 55}, "macro": {"note": 55}}
-        self.assertEqual(A.verdict(65, un_seul, cfg)[0], "Neutre")
+        v, _, _, raison = A.verdict(65, un_seul, cfg, "moyen")
+        self.assertEqual(v, "Neutre (biais positif)")
+        self.assertIn("1 signal concordant", raison)
         deux = {"tendance": {"note": 80}, "courbe": {"note": 70}, "macro": {"note": 50}}
-        self.assertEqual(A.verdict(65, deux, cfg)[0], "Surpondérer")
+        self.assertEqual(A.verdict(65, deux, cfg, "moyen")[:2], ("Surpondérer", ["tendance", "courbe"]))
         baissier = {"tendance": {"note": 20}, "stocks": {"note": 30}, "macro": {"note": 45}}
-        self.assertEqual(A.verdict(35, baissier, cfg)[0], "Sous-pondérer")
+        self.assertEqual(A.verdict(35, baissier, cfg, "élevé")[0], "Sous-pondérer")
         # Hystérésis : un « Surpondérer » est conservé à 59 si les signaux restent concordants
-        self.assertEqual(A.verdict(59, deux, cfg, "Surpondérer")[0], "Surpondérer")
-        self.assertEqual(A.verdict(59, deux, cfg)[0], "Neutre")
+        self.assertEqual(A.verdict(59, deux, cfg, "moyen", "Surpondérer")[0], "Surpondérer")
+        self.assertEqual(A.verdict(59, deux, cfg, "moyen")[0], "Neutre")
+        self.assertEqual(A.verdict(None, deux, cfg, "faible")[0], "Neutre")
+
+    def test_verdict_exige_une_confiance_suffisante(self):
+        """Cas du gaz TTF du 07/11 : note 68, deux signaux concordants, mais confiance « faible »."""
+        cfg = CFG["verdicts"]
+        deux = {"tendance": {"note": 95}, "geopolitique": {"note": 71}, "macro": {"note": 47}, "niveau": {"note": 27}}
+        v, _, _, raison = A.verdict(68.5, deux, cfg, "faible")
+        self.assertEqual(v, "Neutre (biais positif)")
+        self.assertIn("confiance « faible »", raison)
+        baissier = {"tendance": {"note": 20}, "stocks": {"note": 30}}
+        self.assertEqual(A.verdict(35, baissier, cfg, "faible")[0], "Neutre (biais négatif)")
+        # Les deux conditions manquent : les deux raisons sont données
+        self.assertIn(" et ", A.verdict(35, {"tendance": {"note": 20}}, cfg, "faible")[3])
+        # Hystérésis : un « Surpondérer » précédent n'est pas conservé si la confiance tombe à « faible »
+        self.assertEqual(A.verdict(59, deux, cfg, "faible", "Surpondérer")[0], "Neutre (biais positif)")
+
+    def test_controle_final_des_verdicts(self):
+        cfg = CFG["verdicts"]
+        bon = {"nom": "Or", "verdict": "Surpondérer", "confiance": "moyen", "signaux_favorables": ["a", "b"]}
+        self.assertEqual(A.controler_verdict(bon, cfg), [])
+        self.assertEqual(len(A.controler_verdict({**bon, "confiance": "faible"}, cfg)), 1)
+        self.assertEqual(len(A.controler_verdict({**bon, "confiance": "faible", "signaux_favorables": ["a"]}, cfg)), 2)
+        self.assertEqual(A.controler_verdict({"nom": "Or", "verdict": "Neutre (biais positif)", "confiance": "faible"}, cfg), [])
+        self.assertTrue(A.controler_verdict({"nom": "Or", "verdict": "Acheter"}, cfg))
+
+    def test_verdict_famille_avec_biais(self):
+        cfg = CFG["verdicts"]
+        self.assertEqual(A.verdict_famille([70, 68], ["Surpondérer", "Surpondérer"], cfg), "Surpondérer")
+        self.assertEqual(A.verdict_famille([70, 68], ["Neutre (biais positif)", "Surpondérer"], cfg), "Neutre (biais positif)")
+        self.assertEqual(A.verdict_famille([50, 52], ["Neutre", "Neutre"], cfg), "Neutre")
 
     def test_note_globale_repartit_les_poids(self):
         sous = {"tendance": {"note": 80}, "stocks": None, "macro": {"note": 40}}
@@ -227,8 +259,15 @@ class TestAgent(unittest.TestCase):
             self.assertLessEqual(len(m["arguments_pour"]), 3)
             self.assertTrue(m["serie"], m["nom"])
             self.assertTrue(m["sources"])
-            if m["verdict"] != "Neutre":
-                self.assertGreaterEqual(len(m["signaux_favorables" if m["verdict"] == "Surpondérer" else "signaux_defavorables"]), 2)
+            # Règle vérifiée sur toutes les matières premières : pas de recommandation directionnelle
+            # sans confiance « moyen » ou « élevé » et deux signaux concordants
+            if m["verdict"] in ("Surpondérer", "Sous-pondérer"):
+                self.assertIn(m["confiance"], ("moyen", "élevé"), m["nom"])
+                self.assertGreaterEqual(len(m["signaux_favorables" if m["verdict"] == "Surpondérer" else "signaux_defavorables"]), 2, m["nom"])
+                self.assertIsNone(m["verdict_non_retenu"])
+            if m["verdict"].startswith("Neutre ("):
+                self.assertTrue(m["verdict_non_retenu"], m["nom"])
+            self.assertEqual(A.controler_verdict(m, CFG["verdicts"]), [], m["nom"])
 
     def test_sources_croisees(self):
         par = {m["cle"]: m for m in self.sortie["donnees"]["matieres"]}
@@ -300,6 +339,14 @@ class TestAgent(unittest.TestCase):
         self.assertTrue(valide("matieres_premieres.json", signal, src, cfg_risque, "2026-11-08")[0])
         signal["titre"] = f"{m['nom']} : passage de « {m['verdict']} » à « Autre »"
         self.assertFalse(valide("matieres_premieres.json", signal, src, cfg_risque, "2026-11-08")[0])
+
+    def test_gaz_europeen_neutre_avec_biais(self):
+        """Gaz TTF (données réelles du 07/11) : note au-delà de 60, confiance « faible » → pas de « Surpondérer »."""
+        ttf = next(m for m in self.sortie["donnees"]["matieres"] if m["cle"] == "gaz_europe")
+        self.assertEqual(ttf["confiance"], "faible")
+        self.assertGreaterEqual(ttf["note"], 60)
+        self.assertEqual(ttf["verdict"], "Neutre (biais positif)")
+        self.assertIn("confiance « faible »", ttf["verdict_non_retenu"])
 
     def test_source_en_panne(self):
         donnees = self.d / "donnees_panne"

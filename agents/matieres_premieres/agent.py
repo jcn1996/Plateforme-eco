@@ -8,7 +8,8 @@ sur un horizon de 3 à 12 mois ?
    agents (data/macro.json, data/geopolitique.json, data/risque.json, data/entreprises.json) ;
    une source en panne n'arrête pas l'agent ;
 2. calcule 8 sous-notes /100 par matière première, une note globale pondérée par famille, un verdict
-   (« Surpondérer », « Neutre », « Sous-pondérer ») avec confiance, arguments, conditions d'invalidation ;
+   (« Surpondérer », « Neutre », « Sous-pondérer » ; « Neutre (biais positif / négatif) » quand la confiance
+   ou les signaux concordants ne suffisent pas) avec confiance, arguments, conditions d'invalidation ;
    puis une synthèse par famille ;
 3. écrit data/matieres_premieres.json, data/signaux/matieres_premieres.json,
    data/historique/matieres_premieres/AAAA-MM-JJ.json (notes et relevés des ETF),
@@ -187,8 +188,8 @@ def analyser(m: dict, res: dict, ctx: dict, flux_par_etf: dict, cfg: dict, courb
 
     ancien = {x["cle"]: x for x in (precedent or {}).get("matieres", [])}.get(m["cle"]) or {}
     note = A.note_globale(sous, famille["ponderations"])
-    v, fav, defav = A.verdict(note, sous, cfg["verdicts"], ancien.get("verdict"))
     conf = A.confiance(sous, note, bool(m.get("indirect")))
+    v, fav, defav, raison_neutre = A.verdict(note, sous, cfg["verdicts"], conf, ancien.get("verdict"))
     pour, contre = A.arguments(sous, cfg["sous_notes"])
     courbe = sous.get("courbe")
 
@@ -223,7 +224,7 @@ def analyser(m: dict, res: dict, ctx: dict, flux_par_etf: dict, cfg: dict, courb
         "indirect": bool(m.get("indirect")), "mention": m.get("mention"),
         "cours": front, "date_cours": serie[-1][0] if serie else None, "variation_1m": r1, "variation_12m": r12,
         "serie": serie_graphique(serie, hebdo=True),
-        "note": note, "verdict": v, "horizon": cfg["horizon"], "confiance": conf,
+        "note": note, "verdict": v, "verdict_non_retenu": raison_neutre, "horizon": cfg["horizon"], "confiance": conf,
         "signaux_favorables": [cfg["sous_notes"][k] for k in fav], "signaux_defavorables": [cfg["sous_notes"][k] for k in defav],
         "sous_notes": sous, "arguments_pour": pour, "arguments_contre": contre,
         "ce_qui_pourrait_me_donner_tort": A.donner_tort(v, m, sous, contre, pour),
@@ -373,6 +374,13 @@ def main(argv=None) -> int:
     courbes = contrats(cfg, aujourdhui)
 
     matieres = [analyser(m, res, ctx, flux_par_etf, cfg, courbes, aujourdhui, precedent, pays_suivis, surveillance) for m in cfg["matieres"]]
+    # Contrôle de la règle sur toutes les matières premières : aucune recommandation directionnelle sans
+    # confiance « moyen » ou « élevé » et deux signaux concordants. Une anomalie est une erreur de l'agent :
+    # rien n'est écrit (les fichiers de la veille restent en place) et le workflow échoue.
+    anomalies = [a for m in matieres for a in A.controler_verdict(m, cfg["verdicts"])]
+    if anomalies:
+        LOG.error("Verdicts contraires à la règle, fichiers inchangés : %s", " ; ".join(anomalies))
+        return 1
     donnees = {
         "date": aujourdhui.isoformat(), "horizon": cfg["horizon"],
         "familles": familles(matieres, cfg), "matieres": matieres,
@@ -382,7 +390,8 @@ def main(argv=None) -> int:
         "avertissement": "Analyse factuelle à titre informatif, sans conseil d'investissement ; les supports cités sont des exemples de types de produits.",
         "methode": ("8 sous-notes /100 (au-dessus de 50 : favorable à une exposition) ; note globale pondérée par famille ; "
                     f"« Surpondérer » à partir de {cfg['verdicts']['surponderer']} et « Sous-pondérer » jusqu'à {cfg['verdicts']['sous_ponderer']}, "
-                    f"avec au moins {cfg['verdicts']['signaux_concordants_min']} sous-notes concordantes ; sinon « Neutre »."),
+                    f"avec au moins {cfg['verdicts']['signaux_concordants_min']} sous-notes concordantes et une confiance « moyen » ou « élevé » ; "
+                    "seuil atteint sans ces deux conditions : « Neutre (biais positif) » ou « Neutre (biais négatif) » ; sinon « Neutre »."),
     }
     textes = [t for m in matieres for t in m["arguments_pour"] + m["arguments_contre"] + [m["ce_qui_pourrait_me_donner_tort"]] + m["invalidations"]]
     if not A.conformes(textes + [x["texte"] for x in donnees["familles"]]):
