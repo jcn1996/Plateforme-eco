@@ -154,6 +154,20 @@ class TestListes(unittest.TestCase):
         self.assertFalse(A.est_holding("BlackRock, Inc.", "Asset Management", "BLK", CFG["pepites"]))
         self.assertTrue(A.est_holding("Some Fund", "Closed-End Fund - Equity", "X", CFG["pepites"]))
         self.assertTrue(A.est_holding("Investor AB", None, "INVE-B.ST", CFG["pepites"], "Financials"))  # industrie inconnue
+        # fonds fermés, BDC, véhicules de crédit et SPAC
+        self.assertTrue(A.est_holding("Carlyle Credit Solutions, Inc.", "Asset Management", "CGBD", CFG["pepites"]))
+        self.assertTrue(A.est_holding("Main Street Capital Corporation", "Asset Management", "MAIN", CFG["pepites"]))
+        self.assertTrue(A.est_holding("Invesco Senior Income Trust", "Asset Management", "VVR", CFG["pepites"]))
+        self.assertTrue(A.est_holding("BHAV Acquisition Corp II", None, "BHAI", CFG["pepites"]))
+        self.assertFalse(A.est_holding("Northern Trust Corporation", "Banks - Regional", "NTRS", CFG["pepites"]))
+        self.assertFalse(A.est_holding("Ares Management Corporation", "Asset Management", "ARES", CFG["pepites"]))
+
+    def test_holding_jamais_acheter(self):
+        from agents.entreprises import recommandation as R
+        r = {"si_non_detenu": "Acheter", "si_detenu": "Renforcer", "prix_repli": None, "justification": "Signaux."}
+        g = R.garde_holding(r)
+        self.assertEqual((g["si_non_detenu"], g["si_detenu"]), ("Attendre", "Conserver"))
+        self.assertIn("actif net", g["justification"])
 
     def test_deux_listes_et_plafond_par_secteur(self):
         cfg = {**CFG["pepites"], "plafond_par_secteur": 2}

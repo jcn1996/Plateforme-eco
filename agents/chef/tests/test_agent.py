@@ -355,3 +355,169 @@ class TestAllocationUnitaire(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestCorrectionsQualite(BaseChef):
+    """Corrections après la première exécution : holdings et fonds, risque frein, momentum, contradicteur,
+    alertes, Gemini, cohérence, panorama."""
+
+    def test_holdings_exclues(self):
+        r = self.lancer()
+        d = r["donnees"]
+        tickers = {l["cle"] for l in d["entreprises"]}
+        self.assertNotIn("INVE-B.ST", tickers)
+        self.assertIn("INVE-B.ST", {x["ticker"] for x in d["exclues"]})
+        for p in d["pays"]:
+            self.assertNotIn("INVE-B.ST", {s["ticker"] for s in p.get("societes") or []})
+        self.assertNotIn("Investor", json.dumps(lire(self.data / "alertes.json"), ensure_ascii=False))
+
+    def test_objection_sur_la_bonne_entite(self):
+        r = self.lancer()
+        ae = next(l for l in r["donnees"]["pays"] if l["cle"] == "AE")
+        de = next(l for l in r["donnees"]["pays"] if l["cle"] == "DE")
+        for o in ae.get("objections") or []:
+            self.assertNotIn("Allemagne", o["objection"])
+            self.assertNotIn("EWG", o["objection"])
+        self.assertTrue(any("Émirats" in o["objection"] for o in ae.get("objections") or []))
+        for o in de.get("objections") or []:
+            self.assertNotIn("Émirats", o["objection"])
+
+    def test_objection_par_entite_v3(self):
+        revue = {"id": "geopolitique|evenement_grave|e|2026-11-06", "specifique": True, "ajustement": "signal fragile", "objection": "global",
+                 "signal": {"agent": "geopolitique", "type": "evenement_grave", "cle": "e", "date": "2026-11-06", "titre": "t"},
+                 "par_entite": {"AE": {"objection": "Objections spécifiques : point AE [F2].", "ajustement": "abaisser"}}}
+        sig = {"geopolitique": [{"type": "evenement_grave", "cle": "e", "date": "2026-11-06", "pays": ["DE", "AE"]}]}
+        res = M.objections_par_cible([revue], sig, {}, "2026-11-07", self.config, {"DE": "Allemagne", "AE": "Émirats arabes unis"})
+        self.assertEqual(res["pays-AE"][0]["objection"], "Objections spécifiques : point AE.")
+        self.assertEqual(res["pays-AE"][0]["ajustement"], "abaisser")
+        self.assertNotIn("pays-DE", res)  # aucune objection propre à l'Allemagne dans cette revue
+
+    def test_alertes_filtrees(self):
+        from agents.chef import univers as U
+        from agents.chef import entrees as E
+        from agents.chef.agent import alerte_admissible
+        ctx = U.Contexte(E.charger(self.data, self.config, MAINTENANT), self.config, self.data)
+        note = next(e["ticker"] for e in ctx.entreprises if e.get("note") is not None and not U.est_vehicule(ctx, e))
+        cas = [({"cle": "X", "titre": "Third Point LLC déclare 100,0 % de Third Point Private Capital Income Fund (13D)"}, False),
+               ({"cle": "NONE", "titre": "Carlyle Credit Solutions : 3 dirigeants achètent sur le marché en 30 jours"}, False),
+               ({"cle": "ZZZZ", "titre": "Société inconnue : 3 dirigeants achètent"}, False),
+               ({"cle": "INVE-B.ST", "titre": "Investor AB : 3 dirigeants achètent"}, False),
+               ({"cle": note, "titre": "Société : 3 dirigeants achètent sur le marché en 30 jours"}, True)]
+        for s, attendu in cas:
+            self.assertEqual(alerte_admissible(ctx, "inities", s, self.config)[0], attendu, s["titre"])
+        self.assertTrue(alerte_admissible(ctx, "macro", {"titre": "x"}, self.config)[0])
+
+    def test_coherence_et_conviction_forte(self):
+        r = self.lancer()
+        for l in r["lignes"]:
+            if l["conviction"] == "forte" and M.DIRECTION[l["verdict"]] == 1:
+                pos = [f for f, x in l["familles"].items() if x["note"] >= 60 and f not in ("risque", "geopolitique")
+                       and not (f == "tendance" and l.get("momentum_extreme"))]
+                self.assertGreaterEqual(len(pos), 3, l["nom"])
+            if l.get("momentum_extreme") and M.DIRECTION[l["verdict"]] == 1:
+                self.assertNotEqual(l["conviction"], "forte", l["nom"])
+                self.assertTrue(any("Momentum extrême" in o["objection"] for o in l["objections"]), l["nom"])
+
+    def test_pays_jamais_recommande_par_le_seul_risque(self):
+        r = self.lancer()
+        for l in r["donnees"]["pays"]:
+            for f in ("risque", "geopolitique"):
+                if f in l["familles"]:
+                    self.assertLessEqual(l["familles"][f]["note"], self.config["risque_frein"]["plafond"])
+            if M.DIRECTION[l["verdict"]] == 1 and l["score"] >= 58:
+                self.assertTrue(any(l["familles"].get(f, {}).get("note", 0) >= 60 for f in ("fondamentaux", "valorisation", "tendance", "flux")), l["nom"])
+
+    def test_panorama(self):
+        r = self.lancer()
+        p = r["donnees"]["panorama"]
+        cp = self.config["panorama"]
+        ent = p["entreprises"]
+        self.assertGreaterEqual(len(ent), cp["entreprises_min"])
+        from collections import Counter
+        self.assertLessEqual(max(Counter(x["secteur"] for x in ent).values()), cp["max_par_secteur"])
+        self.assertLessEqual(max(Counter(x["pays"] for x in ent).values()), cp["max_par_pays"])
+        self.assertGreaterEqual(len({x["secteur"] for x in ent}), cp["min_secteurs"])
+        self.assertGreaterEqual(len({x["pays"] for x in ent}), cp["min_pays"])
+        self.assertLessEqual(len(p["pays"]), 5)
+        self.assertLessEqual(len(p["matieres"]), 3)
+        self.assertIsNotNone(p["or"])
+        self.assertEqual(len(p["obligations"]), 4)
+        self.assertEqual(len(p["liquidites"]), 2)
+        self.assertLessEqual(len(p["top"]), 5)
+        self.assertLessEqual(max(Counter(x["type"] for x in p["top"]).values()), 2)
+        lignes = {l["id"]: l for l in r["lignes"]}
+        for x in p["top"]:
+            l = lignes[x["id"]]
+            self.assertFalse((l.get("objection") or {}).get("serieuse"), x["nom"])
+            self.assertFalse(l.get("momentum_extreme"), x["nom"])
+        self.assertLessEqual(max(Counter(x["type"] for x in p["a_surveiller"]).values() or [0]), cp["a_surveiller_par_type"])
+        # le briefing résume par catégorie
+        textes = [x["texte"] for x in r["briefing"]["essentiel"]]
+        for debut in ("Pays :", "Matières premières :", "Obligations et liquidités :", "Entreprises :"):
+            self.assertTrue(any(t.startswith(debut) for t in textes), debut)
+
+    def test_raison_sans_gemini_et_chaine_de_secours(self):
+        r = self.lancer()
+        self.assertIn("GEMINI_API_KEY absente", r["briefing"]["raison_regles"])
+        self.assertIn("GEMINI_API_KEY absente", (self.data / "chef" / "briefing-2026-11-07.md").read_text(encoding="utf-8"))
+        self.assertIn("GEMINI_API_KEY absente", json.dumps(lire(self.data / "journal" / "agent-chef.json"), ensure_ascii=False))
+        appels = []
+
+        def poster(url, params=None, timeout=None, json=None):
+            appels.append(url)
+            if "flash-latest" in url:
+                return Reponse(503, {})
+            rep = {"essentiel": [{"texte": f"Phrase {i} [F1].", "faits": ["F1"]} for i in range(5)], "vigilance": []}
+            return Reponse(200, {"candidates": [{"content": {"parts": [{"text": __import__("json").dumps(rep)}]}}]})
+        self.tearDown()
+        self.setUp()
+        r = self.lancer(cle="cle-test", poster=poster)
+        self.assertEqual(r["briefing"]["mode"], "gemini")
+        self.assertEqual(r["briefing"]["modele"], "gemini-3.5-flash-lite")  # modèle de secours
+        self.assertTrue(any("flash-latest" in u for u in appels))
+
+
+class TestMoteurRegles(unittest.TestCase):
+    def setUp(self):
+        self.config = charger_config()
+
+    def opp(self, notes, type_="pays"):
+        return {"id": "x", "type": type_, "familles": {f: {"note": n, "coef": 1.0, "texte": f, "source": "s", "agent": "pays"} for f, n in notes.items()}}
+
+    def test_risque_frein(self):
+        o = self.opp({"risque": 95, "geopolitique": 95, "fondamentaux": 52, "valorisation": 50, "tendance": 50, "cycle": 70})
+        M.appliquer_frein_risque(o, self.config)
+        self.assertEqual(o["familles"]["risque"]["note"], 55)
+        self.assertEqual(M.exiger_moteur(o, "Renforcer", self.config)[0], "Neutre")
+        o["familles"]["valorisation"]["note"] = 70
+        self.assertEqual(M.exiger_moteur(o, "Renforcer", self.config)[0], "Renforcer")
+        # obligations : le palier de risque reste un moteur (valeur refuge)
+        ob = self.opp({"risque": 75}, "obligations")
+        M.appliquer_frein_risque(ob, self.config)
+        self.assertEqual(ob["familles"]["risque"]["note"], 75)
+
+    def test_momentum_extreme(self):
+        o = self.opp({"tendance": 90, "valorisation": 30, "flux": 35, "fondamentaux": 65, "cycle": 62}, "matieres")
+        o["familles"]["tendance"].update({"percentile_classe": 95, "hausse_12m": 55})
+        obj = M.verifier_momentum(o, "2026-11-07", self.config)
+        self.assertTrue(o["momentum_extreme"])
+        self.assertFalse(o["verification_momentum"]["ok"])
+        self.assertTrue(obj["serieuse"])
+        self.assertIn("valorisation tendue", obj["objection"])
+        M.scorer(o, self.config, "Vigilance")
+        groupes = M.groupes_concordants(o, 1, self.config)
+        self.assertNotIn("marche", groupes)
+        self.assertNotEqual(M.conviction(o, "Renforcer", [obj], 1.0, self.config)["niveau"], "forte")
+        # hausse de +45 % sur 12 mois dans une petite classe : extrême même sous le 90e percentile
+        o2 = self.opp({"tendance": 80, "valorisation": 60}, "matieres")
+        o2["familles"]["tendance"].update({"percentile_classe": 85, "hausse_12m": 45})
+        self.assertIsNotNone(M.verifier_momentum(o2, "2026-11-07", self.config))
+
+    def test_controle_coherence(self):
+        l = {"verdict": "Renforcer", "conviction": "forte", "familles": {"fondamentaux": {"note": 70}, "valorisation": {"note": 65},
+                                                                       "risque": {"note": 90}, "cycle": {"note": 55}}}
+        self.assertIsNotNone(M.controle_coherence(l, self.config))
+        self.assertEqual(l["conviction"], "moyenne")
+        l2 = {"verdict": "Renforcer", "conviction": "forte", "familles": {"fondamentaux": {"note": 70}, "valorisation": {"note": 65}, "flux": {"note": 61}}}
+        self.assertIsNone(M.controle_coherence(l2, self.config))
+        self.assertEqual(l2["conviction"], "forte")

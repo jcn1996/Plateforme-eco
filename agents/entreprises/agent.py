@@ -575,6 +575,9 @@ def analyser_societe(s: dict, med: dict, config: dict, pays_json: dict, zones: d
     revue_c = A.revue_critique(s, m, ind, pays_j, devise_3m)
     reco = R.recommander(s, m, g["note"], conf["niveau"], revue_c["risques"] + contre, config["recommandation"],
                          dynamique=bloc_dyn, exc_guidance=cfg_d["exception_guidance"], inities=inities)
+    holding = A.est_holding(s["nom"], s.get("industrie"), s["ticker"], config["pepites"], secteur_gics)
+    if holding:
+        reco = R.garde_holding(reco)
     e = {
         "ticker": s["ticker"], "nom": s["nom"], "pays": s["pays"], "region": s["region"],
         "secteur": f"{s['pays']}-{slug}", "secteur_gics": secteur_gics, "secteur_nom": nom_s,
@@ -592,7 +595,7 @@ def analyser_societe(s: dict, med: dict, config: dict, pays_json: dict, zones: d
         "contexte": {"ajustement": ctx["points"], "details": ctx["details"], "note_ajustee": round(g["note"] + ctx["points"], 1),
                      "phase": phase, "note_pays": pays_j.get("note") if pays_j else None},
         "pepite": False, "qpr": False, "criteres_pepite": crit["criteres"],
-        "holding": A.est_holding(s["nom"], s.get("industrie"), s["ticker"], config["pepites"], secteur_gics),
+        "holding": holding,
         "industrie": s.get("industrie"), "analystes": s.get("analystes"),
         "autres_cotations": s.get("autres_cotations", []),
         "recommandation": reco,
@@ -632,7 +635,7 @@ def mesurer(r: dict, change: dict, cfg_u: dict) -> dict:
 
 CHAMPS_LEGERS = ("ticker", "nom", "pays", "region", "secteur", "secteur_gics", "secteur_nom", "financier", "devise",
                  "capitalisation_md", "note", "niveau", "verdict", "indicateurs", "pepite", "qpr", "precedent", "surveillance",
-                 "autres_cotations", "place")
+                 "autres_cotations", "place", "holding")
 
 
 def fichier_fiche(ticker: str) -> str:

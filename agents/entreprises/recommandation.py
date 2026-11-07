@@ -387,6 +387,24 @@ def recommander(s: dict, m: dict, note: int | None, confiance: str, risques: lis
     }
 
 
+def garde_holding(r: dict | None) -> dict | None:
+    """Holding, société d'investissement, fonds fermé, BDC ou SPAC : le PER et le VE/EBITDA ne mesurent pas leur valeur
+    (décote sur l'actif net, non disponible gratuitement) ; « Acheter » et « Renforcer » sont donc exclus."""
+    if not r:
+        return r
+    r = dict(r)
+    raison = ("Holding, société d'investissement, fonds ou SPAC : valorisation par le PER non pertinente (décote sur l'actif net "
+              "non mesurée) ; « Acheter » exclu.")
+    if r["si_non_detenu"] in ("Acheter", "Acheter sur repli"):
+        r["si_non_detenu"] = "Attendre"
+        r["prix_repli"] = None
+    if r["si_detenu"] == "Renforcer":
+        r["si_detenu"] = "Conserver"
+    r["justification"] = f"{r['justification']} {raison}"
+    r["holding"] = True
+    return r
+
+
 def resume(r: dict | None) -> dict | None:
     """Version courte (listes, data/entreprises.json, pépites)."""
     if not r:

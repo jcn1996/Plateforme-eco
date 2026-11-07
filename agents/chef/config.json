@@ -112,12 +112,42 @@
     "objections_serieuses": ["abaisser", "signal fragile"]
   },
 
+  "risque_frein": {
+    "_commentaire": "Le risque sert de frein, pas de moteur : pour ces types, les familles « Risque » et « Géopolitique » sont plafonnées à `plafond` (un risque faible ne peut pas porter la note), et un verdict positif exige au moins une famille motrice (`moteurs`) au-dessus du seuil de concordance.",
+    "types": ["pays", "entreprises", "matieres"],
+    "familles": ["risque", "geopolitique"],
+    "plafond": 55,
+    "moteurs": ["fondamentaux", "valorisation", "tendance", "flux"]
+  },
+
+  "momentum": {
+    "_commentaire": "Hausse passée extrême (famille « Tendance » au-delà du percentile `percentile_extreme` de sa classe, ou hausse d'au moins `hausse_12m_extreme_pct` % sur 12 mois, car le percentile est grossier dans une petite classe) : elle ne compte pas dans la concordance de la conviction, déclenche une vérification de la valorisation (≥ valorisation_min) et du positionnement (flux et positionnement ≥ positionnement_min), et une objection systématique (règle du contradicteur appliquée par le chef d'orchestre).",
+    "percentile_extreme": 90,
+    "hausse_12m_extreme_pct": 40,
+    "valorisation_min": 45,
+    "positionnement_min": 40
+  },
+
+  "panorama": {
+    "_commentaire": "Tour d'horizon de « Où investir » : top par catégorie, entreprises diversifiées (au plus `max_par_secteur` par secteur et `max_par_pays` par pays, au moins `min_secteurs` secteurs et `min_pays` pays quand les données le permettent), liste « À surveiller » (score à moins de `ecart_seuil` points du seuil « Renforcer », ou verdict positif avec une objection sérieuse à lever).",
+    "pays": 5, "matieres": 3, "entreprises_min": 10, "entreprises_max": 12,
+    "max_par_secteur": 2, "max_par_pays": 3, "min_secteurs": 4, "min_pays": 4,
+    "ecart_seuil": 4, "a_surveiller_max": 8, "a_surveiller_par_type": 3, "top": 5
+  },
+
+  "exclusions": {
+    "_commentaire": "Holdings, sociétés d'investissement, fonds fermés, BDC, véhicules de crédit et SPAC : exclus du classement et des alertes (la décote sur l'actif net, seule mesure pertinente, n'est pas disponible gratuitement ; jamais de conviction fondée sur un PER). Détection : drapeau « holding » de l'agent entreprises, sinon même règle que l'agent entreprises (config pepites), plus `mots` dans le nom pour les alertes d'initiés.",
+    "mots": [" fund", " trust", "income", "credit", "capital corp", "lending", "bdc", "acquisition corp", "acquisition co", "private capital", "partners ii", "spac"],
+    "pct_interne_min": 99
+  },
+
   "tendance": {"_commentaire": "Flèche de tendance : variation du score depuis l'analyse complète précédente.", "seuil_pts": 2},
 
   "univers": {
     "entreprises_par_pays_attractif": 3,
     "note_pays_attractif": 58,
-    "entreprises_max": 90,
+    "entreprises_par_secteur": 3,
+    "entreprises_max": 130,
     "objection_fenetre_jours": 7
   },
 
@@ -201,13 +231,14 @@
   },
 
   "gemini": {
-    "_commentaire": "Budget propre au chef d'orchestre (compté à part des autres agents) pour la rédaction du briefing ; chaque affirmation doit citer un fait fourni, sinon elle est supprimée ; sans Gemini, version par règles.",
+    "_commentaire": "Budget propre au chef d'orchestre (compté à part des autres agents) pour la rédaction du briefing. Même chaîne de modèles de secours que l'agent géopolitique (le premier qui répond est utilisé ; quota du jour atteint ou panne : modèle suivant). Chaque affirmation doit citer un fait fourni, sinon elle est supprimée ; sans Gemini, version par règles, et la raison est journalisée (clé absente, budget épuisé, erreur, réponse rejetée).",
     "modeles": [
-      {"nom": "gemini-3.5-flash-lite", "libelle": "Flash-Lite", "rpm": 10, "rpd": 6},
-      {"nom": "gemini-flash-latest", "libelle": "Flash le plus récent (alias)", "rpm": 5, "rpd": 3}
+      {"nom": "gemini-flash-latest", "libelle": "Flash le plus récent (alias)", "rpm": 10, "rpd": 6},
+      {"nom": "gemini-3.5-flash-lite", "libelle": "Flash-Lite", "rpm": 15, "rpd": 6},
+      {"nom": "gemini-3.6-flash", "libelle": "Flash de la génération précédente", "rpm": 10, "rpd": 4}
     ],
     "marge": 0.0,
-    "appels_max_par_execution": 2,
+    "appels_max_par_execution": 4,
     "essais": 2,
     "attentes_reprise_secondes": [5],
     "attente_429_minute_max_secondes": 30,

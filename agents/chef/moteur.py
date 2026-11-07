@@ -71,10 +71,79 @@ def rang(v: str, config: dict) -> int:
 
 # ------------------------------------------------------------------ conviction
 
+def appliquer_frein_risque(o: dict, config: dict) -> None:
+    """Le risque sert de frein, pas de moteur : un risque faible ne peut pas porter la note au-delà du plafond."""
+    rf = config["risque_frein"]
+    if o["type"] not in rf["types"]:
+        return
+    for f in rf["familles"]:
+        x = o["familles"].get(f)
+        if x and x["note"] > rf["plafond"]:
+            x["note_avant_frein"] = x["note"]
+            x["note"] = float(rf["plafond"])
+            x["texte"] += f" — risque faible : frein levé, pas un moteur (plafonné à {rf['plafond']}/100)"
+
+
+def familles_motrices(o: dict, config: dict) -> list[str]:
+    seuil = config["conviction"]["seuil_concordance_haut"]
+    return [f for f in config["risque_frein"]["moteurs"] if (o["familles"].get(f) or {}).get("note", 0) >= seuil
+            and not (f == "tendance" and o.get("momentum_extreme"))]
+
+
+def exiger_moteur(o: dict, v: str, config: dict) -> tuple[str, str | None]:
+    """Verdict positif : au moins une famille motrice (fondamentaux, valorisation, tendance, flux) au-dessus du seuil."""
+    if DIRECTION.get(v) != 1 or o["type"] not in config["risque_frein"]["types"] or familles_motrices(o, config):
+        return v, None
+    return "Neutre", (f"« {v} » exclu : aucun signal positif de fondamentaux, de valorisation, de tendance ou de flux "
+                      "(un risque faible ne suffit pas à recommander)")
+
+
+def verifier_momentum(o: dict, jour: str, config: dict) -> dict | None:
+    """Hausse passée au-delà du 90e percentile : vérification de la valorisation et du positionnement, et objection
+    systématique (règle du contradicteur appliquée par le chef d'orchestre)."""
+    cm = config["momentum"]
+    t = o["familles"].get("tendance")
+    p = (t or {}).get("percentile_classe")
+    h = (t or {}).get("hausse_12m")
+    par_percentile = p is not None and p >= cm["percentile_extreme"]
+    par_hausse = h is not None and h >= cm["hausse_12m_extreme_pct"]
+    if not (par_percentile or par_hausse):
+        return None
+    o["momentum_extreme"] = True
+    val = o["familles"].get("valorisation")
+    pos = o["familles"].get("flux")
+    motif = (f"au-delà du {cm['percentile_extreme']}e percentile de sa classe (percentile {ent(p)})" if par_percentile
+             else f"de {fr(h, 1, True)} % sur 12 mois (seuil : +{cm['hausse_12m_extreme_pct']} %)")
+    points = [f"hausse passée {motif} : {t['texte']}"]
+    ok = True
+    if val is None:
+        points.append("valorisation non vérifiable (donnée manquante)")
+        ok = False
+    elif val["note"] < cm["valorisation_min"]:
+        points.append(f"valorisation tendue ({ent(val['note'])}/100) : {val['texte']}")
+        ok = False
+    else:
+        points.append(f"valorisation vérifiée ({ent(val['note'])}/100)")
+    if pos is not None and pos["note"] < cm["positionnement_min"]:
+        points.append(f"positionnement encombré ou flux sortants ({ent(pos['note'])}/100) : {pos['texte']}")
+        ok = False
+    elif pos is not None:
+        points.append(f"positionnement vérifié ({ent(pos['note'])}/100)")
+    geo = o["familles"].get("geopolitique")
+    if geo and (geo.get("note_avant_frein") or geo["note"]) >= 60 and o["type"] in ("matieres", "or"):
+        points.append("hausse liée en partie au contexte géopolitique, réversible en cas de détente")
+    o["verification_momentum"] = {"ok": ok, "points": points}
+    return {"objection": "Momentum extrême : " + " ; ".join(points) + ". Une forte hausse passée ne suffit pas à porter une conviction forte.",
+            "ajustement": "abaisser", "signal": "Règle de momentum (contradicteur, appliquée par le chef d'orchestre)", "date": jour,
+            "methode": "règle de momentum", "serieuse": True, "verification_ok": ok}
+
+
 def groupes_concordants(o: dict, direction: int, config: dict) -> list[str]:
     cc = config["conviction"]
     groupes = []
     for f, x in o["familles"].items():
+        if f == "tendance" and o.get("momentum_extreme") and direction > 0:
+            continue  # une forte hausse passée ne porte pas seule la conviction
         n = x["note"]
         ok = (direction > 0 and n >= cc["seuil_concordance_haut"]) or (direction < 0 and n <= cc["seuil_concordance_bas"]) \
             or (direction == 0 and cc["seuil_concordance_bas"] < n < cc["seuil_concordance_haut"])
@@ -112,6 +181,28 @@ def conviction(o: dict, verdict: str, objections: list[dict], fraicheur_min: flo
             niveau -= 1
         raisons.append(f"objection du contradicteur retenue (« {x['ajustement']} ») : conviction abaissée d'un cran")
     return {"niveau": NIVEAUX_CONVICTION[niveau], "groupes": groupes, "raisons": raisons}
+
+
+def controle_coherence(l: dict, config: dict) -> str | None:
+    """Avant publication : une conviction forte doit lister au moins 3 familles de signaux dans son sens (≥ 60 pour un
+    verdict positif, ≤ 40 pour un négatif ; risque et géopolitique exclus pour un verdict positif, car ils ne sont
+    qu'un frein). Sinon elle est rétrogradée à « moyenne »."""
+    if l.get("conviction") != "forte":
+        return None
+    cc = config["conviction"]
+    d = DIRECTION.get(l["verdict"], 0)
+    fams = l.get("familles") or {}
+    if d > 0:
+        ok = [f for f, x in fams.items() if x["note"] >= cc["seuil_concordance_haut"] and f not in config["risque_frein"]["familles"]
+              and not (f == "tendance" and l.get("momentum_extreme"))]
+    else:
+        ok = [f for f, x in fams.items() if x["note"] <= cc["seuil_concordance_bas"]]
+    if len(ok) >= 3:
+        return None
+    l["conviction"] = "moyenne"
+    raison = f"contrôle de cohérence : {len(ok)} famille(s) de signaux dans le sens du verdict au lieu de 3 ; conviction ramenée à « moyenne »"
+    l.setdefault("conviction_raisons", []).append(raison)
+    return raison
 
 
 def plafonner_extreme(v: str, conv: dict, config: dict) -> tuple[str, str | None]:
@@ -198,9 +289,36 @@ def donner_tort(o: dict, contre: list[dict], pour: list[dict], objections: list[
 
 # ------------------------------------------------------------------ objections
 
-def objections_par_cible(revues: list[dict], signaux: dict[str, list[dict]], zones_pays: dict, jour: str, config: dict) -> dict[str, list[dict]]:
-    """{id d'opportunité: [objections]} à partir de data/signaux/revues.json."""
+def _sans_renvois(texte: str) -> str:
+    return re.sub(r"\s*\[F\d+(?:\s*,\s*F\d+)*\]", "", texte or "").strip()
+
+
+def objection_pour_entite(r: dict, code: str, codes_signal: list[str], noms: dict) -> tuple[str, str] | None:
+    """(objection, ajustement) qui concerne l'entité `code`, ou None si la revue ne porte pas sur elle.
+    Un signal qui touche plusieurs entités (ex. événement concernant deux pays) a une objection par entité
+    (« par_entite », contradicteur v3) ; pour une revue plus ancienne, seuls les points qui citent l'entité, ou
+    qui ne citent aucune autre entité du signal, sont gardés."""
+    par = r.get("par_entite")
+    if par:
+        x = par.get(code)
+        return (_sans_renvois(x["objection"]), x["ajustement"]) if x else None
+    texte = _sans_renvois(r.get("objection"))
+    if len(codes_signal) <= 1:
+        return texte, r.get("ajustement")
+    nom = noms.get(code, code)
+    autres = [noms.get(c, c) for c in codes_signal if c != code]
+    corps = texte.removeprefix("Objections spécifiques : ").rstrip(".")
+    points = [p for p in corps.split(" ; ") if nom in p or not any(a in p for a in autres)]
+    if not any(nom in p for p in points):
+        return None
+    return "Objections spécifiques : " + " ; ".join(points) + ".", r.get("ajustement")
+
+
+def objections_par_cible(revues: list[dict], signaux: dict[str, list[dict]], zones_pays: dict, jour: str, config: dict,
+                         noms: dict | None = None) -> dict[str, list[dict]]:
+    """{id d'opportunité: [objections]} à partir de data/signaux/revues.json ; chaque objection porte sur la bonne entité."""
     from datetime import date, timedelta
+    noms = noms or {}
     lim = (date.fromisoformat(jour) - timedelta(days=config["univers"]["objection_fenetre_jours"])).isoformat()
     seuils = set(config["conviction"]["objections_serieuses"])
     index = {(a, s.get("type"), s.get("cle"), s.get("date")): s for a, l in signaux.items() for s in l}
@@ -211,25 +329,37 @@ def objections_par_cible(revues: list[dict], signaux: dict[str, list[dict]], zon
             continue
         agent, cle = s.get("agent"), s.get("cle")
         orig = index.get((agent, s.get("type"), cle, s.get("date"))) or {}
-        cibles = []
+        cibles = []  # (id d'opportunité, entité de l'objection)
         if agent in ("pays", "risque") and cle and len(str(cle)) == 2:
-            cibles.append(f"pays-{cle}")
-        elif agent == "entreprises" or agent == "inities":
-            cibles.append(f"entreprise-{cle}")
+            cibles.append((f"pays-{cle}", cle))
+        elif agent in ("entreprises", "inities"):
+            cibles.append((f"entreprise-{cle}", cle))
         elif agent == "matieres_premieres":
-            cibles.append("or" if cle == "or" else f"matiere-{cle}")
+            cibles.append(("or" if cle == "or" else f"matiere-{cle}", cle))
         elif agent == "macro":
-            cibles += [f"pays-{c}" for c, z in zones_pays.items() if z == cle]
+            cibles += [(f"pays-{c}", None) for c, z in zones_pays.items() if z == cle]
             if cle == "etats_unis":
-                cibles += ["oblig-us-longues", "oblig-us-courtes"]
+                cibles += [("oblig-us-longues", None), ("oblig-us-courtes", None)]
             if cle == "zone_euro":
-                cibles += ["oblig-euro-longues", "oblig-euro-courtes"]
-        for c in orig.get("pays") or []:
-            cibles.append(f"pays-{c}")
-        x = {"objection": re.sub(r"\s*\[F\d+(?:\s*,\s*F\d+)*\]", "", r.get("objection") or "").strip(), "ajustement": r.get("ajustement"), "signal": s.get("titre"), "date": s.get("date"),
-             "methode": r.get("methode"), "serieuse": bool(r.get("specifique")) and r.get("ajustement") in seuils}
-        for c in dict.fromkeys(cibles):
-            res.setdefault(c, []).append(x)
+                cibles += [("oblig-euro-longues", None), ("oblig-euro-courtes", None)]
+        codes_signal = list(orig.get("pays") or [])
+        for c in codes_signal:
+            cibles.append((f"pays-{c}", c))
+        vus = set()
+        for cible, entite in cibles:
+            if cible in vus:
+                continue
+            vus.add(cible)
+            if entite is None:
+                obj = (_sans_renvois(r.get("objection")), r.get("ajustement"))
+            else:
+                obj = objection_pour_entite(r, entite, codes_signal, noms)
+            if not obj:
+                continue
+            texte, ajust = obj
+            res.setdefault(cible, []).append({"objection": texte, "ajustement": ajust, "signal": s.get("titre"), "date": s.get("date"),
+                                              "methode": r.get("methode"), "entite": entite,
+                                              "serieuse": bool(r.get("specifique")) and ajust in seuils})
     for v in res.values():
         v.sort(key=lambda x: (not x["serieuse"], x["date"] or ""), reverse=False)
     return res
@@ -266,7 +396,7 @@ def ligne_publique(o: dict, objections: list[dict], config: dict) -> dict:
     garde = ("id", "type", "cle", "nom", "pays", "zone", "secteur", "secteur_nom", "symbole", "cours", "date_cours", "devise", "themes",
              "score", "score_brut", "qualite", "verdict", "verdict_brut", "plafond", "conviction", "fleche", "score_precedent", "depuis", "changement",
              "en_attente", "familles_manquantes", "poids_effectifs", "provenances", "societes", "note_agent", "verdict_agent", "recommandation_agent",
-             "rendement_reel", "famille_mp")
+             "rendement_reel", "famille_mp", "momentum_extreme", "verification_momentum", "industrie")
     ligne = {k: o[k] for k in garde if k in o and o[k] is not None}
     ligne["familles"] = {f: {"libelle": config["familles"][f]["libelle"], **{k: v for k, v in x.items() if k != "percentile"}} for f, x in o["familles"].items()}
     ligne["pour"], ligne["contre"] = pour, contre

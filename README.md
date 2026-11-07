@@ -363,7 +363,8 @@ Le chef d'orchestre réunit les sorties de tous les agents. Méthode complète :
 - score /100 (ramené vers 50 quand les données manquent ou sont peu fiables) et verdict : « Renforcer fortement », « Renforcer », « Neutre », « Alléger », « Éviter » ;
 - conviction faible, moyenne ou forte (forte : 3 groupes de signaux indépendants concordants, données fiables et fraîches, aucune objection sérieuse ; chaque objection retenue du contradicteur l'abaisse d'un cran) ;
 - anti-girouette : un verdict ne change que si le score franchit le seuil de 3 points ou y reste 2 jours de suite ; chaque changement est expliqué ;
-- concentrations thématiques (IA, semi-conducteurs, or, pétrole) signalées.
+- concentrations thématiques (IA, semi-conducteurs, or, pétrole) signalées ;
+- garde-fous : holdings, sociétés d'investissement, fonds fermés, BDC et SPAC exclus (aussi des pépites, et jamais « Acheter » dans l'agent entreprises) ; le risque est un frein, pas un moteur (pas de « Renforcer » sans signal positif de fondamentaux, valorisation, tendance ou flux) ; une hausse passée extrême ne porte jamais seule une conviction forte (vérification de valorisation et de positionnement, objection systématique) ; contrôle de cohérence avant publication (3 familles positives listées pour une conviction forte) ; objections du contradicteur rattachées à la bonne entité.
 
 **Allocation modèle** (indicative) : profils prudent, équilibré et dynamique, cœur-satellite (satellites = convictions fortes), plafonds par pays, secteur, thème et ligne, liquidités minimales selon le palier de risque, rotation limitée (écart minimal de 1,5 point), variations justifiées. Base du futur agent trader démo.
 
@@ -378,7 +379,7 @@ Le chef d'orchestre réunit les sorties de tous les agents. Méthode complète :
 
 **Appli** :
 - le globe reste le premier écran ; le panneau « Synthèse » remplace le bandeau des alertes ;
-- écran « Où investir » à onglets (Pays, Matières premières, Obligations et liquidités, Entreprises, Allocation) : pour chaque ligne, score, verdict, conviction, flèche de tendance, 3 arguments pour, 3 contre, objection du contradicteur et date du dernier changement ; toucher une ligne ouvre sa fiche détaillée (familles de signaux et leurs sources, conviction, objections, « Ce qui pourrait me donner tort ») ;
+- écran « Où investir » à onglets : « Panorama » (top 5 diversifié, top 5 des pays, top 3 des matières premières, or, obligations et liquidités, au moins 10 entreprises sur 4 secteurs et 4 pays au minimum, liste « À surveiller »), puis Pays, Matières premières, Obligations et liquidités, Entreprises, Allocation) : pour chaque ligne, score, verdict, conviction, flèche de tendance, 3 arguments pour, 3 contre, objection du contradicteur et date du dernier changement ; toucher une ligne ouvre sa fiche détaillée (familles de signaux et leurs sources, conviction, objections, « Ce qui pourrait me donner tort ») ;
 - filtre du globe « Attractivité » ;
 - sous chaque recommandation : « Avis indicatif généré automatiquement, sans prise en compte d'un profil ou d'une situation personnelle. »
 

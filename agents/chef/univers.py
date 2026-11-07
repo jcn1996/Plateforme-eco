@@ -99,6 +99,8 @@ class Contexte:
         self.inities = (entrees["inities"].donnees or {}) if entrees["inities"].disponible else {}
         self.analyses = (entrees["analyses"].donnees or []) if entrees["analyses"].disponible else []
         self._fiches = {}
+        self.cfg_entreprises = config_entreprises()
+        self.exclues: dict[str, str] = {}  # holdings, fonds, BDC, SPAC écartés (ticker → nom)
         etat_risque = lire_json(data / "risque" / "etat.json") or {}
         self.series_taux = ((etat_risque.get("lentes") or {}).get("series") or {})
 
@@ -181,6 +183,7 @@ def opportunites_pays(ctx: Contexte) -> list[dict]:
             if m.get("note") is not None:
                 ajouter(o, "tendance", famille(m["note"], f"{m.get('indice') or m.get('symbole')} {fr(m.get('valeur'), 1, True)} % sur 12 mois en monnaie locale ({m['note']}/100)",
                                                "agent pays (data/pays.json)", "pays", ctx.coef("pays", m.get("confiance"))))
+                o["familles"]["tendance"]["hausse_12m"] = m.get("valeur")
             fl = ((p.get("detail") or {}).get("flux_etrangers") or {})
             if fl.get("note") is not None:
                 ajouter(o, "flux", famille(fl["note"], f"Flux de l'ETF {fl.get('symbole')} : {fl.get('tendance_flux') or 'n. d.'}, {fr(fl.get('valeur'), 2, True)} % de l'encours sur {fl.get('periode_valeur', '1m')} ({fl['note']}/100 ; ETF cotés aux États-Unis seulement)",
@@ -231,6 +234,7 @@ def opportunites_matieres(ctx: Contexte) -> tuple[list[dict], dict | None]:
             ajouter(o, "valorisation", famille(sn_("niveau")["note"], sn_("niveau")["texte"], sn_("niveau").get("source") or "agent matières premières", "matieres_premieres", c))
         if sn_("tendance"):
             ajouter(o, "tendance", famille(sn_("tendance")["note"], sn_("tendance")["texte"], sn_("tendance").get("source") or "agent matières premières", "matieres_premieres", c))
+            o["familles"]["tendance"]["hausse_12m"] = sn_("tendance").get("variation_12m")
         fl = [x for x in (sn_("flux"), sn_("positionnement")) if x]
         if fl:
             ajouter(o, "flux", famille(mean(x["note"] for x in fl), " ; ".join(x["texte"] for x in fl), "agent matières premières (flux des ETF, CFTC)", "matieres_premieres", c))
@@ -403,6 +407,23 @@ def opportunites_obligations(ctx: Contexte) -> tuple[list[dict], list[dict]]:
 
 # ------------------------------------------------------------------ entreprises
 
+def config_entreprises() -> dict:
+    return json.loads((RACINE / "agents" / "entreprises" / "config.json").read_text(encoding="utf-8"))["pepites"]
+
+
+def est_vehicule(ctx: "Contexte", e: dict) -> bool:
+    """Holding, société d'investissement, fonds fermé, BDC, véhicule de crédit ou SPAC : exclu du classement et des
+    alertes (évaluation par le PER non pertinente ; décote sur l'actif net non disponible gratuitement)."""
+    from ..entreprises.analyse import est_holding
+    if not e:
+        return False
+    exclu = bool(e.get("holding") or ctx.fiche(e["ticker"]).get("holding")) or est_holding(
+        e.get("nom") or "", ctx.fiche(e["ticker"]).get("industrie") or e.get("industrie"), e["ticker"], ctx.cfg_entreprises, e.get("secteur_gics"))
+    if exclu:
+        ctx.exclues.setdefault(e["ticker"], e.get("nom") or e["ticker"])
+    return exclu
+
+
 def selection_entreprises(ctx: Contexte, pays_attractifs: list[str]) -> list[tuple[str, list[str]]]:
     """[(ticker, [provenances])] : pépites, qualité à prix raisonnable, liste de surveillance, analyses à la demande,
     et les meilleures sociétés de chaque pays attractif."""
@@ -411,6 +432,9 @@ def selection_entreprises(ctx: Contexte, pays_attractifs: list[str]) -> list[tup
     noms: dict[str, str] = {}
 
     def add(t, p):
+        if t in ctx.par_ticker and est_vehicule(ctx, ctx.par_ticker[t]):
+            ctx.exclues.setdefault(t, ctx.par_ticker[t].get("nom") or t)
+            return
         nom = ((ctx.par_ticker.get(t) or {}).get("nom") or "").strip().lower()
         if nom and noms.setdefault(nom, t) != t:  # même société sous une autre cotation : une seule ligne
             t = noms[nom]
@@ -428,12 +452,20 @@ def selection_entreprises(ctx: Contexte, pays_attractifs: list[str]) -> list[tup
     for code in pays_attractifs:
         for e in meilleures_du_pays(ctx, code):
             add(e["ticker"], f"Parmi les meilleures sociétés du pays ({code})")
+    # Tour d'horizon : les meilleures sociétés de chaque secteur, pour un panorama diversifié
+    ordre = {"Acheter": 0, "Acheter sur repli": 1, "Attendre": 2, "Éviter": 3}
+    par_secteur = {}
+    for e in sorted((e for e in ctx.entreprises if e.get("note") is not None and e.get("secteur_gics")),
+                    key=lambda e: (ordre.get((e.get("recommandation") or {}).get("n"), 2), -e["note"])):
+        if par_secteur.get(e["secteur_gics"], 0) < cfg["entreprises_par_secteur"] and not est_vehicule(ctx, e):
+            par_secteur[e["secteur_gics"]] = par_secteur.get(e["secteur_gics"], 0) + 1
+            add(e["ticker"], f"Parmi les meilleures sociétés de son secteur ({e.get('secteur_nom') or e['secteur_gics']})")
     return list(prov.items())[:cfg["entreprises_max"]]
 
 
 def meilleures_du_pays(ctx: Contexte, code: str) -> list[dict]:
     n = ctx.config["univers"]["entreprises_par_pays_attractif"]
-    cands = [e for e in ctx.entreprises if e.get("pays") == code and e.get("note") is not None]
+    cands = [e for e in ctx.entreprises if e.get("pays") == code and e.get("note") is not None and not est_vehicule(ctx, e)]
     ordre = {"Acheter": 0, "Acheter sur repli": 1, "Attendre": 2, "Éviter": 3}
     cands.sort(key=lambda e: (ordre.get((e.get("recommandation") or {}).get("n"), 2), -e["note"]))
     return cands[:n]
@@ -486,6 +518,7 @@ def opportunites_entreprises(ctx: Contexte, selection: list[tuple[str, list[str]
         m = (e.get("indicateurs") or {}).get("momentum_12m") or {}
         if m.get("note") is not None:
             ajouter(o, "tendance", famille(m["note"], f"Momentum sur 12 mois {m.get('affichage', '')} ({m.get('complement', '')})", "agent entreprises (Yahoo Finance)", "entreprises", c))
+            o["familles"]["tendance"]["hausse_12m"] = m.get("valeur")
         for fam in ("flux", "risque", "geopolitique"):
             fp = familles_pays.get(e.get("pays"), {}).get(fam)
             if fp:

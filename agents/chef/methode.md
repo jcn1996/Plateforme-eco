@@ -38,7 +38,8 @@ Le coefficient d'une famille de signaux = coefficient de l'entrée × confiance 
 - **Or** : traité à part, comme valeur refuge.
 - **Obligations** : États-Unis et zone euro, courtes (2 ans) et longues (10 ans).
 - **Liquidités** : dollar et euro (rendement monétaire réel = taux directeur − inflation).
-- **Entreprises** : pépites, « qualité à prix raisonnable », liste de surveillance, analyses à la demande et meilleures sociétés des pays attractifs (au plus 90 ; une société cotée plusieurs fois n'apparaît qu'une fois).
+- **Entreprises** : pépites, « qualité à prix raisonnable », liste de surveillance, analyses à la demande, meilleures sociétés des pays attractifs et 3 meilleures sociétés de chaque secteur (au plus 130 ; une société cotée plusieurs fois n'apparaît qu'une fois).
+- **Exclusions** : holdings, sociétés d'investissement (ex. Investor AB), fonds fermés, BDC, véhicules de crédit et SPAC sont écartés du classement, des « meilleures sociétés » des pays et des alertes. Leur valeur se lit sur la décote par rapport à l'actif net, que les sources gratuites ne donnent pas ; une conviction ne peut donc jamais s'appuyer sur leur PER. Détection : drapeau « holding » de l'agent entreprises (industries exclues, mots du nom, fonds et BDC, SPAC : `pepites` dans `agents/entreprises/config.json`). L'agent entreprises applique la même règle : ces sociétés sont exclues des pépites et ne reçoivent jamais « Acheter » ni « Renforcer ». La liste des sociétés écartées est publiée (`exclues` dans `data/chef.json`).
 
 ## 3. Moteur de décision
 
@@ -88,6 +89,19 @@ Poids de base par type d'opportunité (`poids`), multipliés selon le palier de 
 2. qualité = (somme des poids × coefficients des familles disponibles) / (somme des poids prévus) ;
 3. **score = 50 + (score brut − 50) × qualité** : une opportunité mal documentée (familles manquantes, données périmées, agent dégradé) est ramenée vers le neutre. Les familles manquantes sont affichées.
 
+### Le risque est un frein, pas un moteur
+
+Pour les pays, les entreprises et les matières premières (`risque_frein`) :
+- les familles « Risque » et « Géopolitique » sont plafonnées à 55/100 : un risque faible lève un frein mais ne porte pas la note (pour l'or, les obligations et les liquidités, le palier de risque reste un moteur, puisqu'il mesure leur rôle de refuge) ;
+- un verdict positif exige au moins une famille motrice (fondamentaux, valorisation, tendance ou flux) à 60/100 ou plus ; sinon le verdict est « Neutre », même si l'hystérésis l'aurait maintenu, et la raison est affichée.
+
+### Momentum extrême
+
+Une hausse passée au-delà du 90e percentile de sa classe, ou d'au moins 40 % sur 12 mois (le percentile est grossier dans une petite classe comme les matières premières), est traitée à part (`momentum`) :
+- elle ne compte pas dans la concordance de la conviction : elle ne peut pas porter seule une conviction forte ;
+- elle déclenche une vérification : valorisation (au moins 45/100) et positionnement ou flux (au moins 40/100, pour écarter une position encombrée) ; pour une matière première, un contexte géopolitique fort est signalé comme réversible ;
+- elle déclenche une objection systématique (règle du contradicteur appliquée par le chef d'orchestre), qui abaisse la conviction d'un cran. L'opportunité va dans « À surveiller », pas dans le top 5.
+
 ### Verdict
 
 | Score | Verdict |
@@ -110,6 +124,8 @@ Les familles sont regroupées en groupes indépendants (fondamentaux et dynamiqu
 - **moyenne** : au moins 2 groupes concordants et qualité ≥ 0,6 ;
 - **faible** : sinon ;
 - verdict « Neutre » : au plus moyenne (3 groupes neutres ou plus) ;
+- **contrôle de cohérence avant publication** : une conviction forte doit lister au moins 3 familles de signaux dans le sens du verdict (≥ 60 pour un verdict positif, hors risque et géopolitique ; ≤ 40 pour un verdict négatif) ; sinon elle est ramenée à « moyenne », et c'est affiché ;
+- **objections rattachées à la bonne entité** : quand un signal touche plusieurs pays (ex. un événement géopolitique concernant l'Allemagne et les Émirats), le contradicteur publie une objection par entité (`par_entite`, règles v3 de l'agent risque) ; le chef n'attache à chaque pays que la sienne, plus les points communs au signal. Pour une revue plus ancienne, seuls les points qui citent l'entité sont gardés ;
 - **chaque objection sérieuse** du contradicteur (revue spécifique avec l'ajustement « abaisser » ou « signal fragile », moins de 7 jours) abaisse la conviction d'un cran. Les objections sont rattachées aux opportunités : pays (signaux pays, risque, géopolitique), zone (pays de la zone et obligations), entreprise, matière première.
 
 ### Tendance et concentrations
@@ -131,13 +147,19 @@ Cette allocation servira de base au futur agent trader démo.
 
 ## 5. Synthèse et alertes
 
-**Briefing quotidien** (`data/chef/briefing-AAAA-MM-JJ.md` et `.json`) : l'essentiel en 5 lignes ; « Où investir » (top 5, au plus 2 par type) ; « Ce qui a changé depuis hier » ; points de vigilance ; scénario central et scénario alternatif avec leurs déclencheurs ; agenda des 7 prochains jours ; « Ce qui pourrait me donner tort » ; état des données ; liste des faits utilisés.
+**Panorama « Où investir »** (`panorama`) : un tour d'horizon large et équilibré plutôt qu'une seule pépite.
+- Top 5 : verdicts positifs dont le score dépasse le seuil « Renforcer » (pas seulement maintenus par l'hystérésis), sans objection sérieuse à lever ni momentum extrême ; d'abord une ligne par catégorie (pays, entreprises, matières premières, or, obligations, liquidités), puis deux au plus.
+- Par catégorie : top 5 des pays, top 3 des matières premières, position sur l'or, sur chaque ligne obligataire et sur les liquidités.
+- Entreprises : au moins 10 quand les données le permettent (verdicts positifs d'abord, puis meilleurs « Neutre »), au plus 2 par secteur et 3 par pays, au moins 4 secteurs et 4 pays ; un écart à ces objectifs est signalé.
+- « À surveiller » (8 au plus, 3 par catégorie) : opportunités à moins de 4 points du seuil « Renforcer », verdict maintenu par l'hystérésis sous le seuil, ou bien notées mais avec une objection sérieuse à lever ou un momentum extrême.
 
-- Version par règles toujours produite. Avec `GEMINI_API_KEY`, Gemini reformule « l'essentiel » et la vigilance (budget propre : 2 appels par exécution au plus). Chaque phrase doit citer un fait fourni (`[F3]`) et ne contenir que des chiffres présents dans les faits cités ; sinon elle est supprimée (liste publiée). Une rubrique avec trop peu de phrases valides reprend la version par règles.
+**Briefing quotidien** (`data/chef/briefing-AAAA-MM-JJ.md` et `.json`) : l'essentiel en 5 lignes, une par catégorie (risque et cycle ; pays ; matières premières et or ; obligations et liquidités ; entreprises) ; le panorama complet ; « Ce qui a changé depuis hier » ; points de vigilance ; scénario central et scénario alternatif avec leurs déclencheurs ; agenda des 7 prochains jours ; « Ce qui pourrait me donner tort » ; état des données ; liste des faits utilisés.
+
+- Version par règles toujours produite. Avec `GEMINI_API_KEY`, Gemini reformule « l'essentiel » et la vigilance (budget propre : 4 appels par exécution au plus), avec la même chaîne de modèles de secours que l'agent géopolitique (Flash le plus récent, Flash-Lite, Flash précédent : quota du jour atteint ou panne, modèle suivant). Quand le briefing reste par règles, la raison est affichée dans le briefing et journalisée : clé absente, budget épuisé, Gemini indisponible sur toute la chaîne, réponse rejetée. Chaque phrase doit citer un fait fourni (`[F3]`) et ne contenir que des chiffres présents dans les faits cités ; sinon elle est supprimée (liste publiée). Une rubrique avec trop peu de phrases valides reprend la version par règles.
 - Agenda : réunions des banques centrales (agent macro, calendriers officiels), publications de résultats des sociétés de la liste de surveillance (Yahoo Finance), EIA (mercredi, jeudi), WASDE (entre le 9 et le 12), emploi américain (premier vendredi), inflation américaine (10 à 15), inflation de la zone euro (fin de mois). Les dates tirées d'une règle de calendrier sont marquées « indicatives ».
 - Dépôt facultatif sur Google Drive : secrets `GOOGLE_SERVICE_ACCOUNT_JSON` et `DRIVE_FOLDER_ID` ; ignoré s'ils sont absents.
 
-**Alertes** (`data/alertes.json`, remplace définitivement le fichier fictif) : signaux de moins de 48 h (`data/signaux/*.json`) et changements de verdict importants du chef ; un signal jugé « signal fragile » par le contradicteur est écarté, « abaisser » réduit son importance d'un cran ; importance moyenne au moins ; 4 alertes au plus, diversifiées (un signal par agent et par type d'abord, deux par agent au plus, titres en double écartés). Sans alerte : « Aucune alerte notable ».
+**Alertes** (`data/alertes.json`, remplace définitivement le fichier fictif) : signaux de moins de 48 h (`data/signaux/*.json`) et changements de verdict importants du chef ; une alerte d'initiés ou d'entreprise ne passe que pour une société de l'univers analysé et notée, qui n'est ni une holding, ni un fonds, ni un véhicule de crédit ou une SPAC ; les déclarations 13D/13G internes (un gestionnaire qui déclare détenir 99 % ou plus de son propre véhicule) sont écartées ; les alertes écartées sont listées (`alertes_ecartees`) ; un signal jugé « signal fragile » par le contradicteur est écarté, « abaisser » réduit son importance d'un cran ; importance moyenne au moins ; 4 alertes au plus, diversifiées (un signal par agent et par type d'abord, deux par agent au plus, titres en double écartés). Sans alerte : « Aucune alerte notable ».
 
 ## 6. Suivi de performance
 

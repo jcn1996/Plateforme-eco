@@ -112,19 +112,33 @@ def est_touche(o: dict, touches: set | None) -> bool:
 def decider(opps: list[dict], ctx: U.Contexte, objections: dict, entrees: dict, etat: dict, jour: str, config: dict) -> None:
     hyst = etat.setdefault("verdicts", {})
     for o in opps:
+        M.appliquer_frein_risque(o, config)  # le risque est un frein, pas un moteur
         M.scorer(o, config, ctx.palier)
-        objs = objections.get(o["id"], [])
+        objs = list(objections.get(o["id"], []))
+        mom = M.verifier_momentum(o, jour, config)
+        if mom:
+            objs.insert(0, mom)  # objection systématique sur une hausse passée extrême
         agents = {x["agent"] for x in o["familles"].values()}
         frais = min([entrees[a].coef for a in agents if a in entrees] or [0])
         v_brut = M.verdict_de(o["score"], config)
-        conv0 = M.conviction(o, v_brut, objs, frais, config)
-        v_cap, plafond = M.plafonner_extreme(v_brut, conv0, config)
+        v_mot, raison_moteur = M.exiger_moteur(o, v_brut, config)
+        conv0 = M.conviction(o, v_mot, objs, frais, config)
+        v_cap, plafond = M.plafonner_extreme(v_mot, conv0, config)
         o["verdict_brut"] = v_brut
-        o["plafond"] = plafond
+        o["plafond"] = " ; ".join(x for x in (raison_moteur, plafond) if x) or None
         if o["score"] is None:
             o.update({"verdict": "Neutre", "changement": None, "depuis": jour})
         else:
             M.appliquer_hysteresis(o, v_cap, hyst, jour, config)
+            # Règle dure, hors hystérésis : pas de verdict positif sans famille motrice
+            v_regle, raison = M.exiger_moteur(o, o["verdict"], config)
+            if v_regle != o["verdict"]:
+                ancien = o["verdict"]
+                o["verdict"] = v_regle
+                o["changement"] = {"date": jour, "de": ancien, "vers": v_regle, "explication": f"De « {ancien} » à « {v_regle} » : {raison}."}
+                hyst[o["id"]].update({"verdict": v_regle, "depuis": jour, "candidat": None})
+                o["depuis"] = jour
+                o.pop("en_attente", None)
         c = M.conviction(o, o["verdict"], objs, frais, config)
         if o["score"] is None:
             c = {"niveau": "faible", "groupes": [], "raisons": ["aucune donnée disponible"]}
@@ -138,7 +152,9 @@ def ligne(o: dict, etat: dict, config: dict) -> dict:
     o["score_precedent"] = prec
     o["fleche"] = M.fleche(o.get("score"), prec, config)
     l = M.ligne_publique(o, o.get("_objections", []), config)
-    l["conviction_raisons"] = o["conviction_detail"]["raisons"]
+    l["conviction_raisons"] = list(o["conviction_detail"]["raisons"])
+    if M.controle_coherence(l, config):
+        l["coherence_retrogradee"] = True
     return l
 
 
@@ -213,7 +229,7 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
     rapport_gemini = {"cle": bool(cle_gemini), "appels": 0, "reussites": 0, "rejets": [], "erreurs": [], "quota_atteint": False}
     briefing, suivi_r = None, None
     if recalcul:
-        objections = M.objections_par_cible(revues, signaux, ctx.zones_pays, jour, config)
+        objections = M.objections_par_cible(revues, signaux, ctx.zones_pays, jour, config, {c: p["nom"] for c, p in ctx.pays_cfg.items()})
         pays = U.opportunites_pays(ctx)
         U.normaliser(pays, config)
         matieres, or_ = U.opportunites_matieres(ctx)
@@ -264,9 +280,18 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
     phase_monde = ctx.phase("monde")
     mondial = ctx.risque.get("mondial") or {}
 
-    # Alertes : à chaque exécution
+    pano = Y.panorama(lignes, config)
+
+    # Alertes : à chaque exécution (signaux hors univers, fonds, holdings et déclarations internes écartés)
     tickers_appli = set(ctx.par_ticker)
-    al = Y.alertes(signaux, revues, chg, maintenant, config, tickers_appli)
+    ecartees = []
+
+    def admissible(agent, s):
+        ok, raison = alerte_admissible(ctx, agent, s, config)
+        if not ok:
+            ecartees.append(f"{agent} · {s.get('titre', '')[:90]} : {raison}")
+        return ok, raison
+    al = Y.alertes(signaux, revues, chg, maintenant, config, tickers_appli, admissible)
     ecrire_json(data / "alertes.json", enveloppe(al, "agent-chef", fictif=False, version_agent=VERSION_AGENT,
                                                  aucune="Aucune alerte notable" if not al else None,
                                                  description="Les 3 ou 4 signaux les plus importants des agents (moins de 48 h), filtrés par les objections du contradicteur"))
@@ -274,16 +299,20 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
     # Briefing quotidien (analyse complète)
     if mode == "complet":
         sc = Y.scenarios(ctx.macro, ctx.risque)
-        tops = Y.top(lignes)
-        ctx_b = {"lignes": lignes, "palier": ctx.palier, "risque_mondial": mondial, "phase_monde": phase_monde, "changements": chg, "vigilance": vig}
+        tops = [next(l for l in lignes if l["id"] == x["id"]) for x in pano["top"]]
+        ctx_b = {"lignes": lignes, "panorama": pano, "palier": ctx.palier, "risque_mondial": mondial, "phase_monde": phase_monde, "changements": chg, "vigilance": vig}
         regles = Y.briefing_regles(ctx_b)
         redige = None
         if cle_gemini:
             from ..geopolitique import ia
             import time
             quotas = ia.Quotas(etat, config["gemini"], horloge=horloge, dormir=dormir or time.sleep)
+            avant = sum(q.disponibles() for q in quotas.modeles)
             redige = Y.briefing_gemini(regles, sc, quotas, config["gemini"], cle_gemini, poster, rapport_gemini)
             rapport_gemini["quota"] = quotas.resume()
+        raison_regles = raison_sans_gemini(cle_gemini, redige, rapport_gemini, locals().get("avant"))
+        if raison_regles:
+            LOG.warning("Briefing par règles : %s", raison_regles)
         b = {**regles, **(redige or {})}
         surveillance = [{"ticker": e["ticker"], "nom": e.get("nom")} for e in ctx.entreprises if e.get("surveillance")]
         resultats = []
@@ -294,10 +323,10 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
                 LOG.warning("Dates de résultats indisponibles : %s", str(e)[:120])
         donnees_b = [f"{x.libelle} : {x.etat}" + (f" ({fr(x.age_h, 0)} h)" if x.age_h is not None else "") + (" — dégradé" if x.degrade else "") for x in entrees.values()]
         briefing = {"date": jour, "genere_le": iso(maintenant), "mode": b["mode"], "modele": b.get("modele"), "palier": ctx.palier, "phase_monde": phase_monde,
+                    "raison_regles": raison_regles, "modeles_essayes": [m["nom"] for m in config["gemini"]["modeles"]],
                     "essentiel": b["essentiel"], "vigilance": b["vigilance"], "rubriques_regles": b.get("rubriques_regles", []),
                     "affirmations_supprimees": b.get("supprimees", []),
-                    "ou_investir": [{"id": l["id"], "nom": l["nom"], "type": l["type"], "verdict": l["verdict"], "conviction": l["conviction"], "score": l["score"],
-                                     "argument": (l["familles"][l["pour"][0]["cle"]]["texte"] if l.get("pour") else None)} for l in tops],
+                    "ou_investir": pano["top"], "panorama": pano,
                     "changements": chg, "scenarios": sc, "agenda": Y.agenda(maintenant.date(), ctx.macro, config, resultats),
                     "donner_tort": ([tops[0]["donner_tort"][0]] if tops and tops[0].get("donner_tort") else []) + sc["alternatif"]["declencheurs"][:2],
                     "donnees": donnees_b, "faits": regles["faits"], "mention": config["mention"]}
@@ -315,7 +344,7 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
         suivi_r = {"fiabilite": suivi_meta.get("fiabilite"), "total": suivi_meta.get("nombre", 0)}
 
     # data/chef.json
-    top5 = Y.top(lignes)
+    top5 = pano["top"]
     donnees = {
         "date": jour if recalcul else prec_donnees.get("date", jour), "mode": mode, "maj": iso(maintenant),
         "declencheurs": raisons_leger,
@@ -327,6 +356,8 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
                      "alertes": len(al)},
         "pays": lignes_par["pays"], "matieres": lignes_par["matieres"], "or": (lignes_par["or"] or [None])[0],
         "obligations": lignes_par["obligations"], "liquidites": lignes_par["liquidites"], "entreprises": lignes_par["entreprises"],
+        "panorama": pano, "exclues": [{"ticker": k, "nom": v} for k, v in sorted(ctx.exclues.items())],
+        "alertes_ecartees": ecartees[:30],
         "concentrations": conc, "changements": chg if recalcul else prec_donnees.get("changements", []), "vigilance": vig, "allocation": alloc,
         "entrees": [x.resume() for x in entrees.values()],
         "fiabilite": {"total": suivi_r.get("total"), "fiabilite": suivi_r.get("fiabilite")},
@@ -361,7 +392,10 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
 
     # Journal et santé
     entree = {"genere_le": iso(maintenant), "mode": mode, "recalcul": recalcul, "declencheurs": raisons_leger, "palier": ctx.palier,
-              "opportunites": len(lignes), "changements": [c["texte"] for c in chg], "alertes": len(al),
+              "opportunites": len(lignes), "changements": [c["texte"] for c in chg], "alertes": len(al), "alertes_ecartees": ecartees[:20],
+              "exclues": sorted(ctx.exclues.values())[:30],
+              "coherence_retrogradees": [l["nom"] for l in lignes if l.get("coherence_retrogradee")],
+              "raison_briefing_regles": (briefing or {}).get("raison_regles") if mode == "complet" else None,
               "briefing": (briefing or {}).get("mode") if mode == "complet" else None,
               "gemini": {k: rapport_gemini.get(k) for k in ("appels", "reussites", "quota_atteint")} | {"rejets": rapport_gemini["rejets"][:10], "erreurs": [e[:200] for e in rapport_gemini["erreurs"]][:5]},
               "suivi": {k: suivi_r.get(k) for k in ("ajoutes", "mesures", "en_attente", "total", "erreur")},
@@ -386,6 +420,43 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
     LOG.info("Statut santé : %s%s", "DÉGRADÉ" if bloc["degrade"] else "OK", (" — " + " | ".join(bloc["raisons"])) if bloc["raisons"] else "")
     return {"ok": True, "donnees": donnees, "lignes": lignes, "alertes": al, "briefing": briefing, "sante": bloc, "etat": etat,
             "recalcul": recalcul, "changements": chg, "suivi": suivi_r, "gemini": rapport_gemini}
+
+
+def raison_sans_gemini(cle: str | None, redige: dict | None, rapport: dict, avant: int | None) -> str | None:
+    """Pourquoi le briefing n'a pas été rédigé par Gemini (journalisé et affiché dans le briefing)."""
+    if not cle:
+        return "clé GEMINI_API_KEY absente (secret non transmis à l'agent, ou exécution de test)"
+    if redige:
+        return ("rubriques reprises par règles : " + ", ".join(redige["rubriques_regles"])) if redige.get("rubriques_regles") else None
+    if avant == 0:
+        return "budget Gemini du jour épuisé pour toute la chaîne de modèles (remise à zéro à minuit, heure du Pacifique)"
+    if rapport.get("erreurs"):
+        return "Gemini indisponible sur toute la chaîne de modèles : " + " | ".join(e[:120] for e in rapport["erreurs"][:3])
+    if rapport.get("rejets"):
+        return "réponse de Gemini rejetée : " + "; ".join(r[:100] for r in rapport["rejets"][:3])
+    return "aucune réponse exploitable de Gemini"
+
+
+def alerte_admissible(ctx: U.Contexte, agent: str, s: dict, config: dict) -> tuple[bool, str | None]:
+    """Une alerte d'initiés ou d'entreprise ne passe que pour une société de l'univers analysé, notée, qui n'est ni une
+    holding, ni un fonds, ni un véhicule de crédit ou une SPAC ; les déclarations 13D/13G internes (un gestionnaire qui
+    déclare détenir son propre véhicule, ≥ 99 %) sont écartées."""
+    import re
+    if agent not in ("inities", "entreprises"):
+        return True, None
+    cx = config["exclusions"]
+    titre = (s.get("titre") or "")
+    m = re.search(r"déclare (?:plus de )?(\d+(?:,\d+)?) %", titre)
+    if m and float(m.group(1).replace(",", ".")) >= cx["pct_interne_min"]:
+        return False, "déclaration interne (le gestionnaire déclare détenir son propre véhicule)"
+    if any(mot in f" {titre.lower()} " for mot in cx["mots"]):
+        return False, "fonds, véhicule de crédit, holding ou SPAC"
+    e = ctx.par_ticker.get(s.get("cle"))
+    if not e or e.get("note") is None:
+        return False, "société hors de l'univers analysé ou sans note"
+    if U.est_vehicule(ctx, e):
+        return False, "holding, fonds, BDC ou SPAC"
+    return True, None
 
 
 def sources_sante(entrees: dict, gemini: dict | None, depot: dict | None, suivi_r: dict | None) -> list[dict]:
