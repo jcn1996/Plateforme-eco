@@ -69,6 +69,10 @@ def description(cle: str, ind: dict) -> str:
     if cle == "valorisation":
         return f"PER {'supérieur' if v > 0 else 'inférieur'} de {nb(abs(v), 0)} % à la médiane des pays suivis"
     if cle == "momentum":
+        if ind.get("base") == "indice":
+            eur = ind.get("performance_eur")
+            return (f"{ind.get('indice', 'indice national')} à {nb(v, signe=True)} % sur 12 mois en monnaie locale"
+                    + (f" ({nb(eur, signe=True)} % en euros)" if eur is not None and ind.get("monnaie") != "EUR" else ""))
         return f"marché à {nb(v, signe=True)} % sur 12 mois (ETF en dollars)"
     if cle == "devise_3m":
         return f"devise à {nb(v, signe=True)} % contre le dollar sur 3 mois"

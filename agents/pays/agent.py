@@ -43,6 +43,9 @@ RACINE = Path(__file__).resolve().parents[2]
 DOSSIER_AGENT = Path(__file__).resolve().parent
 VERSION_AGENT = "1.2"
 CONFIG_FLUX: dict = json.loads((DOSSIER_AGENT / "config.json").read_text(encoding="utf-8"))["flux_etf"]
+# Indice boursier national de référence de chaque pays (momentum 12 mois, graphique de la fiche pays)
+FICHIER_INDICES = RACINE / "config" / "indices_pays.json"
+MENTION_ETF = "indice indisponible, ETF affiché"
 
 LIBELLES = {
     "croissance_pib": "Croissance du PIB",
@@ -109,6 +112,7 @@ def collecter(fournisseur, config: dict, aujourdhui: date) -> tuple[dict, dict]:
     bis = sorted({p["bis"] for p in pays.values()})
     etfs = sorted({p["etf"] for p in pays.values() if p.get("etf")})
     devises = sorted({p["devise"]["symbole"] for p in pays.values() if p.get("devise")})
+    indices, changes_eur = symboles_indices(config)
     debut = (aujourdhui - timedelta(days=400)).strftime("%Y-%m")
     depuis = aujourdhui - timedelta(days=800)
 
@@ -123,7 +127,7 @@ def collecter(fournisseur, config: dict, aujourdhui: date) -> tuple[dict, dict]:
         "eurostat": lambda: fournisseur.eurostat_ipch(sorted(set(couverture["eurostat"].values())), debut),
         "bce_taux": lambda: fournisseur.bce_taux(),
         "bce_change": lambda: fournisseur.bce_change(config["devises_bce"]),
-        "yahoo_cours": lambda: fournisseur.cours(etfs + devises),
+        "yahoo_cours": lambda: fournisseur.cours(sorted(set(etfs + devises + indices + changes_eur))),
         "yahoo_per": lambda: fournisseur.per(etfs),
         **appels_flux(fournisseur, config),
     }
@@ -136,7 +140,17 @@ def collecter(fournisseur, config: dict, aujourdhui: date) -> tuple[dict, dict]:
             appels.setdefault(_cle_nationale(s), (lambda s: lambda: getattr(fournisseur, s["fournisseur"])(
                 *((s["serie"],) if s["fournisseur"] == "dbnomics" else (s["serie"], depuis))))(s))
 
-    return interroger(appels, {"yahoo_per": len(etfs), "yahoo_cours": len(etfs) + len(devises), **attendus_flux(config)})
+    return interroger(appels, {"yahoo_per": len(etfs), "yahoo_cours": len(set(etfs + devises + indices + changes_eur)),
+                               **attendus_flux(config)})
+
+
+def symboles_indices(config: dict) -> tuple[list[str], list[str]]:
+    """Symboles Yahoo des indices nationaux, et cours de l'euro dans chaque monnaie (EURJPY=X…) pour la
+    performance convertie en euros (USD compris : l'ETF pays de secours est coté en dollars)."""
+    indices = config.get("indices") or {}
+    symboles = sorted({i["yahoo"] for i in indices.values() if i.get("yahoo")})
+    monnaies = {i["monnaie"] for i in indices.values() if i.get("monnaie")} | {"USD"}
+    return symboles, sorted(f"EUR{m}=X" for m in monnaies if m != "EUR")
 
 
 def appels_flux(fournisseur, config: dict) -> dict:
@@ -289,22 +303,81 @@ def _variation_quotidienne(serie, jours: int, inverse: bool = False):
     return derniere_date, ((avant[1] / dernier - 1) if inverse else (dernier / avant[1] - 1)) * 100
 
 
-def candidats_marche(cfg: dict, src: dict, config: dict) -> dict:
+def etat_indice(serie, aujourdhui: date, fraicheur_jours: int = 10) -> tuple[tuple | None, str | None]:
+    """((date, performance 12 mois en %), None) si l'historique de l'indice est utilisable, sinon (None, raison)."""
+    if not serie:
+        return None, "aucun cours publié par Yahoo Finance"
+    if date_periode(serie[-1][0]) < aujourdhui - timedelta(days=fraicheur_jours):
+        return None, f"cours arrêtés au {serie[-1][0]} chez Yahoo Finance"
+    r = _variation_quotidienne(serie, 365)
+    return (r, None) if r else (None, "moins de 12 mois d'historique chez Yahoo Finance")
+
+
+def performance_euros(serie, monnaie: str, cours: dict, jours: int = 365, ecart_max: int = 7) -> float | None:
+    """Performance sur `jours` jours convertie en euros : (P1 / E1) / (P0 / E0) − 1, E = cours de l'euro
+    dans la monnaie de cotation (EURJPY=X : yens pour 1 euro), pris à la date de chaque clôture."""
+    fin_d, fin = serie[-1]
+    debut = _valeur_a_date(serie, date_periode(fin_d) - timedelta(days=jours))
+    if not debut:
+        return None
+    if monnaie == "EUR":
+        return (fin / debut[1] - 1) * 100
+    change = (cours or {}).get(f"EUR{monnaie}=X")
+    if not change:
+        return None
+    e1, e0 = _valeur_a_date(change, date_periode(fin_d)), _valeur_a_date(change, date_periode(debut[0]))
+    if not e1 or not e0 or (date_periode(fin_d) - date_periode(e1[0])).days > ecart_max \
+            or (date_periode(debut[0]) - date_periode(e0[0])).days > ecart_max:
+        return None
+    return ((fin / e1[1]) / (debut[1] / e0[1]) - 1) * 100
+
+
+def _candidat_momentum(serie, r, nom, symbole, monnaie, cours, **extra) -> dict:
+    eur = performance_euros(serie, monnaie, cours)
+    return _cand("yahoo_cours", nom, "marche", r[1], r[0], "quotidienne", symbole=symbole, monnaie=monnaie,
+                 performance_eur=round(eur, 2) if eur is not None else None,
+                 effet_change=round(eur - r[1], 2) if eur is not None else None, **extra)
+
+
+def candidats_momentum(cfg: dict, indice: dict | None, cours: dict | None, aujourdhui: date) -> list[dict]:
+    """Momentum 12 mois : l'indice national en monnaie locale ; à défaut, l'ETF pays (en dollars),
+    avec la mention « indice indisponible, ETF affiché »."""
+    etf = cfg.get("etf")
+    raison_indice = None
+    if indice:
+        if not indice.get("yahoo"):
+            raison_indice = "indice non publié par Yahoo Finance"
+        elif cours is not None:
+            r, raison_indice = etat_indice(cours.get(indice["yahoo"]), aujourdhui)
+            if r:
+                nom = SOURCES["yahoo_indice"].format(indice=indice["nom"], symbole=indice["yahoo"], monnaie=indice["monnaie"])
+                return [_candidat_momentum(cours[indice["yahoo"]], r, nom, indice["yahoo"], indice["monnaie"], cours,
+                                           base="indice", indice=indice["nom"])]
+    if not etf:
+        return []
+    extra = {"base": "etf"}
+    if indice:
+        extra.update(indice=indice["nom"], mention=MENTION_ETF, raison_indice=raison_indice or "source indisponible")
+    nom = SOURCES["yahoo_prix"].format(symbole=etf)
+    if cours is None:
+        return [_echec("yahoo_cours", nom, "marche", "source indisponible lors de cette exécution")]
+    if not cours.get(etf):
+        return [_echec("yahoo_cours", nom, "marche", f"aucun cours pour {etf}")]
+    r = _variation_quotidienne(cours[etf], 365)
+    if not r:
+        return [_echec("yahoo_cours", nom, "marche", "moins de 12 mois de cours")]
+    return [_candidat_momentum(cours[etf], r, nom, etf, "USD", cours, **extra)]
+
+
+def candidats_marche(cfg: dict, src: dict, config: dict, code: str | None = None, aujourdhui: date | None = None) -> dict:
     """Candidats des indicateurs de marché : Yahoo Finance, et la BCE pour les devises."""
     c = {"momentum": [], "devise_3m": [], "per": []}
     etf, devise = cfg.get("etf"), cfg.get("devise")
     cours, pers = src.get("yahoo_cours"), src.get("yahoo_per")
+    indice = (config.get("indices") or {}).get(code) if code else None
+    c["momentum"] = candidats_momentum(cfg, indice, cours, aujourdhui or date.today())
 
     if etf:
-        nom = SOURCES["yahoo_prix"].format(symbole=etf)
-        if cours is None:
-            c["momentum"].append(_echec("yahoo_cours", nom, "marche", "source indisponible lors de cette exécution"))
-        elif not cours.get(etf):
-            c["momentum"].append(_echec("yahoo_cours", nom, "marche", f"aucun cours pour {etf}"))
-        else:
-            r = _variation_quotidienne(cours[etf], 365)
-            c["momentum"].append(_cand("yahoo_cours", nom, "marche", r[1], r[0], "quotidienne", symbole=etf) if r else
-                                 _echec("yahoo_cours", nom, "marche", "moins de 12 mois de cours"))
         nom = SOURCES["yahoo_per"].format(symbole=etf)
         if pers is None:
             c["per"].append(_echec("yahoo_per", nom, "marche", "source indisponible lors de cette exécution"))
@@ -358,7 +431,7 @@ def _publier(cle: str, choix: dict, unite: str, **extra) -> dict:
 def indicateurs_pays(code: str, cfg: dict, src: dict, aujourdhui: date, config: dict) -> tuple[dict, list]:
     """Renvoie (indicateurs, tentatives). Les tentatives listent chaque source essayée et son statut."""
     bornes, tol = config["bornes_aberrantes"], config["tolerances_divergence"]
-    cands = {**candidats_pays(code, cfg, src, config, aujourdhui), **candidats_marche(cfg, src, config)}
+    cands = {**candidats_pays(code, cfg, src, config, aujourdhui), **candidats_marche(cfg, src, config, code, aujourdhui)}
     choix = {}
     for cle, liste in cands.items():
         if cle == "per":  # le PER n'a pas de date : contrôlé seulement contre les bornes
@@ -373,7 +446,11 @@ def indicateurs_pays(code: str, cfg: dict, src: dict, aujourdhui: date, config: 
         if ch["retenu"]:
             extra = {}
             if cle == "momentum":
-                extra["symbole"] = ch["retenu"].get("symbole")
+                r = ch["retenu"]
+                extra.update({k: r[k] for k in ("symbole", "base", "indice", "monnaie", "performance_eur", "effet_change",
+                                                 "mention", "raison_indice") if r.get(k) is not None})
+                if r.get("performance_eur") is not None and r.get("monnaie") != "EUR":
+                    extra["source_change"] = SOURCES["yahoo_change"].format(symbole=f"EUR{r['monnaie']}=X")
             if cle == "devise_3m":
                 extra["devise"] = cfg["devise"]["libelle"]
             sortie[cle] = _publier(cle, ch, unite, **extra)
@@ -421,7 +498,7 @@ def indicateurs_pays(code: str, cfg: dict, src: dict, aujourdhui: date, config: 
 
 def _raison_absence(choix: dict, cle: str, cfg: dict) -> str:
     if not choix["sources"]:
-        return {"indicateur_avance": "non publié par l'OCDE pour ce pays", "momentum": "aucun ETF pays coté",
+        return {"indicateur_avance": "non publié par l'OCDE pour ce pays", "momentum": "indice national sans historique chez Yahoo Finance et aucun ETF pays coté",
                 "devise_3m": "cours de change indisponible"}.get(cle, "aucune source ne couvre ce pays")
     raisons = sorted({f"{s['nom'].split(',')[0]} : {s['raison']}" for s in choix["sources"] if s.get("raison")})
     return "aucune valeur valable (" + " ; ".join(raisons) + ")"
@@ -443,6 +520,7 @@ def completer_valorisation(par_pays: dict, aujourdhui: date) -> None:
             "source": SOURCES["yahoo_per"].format(symbole=v["_etf"]) + " ; médiane des pays suivis", "source_courte": "le marché",
             "niveau_source": "marche", "frequence": "quotidienne", "sources": v["_sources"], "verification": "source_unique", "ecart_max": None,
             "per": round(v["_per"], 1), "mediane": round(med, 1), "symbole": v["_etf"],
+            "mention_source": f"calculée via l'ETF {v['_etf']} (le PER des indices n'est pas disponible gratuitement)",
         }
 
 
@@ -583,10 +661,11 @@ def preparer(cle: str, nouveau: dict, ancien: dict | None, aujourdhui: date, con
 
 
 def executer(fournisseur, config: dict, ancien: dict | None, aujourdhui: date, series: dict | None = None,
-             flux: dict | None = None) -> tuple[list, dict, list]:
+             flux: dict | None = None, series_indices: dict | None = None) -> tuple[list, dict, list]:
     """Renvoie (pays, états des sources, échecs et rejets). Si `series` est fourni, il reçoit les clôtures
     quotidiennes sur un an des ETF pays (graphique de secours de l'appli). `flux` : {"historique": {...}}
-    (relevés passés des ETF) ; il reçoit aussi les dates modifiées et les signaux du jour."""
+    (relevés passés des ETF) ; il reçoit aussi les dates modifiées et les signaux du jour. `series_indices` reçoit
+    les clôtures des indices nationaux utilisables (graphique simple de la fiche pays)."""
     flux = flux if flux is not None else {"historique": {}}
     ancien_reel = bool(ancien) and ancien.get("meta", {}).get("fictif") is False
     anciens = {p["code"]: p for p in (ancien or {}).get("donnees", [])} if ancien_reel else {}
@@ -594,6 +673,11 @@ def executer(fournisseur, config: dict, ancien: dict | None, aujourdhui: date, s
     if series is not None:
         etfs = {cfg["etf"] for cfg in config["pays"].values() if cfg.get("etf")}
         series.update({s: serie_graphique(v) for s, v in (src.get("yahoo_cours") or {}).items() if s in etfs and v})
+    if series_indices is not None:
+        indices = set(symboles_indices(config)[0])
+        # Seules les séries utilisables (au moins 12 mois, cours récents) servent au graphique simple
+        series_indices.update({s: serie_graphique(v) for s, v in (src.get("yahoo_cours") or {}).items()
+                               if s in indices and etat_indice(v, aujourdhui)[0]})
 
     par_pays, tentatives = {}, {}
     for code, cfg in config["pays"].items():
@@ -628,7 +712,8 @@ def executer(fournisseur, config: dict, ancien: dict | None, aujourdhui: date, s
 
         p = {
             "code": code, "iso_num": cfg["iso_num"], "nom": cfg["nom"], "lat": cfg["lat"], "lon": cfg["lon"],
-            "etf": cfg.get("etf"),  # ETF pays (momentum, valorisation) : graphique de la fiche pays
+            "etf": cfg.get("etf"),  # ETF pays : flux d'investissement et valorisation (plus affiché comme référence)
+            "indice": indice_publie(config, code, indicateurs["momentum"]),
             "note": note, "niveau": notation.niveau(note) if note is not None else None,
             "note_brute": globale["brute"], "note_ramenee_en_zone_neutre": globale["ramenee"],
             "verdict": verdict,
@@ -653,6 +738,19 @@ def executer(fournisseur, config: dict, ancien: dict | None, aujourdhui: date, s
     echecs += echecs_flux
     etats["textes"] = f"Gemini pour {textes_gemini} pays" if textes_gemini else "règles (pas de clé GEMINI_API_KEY ou rédaction refusée)"
     return sortie, etats, echecs
+
+
+def indice_publie(config: dict, code: str, momentum: dict) -> dict | None:
+    """Indice national de la fiche pays : nom, symbole Yahoo, monnaie, et s'il a servi au momentum du jour."""
+    i = (config.get("indices") or {}).get(code)
+    if not i:
+        return None
+    utilise = momentum.get("base") == "indice" and not momentum.get("ancienne")
+    sortie = {"nom": i["nom"], "yahoo": i.get("yahoo"), "monnaie": i.get("monnaie"), "historique": utilise}
+    if not utilise:
+        sortie["raison"] = momentum.get("raison_indice") or ("indice non publié par Yahoo Finance" if not i.get("yahoo") else
+                                                              "historique de l'indice indisponible")
+    return sortie
 
 
 def historiser(dossier: Path, donnees: list, jour: date, meta: dict) -> Path:
@@ -808,6 +906,7 @@ def main(argv=None) -> int:
     parser.add_argument("--journal", default=str(RACINE / "data" / "journal" / "agent-pays.json"))
     parser.add_argument("--recap", default=str(RACINE / "data" / "recap"))
     parser.add_argument("--cours", help="clôtures des ETF pays pour les graphiques (défaut : cours/etf-pays.json à côté de --sortie)")
+    parser.add_argument("--indices", default=str(FICHIER_INDICES), help="indices nationaux de référence (config/indices_pays.json)")
     parser.add_argument("--date", help="date du jour (AAAA-MM-JJ), utile pour les tests")
     args = parser.parse_args(argv)
     # Les chemins dérivés suivent --sortie et --historique : un essai dans un dossier temporaire n'écrit rien dans data/
@@ -815,6 +914,7 @@ def main(argv=None) -> int:
     args.signaux = args.signaux or str(Path(args.sortie).parent / "signaux" / "pays.json")
 
     config = json.loads((DOSSIER_AGENT / "config.json").read_text(encoding="utf-8"))
+    config["indices"] = lire_indices(Path(args.indices))
     aujourdhui = date.fromisoformat(args.date) if args.date else datetime.now(timezone.utc).date()
     sortie = Path(args.sortie)
     ancien = lire_json(sortie)
@@ -828,9 +928,12 @@ def main(argv=None) -> int:
         else:
             return main_flux(args, fournisseur, config, ancien_reel, aujourdhui, flux)
     LOG.info("Agent pays %s — %s — %d pays", VERSION_AGENT, "données de test" if args.test else "sources réelles", len(config["pays"]))
-    series = {}
-    donnees, etats, echecs = executer(fournisseur, config, ancien, aujourdhui, series, flux)
-    enregistrer_series(Path(args.cours) if args.cours else Path(args.sortie).parent / "cours" / "etf-pays.json", series)
+    series, series_indices = {}, {}
+    donnees, etats, echecs = executer(fournisseur, config, ancien, aujourdhui, series, flux, series_indices)
+    dossier_cours = Path(args.cours).parent if args.cours else Path(args.sortie).parent / "cours"
+    enregistrer_series(Path(args.cours) if args.cours else dossier_cours / "etf-pays.json", series)
+    enregistrer_series(dossier_cours / "indices-pays.json", series_indices,
+                       "Clôtures quotidiennes sur un an des indices nationaux (graphique simple de la fiche pays)")
     ecrire_flux(args, flux, aujourdhui, maintenant_iso())
 
     # Pas d'écriture si rien n'a changé (donc pas de commit)
@@ -891,17 +994,23 @@ def main_flux(args, fournisseur, config: dict, ancien: dict, aujourdhui: date, f
     return 0
 
 
-def enregistrer_series(chemin: Path, series: dict) -> bool:
-    """Clôtures quotidiennes sur un an des ETF pays (graphique de secours de l'appli, lu à la demande).
-    Un ETF sans nouvelle série garde l'ancienne ; pas de réécriture si rien n'a changé."""
+def enregistrer_series(chemin: Path, series: dict,
+                       description: str = "Clôtures quotidiennes sur un an des ETF pays (graphiques de secours de l'appli)") -> bool:
+    """Clôtures quotidiennes sur un an (graphique de secours de l'appli, lu à la demande).
+    Un symbole sans nouvelle série garde l'ancienne ; pas de réécriture si rien n'a changé."""
     ancien = (lire_json(chemin) or {}).get("donnees") or {}
     nouveau = {**ancien, **series}
     if not series or nouveau == ancien:
         return False
-    ecrire_json(chemin, enveloppe(nouveau, "Yahoo Finance", fictif=False, producteur="agent-pays",
-                                  description="Clôtures quotidiennes sur un an des ETF pays (graphiques de secours de l'appli)"), compact=True)
-    LOG.info("Séries des ETF pays écrites : %s (%d)", chemin, len(series))
+    ecrire_json(chemin, enveloppe(nouveau, "Yahoo Finance", fictif=False, producteur="agent-pays", description=description), compact=True)
+    LOG.info("Séries écrites : %s (%d)", chemin, len(series))
     return True
+
+
+def lire_indices(chemin: Path) -> dict:
+    """Indices nationaux de référence par pays (fichier de configuration modifiable)."""
+    contenu = lire_json(chemin) or {}
+    return {code: i for code, i in (contenu.get("pays") or {}).items() if not code.startswith("_")}
 
 
 def sources_publiees(config: dict) -> dict:
@@ -911,6 +1020,6 @@ def sources_publiees(config: dict) -> dict:
         LIBELLES_NIVEAUX["nationale"]: nationales + ["BCE (taux de la facilité de dépôt, pour la zone euro)"],
         LIBELLES_NIVEAUX["internationale"]: ["FMI (DataMapper)", "OCDE (SDMX : CLI, prix, Perspectives économiques)", "BRI (WS_CBPOL)",
                                              "Banque mondiale (API v2)", "Eurostat (IPCH)", "BCE (cours de référence de l'euro)"],
-        LIBELLES_NIVEAUX["marche"]: ["Yahoo Finance (yfinance)",
+        LIBELLES_NIVEAUX["marche"]: ["Yahoo Finance (yfinance) : indices nationaux (momentum), ETF pays (valorisation), changes",
                                      "Émetteurs des ETF pays : iShares, SSGA, VanEck, Global X (parts en circulation et VL, flux des ETF)"],
     }

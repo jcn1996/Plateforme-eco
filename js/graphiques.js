@@ -14,7 +14,7 @@
 
 import { el } from './outils.js';
 import {
-  versTradingView, disponibleDansWidget, lienTradingView, SYMBOLES, CONTRATS_A_TERME,
+  versTradingView, disponibleDansWidget, lienTradingView, SYMBOLES, CONTRATS_A_TERME, INDICES_BANDEAU, MENTION_CFD,
 } from './symboles-tradingview.js';
 
 const SCRIPT_TV = 'https://s3.tradingview.com/tv.js';
@@ -183,9 +183,11 @@ async function graphiqueSecours(zone, historique, { raison, mini = false, period
  * @param {() => Promise<Array>} [o.historique]  nos clôtures, pour le graphique simple
  * @param {string} [o.periode]  période initiale (12M par défaut)
  * @param {string} [o.classe]   classe CSS supplémentaire (hauteur)
+ * @param {string} [o.note]     mention affichée sous le graphique (« graphique : équivalent CFD de l'indice »…)
+ * @param {string} [o.secours]  raison d'un graphique simple imposé (pas de symbole TradingView utilisable)
  */
-export function graphiqueAvance({ yahoo, tv, place, historique, periode = '12M', classe = '' }) {
-  const symbole = tv ?? versTradingView(yahoo, place);
+export function graphiqueAvance({ yahoo, tv, place, historique, periode = '12M', classe = '', note, secours: imposer }) {
+  const symbole = imposer ? null : (tv ?? versTradingView(yahoo, place));
   const zone = el('div', { class: 'graphique-zone' }, el('p', { class: 'graphique-attente' }, 'Le graphique se charge à l’affichage…'));
   let actif = periode;
   let secours = null; // graphique simple en cours (mode ⚡ ou symbole indisponible)
@@ -195,7 +197,8 @@ export function graphiqueAvance({ yahoo, tv, place, historique, periode = '12M',
     onclick: () => choisir(code),
   }, libelle));
   const barre = el('div', { class: 'graphique-periodes', role: 'group', 'aria-label': 'Période du graphique' }, boutons);
-  const bloc = el('div', { class: `graphique-tv ${classe}`.trim() }, barre, zone, mention(symbole));
+  const bloc = el('div', { class: `graphique-tv ${classe}`.trim() }, barre, zone,
+    note ? el('p', { class: 'graphique-note graphique-note--mention' }, note) : null, mention(symbole));
 
   const marquer = () => boutons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.periode === actif)));
 
@@ -248,6 +251,7 @@ export function graphiqueAvance({ yahoo, tv, place, historique, periode = '12M',
   }
 
   quandVisible(bloc, () => {
+    if (imposer) return basculerSecours(imposer);
     if (!symbole) return basculerSecours('Symbole inconnu de TradingView : graphique simple tracé avec nos cours (Yahoo Finance).');
     if (modeLeger()) return basculerSecours('Mode ⚡ : graphique simple tracé avec nos cours (Yahoo Finance), sans le widget TradingView.');
     if (!disponibleDansWidget(symbole)) {
@@ -321,10 +325,13 @@ export function historiqueFichier(fichier, symbole) {
 /* ------------------------------------------------------------------ panneau du bandeau des marchés */
 
 /**
- * Symbole à afficher pour une cotation du bandeau : l'indice pendant les heures de marché,
- * son contrat à terme en dehors (s'il en existe un sur TradingView).
+ * Symbole à afficher pour une cotation du bandeau. Indices d'INDICES_BANDEAU : l'indice officiel,
+ * sa version TradingView ou un CFD équivalent (vérifiés pour le widget gratuit), à toute heure.
+ * Autres cotations : l'actif pendant les heures de marché, son contrat à terme en dehors.
  */
 export function symboleMarche(m) {
+  const indice = INDICES_BANDEAU[m.symbole];
+  if (indice?.tv) return { yahoo: m.symbole, tv: indice.tv, contrat: false, cfd: indice.type === 'cfd' };
   const enSeance = m.statut === 'ouvert';
   const contrat = m.contrat_a_terme?.symbole ?? CONTRATS_A_TERME[m.symbole];
   if (!enSeance && contrat && SYMBOLES[contrat]) {
@@ -346,12 +353,15 @@ export function ouvrirGraphiqueMarche(m) {
         el('div', { class: 'panneau-graphique-nom' }, m.nom),
         el('div', { class: 'panneau-graphique-sous' }, s.contrat
           ? `Contrat à terme ${s.tv} · marché ${m.statut ?? 'fermé'}`
-          : `${s.tv ?? m.symbole}${m.statut ? ` · marché ${m.statut}` : ''}`),
+          : `${s.cfd ? `CFD ${s.tv}` : (s.tv ?? m.symbole)}${m.statut ? ` · marché ${m.statut}` : ''}`),
       ),
       el('button', { type: 'button', class: 'bouton bouton--icone', title: 'Fermer', onclick: fermer },
         el('span', { 'aria-hidden': 'true' }, '✕'), el('span', { class: 'visuellement-cache' }, 'Fermer')),
     ),
-    graphiqueAvance({ yahoo: s.yahoo, tv: s.tv, historique: historiqueFichier('marches', m.symbole), classe: 'graphique-tv--panneau' }),
+    graphiqueAvance({
+      yahoo: s.yahoo, tv: s.tv, historique: historiqueFichier('marches', m.symbole), classe: 'graphique-tv--panneau',
+      note: s.cfd ? MENTION_CFD : undefined,
+    }),
   );
   dialogue.addEventListener('close', () => { dialogue.remove(); if (dialogueOuvert === dialogue) dialogueOuvert = null; });
   // Toucher le fond sombre ferme le panneau

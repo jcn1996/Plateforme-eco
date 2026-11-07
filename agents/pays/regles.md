@@ -18,8 +18,8 @@ En résumé :
 | Inflation | glissement annuel des prix à la consommation (institut national, OCDE ou Eurostat) | mensuelle |
 | Indicateur avancé (OCDE) | Composite Leading Indicator (`DF_CLI`, amplitude ajustée) | mensuelle |
 | Taux réel | taux directeur (banque centrale ou BRI) moins l'inflation retenue | mensuelle |
-| Valorisation relative | PER (trailing) de l'ETF pays (Yahoo Finance), comparé à la médiane des pays suivis | quotidienne |
-| Momentum boursier | performance de l'ETF pays sur 12 mois (en dollars) | quotidienne |
+| Valorisation relative | PER (trailing) de l'ETF pays (Yahoo Finance), comparé à la médiane des pays suivis. Le PER des indices n'est pas disponible gratuitement : la source (ETF) est indiquée | quotidienne |
+| Momentum boursier | performance sur 12 mois de l'indice national de référence (`config/indices_pays.json`), en monnaie locale ; la performance convertie en euros (cours EURxxx=X de Yahoo à chaque date) et l'effet de change sont publiés à côté. Si Yahoo ne fournit pas 12 mois d'historique récent (cours de moins de 10 jours), l'ETF pays (en dollars) est utilisé, avec la mention « indice indisponible, ETF affiché » | quotidienne |
 | Devise sur 3 mois (détail) | variation contre le dollar (BCE, sinon Yahoo Finance) ; indice DXY pour les États-Unis | quotidienne |
 | Solde courant (détail) | % du PIB, dernière année écoulée (FMI et Banque mondiale) | annuelle |
 | Flux étrangers (détail) | flux nets de l'ETF pays coté aux États-Unis : variation du nombre de parts en circulation × VL du jour, sur 1 mois en % de l'encours (1 semaine tant que le mois est en cours de constitution) | quotidienne (en soirée, heure de New York) |
@@ -35,7 +35,7 @@ Chaque valeur publiée porte sa date, sa source exacte et la liste des sources c
 | Inflation | `90 − 15 × |inflation − cible|`, plafond 10 au-delà de 15 % | à la cible → 90 ; 2 pts d'écart → 60. La déflation est pénalisée comme l'excès. Cible par défaut : 2 %. |
 | Taux réel | 80 entre +0,5 et +2,5 pts ; −12 par point en dessous de +0,5 ; −7 par point au-dessus de +2,5 ; +4 si la banque centrale baisse ses taux, −4 si elle les monte | Un taux réel très négatif signale une inflation mal tenue, donc un risque. Un taux très élevé signale une politique très restrictive. |
 | Valorisation relative | `60 − écart` (écart du PER à la médiane, en %) | à la médiane → 60 ; 20 % plus cher → 40 ; 20 % moins cher → 80 |
-| Momentum 12 mois | `50 + 1,2 × performance` | 0 % → 50 ; +20 % → 74 ; −20 % → 26 |
+| Momentum 12 mois | `50 + 1,2 × performance` (en monnaie locale) | 0 % → 50 ; +20 % → 74 ; −20 % → 26. Dans un pays à forte inflation (Turquie, Argentine), la performance en monnaie locale est gonflée par l'inflation : comparer avec la performance en euros affichée à côté. |
 | Devise sur 3 mois | `55 + 4 × variation` (positif = appréciation contre le dollar) | — |
 | Solde courant | `55 + 4 × solde (% du PIB)` | un excédent protège des chocs |
 | Flux étrangers | `50 + 6 × flux sur 1 mois (% de l'encours)` ; sur 1 semaine : `50 + 12 × flux` ; plafond 60 si « position possiblement encombrée » | 0 % → 50 ; +5 % sur un mois → 80 ; −5 % → 20 |

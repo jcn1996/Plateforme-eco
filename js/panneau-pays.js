@@ -12,6 +12,7 @@ import { graphiqueAvance, historiqueFichier } from './graphiques.js';
 import { sectionGeopolitiquePays } from './geopolitique.js';
 import { sectionRisquePays } from './risque.js';
 import { sectionFluxPays } from './flux-investissement.js';
+import { INDICES_PAYS, MENTION_CFD } from './symboles-tradingview.js';
 
 /* ------------------------------ Composants ------------------------------ */
 
@@ -250,11 +251,8 @@ export function fichePays(d, p, nav) {
       detailRepliable(p.detail),
     ),
 
-    // Graphique de l'ETF du pays (le même que celui de l'agent pays : momentum et valorisation)
-    p.etf ? el('section', {},
-      titreSection(`ETF du pays : ${p.etf}`, 'celui de l’agent pays (momentum, valorisation)'),
-      graphiqueAvance({ yahoo: p.etf, historique: historiqueFichier('etf-pays', p.etf) }),
-    ) : null,
+    // Graphique de l'indice national de référence (l'ETF pays n'apparaît plus que dans « Flux d'investissement »)
+    sectionIndicePays(p),
 
     // Flux d'investissement de l'ETF pays (coté aux États-Unis) : 1 semaine, 1 mois, 3 mois, flux cumulés
     sectionFluxPays(p),
@@ -307,6 +305,42 @@ export function fichePays(d, p, nav) {
       ? 'Données réelles issues de sources publiques (instituts statistiques nationaux, banques centrales, FMI, OCDE, BRI, Banque mondiale, Eurostat, BCE, Yahoo Finance), vérifiées entre elles et analysées automatiquement par l’agent pays. Secteurs et entreprises : agent entreprises (comptes officiels et Yahoo Finance).' + (d.fictifPar?.secteurs !== false ? ' Les secteurs restent fictifs.' : '') + ' Ne constitue pas un conseil en investissement.'
       : 'Données fictives à des fins de démonstration — ne constitue pas un conseil en investissement.'),
   ];
+}
+
+/**
+ * Graphique de l'indice national (voir INDICES_PAYS dans symboles-tradingview.js) :
+ * widget TradingView (indice officiel, version TradingView ou CFD équivalent), sinon graphique simple
+ * tracé avec l'historique Yahoo de l'indice, sinon l'ETF pays avec la mention « indice indisponible, ETF affiché ».
+ */
+export function sectionIndicePays(p) {
+  const ref = INDICES_PAYS[p.code];
+  const nom = p.indice?.nom ?? ref?.nom;
+  const yahoo = p.indice?.yahoo;
+  const historique = yahoo ? historiqueFichier('indices-pays', yahoo) : null;
+  if (ref?.tv) {
+    return el('section', {},
+      titreSection(`Indice de référence : ${nom}`, ref.type === 'cfd' ? 'équivalent CFD' : 'momentum 12 mois de l’agent pays'),
+      graphiqueAvance({ tv: ref.tv, historique, note: ref.type === 'cfd' ? MENTION_CFD : undefined }),
+    );
+  }
+  if (nom && yahoo && p.indice?.historique) {
+    return el('section', {},
+      titreSection(`Indice de référence : ${nom}`, 'momentum 12 mois de l’agent pays'),
+      graphiqueAvance({
+        historique,
+        secours: `Graphique simplifié tracé avec l’historique Yahoo Finance de l’indice (${yahoo}) : le widget gratuit de TradingView ne l’affiche pas.`,
+      }),
+    );
+  }
+  if (!p.etf) return null;
+  return el('section', {},
+    titreSection(nom ? `Indice de référence : ${nom}` : 'Marché du pays', 'indice indisponible, ETF affiché'),
+    graphiqueAvance({
+      yahoo: p.etf, historique: historiqueFichier('etf-pays', p.etf),
+      note: `Indice indisponible, ETF affiché : ETF pays ${p.etf} (coté aux États-Unis, en dollars)`
+        + (p.indice?.raison ? ` · ${nom} : ${p.indice.raison}` : '') + '.',
+    }),
+  );
 }
 
 /** Unité des capitalisations : dollars pour les données réelles de l'agent entreprises, euros pour l'ancienne démonstration. */

@@ -44,6 +44,8 @@ SOURCES = {
     "yahoo_prix": "Yahoo Finance via yfinance, cours de clôture de l'ETF {symbole}",
     "yahoo_per": "Yahoo Finance via yfinance, PER (trailing) de l'ETF {symbole}",
     "yahoo_devise": "Yahoo Finance via yfinance, cours {symbole}",
+    "yahoo_indice": "Yahoo Finance via yfinance, clôtures de l'indice {indice} ({symbole}), en monnaie locale ({monnaie})",
+    "yahoo_change": "Yahoo Finance via yfinance, cours {symbole} (conversion en euros)",
     "ocde_eo": "OCDE, Perspectives économiques (DF_EO, GDPV_ANNPCT), prévision {annee}",
     "bm": "Banque mondiale, {indicateur}, année {annee}",
     "eurostat": "Eurostat, IPCH (prc_hicp_minr, glissement annuel), mensuel",
