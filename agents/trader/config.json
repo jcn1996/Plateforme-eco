@@ -1,0 +1,119 @@
+{
+  "_commentaire": "Agent trader (démo). Portefeuille virtuel : aucun ordre réel, jamais. Règles détaillées : agents/trader/regles.md. Pourcentages en points du portefeuille total.",
+  "capital_initial": 100000,
+  "devise": "EUR",
+  "profil": "equilibre",
+  "poches": {
+    "coeur": 70,
+    "satellite": 30
+  },
+  "reequilibrage": {
+    "_commentaire": "Une ligne du cœur n'est rééquilibrée que si son écart à la cible dépasse seuil_points, ou si l'écart de sa classe d'actifs dépasse seuil_points (les lignes de la classe dont l'écart dépasse seuil_ligne_classe sont alors rééquilibrées). Les entrées et sorties de lignes ne sont pas soumises au seuil.",
+    "seuil_points": 3,
+    "seuil_ligne_classe": 0.75,
+    "ligne_min": 1.0,
+    "ordre_min_eur": 500
+  },
+  "satellites": {
+    "convictions": {"forte": 2.0, "moyenne": 1.0},
+    "verdicts": ["Renforcer", "Renforcer fortement"],
+    "types": ["entreprises", "pays", "matieres", "or"],
+    "conviction_tactique_min": "forte",
+    "max_ligne": 8,
+    "max_lignes": 10,
+    "ligne_min": 1.0,
+    "absence_max_jours": 10,
+    "sources_independantes_min": 2,
+    "note_famille_positive": 60,
+    "volatilite_jours": 63,
+    "volatilite_plancher": 15,
+    "volatilite_defaut": 35,
+    "volatilite_par_type_defaut": {"pays": 22, "or": 16, "matieres": 32, "entreprises": 35}
+  },
+  "limites": {
+    "_commentaire": "Plafonds repris de l'allocation modèle du chef d'orchestre (max_pays, max_secteur, max_theme) quand elle les fournit ; sinon ces valeurs.",
+    "max_pays": 40,
+    "max_secteur": 12,
+    "max_theme": 20
+  },
+  "liquidites_min_par_palier": {
+    "Calme": 5,
+    "Vigilance": 10,
+    "Tension": 20,
+    "Crise": 35
+  },
+  "palier_defaut": "Vigilance",
+  "tolerance_plancher_points": 1.0,
+  "stops": {
+    "stop_pct": 15,
+    "suiveur_declenchement_pct": 20,
+    "suiveur_pct": 15,
+    "confirmations": 2,
+    "prise_benefices_pct": 30,
+    "prise_benefices_part": 0.33,
+    "delai_rachat_jours": 20
+  },
+  "rotation": {
+    "_commentaire": "Ventes discrétionnaires (rééquilibrage, sortie de l'allocation) sur 30 jours glissants, en % de la valeur du portefeuille. Les sorties imposées (stop, « Alléger », « Éviter », objection sérieuse, plancher de liquidités) ne sont jamais bloquées.",
+    "max_mensuelle_pct": 30,
+    "jours": 30
+  },
+  "execution": {
+    "frais_pct": 0.1,
+    "frais_min_eur": 0,
+    "ecart_achat_vente_pct": {"etf_large": 0.04, "etf": 0.10, "action_us": 0.06, "action_europe": 0.12, "action_asie": 0.20, "action_emergente": 0.35},
+    "suffixes_emergents": [".VN", ".BA", ".SA", ".MX", ".JK", ".BK", ".KL", ".WA", ".IS", ".JO", ".CA", ".CL", ".SN", ".AE", ".SR", ".QA", ".NS", ".BO", ".SS", ".SZ"],
+    "suffixes_asie": [".T", ".KS", ".KQ", ".TW", ".TWO", ".HK", ".SI", ".AX"],
+    "suffixes_europe": [".L", ".PA", ".DE", ".AS", ".MI", ".MC", ".SW", ".ST", ".CO", ".OL", ".HE", ".BR", ".LS", ".VI", ".IR", ".TO"],
+    "expiration_jours": 5
+  },
+  "supports": {
+    "_commentaire": "Ligne du chef d'orchestre → support coté (part de la ligne). Les pays passent par leur ETF (symbole de la ligne). Les liquidités restent en euros sur le compte (non rémunérées). Une ligne sans support coté est redistribuée dans sa classe, sinon placée en liquidités.",
+    "or": [{"symbole": "GLD", "nom": "SPDR Gold Shares", "devise": "USD", "part": 1}],
+    "matiere-brent": [{"symbole": "BNO", "nom": "United States Brent Oil Fund", "devise": "USD", "part": 1, "contango": true}],
+    "matiere-wti": [{"symbole": "USO", "nom": "United States Oil Fund", "devise": "USD", "part": 1, "contango": true}],
+    "matiere-gaz_us": [{"symbole": "UNG", "nom": "United States Natural Gas Fund", "devise": "USD", "part": 1, "contango": true}],
+    "matiere-argent": [{"symbole": "SLV", "nom": "iShares Silver Trust", "devise": "USD", "part": 1}],
+    "matiere-platine": [{"symbole": "PPLT", "nom": "abrdn Platinum ETF", "devise": "USD", "part": 1}],
+    "matiere-palladium": [{"symbole": "PALL", "nom": "abrdn Palladium ETF", "devise": "USD", "part": 1}],
+    "matiere-cuivre": [{"symbole": "CPER", "nom": "United States Copper Index Fund", "devise": "USD", "part": 1, "contango": true}],
+    "matiere-uranium": [{"symbole": "URA", "nom": "Global X Uranium ETF", "devise": "USD", "part": 1}],
+    "matiere-ble": [{"symbole": "WEAT", "nom": "Teucrium Wheat Fund", "devise": "USD", "part": 1, "contango": true}],
+    "matiere-mais": [{"symbole": "CORN", "nom": "Teucrium Corn Fund", "devise": "USD", "part": 1, "contango": true}],
+    "matiere-soja": [{"symbole": "SOYB", "nom": "Teucrium Soybean Fund", "devise": "USD", "part": 1, "contango": true}],
+    "matiere-sucre": [{"symbole": "CANE", "nom": "Teucrium Sugar Fund", "devise": "USD", "part": 1, "contango": true}],
+    "oblig-us-courtes": [{"symbole": "SHY", "nom": "iShares 1-3 Year Treasury Bond ETF", "devise": "USD", "part": 1, "pays": "US"}],
+    "oblig-us-longues": [
+      {"symbole": "IEF", "nom": "iShares 7-10 Year Treasury Bond ETF", "devise": "USD", "part": 0.5, "pays": "US"},
+      {"symbole": "TLT", "nom": "iShares 20+ Year Treasury Bond ETF", "devise": "USD", "part": 0.5, "pays": "US"}
+    ],
+    "oblig-euro-courtes": [{"symbole": "IBGS.AS", "nom": "iShares Euro Government Bond 1-3yr", "devise": "EUR", "part": 1, "pays": "EZ"}],
+    "oblig-euro-longues": [{"symbole": "EXX6.DE", "nom": "iShares eb.rexx Government Germany 10.5+yr (Bund)", "devise": "EUR", "part": 1, "pays": "DE"}],
+    "liquidites-eur": [],
+    "liquidites-usd": []
+  },
+  "etf_larges": ["SPY", "GLD", "IEF", "TLT", "SHY", "IBGS.AS", "EXX6.DE", "EWJ", "EWG", "EWU", "EWC", "INDA", "MCHI", "EWZ", "EWY", "EWT"],
+  "contango": "Fonds adossé à des contrats à terme : quand les échéances suivantes coûtent plus cher (contango), le renouvellement des contrats retranche du rendement chaque mois, même à cours du pétrole inchangé.",
+  "devises_suffixes": {
+    ".T": "JPY", ".KS": "KRW", ".KQ": "KRW", ".TW": "TWD", ".TWO": "TWD", ".ST": "SEK", ".VN": "VND", ".SW": "CHF", ".TO": "CAD", ".V": "CAD",
+    ".SI": "SGD", ".BK": "THB", ".BA": "ARS", ".WA": "PLN", ".L": "GBp", ".AE": "AED", ".SS": "CNY", ".SZ": "CNY", ".HK": "HKD", ".MX": "MXN",
+    ".AS": "EUR", ".DE": "EUR", ".PA": "EUR", ".MI": "EUR", ".MC": "EUR", ".BR": "EUR", ".HE": "EUR", ".LS": "EUR", ".VI": "EUR", ".IR": "EUR",
+    ".NS": "INR", ".BO": "INR", ".SA": "BRL", ".JK": "IDR", ".JO": "ZAc", ".CO": "DKK", ".OL": "NOK", ".AX": "AUD", ".SN": "CLP", ".CL": "COP",
+    ".IS": "TRY", ".CA": "EGP", ".KL": "MYR", ".SR": "SAR", ".QA": "QAR", ".TA": "ILA"
+  },
+  "fraicheur": {
+    "_commentaire": "Âge maximal (heures) des données utilisées. Au-delà, ou si l'agent est dégradé, l'agent trader ne décide pas : il attend et le note.",
+    "chef_h": 26,
+    "risque_h": 30,
+    "cours_jours": 4
+  },
+  "performance": {
+    "taux_sans_risque_pct": 2.0,
+    "points_min_statistiques": 20,
+    "jours_par_an": 252,
+    "indice": {"symbole": "URTH", "nom": "MSCI World (ETF URTH, en euros)", "change": "EURUSD=X"}
+  },
+  "decision_heure_utc": "07:30",
+  "historique_operations_max": 5000,
+  "mention": "Portefeuille fictif à but de démonstration, aucun ordre réel."
+}

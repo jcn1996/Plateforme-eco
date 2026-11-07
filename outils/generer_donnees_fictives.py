@@ -510,59 +510,6 @@ ecrire("marches.json", "agent-macro",
        [{"categorie": c, "nom": n, "valeur": v, "unite": u, "variation": dj, "variation_1an": da} for c, n, v, u, dj, da in marches])
 
 # ---------------------------------------------------------------- PORTEFEUILLE
-debut = datetime.date(2026, 1, 2)
-hist, p, m = [], 100000.0, 100000.0
-rend_p, rend_m = [], []
-for s in range(44):
-    d = debut + datetime.timedelta(weeks=s)
-    if s > 0:
-        rm = random.gauss(0.0042, 0.016)
-        rp = rm * 0.8 + random.gauss(0.0016, 0.006)
-        if 13 <= s <= 16:  # correction de printemps
-            rm -= 0.022; rp -= 0.017
-        m *= 1 + rm; p *= 1 + rp
-        rend_p.append(rp); rend_m.append(rm)
-    hist.append({"date": d.isoformat(), "portefeuille": round(p), "msci_world": round(m)})
+# Plus de portefeuille fictif : data/portefeuille.json est produit par l'agent trader (démo, agents/trader/).
 
-def sharpe(r, rf=0.025 / 52):
-    moy = sum(r) / len(r); ec = math.sqrt(sum((x - moy) ** 2 for x in r) / (len(r) - 1))
-    return round((moy - rf) / ec * math.sqrt(52), 2)
-
-def perte_max(serie):
-    pic, pm = serie[0], 0
-    for v in serie:
-        pic = max(pic, v); pm = min(pm, v / pic - 1)
-    return round(pm * 100, 1)
-
-valeur = hist[-1]["portefeuille"]
-positions = [
- ("ETF MSCI World", "coeur", 40, 9.1), ("ETF S&P 500", "coeur", 15, 11.4),
- ("ETF Obligations euro", "coeur", 15, 2.3), ("ETF Inde", "satellite", 8, 14.6),
- ("ETF Japon", "satellite", 7, 12.2), ("Maison Aurèle", "satellite", 5, -3.8, "MAIS"),
- ("Hanbit Semicon", "satellite", 5, 27.5, "HANB"), ("Liquidités", "satellite", 5, 0.0),
-]
-positions = [x if len(x) == 5 else x + (None,) for x in positions]
-portefeuille = {
-    "capital_initial": 100000, "valeur_actuelle": valeur, "devise": "EUR",
-    "date_debut": debut.isoformat(),
-    "statistiques": {
-        "performance_totale": round((valeur / 100000 - 1) * 100, 2),
-        "performance_msci_world": round((hist[-1]["msci_world"] / 100000 - 1) * 100, 2),
-        "sharpe": sharpe(rend_p), "sharpe_msci_world": sharpe(rend_m),
-        "perte_max": perte_max([h["portefeuille"] for h in hist]),
-        "perte_max_msci_world": perte_max([h["msci_world"] for h in hist]),
-    },
-    "allocation": {"coeur": 70, "satellite": 30},
-    "positions": [{"nom": n, "ticker": tk, "poche": pc, "poids": w, "valeur": round(valeur * w / 100), "performance": pf} for n, pc, w, pf, tk in positions],
-    "historique": hist,
-    "derniere_decision": {
-        "date": "2026-10-30", "heure": "17:45", "agent": "trader", "action": "Renforcement",
-        "titre": "Renforcement de la poche Inde (+2 %)",
-        "texte": "Suite à l'alerte macro sur le PIB indien, l'agent trader fictif renforce l'ETF Inde de 2 points, financés par les liquidités. Taille limitée par l'agent risque en raison des valorisations élevées.",
-    },
-}
-with open(os.path.join(OUT, "portefeuille.json"), "w", encoding="utf-8") as f:
-    json.dump({"meta": meta("agent-trader"), "donnees": portefeuille}, f, ensure_ascii=False, indent=2)
-    f.write("\n")
-print(len(pays), "pays,", len(secteurs), "secteurs,", len(entreprises), "entreprises,",
-      "portefeuille", valeur, portefeuille["statistiques"])
+print(len(pays), "pays,", len(secteurs), "secteurs,", len(entreprises), "entreprises")

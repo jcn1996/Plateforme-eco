@@ -1717,3 +1717,34 @@ body.mode-leger .puce--pulsations { opacity: 0.55; }
 .chef-pastille { display: inline-block; width: 9px; height: 9px; border-radius: 2px; }
 .chef-table td.mono { white-space: nowrap; }
 .chef-ligne--compacte { gap: 3px; padding: 8px 10px; }
+
+/* ---------- Portefeuille démo (agent trader) ---------- */
+.pf-mention { margin: 0; padding: 7px 10px; border: 1px dashed var(--ligne-forte); border-radius: 10px; font-size: 12px; color: var(--texte-2); text-align: center; }
+.pf-kpis-ops { margin-top: 10px; }
+.pf-poche--coeur { background: var(--serie-portefeuille); }
+.pf-poche--satellite { background: var(--serie-indice); }
+.pf-poche--liquidites { background: #8fd9c4; }
+.pf-deux { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 8px; }
+@media (min-width: 640px) { .pf-deux { grid-template-columns: 1fr 1fr; } }
+.pf-barres { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 5px; font-size: 12px; }
+.pf-barres li { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) auto; align-items: center; gap: 8px; }
+.pf-barres-nom { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--texte-2); }
+.pf-barres-jauge { height: 6px; border-radius: 3px; background: var(--fond-3); overflow: hidden; }
+.pf-barres-jauge span { display: block; height: 100%; background: var(--serie-portefeuille); }
+.pf-positions td { white-space: nowrap; }
+.pf-positions td:first-child { white-space: normal; min-width: 130px; }
+.pf-fil { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 10px; }
+.pf-fil > li { padding-bottom: 10px; border-bottom: 1px solid var(--ligne); }
+.pf-fil > li:last-child { border-bottom: 0; padding-bottom: 0; }
+.pf-op-tete { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; font-size: 13px; }
+.pf-op-tete .mono { margin-left: auto; }
+.pf-sens { padding: 1px 6px; border-radius: 6px; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+.pf-sens--achat { background: rgba(0, 200, 140, 0.18); color: var(--vert, #3ddc97); }
+.pf-sens--vente { background: rgba(255, 107, 107, 0.16); color: var(--rouge, #ff7b7b); }
+.pf-justif { margin-top: 4px; font-size: 12.5px; color: var(--texte-2); }
+.pf-justif summary { cursor: pointer; color: var(--cyan); font-size: 12px; }
+.pf-justif p { margin: 4px 0; line-height: 1.45; }
+.bouton-perf { font-family: var(--police-mono); font-size: 11.5px; margin-left: 4px; }
+.bouton-perf.hausse { color: var(--vert, #3ddc97); }
+.bouton-perf.baisse { color: var(--rouge, #ff7b7b); }
+.pf-devise { text-transform: none; }
