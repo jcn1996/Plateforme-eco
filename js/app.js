@@ -11,7 +11,7 @@
 import { chargerDonnees } from './donnees.js';
 import { el, nombre, variation, lireMetrique, METRIQUES_PAYS } from './outils.js';
 import {
-  demarrerHorloge, remplirBandeau, initialiserAlertes, initialiserFiltres, lireModeLeger, memoriserModeLeger, lirePreference, memoriserPreference,
+  demarrerHorloge, remplirBandeau, initialiserFiltres, lireModeLeger, memoriserModeLeger, lirePreference, memoriserPreference,
 } from './interface.js';
 import { initialiserComparateur, boutonComparer, majBarre, ecranComparaison } from './comparateur.js';
 import { evaluerRegles, ecranMesAlertes } from './mes-alertes.js';
@@ -30,6 +30,9 @@ import { chargerInities, ecranInities, initiesCharges, ONGLETS_INITIES } from '.
 import { METRIQUE_FLUX, lireFlux, initialiserPeriodeFlux, periodeFlux } from './flux-investissement.js';
 import { choisirPulsations, bilanPulsations, libellePeriode } from './pulsations.js';
 import { chargerAnalyses, chargerEnCours, chargerAnalyse, chargerRecommandations, ecranAnalyses, ecranFiabilite } from './analyses.js';
+import {
+  chargerChef, initialiserSynthese, ecranInvestir, ecranFiabiliteChef, chargerSuiviChef, METRIQUE_ATTRACTIVITE, lireAttractivite, ONGLETS_INVESTIR,
+} from './chef.js';
 
 const $ = (sel) => document.querySelector(sel);
 const dom = {
@@ -78,6 +81,8 @@ let macro = null; // données de l'agent macro (data/macro.json), ou null
 let geopolitique = null; // données de l'agent géopolitique (data/geopolitique.json), ou null
 let risque = null; // données de l'agent risque (data/risque.json), ou null
 let pepites = null; // pépites candidates de l'agent entreprises (data/pepites.json), ou null
+let chef = null; // chef d'orchestre (data/chef.json), ou null
+let suiviChef; // suivi de performance du chef d'orchestre : undefined = pas encore lu
 let analyses = { liste: [] }; // analyses à la demande (data/analyses/index.json)
 let enCours; // demandes d'analyse en cours (issues ouvertes) : undefined = pas encore lues, null = GitHub injoignable
 let recommandations; // historique des recommandations : undefined = pas encore lu
@@ -120,7 +125,8 @@ async function demarrer() {
 
   try {
     // data/macro.json est facultatif : son absence n'empêche pas l'appli de démarrer
-    [d, macro, pepites, analyses, geopolitique, risque] = await Promise.all([chargerDonnees(), chargerMacro(), chargerPepites(), chargerAnalyses(), chargerGeopolitique(), chargerRisque()]);
+    [d, macro, pepites, analyses, geopolitique, risque, chef] = await Promise.all([chargerDonnees(), chargerMacro(), chargerPepites(), chargerAnalyses(), chargerGeopolitique(), chargerRisque(), chargerChef()]);
+    d.chef = chef;
     d.macro = macro;
     d.geopolitique = geopolitique;
     d.risque = risque;
@@ -134,10 +140,12 @@ async function demarrer() {
   // La mention « Données fictives » disparaît quand plus aucun fichier n'est fictif
   majBadgesFictifs({ type: 'globe' });
   remplirBandeau($('#bandeau-piste'), d.marches);
-  alertes = initialiserAlertes(
-    { bouton: $('#alertes-bascule'), liste: $('#alertes-liste'), compte: $('#alertes-compte'), apercu: $('#alertes-apercu') },
+  // Panneau « Synthèse » du chef d'orchestre (à la place de l'ancien bandeau des alertes)
+  alertes = initialiserSynthese(
+    { bouton: $('#alertes-bascule'), liste: $('#alertes-liste'), compte: $('#alertes-compte'), apercu: $('#alertes-apercu'), titre: $('#alertes-titre') },
     d.paysParCode, naviguer,
   );
+  alertes.definirChef(chef);
   majAlertes(); // alertes des agents + mes alertes (règles vérifiées à chaque chargement)
   initialiserComparateur(d, { barre: dom.barreComparaison, ouvrir: () => naviguer({ type: 'comparaison' }) });
 
@@ -147,7 +155,7 @@ async function demarrer() {
   // Filtres « Flux d'investissement » (ETF pays), « Risque » (agent risque) et « Risque géopolitique » :
   // seulement pour le globe (pas dans le comparateur ni les alertes)
   const avecFlux = d.pays.some((p) => p.detail?.flux_etrangers?.periodes);
-  const metriquesGlobe = [...METRIQUES_PAYS, ...(avecFlux ? [METRIQUE_FLUX] : []), ...(risque ? [METRIQUE_RISQUE_PAYS] : []), ...(geopolitique ? [METRIQUE_RISQUE] : [])];
+  const metriquesGlobe = [...METRIQUES_PAYS, ...(chef?.pays?.length ? [METRIQUE_ATTRACTIVITE] : []), ...(avecFlux ? [METRIQUE_FLUX] : []), ...(risque ? [METRIQUE_RISQUE_PAYS] : []), ...(geopolitique ? [METRIQUE_RISQUE] : [])];
   const estRisque = (cle) => cle === METRIQUE_RISQUE.cle || cle === METRIQUE_RISQUE_PAYS.cle;
   const estFlux = (cle) => cle === METRIQUE_FLUX.cle;
   // Sélecteur 1 semaine / 1 mois / 3 mois, visible seulement avec le filtre « Flux d'investissement » ;
@@ -161,7 +169,8 @@ async function demarrer() {
   initialiserFiltres({ puces: $('#filtres-puces') }, metriquesGlobe, {
     surMetrique: (cle, initial) => {
       $('#legende-metrique').textContent = metriquesGlobe.find((m) => m.cle === cle).libelle;
-      $('#legende-notes').hidden = estRisque(cle) || estFlux(cle);
+      $('#legende-notes').hidden = estRisque(cle) || estFlux(cle) || cle === METRIQUE_ATTRACTIVITE.cle;
+      $('#legende-attractivite').hidden = cle !== METRIQUE_ATTRACTIVITE.cle;
       $('#legende-risque').hidden = !estRisque(cle);
       $('#legende-flux').hidden = !estFlux(cle);
       $('#flux-periode').hidden = !estFlux(cle);
@@ -192,6 +201,7 @@ async function demarrer() {
   majPastilleRisque($('#btn-risque'), risque);
   $('#btn-risque').addEventListener('click', () => naviguer({ type: 'risque' }));
   $('#btn-pepites').addEventListener('click', () => naviguer({ type: 'pepites' }));
+  $('#btn-investir').addEventListener('click', () => naviguer({ type: 'investir' }));
   $('#btn-analyses').addEventListener('click', () => naviguer({ type: 'analyses' }));
   // Santé des agents : chargée à part (un journal manquant ne bloque pas l'appli),
   // puis recalculée chaque minute, car le statut « en panne » dépend de l'heure
@@ -264,6 +274,7 @@ function objetMetrique(cle) {
   if (cle === METRIQUE_RISQUE.cle) return { cle, lire: (p) => lireRisque(geopolitique, p.code) };
   if (cle === METRIQUE_RISQUE_PAYS.cle) return { cle, lire: (p) => lireRisquePays(risque, p.code) };
   if (cle === METRIQUE_FLUX.cle) return { cle, lire: (p) => lireFlux(p) };
+  if (cle === METRIQUE_ATTRACTIVITE.cle) return { cle, lire: (p) => lireAttractivite(chef, p.code) };
   return { cle, lire: (p) => lireMetrique(p, cle) };
 }
 
@@ -452,6 +463,17 @@ function filAriane(route) {
       return [racine, ecran, { libelle: ONGLETS_INITIES[route.id] ?? route.id, route }];
     }
     case 'pepites': return [racine, { libelle: 'Pépites', route }];
+    case 'investir': {
+      const ecran = { libelle: 'Où investir', route: { type: 'investir' } };
+      if (!route.id) return [racine, ecran];
+      if (route.id.startsWith('o-')) {
+        const id = route.id.slice(2);
+        const l = [...(chef?.pays ?? []), ...(chef?.matieres ?? []), ...(chef?.or ? [chef.or] : []), ...(chef?.obligations ?? []), ...(chef?.liquidites ?? []), ...(chef?.entreprises ?? [])].find((x) => x.id === id);
+        return [racine, ecran, { libelle: l?.nom ?? id, route }];
+      }
+      return [racine, ecran, { libelle: ONGLETS_INVESTIR[route.id] ?? route.id, route }];
+    }
+    case 'fiabilite-chef': return [racine, { libelle: 'Où investir', route: { type: 'investir' } }, { libelle: 'Fiabilité', route }];
     case 'analyses': return [racine, { libelle: 'Mes analyses', route }];
     case 'fiabilite': return [racine, { libelle: 'Mes analyses', route: { type: 'analyses' } }, { libelle: 'Fiabilité', route }];
     case 'analyse': {
@@ -477,7 +499,7 @@ function majAriane(route) {
 function routeValide(route) {
   switch (route.type) {
     case 'globe': case 'portefeuille': case 'classement': case 'comparaison': case 'mes-alertes': case 'sante': case 'macro': case 'geopolitique': case 'risque': case 'pepites':
-    case 'analyses': case 'fiabilite': case 'matieres': case 'inities': return true;
+    case 'analyses': case 'fiabilite': case 'matieres': case 'inities': case 'investir': case 'fiabilite-chef': return true;
     case 'analyse': return Boolean(route.id);
     case 'pays': return d.paysParCode.has(route.id);
     case 'secteur': return d.secteurParId.has(route.id);
@@ -573,6 +595,8 @@ function afficher(route) {
     pepites: { section: '#ecran-pepites', contenu: '#pepites-contenu', titre: 'Pépites', rendu: () => ecranPepites(pepites, d, navigateurPanneau) },
     analyses: { section: '#ecran-analyses', contenu: '#analyses-contenu', titre: 'Mes analyses', rendu: () => ecranAnalyses({ analyses, enCours }, navigateurPanneau) },
     fiabilite: { section: '#ecran-fiabilite', contenu: '#fiabilite-contenu', titre: 'Fiabilité des recommandations', rendu: () => ecranFiabilite(recommandations, navigateurPanneau) },
+    investir: { section: '#ecran-investir', contenu: '#investir-contenu', titre: 'Où investir', rendu: () => ecranInvestir(chef, navigateurPanneau, route.id) },
+    'fiabilite-chef': { section: '#ecran-fiabilite-chef', contenu: '#fiabilite-chef-contenu', titre: 'Fiabilité du chef d’orchestre', rendu: () => ecranFiabiliteChef(suiviChef, navigateurPanneau) },
   };
   // Données lues à l'ouverture de l'écran, puis nouveau rendu s'il est toujours affiché
   if (route.type === 'analyses') {
@@ -596,6 +620,12 @@ function afficher(route) {
       const defilement = dom.panneauContenu.scrollTop;
       dom.panneauContenu.replaceChildren(...ficheEntreprise(d, e, navigateurPanneau).filter(Boolean));
       dom.panneauContenu.scrollTop = defilement;
+    });
+  }
+  if (route.type === 'fiabilite-chef' && suiviChef === undefined) {
+    chargerSuiviChef().then((s) => {
+      suiviChef = s;
+      if (routeActuelle.type === 'fiabilite-chef') $('#fiabilite-chef-contenu').replaceChildren(...ecranFiabiliteChef(suiviChef, navigateurPanneau).filter(Boolean));
     });
   }
   if (route.type === 'fiabilite' && recommandations === undefined) {
@@ -632,7 +662,7 @@ function afficher(route) {
 
 /** Le globe ne se dessine que s'il est visible (économie de batterie). */
 function majActiviteGlobe() {
-  const masque = ['portefeuille', 'classement', 'comparaison', 'mes-alertes', 'sante', 'macro', 'geopolitique', 'risque', 'pepites', 'analyses', 'fiabilite', 'matieres', 'inities'].includes(routeActuelle.type)
+  const masque = ['portefeuille', 'classement', 'comparaison', 'mes-alertes', 'sante', 'macro', 'geopolitique', 'risque', 'pepites', 'analyses', 'fiabilite', 'matieres', 'inities', 'investir', 'fiabilite-chef'].includes(routeActuelle.type)
     || (dom.panneau.classList.contains('est-ouvert') && etatPanneau === 'plein' && !estLarge());
   globe?.definirActif(!masque);
 }

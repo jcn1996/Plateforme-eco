@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Salle de contrôle</title>
-  <meta name="description" content="Plateforme personnelle de suivi économique mondial (prototype, données fictives).">
+  <meta name="description" content="Plateforme personnelle de suivi économique mondial.">
   <meta name="theme-color" content="#050b18">
 
   <!-- PWA : installation sur l'écran d'accueil -->
@@ -55,6 +55,11 @@
         <button id="btn-recherche" class="bouton bouton--icone" type="button" aria-expanded="false" aria-controls="recherche" title="Rechercher un pays, un secteur, une entreprise">
           <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12.6 12.6 17 17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
           <span class="visuellement-cache">Rechercher</span>
+        </button>
+        <!-- Chef d'orchestre : « Où investir maintenant, et avec quelle conviction ? » -->
+        <button id="btn-investir" class="bouton bouton--icone-texte bouton--accent" type="button" title="Où investir (chef d'orchestre)">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M13.2 6.8 11.2 11.2 6.8 13.2 8.8 8.8z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          <span class="bouton-libelle">Où investir</span>
         </button>
         <button id="btn-pepites" class="bouton bouton--icone-texte" type="button" title="Pépites candidates">
           <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 3h8l3 4.5L10 17 3 7.5z M3 7.5h14 M8 3 6.8 7.5 10 17 13.2 7.5 12 3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
@@ -131,6 +136,11 @@
         <li><span class="pastille pastille--orange"></span>50 à 64 : neutre</li>
         <li><span class="pastille pastille--rouge"></span>&lt; 50 : défavorable</li>
       </ul>
+      <ul id="legende-attractivite" class="legende" aria-label="Légende de l'attractivité (chef d'orchestre)" hidden>
+        <li><span class="pastille pastille--vert"></span>≥ 58 : renforcer</li>
+        <li><span class="pastille pastille--orange"></span>43 à 57 : neutre</li>
+        <li><span class="pastille pastille--rouge"></span>&lt; 43 : alléger ou éviter</li>
+      </ul>
       <ul id="legende-risque" class="legende" aria-label="Légende du risque (agent risque et risque géopolitique)" hidden>
         <li><span class="pastille pastille--rouge"></span>≥ 60 : risque élevé</li>
         <li><span class="pastille pastille--orange"></span>35 à 59 : modéré</li>
@@ -168,11 +178,11 @@
     </button>
   </nav>
 
-  <!-- ===================== ALERTES DU JOUR ===================== -->
-  <section id="alertes" class="alertes" aria-label="Alertes du jour">
+  <!-- ===================== SYNTHÈSE (chef d'orchestre) ET ALERTES DU JOUR ===================== -->
+  <section id="alertes" class="alertes" aria-label="Synthèse et alertes du jour">
     <button id="alertes-bascule" class="alertes-bascule" type="button" aria-expanded="false" aria-controls="alertes-liste">
       <span class="alertes-voyant" aria-hidden="true"></span>
-      <span class="alertes-titre">Alertes du jour</span>
+      <span id="alertes-titre" class="alertes-titre">Synthèse</span>
       <span id="alertes-compte" class="alertes-compte mono">0</span>
       <span id="alertes-apercu" class="alertes-apercu"></span>
       <span class="chevron" aria-hidden="true"></span>
@@ -300,6 +310,24 @@
       <ol class="ariane js-ariane"></ol>
     </nav>
     <div id="inities-contenu" class="ecran-contenu"></div>
+  </section>
+
+  <!-- ===================== ÉCRAN OÙ INVESTIR (chef d'orchestre) ===================== -->
+  <section id="ecran-investir" class="ecran" hidden aria-label="Où investir">
+    <nav class="navigation navigation--ecran" aria-label="Fil d'Ariane">
+      <button class="bouton bouton--icone js-retour" type="button" title="Retour"><span aria-hidden="true">‹</span><span class="visuellement-cache">Retour</span></button>
+      <ol class="ariane js-ariane"></ol>
+    </nav>
+    <div id="investir-contenu" class="ecran-contenu"></div>
+  </section>
+
+  <!-- ===================== ÉCRAN FIABILITÉ DU CHEF D'ORCHESTRE ===================== -->
+  <section id="ecran-fiabilite-chef" class="ecran" hidden aria-label="Fiabilité du chef d'orchestre">
+    <nav class="navigation navigation--ecran" aria-label="Fil d'Ariane">
+      <button class="bouton bouton--icone js-retour" type="button" title="Retour"><span aria-hidden="true">‹</span><span class="visuellement-cache">Retour</span></button>
+      <ol class="ariane js-ariane"></ol>
+    </nav>
+    <div id="fiabilite-chef-contenu" class="ecran-contenu"></div>
   </section>
 
   <!-- ===================== ÉCRAN SANTÉ DES AGENTS ===================== -->

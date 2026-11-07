@@ -11,12 +11,13 @@
      le premier chargement, mis à jour en arrière-plan.
    - TradingView (scripts des widgets, cotations) : jamais mis en cache, le service
      worker laisse passer ces requêtes telles quelles.
+   - Chef d'orchestre : data/chef.json préchargé ; briefing et suivi (data/chef/) lus à la demande.
    - Séries de cours des graphiques (data/cours/), matières premières (data/matieres_premieres.json) et
      initiés (data/inities.json) : non préchargées, lues à la demande.
    Changer VERSION vide les anciens caches chez tous les utilisateurs.
    ========================================================================== */
 
-const VERSION = 'salle-controle-v37';
+const VERSION = 'salle-controle-v38';
 
 const FICHIERS_APPLI = [
   './',
@@ -50,6 +51,7 @@ const FICHIERS_APPLI = [
   'js/flux-investissement.js',
   'js/pulsations.js',
   'js/dynamique-resultats.js',
+  'js/chef.js',
   'assets/icone.svg',
   'assets/icone-192.png',
   'assets/icone-512.png',
@@ -63,6 +65,7 @@ const FICHIERS_APPLI = [
   'data/geopolitique.json',
   'data/risque.json',
   'data/pepites.json',
+  'data/chef.json',
   'data/journal/index.json',
   'data/analyses/index.json',
   'data/countries-110m.json',

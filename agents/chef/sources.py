@@ -1,0 +1,51 @@
+"""Seules sources externes du chef d'orchestre (tout le reste vient des autres agents) :
+- cours ajustés Yahoo Finance des verdicts arrivés à échéance et des indices de référence (suivi de performance) ;
+- dates de publication des résultats des sociétés de la liste de surveillance (agenda).
+FournisseurTest lit des réponses enregistrées (tests, sans réseau)."""
+from __future__ import annotations
+
+import json
+from datetime import date, datetime
+from pathlib import Path
+
+
+class FournisseurReel:
+    def series(self, symboles: list[str]) -> dict:
+        from ..entreprises.comptes import Yahoo
+        return Yahoo().cours_groupes(sorted(set(symboles)), periode="2y")
+
+    def resultats(self, societes: list[dict]) -> list[dict]:
+        import yfinance as yf
+        res = []
+        for s in societes:
+            try:
+                cal = yf.Ticker(s["ticker"]).calendar or {}
+                dates = cal.get("Earnings Date") if isinstance(cal, dict) else None
+                for d in dates or []:
+                    d = d.date() if isinstance(d, datetime) else d
+                    if isinstance(d, date):
+                        res.append({"ticker": s["ticker"], "nom": s["nom"], "date": d.isoformat()})
+                        break
+            except Exception:  # noqa: BLE001 — date inconnue : rien d'affiché
+                continue
+        return res
+
+
+class FournisseurTest:
+    def __init__(self, dossier: Path):
+        self.dossier = Path(dossier)
+
+    def _lire(self, nom):
+        try:
+            return json.loads((self.dossier / nom).read_text(encoding="utf-8"))
+        except FileNotFoundError:
+            return None
+
+    def series(self, symboles: list[str]) -> dict:
+        tout = self._lire("series.json") or {}
+        return {s: [tuple(x) for x in tout[s]] for s in symboles if s in tout}
+
+    def resultats(self, societes: list[dict]) -> list[dict]:
+        tout = self._lire("resultats.json") or []
+        tickers = {s["ticker"] for s in societes}
+        return [x for x in tout if x["ticker"] in tickers]
