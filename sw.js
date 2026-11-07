@@ -12,12 +12,14 @@
    - TradingView (scripts des widgets, cotations) : jamais mis en cache, le service
      worker laisse passer ces requêtes telles quelles.
    - Chef d'orchestre : data/chef.json préchargé ; briefing et suivi (data/chef/) lus à la demande.
+   - Agent trader (démo) : data/portefeuille.json préchargé (réseau d'abord : valeur en direct) ;
+     journal complet des opérations (data/trader/) non préchargé.
    - Séries de cours des graphiques (data/cours/), matières premières (data/matieres_premieres.json) et
      initiés (data/inities.json) : non préchargées, lues à la demande.
    Changer VERSION vide les anciens caches chez tous les utilisateurs.
    ========================================================================== */
 
-const VERSION = 'salle-controle-v39';
+const VERSION = 'salle-controle-v40';
 
 const FICHIERS_APPLI = [
   './',

@@ -3,7 +3,7 @@
 Prototype d'une application personnelle de suivi économique mondial, pensée d'abord pour le téléphone.
 **Les données des pays sont réelles** : elles sont produites chaque jour par l'**agent pays** (instituts statistiques nationaux, banques centrales, FMI, OCDE, BRI, Banque mondiale, Eurostat, BCE, Yahoo Finance, avec vérification croisée), qui tourne gratuitement avec GitHub Actions.
 **Les cours du bandeau des marchés sont réels** : l'**agent marchés** (sans IA) les met à jour toutes les 15 minutes en semaine.
-**Les secteurs et les entreprises sont réels** (agent entreprises). **Les flux d'investissement sont réels** : flux des ETF pays cotés aux États-Unis, relevés chaque soir chez les émetteurs (agent pays). **Les alertes du jour sont réelles** : le **chef d'orchestre** retient les signaux les plus importants de tous les agents. Seul le portefeuille démo est encore **fictif**, en attendant l'agent trader.
+**Les secteurs et les entreprises sont réels** (agent entreprises). **Les flux d'investissement sont réels** : flux des ETF pays cotés aux États-Unis, relevés chaque soir chez les émetteurs (agent pays). **Les alertes du jour sont réelles** : le **chef d'orchestre** retient les signaux les plus importants de tous les agents. Le **portefeuille démo** est géré par l'**agent trader** : 100 000 € virtuels investis selon les recommandations du chef d'orchestre, aux cours réels, pour mesurer ce que vaut la plateforme (aucun ordre réel).
 
 ## Ce que fait le prototype
 
@@ -366,7 +366,7 @@ Le chef d'orchestre réunit les sorties de tous les agents. Méthode complète :
 - concentrations thématiques (IA, semi-conducteurs, or, pétrole) signalées ;
 - garde-fous : holdings, sociétés d'investissement, fonds fermés, BDC et SPAC exclus (aussi des pépites, et jamais « Acheter » dans l'agent entreprises) ; le risque est un frein, pas un moteur (pas de « Renforcer » sans signal positif de fondamentaux, valorisation, tendance ou flux) ; une hausse passée extrême ne porte jamais seule une conviction forte (vérification de valorisation et de positionnement, objection systématique) ; contrôle de cohérence avant publication (3 familles positives listées pour une conviction forte) ; objections du contradicteur rattachées à la bonne entité.
 
-**Allocation modèle** (indicative) : profils prudent, équilibré et dynamique, cœur-satellite (satellites = convictions fortes), plafonds par pays, secteur, thème et ligne, liquidités minimales selon le palier de risque, rotation limitée (écart minimal de 1,5 point), variations justifiées. Base du futur agent trader démo.
+**Allocation modèle** (indicative) : profils prudent, équilibré et dynamique, cœur-satellite (satellites = convictions fortes), plafonds par pays, secteur, thème et ligne, liquidités minimales selon le palier de risque, rotation limitée (écart minimal de 1,5 point), variations justifiées. Base de l'agent trader démo.
 
 **Synthèse et alertes** :
 - briefing quotidien `data/chef/briefing-AAAA-MM-JJ.md` et `.json` : l'essentiel en 5 lignes, « Où investir » (top 5 avec conviction), ce qui a changé depuis hier, points de vigilance, scénarios central et alternatif avec leurs déclencheurs, agenda des 7 prochains jours (banques centrales, résultats des sociétés de la liste de surveillance, EIA, WASDE, grandes statistiques ; dates tirées d'une règle de calendrier marquées « indicatives »). Rédigé par règles ; avec `GEMINI_API_KEY`, Gemini reformule l'essentiel et la vigilance sous contrôle (budget propre ; toute phrase sans fait cité ou avec un chiffre absent des faits est supprimée) ;
@@ -390,6 +390,25 @@ python -m agents.chef                                   # analyse complète (Gem
 python -m agents.chef --mode leger                      # mise à jour légère
 python -m agents.chef --test --data /tmp/essai          # sans réseau ni Gemini (copie de data/ à fournir)
 python -m agents.chef.tests.capturer_donnees_test       # met à jour les données de test
+```
+
+## Agent trader (démo : portefeuille virtuel, aucun ordre réel)
+
+**Portefeuille fictif à but de démonstration, aucun ordre réel.** L'agent trader gère 100 000 € virtuels à partir des recommandations du chef d'orchestre, aux cours réels (Yahoo Finance), pour mesurer en conditions réelles ce que vaut la plateforme. Règles complètes : [`agents/trader/regles.md`](agents/trader/regles.md) ; paramètres : [`agents/trader/config.json`](agents/trader/config.json).
+
+- **Stratégie** : cœur (≈ 70 %) = allocation modèle du chef d'orchestre (profil « équilibré » par défaut, modifiable), chaque ligne par son support coté (ETF pays, GLD, BNO/USO avec le coût du contango signalé, SHY/IEF/TLT, IBGS.AS et EXX6.DE pour le Bund), rééquilibré seulement au-delà de 3 points d'écart ; satellites (≈ 30 %) = convictions fortes et moyennes du chef d'orchestre sans objection sérieuse du contradicteur et avec des signaux d'au moins 2 agents, 8 % maximum par ligne, taille ∝ conviction ÷ volatilité ; plafonds par pays, secteur et thème repris du chef d'orchestre ; tout est valorisé en euros au change du jour.
+- **Risque** : liquidités minimales selon le palier de l'agent risque (5 % en « Calme », 10 % en « Vigilance », 20 % en « Tension », 35 % en « Crise ») ; stop −15 % sur les satellites (suiveur dès +20 %, confirmé par 2 relevés), prise de bénéfices d'un tiers à +30 % ; sortie sur « Alléger » / « Éviter » ou objection sérieuse ; rotation mensuelle plafonnée à 30 % (sorties imposées exceptées) ; **aucune décision si le chef d'orchestre ou l'agent risque sont périmés ou dégradés** : l'agent attend et le note.
+- **Exécution simulée** : premier cours disponible après la décision (jamais un cours passé), frais 0,1 %, écart achat/vente estimé, quantités entières, change du jour. Chaque opération est journalisée avec sa raison (verdict, conviction, agents, objection), son stop et « Ce qui pourrait me donner tort ».
+- **Suivi** : valeur et historique quotidien, performance depuis le départ, sur 1 et 3 mois, comparée au MSCI World en euros (URTH ÷ EUR/USD) ; Sharpe, volatilité, perte maximale ; taux de réussite, gain et perte moyens ; attribution par poche, classe d'actifs et famille de signaux (pour le futur agent calibrateur).
+- **Sorties** : `data/portefeuille.json` (remplace le fichier fictif), `data/trader/operations.json` (journal des opérations), `data/trader/etat.json` (positions, ordres en attente, historique), `data/journal/agent-trader.json` (écran « Santé »).
+- **Appli** : écran « Portefeuille démo » (valeur en direct, graphique contre le MSCI World, risque, répartitions cœur/satellites, classes, pays et secteurs, positions avec prix de revient, cours, plus-value, poids et stop, ordres en attente, fil des opérations justifiées, dernière décision) ; le bouton de l'en-tête affiche la performance depuis le départ.
+- **Exécution** : `.github/workflows/agent-trader.yml`, lancé par le planificateur : décision chaque jour de semaine à 7 h 33 UTC (après l'analyse complète du chef d'orchestre), exécutée à l'ouverture des marchés concernés ; toutes les heures (minute 5) de 8 h à 21 h UTC en semaine : ordres, valorisation, stops (et décision du jour si elle n'a pas pu être prise à 7 h 33). Le workflow ne lance que ses propres tests et ceux du module commun.
+
+```
+python -m agents.trader                                  # exécution horaire (décision du jour si due)
+python -m agents.trader --mode decision                  # décision forcée
+python -m agents.trader --test --data /tmp/essai         # cours simulés, sans réseau (copie de data/ à fournir)
+python -m agents.trader.tests.simulation                 # simulation de 3 mois sur données de test
 ```
 
 ## Agent entreprises (environ 1 200 sociétés ; Gemini seulement pour lire la guidance)
@@ -492,6 +511,7 @@ Les tâches planifiées de GitHub (`schedule`) peuvent être retardées, voire s
   - agent marchés : selon son créneau ;
   - agents pays, macro et entreprises : une fois par jour à leur heure ; agent pays en mode « flux » en soirée à New York (2 h 07 UTC, du mardi au samedi) ;
   - agent géopolitique : toutes les heures ; agent risque : toutes les heures en séance et analyse complète à 22 h 45 UTC ;
+  - agent trader (démo) : décision à 7 h 33 UTC en semaine, puis toutes les heures (minute 5) de 8 h à 21 h UTC ;
   - révision complète du samedi ;
   - maintien du lundi.
 - ne lance jamais deux fois le même créneau : il se fonde sur `derniere_execution` des journaux. Une nouvelle tentative a lieu après 60 min sans résultat, deux tentatives au plus, et rien n'est lancé si une exécution est déjà en cours.
@@ -585,7 +605,7 @@ js/pepites.js         écran « Pépites »
 js/analyses.js        analyse à la demande (bouton, « Mes analyses »), écran « Fiabilité des recommandations »
 js/panneau-pays.js    fiches pays et secteur
 js/panneau-entreprise.js  fiche entreprise
-js/portefeuille.js    écran portefeuille
+js/portefeuille.js    écran « Portefeuille démo » (agent trader : valeur, performance contre le MSCI World, risque, répartitions, positions, opérations)
 js/classement.js      écran classement
 js/comparateur.js     comparateur (sélection, barre flottante, écran)
 js/recherche.js       recherche de pays, secteurs et entreprises
@@ -604,8 +624,9 @@ data/historique/flux_etf/  relevés quotidiens des ETF pays (parts en circulatio
 data/signaux/pays.json     signaux de l'agent pays (flux des ETF) pour le futur chef d'orchestre
 data/chef.json        sortie du chef d'orchestre (opportunités, verdicts, allocation) ; data/chef/ : briefings, suivi de performance, état
 data/alertes.json     alertes du jour (chef d'orchestre)
-data/*.json           autres données (portefeuille démo : fictif)
-agents/               agents Python (agents/commun : téléchargement, cache, journal, écriture ; agents/pays : agent pays ; agents/marches : agent marchés ; agents/macro : agent macro ; agents/rattrapage : relance des exécutions manquées ; agents/entreprises : agent entreprises, recommandation et suivi ; agents/analyse_demande : analyse à la demande ; agents/risque : agent risque et contradicteur ; agents/matieres_premieres : agent matières premières ; agents/inities : agent initiés ; agents/chef : chef d'orchestre)
+data/portefeuille.json  portefeuille démo (agent trader, aucun ordre réel) ; data/trader/ : journal des opérations et état
+data/*.json           autres données
+agents/               agents Python (agents/commun : téléchargement, cache, journal, écriture ; agents/pays : agent pays ; agents/marches : agent marchés ; agents/macro : agent macro ; agents/rattrapage : relance des exécutions manquées ; agents/entreprises : agent entreprises, recommandation et suivi ; agents/analyse_demande : analyse à la demande ; agents/risque : agent risque et contradicteur ; agents/matieres_premieres : agent matières premières ; agents/inities : agent initiés ; agents/chef : chef d'orchestre ; agents/trader : agent trader démo)
 .github/workflows/    exécution planifiée des agents (GitHub Actions)
 data/countries-110m.json, countries-50m.json  frontières des pays (voir data/LICENCE-countries-110m.txt)
 outils/generer_donnees_fictives.py  régénère les données fictives
@@ -634,7 +655,7 @@ Les fichiers sont reliés par des identifiants :
 | `entreprises.json` | entreprises | 5 indicateurs, verdict, lecture de chaque agent, étude complète |
 | `alertes.json` | chef d'orchestre | heure, agent, pays, niveau, titre, texte |
 | `marches.json` | agent marchés | cours réels : indices, devises, matières premières, Bitcoin |
-| `portefeuille.json` | trader | valeur, statistiques, allocation, positions, historique, dernière décision |
+| `portefeuille.json` | agent trader (réel) | valeur, statistiques, répartitions, positions, ordres en attente, opérations, historique, dernière décision |
 
 Le bloc `meta` de chaque fichier contient :
 - `genere_le` : date de la mise à jour, affichée sous les fiches ;

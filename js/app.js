@@ -18,7 +18,7 @@ import { evaluerRegles, ecranMesAlertes } from './mes-alertes.js';
 import { initialiserRecherche } from './recherche.js';
 import { fichePays, ficheSecteur } from './panneau-pays.js';
 import { ficheEntreprise, chargerFiche } from './panneau-entreprise.js';
-import { ecranPortefeuille } from './portefeuille.js';
+import { ecranPortefeuille, performanceEnTete } from './portefeuille.js';
 import { ecranClassement } from './classement.js';
 import { chargerSante, ecranSante, problemeDetecte } from './sante.js';
 import { chargerMacro, ecranMacro } from './macro.js';
@@ -117,6 +117,31 @@ function majBadgesFictifs(route) {
   document.querySelectorAll('.badge-fictif').forEach((b) => { b.hidden = !fictif; });
 }
 
+/** Bouton « Portefeuille démo » de l'en-tête : performance réelle depuis le départ (agent trader). */
+function afficherPerformancePortefeuille() {
+  const span = $('#perf-portefeuille');
+  const texte = performanceEnTete(d?.portefeuille);
+  if (!span || !texte) return;
+  const p = d.portefeuille.statistiques.performance.depuis_debut;
+  span.textContent = texte;
+  span.className = `bouton-perf ${p > 0 ? 'hausse' : p < 0 ? 'baisse' : ''}`;
+  span.hidden = false;
+  $('#btn-portefeuille').title = `Portefeuille démo : ${texte} depuis le ${new Date(`${d.portefeuille.date_debut}T12:00:00`).toLocaleDateString('fr-FR')} (fictif, aucun ordre réel)`;
+}
+
+async function rafraichirPortefeuille() {
+  try {
+    const r = await fetch('data/portefeuille.json', { cache: 'no-cache' });
+    if (!r.ok) return;
+    const j = await r.json();
+    if (!j?.donnees || j.meta?.genere_le === d.meta?.portefeuille?.genere_le) return;
+    d.portefeuille = j.donnees;
+    d.meta.portefeuille = j.meta;
+    afficherPerformancePortefeuille();
+    if (routeActuelle?.type === 'portefeuille') afficher(routeActuelle);
+  } catch { /* hors ligne : dernière valeur conservée */ }
+}
+
 /* ============================== Démarrage ============================== */
 
 async function demarrer() {
@@ -127,6 +152,7 @@ async function demarrer() {
     // data/macro.json est facultatif : son absence n'empêche pas l'appli de démarrer
     [d, macro, pepites, analyses, geopolitique, risque, chef] = await Promise.all([chargerDonnees(), chargerMacro(), chargerPepites(), chargerAnalyses(), chargerGeopolitique(), chargerRisque(), chargerChef()]);
     d.chef = chef;
+    afficherPerformancePortefeuille();
     d.macro = macro;
     d.geopolitique = geopolitique;
     d.risque = risque;
@@ -207,6 +233,8 @@ async function demarrer() {
   // puis recalculée chaque minute, car le statut « en panne » dépend de l'heure
   majSante();
   setInterval(majSante, 60_000);
+  // Portefeuille démo : nouvelle valorisation de l'agent trader relue toutes les 5 minutes
+  setInterval(rafraichirPortefeuille, 300_000);
   // Recherche : toucher un résultat ouvre la fiche (le globe se centre sur le pays)
   recherche = initialiserRecherche(d, {
     bouton: $('#btn-recherche'), panneau: $('#recherche'), champ: $('#recherche-champ'),

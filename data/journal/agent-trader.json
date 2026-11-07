@@ -1,0 +1,80 @@
+{
+  "meta": {
+    "genere_le": "2026-11-07T22:44:02Z",
+    "source": "agent-trader",
+    "version_agent": "1.0",
+    "description": "Ordres exécutés, ordres imposés, décisions et attentes de l'agent trader (démo), à chaque exécution",
+    "sante": {
+      "agent": "trader",
+      "libelle": "Agent trader (démo)",
+      "ordre": 11,
+      "workflow": "agent-trader.yml",
+      "derniere_execution": "2026-11-07T22:44:02Z",
+      "prochaine_prevue": "2026-11-09T07:33:00Z",
+      "intervalle_min": 3508,
+      "planning": {
+        "crons": [
+          "33 7 * * 1-5",
+          "5 8-21 * * 1-5"
+        ],
+        "fuseau": "UTC"
+      },
+      "sources_total": 4,
+      "sources_ok": 4,
+      "sources": [
+        {
+          "nom": "Chef d'orchestre (data/chef.json)",
+          "etat": "ok",
+          "detail": "0 h",
+          "derniere_donnee_valide": "2026-11-07T22:18:25Z"
+        },
+        {
+          "nom": "Agent risque (palier) (data/risque.json)",
+          "etat": "ok",
+          "detail": "20 h",
+          "derniere_donnee_valide": "2026-11-07T02:23:35Z"
+        },
+        {
+          "nom": "Agent marchés (indice de référence, EUR/USD ; facultatif)",
+          "etat": "ok",
+          "detail": "à jour",
+          "derniere_donnee_valide": "2026-11-07T22:16:13Z"
+        },
+        {
+          "nom": "Yahoo Finance via yfinance (cours, change, exécution)",
+          "etat": "ok",
+          "detail": "0 position(s) valorisée(s)",
+          "derniere_donnee_valide": "2026-11-07T22:44:02Z"
+        }
+      ],
+      "degrade": false,
+      "raisons": []
+    }
+  },
+  "donnees": [
+    {
+      "genere_le": "2026-11-07T22:44:02Z",
+      "mode": "decision",
+      "valeur": 100000.0,
+      "liquidites_pct": 100.0,
+      "palier": "Vigilance",
+      "executees": [],
+      "annulees": [],
+      "ordres_imposes": [],
+      "decision": "Décision du 07/11/2026 : palier « Vigilance », liquidités minimales 10 %. Cibles : cœur 64,7 %, satellites 25,3 % (9 ligne(s)), liquidités 10,0 %. 24 achat(s) et 0 vente(s) à exécuter au premier cours disponible.",
+      "attente": null,
+      "ordres_en_attente": 24,
+      "cours_manquants": []
+    }
+  ],
+  "derniere_execution": "2026-11-07T22:44:02Z",
+  "prochaine_prevue": "2026-11-09T07:33:00Z",
+  "intervalle_min": 3508,
+  "planning": {
+    "crons": [
+      "33 7 * * 1-5",
+      "5 8-21 * * 1-5"
+    ],
+    "fuseau": "UTC"
+  }
+}
