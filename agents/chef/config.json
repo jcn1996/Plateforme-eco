@@ -1,0 +1,221 @@
+{
+  "_commentaire": "Chef d'orchestre : tous les poids et seuils. Méthode détaillée dans agents/chef/methode.md. Les scores de famille et le score final sont sur 100 (50 = neutre).",
+
+  "entrees": {
+    "_commentaire": "Fichiers lus, âge maximal avant que la donnée soit jugée périmée (heures), journal de santé de l'agent producteur. Coefficient de fraîcheur : 1 jusqu'à age_max_h, puis décroissance linéaire jusqu'à coef_perime_min à 3 × age_max_h. Agent dégradé : × coef_degrade. Confiance : coefficients par niveau.",
+    "fichiers": {
+      "pays": {"fichier": "pays.json", "journal": "agent-pays.json", "libelle": "Agent pays", "age_max_h": 30},
+      "macro": {"fichier": "macro.json", "journal": "agent-macro.json", "libelle": "Agent macro", "age_max_h": 30},
+      "marches": {"fichier": "marches.json", "journal": "agent-marches.json", "libelle": "Agent marchés", "age_max_h": 72},
+      "risque": {"fichier": "risque.json", "journal": "agent-risque.json", "libelle": "Agent risque", "age_max_h": 30},
+      "geopolitique": {"fichier": "geopolitique.json", "journal": "agent-geopolitique.json", "libelle": "Agent géopolitique", "age_max_h": 6},
+      "matieres_premieres": {"fichier": "matieres_premieres.json", "journal": "agent-matieres-premieres.json", "libelle": "Agent matières premières", "age_max_h": 80},
+      "entreprises": {"fichier": "entreprises.json", "journal": "agent-entreprises.json", "libelle": "Agent entreprises", "age_max_h": 30},
+      "pepites": {"fichier": "pepites.json", "journal": "agent-entreprises.json", "libelle": "Agent entreprises (pépites)", "age_max_h": 30},
+      "inities": {"fichier": "inities.json", "journal": "agent-inities.json", "libelle": "Agent initiés", "age_max_h": 80},
+      "analyses": {"fichier": "analyses/index.json", "journal": "analyse-demande.json", "libelle": "Analyses à la demande", "age_max_h": 100000},
+      "revues": {"fichier": "signaux/revues.json", "journal": "agent-risque.json", "libelle": "Contradicteur (agent risque)", "age_max_h": 30}
+    },
+    "coef_perime_min": 0.4,
+    "coef_degrade": 0.8,
+    "confiance": {"élevé": 1.0, "élevée": 1.0, "moyen": 0.85, "moyenne": 0.85, "faible": 0.6}
+  },
+
+  "familles": {
+    "_commentaire": "Familles de signaux. « groupe » : familles considérées comme indépendantes pour la règle de conviction (deux familles du même groupe ne comptent qu'une fois).",
+    "fondamentaux": {"libelle": "Fondamentaux", "groupe": "fondamentaux"},
+    "valorisation": {"libelle": "Valorisation", "groupe": "valorisation"},
+    "tendance": {"libelle": "Tendance et momentum", "groupe": "marche"},
+    "flux": {"libelle": "Flux d'investissement", "groupe": "flux"},
+    "cycle": {"libelle": "Adéquation au cycle", "groupe": "cycle"},
+    "risque": {"libelle": "Risque", "groupe": "risque"},
+    "geopolitique": {"libelle": "Géopolitique", "groupe": "risque"},
+    "inities": {"libelle": "Initiés et super-investisseurs", "groupe": "inities"},
+    "resultats": {"libelle": "Dynamique des résultats", "groupe": "fondamentaux"}
+  },
+
+  "poids": {
+    "_commentaire": "Poids de base par type d'opportunité (renormalisés sur les familles disponibles).",
+    "pays":        {"fondamentaux": 20, "valorisation": 15, "tendance": 15, "flux": 8, "cycle": 12, "risque": 12, "geopolitique": 8, "resultats": 10},
+    "matieres":    {"fondamentaux": 20, "valorisation": 12, "tendance": 20, "flux": 15, "cycle": 15, "risque": 8, "geopolitique": 10},
+    "or":          {"fondamentaux": 20, "valorisation": 10, "tendance": 18, "flux": 12, "cycle": 15, "risque": 15, "geopolitique": 10},
+    "obligations": {"fondamentaux": 20, "valorisation": 30, "tendance": 15, "cycle": 20, "risque": 15},
+    "liquidites":  {"valorisation": 45, "cycle": 20, "risque": 35},
+    "entreprises": {"fondamentaux": 22, "valorisation": 16, "tendance": 12, "flux": 4, "cycle": 8, "risque": 10, "geopolitique": 5, "inities": 8, "resultats": 15}
+  },
+
+  "regimes": {
+    "_commentaire": "Multiplicateurs des poids selon le palier de risque mondial (agent risque). En Tension et en Crise, le risque et la qualité (fondamentaux) pèsent davantage, le momentum moins ; en Calme, l'inverse.",
+    "Calme":     {"tendance": 1.3, "flux": 1.1, "risque": 0.8, "fondamentaux": 0.9},
+    "Vigilance": {},
+    "Tension":   {"tendance": 0.7, "flux": 0.9, "risque": 1.4, "fondamentaux": 1.3, "geopolitique": 1.2},
+    "Crise":     {"tendance": 0.5, "flux": 0.8, "risque": 1.7, "fondamentaux": 1.5, "geopolitique": 1.3}
+  },
+
+  "cycle": {
+    "_commentaire": "Tableau des actifs qui performent historiquement dans chaque phase de l'agent macro (adaptation de « l'horloge des investissements », Merrill Lynch, 2004, aux 4 phases de l'agent macro). Score /100 de la famille « Adéquation au cycle ».",
+    "phases": {
+      "Reprise":                      {"actions": 85, "obligations_longues": 55, "obligations_courtes": 45, "matieres": 55, "or": 45, "liquidites": 30},
+      "Surchauffe":                   {"actions": 60, "obligations_longues": 25, "obligations_courtes": 40, "matieres": 85, "or": 60, "liquidites": 45},
+      "Ralentissement inflationniste":{"actions": 25, "obligations_longues": 30, "obligations_courtes": 60, "matieres": 60, "or": 85, "liquidites": 75},
+      "Expansion sans inflation":     {"actions": 55, "obligations_longues": 85, "obligations_courtes": 65, "matieres": 30, "or": 55, "liquidites": 50}
+    },
+    "secteurs": {
+      "_commentaire": "Inflexion (points) par secteur GICS selon la phase, pour les entreprises.",
+      "Reprise": {"Information Technology": 8, "Consumer Discretionary": 8, "Financials": 6, "Industrials": 5, "Utilities": -6, "Consumer Staples": -6},
+      "Surchauffe": {"Energy": 10, "Materials": 8, "Industrials": 4, "Utilities": -4, "Information Technology": -3},
+      "Ralentissement inflationniste": {"Consumer Staples": 8, "Health Care": 8, "Utilities": 6, "Energy": 4, "Consumer Discretionary": -8, "Information Technology": -6},
+      "Expansion sans inflation": {"Health Care": 5, "Utilities": 5, "Information Technology": 4, "Communication Services": 3, "Energy": -6, "Materials": -6}
+    }
+  },
+
+  "risque_par_palier": {
+    "_commentaire": "Score de la famille « Risque » pour les classes sans risque propre, selon le palier de risque mondial (valeur refuge : l'or, les liquidités et les obligations d'État profitent d'un palier élevé).",
+    "matieres":            {"Calme": 60, "Vigilance": 50, "Tension": 35, "Crise": 20},
+    "or":                  {"Calme": 45, "Vigilance": 60, "Tension": 75, "Crise": 85},
+    "obligations_longues": {"Calme": 45, "Vigilance": 55, "Tension": 65, "Crise": 75},
+    "obligations_courtes": {"Calme": 50, "Vigilance": 55, "Tension": 65, "Crise": 70},
+    "liquidites":          {"Calme": 35, "Vigilance": 50, "Tension": 70, "Crise": 85}
+  },
+
+  "obligations": {
+    "_commentaire": "Échelles des signaux obligataires (score = base + pente × valeur, borné à 0–100).",
+    "taux_reel_base": 25, "taux_reel_pente": 22,
+    "variation_taux_pente": -18,
+    "pente_courbe_pente": 15,
+    "inflation_ecart_cible_pente": -12,
+    "cibles_inflation": {"etats_unis": 2.0, "zone_euro": 2.0}
+  },
+  "liquidites": {"taux_reel_base": 50, "taux_reel_pente": 15},
+
+  "or": {"_commentaire": "Taux réel attendu à 10 ans (États-Unis) : sa baisse est favorable à l'or.", "variation_taux_reel_pente": -20, "niveau_taux_reel_pente": -8, "niveau_taux_reel_reference": 1.5},
+
+  "percentiles": {"_commentaire": "Normalisation en percentiles dans la classe à partir de `taille_min` éléments : score de famille = poids_percentile × percentile + (1 − poids_percentile) × note absolue de l'agent (un classement seul rendrait toujours « attractifs » les premiers, même quand tous sont mauvais). En dessous de `taille_min`, la note absolue est gardée.", "taille_min": 8, "poids_percentile": 0.5},
+  "qualite_retrecit_vers_neutre": true,
+
+  "verdicts": {
+    "_commentaire": "Seuils du score /100 (bornes basses). Hystérésis : un verdict ne change que si le score dépasse le seuil d'au moins `marge`, ou reste au-delà `jours_confirmation` jours de suite.",
+    "ordre": ["Éviter", "Alléger", "Neutre", "Renforcer", "Renforcer fortement"],
+    "seuils": {"Alléger": 33, "Neutre": 43, "Renforcer": 58, "Renforcer fortement": 70},
+    "marge": 3,
+    "jours_confirmation": 2,
+    "fort_exige_conviction": "moyenne"
+  },
+
+  "conviction": {
+    "_commentaire": "Forte : au moins `groupes_forte` groupes de familles indépendants concordants, confiance moyenne ou élevée, données fraîches, aucune objection sérieuse. Chaque objection sérieuse du contradicteur abaisse d'un cran.",
+    "seuil_concordance_haut": 60,
+    "seuil_concordance_bas": 40,
+    "groupes_forte": 3,
+    "groupes_moyenne": 2,
+    "fraicheur_min_forte": 0.95,
+    "objections_serieuses": ["abaisser", "signal fragile"]
+  },
+
+  "tendance": {"_commentaire": "Flèche de tendance : variation du score depuis l'analyse complète précédente.", "seuil_pts": 2},
+
+  "univers": {
+    "entreprises_par_pays_attractif": 3,
+    "note_pays_attractif": 58,
+    "entreprises_max": 90,
+    "objection_fenetre_jours": 7
+  },
+
+  "themes": {
+    "_commentaire": "Détection des concentrations thématiques : un thème est signalé quand il dépasse `seuil_part` des recommandations positives, ou `max_allocation` de l'allocation d'un profil.",
+    "seuil_part": 0.3,
+    "liste": {
+      "ia": {"libelle": "Intelligence artificielle", "tickers": ["NVDA", "MSFT", "GOOGL", "GOOG", "META", "AMZN", "AVGO", "AMD", "TSM", "2330.TW", "ORCL", "PLTR", "SMCI", "ARM", "ANET", "VRT", "DELL"], "industries": []},
+      "semi": {"libelle": "Semi-conducteurs", "tickers": [], "industries": ["Semiconductor"], "pays": ["TW", "KR"]},
+      "or": {"libelle": "Or", "tickers": [], "industries": ["Gold"], "matieres": ["or"]},
+      "petrole": {"libelle": "Pétrole", "tickers": [], "industries": ["Oil & Gas"], "matieres": ["wti", "brent"], "pays": ["SA", "AE"]}
+    }
+  },
+
+  "allocation": {
+    "_commentaire": "Allocation modèle indicative, structure cœur-satellite. Classes : actions (pays), obligations, or, matieres, liquidites. Les satellites sont les convictions fortes à verdict positif.",
+    "profils": {
+      "prudent":   {"libelle": "Prudent",   "classes": {"actions": 30, "obligations": 45, "or": 7, "matieres": 3, "liquidites": 15}, "satellite": 10, "inflexion_max": 6},
+      "equilibre": {"libelle": "Équilibré", "classes": {"actions": 55, "obligations": 27, "or": 6, "matieres": 5, "liquidites": 7},  "satellite": 20, "inflexion_max": 8},
+      "dynamique": {"libelle": "Dynamique", "classes": {"actions": 75, "obligations": 10, "or": 5, "matieres": 7, "liquidites": 3},  "satellite": 30, "inflexion_max": 10}
+    },
+    "liquidites_min_par_palier": {"Calme": 2, "Vigilance": 5, "Tension": 10, "Crise": 20},
+    "max_pays": 40,
+    "max_secteur": 12,
+    "max_theme": 20,
+    "max_ligne": 8,
+    "max_ligne_satellite": 4,
+    "satellites_max": 8,
+    "max_ligne_obligations": 25,
+    "ligne_min": 0.5,
+    "rotation_seuil": 1.5,
+    "pays_coeur_max": 10
+  },
+
+  "alertes": {
+    "_commentaire": "3 ou 4 signaux les plus importants de moins de 48 h, après filtrage par les objections du contradicteur (« signal fragile » : écarté ; « abaisser » : importance diminuée d'un cran).",
+    "nombre": 4,
+    "fenetre_heures": 48,
+    "importances": {"faible": 1, "moyenne": 2, "forte": 3, "haute": 3},
+    "importance_min": 2,
+    "niveau_par_type": {
+      "changement_de_palier": "defavorable", "ecart_credit_hausse": "defavorable", "devise_decrochage": "defavorable", "rupture_correlation": "neutre",
+      "evenement_grave": "defavorable", "sorties_inhabituelles": "defavorable", "entrees_inhabituelles": "attractif", "inversion_flux": "neutre",
+      "nouvelle_pepite": "attractif", "achats_groupes": "attractif", "nouvelle_position": "attractif", "positionnement_extreme": "neutre",
+      "changement_de_verdict": "neutre", "choc_de_stocks": "neutre", "retournement_courbe": "neutre", "changement_de_phase": "neutre", "verdict_chef": "neutre"
+    }
+  },
+
+  "leger": {
+    "_commentaire": "Mise à jour horaire : seulement si le palier de risque change, en cas de choc de marché (variation du jour d'un indice suivi au-delà de `choc_marche_pct`), ou si un événement géopolitique de gravité ≥ `gravite_min` apparaît.",
+    "choc_marche_pct": 3.0,
+    "indices_choc": ["^NDX", "^GSPC", "^FCHI", "URTH", "CL=F", "GC=F"],
+    "gravite_min": 4
+  },
+
+  "suivi": {
+    "_commentaire": "Suivi de performance de chaque verdict (au plus une entrée par opportunité et par jour ; nouvelle entrée à chaque changement de verdict). Réussite par rapport à l'indice de référence de la classe.",
+    "horizons_mois": [1, 3, 6, 12],
+    "indices": {"pays": "URTH", "entreprises": "URTH", "matieres": "DBC", "or": "DBC", "obligations_us": "AGG", "obligations_euro": "IEAG.AS", "liquidites": "URTH"},
+    "indices_noms": {"URTH": "MSCI World (ETF URTH)", "DBC": "Indice large des matières premières (ETF DBC)", "AGG": "Obligations américaines (ETF AGG)", "IEAG.AS": "Obligations en euros (ETF IEAG)"},
+    "reussite": {
+      "Renforcer fortement": {"relative_min": 0.0}, "Renforcer": {"relative_min": 0.0},
+      "Neutre": {"absolue_max": 5.0},
+      "Alléger": {"relative_max": 0.0}, "Éviter": {"relative_max": 0.0}
+    },
+    "abandon_jours": 30,
+    "min_mesures_calibration": 10
+  },
+
+  "agenda": {
+    "_commentaire": "Agenda des 7 prochains jours. Les dates marquées « indicative » suivent une règle de calendrier (ex. premier vendredi du mois) : la date exacte est à confirmer auprès de la source.",
+    "jours": 7,
+    "eia": [{"libelle": "EIA : stocks pétroliers hebdomadaires", "jour_semaine": 2}, {"libelle": "EIA : stocks de gaz naturel", "jour_semaine": 3}],
+    "wasde": {"libelle": "USDA : rapport WASDE (offre et demande agricoles mondiales)", "jour_du_mois_approx": [9, 12]},
+    "macro": [
+      {"libelle": "États-Unis : rapport sur l'emploi (BLS)", "regle": "premier_vendredi"},
+      {"libelle": "États-Unis : inflation (CPI, BLS)", "regle": "jours_du_mois", "jours": [10, 15]},
+      {"libelle": "Zone euro : estimation rapide de l'inflation (Eurostat)", "regle": "fin_de_mois", "jours": [28, 31]}
+    ],
+    "resultats_surveillance": true
+  },
+
+  "gemini": {
+    "_commentaire": "Budget propre au chef d'orchestre (compté à part des autres agents) pour la rédaction du briefing ; chaque affirmation doit citer un fait fourni, sinon elle est supprimée ; sans Gemini, version par règles.",
+    "modeles": [
+      {"nom": "gemini-3.5-flash-lite", "libelle": "Flash-Lite", "rpm": 10, "rpd": 6},
+      {"nom": "gemini-flash-latest", "libelle": "Flash le plus récent (alias)", "rpm": 5, "rpd": 3}
+    ],
+    "marge": 0.0,
+    "appels_max_par_execution": 2,
+    "essais": 2,
+    "attentes_reprise_secondes": [5],
+    "attente_429_minute_max_secondes": 30,
+    "fuseau_quota": "America/Los_Angeles",
+    "delai_reponse_secondes": 90,
+    "repartir_sur_la_journee": false
+  },
+
+  "mention": "Avis indicatif généré automatiquement, sans prise en compte d'un profil ou d'une situation personnelle.",
+  "sante": {"entrees_min": 6}
+}
