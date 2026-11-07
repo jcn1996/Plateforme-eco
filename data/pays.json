@@ -52,11 +52,6 @@
       "bce_change": "ok",
       "yahoo_cours": "ok",
       "yahoo_per": "ok",
-      "flux_globalx": "ok",
-      "flux_ishares": "ok",
-      "flux_ssga": "ok",
-      "flux_vaneck": "ok",
-      "flux_yahoo_parts": "partiel (21/30)",
       "bm_croissance": "ok",
       "bm_inflation": "ok",
       "bm_solde_courant": "ok",
@@ -71,7 +66,12 @@
       "national_dbnomics_INSEE_IPC-2025_M.IPC.SO.00.00.GLISSEMENT_ANNUEL.ENSEMBLE.FE.POURCENT.BRUT.2025.FALSE": "ok",
       "national_dbnomics_DESTATIS_61111BM001_DG.PREIS1": "ok",
       "national_dbnomics_STATJP_CPIm_001": "ok",
-      "textes": "règles (pas de clé GEMINI_API_KEY ou rédaction refusée)"
+      "textes": "règles (pas de clé GEMINI_API_KEY ou rédaction refusée)",
+      "flux_globalx": "ok",
+      "flux_ishares": "ok",
+      "flux_ssga": "ok",
+      "flux_vaneck": "ok",
+      "flux_yahoo_parts": "partiel (21/30)"
     },
     "ponderations": {
       "croissance_pib": 0.2,
@@ -82,7 +82,7 @@
       "momentum": 0.15
     },
     "alertes_qualite": [],
-    "flux_etf_mis_a_jour_le": "2026-11-07T06:17:48Z"
+    "flux_etf_mis_a_jour_le": "2026-11-07T08:41:09Z"
   },
   "donnees": [
     {
@@ -10228,7 +10228,7 @@
           "avertissement": "Flux des ETF pays cotés aux États-Unis uniquement : ils ne couvrent ni les ETF cotés ailleurs, ni les fonds non cotés, ni les achats directs d'actions par les étrangers.",
           "symbole": "VNM",
           "emetteur": "VanEck",
-          "date": "2026-11-05",
+          "date": "2026-11-06",
           "source": "VanEck, fichier des VL quotidiennes du fonds VNM (VL et actif net ; parts = actif net / VL) ; relevés jour par jour accumulés par l'agent",
           "source_courte": "VanEck",
           "niveau_source": "marche",
@@ -10238,7 +10238,7 @@
               "source": "vaneck",
               "nom": "VanEck, fichier des VL quotidiennes du fonds VNM (VL et actif net ; parts = actif net / VL)",
               "valeur": 27.45,
-              "date": "2026-11-05",
+              "date": "2026-11-06",
               "statut": "retenue"
             },
             {
@@ -10255,48 +10255,44 @@
               "libelle": "1 semaine",
               "jours": 7,
               "complet": true,
-              "debut": "2026-10-29",
-              "jours_disponibles": 99,
+              "debut": "2026-10-30",
+              "jours_disponibles": 100,
               "flux_musd": -8.49,
-              "pct_encours": -1.784,
+              "pct_encours": -1.809,
               "statut": "complet"
             },
             "1m": {
               "libelle": "1 mois",
               "jours": 30,
               "complet": true,
-              "debut": "2026-10-06",
-              "jours_disponibles": 99,
+              "debut": "2026-10-07",
+              "jours_disponibles": 100,
               "flux_musd": -8.49,
-              "pct_encours": -1.784,
+              "pct_encours": -1.792,
               "statut": "complet"
             },
             "3m": {
               "libelle": "3 mois",
               "jours": 91,
               "complet": true,
-              "debut": "2026-08-06",
-              "jours_disponibles": 99,
+              "debut": "2026-08-07",
+              "jours_disponibles": 100,
               "flux_musd": -24.72,
-              "pct_encours": -4.896,
+              "pct_encours": -4.885,
               "statut": "complet"
             }
           },
-          "releves": 71,
+          "releves": 72,
           "premier_releve": "2026-07-29",
-          "encours_musd": 466.2,
+          "encours_musd": 474.1,
           "parts": 27450000,
-          "vl": 16.9843,
+          "vl": 17.2713,
           "serie_consecutive": {
             "sens": "sorties",
             "jours": 4,
             "depuis": "2026-09-29"
           },
           "cumul": [
-            [
-              "2026-08-06",
-              0.0
-            ],
             [
               "2026-08-07",
               0.0
@@ -10552,15 +10548,24 @@
             [
               "2026-11-05",
               -24.72
+            ],
+            [
+              "2026-11-06",
+              -24.72
             ]
           ],
-          "flux_dernier_jour_musd": -8.49,
-          "valeur": -1.784,
+          "flux_dernier_jour_musd": 0.0,
+          "valeur": -1.792,
           "periode_valeur": "1m",
           "flux_musd": -8.49,
           "tendance_flux": "sorties nettes",
           "note": 39,
-          "confiance": "moyen"
+          "confiance": "moyen",
+          "precedent": {
+            "valeur": -1.784,
+            "note": 39,
+            "date": "2026-11-05"
+          }
         }
       },
       "precedent": {
