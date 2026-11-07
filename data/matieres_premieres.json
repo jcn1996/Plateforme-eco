@@ -1,17 +1,17 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-07T16:31:57Z",
+    "genere_le": "2026-11-07T16:42:59Z",
     "source": "agent-matieres-premieres",
     "fictif": false,
     "version_agent": "1.0",
-    "mise_a_jour_precedente": null,
+    "mise_a_jour_precedente": "2026-11-07T16:31:57Z",
     "etat_des_sources": {
       "Yahoo Finance via yfinance (contrat le plus proche, 10 ans)": "ok",
       "Yahoo Finance via yfinance (contrats des échéances suivantes)": "ok",
       "Yahoo Finance via yfinance (parts en circulation et VL des ETF)": "ok",
       "CFTC, Commitments of Traders (API publique Socrata)": "ok",
-      "EIA, stocks hebdomadaires (API v2, clé EIA_API_KEY)": "non configurée",
+      "EIA, stocks hebdomadaires (API v2, clé EIA_API_KEY)": "ok",
       "USDA, base PSD (fichiers CSV publics)": "ok",
       "USDA, rapport WASDE (fichier texte mensuel)": "ok",
       "FRED, taux réel américain à 10 ans (DFII10)": "ok",
@@ -61,9 +61,9 @@
       {
         "cle": "energie",
         "nom": "Énergie",
-        "note": 68.3,
+        "note": 65.1,
         "verdict": "Surpondérer",
-        "texte": "Énergie : note moyenne 68/100 sur 4 matières premières ; la plus favorable : Pétrole WTI (71), la moins favorable : Gaz naturel américain (62).",
+        "texte": "Énergie : note moyenne 65/100 sur 4 matières premières ; la plus favorable : Pétrole Brent (70), la moins favorable : Gaz naturel américain (58).",
         "matieres": [
           "wti",
           "brent",
@@ -71,8 +71,8 @@
           "gaz_europe"
         ],
         "repartition": {
-          "Surpondérer": 4,
-          "Neutre": 0,
+          "Surpondérer": 3,
+          "Neutre": 1,
           "Sous-pondérer": 0
         }
       },
@@ -644,24 +644,24 @@
           },
           "geopolitique": {
             "note": 68,
-            "texte": "3 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes militaires américaines et tensions croissantes avec l'Iran ») ; palier de risque mondial « Vigilance » (rôle de valeur refuge)",
+            "texte": "3 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes russes en Ukraine ») ; palier de risque mondial « Vigilance » (rôle de valeur refuge)",
             "source": "agent géopolitique (data/geopolitique.json), agent risque",
             "date": "2026-11-07",
             "evenements": [
-              {
-                "titre": "Frappes militaires américaines et tensions croissantes avec l'Iran",
-                "gravite": 4,
-                "pays": [
-                  "US"
-                ],
-                "categorie": "Conflit armé",
-                "date": "2026-11-07"
-              },
               {
                 "titre": "Frappes aériennes russes en Ukraine",
                 "gravite": 4,
                 "pays": [
                   "RU"
+                ],
+                "categorie": "Conflit armé",
+                "date": "2026-11-07"
+              },
+              {
+                "titre": "Frappes militaires américaines et tensions croissantes avec l'Iran",
+                "gravite": 4,
+                "pays": [
+                  "US"
                 ],
                 "categorie": "Conflit armé",
                 "date": "2026-11-07"
@@ -755,7 +755,7 @@
           }
         },
         "arguments_pour": [
-          "Contexte géopolitique (68/100) : 3 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes militaires américaines et tensions croissantes avec l'Iran ») ; palier de risque mondial « Vigilance » (rôle de valeur refuge).",
+          "Contexte géopolitique (68/100) : 3 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes russes en Ukraine ») ; palier de risque mondial « Vigilance » (rôle de valeur refuge).",
           "Positionnement des investisseurs (56/100) : Position nette des gérants (managed money) de +103 614 contrats (+26,0 % de l’intérêt ouvert), percentile 22 sur 3 ans : position dans sa plage habituelle.",
           "Tendance et momentum (40/100) : Cours −7,4 % sur 3 mois, +2,1 % sur 12 mois, en dessous de sa moyenne 200 jours (4 501,50)."
         ],
@@ -999,7 +999,10 @@
             "date": "2026-11-06"
           }
         ],
-        "precedent": null
+        "precedent": {
+          "note": 46.0,
+          "verdict": "Neutre"
+        }
       },
       {
         "cle": "argent",
@@ -1740,7 +1743,10 @@
             "date": "2026-11-06"
           }
         ],
-        "precedent": null
+        "precedent": {
+          "note": 47.8,
+          "verdict": "Neutre"
+        }
       },
       {
         "cle": "platine",
@@ -2284,24 +2290,24 @@
           },
           "geopolitique": {
             "note": 65,
-            "texte": "3 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes militaires américaines et tensions croissantes avec l'Iran »)",
+            "texte": "3 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes russes en Ukraine »)",
             "source": "agent géopolitique (data/geopolitique.json)",
             "date": "2026-11-07",
             "evenements": [
-              {
-                "titre": "Frappes militaires américaines et tensions croissantes avec l'Iran",
-                "gravite": 4,
-                "pays": [
-                  "US"
-                ],
-                "categorie": "Conflit armé",
-                "date": "2026-11-07"
-              },
               {
                 "titre": "Frappes aériennes russes en Ukraine",
                 "gravite": 4,
                 "pays": [
                   "RU"
+                ],
+                "categorie": "Conflit armé",
+                "date": "2026-11-07"
+              },
+              {
+                "titre": "Frappes militaires américaines et tensions croissantes avec l'Iran",
+                "gravite": 4,
+                "pays": [
+                  "US"
                 ],
                 "categorie": "Conflit armé",
                 "date": "2026-11-07"
@@ -2331,7 +2337,7 @@
           }
         },
         "arguments_pour": [
-          "Contexte géopolitique (65/100) : 3 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes militaires américaines et tensions croissantes avec l'Iran »).",
+          "Contexte géopolitique (65/100) : 3 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes russes en Ukraine »).",
           "Positionnement des investisseurs (57/100) : Position nette des gérants (managed money) de −1 283 contrats (−1,4 % de l’intérêt ouvert), percentile 15 sur 3 ans : position dans sa plage habituelle.",
           "Moteurs macro (47/100) : Indicateur avancé de l'OCDE (G20) à 100,2 (−0,08 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +1,6 % sur 3 mois."
         ],
@@ -2441,7 +2447,10 @@
             "date": "2026-11-06"
           }
         ],
-        "precedent": null
+        "precedent": {
+          "note": 48.0,
+          "verdict": "Neutre"
+        }
       },
       {
         "cle": "palladium",
@@ -2982,24 +2991,24 @@
           },
           "geopolitique": {
             "note": 65,
-            "texte": "3 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes militaires américaines et tensions croissantes avec l'Iran »)",
+            "texte": "3 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes russes en Ukraine »)",
             "source": "agent géopolitique (data/geopolitique.json)",
             "date": "2026-11-07",
             "evenements": [
-              {
-                "titre": "Frappes militaires américaines et tensions croissantes avec l'Iran",
-                "gravite": 4,
-                "pays": [
-                  "US"
-                ],
-                "categorie": "Conflit armé",
-                "date": "2026-11-07"
-              },
               {
                 "titre": "Frappes aériennes russes en Ukraine",
                 "gravite": 4,
                 "pays": [
                   "RU"
+                ],
+                "categorie": "Conflit armé",
+                "date": "2026-11-07"
+              },
+              {
+                "titre": "Frappes militaires américaines et tensions croissantes avec l'Iran",
+                "gravite": 4,
+                "pays": [
+                  "US"
                 ],
                 "categorie": "Conflit armé",
                 "date": "2026-11-07"
@@ -3031,7 +3040,7 @@
         "arguments_pour": [
           "Niveau historique (77/100) : Cours corrigé de l’inflation américaine au percentile 6 de sa plage sur 10 ans (plus bas 655,35, plus haut 2 979,90 en valeur nominale).",
           "Positionnement des investisseurs (75/100) : Position nette des gérants (managed money) de −15 216 contrats (−49,6 % de l’intérêt ouvert), percentile 3 sur 3 ans : position très vendeuse : lecture à contre-courant favorable.",
-          "Contexte géopolitique (65/100) : 3 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes militaires américaines et tensions croissantes avec l'Iran »)."
+          "Contexte géopolitique (65/100) : 3 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes russes en Ukraine »)."
         ],
         "arguments_contre": [
           "Tendance et momentum (16/100) : Cours −26,2 % sur 3 mois, −26,9 % sur 12 mois, en dessous de sa moyenne 200 jours (1 392,01).",
@@ -3139,7 +3148,10 @@
             "date": "2026-11-06"
           }
         ],
-        "precedent": null
+        "precedent": {
+          "note": 51.6,
+          "verdict": "Neutre"
+        }
       },
       {
         "cle": "cuivre",
@@ -3937,7 +3949,10 @@
             "date": "2026-11-06"
           }
         ],
-        "precedent": null
+        "precedent": {
+          "note": 43.9,
+          "verdict": "Neutre"
+        }
       },
       {
         "cle": "aluminium",
@@ -4681,7 +4696,10 @@
             "date": "2026-11-06"
           }
         ],
-        "precedent": null
+        "precedent": {
+          "note": 49.0,
+          "verdict": "Neutre"
+        }
       },
       {
         "cle": "uranium",
@@ -5071,7 +5089,10 @@
             "date": "2026-11-06"
           }
         ],
-        "precedent": null
+        "precedent": {
+          "note": 34.9,
+          "verdict": "Neutre"
+        }
       },
       {
         "cle": "wti",
@@ -5303,7 +5324,7 @@
             90.83
           ]
         ],
-        "note": 71.4,
+        "note": 64.2,
         "verdict": "Surpondérer",
         "horizon": "3 à 12 mois",
         "confiance": "élevé",
@@ -5384,7 +5405,468 @@
               }
             ]
           },
-          "stocks": null,
+          "stocks": {
+            "note": 44,
+            "texte": "Stocks commerciaux de brut américains (hors réserve stratégique) à 409 760,0 Mb, −4,3 % par rapport à la moyenne sur 5 ans ; écart moyen des 2 séries suivies : +2,4 %",
+            "source": "EIA (département américain de l'Énergie), API v2",
+            "date": "2026-10-30",
+            "series": [
+              {
+                "cle": "brut",
+                "libelle": "stocks commerciaux de brut américains (hors réserve stratégique)",
+                "unite": "Mb",
+                "date": "2026-10-30",
+                "valeur": 409760.0,
+                "moyenne_5_ans": 428330.2,
+                "ecart_pct": -4.34,
+                "variation_hebdo": -865.0,
+                "z_hebdo": -0.15,
+                "choc": false,
+                "historique": [
+                  [
+                    "2025-10-31",
+                    421168.0
+                  ],
+                  [
+                    "2025-11-07",
+                    427581.0
+                  ],
+                  [
+                    "2025-11-14",
+                    424155.0
+                  ],
+                  [
+                    "2025-11-21",
+                    426929.0
+                  ],
+                  [
+                    "2025-11-28",
+                    427503.0
+                  ],
+                  [
+                    "2025-12-05",
+                    425691.0
+                  ],
+                  [
+                    "2025-12-12",
+                    424417.0
+                  ],
+                  [
+                    "2025-12-19",
+                    424822.0
+                  ],
+                  [
+                    "2025-12-26",
+                    422888.0
+                  ],
+                  [
+                    "2026-01-02",
+                    419056.0
+                  ],
+                  [
+                    "2026-01-09",
+                    422447.0
+                  ],
+                  [
+                    "2026-01-16",
+                    426049.0
+                  ],
+                  [
+                    "2026-01-23",
+                    423754.0
+                  ],
+                  [
+                    "2026-01-30",
+                    420299.0
+                  ],
+                  [
+                    "2026-02-06",
+                    428829.0
+                  ],
+                  [
+                    "2026-02-13",
+                    419815.0
+                  ],
+                  [
+                    "2026-02-20",
+                    435804.0
+                  ],
+                  [
+                    "2026-02-27",
+                    439279.0
+                  ],
+                  [
+                    "2026-03-06",
+                    443103.0
+                  ],
+                  [
+                    "2026-03-13",
+                    449259.0
+                  ],
+                  [
+                    "2026-03-20",
+                    456185.0
+                  ],
+                  [
+                    "2026-03-27",
+                    461636.0
+                  ],
+                  [
+                    "2026-04-03",
+                    464717.0
+                  ],
+                  [
+                    "2026-04-10",
+                    463804.0
+                  ],
+                  [
+                    "2026-04-17",
+                    465729.0
+                  ],
+                  [
+                    "2026-04-24",
+                    459495.0
+                  ],
+                  [
+                    "2026-05-01",
+                    457182.0
+                  ],
+                  [
+                    "2026-05-08",
+                    452876.0
+                  ],
+                  [
+                    "2026-05-15",
+                    445013.0
+                  ],
+                  [
+                    "2026-05-22",
+                    441686.0
+                  ],
+                  [
+                    "2026-05-29",
+                    433712.0
+                  ],
+                  [
+                    "2026-06-05",
+                    426485.0
+                  ],
+                  [
+                    "2026-06-12",
+                    418222.0
+                  ],
+                  [
+                    "2026-06-19",
+                    412134.0
+                  ],
+                  [
+                    "2026-06-26",
+                    408359.0
+                  ],
+                  [
+                    "2026-07-03",
+                    411357.0
+                  ],
+                  [
+                    "2026-07-10",
+                    409665.0
+                  ],
+                  [
+                    "2026-07-17",
+                    411675.0
+                  ],
+                  [
+                    "2026-07-24",
+                    404508.0
+                  ],
+                  [
+                    "2026-07-31",
+                    406987.0
+                  ],
+                  [
+                    "2026-08-07",
+                    424410.0
+                  ],
+                  [
+                    "2026-08-14",
+                    428815.0
+                  ],
+                  [
+                    "2026-08-21",
+                    428910.0
+                  ],
+                  [
+                    "2026-08-28",
+                    424460.0
+                  ],
+                  [
+                    "2026-09-04",
+                    424069.0
+                  ],
+                  [
+                    "2026-09-11",
+                    423429.0
+                  ],
+                  [
+                    "2026-09-18",
+                    426398.0
+                  ],
+                  [
+                    "2026-09-25",
+                    427320.0
+                  ],
+                  [
+                    "2026-10-02",
+                    424134.0
+                  ],
+                  [
+                    "2026-10-09",
+                    415577.0
+                  ],
+                  [
+                    "2026-10-16",
+                    412517.0
+                  ],
+                  [
+                    "2026-10-23",
+                    410625.0
+                  ],
+                  [
+                    "2026-10-30",
+                    409760.0
+                  ]
+                ]
+              },
+              {
+                "cle": "cushing",
+                "libelle": "stocks de brut à Cushing (Oklahoma)",
+                "unite": "Mb",
+                "date": "2026-10-30",
+                "valeur": 27250.0,
+                "moyenne_5_ans": 24964.4,
+                "ecart_pct": 9.16,
+                "variation_hebdo": 280.0,
+                "z_hebdo": 0.23,
+                "choc": false,
+                "historique": [
+                  [
+                    "2025-10-31",
+                    22865.0
+                  ],
+                  [
+                    "2025-11-07",
+                    22519.0
+                  ],
+                  [
+                    "2025-11-14",
+                    21821.0
+                  ],
+                  [
+                    "2025-11-21",
+                    21753.0
+                  ],
+                  [
+                    "2025-11-28",
+                    21296.0
+                  ],
+                  [
+                    "2025-12-05",
+                    21604.0
+                  ],
+                  [
+                    "2025-12-12",
+                    20862.0
+                  ],
+                  [
+                    "2025-12-19",
+                    21569.0
+                  ],
+                  [
+                    "2025-12-26",
+                    22112.0
+                  ],
+                  [
+                    "2026-01-02",
+                    22840.0
+                  ],
+                  [
+                    "2026-01-09",
+                    23585.0
+                  ],
+                  [
+                    "2026-01-16",
+                    25063.0
+                  ],
+                  [
+                    "2026-01-23",
+                    24785.0
+                  ],
+                  [
+                    "2026-01-30",
+                    24042.0
+                  ],
+                  [
+                    "2026-02-06",
+                    25113.0
+                  ],
+                  [
+                    "2026-02-13",
+                    24018.0
+                  ],
+                  [
+                    "2026-02-20",
+                    24899.0
+                  ],
+                  [
+                    "2026-02-27",
+                    26463.0
+                  ],
+                  [
+                    "2026-03-06",
+                    26580.0
+                  ],
+                  [
+                    "2026-03-13",
+                    27524.0
+                  ],
+                  [
+                    "2026-03-20",
+                    30945.0
+                  ],
+                  [
+                    "2026-03-27",
+                    31465.0
+                  ],
+                  [
+                    "2026-04-03",
+                    31489.0
+                  ],
+                  [
+                    "2026-04-10",
+                    29762.0
+                  ],
+                  [
+                    "2026-04-17",
+                    30568.0
+                  ],
+                  [
+                    "2026-04-24",
+                    29772.0
+                  ],
+                  [
+                    "2026-05-01",
+                    29124.0
+                  ],
+                  [
+                    "2026-05-08",
+                    27422.0
+                  ],
+                  [
+                    "2026-05-15",
+                    25818.0
+                  ],
+                  [
+                    "2026-05-22",
+                    23024.0
+                  ],
+                  [
+                    "2026-05-29",
+                    22441.0
+                  ],
+                  [
+                    "2026-06-05",
+                    21640.0
+                  ],
+                  [
+                    "2026-06-12",
+                    20034.0
+                  ],
+                  [
+                    "2026-06-19",
+                    18957.0
+                  ],
+                  [
+                    "2026-06-26",
+                    19666.0
+                  ],
+                  [
+                    "2026-07-03",
+                    19614.0
+                  ],
+                  [
+                    "2026-07-10",
+                    20044.0
+                  ],
+                  [
+                    "2026-07-17",
+                    19370.0
+                  ],
+                  [
+                    "2026-07-24",
+                    18599.0
+                  ],
+                  [
+                    "2026-07-31",
+                    20955.0
+                  ],
+                  [
+                    "2026-08-07",
+                    22566.0
+                  ],
+                  [
+                    "2026-08-14",
+                    21252.0
+                  ],
+                  [
+                    "2026-08-21",
+                    22428.0
+                  ],
+                  [
+                    "2026-08-28",
+                    22508.0
+                  ],
+                  [
+                    "2026-09-04",
+                    21824.0
+                  ],
+                  [
+                    "2026-09-11",
+                    21482.0
+                  ],
+                  [
+                    "2026-09-18",
+                    23748.0
+                  ],
+                  [
+                    "2026-09-25",
+                    24301.0
+                  ],
+                  [
+                    "2026-10-02",
+                    24745.0
+                  ],
+                  [
+                    "2026-10-09",
+                    26607.0
+                  ],
+                  [
+                    "2026-10-16",
+                    27594.0
+                  ],
+                  [
+                    "2026-10-23",
+                    26970.0
+                  ],
+                  [
+                    "2026-10-30",
+                    27250.0
+                  ]
+                ]
+              }
+            ],
+            "ecart_moyen_pct": 2.41,
+            "type": "eia"
+          },
           "positionnement": {
             "note": 58,
             "texte": "Position nette des gérants (managed money) de +21 728 contrats (+1,1 % de l’intérêt ouvert), percentile 10 sur 3 ans : position dans sa plage habituelle",
@@ -5617,10 +6099,19 @@
           },
           "geopolitique": {
             "note": 71,
-            "texte": "4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes et militaires au Yémen »)",
+            "texte": "4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes russes en Ukraine »)",
             "source": "agent géopolitique (data/geopolitique.json)",
             "date": "2026-11-07",
             "evenements": [
+              {
+                "titre": "Frappes aériennes russes en Ukraine",
+                "gravite": 4,
+                "pays": [
+                  "RU"
+                ],
+                "categorie": "Conflit armé",
+                "date": "2026-11-07"
+              },
               {
                 "titre": "Frappes aériennes et militaires au Yémen",
                 "gravite": 4,
@@ -5637,15 +6128,6 @@
                 "pays": [
                   "IR",
                   "US"
-                ],
-                "categorie": "Conflit armé",
-                "date": "2026-11-07"
-              },
-              {
-                "titre": "Frappes aériennes russes en Ukraine",
-                "gravite": 4,
-                "pays": [
-                  "RU"
                 ],
                 "categorie": "Conflit armé",
                 "date": "2026-11-07"
@@ -5677,12 +6159,12 @@
         "arguments_pour": [
           "Structure de la courbe (90/100) : Courbe en backwardation (prix futurs plus bas : marché tendu) : rendement de roulement de +21,5 % par an entre 2026-12 et 2027-07.",
           "Tendance et momentum (84/100) : Cours +16,2 % sur 3 mois, +52,8 % sur 12 mois, au-dessus de sa moyenne 200 jours (87,16).",
-          "Contexte géopolitique (71/100) : 4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes et militaires au Yémen »)."
+          "Contexte géopolitique (71/100) : 4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes russes en Ukraine »)."
         ],
         "arguments_contre": [
           "Niveau historique (35/100) : Cours corrigé de l’inflation américaine au percentile 75 de sa plage sur 10 ans (plus bas 16,94, plus haut 120,67 en valeur nominale).",
-          "Moteurs macro (47/100) : Indicateur avancé de l'OCDE (G20) à 100,2 (−0,08 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +1,6 % sur 3 mois.",
-          "Positionnement des investisseurs (58/100) : Position nette des gérants (managed money) de +21 728 contrats (+1,1 % de l’intérêt ouvert), percentile 10 sur 3 ans : position dans sa plage habituelle."
+          "Stocks par rapport à la normale (44/100) : Stocks commerciaux de brut américains (hors réserve stratégique) à 409 760,0 Mb, −4,3 % par rapport à la moyenne sur 5 ans ; écart moyen des 2 séries suivies : +2,4 %.",
+          "Moteurs macro (47/100) : Indicateur avancé de l'OCDE (G20) à 100,2 (−0,08 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +1,6 % sur 3 mois."
         ],
         "ce_qui_pourrait_me_donner_tort": "Le principal point faible : niveau historique (35/100) : Cours corrigé de l’inflation américaine au percentile 75 de sa plage sur 10 ans (plus bas 16,94, plus haut 120,67 en valeur nominale). Le scénario serait contredit par une hausse de production de l'OPEP+ ou un ralentissement de la demande mondiale.",
         "invalidations": [
@@ -5915,6 +6397,11 @@
             "date": "2026-11-06"
           },
           {
+            "sous_note": "Stocks par rapport à la normale",
+            "source": "EIA (département américain de l'Énergie), API v2",
+            "date": "2026-10-30"
+          },
+          {
             "sous_note": "Positionnement des investisseurs",
             "source": "CFTC, Commitments of Traders (disaggregated, contrats à terme), API Socrata",
             "date": "2026-11-03"
@@ -5935,7 +6422,10 @@
             "date": "2026-11-06"
           }
         ],
-        "precedent": null
+        "precedent": {
+          "note": 71.4,
+          "verdict": "Surpondérer"
+        }
       },
       {
         "cle": "brent",
@@ -6167,13 +6657,14 @@
             98.32
           ]
         ],
-        "note": 71.1,
+        "note": 69.7,
         "verdict": "Surpondérer",
         "horizon": "3 à 12 mois",
-        "confiance": "moyen",
+        "confiance": "élevé",
         "signaux_favorables": [
           "Tendance et momentum",
           "Structure de la courbe",
+          "Stocks par rapport à la normale",
           "Contexte géopolitique"
         ],
         "signaux_defavorables": [
@@ -6242,7 +6733,694 @@
               }
             ]
           },
-          "stocks": null,
+          "stocks": {
+            "note": 66,
+            "texte": "Stocks commerciaux de brut américains (hors réserve stratégique) à 409 760,0 Mb, −4,3 % par rapport à la moyenne sur 5 ans ; écart moyen des 3 séries suivies : −6,4 %",
+            "source": "EIA (département américain de l'Énergie), API v2",
+            "date": "2026-10-30",
+            "series": [
+              {
+                "cle": "brut",
+                "libelle": "stocks commerciaux de brut américains (hors réserve stratégique)",
+                "unite": "Mb",
+                "date": "2026-10-30",
+                "valeur": 409760.0,
+                "moyenne_5_ans": 428330.2,
+                "ecart_pct": -4.34,
+                "variation_hebdo": -865.0,
+                "z_hebdo": -0.15,
+                "choc": false,
+                "historique": [
+                  [
+                    "2025-10-31",
+                    421168.0
+                  ],
+                  [
+                    "2025-11-07",
+                    427581.0
+                  ],
+                  [
+                    "2025-11-14",
+                    424155.0
+                  ],
+                  [
+                    "2025-11-21",
+                    426929.0
+                  ],
+                  [
+                    "2025-11-28",
+                    427503.0
+                  ],
+                  [
+                    "2025-12-05",
+                    425691.0
+                  ],
+                  [
+                    "2025-12-12",
+                    424417.0
+                  ],
+                  [
+                    "2025-12-19",
+                    424822.0
+                  ],
+                  [
+                    "2025-12-26",
+                    422888.0
+                  ],
+                  [
+                    "2026-01-02",
+                    419056.0
+                  ],
+                  [
+                    "2026-01-09",
+                    422447.0
+                  ],
+                  [
+                    "2026-01-16",
+                    426049.0
+                  ],
+                  [
+                    "2026-01-23",
+                    423754.0
+                  ],
+                  [
+                    "2026-01-30",
+                    420299.0
+                  ],
+                  [
+                    "2026-02-06",
+                    428829.0
+                  ],
+                  [
+                    "2026-02-13",
+                    419815.0
+                  ],
+                  [
+                    "2026-02-20",
+                    435804.0
+                  ],
+                  [
+                    "2026-02-27",
+                    439279.0
+                  ],
+                  [
+                    "2026-03-06",
+                    443103.0
+                  ],
+                  [
+                    "2026-03-13",
+                    449259.0
+                  ],
+                  [
+                    "2026-03-20",
+                    456185.0
+                  ],
+                  [
+                    "2026-03-27",
+                    461636.0
+                  ],
+                  [
+                    "2026-04-03",
+                    464717.0
+                  ],
+                  [
+                    "2026-04-10",
+                    463804.0
+                  ],
+                  [
+                    "2026-04-17",
+                    465729.0
+                  ],
+                  [
+                    "2026-04-24",
+                    459495.0
+                  ],
+                  [
+                    "2026-05-01",
+                    457182.0
+                  ],
+                  [
+                    "2026-05-08",
+                    452876.0
+                  ],
+                  [
+                    "2026-05-15",
+                    445013.0
+                  ],
+                  [
+                    "2026-05-22",
+                    441686.0
+                  ],
+                  [
+                    "2026-05-29",
+                    433712.0
+                  ],
+                  [
+                    "2026-06-05",
+                    426485.0
+                  ],
+                  [
+                    "2026-06-12",
+                    418222.0
+                  ],
+                  [
+                    "2026-06-19",
+                    412134.0
+                  ],
+                  [
+                    "2026-06-26",
+                    408359.0
+                  ],
+                  [
+                    "2026-07-03",
+                    411357.0
+                  ],
+                  [
+                    "2026-07-10",
+                    409665.0
+                  ],
+                  [
+                    "2026-07-17",
+                    411675.0
+                  ],
+                  [
+                    "2026-07-24",
+                    404508.0
+                  ],
+                  [
+                    "2026-07-31",
+                    406987.0
+                  ],
+                  [
+                    "2026-08-07",
+                    424410.0
+                  ],
+                  [
+                    "2026-08-14",
+                    428815.0
+                  ],
+                  [
+                    "2026-08-21",
+                    428910.0
+                  ],
+                  [
+                    "2026-08-28",
+                    424460.0
+                  ],
+                  [
+                    "2026-09-04",
+                    424069.0
+                  ],
+                  [
+                    "2026-09-11",
+                    423429.0
+                  ],
+                  [
+                    "2026-09-18",
+                    426398.0
+                  ],
+                  [
+                    "2026-09-25",
+                    427320.0
+                  ],
+                  [
+                    "2026-10-02",
+                    424134.0
+                  ],
+                  [
+                    "2026-10-09",
+                    415577.0
+                  ],
+                  [
+                    "2026-10-16",
+                    412517.0
+                  ],
+                  [
+                    "2026-10-23",
+                    410625.0
+                  ],
+                  [
+                    "2026-10-30",
+                    409760.0
+                  ]
+                ]
+              },
+              {
+                "cle": "essence",
+                "libelle": "stocks d'essence américains",
+                "unite": "Mb",
+                "date": "2026-10-30",
+                "valeur": 208958.0,
+                "moyenne_5_ans": 212340.4,
+                "ecart_pct": -1.59,
+                "variation_hebdo": -222.0,
+                "z_hebdo": -0.07,
+                "choc": false,
+                "historique": [
+                  [
+                    "2025-10-31",
+                    206009.0
+                  ],
+                  [
+                    "2025-11-07",
+                    205064.0
+                  ],
+                  [
+                    "2025-11-14",
+                    207391.0
+                  ],
+                  [
+                    "2025-11-21",
+                    209904.0
+                  ],
+                  [
+                    "2025-11-28",
+                    214422.0
+                  ],
+                  [
+                    "2025-12-05",
+                    220819.0
+                  ],
+                  [
+                    "2025-12-12",
+                    225627.0
+                  ],
+                  [
+                    "2025-12-19",
+                    228489.0
+                  ],
+                  [
+                    "2025-12-26",
+                    234334.0
+                  ],
+                  [
+                    "2026-01-02",
+                    242036.0
+                  ],
+                  [
+                    "2026-01-09",
+                    251013.0
+                  ],
+                  [
+                    "2026-01-16",
+                    256990.0
+                  ],
+                  [
+                    "2026-01-23",
+                    257213.0
+                  ],
+                  [
+                    "2026-01-30",
+                    257898.0
+                  ],
+                  [
+                    "2026-02-06",
+                    259058.0
+                  ],
+                  [
+                    "2026-02-13",
+                    255845.0
+                  ],
+                  [
+                    "2026-02-20",
+                    254834.0
+                  ],
+                  [
+                    "2026-02-27",
+                    253130.0
+                  ],
+                  [
+                    "2026-03-06",
+                    249476.0
+                  ],
+                  [
+                    "2026-03-13",
+                    244040.0
+                  ],
+                  [
+                    "2026-03-20",
+                    241447.0
+                  ],
+                  [
+                    "2026-03-27",
+                    240861.0
+                  ],
+                  [
+                    "2026-04-03",
+                    239272.0
+                  ],
+                  [
+                    "2026-04-10",
+                    232944.0
+                  ],
+                  [
+                    "2026-04-17",
+                    228374.0
+                  ],
+                  [
+                    "2026-04-24",
+                    222299.0
+                  ],
+                  [
+                    "2026-05-01",
+                    219795.0
+                  ],
+                  [
+                    "2026-05-08",
+                    215711.0
+                  ],
+                  [
+                    "2026-05-15",
+                    214163.0
+                  ],
+                  [
+                    "2026-05-22",
+                    211591.0
+                  ],
+                  [
+                    "2026-05-29",
+                    214955.0
+                  ],
+                  [
+                    "2026-06-05",
+                    215141.0
+                  ],
+                  [
+                    "2026-06-12",
+                    214235.0
+                  ],
+                  [
+                    "2026-06-19",
+                    216299.0
+                  ],
+                  [
+                    "2026-06-26",
+                    213966.0
+                  ],
+                  [
+                    "2026-07-03",
+                    212062.0
+                  ],
+                  [
+                    "2026-07-10",
+                    210529.0
+                  ],
+                  [
+                    "2026-07-17",
+                    211294.0
+                  ],
+                  [
+                    "2026-07-24",
+                    211301.0
+                  ],
+                  [
+                    "2026-07-31",
+                    209658.0
+                  ],
+                  [
+                    "2026-08-07",
+                    208690.0
+                  ],
+                  [
+                    "2026-08-14",
+                    209378.0
+                  ],
+                  [
+                    "2026-08-21",
+                    206842.0
+                  ],
+                  [
+                    "2026-08-28",
+                    205669.0
+                  ],
+                  [
+                    "2026-09-04",
+                    206938.0
+                  ],
+                  [
+                    "2026-09-11",
+                    207732.0
+                  ],
+                  [
+                    "2026-09-18",
+                    206046.0
+                  ],
+                  [
+                    "2026-09-25",
+                    204362.0
+                  ],
+                  [
+                    "2026-10-02",
+                    204744.0
+                  ],
+                  [
+                    "2026-10-09",
+                    208262.0
+                  ],
+                  [
+                    "2026-10-16",
+                    205310.0
+                  ],
+                  [
+                    "2026-10-23",
+                    209180.0
+                  ],
+                  [
+                    "2026-10-30",
+                    208958.0
+                  ]
+                ]
+              },
+              {
+                "cle": "distillats",
+                "libelle": "stocks de distillats américains",
+                "unite": "Mb",
+                "date": "2026-10-30",
+                "valeur": 99259.0,
+                "moyenne_5_ans": 114511.2,
+                "ecart_pct": -13.32,
+                "variation_hebdo": -3565.0,
+                "z_hebdo": -1.38,
+                "choc": false,
+                "historique": [
+                  [
+                    "2025-10-31",
+                    111546.0
+                  ],
+                  [
+                    "2025-11-07",
+                    110909.0
+                  ],
+                  [
+                    "2025-11-14",
+                    111080.0
+                  ],
+                  [
+                    "2025-11-21",
+                    112227.0
+                  ],
+                  [
+                    "2025-11-28",
+                    114286.0
+                  ],
+                  [
+                    "2025-12-05",
+                    116788.0
+                  ],
+                  [
+                    "2025-12-12",
+                    118500.0
+                  ],
+                  [
+                    "2025-12-19",
+                    118702.0
+                  ],
+                  [
+                    "2025-12-26",
+                    123679.0
+                  ],
+                  [
+                    "2026-01-02",
+                    129273.0
+                  ],
+                  [
+                    "2026-01-09",
+                    129244.0
+                  ],
+                  [
+                    "2026-01-16",
+                    132592.0
+                  ],
+                  [
+                    "2026-01-23",
+                    132921.0
+                  ],
+                  [
+                    "2026-01-30",
+                    127368.0
+                  ],
+                  [
+                    "2026-02-06",
+                    124665.0
+                  ],
+                  [
+                    "2026-02-13",
+                    120099.0
+                  ],
+                  [
+                    "2026-02-20",
+                    120351.0
+                  ],
+                  [
+                    "2026-02-27",
+                    120780.0
+                  ],
+                  [
+                    "2026-03-06",
+                    119431.0
+                  ],
+                  [
+                    "2026-03-13",
+                    116904.0
+                  ],
+                  [
+                    "2026-03-20",
+                    119936.0
+                  ],
+                  [
+                    "2026-03-27",
+                    117825.0
+                  ],
+                  [
+                    "2026-04-03",
+                    114681.0
+                  ],
+                  [
+                    "2026-04-10",
+                    111559.0
+                  ],
+                  [
+                    "2026-04-17",
+                    108132.0
+                  ],
+                  [
+                    "2026-04-24",
+                    103638.0
+                  ],
+                  [
+                    "2026-05-01",
+                    102344.0
+                  ],
+                  [
+                    "2026-05-08",
+                    102534.0
+                  ],
+                  [
+                    "2026-05-15",
+                    102906.0
+                  ],
+                  [
+                    "2026-05-22",
+                    100799.0
+                  ],
+                  [
+                    "2026-05-29",
+                    102301.0
+                  ],
+                  [
+                    "2026-06-05",
+                    102101.0
+                  ],
+                  [
+                    "2026-06-12",
+                    103052.0
+                  ],
+                  [
+                    "2026-06-19",
+                    106116.0
+                  ],
+                  [
+                    "2026-06-26",
+                    108599.0
+                  ],
+                  [
+                    "2026-07-03",
+                    103619.0
+                  ],
+                  [
+                    "2026-07-10",
+                    108175.0
+                  ],
+                  [
+                    "2026-07-17",
+                    109570.0
+                  ],
+                  [
+                    "2026-07-24",
+                    110632.0
+                  ],
+                  [
+                    "2026-07-31",
+                    107159.0
+                  ],
+                  [
+                    "2026-08-07",
+                    107149.0
+                  ],
+                  [
+                    "2026-08-14",
+                    105619.0
+                  ],
+                  [
+                    "2026-08-21",
+                    103391.0
+                  ],
+                  [
+                    "2026-08-28",
+                    104187.0
+                  ],
+                  [
+                    "2026-09-04",
+                    106274.0
+                  ],
+                  [
+                    "2026-09-11",
+                    107859.0
+                  ],
+                  [
+                    "2026-09-18",
+                    107431.0
+                  ],
+                  [
+                    "2026-09-25",
+                    105180.0
+                  ],
+                  [
+                    "2026-10-02",
+                    105138.0
+                  ],
+                  [
+                    "2026-10-09",
+                    102611.0
+                  ],
+                  [
+                    "2026-10-16",
+                    104286.0
+                  ],
+                  [
+                    "2026-10-23",
+                    102824.0
+                  ],
+                  [
+                    "2026-10-30",
+                    99259.0
+                  ]
+                ]
+              }
+            ],
+            "ecart_moyen_pct": -6.42,
+            "type": "eia"
+          },
           "positionnement": {
             "note": 54,
             "texte": "Position nette des gérants (managed money) de +4 671 contrats (+2,2 % de l’intérêt ouvert), percentile 30 sur 3 ans : position dans sa plage habituelle",
@@ -6475,10 +7653,19 @@
           },
           "geopolitique": {
             "note": 71,
-            "texte": "4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes et militaires au Yémen »)",
+            "texte": "4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes russes en Ukraine »)",
             "source": "agent géopolitique (data/geopolitique.json)",
             "date": "2026-11-07",
             "evenements": [
+              {
+                "titre": "Frappes aériennes russes en Ukraine",
+                "gravite": 4,
+                "pays": [
+                  "RU"
+                ],
+                "categorie": "Conflit armé",
+                "date": "2026-11-07"
+              },
               {
                 "titre": "Frappes aériennes et militaires au Yémen",
                 "gravite": 4,
@@ -6495,15 +7682,6 @@
                 "pays": [
                   "IR",
                   "US"
-                ],
-                "categorie": "Conflit armé",
-                "date": "2026-11-07"
-              },
-              {
-                "titre": "Frappes aériennes russes en Ukraine",
-                "gravite": 4,
-                "pays": [
-                  "RU"
                 ],
                 "categorie": "Conflit armé",
                 "date": "2026-11-07"
@@ -6535,7 +7713,7 @@
         "arguments_pour": [
           "Structure de la courbe (90/100) : Courbe en backwardation (prix futurs plus bas : marché tendu) : rendement de roulement de +28,0 % par an entre 2027-01 et 2027-07.",
           "Tendance et momentum (86/100) : Cours +17,7 % sur 3 mois, +55,1 % sur 12 mois, au-dessus de sa moyenne 200 jours (93,34).",
-          "Contexte géopolitique (71/100) : 4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes et militaires au Yémen »)."
+          "Contexte géopolitique (71/100) : 4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes russes en Ukraine »)."
         ],
         "arguments_contre": [
           "Niveau historique (33/100) : Cours corrigé de l’inflation américaine au percentile 78 de sa plage sur 10 ans (plus bas 21,44, plus haut 122,01 en valeur nominale).",
@@ -6723,6 +7901,11 @@
             "date": "2026-11-06"
           },
           {
+            "sous_note": "Stocks par rapport à la normale",
+            "source": "EIA (département américain de l'Énergie), API v2",
+            "date": "2026-10-30"
+          },
+          {
             "sous_note": "Positionnement des investisseurs",
             "source": "CFTC, Commitments of Traders (disaggregated, contrats à terme), API Socrata",
             "date": "2026-11-03"
@@ -6743,7 +7926,10 @@
             "date": "2026-11-06"
           }
         ],
-        "precedent": null
+        "precedent": {
+          "note": 71.1,
+          "verdict": "Surpondérer"
+        }
       },
       {
         "cle": "gaz_us",
@@ -6975,10 +8161,10 @@
             2.998
           ]
         ],
-        "note": 62.1,
-        "verdict": "Surpondérer",
+        "note": 57.9,
+        "verdict": "Neutre",
         "horizon": "3 à 12 mois",
-        "confiance": "élevé",
+        "confiance": "moyen",
         "signaux_favorables": [
           "Structure de la courbe",
           "Positionnement des investisseurs",
@@ -7054,7 +8240,242 @@
               }
             ]
           },
-          "stocks": null,
+          "stocks": {
+            "note": 46,
+            "texte": "Stocks de gaz naturel américains (48 États) à 3 801,0 Gpi³, +1,5 % par rapport à la moyenne sur 5 ans",
+            "source": "EIA (département américain de l'Énergie), API v2",
+            "date": "2026-10-30",
+            "series": [
+              {
+                "cle": "gaz",
+                "libelle": "stocks de gaz naturel américains (48 États)",
+                "unite": "Gpi³",
+                "date": "2026-10-30",
+                "valeur": 3801.0,
+                "moyenne_5_ans": 3745.4,
+                "ecart_pct": 1.48,
+                "variation_hebdo": 77.0,
+                "z_hebdo": 0.77,
+                "choc": false,
+                "historique": [
+                  [
+                    "2025-10-31",
+                    3905.0
+                  ],
+                  [
+                    "2025-11-07",
+                    3950.0
+                  ],
+                  [
+                    "2025-11-14",
+                    3936.0
+                  ],
+                  [
+                    "2025-11-21",
+                    3924.0
+                  ],
+                  [
+                    "2025-11-28",
+                    3913.0
+                  ],
+                  [
+                    "2025-12-05",
+                    3735.0
+                  ],
+                  [
+                    "2025-12-12",
+                    3569.0
+                  ],
+                  [
+                    "2025-12-19",
+                    3401.0
+                  ],
+                  [
+                    "2025-12-26",
+                    3364.0
+                  ],
+                  [
+                    "2026-01-02",
+                    3244.0
+                  ],
+                  [
+                    "2026-01-09",
+                    3174.0
+                  ],
+                  [
+                    "2026-01-16",
+                    3054.0
+                  ],
+                  [
+                    "2026-01-23",
+                    2813.0
+                  ],
+                  [
+                    "2026-01-30",
+                    2454.0
+                  ],
+                  [
+                    "2026-02-06",
+                    2202.0
+                  ],
+                  [
+                    "2026-02-13",
+                    2059.0
+                  ],
+                  [
+                    "2026-02-20",
+                    2007.0
+                  ],
+                  [
+                    "2026-02-27",
+                    1876.0
+                  ],
+                  [
+                    "2026-03-06",
+                    1838.0
+                  ],
+                  [
+                    "2026-03-13",
+                    1872.0
+                  ],
+                  [
+                    "2026-03-20",
+                    1818.0
+                  ],
+                  [
+                    "2026-03-27",
+                    1851.0
+                  ],
+                  [
+                    "2026-04-03",
+                    1900.0
+                  ],
+                  [
+                    "2026-04-10",
+                    1960.0
+                  ],
+                  [
+                    "2026-04-17",
+                    2063.0
+                  ],
+                  [
+                    "2026-04-24",
+                    2142.0
+                  ],
+                  [
+                    "2026-05-01",
+                    2205.0
+                  ],
+                  [
+                    "2026-05-08",
+                    2290.0
+                  ],
+                  [
+                    "2026-05-15",
+                    2391.0
+                  ],
+                  [
+                    "2026-05-22",
+                    2483.0
+                  ],
+                  [
+                    "2026-05-29",
+                    2578.0
+                  ],
+                  [
+                    "2026-06-05",
+                    2686.0
+                  ],
+                  [
+                    "2026-06-12",
+                    2759.0
+                  ],
+                  [
+                    "2026-06-19",
+                    2835.0
+                  ],
+                  [
+                    "2026-06-26",
+                    2922.0
+                  ],
+                  [
+                    "2026-07-03",
+                    2983.0
+                  ],
+                  [
+                    "2026-07-10",
+                    3024.0
+                  ],
+                  [
+                    "2026-07-17",
+                    3056.0
+                  ],
+                  [
+                    "2026-07-24",
+                    3084.0
+                  ],
+                  [
+                    "2026-07-31",
+                    3117.0
+                  ],
+                  [
+                    "2026-08-07",
+                    3153.0
+                  ],
+                  [
+                    "2026-08-14",
+                    3169.0
+                  ],
+                  [
+                    "2026-08-21",
+                    3184.0
+                  ],
+                  [
+                    "2026-08-28",
+                    3214.0
+                  ],
+                  [
+                    "2026-09-04",
+                    3254.0
+                  ],
+                  [
+                    "2026-09-11",
+                    3298.0
+                  ],
+                  [
+                    "2026-09-18",
+                    3351.0
+                  ],
+                  [
+                    "2026-09-25",
+                    3415.0
+                  ],
+                  [
+                    "2026-10-02",
+                    3500.0
+                  ],
+                  [
+                    "2026-10-09",
+                    3567.0
+                  ],
+                  [
+                    "2026-10-16",
+                    3644.0
+                  ],
+                  [
+                    "2026-10-23",
+                    3724.0
+                  ],
+                  [
+                    "2026-10-30",
+                    3801.0
+                  ]
+                ]
+              }
+            ],
+            "ecart_moyen_pct": 1.48,
+            "type": "eia"
+          },
           "positionnement": {
             "note": 75,
             "texte": "Position nette des gérants (managed money) de −225 359 contrats (−13,4 % de l’intérêt ouvert), percentile 1 sur 3 ans : position très vendeuse : lecture à contre-courant favorable",
@@ -7321,14 +8742,14 @@
           "Niveau historique (62/100) : Cours corrigé de l’inflation américaine au percentile 31 de sa plage sur 10 ans (plus bas 1,50, plus haut 9,34 en valeur nominale)."
         ],
         "arguments_contre": [
+          "Stocks par rapport à la normale (46/100) : Stocks de gaz naturel américains (48 États) à 3 801,0 Gpi³, +1,5 % par rapport à la moyenne sur 5 ans.",
           "Tendance et momentum (46/100) : Cours +12,6 % sur 3 mois, −31,2 % sur 12 mois, en dessous de sa moyenne 200 jours (3,04).",
-          "Moteurs macro (47/100) : Indicateur avancé de l'OCDE (G20) à 100,2 (−0,08 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +1,6 % sur 3 mois.",
-          "Contexte géopolitique (53/100) : 1 événement de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Levée des sanctions suisses contre des personnalités russes »)."
+          "Moteurs macro (47/100) : Indicateur avancé de l'OCDE (G20) à 100,2 (−0,08 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +1,6 % sur 3 mois."
         ],
-        "ce_qui_pourrait_me_donner_tort": "Le principal point faible : tendance et momentum (46/100) : Cours +12,6 % sur 3 mois, −31,2 % sur 12 mois, en dessous de sa moyenne 200 jours (3,04). Le scénario serait contredit par un hiver doux ou une production record qui gonfle les stocks.",
+        "ce_qui_pourrait_me_donner_tort": "Les signaux se compensent ; une rupture nette dans un sens (cours, stocks ou positionnement) suffirait à trancher. Risque propre : un hiver doux ou une production record qui gonfle les stocks.",
         "invalidations": [
-          "une clôture sous la moyenne 200 jours (3,04 $/MMBtu)",
-          "un passage de la courbe en contango au-delà de 2 % par an (aujourd'hui +12,1 %)"
+          "une clôture au-dessus du plus haut de 3 mois (3,30 $/MMBtu) avec au moins deux sous-notes favorables",
+          "une clôture sous le plus bas de 3 mois (2,60 $/MMBtu) avec au moins deux sous-notes défavorables"
         ],
         "supports": [
           {
@@ -7458,6 +8879,11 @@
             "date": "2026-11-06"
           },
           {
+            "sous_note": "Stocks par rapport à la normale",
+            "source": "EIA (département américain de l'Énergie), API v2",
+            "date": "2026-10-30"
+          },
+          {
             "sous_note": "Positionnement des investisseurs",
             "source": "CFTC, Commitments of Traders (disaggregated, contrats à terme), API Socrata",
             "date": "2026-11-03"
@@ -7478,7 +8904,10 @@
             "date": "2026-11-06"
           }
         ],
-        "precedent": null
+        "precedent": {
+          "note": 62.1,
+          "verdict": "Surpondérer"
+        }
       },
       {
         "cle": "gaz_europe",
@@ -7745,10 +9174,20 @@
           },
           "geopolitique": {
             "note": 71,
-            "texte": "4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Impact des frappes russes sur les infrastructures à Kyiv »)",
+            "texte": "4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes russes en Ukraine »)",
             "source": "agent géopolitique (data/geopolitique.json)",
             "date": "2026-11-07",
             "evenements": [
+              {
+                "titre": "Frappes aériennes russes en Ukraine",
+                "gravite": 4,
+                "pays": [
+                  "RU",
+                  "UA"
+                ],
+                "categorie": "Conflit armé",
+                "date": "2026-11-07"
+              },
               {
                 "titre": "Impact des frappes russes sur les infrastructures à Kyiv",
                 "gravite": 4,
@@ -7763,16 +9202,6 @@
                 "gravite": 4,
                 "pays": [
                   "US"
-                ],
-                "categorie": "Conflit armé",
-                "date": "2026-11-07"
-              },
-              {
-                "titre": "Frappes aériennes russes en Ukraine",
-                "gravite": 4,
-                "pays": [
-                  "RU",
-                  "UA"
                 ],
                 "categorie": "Conflit armé",
                 "date": "2026-11-07"
@@ -7803,7 +9232,7 @@
         },
         "arguments_pour": [
           "Tendance et momentum (95/100) : Cours +54,1 % sur 3 mois, +171,3 % sur 12 mois, au-dessus de sa moyenne 200 jours (56,50).",
-          "Contexte géopolitique (71/100) : 4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Impact des frappes russes sur les infrastructures à Kyiv »)."
+          "Contexte géopolitique (71/100) : 4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes russes en Ukraine »)."
         ],
         "arguments_contre": [
           "Niveau historique (27/100) : Cours corrigé de l’inflation américaine au percentile 88 de sa plage sur 9 ans (plus bas 3,89, plus haut 339,20 en valeur nominale).",
@@ -7930,7 +9359,10 @@
             "date": "2026-11-06"
           }
         ],
-        "precedent": null
+        "precedent": {
+          "note": 68.5,
+          "verdict": "Surpondérer"
+        }
       },
       {
         "cle": "ble",
@@ -8550,10 +9982,20 @@
           },
           "geopolitique": {
             "note": 74,
-            "texte": "5 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Impact des frappes russes sur les infrastructures à Kyiv »)",
+            "texte": "5 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes russes en Ukraine »)",
             "source": "agent géopolitique (data/geopolitique.json)",
             "date": "2026-11-07",
             "evenements": [
+              {
+                "titre": "Frappes aériennes russes en Ukraine",
+                "gravite": 4,
+                "pays": [
+                  "RU",
+                  "UA"
+                ],
+                "categorie": "Conflit armé",
+                "date": "2026-11-07"
+              },
               {
                 "titre": "Impact des frappes russes sur les infrastructures à Kyiv",
                 "gravite": 4,
@@ -8568,16 +10010,6 @@
                 "gravite": 4,
                 "pays": [
                   "US"
-                ],
-                "categorie": "Conflit armé",
-                "date": "2026-11-07"
-              },
-              {
-                "titre": "Frappes aériennes russes en Ukraine",
-                "gravite": 4,
-                "pays": [
-                  "RU",
-                  "UA"
                 ],
                 "categorie": "Conflit armé",
                 "date": "2026-11-07"
@@ -8652,7 +10084,7 @@
           }
         },
         "arguments_pour": [
-          "Contexte géopolitique (74/100) : 5 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Impact des frappes russes sur les infrastructures à Kyiv »).",
+          "Contexte géopolitique (74/100) : 5 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes russes en Ukraine »).",
           "Niveau historique (62/100) : Cours corrigé de l’inflation américaine au percentile 30 de sa plage sur 10 ans (plus bas 387,50, plus haut 1 348,00 en valeur nominale).",
           "Positionnement des investisseurs (55/100) : Position nette des gérants (managed money) de −87 126 contrats (−16,3 % de l’intérêt ouvert), percentile 26 sur 3 ans : position dans sa plage habituelle."
         ],
@@ -8796,7 +10228,10 @@
             "date": "2026-11-06"
           }
         ],
-        "precedent": null
+        "precedent": {
+          "note": 49.6,
+          "verdict": "Neutre"
+        }
       },
       {
         "cle": "mais",
@@ -9417,10 +10852,19 @@
           },
           "geopolitique": {
             "note": 74,
-            "texte": "5 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Impact des frappes russes sur les infrastructures à Kyiv »)",
+            "texte": "5 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes russes en Ukraine »)",
             "source": "agent géopolitique (data/geopolitique.json)",
             "date": "2026-11-07",
             "evenements": [
+              {
+                "titre": "Frappes aériennes russes en Ukraine",
+                "gravite": 4,
+                "pays": [
+                  "UA"
+                ],
+                "categorie": "Conflit armé",
+                "date": "2026-11-07"
+              },
               {
                 "titre": "Impact des frappes russes sur les infrastructures à Kyiv",
                 "gravite": 4,
@@ -9435,15 +10879,6 @@
                 "gravite": 4,
                 "pays": [
                   "US"
-                ],
-                "categorie": "Conflit armé",
-                "date": "2026-11-07"
-              },
-              {
-                "titre": "Frappes aériennes russes en Ukraine",
-                "gravite": 4,
-                "pays": [
-                  "UA"
                 ],
                 "categorie": "Conflit armé",
                 "date": "2026-11-07"
@@ -9518,7 +10953,7 @@
           }
         },
         "arguments_pour": [
-          "Contexte géopolitique (74/100) : 5 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Impact des frappes russes sur les infrastructures à Kyiv »).",
+          "Contexte géopolitique (74/100) : 5 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes russes en Ukraine »).",
           "Niveau historique (69/100) : Cours corrigé de l’inflation américaine au percentile 18 de sa plage sur 10 ans (plus bas 307,75, plus haut 818,25 en valeur nominale).",
           "Stocks par rapport à la normale (60/100) : Stocks mondiaux de fin de campagne 2026/27 à 21,2 % de la consommation (percentile 36 depuis 1995) ; révision du mois : +3,1 % sur les stocks."
         ],
@@ -9638,7 +11073,10 @@
             "date": "2026-11-06"
           }
         ],
-        "precedent": null
+        "precedent": {
+          "note": 52.3,
+          "verdict": "Neutre"
+        }
       },
       {
         "cle": "soja",
@@ -10437,7 +11875,10 @@
             "date": "2026-11-06"
           }
         ],
-        "precedent": null
+        "precedent": {
+          "note": 45.5,
+          "verdict": "Neutre"
+        }
       },
       {
         "cle": "cafe",
@@ -11134,7 +12575,10 @@
             "date": "2026-11-06"
           }
         ],
-        "precedent": null
+        "precedent": {
+          "note": 52.9,
+          "verdict": "Neutre"
+        }
       },
       {
         "cle": "sucre",
@@ -11855,7 +13299,10 @@
             "date": "2026-11-06"
           }
         ],
-        "precedent": null
+        "precedent": {
+          "note": 50.7,
+          "verdict": "Neutre"
+        }
       },
       {
         "cle": "cacao",
@@ -12561,7 +14008,10 @@
             "date": "2026-11-06"
           }
         ],
-        "precedent": null
+        "precedent": {
+          "note": 50.3,
+          "verdict": "Neutre"
+        }
       },
       {
         "cle": "coton",
@@ -13284,33 +14734,36 @@
             "date": "2026-11-06"
           }
         ],
-        "precedent": null
+        "precedent": {
+          "note": 52.5,
+          "verdict": "Neutre"
+        }
       }
     ],
     "publications": [
       {
         "source": "EIA, stocks pétroliers hebdomadaires",
         "rythme": "chaque mercredi (jeudi si jour férié), 10 h 30 à New York",
-        "derniere_donnee": null,
-        "nouvelle": false
+        "derniere_donnee": "2026-10-30",
+        "nouvelle": true
       },
       {
         "source": "EIA, stocks de gaz naturel",
         "rythme": "chaque jeudi, 10 h 30 à New York",
-        "derniere_donnee": null,
-        "nouvelle": false
+        "derniere_donnee": "2026-10-30",
+        "nouvelle": true
       },
       {
         "source": "CFTC, Commitments of Traders",
         "rythme": "chaque vendredi, 15 h 30 à New York (positions du mardi)",
         "derniere_donnee": "2026-11-03",
-        "nouvelle": true
+        "nouvelle": false
       },
       {
         "source": "USDA, WASDE et base PSD",
         "rythme": "une fois par mois, vers le 10",
         "derniere_donnee": "2026-10",
-        "nouvelle": true
+        "nouvelle": false
       }
     ],
     "flux_etf": {
