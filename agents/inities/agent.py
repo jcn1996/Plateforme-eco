@@ -28,6 +28,7 @@ from ..commun import sante
 from ..commun.journal import journal
 from ..commun.sortie import ecrire_json, enveloppe, lire_json
 from . import analyse as A
+from . import hors_us as H
 from .sources import Capture, FournisseurReel, FournisseurTest
 
 LOG = journal("agent-inities")
@@ -49,12 +50,13 @@ NOMS_SOURCES = {
     "amf_seuils": "AMF, base BDIF : franchissements de seuil",
     "dart": "DART (Corée), déclarations de participation (clé DART_API_KEY)",
     "edinet": "EDINET (Japon), déclarations de grands actionnaires (clé EDINET_API_KEY)",
-    "kap": "KAP (Turquie), annonces des sociétés",
-    "bse": "BSE (Inde), actionnaires de plus de 1 %",
+    "kap": "KAP (Turquie), notifications de franchissement de seuil (source secondaire)",
+    "nse_sast": "NSE (Inde), déclarations SAST (franchissements de 5 %)",
+    "nse_actionnariat": "NSE (Inde), répartition de l'actionnariat (actionnaires de plus de 1 %)",
     "chambre": "Chambre des représentants, déclarations de transactions",
     "senat": "Sénat, déclarations de transactions (efdsearch)",
 }
-SOURCES_COMPLET = ("sec_tickers", "edgar_index", "edgar_form4", "edgar_13d", "amf_dirigeants", "bafin", "amf_seuils", "dart", "edinet", "kap", "bse")
+SOURCES_COMPLET = ("sec_tickers", "edgar_index", "edgar_form4", "edgar_13d", "amf_dirigeants", "bafin")
 
 
 # ------------------------------------------------------------------ outils
@@ -363,86 +365,6 @@ def tickers_13f(f, col: Collecte, etat: dict, cfg: dict, par_nom: dict) -> None:
                 p["ticker"] = cache.get(p.get("cusip")) or par_nom.get(A.normaliser_nom(p.get("nom")))
 
 
-# ------------------------------------------------------------------ hors États-Unis
-
-def collecter_hors_us(f, col: Collecte, etat: dict, si: list[dict], cfg: dict, aujourdhui: date) -> None:
-    """Déclarations de franchissement de seuil des entités des super-investisseurs (Inde, Turquie, Corée, Japon, France)."""
-    ch = cfg["hors_us"]
-    liste = etat.setdefault("hors_us", [])
-    vus = {x["id"] for x in liste}
-    depuis = (aujourdhui - timedelta(days=ch["jours"])).isoformat()
-    alias = {inv["cle"]: inv.get("entites") or [inv["societe"]] for inv in si}
-    noms = {inv["cle"]: inv["nom"] for inv in si}
-
-    def ajouter(cle, pays, source, x, pct=None):
-        ident = f"{source}|{x.get('id')}|{cle}"
-        if ident in vus:
-            return
-        vus.add(ident)
-        liste.append({"id": ident, "investisseur": cle, "nom": noms[cle], "pays": pays, "societe": x.get("societe"), "ticker": x.get("ticker"),
-                      "pct": pct, "date": x.get("date"), "titre": x.get("titre"), "source": source, "url": x.get("url")})
-
-    # France : franchissements de seuil (AMF)
-    lus = etat.setdefault("spde_lus", {})
-    pages = []
-    for page in range(6):
-        r = col.appel("amf_seuils", lambda p=page: f.amf_liste("SPDE", depuis, p))
-        if not r:
-            break
-        pages += r
-        if len(r) < 50:
-            break
-    for x in [x for x in pages if x.get("numero") not in lus and x.get("chemin")][:cfg["europe"]["franchissements_max_par_execution"]]:
-        try:
-            texte = f.amf_pdf(x["chemin"])
-        except Exception:  # noqa: BLE001
-            continue
-        lus[x["numero"]] = x["publication"]
-        for cle, al in alias.items():
-            trouve = A.chercher_entites(texte, al)
-            if trouve:
-                ajouter(cle, "FR", "AMF", {"id": x["numero"], "societe": ", ".join(x["societes"]) or None, "date": x["publication"],
-                                           "titre": f"Franchissement de seuil déclaré par {trouve[0]}",
-                                           "url": f"https://bdif.amf-france.org/back/api/v1/documents/{x['chemin']}"}, trouve[1])
-    etat["spde_lus"] = {k: v for k, v in lus.items() if v >= (aujourdhui - timedelta(days=30)).isoformat()}
-
-    # Corée (DART) et Japon (EDINET) : déclarants comparés aux noms des entités
-    r = col.appel("dart", lambda: f.dart(depuis, aujourdhui.isoformat()))
-    for x in r or []:
-        for cle, al in alias.items():
-            if correspond(x.get("declarant"), al):
-                ajouter(cle, "KR", "DART", x)
-    for j in jours_ouvres(aujourdhui - timedelta(days=min(ch["jours"], 7)), aujourdhui):
-        r = col.appel("edinet", lambda j=j: f.edinet(j.isoformat()))
-        if r is None:  # clé absente (« non configurée ») ou panne : inutile d'insister
-            break
-        for x in r:
-            for cle, al in alias.items():
-                if correspond(x.get("declarant"), al):
-                    ajouter(cle, "JP", "EDINET", x)
-    # Turquie (KAP) : nom de l'entité dans le titre ou le résumé de l'annonce
-    r = col.appel("kap", lambda: f.kap(depuis, aujourdhui.isoformat()))
-    for x in r or []:
-        texte = " ".join(str(x.get(k) or "") for k in ("titre", "resume", "societe"))
-        for cle, al in alias.items():
-            trouve = A.chercher_entites(texte, al)
-            if trouve:
-                ajouter(cle, "TR", "KAP", x, trouve[1])
-    # Inde (BSE) : sociétés listées dans la config, actionnaires de plus de 1 %
-    codes = [(inv["cle"], c) for inv in si for c in (inv.get("hors_us") or {}).get("inde_bse", [])]
-    if not codes:
-        col.etats["bse"] = "non configurée"
-    for cle, code in codes:
-        texte = col.appel("bse", lambda c=code: f.bse(str(c)))
-        trouve = A.chercher_entites(texte or "", alias[cle])
-        if trouve:
-            ajouter(cle, "IN", "BSE", {"id": f"{code}-{aujourdhui:%Y-%m}", "societe": f"BSE {code}", "date": aujourdhui.isoformat(),
-                                       "titre": f"Actionnaire de plus de 1 % : {trouve[0]}",
-                                       "url": f"https://www.bseindia.com/stock-share-price/x/x/{code}/shareholding-pattern/"}, trouve[1])
-    limite = (aujourdhui - timedelta(days=ch["conservation_jours"])).isoformat()
-    etat["hors_us"] = sorted((x for x in liste if (x.get("date") or "") >= limite), key=lambda x: x.get("date") or "", reverse=True)
-
-
 # ------------------------------------------------------------------ élus
 
 def collecter_elus(f, col: Collecte, etat: dict, cfg: dict, aujourdhui: date) -> None:
@@ -522,8 +444,10 @@ def detentions(etat: dict, si: list[dict]) -> dict[str, list[dict]]:
         for p in x.get("positions") or []:
             if p.get("ticker"):
                 res[p["ticker"]].append({"cle": cle, "nom": noms[cle], "poids": p["poids"], "mouvement": p["mouvement"], "trimestre": x.get("periode")})
-    for h in etat.get("hors_us", []):
-        if h.get("ticker") and h["investisseur"] in noms and not any(y["cle"] == h["investisseur"] for y in res[h["ticker"]]):
+    for h in A.positions_hors_us(etat.get("hors_us", [])):
+        if h["statut"] != "détenue" or not h.get("ticker") or h["investisseur"] not in noms:
+            continue
+        if not any(y["cle"] == h["investisseur"] for y in res[h["ticker"]]):
             res[h["ticker"]].append({"cle": h["investisseur"], "nom": noms[h["investisseur"]], "poids": None, "mouvement": None, "pct_capital": h.get("pct")})
     return res
 
@@ -544,7 +468,8 @@ def vue_investisseurs(etat: dict, si: list[dict], cfg: dict) -> list[dict]:
             "valeur_totale": x.get("valeur_totale"), "nb_positions": x.get("nb_positions"),
             "principales": principales, "nouvelles": x.get("nouvelles", [])[:25], "renforcements": x.get("renforcements", [])[:25],
             "allegements": x.get("allegements", [])[:25], "sorties": x.get("sorties", [])[:25], "options": x.get("options", []),
-            "hors_us": [h for h in etat.get("hors_us", []) if h["investisseur"] == inv["cle"]][:30],
+            "positions_hors_us": [h for h in A.positions_hors_us(etat.get("hors_us", [])) if h["investisseur"] == inv["cle"]][:40],
+            "hors_us": [h for h in etat.get("hors_us", []) if h["investisseur"] == inv["cle"]][:40],
             "url": f"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK={inv['cik']}&type=13F-HR",
         })
     return res
@@ -588,6 +513,14 @@ def recap_markdown(jour: date, d: dict, nouveaux: list[dict], etats: dict) -> st
     for i in d["super_investisseurs"]:
         l.append(f"- {i['nom']} ({i['societe']}) : {i['statut']}, {i['trimestre_texte']}, déposé le {A.date_fr(i['date_depot'])}, "
                  f"{i['nb_positions'] or 0} positions, {len(i['nouvelles'])} nouvelles")
+    l += ["", "## Positions hors États-Unis", "", f"_{A.MENTION_HORS_US}._", ""]
+    l += [f"- {x['nom']} — {x['societe']} ({A.PAYS_FR.get(x['pays'], x['pays'])}) : {A.fr(x['pct'], 2) + ' %' if x.get('pct') is not None else 'n. d.'}, "
+          f"{x['statut']}, {x['source']} du {A.date_fr(x.get('date'))} ({x.get('entite') or '—'})" for x in d["positions_hors_us"]] or ["- aucune"]
+    l += ["", "### Recherche effectuée", ""]
+    for cle, s in (d.get("recherche_hors_us") or {}).get("sources", {}).items():
+        per = f"du {A.date_fr(s['periodes'][0])} au {A.date_fr(s['periodes'][1])}" if s.get("periodes") else "aucune période"
+        l.append(f"- {s['source']} : {s['etat']} ; {per} ; {s['documents_examines']} document(s) examiné(s)"
+                 + (f" ; {s['detail']}" if s.get("detail") else "") + f" ; trouvé : {'; '.join(s['trouves']) or 'rien'}")
     l += ["", "## Nouveaux 13D (7 derniers jours)", ""]
     recents = [a for a in d["activistes"] if (jour - A.jour(a["depot"])).days <= 7 and a["formulaire"] == "13D"]
     l += [f"- {a['societe']} : {a['investisseur']} ({A.fr(a['pct'], 1)} %)" for a in recents[:20]] or ["- aucun"]
@@ -597,15 +530,20 @@ def recap_markdown(jour: date, d: dict, nouveaux: list[dict], etats: dict) -> st
     return "\n".join(l) + "\n"
 
 
-def sources_sante(etats: dict) -> list[dict]:
+def sources_sante(etats: dict, secondaires: tuple = ()) -> list[dict]:
     res = []
     for nom, etat in etats.items():
+        if nom in secondaires and etat != "non configurée":
+            # Source secondaire (KAP) : affichée pour information, sans effet sur le statut de l'agent
+            res.append({"nom": NOMS_SOURCES.get(nom, nom), "etat": "ok" if etat == "ok" else "échec" if etat.startswith("erreur") else "partielle",
+                        "detail": None if etat == "ok" else etat.split(" : ", 1)[-1], "secondaire": True})
+            continue
         n = NOMS_SOURCES.get(nom, nom)
         if etat == "ok":
             res.append({"nom": n, "etat": "ok", "detail": None})
         elif etat == "non configurée":
-            detail = {"dart": "secret DART_API_KEY absent : source ignorée", "edinet": "secret EDINET_API_KEY absent : source ignorée",
-                      "bse": "aucune société indienne listée dans config/super_investisseurs.json",
+            detail = {"dart": "clé non configurée (secret DART_API_KEY absent) : source ignorée",
+                      "edinet": "clé non configurée (secret EDINET_API_KEY absent) : source ignorée",
                       "senat": "désactivée (elus.senat_actif) : le site impose d'accepter ses conditions d'utilisation"}.get(nom, "secret SEC_USER_AGENT absent : source ignorée")
             res.append({"nom": n, "etat": "non configurée", "detail": detail})
         elif etat == "vide":
@@ -617,11 +555,11 @@ def sources_sante(etats: dict) -> list[dict]:
     return res
 
 
-def indicateurs_sante(etats: dict) -> dict:
+def indicateurs_sante(etats: dict, secondaires: tuple = ()) -> dict:
     """Une source = un indicateur : l'agent n'est dégradé que si une source qui fonctionnait lors de la dernière
     exécution saine est perdue (une source jamais joignable, comme KAP, ne le rend pas dégradé)."""
     return {NOMS_SOURCES.get(k, k): {"valides": [k] if v in ("ok",) or v.startswith("partielle") else [], "configurees": [k]}
-            for k, v in etats.items() if v != "non configurée"}
+            for k, v in etats.items() if v != "non configurée" and k not in secondaires}
 
 
 def main(argv=None) -> int:
@@ -672,9 +610,10 @@ def main(argv=None) -> int:
                 col.etats[s] = "non configurée" if not sec_ok else "erreur : correspondance ticker ↔ CIK indisponible"
         ops += collecter_amf_dd(f, col, etat, cfg, aujourdhui, ctx)
         ops += collecter_bafin(f, col, cfg, aujourdhui, ctx, etat)
-        collecter_hors_us(f, col, etat, si, cfg, aujourdhui)
     else:
         ops, n13 = [], []
+    # Positions hors États-Unis : dans les deux modes (le week-end avance le rattrapage de l'historique)
+    recherche = H.collecter(f, col, etat, si, cfg, aujourdhui, ctx)
     if sec_ok:
         nouveaux_13f = collecter_13f(f, col, etat, si, cfg, aujourdhui)
         tickers_13f(f, col, etat, cfg, par_nom)
@@ -759,6 +698,8 @@ def main(argv=None) -> int:
         "activistes": [{k: x.get(k) for k in ("depot", "formulaire", "societe", "ticker", "cik", "investisseur", "personnes", "pct", "date_evenement",
                                               "url", "super_investisseur", "suivie")} for x in etat["activistes"]][:300],
         "hors_us": etat.get("hors_us", [])[:200],
+        "positions_hors_us": A.positions_hors_us(etat.get("hors_us", [])),
+        "recherche_hors_us": recherche,
         "elus": etat.get("elus", [])[:500],
         "societes": societes(scores, conv, etat["activistes"], ventes, etat),
         "methode": ("Score « achats d'initiés » /100 : achat opportuniste plutôt que routinier (25), achats groupés sur 30 jours (25), "
@@ -785,14 +726,16 @@ def main(argv=None) -> int:
     chemin_journal = data / "journal" / FICHIER_JOURNAL
     j = lire_json(chemin_journal) or {"meta": {}, "donnees": []}
     j["donnees"] = (j.get("donnees", []) + [{"genere_le": objet["meta"]["genere_le"], "mode": args.mode, "etat_des_sources": col.etats,
-                                             "achats_retenus": len(nouveaux_achats), "signaux": [s["titre"] for s in nouveaux]}])[-90:]
+                                             "achats_retenus": len(nouveaux_achats), "signaux": [s["titre"] for s in nouveaux],
+                                             "recherche_hors_us": recherche}])[-90:]
     j["meta"] = {**j.get("meta", {}), "genere_le": objet["meta"]["genere_le"], "source": "agent-inities", "version_agent": VERSION_AGENT,
                  "description": "État des sources et signaux, à chaque exécution"}
     ecrire_json(chemin_journal, j)
     maintenant = (datetime.combine(aujourdhui, datetime.min.time(), timezone.utc).replace(hour=6, minute=40) if args.date
                   else datetime.now(timezone.utc))
-    bloc = sante.bloc_sante("inities", "Agent initiés", 9, "agent-inities.yml", sources_sante(col.etats), maintenant,
-                            (j.get("meta") or {}).get("sante"), indicateurs=indicateurs_sante(col.etats))
+    secondaires = tuple(cfg["hors_us"]["sources_secondaires"])
+    bloc = sante.bloc_sante("inities", "Agent initiés", 9, "agent-inities.yml", sources_sante(col.etats, secondaires), maintenant,
+                            (j.get("meta") or {}).get("sante"), indicateurs=indicateurs_sante(col.etats, secondaires))
     sante.enregistrer_sante(chemin_journal, bloc, forcer=True)
 
     LOG.info("Achats retenus : %d nouveaux ; %d sociétés notées ; %d super-investisseurs ; %d 13D ; %d opérations d'élus",

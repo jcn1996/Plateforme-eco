@@ -149,6 +149,22 @@ class TestAutresSources(unittest.TestCase):
         self.assertEqual([(o["ticker"], o["type"], o["date_operation"]) for o in ops],
                          [("AAPL", "achat", "2026-09-14"), ("MSFT", "vente partielle", "2026-10-01")])
 
+    def test_actionnariat_xbrl(self):
+        xml = json.loads((DONNEES / "nse_xbrl.json").read_text(encoding="utf-8"))["https://nsearchives.nseindia.com/x/edel.xml"]
+        shp = A.lire_actionnariat_xbrl(xml)
+        self.assertEqual(shp["date"], "2026-09-30")
+        self.assertIn({"nom": "Pabrai Wagons Fund", "pct": 1.54, "actions": 14572000.0, "categorie": "Cat1"}, shp["actionnaires"])
+
+    def test_pourcentage_kap(self):
+        self.assertEqual(A.pct_kap("paylarım 05/11/2026 tarihi itibariyle %.6,25 sınırına ulaşmıştır."), 6.25)
+        self.assertEqual(A.pct_kap("sermayedeki paylarımız %5,40 sınırına ulaşmıştır"), 5.4)
+
+    def test_nom_seul_compare(self):
+        al = ["Pabrai", "Dalal Street, LLC", "Dhandho India Zero Fee Fund"]
+        self.assertEqual(A.nom_correspond("Pabrai Investment funds along with pac", al), "Pabrai")
+        self.assertEqual(A.nom_correspond("DHANDHO INDIA ZERO FEE FUND OFFSHORE LTD", al), "Dhandho India Zero Fee Fund")
+        self.assertIsNone(A.nom_correspond("Dalal Street Investments Mumbai Pvt Ltd", al))  # nom courant en Inde
+
     def test_seuils(self):
         self.assertEqual(A.chercher_entites("Dalal Street, LLC a franchi le seuil de 5 % et détient 5,12 % du capital", ["Dalal Street"])[1], 5.12)
         self.assertEqual(A.chercher_entites("Pabrai Investment Fund 3 paylarında %5,40 oranına", ["Pabrai Investment Fund"])[1], 5.4)
@@ -188,7 +204,7 @@ class TestAgent(unittest.TestCase):
         self.assertEqual(inv["burry"]["statut"], "inactif")
         self.assertEqual(inv["ackman-ancien"]["statut"], "13F-NT")
         self.assertEqual(inv["pabrai"]["trimestre_texte"], "T3 2026")
-        self.assertEqual({h["pays"] for h in inv["pabrai"]["hors_us"]}, {"FR", "TR"})
+        self.assertEqual({h["pays"] for h in inv["pabrai"]["hors_us"]}, {"FR", "TR", "IN"})
         self.assertEqual(d["mentions"]["13f"], "13F : positions américaines uniquement, avec jusqu'à 45 jours de retard")
         conv = {c["ticker"]: c for c in d["conviction"]}
         self.assertEqual(conv["SMLC"]["nombre"], 2)
@@ -233,6 +249,60 @@ class TestAgent(unittest.TestCase):
         self.assertEqual(d["dirigeants"]["societes"], [])
         self.assertTrue(d["elus"])
         self.assertEqual(d["super_investisseurs"][0]["trimestre_texte"], "T3 2026")
+
+    def test_positions_hors_us(self):
+        d = self.lancer()["donnees"]
+        pos = {(p["pays"], p["societe"]): p for p in d["positions_hors_us"] if p["investisseur"] == "pabrai"}
+        edel = pos[("IN", "Edelweiss Financial Services Limited")]
+        # Cession SAST sous 5 % en 2024, puis actionnaire de plus de 1 % au 30/09/2026 : position actuelle 1,54 %
+        self.assertEqual((edel["pct"], edel["statut"], edel["entite"], edel["date"]), (1.54, "détenue", "Pabrai Wagons Fund", "2026-09-30"))
+        self.assertEqual(pos[("IN", "Testco Industries Limited")]["statut"], "détenue")
+        self.assertEqual((pos[("TR", "EXTKS")]["pct"], pos[("TR", "EXTKS")]["ticker"]), (5.4, "EXTKS.IS"))
+        self.assertEqual(pos[("FR", "EXEMPLE SA")]["pct"], 5.12)
+        self.assertNotIn(("IN", "Autre Limited"), pos)  # « Dalal Street » d'un autre déclarant
+        # Rain : cession SAST à 3,96 % en 2024, absente des actionnaires de plus de 1 % au 30/09/2026
+        rain = pos[("IN", "Rain Industries Limited")]
+        self.assertEqual((rain["statut"], rain["type"], rain["date"], rain["pct"]), ("sous le seuil", "sortie", "2026-09-30", None))
+        # Journal de la recherche : ce qui a été cherché, sur quelle période, et trouvé
+        r = d["recherche_hors_us"]
+        self.assertIn("Pabrai", r["noms_cherches"]["pabrai"])
+        sast = r["sources"]["nse_sast"]
+        self.assertEqual(sast["periodes"], ["2021-01-01", JOUR])
+        self.assertEqual(sast["documents_examines"], 5)
+        self.assertEqual(len(sast["trouves"]), 3)
+        self.assertIn("clé non configurée", r["sources"]["dart"]["detail"])
+        self.assertIn("clé non configurée", r["sources"]["edinet"]["detail"])
+        self.assertEqual(r["sources"]["kap"]["documents_examines"], 2)  # deux notifications DKB lues, rapport financier ignoré
+        etat = json.loads((self.data / "inities" / "etat.json").read_text(encoding="utf-8"))
+        self.assertEqual(etat["curseurs_hors_us"]["nse_sast"], "2021-01-01")  # historique entièrement rattrapé
+        self.assertLess(etat["curseurs_hors_us"]["kap"], "2026-10-27")  # rattrapage KAP commencé
+        # Conviction : la position indienne compte pour la société (ticker NSE)
+        self.assertEqual(d["societes"]["EDELWEISS.NS"]["super_investisseurs"][0]["pct_capital"], 1.54)
+        recap = (self.data / "recap" / f"inities-{JOUR}.md").read_text(encoding="utf-8")
+        self.assertIn("Recherche effectuée", recap)
+        self.assertIn("Pabrai Wagons Fund", recap)
+
+    def test_sortie_sous_1_pct(self):
+        self.lancer()
+        # Trimestre suivant : Pabrai ne figure plus parmi les actionnaires de plus de 1 % d'Edelweiss
+        chemin = self.donnees / "nse_actionnariat.json"
+        d = json.loads(chemin.read_text(encoding="utf-8"))
+        d["EDELWEISS"].insert(0, {"date": "31-DEC-2026", "id": "220001", "xbrl": "https://nsearchives.nseindia.com/x/edel-t4.xml",
+                                  "societe": "Edelweiss Financial Services Limited", "depot": "15-JAN-2027"})
+        chemin.write_text(json.dumps(d), encoding="utf-8")
+        d = self.lancer("2027-01-20")["donnees"]
+        edel = next(p for p in d["positions_hors_us"] if p["societe"] == "Edelweiss Financial Services Limited")
+        self.assertEqual((edel["statut"], edel["type"], edel["date"]), ("sous le seuil", "sortie", "2026-12-31"))
+
+    def test_kap_secondaire_ne_degrade_pas(self):
+        (self.donnees / "kap_liste.json").unlink()
+        self.lancer()
+        j = json.loads((self.data / "journal" / "agent-inities.json").read_text(encoding="utf-8"))
+        s = j["meta"]["sante"]
+        kap = next(x for x in s["sources"] if x["nom"].startswith("KAP"))
+        self.assertEqual((kap["etat"], kap["secondaire"]), ("échec", True))
+        self.assertFalse(s["degrade"])
+        self.assertEqual(j["donnees"][-1]["recherche_hors_us"]["sources"]["kap"]["etat"][:6], "erreur")
 
     def test_source_en_panne(self):
         (self.donnees / "bafin.json").unlink()

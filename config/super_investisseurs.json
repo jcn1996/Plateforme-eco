@@ -1,11 +1,12 @@
 {
-  "_commentaire": "Super-investisseurs suivis par l'agent initiés (rapports 13F trimestriels de la SEC et, hors des États-Unis, déclarations de franchissement de seuil). « cik » : identifiant EDGAR de l'entité qui dépose le 13F (vérifié le 07/11/2026). « entites » : noms sous lesquels l'investisseur apparaît dans les déclarations hors États-Unis (franchissements de seuil, actionnaires de plus de 1 %), en minuscules ou majuscules indifféremment. « hors_us » (facultatif) : sociétés à vérifier là où il faut interroger société par société (Inde : code BSE). Pour ajouter un investisseur : copier un bloc, renseigner le CIK (https://www.sec.gov/cgi-bin/browse-edgar?company=NOM&type=13F-HR).",
+  "_commentaire": "Super-investisseurs suivis par l'agent initiés (rapports 13F trimestriels de la SEC et, hors des États-Unis, déclarations de franchissement de seuil). « cik » : identifiant EDGAR de l'entité qui dépose le 13F (vérifié le 07/11/2026). « entites » : noms sous lesquels l'investisseur apparaît dans les déclarations hors États-Unis (franchissements de seuil, actionnaires de plus de 1 %), en minuscules ou majuscules indifféremment. « hors_us » (facultatif) : sociétés à vérifier là où il faut interroger société par société (Inde : symboles NSE, « inde_nse » ; les sociétés repérées par les déclarations SAST et les sociétés indiennes de l'agent entreprises sont ajoutées automatiquement). Pour ajouter un investisseur : copier un bloc, renseigner le CIK (https://www.sec.gov/cgi-bin/browse-edgar?company=NOM&type=13F-HR).",
   "investisseurs": [
     {
       "cle": "pabrai", "nom": "Mohnish Pabrai", "societe": "Dalal Street, LLC", "cik": "0001549575",
-      "entites": ["Pabrai Investment Fund", "Pabrai Investment Funds", "Dalal Street", "Pabrai Wagons Fund", "Pabrai Wagons", "Mohnish Pabrai", "PABRAI MOHNISH"],
+      "entites": ["Pabrai", "Dalal Street, LLC", "Dalal Street LLC", "Dhandho India Zero Fee Fund", "Dhandho", "파브라이", "パブライ"],
+      "_entites": "« Pabrai » couvre Pabrai Investment Fund(s) II / 3 / IV, Pabrai Investments Funds, Pabrai Wagons Fund et Mohnish Pabrai ; « Dalal Street » seul est exclu (nom courant en Inde, et adresse de la BSE) ; « Dhandho India Zero Fee Fund » (LP et Offshore) apparaît avec eux dans les déclarations SAST de la NSE ; les noms en coréen et en japonais couvrent les déclarations DART et EDINET déposées en translittération.",
       "note": "Investi en grande partie hors des États-Unis (Inde, Turquie, Corée, Japon) : le 13F ne montre qu'une petite partie du portefeuille.",
-      "hors_us": {"inde_bse": []}
+      "hors_us": {"inde_nse": ["EDELWEISS", "RAIN", "SUNTECK"]}
     },
     {"cle": "buffett", "nom": "Warren Buffett (Greg Abel)", "societe": "Berkshire Hathaway Inc.", "cik": "0001067983",
      "entites": ["Berkshire Hathaway", "National Indemnity"]},
