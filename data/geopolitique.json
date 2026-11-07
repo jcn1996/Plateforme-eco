@@ -1,11 +1,11 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-07T17:16:50Z",
+    "genere_le": "2026-11-07T18:16:33Z",
     "source": "agent-geopolitique",
     "fictif": false,
     "version_agent": "1.0",
-    "mise_a_jour_precedente": "2026-11-07T16:19:21Z",
+    "mise_a_jour_precedente": "2026-11-07T17:16:50Z",
     "etat_des_sources": {
       "GDELT, API DOC 2.0 (articles par thème)": "échec",
       "GDELT 2.0, fichiers d'événements géolocalisés (15 min)": "ok",
@@ -43,6 +43,484 @@
     "mode_ia": "gemini",
     "avertissement_ia": null,
     "evenements": [
+      {
+        "id": "theme-evt-774117620112",
+        "titre": "Frappes aériennes et militaires au Yémen",
+        "titre_origine": "Yémen: les Houthis font état de 20 morts dans des frappes sur un marché",
+        "categorie": "conflit",
+        "titre_langue": null,
+        "mention": null,
+        "categorie_libelle": "Conflit armé",
+        "pays": [
+          "YE",
+          "SA"
+        ],
+        "pays_noms": [
+          "Yémen",
+          "Arabie saoudite"
+        ],
+        "mondial": false,
+        "pays_suivis": [
+          "SA"
+        ],
+        "lieux": [],
+        "lieux_noms": [],
+        "theme": true,
+        "chronologie": [
+          {
+            "id": "evt-774117620112",
+            "date": "2026-11-07T17:21:15Z",
+            "titre": "Frappes saoudiennes au Yémen : vingt-deux morts recensés près de Sanaa",
+            "gravite": 4,
+            "resume": "Des frappes aériennes attribuées à l'Arabie saoudite ont causé la mort de vingt-deux personnes dans la région de Sanaa au Yémen selon les informations communiquées par les autorités houthistes.",
+            "nb_sources": 12,
+            "source": "https://news.google.com/rss/articles/CBMirwFBVV95cUxQWmQtX2VsVGZJV1RwMUI4Q1hGQUpULVIzYjlGZkhXNWNkN2ZFQ2Vxd0RKSHVUV29OVXZ5dWtDV29CZ2E5d1NGNTA2WExseTFpLWhVdkVQSVFiSlExenVobWprMVNGYzhrWjBuelpRSC1RUi14eDNiLUd2a2pHVFdHT2JES1VUbzYtTHJTYTF4LTk4SGhrMUxQa05KYjVJRDJaSDNWU25xZ2UzTHNNZV80?oc=5"
+          },
+          {
+            "id": "evt-e43e3bba3e01",
+            "date": "2026-11-07T18:00:00Z",
+            "titre": "Frappes aériennes dans la province de Taïz au Yémen",
+            "gravite": 3,
+            "resume": "Des frappes aériennes attribuées à la coalition saoudienne ont touché un marché dans la province de Taïz, faisant de nombreuses victimes selon les autorités houthies.",
+            "nb_sources": 12,
+            "source": "https://news.google.com/rss/articles/CBMirwFBVV95cUxPTVZQdmEzUzJEak1DS2RrRE9lMTdLbktQQmtRTWIzMmVVck84bXpKa3VyVF9rU2wwZ1RRVzhWSHRGei1udEw1TTIyeWk2RU42UFFOWWdrX2piZlRtMEtlbV9HX0xBeFU3d3RiYlRKZVZwNjdpcEFLOEhBRDhmS0xFUlhGUmxabEU2TmlNX0Z3TnJmR0hKZnBZUVB2UDNxUVV2U0lmT2lnR2dvdVoxa1M4?oc=5"
+          }
+        ],
+        "regions": [
+          "moyen_orient"
+        ],
+        "gravite": 4,
+        "gravite_regles": 4,
+        "note_gravite": null,
+        "ia": true,
+        "modele": "gemini-3.5-flash-lite",
+        "analyse_le": "2026-11-07T14:16:33Z",
+        "resume": [
+          {
+            "texte": "Des frappes aériennes attribuées à la coalition saoudienne ont touché un marché dans la province de Taïz, faisant de nombreuses victimes selon les autorités houthies.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMiyAFBVV95cUxNMHhEUTRRU1ZZa3pGc3hDM2ZlNHZvcFlzSzZTdXA3c0FvYWRxY05ERkxmdmlqOGFjTDd1Q3VlcnFiZTd1X0NOQlZaTXdFbXp5MDRkVHF2SjZVRnFRdk9WZllweG1tcEZxSFhGa3hYSnMtS3RUVG8yUU03Q1oxcHU1UVBKQlg0c1NQT255d0FWVC02MENBa2QwNkFRazZBbktZUkVJN2dZY1hZVDNkbUlyUUxDV1RyaXhyYXRISzFtX3FMT180SnM1TA?oc=5",
+              "https://news.google.com/rss/articles/CBMiwAFBVV95cUxNUW5aS2JKODd3YzJxWWJBTzVLS3lTWm9mSjVCbGo5SjZFbXlpVVhBbHJNNlNKa1lPSmVINUpBVExUek1wRENnQWR5WEtuS0dYSUFzcTVPVDdqQkUtWG5tQmk5RmNJSDdXaE16dl94aFBMc1IzMV9KWTdmbllsZ1c5cWZuT3dOVDJuWDVKRlBmSXBaRkFkTkpRWDVKNDRWNW9obTdKU3RaQXFOSkx5S1hjYWN4dDh4eHJ2SVNBMnRtWVHSAdYBQVVfeXFMTmpsdVJ0VC1ZS2w2NjNEY3dFakxxT3d4dC1DUERSSGpSTUhlZmg2cnFlc2YyMmlFWTkzOTRvTElTby0xdTJxaXpuSzlrLXhPVHctZ0VtdnRwR09BZHczS3kxc2FnLVhpNENkdFdWNG0tRXIwYm9GX0haaHlBbmg1VkNuNUdHRndvZkNpREp0M3hYWmtOSFV1RnFsQ29mQUlsQWt6WEV4SDJ0RWc3djA3UzYwUkNVUE54UlZsbzRNTElpQVEzSzJFcGNsc2RHWmNrMVJvZjBzdw?oc=5",
+              "https://news.google.com/rss/articles/CBMijAFBVV95cUxQb1NQd1Y2UmgtSDRfc01IM3c0X3hXdW1ORTNJakFRcElZX2REaEhkQXV2SHBGeF9ZNWZHYS1rLUtQUGRxNXZkTGtEaTB4LVlpNGd4bHVzQ2NRbi05M2N0azBpellwdFFLS0phZ0hmNUxDamFMeU96NVJkNWpWVE4tNDBRMktuS1F6c1JNbA?oc=5"
+            ]
+          },
+          {
+            "texte": "Le bilan des autorités sanitaires locales fait état de plusieurs dizaines de morts à la suite de cette offensive.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMiyAFBVV95cUxNMHhEUTRRU1ZZa3pGc3hDM2ZlNHZvcFlzSzZTdXA3c0FvYWRxY05ERkxmdmlqOGFjTDd1Q3VlcnFiZTd1X0NOQlZaTXdFbXp5MDRkVHF2SjZVRnFRdk9WZllweG1tcEZxSFhGa3hYSnMtS3RUVG8yUU03Q1oxcHU1UVBKQlg0c1NQT255d0FWVC02MENBa2QwNkFRazZBbktZUkVJN2dZY1hZVDNkbUlyUUxDV1RyaXhyYXRISzFtX3FMT180SnM1TA?oc=5",
+              "https://news.google.com/rss/articles/CBMiwAFBVV95cUxNUW5aS2JKODd3YzJxWWJBTzVLS3lTWm9mSjVCbGo5SjZFbXlpVVhBbHJNNlNKa1lPSmVINUpBVExUek1wRENnQWR5WEtuS0dYSUFzcTVPVDdqQkUtWG5tQmk5RmNJSDdXaE16dl94aFBMc1IzMV9KWTdmbllsZ1c5cWZuT3dOVDJuWDVKRlBmSXBaRkFkTkpRWDVKNDRWNW9obTdKU3RaQXFOSkx5S1hjYWN4dDh4eHJ2SVNBMnRtWVHSAdYBQVVfeXFMTmpsdVJ0VC1ZS2w2NjNEY3dFakxxT3d4dC1DUERSSGpSTUhlZmg2cnFlc2YyMmlFWTkzOTRvTElTby0xdTJxaXpuSzlrLXhPVHctZ0VtdnRwR09BZHczS3kxc2FnLVhpNENkdFdWNG0tRXIwYm9GX0haaHlBbmg1VkNuNUdHRndvZkNpREp0M3hYWmtOSFV1RnFsQ29mQUlsQWt6WEV4SDJ0RWc3djA3UzYwUkNVUE54UlZsbzRNTElpQVEzSzJFcGNsc2RHWmNrMVJvZjBzdw?oc=5"
+            ]
+          }
+        ],
+        "actifs": [
+          {
+            "actif": "pétrole",
+            "sens": "hausse",
+            "texte": "L'intensification des affrontements au Yémen et l'implication de l'Arabie saoudite font craindre des perturbations sur l'approvisionnement énergétique régional.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMizAFBVV95cUxOaVJ6NFJXMTRXVU9raVE3Z2tpNTRVVTRURy1vZjdQXy1YWk1qZHlPM1RlUldjdVk1d1ZGanF4MzZxdmM5WmdQLTVvRktyaDRGUm1hbFR4d041R2hJQUdBSG9hTmY5VUZnMTV2VGZndTAyVGZvM3FEU2Yyc3RPVFdyUy00clFyZk5aaEMwNUpWazVneFZQRXJIcWpHSEhJLVpVOEExZlpYTTJjVTZJQ2JTMHItQ0xxNUVUNEItSVhURnd1NklOMGJETm5pVzg?oc=5",
+              "https://news.google.com/rss/articles/CBMivgFBVV95cUxNUjJXYVV2M2FOSm15aUhsalRpWHhYbTV4ajZaMWdSYUpsbV83Q0lOaEw1bTVERXlrbFR1T0tyODItZGNwQmp4RGJTSlJKRVVlQ0YxVWRnczhzRzVPTEcyVTQ0a3c2eEd0ZzY0dUpTLWExWFpHV3liZzJwNTQ0cE9JQmkyRFRENkxPYTZJWFdCOExtdF9qYnFIQ3pVeU9tRGNVaVhkZGl0bzhjeXB6TlpkR0NaZ3BKUnhsSnhSOUJn?oc=5"
+            ]
+          }
+        ],
+        "horizon": "jours",
+        "confiance": "élevée",
+        "contre": [
+          {
+            "texte": "Une absence de répercussion sur les infrastructures de production et de transport pétrolier pourrait limiter l'impact sur les marchés des hydrocarbures.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMizAFBVV95cUxOaVJ6NFJXMTRXVU9raVE3Z2tpNTRVVTRURy1vZjdQXy1YWk1qZHlPM1RlUldjdVk1d1ZGanF4MzZxdmM5WmdQLTVvRktyaDRGUm1hbFR4d041R2hJQUdBSG9hTmY5VUZnMTV2VGZndTAyVGZvM3FEU2Yyc3RPVFdyUy00clFyZk5aaEMwNUpWazVneFZQRXJIcWpHSEhJLVpVOEExZlpYTTJjVTZJQ2JTMHItQ0xxNUVUNEItSVhURnd1NklOMGJETm5pVzg?oc=5"
+            ]
+          }
+        ],
+        "sources_independantes": 3,
+        "sources": [
+          {
+            "titre": "Airstrikes kill more than 2 dozen people near Yemen's capital, Houthis say",
+            "url": "https://news.google.com/rss/articles/CBMirwFBVV95cUxPTVZQdmEzUzJEak1DS2RrRE9lMTdLbktQQmtRTWIzMmVVck84bXpKa3VyVF9rU2wwZ1RRVzhWSHRGei1udEw1TTIyeWk2RU42UFFOWWdrX2piZlRtMEtlbV9HX0xBeFU3d3RiYlRKZVZwNjdpcEFLOEhBRDhmS0xFUlhGUmxabEU2TmlNX0Z3TnJmR0hKZnBZUVB2UDNxUVV2U0lmT2lnR2dvdVoxa1M4?oc=5",
+            "domaine": "wral.com",
+            "date": "2026-11-07T18:00:00Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
+            "titre": "Houthis report 25 killed in Yemen strikes",
+            "url": "https://www.aljazeera.com/video/newsfeed/2026/11/7/houthis-report-25-killed-in-yemen-strikes?traffic_source=rss",
+            "domaine": "aljazeera.com",
+            "date": "2026-11-07T17:39:23Z",
+            "officiel": false,
+            "source": "Al Jazeera (RSS)"
+          },
+          {
+            "titre": "Houthis say at least 25 killed in Saudi airstrike",
+            "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxOYm1zVnBWa1VwNWl2RmE2ZDZwbG5jZW9yQzJVRm5KUHRaRi1TWmhoWDNWTXc2VU1lWUYzc1ZSMGc3cTRTeVhxOF9aMUVQamd3UWlkUERNRWtJVXBET05tbzU1RE5uem5lT2VESUdSeDlfQ3lhRjJYb21VcVlaOEdaY0pkdVRnWG93TkxtS1V3?oc=5",
+            "domaine": "operativmm.az",
+            "date": "2026-11-07T17:19:24Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
+            "titre": "Houthis say at least 25 killed in Saudi air strike",
+            "url": "https://www.bbc.co.uk/news/articles/c65yn1v99ypmo?at_medium=RSS&at_campaign=rss",
+            "domaine": "bbc.co.uk",
+            "date": "2026-11-07T17:09:24Z",
+            "officiel": false,
+            "source": "BBC News, monde (RSS)"
+          },
+          {
+            "titre": "Airstrikes kill more than 2 dozen people near Yemen's capital, Houthis say",
+            "url": "https://news.google.com/rss/articles/CBMi9gFBVV95cUxOc2tyQ2ZDSFlQR3l1TjVYSGkweU5iVE9xQVVRcFQwQnBxVG9TRFRUSWg1c3VWZzBGS1RGcEdxZTRIUjZvYjhycHJBZUJYX2h0TFFBWXdBZk5QS0I3WHBFTGEtQmFaWUpRNHMtdklwY28taGxtYUo3eW4xVVVJUUstekdocjc0XzBvNVJZNEVaWTM3WS1MVTgteldUYU0zckRRRzluQWlaeDJFVUdtVHdLai10ZEhDWlRpWTU2T3pOdFJCV01nUFpNQVMtcGI3ZDVydHNGbl96VzFOVHBJRHVoRURwY1RXRE56ZXZQM204dk8zOVAxR0E?oc=5",
+            "domaine": "guardonline.com",
+            "date": "2026-11-07T16:42:05Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
+            "titre": "An airstrike has killed 25 people near Yemen’s capital, Houthi official says",
+            "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxQSldBcXptZTgxNEZteWg4T1NNVmpieDZHMDV3T2oyaEx4YVdGempITlhBeWVzRDVldUJzWnJsYmtPMDgzYVRzWTdXeGFReV9vTjJMSk5yelZhWDFCV0plWVFHV1YyamlMSlktUS13Z1oyUWl4ZHk1NjZlTl9XVUZUMUdhcEZYWm9YOGRkajRzd0ZUMW5JdmFpZ1dTQnBTX09udTFCbHR0cUFGaEFUanBYRjc4aUlaaDg?oc=5",
+            "domaine": "nypost.com",
+            "date": "2026-11-07T15:27:00Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
+            "titre": "Yemen: 25 killed, 30 injured in airstrike in Taiz province",
+            "url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxQQ3ZrUVJJVlBuWXFkT1p5c2hmVkhOemRWakR0QTA5cUtQczhMb2dMcUI3TG5KQTFRRkx6OWhhS2wyRnE3V1ZDQU9FeTEyZzRIOHB2amE2Qm5FS1Z3TXd6OVF2R2VRYVk0dF9XeEFaVTM0bndZYzB3OVF1aE5lZzAzNTVGTEhwWjhxb0E?oc=5",
+            "domaine": "newsonair.gov.in",
+            "date": "2026-11-07T15:11:26Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
+            "titre": "Five civilians injured in Saudi airstrike on Taiz",
+            "url": "https://news.google.com/rss/articles/CBMiSkFVX3lxTFBzWWdzQ3A3QWVSbzVZRnlDTE9VTjdBTnE2dXpGSm9MX0tOZXNlYTVoQmx5S3VCTEZEczlLczJjOVd4UW1BY2U1QlJB?oc=5",
+            "domaine": "saba.ye",
+            "date": "2026-11-07T14:29:55Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
+            "titre": "Houthis say 22 killed in airstrike — The Hindu",
+            "url": "https://news.google.com/rss/articles/CBMinAFBVV95cUxNLXFzVmpCa0Q3NXdudEl1S1dtbkRNcl82YmNsbVltOHFOeFVNMnkzT2JXWi04NDhKODBlQ1hjR2pEU0tQT3g4cVRVRW9uaWxLS0Y0WnA5R2RZVHFrVXk2QlhIY1RRYmxLQmRRcHFLcnJtNER0ZHpvNWoyOXVKTmVYeDZiVmhCNnM4ZTcxeE5VOENmcFctMk5yODlqcmo?oc=5",
+            "domaine": "ua.news",
+            "date": "2026-11-07T14:29:43Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
+            "titre": "Houthis claim Saudi airstrike kills 22 near Sanaa amid tit-for-tat attacks",
+            "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxPbnU2ZWUxNWlhNjlvdkR2VkNfLUM5UVc4ZlBudGViSEE1a2lURV9zUTRwOVliaGUwWFQ0TEJwa2c3dUpOemFvTXNlbFBwS1hZbGdHMjlQcWNDRTdYanVPTGJva1FsbVZYTlpGZGdEZ0Fyd2UwOTNndEJMdll6Y2U4aEZKZUwwYXBW0gGcAUFVX3lxTE10QWtzV2J1c0dERENIeUp6SmpiMlRqTXd1X0N1Z1I2Y0JUUEVGdUVPVjgydDNZT1IycU01eWg4NDhhSkdwZmktbk9FTFhlSW9HNVZYUVB3UGk0VzFXVkFkN0szdVpocUNSR3Y5bnZMWWhubUR2azg4Rm5tckN6MTJjbWpHblUxUGtlZy1fRVNaZWpBWEh4bjhnbk9tRw?oc=5",
+            "domaine": "chosun.com",
+            "date": "2026-11-07T13:47:00Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
+            "titre": "An airstrike has killed 25 people near Yemen's capital, Houthi official says | National News | 2news.com",
+            "url": "https://news.google.com/rss/articles/CBMi7wFBVV95cUxQMjFBUzZLa3JHVGh1YlhaT3FJVFNIUkVYZ0tvTDJoak1oeHd3WFJ4UmNMQ0syUzFFWnpoUVRCWWNxUzJndG1tdEVkUURUbnAtS0NwVHI3Sjlrd25mSXJfOHBsZjlrRUJCWWtnVFlqOUtBd2w2d1VBektKRGhjeEhoY255R21SMkRsSWJrcG9kOUlLTTFrWDZHcG1tWmNpZEpfa1drTkFLY18wOHVhT3dpcWJORmRNbWRtWTFFbEZPT0VIZTZjcEdKczFoS2EzLUp4aUdzcWREcjRpeTV0eVBkeUMxaTJKd3pYdnh4d2VJMA?oc=5",
+            "domaine": "ktvn.com",
+            "date": "2026-11-07T13:43:08Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
+            "titre": "An airstrike has killed 25 people near Yemen's capital, Houthi official says",
+            "url": "https://news.google.com/rss/articles/CBMi6wFBVV95cUxQLUdpbHBSMUxzeXN2R3VmTFIxZUlzVHpqQ0ZoeWt2UWh3WHpEaUVwY2FZWF9nZHdTeWZCN2J0aVBERjhQQTZ5SFNaUElqRXlPX1Z4aGtkbVc2RVVGMmw5Tm9CQ3NNRU1Bc29RcFVESFFIdzEtRElsa01SSU1xTS1RdmktWGJyOXhOUnRyRWhsLXl4ZzdLOFFyNWgtbWhsWGJrNkVtRFJJbXUtUi13UHU5UkplWjE3cTNfbXZ3V3I3YnlYRkVhamlQb2NyN0llVzRYcVc5QjlValQtTmZqWWRBdnlQTGY5VXlBaGUw?oc=5",
+            "domaine": "kdhnews.com",
+            "date": "2026-11-07T13:43:08Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
+            "titre": "Yémen: 27 morts dans des frappes saoudiennes, selon les Houthis",
+            "url": "https://news.google.com/rss/articles/CBMirwFBVV95cUxQWmQtX2VsVGZJV1RwMUI4Q1hGQUpULVIzYjlGZkhXNWNkN2ZFQ2Vxd0RKSHVUV29OVXZ5dWtDV29CZ2E5d1NGNTA2WExseTFpLWhVdkVQSVFiSlExenVobWprMVNGYzhrWjBuelpRSC1RUi14eDNiLUd2a2pHVFdHT2JES1VUbzYtTHJTYTF4LTk4SGhrMUxQa05KYjVJRDJaSDNWU25xZ2UzTHNNZV80?oc=5",
+            "domaine": "orange.fr",
+            "date": "2026-11-07T17:21:15Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Yémen: des frappes saoudiennes dans la région de Sanaa font 22 morts, selon les Houthis",
+            "url": "https://news.google.com/rss/articles/CBMijgJBVV95cUxQSmd6NE5Zc1B0NnVWREs4cVRvTDE1OGxZNy1PMGRqV1FzNlAwNElQNk9vaGxzRTM5V0l2WEMyLWVVOFZVRnM5NmJsalJiYmU0ZHRLWmZpSTRuYUx0MlhQS3VnandvTnlnWEJ0UmZQbENWYTUxaThudi0zcFlxTlp3aFJzbUNNcWhwLTY3dlVnN3NsYU1xRXVjNGpROU5GODRBSUdmNVZpLVdGRWZOUDdURmlUbWtTZzltUjJYQVVtZWxyQUdnWGt0bU9MQmh3Z1Y5S0FSZGl5eDlKRURyWkZ6R1JheG5GcnozbTRFUTNqemtZU0VzUjJfaVctbHhJbjBwM3ctUXd1TENlSUhKRUHSAY4CQVVfeXFMUEpnejROWXNQdDZ1VkRLOHFUb0wxNThsWTctTzBkaldRczZQMDRJUDZPb2hsc0UzOVdJdlhDMi1lVThWVUZzOTZibGpSYmJlNGR0S1pmaUk0bmFMdDJYUEt1Z2p3b055Z1hCdFJmUGxDVmE1MWk4bnYtM3BZcU5ad2hSc21DTXFocC02N3ZVZzdzbGFNcUV1YzRqUTlORjg0QUlHZjVWaS1XRkVmTlA3VEZpVG1rU2c5bVIyWEFVbWVsckFHZ1hrdG1PTEJod2dWOUtBUmRpeXg5SkVEclpGekdSYXhuRnJ6M200RVEzanprWVNFc1IyX2lXLWx4SW4wcDN3LVF3dUxDZUlISkVB?oc=5",
+            "domaine": "boursorama.com",
+            "date": "2026-11-07T15:37:43Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Yémen: le bilan des frappes saoudiennes grimpe à 22 morts",
+            "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxNR0VhaXBmdmRLUUpuV2tmeVdhQWlpNk0yRjhRRm1JUTJFS3FLU2V2X2p6ZU51N01WVlJNUHhMWjNQQXk2LW9KZWlzbDRtTTRCbXBwTVNpVkFZTDNDYW5wVThuV1RHMFpOOVM1QlRnTzlLeFVRMHlJTXZtM01IcjJocEZiVDBWMGNaYXpZY0RRQ3YyckhTNTNNZDQ1Q2Z6SkNseWx0X3hvblp6MzFNMmZGZVVR?oc=5",
+            "domaine": "watson.ch",
+            "date": "2026-11-07T15:01:29Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          }
+        ],
+        "nb_articles": 61,
+        "nb_domaines": 16,
+        "officiel": false,
+        "premier": "2026-11-04T06:20:19Z",
+        "dernier": "2026-11-07T18:00:00Z",
+        "tonalite_gdelt": -1.72,
+        "score_selection": 8.42,
+        "theme_confirme": true,
+        "nb_evenements": 2
+      },
+      {
+        "id": "theme-evt-6b9906d3de52",
+        "titre": "Frappes militaires américaines et tensions croissantes avec l'Iran",
+        "titre_origine": "Ukraine-Zelensky anticipe de nouvelles frappes russes sur les infrastructures énérgétiques",
+        "categorie": "conflit",
+        "titre_langue": null,
+        "mention": null,
+        "categorie_libelle": "Conflit armé",
+        "pays": [
+          "US",
+          "IR"
+        ],
+        "pays_noms": [
+          "États-Unis",
+          "Iran"
+        ],
+        "mondial": false,
+        "pays_suivis": [
+          "US"
+        ],
+        "lieux": [
+          "QA"
+        ],
+        "lieux_noms": [
+          "Qatar"
+        ],
+        "theme": true,
+        "chronologie": [
+          {
+            "id": "evt-6b9906d3de52",
+            "date": "2026-11-04T11:56:47Z",
+            "titre": "Les États-Unis effectuent des frappes sur une île iranienne",
+            "gravite": 3,
+            "resume": "Le président américain Donald Trump a confirmé des frappes militaires menées sur une île iranienne.",
+            "nb_sources": 12,
+            "source": "https://news.google.com/rss/articles/CBMi9AFBVV95cUxNZjV0QWctZld0U0xpaDRUV1gxbHBCYzhacVRvZmVUUHdOXzdLU1YtSVAwMENRdGtEZktyWWVqUXY4UkpsS2RZUUVBdm83aXNTb2twOEktbVQzTWxLX3JybUY1dW14V3pHemJrSS1zeGlBNWpnVkRNQ0RfWnNGakdNY2VwVTFZUldMRHhub3BNM19wMEg4aGhZUEhEbVJYZ1FkbWQ5LWNTYTNEUmYwNHRTSE5ISjlxMDdmSkRXaHJuWFdOdXk0anNwUVNlU1JaVVpHalFDZFlxS29qMS05MU5XZkNXakVDZUhhUTlFQ1dNZFF5ZmVp?oc=5"
+          },
+          {
+            "id": "evt-2081133dab50",
+            "date": "2026-11-04T16:43:40Z",
+            "titre": "L'Iran menace d'une guerre étendue en cas de frappes américaines",
+            "gravite": 4,
+            "resume": "Le dirigeant iranien a prévenu que le conflit serait beaucoup plus étendu si les États-Unis reprenaient leurs opérations militaires.",
+            "nb_sources": 8,
+            "source": "https://news.google.com/rss/articles/CBMi_AFBVV95cUxOWVY1M2dUa1E3SzRKcE91UU0wNnRXSEJhT0hERzRCN19zZUNOejVGS3hlSmJNbm42X2dUdnY3Z0JDVjZ4YzNRV1Q2U3pyb0lDOEZoSG9VeGROZFhBUzdLelI3bjN1bnhjamtqejdPeFpiYUhXME5fOXp1MGk4Rjh2dW5wdFJFUmE3T3Z4SWV2R0QtajNPMGNiRFJYamg5TmJBSHRZQjQ1YnJJY2RuNHVUY1lucW1ia1ctOFVmMVFNUGlWejFxTldPZ29vUGVLYmwyZVpyQWduaXhUcnQxYUJOQ2dVdVFrRjlWNURJZ1c0ZVZVMXJqbWlvWFJYWEQ?oc=5"
+          },
+          {
+            "id": "evt-d40435d5b052",
+            "date": "2026-11-06T22:30:00Z",
+            "titre": "Menace d'une reprise de l'offensive américaine contre l'Iran après les scrutins",
+            "gravite": 3,
+            "resume": "Au lendemain des élections de mi-mandat, la menace d'une reprise de l'offensive militaire américaine contre l'Iran est évoquée par plusieurs observateurs et responsables politiques.",
+            "nb_sources": 9,
+            "source": "https://news.google.com/rss/articles/CBMikwFBVV95cUxPcUFFWWRJOVpjTjFzZXJXLTRLMHlfeHZzLW4tZWpoWVRaQ1g3ejMybTA5V1ZMcFFnbGZsNkxxQTA0U3dzc0YtNlhOSC1tTFF6LTY4U3JENkdHbnU0N0VVOTRjQXFuaDlFZ3o3TVZFTnczLUxObjg1b1FXNzRjN0d2SXQyb1ZnRnRvd3lYdDV2Q01VUU0?oc=5"
+          },
+          {
+            "id": "evt-eb4a649fce51",
+            "date": "2026-11-07T11:37:27Z",
+            "titre": "Frappes américaines en Iran et poursuite des efforts diplomatiques",
+            "gravite": 3,
+            "resume": "Les États-Unis ont mené de nouvelles frappes limitées contre des infrastructures en Iran, tandis que le Qatar continue d'espérer un accord entre les deux pays.",
+            "nb_sources": 12,
+            "source": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxNX1lSRzlWM003OXA5bmduaXVta2Fadk93UDR4bW1SLUF4aWZyMkNpMVlHUjBxbUVvN2VmZ1BVQXBJbHVJZjBkcnhjbmdXMFVnZi1zWUR1blEtd18xYVdEamFISFVNbmpHT0VfQVZvWnQyaVEzY0ZHdjNRNDFWWUJrX0JieDVQTzN3Qi0zN3dwa3AwQlBkQUozNFZTSWhsUmhOT1A1YWZ2U2tDODJETXZNdklFT01vMHN5MDNz?oc=5"
+          },
+          {
+            "id": "evt-9024bdfb458f",
+            "date": "2026-11-07T17:32:24Z",
+            "titre": "Les États-Unis mènent des frappes limitées sur l'île iranienne de Qeshm",
+            "gravite": 4,
+            "resume": "Les États-Unis ont conduit des frappes aériennes sur l'île iranienne de Qeshm, tout en indiquant ne pas planifier d'attaques immédiates supplémentaires.",
+            "nb_sources": 12,
+            "source": "https://news.google.com/rss/articles/CBMizAFBVV95cUxNVkJlVVFDT3NEUHp6LVVCLTAyeUdIZUhwbnUwV2pRajJGMEZfUGx4YnBzakV2MnQ2enFUeFhEMHlDejViUjN2UHpXbzg5VnBubWt4WExMZmJNYURUV3lzTkdLdTdRaWszSVRwWGdreHE1UjRUelVQRU9zR0F0TGlpLThSelpqeVhfQXZueHNTNmQ5UGNhNXlEdF9QdUVwTGhWLVhOeXBHeHp5aTZ3OGRGVVdpdzMyZGF5cmZEWDZOUmZmbFppNDhlTjU1aTPSAdIBQVVfeXFMUFpaYkZxRWgwbzhwRXdSTDA4bmhkS1NBOHdBTVNNM1RwMEJTVXp6b3Y3dzJlWHJGZ0RfX29tNmdkdVAydXFzcGtaN3BPRkUyS29NWDRBb2ppaWwtUXE1UEZRbGQyOS1JOUxDeVU2SE12VUJycDNvUGlIdFdXR2FLUnA3U3RscDVINUd4UkEzdUJ4cFFUcTY0bnpmWWRHQjlKSFpXRU42bWRlOFlmN3lKYTNMaWh1Zzl6cFdyZE1mQXJnekpHeTlsNjV5SEVmbFhtRXBB?oc=5"
+          }
+        ],
+        "regions": [
+          "amerique_nord",
+          "moyen_orient"
+        ],
+        "gravite": 4,
+        "gravite_regles": 4,
+        "note_gravite": null,
+        "ia": true,
+        "modele": "gemini-3.5-flash-lite",
+        "analyse_le": "2026-11-04T10:16:49Z",
+        "resume": [
+          {
+            "texte": "Les États-Unis ont conduit des frappes aériennes sur l'île iranienne de Qeshm, tout en indiquant ne pas planifier d'attaques immédiates supplémentaires.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMimwFBVV95cUxOSG05R3lwWmJxcU1VUG5RcjUwR1daNzEtU3p2aHplUGZTWkFKbTVKdGtJMDQyblVkdVpiM0VaWG9NU29BMkNUS2psLTAtWVA4Wk5jeElJWkd3ekR2aHp3T2pYN0lTbS1wX2pQdU15T0d6di1IWTNhS0IwR29TRkpKTXpFSkpSQ1lKN3lHNWw2bnhwQ0pDUnpFVVFtYw?oc=5",
+              "https://www.ft.com/content/f3afd549-65fc-487e-922e-2748fa6a8a5f?syn-25a6b1a6=1"
+            ]
+          },
+          {
+            "texte": "L'Iran a qualifié la réponse de Washington sur le plan maritime d'inconvaincante et a appelé à éviter une escalade.",
+            "sources": [
+              "https://www.aljazeera.com/news/2026/11/4/iran-says-us-reply-to-hormuz-plan-unconvincing-trump-confirms-strikes?traffic_source=rss",
+              "https://news.google.com/rss/articles/CBMioAFBVV95cUxPSW1QTDAwcFhaVUI4eTY3dWxmQlhoYXpJaXpPT3Nac3VYSDAyTGlUb3VhOS04RktMR3MtT1BtdEZlOTdTUFBQbVBTX0toMGoxZ0N5U000UUNjN19LT255RFV5aFIzd25ITGFGeDRCZjlKUE40LWEydk9Pdjc0eHEzUklfOGg3N0FZakJsZDN3YVJWOWhnNW5jY2R5SEpjSEZn?oc=5"
+            ]
+          }
+        ],
+        "actifs": [
+          {
+            "actif": "pétrole",
+            "sens": "hausse",
+            "texte": "Les opérations militaires menées à proximité du détroit d'Hormuz font craindre des perturbations du transport maritime pétrolier.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMimwFBVV95cUxOSG05R3lwWmJxcU1VUG5RcjUwR1daNzEtU3p2aHplUGZTWkFKbTVKdGtJMDQyblVkdVpiM0VaWG9NU29BMkNUS2psLTAtWVA4Wk5jeElJWkd3ekR2aHp3T2pYN0lTbS1wX2pQdU15T0d6di1IWTNhS0IwR29TRkpKTXpFSkpSQ1lKN3lHNWw2bnhwQ0pDUnpFVVFtYw?oc=5",
+              "https://www.aljazeera.com/news/2026/11/4/iran-says-us-reply-to-hormuz-plan-unconvincing-trump-confirms-strikes?traffic_source=rss"
+            ]
+          }
+        ],
+        "horizon": "jours",
+        "confiance": "moyenne",
+        "contre": [
+          {
+            "texte": "Les déclarations écartant de nouvelles frappes immédiates pourraient apaiser temporairement les craintes sur le marché pétrolier.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMiuwFBVV95cUxQNzdZeU8zVHU4RFF5aE1iNzhhQ3dDU1d2Zmo3dnNqVjkxUWtCdFhLcVN5X3A0VGkwZTdvVy1pWTh5R2FSQ3k2UlpQeE9XRXpDa0hXSjFLa0pWY05ZSEtiRDNmUFdXSTJqbGZpbE1JM05oaGxsaTJZWGxZcUczdEtpRURZX3R5WkVYLW10NzRCU2tySmt1SnNmLXR4MFJOSmI1TGVkUS1WeFpndEdRR1MyU2xEZ2o2RW1XZk5r?oc=5",
+              "https://www.ft.com/content/f3afd549-65fc-487e-922e-2748fa6a8a5f?syn-25a6b1a6=1"
+            ]
+          }
+        ],
+        "sources_independantes": 5,
+        "sources": [
+          {
+            "titre": "Trump: les États-Unis ont lancé des frappes « mineures » contre l’Iran, visant « un petit dispositif antiaérien »",
+            "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxNVkJlVVFDT3NEUHp6LVVCLTAyeUdIZUhwbnUwV2pRajJGMEZfUGx4YnBzakV2MnQ2enFUeFhEMHlDejViUjN2UHpXbzg5VnBubWt4WExMZmJNYURUV3lzTkdLdTdRaWszSVRwWGdreHE1UjRUelVQRU9zR0F0TGlpLThSelpqeVhfQXZueHNTNmQ5UGNhNXlEdF9QdUVwTGhWLVhOeXBHeHp5aTZ3OGRGVVdpdzMyZGF5cmZEWDZOUmZmbFppNDhlTjU1aTPSAdIBQVVfeXFMUFpaYkZxRWgwbzhwRXdSTDA4bmhkS1NBOHdBTVNNM1RwMEJTVXp6b3Y3dzJlWHJGZ0RfX29tNmdkdVAydXFzcGtaN3BPRkUyS29NWDRBb2ppaWwtUXE1UEZRbGQyOS1JOUxDeVU2SE12VUJycDNvUGlIdFdXR2FLUnA3U3RscDVINUd4UkEzdUJ4cFFUcTY0bnpmWWRHQjlKSFpXRU42bWRlOFlmN3lKYTNMaWh1Zzl6cFdyZE1mQXJnekpHeTlsNjV5SEVmbFhtRXBB?oc=5",
+            "domaine": "timesofisrael.com",
+            "date": "2026-11-07T17:32:24Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Iran: Trump annonce de nouvelles frappes américaines tout en poursuivant les négociations",
+            "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxNM3JOZ3lXdGg2Tk9QcWFNNUZjZW1EdV9waWc2WENLd3lDU3FCZXZ4cGlmVnRnRUo0aDlmQU12elQ3cUJ2RTdWdlhCbGRSajdKaVBPZVdGVE1qakVidHRuMmpoSW5CMEhxTEZxS1QtQThmRWZJNXpBM2RZOGdjdEw2WklTVTBGZWNBTzZ1MGxLNGpEQjRObE9vYk1SSDJsZXhaczNLRTFuVlRlQTZlWW5scDZYYw?oc=5",
+            "domaine": "lemediaen442.fr",
+            "date": "2026-11-07T14:45:49Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Kiev dénonce de nouvelles frappes russes contre ses infrastructures énergétiques",
+            "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxQU2hkYTRYVzRjOF9aUy1rcG82MWF0U0VCeTJLM0tkRFA4Z1FKMXMzMV9OVVJBREttd3plNERhSUZTcUNmWWh1aU9ZY3RJSjdNOW1FQUFqUkFKRE9wVnNtRnh4ZnhGUWdKcFk0Uk9UaFB0M2pDd2tUSXFPamhhb3A3Ul9kVDFGYXZXTjFOcjRyZHlZa19qQXJQQ3hNeDBfS3BGdDRUMXlkdjBGcWJ5UmRQNk9BT2FjektiVjVvTDV4MWtLS1U3LWtB?oc=5",
+            "domaine": "connaissancedesenergies.org",
+            "date": "2026-11-07T14:35:21Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Iran: l'armée assure être \"plus forte\" qu'au début de la guerre",
+            "url": "https://www.france24.com/fr/vid%C3%A9o/20261107-iran-l-arm%C3%A9e-assure-%C3%AAtre-plus-forte-qu-au-d%C3%A9but-de-la-guerre",
+            "domaine": "france24.com",
+            "date": "2026-11-07T13:52:21Z",
+            "officiel": false,
+            "source": "France 24 (dépêches AFP) (RSS)"
+          },
+          {
+            "titre": "Ukraine: les frappes s'intensifient avant l'hiver",
+            "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxPM3locnZtelN6TEx5cFVqcmxfTllyZkFaU0gyZ29FMVpaUk1HX2R6aVJKNWM5TGR5ai0wRVhqdzZ0ZksySDhCcFdXY0RyTllMR0xnT0Rvb0U1X0ZHdmt1QzdKY1doZDk0bWtncEZFOWV6ZVkweEhzamdvNGw4VXdnTDV3MDFYOENrcFppejF0MkFXYkQyUVJUanhrTVRSdw?oc=5",
+            "domaine": "tf1.fr",
+            "date": "2026-11-07T13:20:22Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "L'Ukraine frappée par de «massives» frappes russes pendant la nuit",
+            "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxOYzZidzZ4dUoyT2NON2U3N1MtcGh6NnJRX1BBS2FaUFV4QnNtYzh2YVQzZGdBa1J3cTFEbWp1NE5LbGdmMHY2aXZNX3V0SWRDMFV6UE55SEJlVlduRkZadi1ZcVFEbmE0eW8teDh1cG5lWTNhNDJMWFVRNmJsWnh4amt2el9heHkybXQ4dXFrYk1sR252SlVxT2o5djdFQ1k0NW9PRU1kTkxJcWlv?oc=5",
+            "domaine": "bluewin.ch",
+            "date": "2026-11-07T10:38:36Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "JD Vance leads behind - the - scenes push for new Iran deal amid war tensions: Report",
+            "url": "https://www.moneycontrol.com/world/jd-vance-leads-behind-the-scenes-push-for-new-iran-deal-amid-war-tensions-report-article-14074318.html",
+            "domaine": "moneycontrol.com",
+            "date": "2026-11-07T10:00:00Z",
+            "officiel": false,
+            "source": "GDELT DOC 2.0"
+          },
+          {
+            "titre": "Guerre au Moyen-Orient: une prime américaine contre des informations; l’Iran dit être « plus fort » qu’avant",
+            "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxNMjhrVDBPdjhiNm9tUjFhalFVVUYxSFlCZ1NiOEJLbE00UHFoaWlkclBXVEk2TFBxWmg2UDVxMGVia25NQTZ3WWItRDEyMlduWTJTYW1sdkNtVGdVb2FkRkEtX3Z4a19Ncms1N1d1UUVPZldnb2xtTTdvdHExbVlfNkFLenZqUmM0N1R2WkNBaHI5RW5GRVlyLXgxdVRaSUJlOXRMMTJVckp5QWtoaFVqaHZNYzVpNXRsRC1DaVA2Z00?oc=5",
+            "domaine": "la-croix.com",
+            "date": "2026-11-07T09:16:06Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Iran's Qeshm Island was hit by missiles again following a US airstrike earlier this week.",
+            "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQOVpoaUNTaDZZRTljX2R0bTZ2dDRacDJLQUF3WThiWGJJSGVSQUx5MDQ0Z0Y2bUplOUFMbDZURkxqcjhIdURwM0g4SG52NXZldy1pYW5YWWFNTnZtR0ZMZDNEU2RTejUxY3JrZ2N1VGVxUGxIc2p4WEZpeEtQSHZ2ZF9UT1YxNU9uWE43R3FRX20zYnBuVG1yb1R5bTk1eWM?oc=5",
+            "domaine": "vietnam.vn",
+            "date": "2026-11-07T08:06:09Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
+            "titre": "«Vérification des bénéfices»: Trump révèle la conduite de « frappes limitées » en Iran (vidéo)",
+            "url": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxQUElMOFRVWXVmQzhCY1ZXcVZSMFVBcUt1aVJuS24taDI5WlBTMVlvMHA0MC1kX1B1R2xDay1QRDBaT2lKeHZhY3RDd3lPSS1XYVJvYjJkNG1VVDR4SDFwYkxlcEE0dVhzTGI0WUEwLXR5ZWNnT0RJVFBaZ0ZYLXo0QUlwOUJRVUExSk1B?oc=5",
+            "domaine": "dailybeirut.com",
+            "date": "2026-11-07T07:14:24Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Trump confirms US strikes in Iran, insists ‘it’s not a war’",
+            "url": "https://www.aljazeera.com/video/newsfeed/2026/11/7/trump-confirms-us-strikes-in-iran-insists-its-not-a?traffic_source=rss",
+            "domaine": "aljazeera.com",
+            "date": "2026-11-07T07:05:01Z",
+            "officiel": false,
+            "source": "Al Jazeera (RSS)"
+          },
+          {
+            "titre": "L’île iranienne de Qeshm visée par de nouvelles frappes américaines, l’Iran menace d’une réponse « immédiate » et « sans limite géographique »",
+            "url": "https://news.google.com/rss/articles/CBMi4wFBVV95cUxNN1I3QjVzamxnNFBzLU04WUh4NE4tSXVnQUQteFNJOTgtZXBnSk44QkpHLTU0b2pWMXlwYnhKck5rWnhqcEJ6d1pmd1d3VzRzc0tQOURUTlZoV3NlYllQeGYzV08wSXdfd2RUM3QwVW1OTEpuNno4dlRUV0cwZmdrU0tleW05SmNCX3ZZbDRWdy1jaWdtSUlrekRSdC1PLUpraVFMMENLcklHTHQxVFMtcVo5Qi14RGpjTTluX0w2bjhNRm01UDFjZ0JLUzAweTJrT1NoUUJzWmVabUZkU2tHNmo5RQ?oc=5",
+            "domaine": "rtl.be",
+            "date": "2026-11-07T06:52:24Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "États-Unis: nouvelles frappes limitées en Iran, Trump évoque des progrès diplomatiques",
+            "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxNX1lSRzlWM003OXA5bmduaXVta2Fadk93UDR4bW1SLUF4aWZyMkNpMVlHUjBxbUVvN2VmZ1BVQXBJbHVJZjBkcnhjbmdXMFVnZi1zWUR1blEtd18xYVdEamFISFVNbmpHT0VfQVZvWnQyaVEzY0ZHdjNRNDFWWUJrX0JieDVQTzN3Qi0zN3dwa3AwQlBkQUozNFZTSWhsUmhOT1A1YWZ2U2tDODJETXZNdklFT01vMHN5MDNz?oc=5",
+            "domaine": "euronews.com",
+            "date": "2026-11-07T11:37:27Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "United States announces fresh Iran-related sanctions, says Treasury Dept",
+            "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxPM3p0cnFKLWtleFc3Z0lHS2VUbWF0N0dPM1VqYnFsbXhwaHZVOTBoQU12RVItVDFtR3lINmFuV1hnbDFoa2tYTi1VQURBelFwV0ZmMWx1LXQ3d0NvMDVtYVoyQWJHRjN2SlM4clE2enVZOGZwbjBRRFpGQ1hyNTJPdE5nTUoxZ0JMOHgxSW92N2FYcWJLOWVHdWJ6bXlOTkFpTXZXN1FPZzZWbU5FTXNnTzNieDNEZ9IBugFBVV95cUxNWFRkbXhkN1JHWVg2M0l6NFVFUVZqanBFaVozSEFMZG55bmpXYjNVTVZrbzNSTFlxcjJmQ3JJVEhWbWdZNUc2Wk00UnY2ejk2YnRpTDkxbHBYLW9TVTBEdjBocmVUaWlvTG1vN3pNTzRUcXdMR3I2QkJHMlRua0hGa1ZoRUM1RmdPWnlzMGxnWWszRVA2TlZYUEExZUxSMFFuNWN4QXlwZEV6SkVaVk05eXJvdlFXdkRSR2c?oc=5",
+            "domaine": "tribuneindia.com",
+            "date": "2026-11-06T20:57:07Z",
+            "officiel": false,
+            "source": "Google Actualités : sanctions (anglais)"
+          },
+          {
+            "titre": "United States announces fresh Iran-related sanctions, says Treasury Dept",
+            "url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxQRFhLOUIwa2ozVnFwQ2ViY1RKQjRqZ0tnRlhHVV9pOVpvRTJvRUs2MVdhNGxpeVFGTG9yS2k5TlZvT3ZQWW1GSVhKNVVXcUd3M3FXRWxRZHlkT0FHNHlLQTRWNHpuY0cxdDFiNTZ3RXpVeG9nb3lDenFBYmF4ckNZNDNNQTJyUnM1RWUyaVZUTG9RTEV4VF9zM0Vjd0VNTzBvMGlWZTJDUEtHYUlOWWN5M2ZNV0dOMkF1WDZ5czhicw?oc=5",
+            "domaine": "aninews.in",
+            "date": "2026-11-06T20:55:00Z",
+            "officiel": false,
+            "source": "Google Actualités : sanctions (anglais)"
+          }
+        ],
+        "nb_articles": 116,
+        "nb_domaines": 27,
+        "officiel": false,
+        "premier": "2026-11-02T22:19:02Z",
+        "dernier": "2026-11-07T17:32:24Z",
+        "tonalite_gdelt": -1.87,
+        "score_selection": 13.4,
+        "theme_confirme": true,
+        "nb_evenements": 5
+      },
       {
         "id": "theme-evt-84574808e622",
         "titre": "Frappes aériennes russes en Ukraine",
@@ -278,229 +756,6 @@
         "nb_evenements": 3
       },
       {
-        "id": "theme-evt-774117620112",
-        "titre": "Frappes aériennes et militaires au Yémen",
-        "titre_origine": "Yémen: les Houthis font état de 20 morts dans des frappes sur un marché",
-        "categorie": "conflit",
-        "titre_langue": null,
-        "mention": null,
-        "categorie_libelle": "Conflit armé",
-        "pays": [
-          "YE",
-          "SA"
-        ],
-        "pays_noms": [
-          "Yémen",
-          "Arabie saoudite"
-        ],
-        "mondial": false,
-        "pays_suivis": [
-          "SA"
-        ],
-        "lieux": [],
-        "lieux_noms": [],
-        "theme": true,
-        "chronologie": [
-          {
-            "id": "evt-774117620112",
-            "date": "2026-11-07T15:01:29Z",
-            "titre": "Frappes saoudiennes au Yémen : vingt-deux morts recensés près de Sanaa",
-            "gravite": 4,
-            "resume": "Des frappes aériennes attribuées à l'Arabie saoudite ont causé la mort de vingt-deux personnes dans la région de Sanaa au Yémen selon les informations communiquées par les autorités houthistes.",
-            "nb_sources": 12,
-            "source": "https://news.google.com/rss/articles/CBMisgFBVV95cUxNR0VhaXBmdmRLUUpuV2tmeVdhQWlpNk0yRjhRRm1JUTJFS3FLU2V2X2p6ZU51N01WVlJNUHhMWjNQQXk2LW9KZWlzbDRtTTRCbXBwTVNpVkFZTDNDYW5wVThuV1RHMFpOOVM1QlRnTzlLeFVRMHlJTXZtM01IcjJocEZiVDBWMGNaYXpZY0RRQ3YyckhTNTNNZDQ1Q2Z6SkNseWx0X3hvblp6MzFNMmZGZVVR?oc=5"
-          },
-          {
-            "id": "evt-e43e3bba3e01",
-            "date": "2026-11-07T15:27:00Z",
-            "titre": "Frappes aériennes dans la province de Taïz au Yémen",
-            "gravite": 3,
-            "resume": "Des frappes aériennes attribuées à la coalition saoudienne ont touché un marché dans la province de Taïz, faisant de nombreuses victimes selon les autorités houthies.",
-            "nb_sources": 12,
-            "source": "https://news.google.com/rss/articles/CBMitwFBVV95cUxQSldBcXptZTgxNEZteWg4T1NNVmpieDZHMDV3T2oyaEx4YVdGempITlhBeWVzRDVldUJzWnJsYmtPMDgzYVRzWTdXeGFReV9vTjJMSk5yelZhWDFCV0plWVFHV1YyamlMSlktUS13Z1oyUWl4ZHk1NjZlTl9XVUZUMUdhcEZYWm9YOGRkajRzd0ZUMW5JdmFpZ1dTQnBTX09udTFCbHR0cUFGaEFUanBYRjc4aUlaaDg?oc=5"
-          }
-        ],
-        "regions": [
-          "moyen_orient"
-        ],
-        "gravite": 4,
-        "gravite_regles": 4,
-        "note_gravite": null,
-        "ia": true,
-        "modele": "gemini-3.5-flash-lite",
-        "analyse_le": "2026-11-07T14:16:33Z",
-        "resume": [
-          {
-            "texte": "Des frappes aériennes attribuées à la coalition saoudienne ont touché un marché dans la province de Taïz, faisant de nombreuses victimes selon les autorités houthies.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMiyAFBVV95cUxNMHhEUTRRU1ZZa3pGc3hDM2ZlNHZvcFlzSzZTdXA3c0FvYWRxY05ERkxmdmlqOGFjTDd1Q3VlcnFiZTd1X0NOQlZaTXdFbXp5MDRkVHF2SjZVRnFRdk9WZllweG1tcEZxSFhGa3hYSnMtS3RUVG8yUU03Q1oxcHU1UVBKQlg0c1NQT255d0FWVC02MENBa2QwNkFRazZBbktZUkVJN2dZY1hZVDNkbUlyUUxDV1RyaXhyYXRISzFtX3FMT180SnM1TA?oc=5",
-              "https://news.google.com/rss/articles/CBMiwAFBVV95cUxNUW5aS2JKODd3YzJxWWJBTzVLS3lTWm9mSjVCbGo5SjZFbXlpVVhBbHJNNlNKa1lPSmVINUpBVExUek1wRENnQWR5WEtuS0dYSUFzcTVPVDdqQkUtWG5tQmk5RmNJSDdXaE16dl94aFBMc1IzMV9KWTdmbllsZ1c5cWZuT3dOVDJuWDVKRlBmSXBaRkFkTkpRWDVKNDRWNW9obTdKU3RaQXFOSkx5S1hjYWN4dDh4eHJ2SVNBMnRtWVHSAdYBQVVfeXFMTmpsdVJ0VC1ZS2w2NjNEY3dFakxxT3d4dC1DUERSSGpSTUhlZmg2cnFlc2YyMmlFWTkzOTRvTElTby0xdTJxaXpuSzlrLXhPVHctZ0VtdnRwR09BZHczS3kxc2FnLVhpNENkdFdWNG0tRXIwYm9GX0haaHlBbmg1VkNuNUdHRndvZkNpREp0M3hYWmtOSFV1RnFsQ29mQUlsQWt6WEV4SDJ0RWc3djA3UzYwUkNVUE54UlZsbzRNTElpQVEzSzJFcGNsc2RHWmNrMVJvZjBzdw?oc=5",
-              "https://news.google.com/rss/articles/CBMijAFBVV95cUxQb1NQd1Y2UmgtSDRfc01IM3c0X3hXdW1ORTNJakFRcElZX2REaEhkQXV2SHBGeF9ZNWZHYS1rLUtQUGRxNXZkTGtEaTB4LVlpNGd4bHVzQ2NRbi05M2N0azBpellwdFFLS0phZ0hmNUxDamFMeU96NVJkNWpWVE4tNDBRMktuS1F6c1JNbA?oc=5"
-            ]
-          },
-          {
-            "texte": "Le bilan des autorités sanitaires locales fait état de plusieurs dizaines de morts à la suite de cette offensive.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMiyAFBVV95cUxNMHhEUTRRU1ZZa3pGc3hDM2ZlNHZvcFlzSzZTdXA3c0FvYWRxY05ERkxmdmlqOGFjTDd1Q3VlcnFiZTd1X0NOQlZaTXdFbXp5MDRkVHF2SjZVRnFRdk9WZllweG1tcEZxSFhGa3hYSnMtS3RUVG8yUU03Q1oxcHU1UVBKQlg0c1NQT255d0FWVC02MENBa2QwNkFRazZBbktZUkVJN2dZY1hZVDNkbUlyUUxDV1RyaXhyYXRISzFtX3FMT180SnM1TA?oc=5",
-              "https://news.google.com/rss/articles/CBMiwAFBVV95cUxNUW5aS2JKODd3YzJxWWJBTzVLS3lTWm9mSjVCbGo5SjZFbXlpVVhBbHJNNlNKa1lPSmVINUpBVExUek1wRENnQWR5WEtuS0dYSUFzcTVPVDdqQkUtWG5tQmk5RmNJSDdXaE16dl94aFBMc1IzMV9KWTdmbllsZ1c5cWZuT3dOVDJuWDVKRlBmSXBaRkFkTkpRWDVKNDRWNW9obTdKU3RaQXFOSkx5S1hjYWN4dDh4eHJ2SVNBMnRtWVHSAdYBQVVfeXFMTmpsdVJ0VC1ZS2w2NjNEY3dFakxxT3d4dC1DUERSSGpSTUhlZmg2cnFlc2YyMmlFWTkzOTRvTElTby0xdTJxaXpuSzlrLXhPVHctZ0VtdnRwR09BZHczS3kxc2FnLVhpNENkdFdWNG0tRXIwYm9GX0haaHlBbmg1VkNuNUdHRndvZkNpREp0M3hYWmtOSFV1RnFsQ29mQUlsQWt6WEV4SDJ0RWc3djA3UzYwUkNVUE54UlZsbzRNTElpQVEzSzJFcGNsc2RHWmNrMVJvZjBzdw?oc=5"
-            ]
-          }
-        ],
-        "actifs": [
-          {
-            "actif": "pétrole",
-            "sens": "hausse",
-            "texte": "L'intensification des affrontements au Yémen et l'implication de l'Arabie saoudite font craindre des perturbations sur l'approvisionnement énergétique régional.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMizAFBVV95cUxOaVJ6NFJXMTRXVU9raVE3Z2tpNTRVVTRURy1vZjdQXy1YWk1qZHlPM1RlUldjdVk1d1ZGanF4MzZxdmM5WmdQLTVvRktyaDRGUm1hbFR4d041R2hJQUdBSG9hTmY5VUZnMTV2VGZndTAyVGZvM3FEU2Yyc3RPVFdyUy00clFyZk5aaEMwNUpWazVneFZQRXJIcWpHSEhJLVpVOEExZlpYTTJjVTZJQ2JTMHItQ0xxNUVUNEItSVhURnd1NklOMGJETm5pVzg?oc=5",
-              "https://news.google.com/rss/articles/CBMivgFBVV95cUxNUjJXYVV2M2FOSm15aUhsalRpWHhYbTV4ajZaMWdSYUpsbV83Q0lOaEw1bTVERXlrbFR1T0tyODItZGNwQmp4RGJTSlJKRVVlQ0YxVWRnczhzRzVPTEcyVTQ0a3c2eEd0ZzY0dUpTLWExWFpHV3liZzJwNTQ0cE9JQmkyRFRENkxPYTZJWFdCOExtdF9qYnFIQ3pVeU9tRGNVaVhkZGl0bzhjeXB6TlpkR0NaZ3BKUnhsSnhSOUJn?oc=5"
-            ]
-          }
-        ],
-        "horizon": "jours",
-        "confiance": "élevée",
-        "contre": [
-          {
-            "texte": "Une absence de répercussion sur les infrastructures de production et de transport pétrolier pourrait limiter l'impact sur les marchés des hydrocarbures.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMizAFBVV95cUxOaVJ6NFJXMTRXVU9raVE3Z2tpNTRVVTRURy1vZjdQXy1YWk1qZHlPM1RlUldjdVk1d1ZGanF4MzZxdmM5WmdQLTVvRktyaDRGUm1hbFR4d041R2hJQUdBSG9hTmY5VUZnMTV2VGZndTAyVGZvM3FEU2Yyc3RPVFdyUy00clFyZk5aaEMwNUpWazVneFZQRXJIcWpHSEhJLVpVOEExZlpYTTJjVTZJQ2JTMHItQ0xxNUVUNEItSVhURnd1NklOMGJETm5pVzg?oc=5"
-            ]
-          }
-        ],
-        "sources_independantes": 3,
-        "sources": [
-          {
-            "titre": "An airstrike has killed 25 people near Yemen’s capital, Houthi official says",
-            "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxQSldBcXptZTgxNEZteWg4T1NNVmpieDZHMDV3T2oyaEx4YVdGempITlhBeWVzRDVldUJzWnJsYmtPMDgzYVRzWTdXeGFReV9vTjJMSk5yelZhWDFCV0plWVFHV1YyamlMSlktUS13Z1oyUWl4ZHk1NjZlTl9XVUZUMUdhcEZYWm9YOGRkajRzd0ZUMW5JdmFpZ1dTQnBTX09udTFCbHR0cUFGaEFUanBYRjc4aUlaaDg?oc=5",
-            "domaine": "nypost.com",
-            "date": "2026-11-07T15:27:00Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "Yemen: 25 killed, 30 injured in airstrike in Taiz province",
-            "url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxQQ3ZrUVJJVlBuWXFkT1p5c2hmVkhOemRWakR0QTA5cUtQczhMb2dMcUI3TG5KQTFRRkx6OWhhS2wyRnE3V1ZDQU9FeTEyZzRIOHB2amE2Qm5FS1Z3TXd6OVF2R2VRYVk0dF9XeEFaVTM0bndZYzB3OVF1aE5lZzAzNTVGTEhwWjhxb0E?oc=5",
-            "domaine": "newsonair.gov.in",
-            "date": "2026-11-07T15:11:26Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "Five civilians injured in Saudi airstrike on Taiz",
-            "url": "https://news.google.com/rss/articles/CBMiSkFVX3lxTFBzWWdzQ3A3QWVSbzVZRnlDTE9VTjdBTnE2dXpGSm9MX0tOZXNlYTVoQmx5S3VCTEZEczlLczJjOVd4UW1BY2U1QlJB?oc=5",
-            "domaine": "saba.ye",
-            "date": "2026-11-07T14:29:55Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "Houthis say 22 killed in airstrike — The Hindu",
-            "url": "https://news.google.com/rss/articles/CBMinAFBVV95cUxNLXFzVmpCa0Q3NXdudEl1S1dtbkRNcl82YmNsbVltOHFOeFVNMnkzT2JXWi04NDhKODBlQ1hjR2pEU0tQT3g4cVRVRW9uaWxLS0Y0WnA5R2RZVHFrVXk2QlhIY1RRYmxLQmRRcHFLcnJtNER0ZHpvNWoyOXVKTmVYeDZiVmhCNnM4ZTcxeE5VOENmcFctMk5yODlqcmo?oc=5",
-            "domaine": "ua.news",
-            "date": "2026-11-07T14:29:43Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "Houthis claim Saudi airstrike kills 22 near Sanaa amid tit-for-tat attacks",
-            "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxPbnU2ZWUxNWlhNjlvdkR2VkNfLUM5UVc4ZlBudGViSEE1a2lURV9zUTRwOVliaGUwWFQ0TEJwa2c3dUpOemFvTXNlbFBwS1hZbGdHMjlQcWNDRTdYanVPTGJva1FsbVZYTlpGZGdEZ0Fyd2UwOTNndEJMdll6Y2U4aEZKZUwwYXBW0gGcAUFVX3lxTE10QWtzV2J1c0dERENIeUp6SmpiMlRqTXd1X0N1Z1I2Y0JUUEVGdUVPVjgydDNZT1IycU01eWg4NDhhSkdwZmktbk9FTFhlSW9HNVZYUVB3UGk0VzFXVkFkN0szdVpocUNSR3Y5bnZMWWhubUR2azg4Rm5tckN6MTJjbWpHblUxUGtlZy1fRVNaZWpBWEh4bjhnbk9tRw?oc=5",
-            "domaine": "chosun.com",
-            "date": "2026-11-07T13:47:00Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "An airstrike has killed 25 people near Yemen's capital, Houthi official says | National News | 2news.com",
-            "url": "https://news.google.com/rss/articles/CBMi7wFBVV95cUxQMjFBUzZLa3JHVGh1YlhaT3FJVFNIUkVYZ0tvTDJoak1oeHd3WFJ4UmNMQ0syUzFFWnpoUVRCWWNxUzJndG1tdEVkUURUbnAtS0NwVHI3Sjlrd25mSXJfOHBsZjlrRUJCWWtnVFlqOUtBd2w2d1VBektKRGhjeEhoY255R21SMkRsSWJrcG9kOUlLTTFrWDZHcG1tWmNpZEpfa1drTkFLY18wOHVhT3dpcWJORmRNbWRtWTFFbEZPT0VIZTZjcEdKczFoS2EzLUp4aUdzcWREcjRpeTV0eVBkeUMxaTJKd3pYdnh4d2VJMA?oc=5",
-            "domaine": "ktvn.com",
-            "date": "2026-11-07T13:43:08Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "An airstrike has killed 25 people near Yemen's capital, Houthi official says",
-            "url": "https://news.google.com/rss/articles/CBMi6wFBVV95cUxQLUdpbHBSMUxzeXN2R3VmTFIxZUlzVHpqQ0ZoeWt2UWh3WHpEaUVwY2FZWF9nZHdTeWZCN2J0aVBERjhQQTZ5SFNaUElqRXlPX1Z4aGtkbVc2RVVGMmw5Tm9CQ3NNRU1Bc29RcFVESFFIdzEtRElsa01SSU1xTS1RdmktWGJyOXhOUnRyRWhsLXl4ZzdLOFFyNWgtbWhsWGJrNkVtRFJJbXUtUi13UHU5UkplWjE3cTNfbXZ3V3I3YnlYRkVhamlQb2NyN0llVzRYcVc5QjlValQtTmZqWWRBdnlQTGY5VXlBaGUw?oc=5",
-            "domaine": "kdhnews.com",
-            "date": "2026-11-07T13:43:08Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "An airstrike has killed 25 people near Yemen's capital, Houthi official says",
-            "url": "https://news.google.com/rss/articles/CBMi_wFBVV95cUxPNVRmOWNFY1RackdpNEZ3VUxSQmoxR0RnNFJXXzBaMExXX1NYZ25sTDRzdlRqQUhrTDI2eEQ2TTRlNnpEazRQeUpiZjdpQ1RCdUpnUmczWFhxRkFtcXY4SlRmVGE0ODA5cFV1VzR6TXhDSjhNR3l0d05QRlI1VWw5Y1RPWFJfY2tiU2Zwa01FaEY0Q3E0Vm1WalRLZFkzZXk5Vm4wZEtTUzc2YUdPYkU2RWVLbEZ4aXk2aEFuVGt2RzJsNzZsN1BlOTAtSV9xN016aWdWeUp4VUtBNGM5SS1obGlET1JOSURKYmJnRmU4UHBYN1FsSTdBT08xQjlXSWM?oc=5",
-            "domaine": "record-eagle.com",
-            "date": "2026-11-07T13:43:08Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "An airstrike has killed 25 people near Yemen's capital, Houthi official says",
-            "url": "https://news.google.com/rss/articles/CBMigwJBVV95cUxPbTZYVjB3cVU5ZS00b0VWcjlRT1RDRDZmZVFoLVdwT3RFNnVaZzV6UHBCQ0NodVNKREllVDM1bDJZMFpVQnpkQW9SUEF0NkdUVjVCWWo5aFRINHhTWFh5d3hlc1V1WldVZTFyZTh5THpPcG5ramxxajNHelczMHdKT0NySTdCRm1KR0VET01fbVBRMlJFMDM0T1hKZVlLMnRQMnNPUUhNTlNBbVM1TUZhdVRYcjVGaEo3N1kyeUZETVhYVlJ3ZFlwb2p3dnRFdWFWY3FDX2tJT1dfU0xrTEtFUVZhRlRNUWxFTW1yRDE2YTBnYmpfVnE5dkl3a0hERjQ0Mmdr?oc=5",
-            "domaine": "heraldbulletin.com",
-            "date": "2026-11-07T13:43:08Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "Airstrike kills 22 people near Yemen's capital, Houthi official says",
-            "url": "https://news.google.com/rss/articles/CBMiygFBVV95cUxOUUd5WV9TbmFiVWNqb3kzZnZ2RzVENlo4THQ1aWFlWVFZemlUbTV6Zld5Zld6dGUzQzFhVHRlSEVRYlpMaFFEMkJWbXlwWFprNWFET3NrSzhqZW5yNzlYSElBc1kyblZfc1FubEZBMkhRdFpoVkdpTHYxS255OHdEemtEZFAzSjlFUjhnTDZ6MWg5cEUyRl92Z1d6ZFp1M1hXdFlXMTFnclROU250T1lkV2tSZE5lMy1qWlJ3c1RudG9IV21BeThqUVZn0gHQAUFVX3lxTE9qZ2JGUWVFTEFxaWh1MHdOZzJJT1B0dUpOZzlJbzNQQW1mSXdNTnlEOGFGdjU3aDFtekY1M0NBS1pZYl85TllxNGVPbi0yRkJqWFo1YlpnUDFYcEFQMTBDNFVGU3VuMzZKSldsbkVzaDMzZmxvYU5XTmxUWVFucm5RUUdKWG4zVFBmQTBCQmdfWEt1OHR1dDlpdWRvTlZsMVo1R1F5V0NvLXlLcUR2enItcjZOaDh0M29YU0pMajAyd1NGUTNBWVRDX2tLTS1zRmw?oc=5",
-            "domaine": "thehindu.com",
-            "date": "2026-11-07T13:29:53Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "Houthis Claim 22 Dead in Saudi Airstrike Near Yemen's Capital",
-            "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE13Qlo3bEEtY3BTNDE3cFlzNFV4NXQ5SDIta2ZKbmFKOV9xR3RLMy00TE5ENURZRWctWlpiY1dOWEpWS3VaZDZLdFBsdzM0Y2hSd2poeWdaaWlOTVdhWmFSZ2JTNDlpR2ljRndLa3J3?oc=5",
-            "domaine": "sbs.co.kr",
-            "date": "2026-11-07T13:27:57Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "Houthi media reports airstrike in Yemen’s Amran province",
-            "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxOWEVLbGoyYmJiUzdMamZJY2dHREgtX1VmVTFmOUFZTGJqZFlpeWlQTXhWZFJ2a01NWXNWbVJWNWhiaWhycFRERVZCLXg3V0YwQThGa3ZqbzVZQkJzOG52YjZrRDQ4c2RRdDJnR2o1ajRvLWF2TVY2cGE2MFI3SGo0dzVR?oc=5",
-            "domaine": "news.az",
-            "date": "2026-11-07T13:00:41Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "Yémen: le bilan des frappes saoudiennes grimpe à 22 morts",
-            "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxNR0VhaXBmdmRLUUpuV2tmeVdhQWlpNk0yRjhRRm1JUTJFS3FLU2V2X2p6ZU51N01WVlJNUHhMWjNQQXk2LW9KZWlzbDRtTTRCbXBwTVNpVkFZTDNDYW5wVThuV1RHMFpOOVM1QlRnTzlLeFVRMHlJTXZtM01IcjJocEZiVDBWMGNaYXpZY0RRQ3YyckhTNTNNZDQ1Q2Z6SkNseWx0X3hvblp6MzFNMmZGZVVR?oc=5",
-            "domaine": "watson.ch",
-            "date": "2026-11-07T15:01:29Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Yémen: des frappes saoudiennes font 22 morts dans la région de Sanaa, selon les Houthis",
-            "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxOaVJ6NFJXMTRXVU9raVE3Z2tpNTRVVTRURy1vZjdQXy1YWk1qZHlPM1RlUldjdVk1d1ZGanF4MzZxdmM5WmdQLTVvRktyaDRGUm1hbFR4d041R2hJQUdBSG9hTmY5VUZnMTV2VGZndTAyVGZvM3FEU2Yyc3RPVFdyUy00clFyZk5aaEMwNUpWazVneFZQRXJIcWpHSEhJLVpVOEExZlpYTTJjVTZJQ2JTMHItQ0xxNUVUNEItSVhURnd1NklOMGJETm5pVzg?oc=5",
-            "domaine": "lefigaro.fr",
-            "date": "2026-11-07T13:49:46Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Au Yémen, 22 morts après des frappes saoudiennes dans la région de Sanaa, annoncent les houthistes",
-            "url": "https://news.google.com/rss/articles/CBMi_wFBVV95cUxOUjhoNWhmeldPdmdpcVVfaG56dlNJRlc5YXZMWWdaSWd3c3ROQ01NRGJvZ0pFNi0xUDd1a0Q3dWpacjloQmE0SW1LaV85Z0tPOG43dHF2cWZCVVI2R0k3VGJtaW96bXpyaW5kRExPYV96b0V1LS1CcTdkUm1YNVZzQnFhNTFoaklXQnVIMGlXX2IzQUNoN0JCTTZoRDdka2RzQnBfbHlSZUtDT1hZQ19zTlE0U3NVVktpa2JObk1hRlNwQXU1NG04ZVlsYi1XMlFZeWdrWXdCS25rdmV0TDZ3c3hwVXl3NjVuNlUxOE9tMVJIOUFhM2I3aDBxRkhhdnc?oc=5",
-            "domaine": "lemonde.fr",
-            "date": "2026-11-07T13:38:29Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          }
-        ],
-        "nb_articles": 56,
-        "nb_domaines": 14,
-        "officiel": false,
-        "premier": "2026-11-04T06:20:19Z",
-        "dernier": "2026-11-07T15:27:00Z",
-        "tonalite_gdelt": -1.76,
-        "score_selection": 7.84,
-        "theme_confirme": true,
-        "nb_evenements": 2
-      },
-      {
         "id": "theme-evt-b3d7f55d9bd9",
         "titre": "Impact des frappes russes sur les infrastructures à Kyiv",
         "titre_origine": "L'Ukraine touchée par des frappes russes \"massives\" contre le réseau énergétique",
@@ -708,269 +963,14 @@
           }
         ],
         "nb_articles": 50,
-        "nb_domaines": 24,
+        "nb_domaines": 25,
         "officiel": false,
         "premier": "2026-11-02T21:07:54Z",
         "dernier": "2026-11-07T15:09:52Z",
         "tonalite_gdelt": null,
-        "score_selection": 14.79,
+        "score_selection": 14.9,
         "theme_confirme": true,
         "nb_evenements": 2
-      },
-      {
-        "id": "theme-evt-6b9906d3de52",
-        "titre": "Frappes militaires américaines et tensions croissantes avec l'Iran",
-        "titre_origine": "Ukraine-Zelensky anticipe de nouvelles frappes russes sur les infrastructures énérgétiques",
-        "categorie": "conflit",
-        "titre_langue": null,
-        "mention": null,
-        "categorie_libelle": "Conflit armé",
-        "pays": [
-          "US",
-          "IR"
-        ],
-        "pays_noms": [
-          "États-Unis",
-          "Iran"
-        ],
-        "mondial": false,
-        "pays_suivis": [
-          "US"
-        ],
-        "lieux": [
-          "QA"
-        ],
-        "lieux_noms": [
-          "Qatar"
-        ],
-        "theme": true,
-        "chronologie": [
-          {
-            "id": "evt-6b9906d3de52",
-            "date": "2026-11-04T11:56:47Z",
-            "titre": "Les États-Unis effectuent des frappes sur une île iranienne",
-            "gravite": 3,
-            "resume": "Le président américain Donald Trump a confirmé des frappes militaires menées sur une île iranienne.",
-            "nb_sources": 12,
-            "source": "https://news.google.com/rss/articles/CBMi9AFBVV95cUxNZjV0QWctZld0U0xpaDRUV1gxbHBCYzhacVRvZmVUUHdOXzdLU1YtSVAwMENRdGtEZktyWWVqUXY4UkpsS2RZUUVBdm83aXNTb2twOEktbVQzTWxLX3JybUY1dW14V3pHemJrSS1zeGlBNWpnVkRNQ0RfWnNGakdNY2VwVTFZUldMRHhub3BNM19wMEg4aGhZUEhEbVJYZ1FkbWQ5LWNTYTNEUmYwNHRTSE5ISjlxMDdmSkRXaHJuWFdOdXk0anNwUVNlU1JaVVpHalFDZFlxS29qMS05MU5XZkNXakVDZUhhUTlFQ1dNZFF5ZmVp?oc=5"
-          },
-          {
-            "id": "evt-2081133dab50",
-            "date": "2026-11-04T16:43:40Z",
-            "titre": "L'Iran menace d'une guerre étendue en cas de frappes américaines",
-            "gravite": 4,
-            "resume": "Le dirigeant iranien a prévenu que le conflit serait beaucoup plus étendu si les États-Unis reprenaient leurs opérations militaires.",
-            "nb_sources": 8,
-            "source": "https://news.google.com/rss/articles/CBMi_AFBVV95cUxOWVY1M2dUa1E3SzRKcE91UU0wNnRXSEJhT0hERzRCN19zZUNOejVGS3hlSmJNbm42X2dUdnY3Z0JDVjZ4YzNRV1Q2U3pyb0lDOEZoSG9VeGROZFhBUzdLelI3bjN1bnhjamtqejdPeFpiYUhXME5fOXp1MGk4Rjh2dW5wdFJFUmE3T3Z4SWV2R0QtajNPMGNiRFJYamg5TmJBSHRZQjQ1YnJJY2RuNHVUY1lucW1ia1ctOFVmMVFNUGlWejFxTldPZ29vUGVLYmwyZVpyQWduaXhUcnQxYUJOQ2dVdVFrRjlWNURJZ1c0ZVZVMXJqbWlvWFJYWEQ?oc=5"
-          },
-          {
-            "id": "evt-d40435d5b052",
-            "date": "2026-11-06T22:30:00Z",
-            "titre": "Menace d'une reprise de l'offensive américaine contre l'Iran après les scrutins",
-            "gravite": 3,
-            "resume": "Au lendemain des élections de mi-mandat, la menace d'une reprise de l'offensive militaire américaine contre l'Iran est évoquée par plusieurs observateurs et responsables politiques.",
-            "nb_sources": 9,
-            "source": "https://news.google.com/rss/articles/CBMikwFBVV95cUxPcUFFWWRJOVpjTjFzZXJXLTRLMHlfeHZzLW4tZWpoWVRaQ1g3ejMybTA5V1ZMcFFnbGZsNkxxQTA0U3dzc0YtNlhOSC1tTFF6LTY4U3JENkdHbnU0N0VVOTRjQXFuaDlFZ3o3TVZFTnczLUxObjg1b1FXNzRjN0d2SXQyb1ZnRnRvd3lYdDV2Q01VUU0?oc=5"
-          },
-          {
-            "id": "evt-eb4a649fce51",
-            "date": "2026-11-07T11:37:27Z",
-            "titre": "Frappes américaines en Iran et poursuite des efforts diplomatiques",
-            "gravite": 3,
-            "resume": "Les États-Unis ont mené de nouvelles frappes limitées contre des infrastructures en Iran, tandis que le Qatar continue d'espérer un accord entre les deux pays.",
-            "nb_sources": 12,
-            "source": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxNX1lSRzlWM003OXA5bmduaXVta2Fadk93UDR4bW1SLUF4aWZyMkNpMVlHUjBxbUVvN2VmZ1BVQXBJbHVJZjBkcnhjbmdXMFVnZi1zWUR1blEtd18xYVdEamFISFVNbmpHT0VfQVZvWnQyaVEzY0ZHdjNRNDFWWUJrX0JieDVQTzN3Qi0zN3dwa3AwQlBkQUozNFZTSWhsUmhOT1A1YWZ2U2tDODJETXZNdklFT01vMHN5MDNz?oc=5"
-          },
-          {
-            "id": "evt-9024bdfb458f",
-            "date": "2026-11-07T14:45:49Z",
-            "titre": "Les États-Unis mènent des frappes limitées sur l'île iranienne de Qeshm",
-            "gravite": 4,
-            "resume": "Les États-Unis ont conduit des frappes aériennes sur l'île iranienne de Qeshm, tout en indiquant ne pas planifier d'attaques immédiates supplémentaires.",
-            "nb_sources": 12,
-            "source": "https://news.google.com/rss/articles/CBMiswFBVV95cUxNM3JOZ3lXdGg2Tk9QcWFNNUZjZW1EdV9waWc2WENLd3lDU3FCZXZ4cGlmVnRnRUo0aDlmQU12elQ3cUJ2RTdWdlhCbGRSajdKaVBPZVdGVE1qakVidHRuMmpoSW5CMEhxTEZxS1QtQThmRWZJNXpBM2RZOGdjdEw2WklTVTBGZWNBTzZ1MGxLNGpEQjRObE9vYk1SSDJsZXhaczNLRTFuVlRlQTZlWW5scDZYYw?oc=5"
-          }
-        ],
-        "regions": [
-          "amerique_nord",
-          "moyen_orient"
-        ],
-        "gravite": 4,
-        "gravite_regles": 4,
-        "note_gravite": null,
-        "ia": true,
-        "modele": "gemini-3.5-flash-lite",
-        "analyse_le": "2026-11-04T10:16:49Z",
-        "resume": [
-          {
-            "texte": "Les États-Unis ont conduit des frappes aériennes sur l'île iranienne de Qeshm, tout en indiquant ne pas planifier d'attaques immédiates supplémentaires.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMimwFBVV95cUxOSG05R3lwWmJxcU1VUG5RcjUwR1daNzEtU3p2aHplUGZTWkFKbTVKdGtJMDQyblVkdVpiM0VaWG9NU29BMkNUS2psLTAtWVA4Wk5jeElJWkd3ekR2aHp3T2pYN0lTbS1wX2pQdU15T0d6di1IWTNhS0IwR29TRkpKTXpFSkpSQ1lKN3lHNWw2bnhwQ0pDUnpFVVFtYw?oc=5",
-              "https://www.ft.com/content/f3afd549-65fc-487e-922e-2748fa6a8a5f?syn-25a6b1a6=1"
-            ]
-          },
-          {
-            "texte": "L'Iran a qualifié la réponse de Washington sur le plan maritime d'inconvaincante et a appelé à éviter une escalade.",
-            "sources": [
-              "https://www.aljazeera.com/news/2026/11/4/iran-says-us-reply-to-hormuz-plan-unconvincing-trump-confirms-strikes?traffic_source=rss",
-              "https://news.google.com/rss/articles/CBMioAFBVV95cUxPSW1QTDAwcFhaVUI4eTY3dWxmQlhoYXpJaXpPT3Nac3VYSDAyTGlUb3VhOS04RktMR3MtT1BtdEZlOTdTUFBQbVBTX0toMGoxZ0N5U000UUNjN19LT255RFV5aFIzd25ITGFGeDRCZjlKUE40LWEydk9Pdjc0eHEzUklfOGg3N0FZakJsZDN3YVJWOWhnNW5jY2R5SEpjSEZn?oc=5"
-            ]
-          }
-        ],
-        "actifs": [
-          {
-            "actif": "pétrole",
-            "sens": "hausse",
-            "texte": "Les opérations militaires menées à proximité du détroit d'Hormuz font craindre des perturbations du transport maritime pétrolier.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMimwFBVV95cUxOSG05R3lwWmJxcU1VUG5RcjUwR1daNzEtU3p2aHplUGZTWkFKbTVKdGtJMDQyblVkdVpiM0VaWG9NU29BMkNUS2psLTAtWVA4Wk5jeElJWkd3ekR2aHp3T2pYN0lTbS1wX2pQdU15T0d6di1IWTNhS0IwR29TRkpKTXpFSkpSQ1lKN3lHNWw2bnhwQ0pDUnpFVVFtYw?oc=5",
-              "https://www.aljazeera.com/news/2026/11/4/iran-says-us-reply-to-hormuz-plan-unconvincing-trump-confirms-strikes?traffic_source=rss"
-            ]
-          }
-        ],
-        "horizon": "jours",
-        "confiance": "moyenne",
-        "contre": [
-          {
-            "texte": "Les déclarations écartant de nouvelles frappes immédiates pourraient apaiser temporairement les craintes sur le marché pétrolier.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMiuwFBVV95cUxQNzdZeU8zVHU4RFF5aE1iNzhhQ3dDU1d2Zmo3dnNqVjkxUWtCdFhLcVN5X3A0VGkwZTdvVy1pWTh5R2FSQ3k2UlpQeE9XRXpDa0hXSjFLa0pWY05ZSEtiRDNmUFdXSTJqbGZpbE1JM05oaGxsaTJZWGxZcUczdEtpRURZX3R5WkVYLW10NzRCU2tySmt1SnNmLXR4MFJOSmI1TGVkUS1WeFpndEdRR1MyU2xEZ2o2RW1XZk5r?oc=5",
-              "https://www.ft.com/content/f3afd549-65fc-487e-922e-2748fa6a8a5f?syn-25a6b1a6=1"
-            ]
-          }
-        ],
-        "sources_independantes": 5,
-        "sources": [
-          {
-            "titre": "Iran: Trump annonce de nouvelles frappes américaines tout en poursuivant les négociations",
-            "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxNM3JOZ3lXdGg2Tk9QcWFNNUZjZW1EdV9waWc2WENLd3lDU3FCZXZ4cGlmVnRnRUo0aDlmQU12elQ3cUJ2RTdWdlhCbGRSajdKaVBPZVdGVE1qakVidHRuMmpoSW5CMEhxTEZxS1QtQThmRWZJNXpBM2RZOGdjdEw2WklTVTBGZWNBTzZ1MGxLNGpEQjRObE9vYk1SSDJsZXhaczNLRTFuVlRlQTZlWW5scDZYYw?oc=5",
-            "domaine": "lemediaen442.fr",
-            "date": "2026-11-07T14:45:49Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Kiev dénonce de nouvelles frappes russes contre ses infrastructures énergétiques",
-            "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxQU2hkYTRYVzRjOF9aUy1rcG82MWF0U0VCeTJLM0tkRFA4Z1FKMXMzMV9OVVJBREttd3plNERhSUZTcUNmWWh1aU9ZY3RJSjdNOW1FQUFqUkFKRE9wVnNtRnh4ZnhGUWdKcFk0Uk9UaFB0M2pDd2tUSXFPamhhb3A3Ul9kVDFGYXZXTjFOcjRyZHlZa19qQXJQQ3hNeDBfS3BGdDRUMXlkdjBGcWJ5UmRQNk9BT2FjektiVjVvTDV4MWtLS1U3LWtB?oc=5",
-            "domaine": "connaissancedesenergies.org",
-            "date": "2026-11-07T14:35:21Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Iran: l'armée assure être \"plus forte\" qu'au début de la guerre",
-            "url": "https://www.france24.com/fr/vid%C3%A9o/20261107-iran-l-arm%C3%A9e-assure-%C3%AAtre-plus-forte-qu-au-d%C3%A9but-de-la-guerre",
-            "domaine": "france24.com",
-            "date": "2026-11-07T13:52:21Z",
-            "officiel": false,
-            "source": "France 24 (dépêches AFP) (RSS)"
-          },
-          {
-            "titre": "Ukraine: les frappes s'intensifient avant l'hiver",
-            "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxPM3locnZtelN6TEx5cFVqcmxfTllyZkFaU0gyZ29FMVpaUk1HX2R6aVJKNWM5TGR5ai0wRVhqdzZ0ZksySDhCcFdXY0RyTllMR0xnT0Rvb0U1X0ZHdmt1QzdKY1doZDk0bWtncEZFOWV6ZVkweEhzamdvNGw4VXdnTDV3MDFYOENrcFppejF0MkFXYkQyUVJUanhrTVRSdw?oc=5",
-            "domaine": "tf1.fr",
-            "date": "2026-11-07T13:20:22Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "L'Ukraine frappée par de «massives» frappes russes pendant la nuit",
-            "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxOYzZidzZ4dUoyT2NON2U3N1MtcGh6NnJRX1BBS2FaUFV4QnNtYzh2YVQzZGdBa1J3cTFEbWp1NE5LbGdmMHY2aXZNX3V0SWRDMFV6UE55SEJlVlduRkZadi1ZcVFEbmE0eW8teDh1cG5lWTNhNDJMWFVRNmJsWnh4amt2el9heHkybXQ4dXFrYk1sR252SlVxT2o5djdFQ1k0NW9PRU1kTkxJcWlv?oc=5",
-            "domaine": "bluewin.ch",
-            "date": "2026-11-07T10:38:36Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "JD Vance leads behind - the - scenes push for new Iran deal amid war tensions: Report",
-            "url": "https://www.moneycontrol.com/world/jd-vance-leads-behind-the-scenes-push-for-new-iran-deal-amid-war-tensions-report-article-14074318.html",
-            "domaine": "moneycontrol.com",
-            "date": "2026-11-07T10:00:00Z",
-            "officiel": false,
-            "source": "GDELT DOC 2.0"
-          },
-          {
-            "titre": "Guerre au Moyen-Orient: une prime américaine contre des informations; l’Iran dit être « plus fort » qu’avant",
-            "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxNMjhrVDBPdjhiNm9tUjFhalFVVUYxSFlCZ1NiOEJLbE00UHFoaWlkclBXVEk2TFBxWmg2UDVxMGVia25NQTZ3WWItRDEyMlduWTJTYW1sdkNtVGdVb2FkRkEtX3Z4a19Ncms1N1d1UUVPZldnb2xtTTdvdHExbVlfNkFLenZqUmM0N1R2WkNBaHI5RW5GRVlyLXgxdVRaSUJlOXRMMTJVckp5QWtoaFVqaHZNYzVpNXRsRC1DaVA2Z00?oc=5",
-            "domaine": "la-croix.com",
-            "date": "2026-11-07T09:16:06Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Iran's Qeshm Island was hit by missiles again following a US airstrike earlier this week.",
-            "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQOVpoaUNTaDZZRTljX2R0bTZ2dDRacDJLQUF3WThiWGJJSGVSQUx5MDQ0Z0Y2bUplOUFMbDZURkxqcjhIdURwM0g4SG52NXZldy1pYW5YWWFNTnZtR0ZMZDNEU2RTejUxY3JrZ2N1VGVxUGxIc2p4WEZpeEtQSHZ2ZF9UT1YxNU9uWE43R3FRX20zYnBuVG1yb1R5bTk1eWM?oc=5",
-            "domaine": "vietnam.vn",
-            "date": "2026-11-07T08:06:09Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "«Vérification des bénéfices»: Trump révèle la conduite de « frappes limitées » en Iran (vidéo)",
-            "url": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxQUElMOFRVWXVmQzhCY1ZXcVZSMFVBcUt1aVJuS24taDI5WlBTMVlvMHA0MC1kX1B1R2xDay1QRDBaT2lKeHZhY3RDd3lPSS1XYVJvYjJkNG1VVDR4SDFwYkxlcEE0dVhzTGI0WUEwLXR5ZWNnT0RJVFBaZ0ZYLXo0QUlwOUJRVUExSk1B?oc=5",
-            "domaine": "dailybeirut.com",
-            "date": "2026-11-07T07:14:24Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Trump confirms US strikes in Iran, insists ‘it’s not a war’",
-            "url": "https://www.aljazeera.com/video/newsfeed/2026/11/7/trump-confirms-us-strikes-in-iran-insists-its-not-a?traffic_source=rss",
-            "domaine": "aljazeera.com",
-            "date": "2026-11-07T07:05:01Z",
-            "officiel": false,
-            "source": "Al Jazeera (RSS)"
-          },
-          {
-            "titre": "L’île iranienne de Qeshm visée par de nouvelles frappes américaines, l’Iran menace d’une réponse « immédiate » et « sans limite géographique »",
-            "url": "https://news.google.com/rss/articles/CBMi4wFBVV95cUxNN1I3QjVzamxnNFBzLU04WUh4NE4tSXVnQUQteFNJOTgtZXBnSk44QkpHLTU0b2pWMXlwYnhKck5rWnhqcEJ6d1pmd1d3VzRzc0tQOURUTlZoV3NlYllQeGYzV08wSXdfd2RUM3QwVW1OTEpuNno4dlRUV0cwZmdrU0tleW05SmNCX3ZZbDRWdy1jaWdtSUlrekRSdC1PLUpraVFMMENLcklHTHQxVFMtcVo5Qi14RGpjTTluX0w2bjhNRm01UDFjZ0JLUzAweTJrT1NoUUJzWmVabUZkU2tHNmo5RQ?oc=5",
-            "domaine": "rtl.be",
-            "date": "2026-11-07T06:52:24Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Iran: Trump revendique de nouvelles frappes",
-            "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE5xRkltZS1idENMSTd4eklkbVJHSk9IdFZVVTVuNDJQRE9kV1p1c3R2NEt3MVJtVmxlLVgwZ2c5cGQ4YlNJaG1iUFZOeWpyd28zUTRsMEFiMUpUdDh0LVBmZHA1Z2o5U2lRdDd4NmZlYnZWZk0?oc=5",
-            "domaine": "libnanews.com",
-            "date": "2026-11-07T02:19:02Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "États-Unis: nouvelles frappes limitées en Iran, Trump évoque des progrès diplomatiques",
-            "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxNX1lSRzlWM003OXA5bmduaXVta2Fadk93UDR4bW1SLUF4aWZyMkNpMVlHUjBxbUVvN2VmZ1BVQXBJbHVJZjBkcnhjbmdXMFVnZi1zWUR1blEtd18xYVdEamFISFVNbmpHT0VfQVZvWnQyaVEzY0ZHdjNRNDFWWUJrX0JieDVQTzN3Qi0zN3dwa3AwQlBkQUozNFZTSWhsUmhOT1A1YWZ2U2tDODJETXZNdklFT01vMHN5MDNz?oc=5",
-            "domaine": "euronews.com",
-            "date": "2026-11-07T11:37:27Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "United States announces fresh Iran-related sanctions, says Treasury Dept",
-            "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxPM3p0cnFKLWtleFc3Z0lHS2VUbWF0N0dPM1VqYnFsbXhwaHZVOTBoQU12RVItVDFtR3lINmFuV1hnbDFoa2tYTi1VQURBelFwV0ZmMWx1LXQ3d0NvMDVtYVoyQWJHRjN2SlM4clE2enVZOGZwbjBRRFpGQ1hyNTJPdE5nTUoxZ0JMOHgxSW92N2FYcWJLOWVHdWJ6bXlOTkFpTXZXN1FPZzZWbU5FTXNnTzNieDNEZ9IBugFBVV95cUxNWFRkbXhkN1JHWVg2M0l6NFVFUVZqanBFaVozSEFMZG55bmpXYjNVTVZrbzNSTFlxcjJmQ3JJVEhWbWdZNUc2Wk00UnY2ejk2YnRpTDkxbHBYLW9TVTBEdjBocmVUaWlvTG1vN3pNTzRUcXdMR3I2QkJHMlRua0hGa1ZoRUM1RmdPWnlzMGxnWWszRVA2TlZYUEExZUxSMFFuNWN4QXlwZEV6SkVaVk05eXJvdlFXdkRSR2c?oc=5",
-            "domaine": "tribuneindia.com",
-            "date": "2026-11-06T20:57:07Z",
-            "officiel": false,
-            "source": "Google Actualités : sanctions (anglais)"
-          },
-          {
-            "titre": "United States announces fresh Iran-related sanctions, says Treasury Dept",
-            "url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxQRFhLOUIwa2ozVnFwQ2ViY1RKQjRqZ0tnRlhHVV9pOVpvRTJvRUs2MVdhNGxpeVFGTG9yS2k5TlZvT3ZQWW1GSVhKNVVXcUd3M3FXRWxRZHlkT0FHNHlLQTRWNHpuY0cxdDFiNTZ3RXpVeG9nb3lDenFBYmF4ckNZNDNNQTJyUnM1RWUyaVZUTG9RTEV4VF9zM0Vjd0VNTzBvMGlWZTJDUEtHYUlOWWN5M2ZNV0dOMkF1WDZ5czhicw?oc=5",
-            "domaine": "aninews.in",
-            "date": "2026-11-06T20:55:00Z",
-            "officiel": false,
-            "source": "Google Actualités : sanctions (anglais)"
-          }
-        ],
-        "nb_articles": 116,
-        "nb_domaines": 27,
-        "officiel": false,
-        "premier": "2026-11-02T22:19:02Z",
-        "dernier": "2026-11-07T14:45:49Z",
-        "tonalite_gdelt": -1.86,
-        "score_selection": 13.51,
-        "theme_confirme": true,
-        "nb_evenements": 5
       },
       {
         "id": "evt-3ba56f3fae09",
@@ -1151,8 +1151,180 @@
         "officiel": false,
         "premier": "2026-11-01T17:49:28Z",
         "dernier": "2026-11-07T12:22:18Z",
-        "tonalite_gdelt": -1.86,
+        "tonalite_gdelt": -1.87,
         "score_selection": 13.11
+      },
+      {
+        "id": "evt-471d58831fea",
+        "titre": "Cinq Palestiniens tués à Gaza dans des frappes et tirs israéliens",
+        "titre_origine": "Proche-Orient. Gaza: cinq morts dont une adolescente dans des frappes israéliennes",
+        "categorie": "conflit",
+        "titre_langue": null,
+        "mention": null,
+        "categorie_libelle": "Conflit armé",
+        "pays": [
+          "PS"
+        ],
+        "pays_noms": [
+          "Territoires palestiniens"
+        ],
+        "mondial": false,
+        "pays_suivis": [],
+        "lieux": [],
+        "lieux_noms": [],
+        "theme": false,
+        "chronologie": [],
+        "regions": [
+          "moyen_orient"
+        ],
+        "gravite": 3,
+        "gravite_regles": 4,
+        "note_gravite": null,
+        "ia": true,
+        "modele": "gemini-3.5-flash-lite",
+        "analyse_le": "2026-11-05T21:55:38Z",
+        "resume": [
+          {
+            "texte": "Des frappes et des tirs israéliens dans la bande de Gaza ont fait cinq morts, incluant un mineur.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMitgFBVV95cUxPN3YzV0Q1UHNrTjRlQlJBa0g0ajVobWtJdUJ3WTFIQXZkRElOTlFBQ1AzcmkyYzZNRWVlVnJZMjd6M0N5dG5RZUlGSDRHM1FFYXl4RHc0dl9meDNCWWpfR0xmVHdtREQ3U0twb0hsMkFDYV9TWHJOMkMwS0w4Tm5TZGE2ZVlvTFRWQ01XYWZUMWN5Z0RfU2NHeXlVLVJocDBvdFFscEtFcFhyQWVpSVVXbzJsZzlvdw?oc=5",
+              "https://news.google.com/rss/articles/CBMi5AFBVV95cUxOcGtwOU1aLTlDcDNKRlFNX0FuQkp3WkxPRWdlVW5kak5rbjgtTFd1U2ZfemdTbDR2Q1phTXBQYkdRZ2xoclNHUW9USFZHZGpqRV9BaWFzY19xUk1idndGLTJOMldRUWpJNTdFSF9GLTBVTGNXamx5TmNwZF9YeTROMldSdGpQZE1qeWpJMXZ6eVQxZ013REZ4bVN2bTdJcW84WHFOcklPVnEwRW90Y2VYQzRnLUZuS2UydjhKdlMtb1pMdXp1N2JwbDgxSDVjTTBxU1k2OVdEMUxPVHhJRFVNaTZaY1E?oc=5",
+              "https://news.google.com/rss/articles/CBMixgFBVV95cUxNVXFMckk4U0dXRkJlTjJOWHdxSjVWN2VJYjBUdldWd2N1Z2JKSWNTMTZNTnhkOUlwOGxzNzFHUFJXcnJRajVyMGNvQmNmWV9pN0FjMnNIdlJxajdJT2s1YnF4MkFxZU84RDhmMktiNk4yTWI3UmxjZHhiTGhSNy1MYXRIUlUxbHFPalJMZnJYbTlFcVV3RXJPTDhrOEV4QVk5MWhiR2xQalE1U19NTVZqSHdTWUtpaV82QjZtZ2hvbHF2WC1vcmc?oc=5"
+            ]
+          },
+          {
+            "texte": "La défense civile locale a rapporté le bilan de ces opérations militaires.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMi6wFBVV95cUxPdk5wcUV5bVN1SGNLTXBSampyS1JZS2dtR19JZDMxQmlSYVhvczZsb2lZTGg4YWJmX1RWVGN2WjZsUmo1d3BSZHM3a2d1d1BldGhPa1F3MExxT2hvNkE1c0JWeXRyaG4zWk00ZTBXX0JNSzFxN1N1X1NldDJ4emRRU1QyWWlwY2VaYzRGRVc5WW16NjJFSy10djlsS01MN3dUT2dCbW4waFJEb082NkJhNWlaZmVGUlBSMFBUVTRUQjBOSWZVNmJXUFZuMU44MmZQUHR5dmtQRUtVanc3MjFJQzRWU1NfQjdiN0lJ?oc=5"
+            ]
+          }
+        ],
+        "actifs": [
+          {
+            "actif": "pétrole",
+            "sens": "incertain",
+            "texte": "L'intensification des affrontements au Proche-Orient maintient une incertitude sur les marchés de l'énergie.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMiwAFBVV95cUxQVzVnMEttSWxPMHNRUHNoOVNWcXZubnExVi14LTNKLVp3VXBpWWhfbTFZSjBaYXVfUkt3dHpHWlpQc01JVEFfLUtXanZ5cHZJa2NrUGVlUHNRUkkxZEoxMDZxT2YzcE9JdElLaFdqbVQ0cnpRZkRnRHlHZ3owV2oxSmQ0MTRqQmNEejV2OWZMY1BLY3hHSy1kcVlnVjI0Ykx6NWdqc01MSEJqZ1dneHBpRkx6dE0zZThQOUIxWjk4bTM?oc=5"
+            ]
+          }
+        ],
+        "horizon": "jours",
+        "confiance": "élevée",
+        "contre": [
+          {
+            "texte": "Une désescalade rapide des opérations militaires pourrait annuler l'impact géopolitique.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMiwAFBVV95cUxQVzVnMEttSWxPMHNRUHNoOVNWcXZubnExVi14LTNKLVp3VXBpWWhfbTFZSjBaYXVfUkt3dHpHWlpQc01JVEFfLUtXanZ5cHZJa2NrUGVlUHNRUkkxZEoxMDZxT2YzcE9JdElLaFdqbVQ0cnpRZkRnRHlHZ3owV2oxSmQ0MTRqQmNEejV2OWZMY1BLY3hHSy1kcVlnVjI0Ykx6NWdqc01MSEJqZ1dneHBpRkx6dE0zZThQOUIxWjk4bTM?oc=5"
+            ]
+          }
+        ],
+        "sources_independantes": 5,
+        "sources": [
+          {
+            "titre": "Agression génocidaire contre Gaza: Cinq martyrs dans des frappes sionistes",
+            "url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxPYzVsVndFUmM2cjFhdno3dGlMTWN6aF9NQjBTT0JvRjNvdWlZb3pkVTAwNk11VnljRWU0R0MybDV2TGlXNmV0WUt0T3dtRE4zVTAycG95QlQ4REhMWWhrQkZwaXV1RmtqS1ZOLUh6NlZFOWtpdy1tLUFFdjk4UTk4YUNqalF4NFVBNDd3aW92YU9UMmRQRVF0aVRPOTBZSmxnbGVITkhONDdXbWNNdVE?oc=5",
+            "domaine": "lapresse.tn",
+            "date": "2026-11-07T17:47:37Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Gaza: deux Palestiniens succombent à leurs blessures après des frappes israéliennes",
+            "url": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE05X0dKN3ZEWmZ5U2VuUW9zZjR0bDZ4VExmNzJBdXR4azlfNjBIU2g1NEQ4RU9CU2NfNkx4bEZLNFh0NjlUanJPUS03NDg2dmdD?oc=5",
+            "domaine": "sana.sy",
+            "date": "2026-11-06T11:03:11Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Gaza: quatre morts, dont un enfant, dans des frappes israéliennes - Monde Arabe - International",
+            "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE1DNjVhcl9mb3NnM1BhdFBROXlSaV9kbzhQUDFGeGxHeGZFb01IN2lnOTY3QjZ1RjZ0MFEwUm9VU05aRzltUDZwb09Jem51bzZLbG42Vktn?oc=5",
+            "domaine": "ahram.org.eg",
+            "date": "2026-11-05T21:22:38Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Cinq Palestiniens tués à Gaza, dont un garçon de 12 ans, dans des frappes et des tirs israéliens",
+            "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxPN3YzV0Q1UHNrTjRlQlJBa0g0ajVobWtJdUJ3WTFIQXZkRElOTlFBQ1AzcmkyYzZNRWVlVnJZMjd6M0N5dG5RZUlGSDRHM1FFYXl4RHc0dl9meDNCWWpfR0xmVHdtREQ3U0twb0hsMkFDYV9TWHJOMkMwS0w4Tm5TZGE2ZVlvTFRWQ01XYWZUMWN5Z0RfU2NHeXlVLVJocDBvdFFscEtFcFhyQWVpSVVXbzJsZzlvdw?oc=5",
+            "domaine": "atlasinfo.fr",
+            "date": "2026-11-05T21:06:10Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Des frappes israéliennes sur Gaza font cinq morts, dont un enfant",
+            "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxPVFBGbk5CTGFMcXd2UllTbWstazdYUVhtRi1qUU5HQWdKeXNwTm0wTHRBTk12eHdZc2JDQWFyVkt3UVJBXzYyQVRqa2hwYUc2TUR0N3M2cFd3d2JRRW5KUmZTa1lqeWxheWNmMV9NVmluTzJ6TFF6YTZXQ2VocS1fNllZLTJRMlF6Z1dJZXpzWk5EbGd2RFFsT25zd3QzZ0xoRjlR?oc=5",
+            "domaine": "7sur7.be",
+            "date": "2026-11-05T19:18:29Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Bande de Gaza | Des frappes et des tirs israéliens tuent cinq personnes, dont un enfant",
+            "url": "https://news.google.com/rss/articles/CBMi5AFBVV95cUxOcGtwOU1aLTlDcDNKRlFNX0FuQkp3WkxPRWdlVW5kak5rbjgtTFd1U2ZfemdTbDR2Q1phTXBQYkdRZ2xoclNHUW9USFZHZGpqRV9BaWFzY19xUk1idndGLTJOMldRUWpJNTdFSF9GLTBVTGNXamx5TmNwZF9YeTROMldSdGpQZE1qeWpJMXZ6eVQxZ013REZ4bVN2bTdJcW84WHFOcklPVnEwRW90Y2VYQzRnLUZuS2UydjhKdlMtb1pMdXp1N2JwbDgxSDVjTTBxU1k2OVdEMUxPVHhJRFVNaTZaY1E?oc=5",
+            "domaine": "lapresse.ca",
+            "date": "2026-11-05T18:42:28Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Guerre au Moyen-Orient: trois navires en feu à Ormuz; 5 morts à Gaza dans des frappes israéliennes",
+            "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxQVzVnMEttSWxPMHNRUHNoOVNWcXZubnExVi14LTNKLVp3VXBpWWhfbTFZSjBaYXVfUkt3dHpHWlpQc01JVEFfLUtXanZ5cHZJa2NrUGVlUHNRUkkxZEoxMDZxT2YzcE9JdElLaFdqbVQ0cnpRZkRnRHlHZ3owV2oxSmQ0MTRqQmNEejV2OWZMY1BLY3hHSy1kcVlnVjI0Ykx6NWdqc01MSEJqZ1dneHBpRkx6dE0zZThQOUIxWjk4bTM?oc=5",
+            "domaine": "la-croix.com",
+            "date": "2026-11-05T18:39:20Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Des frappes israéliennes font quatre morts dont un enfant à Gaza",
+            "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxPWWQwdmxod2txQUZOUjZkMzBqZ29xbE5IcXFjWEp3MWQteU1LUTRnZmVCU1V0WFhfU0V3a1BDbGZIS2psNGdGWjBCNlZWMzBtX3NFa0cybU9KeUxEb0JjaUIzY3J5M1dDTWFwRnU0aEFRaHJ3VmJvdnNCcTZGbjQ1cTNuRjk5eDFLNEZCc1htc3VrN3RZdTNQQ2FEaEN5NDhSVTVNclVaM2ptTnVXUlVQc1k2RWpwdw?oc=5",
+            "domaine": "20minutes.fr",
+            "date": "2026-11-05T16:22:00Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Plusieurs morts, dont un enfant, lors de frappes israéliennes dans la bande de Gaza",
+            "url": "https://news.google.com/rss/articles/CBMi8AFBVV95cUxONW5wUXEyeEl6elgtZFc2cUd2SWFuSXVtYVVnRFdnRF9YeU5DaVRKbEtuNUtMZDV4aWdrdFVaTEFCSmRCWTF0a2Ixd3k0NHF6V0dUa3h5V3FsUGl4Zm15c2hHcWdnMzFFUGR5aUVrMUlLb09NbW9hOUg1U0ZCaXZJbUgwQ1VEM2x4TVpKTVM4a3JFSjJtRVE0Q1hueUQ5bE9zaktWaWUtWnNMM055dlpXU2RvTVRvVEoyZk9JTE9iLVJrTng1dV9ZUVU5cGM3TnNMSGp3eWlGSVhYQ3VWbFlULXJqa1B1NUEyc1RuSm9NT2k?oc=5",
+            "domaine": "noovo.info",
+            "date": "2026-11-05T15:19:34Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Proche-Orient. Gaza: cinq morts dont une adolescente dans des frappes israéliennes",
+            "url": "https://news.google.com/rss/articles/CBMixgFBVV95cUxNVXFMckk4U0dXRkJlTjJOWHdxSjVWN2VJYjBUdldWd2N1Z2JKSWNTMTZNTnhkOUlwOGxzNzFHUFJXcnJRajVyMGNvQmNmWV9pN0FjMnNIdlJxajdJT2s1YnF4MkFxZU84RDhmMktiNk4yTWI3UmxjZHhiTGhSNy1MYXRIUlUxbHFPalJMZnJYbTlFcVV3RXJPTDhrOEV4QVk5MWhiR2xQalE1U19NTVZqSHdTWUtpaV82QjZtZ2hvbHF2WC1vcmc?oc=5",
+            "domaine": "ledauphine.com",
+            "date": "2026-11-03T22:52:24Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Proche-Orient. Gaza: cinq morts dont une adolescente dans des frappes israéliennes",
+            "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxQaWlrRGZqbk9SVzdkRkVzUjY3RmZEbXVWR2F0MmFzMl9mVDV0M3FCRExmNVM1ZFoyNEJHZGh0VGpDNEtJblN5aldLWV9lTXc2R082WW9TdlZqSmdjb3FHZE9GZzdtY0taM042bms5LXpVY3VwTkFhd040aFI4MDJ3WHJGNm5QTHIzbVJVVWR5eGJvdXI4Z1Y1UkRXSjdfeFdpTnliMEhmSWZXRHNLSWVZaF9aMGFlV19iNVlQVWFVNVRDSGM?oc=5",
+            "domaine": "leprogres.fr",
+            "date": "2026-11-03T22:50:37Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Des frappes israéliennes font cinq morts à Gaza, dont une adolescente",
+            "url": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxPeWN5MjhSVGZfdjdzQWdVRWxiV1dXblV4cjNwbjZkSjB1Nko3TkwycFUwX1I5cFZmSnFISjdvQ0p1QTBVdXBxSktSMGMxa18weHE4OWlYT1EzUGY3cFd0NGlxRjhZWVdmZmE4QVdMNGE2V0tPSkRCZkFKM0JXdDc2U3ZFMTMyN2JKc0tWSlVhMVFGb3FwM21QbDNLTXg5NjI0cl9FOG1DclphM01YNHBobFZWd25FUGhsLUJTZXk4TlhvdFM1Q2dWYXl2VXhJdHhmcXRvbDFTTWotc1dQOEZLdVNn?oc=5",
+            "domaine": "bfmtv.com",
+            "date": "2026-11-03T22:37:15Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          }
+        ],
+        "nb_articles": 13,
+        "nb_domaines": 12,
+        "officiel": false,
+        "premier": "2026-11-02T22:47:32Z",
+        "dernier": "2026-11-07T17:47:37Z",
+        "tonalite_gdelt": null,
+        "score_selection": 7.4
       },
       {
         "id": "evt-84096675c6d9",
@@ -1337,7 +1509,7 @@
         "officiel": false,
         "premier": "2026-11-03T23:33:23Z",
         "dernier": "2026-11-07T16:03:20Z",
-        "tonalite_gdelt": -0.71,
+        "tonalite_gdelt": -0.74,
         "score_selection": 15.67
       },
       {
@@ -1530,7 +1702,7 @@
         "officiel": false,
         "premier": "2026-11-04T21:29:29Z",
         "dernier": "2026-11-07T14:34:30Z",
-        "tonalite_gdelt": -1.65,
+        "tonalite_gdelt": -1.67,
         "score_selection": 13.42
       },
       {
@@ -1709,7 +1881,7 @@
         "officiel": false,
         "premier": "2026-11-03T02:16:44Z",
         "dernier": "2026-11-07T14:10:58Z",
-        "tonalite_gdelt": -1.86,
+        "tonalite_gdelt": -1.87,
         "score_selection": 9.67
       },
       {
@@ -1793,6 +1965,14 @@
             "source": "Google Actualités : conflits (anglais)"
           },
           {
+            "titre": "Vence Involved in Mediated Talks with Iran for New Ceasefire: Axios",
+            "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOM19xUUFrSTBTMFdRRzNCN3hwU3gzU2F3VmEzeXpXU05hNGJFNXdtN0xXWWpuUkxfckNZaUxkc0ZIUDFKeDZGS01xNG1SQlFPenFVcTNRRlJ5cXpiR2p0OXkxX0E2eEhpeGxRR2VpODB1NkhBT2FjUkhLWG02WnlUTTJ0LWJqOGtTN3czaGlsLWNYaHQxR2M2S3o2NXJocHJiU2VOcVpWclppajQ?oc=5",
+            "domaine": "auroranews.am",
+            "date": "2026-11-07T12:32:59Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
             "titre": "US Iran War Latest | Trump Says US 'Doing Very Well & Talking To Iran' As Ceasefire Talks Continue",
             "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxQNXF3eTFwREphMDJHZFIyQTFuMkplUHdsVmZPQUVYaDZrTXpWV01iaGFFVm5sMXp4ZGFDeXdCM1IzZkpMV19UVkZSNmVFV19HbHNfRDBKaTdNc3JBOEtVU0lnX2FXQ3dCWHhBQWFHVERZOEx2UTE5WnlWcFVNUkc2YUM2c1R3NlM0QXNtT0pHSG9vTTJkdjBWaTNzZjVOS3Z5NDdaQWxvNnpUVGlqVTVkdVpfc1JzX3RVSlZwa3pNcjBKSUdpR19v?oc=5",
             "domaine": "ndtv.com",
@@ -1871,23 +2051,15 @@
             "date": "2026-11-03T19:04:15Z",
             "officiel": false,
             "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "Israeli attacks kill five Palestinians across Gaza despite ceasefire",
-            "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxPRzhsY0FpZkYwbDFaOVhBcHFpYm5hQ292VmduWXNjUWtwNDRJdXJQSXVwWXMyQzZNRHZiTjhOd0E1WVluWXQ4YVpoUkk2M0tQQXhCT3B1d21aRUxabFZaazN6c2t5SDA2Ni05dC15eVhOWUFJd3ZuZlYtNzV5RTVkbEpxVzZZLTdwbzZ4TWxrZm5iOU5ZaDVNRV9rS1VwMDA?oc=5",
-            "domaine": "muslimnetwork.tv",
-            "date": "2026-11-03T18:56:15Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
           }
         ],
-        "nb_articles": 27,
-        "nb_domaines": 17,
+        "nb_articles": 28,
+        "nb_domaines": 18,
         "officiel": false,
         "premier": "2026-11-03T06:30:00Z",
         "dernier": "2026-11-07T14:04:05Z",
         "tonalite_gdelt": null,
-        "score_selection": 12.34
+        "score_selection": 12.5
       },
       {
         "id": "evt-c959673e6e2e",
@@ -2009,7 +2181,7 @@
         "officiel": false,
         "premier": "2026-11-03T22:50:14Z",
         "dernier": "2026-11-07T06:26:58Z",
-        "tonalite_gdelt": -1.86,
+        "tonalite_gdelt": -1.87,
         "score_selection": 6.67
       },
       {
@@ -2191,7 +2363,7 @@
         "officiel": false,
         "premier": "2026-11-05T18:46:30Z",
         "dernier": "2026-11-07T05:41:31Z",
-        "tonalite_gdelt": -1.86,
+        "tonalite_gdelt": -1.87,
         "score_selection": 11.17
       },
       {
@@ -2427,7 +2599,7 @@
         "officiel": true,
         "premier": "2026-11-02T12:00:00Z",
         "dernier": "2026-11-07T05:28:59Z",
-        "tonalite_gdelt": -1.86,
+        "tonalite_gdelt": -1.87,
         "score_selection": 6.14,
         "theme_confirme": true,
         "nb_evenements": 4
@@ -2624,7 +2796,7 @@
         "officiel": false,
         "premier": "2026-11-04T14:15:58Z",
         "dernier": "2026-11-07T02:47:13Z",
-        "tonalite_gdelt": -1.39,
+        "tonalite_gdelt": -1.4,
         "score_selection": 14.28
       },
       {
@@ -2807,7 +2979,7 @@
         "officiel": false,
         "premier": "2026-11-03T01:12:17Z",
         "dernier": "2026-11-07T01:54:00Z",
-        "tonalite_gdelt": -0.89,
+        "tonalite_gdelt": -0.93,
         "score_selection": 14.31
       },
       {
@@ -3168,7 +3340,7 @@
         "officiel": false,
         "premier": "2026-11-03T13:41:18Z",
         "dernier": "2026-11-06T18:04:57Z",
-        "tonalite_gdelt": -1.86,
+        "tonalite_gdelt": -1.87,
         "score_selection": 13.31
       },
       {
@@ -3357,178 +3529,6 @@
         "score_selection": 12.11
       },
       {
-        "id": "evt-471d58831fea",
-        "titre": "Cinq Palestiniens tués à Gaza dans des frappes et tirs israéliens",
-        "titre_origine": "Proche-Orient. Gaza: cinq morts dont une adolescente dans des frappes israéliennes",
-        "categorie": "conflit",
-        "titre_langue": null,
-        "mention": null,
-        "categorie_libelle": "Conflit armé",
-        "pays": [
-          "PS"
-        ],
-        "pays_noms": [
-          "Territoires palestiniens"
-        ],
-        "mondial": false,
-        "pays_suivis": [],
-        "lieux": [],
-        "lieux_noms": [],
-        "theme": false,
-        "chronologie": [],
-        "regions": [
-          "moyen_orient"
-        ],
-        "gravite": 3,
-        "gravite_regles": 4,
-        "note_gravite": null,
-        "ia": true,
-        "modele": "gemini-3.5-flash-lite",
-        "analyse_le": "2026-11-05T21:55:38Z",
-        "resume": [
-          {
-            "texte": "Des frappes et des tirs israéliens dans la bande de Gaza ont fait cinq morts, incluant un mineur.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMitgFBVV95cUxPN3YzV0Q1UHNrTjRlQlJBa0g0ajVobWtJdUJ3WTFIQXZkRElOTlFBQ1AzcmkyYzZNRWVlVnJZMjd6M0N5dG5RZUlGSDRHM1FFYXl4RHc0dl9meDNCWWpfR0xmVHdtREQ3U0twb0hsMkFDYV9TWHJOMkMwS0w4Tm5TZGE2ZVlvTFRWQ01XYWZUMWN5Z0RfU2NHeXlVLVJocDBvdFFscEtFcFhyQWVpSVVXbzJsZzlvdw?oc=5",
-              "https://news.google.com/rss/articles/CBMi5AFBVV95cUxOcGtwOU1aLTlDcDNKRlFNX0FuQkp3WkxPRWdlVW5kak5rbjgtTFd1U2ZfemdTbDR2Q1phTXBQYkdRZ2xoclNHUW9USFZHZGpqRV9BaWFzY19xUk1idndGLTJOMldRUWpJNTdFSF9GLTBVTGNXamx5TmNwZF9YeTROMldSdGpQZE1qeWpJMXZ6eVQxZ013REZ4bVN2bTdJcW84WHFOcklPVnEwRW90Y2VYQzRnLUZuS2UydjhKdlMtb1pMdXp1N2JwbDgxSDVjTTBxU1k2OVdEMUxPVHhJRFVNaTZaY1E?oc=5",
-              "https://news.google.com/rss/articles/CBMixgFBVV95cUxNVXFMckk4U0dXRkJlTjJOWHdxSjVWN2VJYjBUdldWd2N1Z2JKSWNTMTZNTnhkOUlwOGxzNzFHUFJXcnJRajVyMGNvQmNmWV9pN0FjMnNIdlJxajdJT2s1YnF4MkFxZU84RDhmMktiNk4yTWI3UmxjZHhiTGhSNy1MYXRIUlUxbHFPalJMZnJYbTlFcVV3RXJPTDhrOEV4QVk5MWhiR2xQalE1U19NTVZqSHdTWUtpaV82QjZtZ2hvbHF2WC1vcmc?oc=5"
-            ]
-          },
-          {
-            "texte": "La défense civile locale a rapporté le bilan de ces opérations militaires.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMi6wFBVV95cUxPdk5wcUV5bVN1SGNLTXBSampyS1JZS2dtR19JZDMxQmlSYVhvczZsb2lZTGg4YWJmX1RWVGN2WjZsUmo1d3BSZHM3a2d1d1BldGhPa1F3MExxT2hvNkE1c0JWeXRyaG4zWk00ZTBXX0JNSzFxN1N1X1NldDJ4emRRU1QyWWlwY2VaYzRGRVc5WW16NjJFSy10djlsS01MN3dUT2dCbW4waFJEb082NkJhNWlaZmVGUlBSMFBUVTRUQjBOSWZVNmJXUFZuMU44MmZQUHR5dmtQRUtVanc3MjFJQzRWU1NfQjdiN0lJ?oc=5"
-            ]
-          }
-        ],
-        "actifs": [
-          {
-            "actif": "pétrole",
-            "sens": "incertain",
-            "texte": "L'intensification des affrontements au Proche-Orient maintient une incertitude sur les marchés de l'énergie.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMiwAFBVV95cUxQVzVnMEttSWxPMHNRUHNoOVNWcXZubnExVi14LTNKLVp3VXBpWWhfbTFZSjBaYXVfUkt3dHpHWlpQc01JVEFfLUtXanZ5cHZJa2NrUGVlUHNRUkkxZEoxMDZxT2YzcE9JdElLaFdqbVQ0cnpRZkRnRHlHZ3owV2oxSmQ0MTRqQmNEejV2OWZMY1BLY3hHSy1kcVlnVjI0Ykx6NWdqc01MSEJqZ1dneHBpRkx6dE0zZThQOUIxWjk4bTM?oc=5"
-            ]
-          }
-        ],
-        "horizon": "jours",
-        "confiance": "élevée",
-        "contre": [
-          {
-            "texte": "Une désescalade rapide des opérations militaires pourrait annuler l'impact géopolitique.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMiwAFBVV95cUxQVzVnMEttSWxPMHNRUHNoOVNWcXZubnExVi14LTNKLVp3VXBpWWhfbTFZSjBaYXVfUkt3dHpHWlpQc01JVEFfLUtXanZ5cHZJa2NrUGVlUHNRUkkxZEoxMDZxT2YzcE9JdElLaFdqbVQ0cnpRZkRnRHlHZ3owV2oxSmQ0MTRqQmNEejV2OWZMY1BLY3hHSy1kcVlnVjI0Ykx6NWdqc01MSEJqZ1dneHBpRkx6dE0zZThQOUIxWjk4bTM?oc=5"
-            ]
-          }
-        ],
-        "sources_independantes": 5,
-        "sources": [
-          {
-            "titre": "Gaza: deux Palestiniens succombent à leurs blessures après des frappes israéliennes",
-            "url": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE05X0dKN3ZEWmZ5U2VuUW9zZjR0bDZ4VExmNzJBdXR4azlfNjBIU2g1NEQ4RU9CU2NfNkx4bEZLNFh0NjlUanJPUS03NDg2dmdD?oc=5",
-            "domaine": "sana.sy",
-            "date": "2026-11-06T11:03:11Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Gaza: quatre morts, dont un enfant, dans des frappes israéliennes - Monde Arabe - International",
-            "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE1DNjVhcl9mb3NnM1BhdFBROXlSaV9kbzhQUDFGeGxHeGZFb01IN2lnOTY3QjZ1RjZ0MFEwUm9VU05aRzltUDZwb09Jem51bzZLbG42Vktn?oc=5",
-            "domaine": "ahram.org.eg",
-            "date": "2026-11-05T21:22:38Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Cinq Palestiniens tués à Gaza, dont un garçon de 12 ans, dans des frappes et des tirs israéliens",
-            "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxPN3YzV0Q1UHNrTjRlQlJBa0g0ajVobWtJdUJ3WTFIQXZkRElOTlFBQ1AzcmkyYzZNRWVlVnJZMjd6M0N5dG5RZUlGSDRHM1FFYXl4RHc0dl9meDNCWWpfR0xmVHdtREQ3U0twb0hsMkFDYV9TWHJOMkMwS0w4Tm5TZGE2ZVlvTFRWQ01XYWZUMWN5Z0RfU2NHeXlVLVJocDBvdFFscEtFcFhyQWVpSVVXbzJsZzlvdw?oc=5",
-            "domaine": "atlasinfo.fr",
-            "date": "2026-11-05T21:06:10Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Des frappes israéliennes sur Gaza font cinq morts, dont un enfant",
-            "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxPVFBGbk5CTGFMcXd2UllTbWstazdYUVhtRi1qUU5HQWdKeXNwTm0wTHRBTk12eHdZc2JDQWFyVkt3UVJBXzYyQVRqa2hwYUc2TUR0N3M2cFd3d2JRRW5KUmZTa1lqeWxheWNmMV9NVmluTzJ6TFF6YTZXQ2VocS1fNllZLTJRMlF6Z1dJZXpzWk5EbGd2RFFsT25zd3QzZ0xoRjlR?oc=5",
-            "domaine": "7sur7.be",
-            "date": "2026-11-05T19:18:29Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Bande de Gaza | Des frappes et des tirs israéliens tuent cinq personnes, dont un enfant",
-            "url": "https://news.google.com/rss/articles/CBMi5AFBVV95cUxOcGtwOU1aLTlDcDNKRlFNX0FuQkp3WkxPRWdlVW5kak5rbjgtTFd1U2ZfemdTbDR2Q1phTXBQYkdRZ2xoclNHUW9USFZHZGpqRV9BaWFzY19xUk1idndGLTJOMldRUWpJNTdFSF9GLTBVTGNXamx5TmNwZF9YeTROMldSdGpQZE1qeWpJMXZ6eVQxZ013REZ4bVN2bTdJcW84WHFOcklPVnEwRW90Y2VYQzRnLUZuS2UydjhKdlMtb1pMdXp1N2JwbDgxSDVjTTBxU1k2OVdEMUxPVHhJRFVNaTZaY1E?oc=5",
-            "domaine": "lapresse.ca",
-            "date": "2026-11-05T18:42:28Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Guerre au Moyen-Orient: trois navires en feu à Ormuz; 5 morts à Gaza dans des frappes israéliennes",
-            "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxQVzVnMEttSWxPMHNRUHNoOVNWcXZubnExVi14LTNKLVp3VXBpWWhfbTFZSjBaYXVfUkt3dHpHWlpQc01JVEFfLUtXanZ5cHZJa2NrUGVlUHNRUkkxZEoxMDZxT2YzcE9JdElLaFdqbVQ0cnpRZkRnRHlHZ3owV2oxSmQ0MTRqQmNEejV2OWZMY1BLY3hHSy1kcVlnVjI0Ykx6NWdqc01MSEJqZ1dneHBpRkx6dE0zZThQOUIxWjk4bTM?oc=5",
-            "domaine": "la-croix.com",
-            "date": "2026-11-05T18:39:20Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Des frappes israéliennes font quatre morts dont un enfant à Gaza",
-            "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxPWWQwdmxod2txQUZOUjZkMzBqZ29xbE5IcXFjWEp3MWQteU1LUTRnZmVCU1V0WFhfU0V3a1BDbGZIS2psNGdGWjBCNlZWMzBtX3NFa0cybU9KeUxEb0JjaUIzY3J5M1dDTWFwRnU0aEFRaHJ3VmJvdnNCcTZGbjQ1cTNuRjk5eDFLNEZCc1htc3VrN3RZdTNQQ2FEaEN5NDhSVTVNclVaM2ptTnVXUlVQc1k2RWpwdw?oc=5",
-            "domaine": "20minutes.fr",
-            "date": "2026-11-05T16:22:00Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Plusieurs morts, dont un enfant, lors de frappes israéliennes dans la bande de Gaza",
-            "url": "https://news.google.com/rss/articles/CBMi8AFBVV95cUxONW5wUXEyeEl6elgtZFc2cUd2SWFuSXVtYVVnRFdnRF9YeU5DaVRKbEtuNUtMZDV4aWdrdFVaTEFCSmRCWTF0a2Ixd3k0NHF6V0dUa3h5V3FsUGl4Zm15c2hHcWdnMzFFUGR5aUVrMUlLb09NbW9hOUg1U0ZCaXZJbUgwQ1VEM2x4TVpKTVM4a3JFSjJtRVE0Q1hueUQ5bE9zaktWaWUtWnNMM055dlpXU2RvTVRvVEoyZk9JTE9iLVJrTng1dV9ZUVU5cGM3TnNMSGp3eWlGSVhYQ3VWbFlULXJqa1B1NUEyc1RuSm9NT2k?oc=5",
-            "domaine": "noovo.info",
-            "date": "2026-11-05T15:19:34Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Proche-Orient. Gaza: cinq morts dont une adolescente dans des frappes israéliennes",
-            "url": "https://news.google.com/rss/articles/CBMixgFBVV95cUxNVXFMckk4U0dXRkJlTjJOWHdxSjVWN2VJYjBUdldWd2N1Z2JKSWNTMTZNTnhkOUlwOGxzNzFHUFJXcnJRajVyMGNvQmNmWV9pN0FjMnNIdlJxajdJT2s1YnF4MkFxZU84RDhmMktiNk4yTWI3UmxjZHhiTGhSNy1MYXRIUlUxbHFPalJMZnJYbTlFcVV3RXJPTDhrOEV4QVk5MWhiR2xQalE1U19NTVZqSHdTWUtpaV82QjZtZ2hvbHF2WC1vcmc?oc=5",
-            "domaine": "ledauphine.com",
-            "date": "2026-11-03T22:52:24Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Proche-Orient. Gaza: cinq morts dont une adolescente dans des frappes israéliennes",
-            "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxQaWlrRGZqbk9SVzdkRkVzUjY3RmZEbXVWR2F0MmFzMl9mVDV0M3FCRExmNVM1ZFoyNEJHZGh0VGpDNEtJblN5aldLWV9lTXc2R082WW9TdlZqSmdjb3FHZE9GZzdtY0taM042bms5LXpVY3VwTkFhd040aFI4MDJ3WHJGNm5QTHIzbVJVVWR5eGJvdXI4Z1Y1UkRXSjdfeFdpTnliMEhmSWZXRHNLSWVZaF9aMGFlV19iNVlQVWFVNVRDSGM?oc=5",
-            "domaine": "leprogres.fr",
-            "date": "2026-11-03T22:50:37Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Des frappes israéliennes font cinq morts à Gaza, dont une adolescente",
-            "url": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxPeWN5MjhSVGZfdjdzQWdVRWxiV1dXblV4cjNwbjZkSjB1Nko3TkwycFUwX1I5cFZmSnFISjdvQ0p1QTBVdXBxSktSMGMxa18weHE4OWlYT1EzUGY3cFd0NGlxRjhZWVdmZmE4QVdMNGE2V0tPSkRCZkFKM0JXdDc2U3ZFMTMyN2JKc0tWSlVhMVFGb3FwM21QbDNLTXg5NjI0cl9FOG1DclphM01YNHBobFZWd25FUGhsLUJTZXk4TlhvdFM1Q2dWYXl2VXhJdHhmcXRvbDFTTWotc1dQOEZLdVNn?oc=5",
-            "domaine": "bfmtv.com",
-            "date": "2026-11-03T22:37:15Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Cinq personnes tuées par des frappes israéliennes dans la bande de Gaza, selon la défense civile",
-            "url": "https://news.google.com/rss/articles/CBMi6wFBVV95cUxPdk5wcUV5bVN1SGNLTXBSampyS1JZS2dtR19JZDMxQmlSYVhvczZsb2lZTGg4YWJmX1RWVGN2WjZsUmo1d3BSZHM3a2d1d1BldGhPa1F3MExxT2hvNkE1c0JWeXRyaG4zWk00ZTBXX0JNSzFxN1N1X1NldDJ4emRRU1QyWWlwY2VaYzRGRVc5WW16NjJFSy10djlsS01MN3dUT2dCbW4waFJEb082NkJhNWlaZmVGUlBSMFBUVTRUQjBOSWZVNmJXUFZuMU44MmZQUHR5dmtQRUtVanc3MjFJQzRWU1NfQjdiN0lJ?oc=5",
-            "domaine": "franceinfo.fr",
-            "date": "2026-11-02T22:47:32Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          }
-        ],
-        "nb_articles": 12,
-        "nb_domaines": 11,
-        "officiel": false,
-        "premier": "2026-11-02T22:47:32Z",
-        "dernier": "2026-11-06T11:03:11Z",
-        "tonalite_gdelt": null,
-        "score_selection": 7.17
-      },
-      {
         "id": "evt-a3e69fde45a7",
         "titre": "Les Houthis réclament 51 milliards de dollars pour un cessez-le-feu saoudien",
         "titre_origine": "Saudi Arabia denies report that Houthis demanded $51 billion and official recognition for ceasefire",
@@ -3663,7 +3663,7 @@
         "officiel": false,
         "premier": "2026-11-05T10:14:33Z",
         "dernier": "2026-11-06T10:52:00Z",
-        "tonalite_gdelt": -1.76,
+        "tonalite_gdelt": -1.72,
         "score_selection": 8.5
       },
       {
@@ -3840,7 +3840,7 @@
         "officiel": false,
         "premier": "2026-11-02T21:58:00Z",
         "dernier": "2026-11-06T05:22:12Z",
-        "tonalite_gdelt": -1.86,
+        "tonalite_gdelt": -1.87,
         "score_selection": 10.4
       },
       {
@@ -4027,7 +4027,7 @@
         "officiel": false,
         "premier": "2026-11-03T09:46:50Z",
         "dernier": "2026-11-05T23:30:01Z",
-        "tonalite_gdelt": -1.65,
+        "tonalite_gdelt": -1.67,
         "score_selection": 10.17
       },
       {
@@ -4174,7 +4174,7 @@
         "officiel": false,
         "premier": "2026-11-04T06:28:34Z",
         "dernier": "2026-11-05T20:00:58Z",
-        "tonalite_gdelt": -1.86,
+        "tonalite_gdelt": -1.87,
         "score_selection": 8.84
       },
       {
@@ -4352,7 +4352,7 @@
         "officiel": false,
         "premier": "2026-11-03T08:21:29Z",
         "dernier": "2026-11-05T15:30:00Z",
-        "tonalite_gdelt": -1.86,
+        "tonalite_gdelt": -1.87,
         "score_selection": 11.0
       },
       {
@@ -4464,7 +4464,7 @@
         "officiel": false,
         "premier": "2026-11-03T03:34:55Z",
         "dernier": "2026-11-05T04:45:02Z",
-        "tonalite_gdelt": -0.27,
+        "tonalite_gdelt": -0.48,
         "score_selection": 7.64
       },
       {
@@ -4579,8 +4579,391 @@
         "officiel": false,
         "premier": "2026-11-03T02:12:02Z",
         "dernier": "2026-11-04T18:53:11Z",
-        "tonalite_gdelt": -1.86,
+        "tonalite_gdelt": -1.87,
         "score_selection": 6.14
+      },
+      {
+        "id": "theme-evt-c83d7138a76d",
+        "titre": "Conséquences politiques et économiques des élections de mi-mandat américaines",
+        "titre_origine": "Trump says US talking to Iran amid sanctions push",
+        "categorie": "election",
+        "titre_langue": null,
+        "mention": null,
+        "categorie_libelle": "Élections",
+        "pays": [
+          "US"
+        ],
+        "pays_noms": [
+          "États-Unis"
+        ],
+        "mondial": false,
+        "pays_suivis": [
+          "US"
+        ],
+        "lieux": [],
+        "lieux_noms": [],
+        "theme": true,
+        "chronologie": [
+          {
+            "id": "evt-c83d7138a76d",
+            "date": "2026-11-06T06:43:00Z",
+            "titre": "Les résultats des élections locales américaines marquent des gains pour les démocrates",
+            "gravite": 2,
+            "resume": "Les scrutins locaux et d'inter-saison aux États-Unis, notamment dans l'Iowa et au Texas, enregistrent des victoires significatives pour le parti démocrate.",
+            "nb_sources": 6,
+            "source": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNaU01U2lMaG9JUTBjVW9LYWpQZmVMd2Z2aVF4bGNGNlAtWmRsQldodkoxMk55bzJGN0NsQzZoM3dpY0xBZy1OS0EzbTAtOE1nTElQc0FERHNNeWJRUXk4ZE1kdEExTllpVmp0UEpQMFV3Mlh2RDA3MnFUOVVvTldkREliTnVIbXM5bVVhWENDZjQ?oc=5"
+          },
+          {
+            "id": "evt-66c8cd956a20",
+            "date": "2026-11-06T18:10:28Z",
+            "titre": "Les résultats des élections de mi-mandat relancent le débat sur les tarifs douaniers",
+            "gravite": 2,
+            "resume": "Les élections de mi-mandat aux États-Unis entraînent des discussions politiques sur l'orientation future des taxes et des droits de douane.",
+            "nb_sources": 12,
+            "source": "https://news.google.com/rss/articles/CBMiigFBVV95cUxNTTlPWVM2SzF4RmJ1Ry1oX2NOMWc0MGJQREpBLTE5OEZ2RnVDT2JtZFZXR1JYWDRka19hUWkzTWJCR1ZrNVQ3R0RTUEFOcDJVSXJnWE54YjFlOUR6RkVUWTNiYWJweWsxQUI2TmpGWTdFZmtOc1VnVllRdWM1ajlhbjg5UXkxZ3Vid3c?oc=5"
+          },
+          {
+            "id": "evt-744b31d2306e",
+            "date": "2026-11-07T06:29:58Z",
+            "titre": "Impact des résultats des élections américaines sur les marchés boursiers",
+            "gravite": 2,
+            "resume": "Les marchés boursiers européens ont réagi négativement aux résultats des élections de mi-mandat aux États-Unis.",
+            "nb_sources": 12,
+            "source": "https://news.google.com/rss/articles/CBMi2gJBVV95cUxOSkcxNDlnTmt1NVUyVUZXalVOVThIM3c3RUFTdXJpS3pjNDdST0tBQ2x3WmJTdk12YjN1M2E0eUVNVFlxSXZqeExVN1JqTTUycDFnNlZKc3dHSG5GelZYbENnTTRhcGNpdWt0VFhCMXdFWFZqUEZVdzFhZ3NsN1h0ODJXaVg3dW9iTS1kaG1wS19NaFQteVZ6ZUdzS09UOGtud29kT0g5TkpiOTZ4cTR3dmMyMXJ0T19mUkxXckVwSm5VN2xxMGRhU3V5UmhFWVFjZU43cnR5LTQyMTV4N1B2TnhsTXN0aUJhNzRJeHNxSkxvWWlJSEVfQVVQMmlGVXNDb2FwR3F5UU42VVZpajNuajZNTlp3SEJkVUVBNjUyQm1EMVdJckxLZ1pBUTFOTW9ORzBRZjNQR0FvdWV3NDZmc0V1NVNlQUhndVBXcXRHckUwZ2lxR3pyeTRR?oc=5"
+          },
+          {
+            "id": "evt-d7010a592e52",
+            "date": "2026-11-07T09:26:07Z",
+            "titre": "Les marchés réagissent aux résultats des élections de mi-mandat aux États-Unis",
+            "gravite": 2,
+            "resume": "Les premiers résultats des élections de mi-mandat aux États-Unis montrent des gains pour l'opposition dans plusieurs États clés.",
+            "nb_sources": 12,
+            "source": "https://news.google.com/rss/articles/CBMiX0FVX3lxTFA0Y2tDNFZaNURMWEZtbE5ZazlhbjJBem9BSE1NMlgwcHlDdUtyX3k4UWhNbGZZSm9tZVhiUUw1bE0yVlFsOGRZSklaQ2FVczVldGxfellsd2w1OHJjZTI00gFkQVVfeXFMT1FCbkdnd29COER4N1IzRUtTXzVBZEtIZkVYUWcwLTJLdTl1X2ozUjdEWlBKZmg0R1lKSXZzeXk2WGQ0V1JNYnFKdl9UMU1IN1dqOW8zaFd5RnRfSUlYZkFrTktEdA?oc=5"
+          },
+          {
+            "id": "evt-bad80bc9e34d",
+            "date": "2026-11-07T15:31:07Z",
+            "titre": "Les résultats des élections de mi-mandat aux États-Unis continuent d'être traités",
+            "gravite": 2,
+            "resume": "Les autorités locales aux États-Unis procèdent au dépouillement et à la publication des résultats actualisés des élections de mi-mandat.",
+            "nb_sources": 12,
+            "source": "https://news.google.com/rss/articles/CBMirwFBVV95cUxNZjJCNkpQU1Uza3BibklzR3VBNjFHZGU3SVB0NWlfWER6Z1B1ZnNlY1I5TGE2cjVZek1jMWdJY0NEVGdxcHpTZ3g4ZkV5TzBpbnZxNk1iempYSDlHZks2LTliMFBveE10MTdrSmN5OHBqY0l0cENrNWFOSWdldlRZVUJxTmZfYUwzMzB2THp1SkU1ZFk5anprcG94SVgtX1JLRUo1TC1KRGhqb2g3alZJ?oc=5"
+          },
+          {
+            "id": "evt-c080f6164bd4",
+            "date": "2026-11-07T17:02:00Z",
+            "titre": "Les élections de mi-mandat aux États-Unis modifient le paysage politique fédéral",
+            "gravite": 2,
+            "resume": "Les résultats des élections de mi-mandat de 2026 aux États-Unis marquent la fin de la campagne et préparent l'installation du nouveau Congrès et des législatures pour l'année suivante.",
+            "nb_sources": 12,
+            "source": "https://news.google.com/rss/articles/CBMivAFBVV95cUxPbVJ3czRBNDFOMDVadVNjSXZvNWlXRGZFblBDUDFGSlRVdExleTVDOTJhQnI5QUx4RU82TTVIb0ZlMnNTZjhVcXhWR2J3S2VOWmc1VTB1c1hvcGNxOWFKZFZMbUkzWjNSU1NBNk9YaFBPdmlad01ZNTlDMWhFQXllTGIxV183dnplWDMzLTh6N1pBMmxReTZvbC1JUDRzLTZvR3UwTFQ3VEhVRFY1am0zM3gxVVRFR0VPdER0Tg?oc=5"
+          },
+          {
+            "id": "evt-f7a1968f92cb",
+            "date": "2026-11-07T17:55:44Z",
+            "titre": "Résultats des élections de mi-mandat et locales aux États-Unis",
+            "gravite": 2,
+            "resume": "Les résultats des élections de mi-mandat et des scrutins locaux se déroulent dans plusieurs États américains, incluant la Californie, le Nevada et le Dakota du Sud.",
+            "nb_sources": 12,
+            "source": "https://news.google.com/rss/articles/CBMi_gFBVV95cUxOUDZ1V19IVzZBblk3OEhLOW5EOVFOUFNkZGFENTNxTkNCM2M4TlUyeGdjYUptQU1WaWlvZzhtQ0YzeVl0OEZudmdqR0o1YTBSR1FoZ3AzbzN5c2NwRk82bVQ3eEhqcUJOYWxoQmZiM1RmbGFwQU0yZ240TWZPNkl1N0Jfems4NTFDZnhDMUxGZ1lVWS1fX2lTVjNCcFJUbWN6a2VhWlIydWhjTWkxMkE1XzF2cmV3RXF2YTRPZVFkVEgxbDJJbWZUZTBoYlFQZHFJaDNCdFpPaUs5WEdqRkk4d1p6cERGSFU3TWM3dzJFUW5FbmVMS1pRWS1wQkNNZw?oc=5"
+          }
+        ],
+        "regions": [
+          "amerique_nord"
+        ],
+        "gravite": 2,
+        "gravite_regles": 1,
+        "note_gravite": null,
+        "ia": true,
+        "modele": "gemini-3.5-flash-lite",
+        "analyse_le": "2026-11-04T10:16:49Z",
+        "resume": [
+          {
+            "texte": "Les résultats des élections de mi-mandat et des scrutins locaux se déroulent dans plusieurs États américains, incluant la Californie, le Nevada et le Dakota du Sud.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMi4wFBVV95cUxQdEM5b3R3aWxmZmkyV2JCaDVXczdZTE5rajdxVGo3OGREZHdzZ0hibDV0dVBSSTd2bzJlRzNNdHVrbjdEd1NZa3BOWWZXa0NROFpFTG9SM2JHejJMQWVhVWxBSHppN3lyVEtBc2FaMVctVXo2bjBZVDc1aWtVV3d6RmltNjRfWWtJS0RSczhoTDRHSjBOdlljNWJwTWQzVHp3RWpCc3B5Q0VGOGEzbDRCd1d0NTIzUDFoeHp5cGZUMjNDbFVHZExLR0Rzc0F6aDJBRzA4cF9wd2RzTi1MQ3hPTzh6VQ?oc=5",
+              "https://www.aljazeera.com/news/2026/11/4/key-takeaways-from-the-2026-midterm-elections-in-california?traffic_source=rss",
+              "https://news.google.com/rss/articles/CBMikwFBVV95cUxNRlJxQ0tYa2tSUnRGWjdCeEhsaTVLWUVHT3FxQW5vNmFmR043c1dsY1l2MDRUTUYzMGVPYUpOWjNxczVBVVNSc2ZmTm9HTnBUaU82MTNXTE5KdnJwVFdsTnN1MkJZSTB3d3QxQ1hmcFhJR2h0MmlwU21QaExQMWZiVm5ibndqZFVSSkFJR3dqdTlCc1E?oc=5",
+              "https://news.google.com/rss/articles/CBMiqwFBVV95cUxObndtWjJMdFpiYmpNRVNmZUlEdktCbXJmbmhFTWNRNjNpRVpEMDd1Umt2aUpOaHRtU3ZFUGFleER6Q0IwNGJCNnRaSnRJQURmMWxqUUxfMnRKVTVwWHJ2d0ludlJpcmZtTV9pTmhPT0pHLW9qS0NETGJDeTlKS0JyWEhxVzNJUG5tY2tjdlV4N2p6OXg1NG1ZVGR2VE1wbW81TjFkSmZTMEFseWs?oc=5"
+            ]
+          },
+          {
+            "texte": "Des scrutins et des négociations de mandats ont également lieu dans d'autres contextes locaux et institutionnels.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMirwFBVV95cUxPOVpPTFFvU202TlhYUE5lM3htN2VCRFRPU3kwTGw0djNMaHB1MEM5NmJzc1pERkREOFJ5MmwzQkNQUnF5S1pjZm9rVjhCNGFBMFJSUjRnYUJZeU1sRUc0am5GNUd1T0RSaXE0dlZTbzhTbFRkS18zM1pvbmFXaXZ1aTlWanQ4cXl5YmlmOEx5UGpXWmthMUhUSXRoa0o2akdCWG1EWmM3MjJkV1I0NXFZ?oc=5",
+              "https://news.google.com/rss/articles/CBMiqgFBVV95cUxPWUNsZC1IR1JxZW1NYjBuSjNoMDRuRHJqTmxnZlU4bEc5N0tjZWtSNjZfUzNwLUFWUlFFUFVVUzY3QmxUR3dUTzYtTkhRYmRHMlhEMUtxRGpXSEJBM01pbWljN2FOWVZ6V1Nic294S2NxdHJjVVgyZ0YxTHJrUktRMFhzQW14LWFIckZnUEFJREQ3YWpYM0dTSkdadlZuTVZGMlRtdWU1NGQ3Zw?oc=5",
+              "https://news.google.com/rss/articles/CBMiaEFVX3lxTFBYMU5TUlFRU2NXZ2U1ZEFvSHlHUEYtT0hHWkl3MjFoc2t0MVlQMzFRYXVOcERlWkV6Y0o5a0tpQUVoMnZ0RXRnS1hVMHJKa0tMeUlYUjByS3Q0NG5oZF9WdXJRY1hPRmNO?oc=5",
+              "https://news.google.com/rss/articles/CBMigAFBVV95cUxPOVhHeFdpeGpxNnBGSk5IZzVFWW02UkpNZkZMSjhuUm5zVWZfTU9hVTFYbUdwMnNHNzZacVQzcWt5Y0poS0lpZTNGUWhTTlBTNjBzZGFmWlNkN2tPcnhvTWZ0bE01RnM5WUgtVFBIdXIyaG9OdkowYUlIOHFuOG1kdQ?oc=5",
+              "https://news.google.com/rss/articles/CBMimAFBVV95cUxQNTRJTG54ajhWS0o4T1MzSXU0V2t2MXBmRHp0OFFzenU0Z1RGb3ZWdi13aGZDUGJVMFp1TjVNbWtRY0RFcWYzOGRxa3pwMEc5Q3pjYlhNN1RuNkZsYU5ZSk5VZnpXYWQ1alUydXRITklXTTVnRU1SV1RFZEM0ZU1vLWpfU1dfQXpxY0JsZk55RG42U2RKNjRIWg?oc=5",
+              "https://news.google.com/rss/articles/CBMikwFBVV95cUxNa1lmeFhubE1ud3FOeUZxdXo2TG9sTzUwR1c5MzJUd0ZIQkJ4empNUnpVTFAtZ2lSb1hHWGZoUnJpWTlnUVFlVXNIMGRuMU5lMDh0VUwxN0FzMkg0SE52S2V1bkw0ZFdBajYzOHRKMTNHTUU1OVBYMGVRMlhZOEk1NC1vWWE1ckNhMWpmTjh1eWYxejQ?oc=5"
+            ]
+          }
+        ],
+        "actifs": [
+          {
+            "actif": "actions",
+            "sens": "incertain",
+            "texte": "L'incertitude liée aux résultats électoraux locaux et nationaux pèse sur la visibilité à court terme des marchés boursiers.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMi4wFBVV95cUxQdEM5b3R3aWxmZmkyV2JCaDVXczdZTE5rajdxVGo3OGREZHdzZ0hibDV0dVBSSTd2bzJlRzNNdHVrbjdEd1NZa3BOWWZXa0NROFpFTG9SM2JHejJMQWVhVWxBSHppN3lyVEtBc2FaMVctVXo2bjBZVDc1aWtVV3d6RmltNjRfWWtJS0RSczhoTDRHSjBOdlljNWJwTWQzVHp3RWpCc3B5Q0VGOGEzbDRCd1d0NTIzUDFoeHp5cGZUMjNDbFVHZExLR0Rzc0F6aDJBRzA4cF9wd2RzTi1MQ3hPTzh6VQ?oc=5",
+              "https://news.google.com/rss/articles/CBMiqwFBVV95cUxObndtWjJMdFpiYmpNRVNmZUlEdktCbXJmbmhFTWNRNjNpRVpEMDd1Umt2aUpOaHRtU3ZFUGFleER6Q0IwNGJCNnRaSnRJQURmMWxqUUxfMnRKVTVwWHJ2d0ludlJpcmZtTV9pTmhPT0pHLW9qS0NETGJDeTlKS0JyWEhxVzNJUG5tY2tjdlV4N2p6OXg1NG1ZVGR2VE1wbW81TjFkSmZTMEFseWs?oc=5"
+            ]
+          }
+        ],
+        "horizon": "jours",
+        "confiance": "élevée",
+        "contre": [
+          {
+            "texte": "Une transition politique apaisée sans changement majeur d'orientation fiscale pourrait stabiliser rapidement les marchés.",
+            "sources": [
+              "https://www.aljazeera.com/news/2026/11/4/key-takeaways-from-the-2026-midterm-elections-in-california?traffic_source=rss",
+              "https://news.google.com/rss/articles/CBMikwFBVV95cUxNRlJxQ0tYa2tSUnRGWjdCeEhsaTVLWUVHT3FxQW5vNmFmR043c1dsY1l2MDRUTUYzMGVPYUpOWjNxczVBVVNSc2ZmTm9HTnBUaU82MTNXTE5KdnJwVFdsTnN1MkJZSTB3d3QxQ1hmcFhJR2h0MmlwU21QaExQMWZiVm5ibndqZFVSSkFJR3dqdTlCc1E?oc=5"
+            ]
+          }
+        ],
+        "sources_independantes": 10,
+        "sources": [
+          {
+            "titre": "Chinese cars: the invasion continues – a 20 per cent market share in Europe is possible by 2030. Here’s why",
+            "url": "https://news.google.com/rss/articles/CBMi_gFBVV95cUxOUDZ1V19IVzZBblk3OEhLOW5EOVFOUFNkZGFENTNxTkNCM2M4TlUyeGdjYUptQU1WaWlvZzhtQ0YzeVl0OEZudmdqR0o1YTBSR1FoZ3AzbzN5c2NwRk82bVQ3eEhqcUJOYWxoQmZiM1RmbGFwQU0yZ240TWZPNkl1N0Jfems4NTFDZnhDMUxGZ1lVWS1fX2lTVjNCcFJUbWN6a2VhWlIydWhjTWkxMkE1XzF2cmV3RXF2YTRPZVFkVEgxbDJJbWZUZTBoYlFQZHFJaDNCdFpPaUs5WEdqRkk4d1p6cERGSFU3TWM3dzJFUW5FbmVMS1pRWS1wQkNNZw?oc=5",
+            "domaine": "repubblica.it",
+            "date": "2026-11-07T17:55:44Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
+            "titre": "Opportunities under the shadow of sanctions… – Is Russia ready to cooperate with the US?",
+            "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxPcFdvMEEzNXNVZnM4NTZrbktzRlNNVlVVb1M3UWJ0V3RjSEFnUjJuYWc0M21VQzFMRi12djZJMDdhZUdGTm1KUVlQb3NPb2h0V3l3ZWl6d2RFVWp2U3NGVjdoV1JlS2NhQnc5ZUp0bk96OVI0RHF3Sl8tdDUwR2locmd4aXFxV1l3RVkxa1U1WVNpdm55bkhkT1AzWWdKSDk5SUt1MkZaTGhvN3lVSTRZajNjTzVUQQ?oc=5",
+            "domaine": "todaypress.tv",
+            "date": "2026-11-07T17:34:00Z",
+            "officiel": false,
+            "source": "Google Actualités : sanctions (anglais)"
+          },
+          {
+            "titre": "Argentina FA to appeal World Cup final sanctions to CAS",
+            "url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxNRV93ZXF5R2FRUW9sT2tsMUFoSGZWOWFfUHdodXBCYmxoZ1BPd3FWNC1QaWJFZkIyaF84VXRoUXp4X3QwRVAwWm5fTUs0ZkNlMjRtRUtEX3BxMjA1dWRfNG1sMXBzZnBESVV4b1VKTlQ5aW5kTU9Mc2p1eVQ5bmwtZWNDWGQwUDJ5bHdwN2ZJS3kyWXJQRThF0gGcAUFVX3lxTE1lQUJuaHMySnhhMmEtOFZycG42MzhnQWZMaE11Z094QlF3LUZvWm81ZXVFaDB1WDN2YnZWSVFvdi01VVhWZnZyNWZBcEdaUlBiV2YtMDBWdk44WmtLcFdodm51U0FlMXIxakp3WUJwVWphXzFQdUY3QmxROFJIX184UXJoQjNieHExYTJNcWlLV01hZDBPVzBnMjFrYg?oc=5",
+            "domaine": "vanguardngr.com",
+            "date": "2026-11-07T17:16:33Z",
+            "officiel": false,
+            "source": "Google Actualités : sanctions (anglais)"
+          },
+          {
+            "titre": "Prediction markets weigh in: Was it the Iran war, tariffs or immigration that sank the GOP?",
+            "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxPcVBSQmNZakMwcmdDUGJXQkkxdHJKNkk4RWhuSzlvMWhzNDdXYTBkVUtYaGYxZDZvMUZjaGJsQmxyUHZmMGlTbTZpR0Y4WDlOcEEwYzBfWGJDX2V0QWhYcTdiamNfSGUtUklfNjRxLWlTYWo0czR0NzZtRnRFZzRxVXVtWUxjdXpSR3c1SndwdE1QaXl2cm5yR3huaEFzTXdHZVdQSHhUVQ?oc=5",
+            "domaine": "knewz.com",
+            "date": "2026-11-07T16:16:46Z",
+            "officiel": false,
+            "source": "Google Actualités : droits de douane (anglais)"
+          },
+          {
+            "titre": "U.S. election showed growing frustration with Israel on both sides of the aisle",
+            "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxPZHpQMkVMZ3NaMEoxOXd1emstTVRwUVBMV3NIU0pDMEZFSTNnWDNWVTlRUWJCNThPME50YXNuOFJiN1pRb1hCd0dCbTh6RzB5Y2tSQlpWMEhSWTdNVzZfR1MtUkJWcjFzQjR2UGVPZTRZVG1EQ0ZIcFJPVjd2SDluQ1NYZXVRaTl4VmE1LUFtdXN3T2UtT2Z0dTBJbWlsMzF1TVFr?oc=5",
+            "domaine": "spectrumlocalnews.com",
+            "date": "2026-11-07T15:41:00Z",
+            "officiel": false,
+            "source": "Google Actualités : élections (anglais)"
+          },
+          {
+            "titre": "Israel mired in uncertainty and acrimony after contentious vote",
+            "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxQQ2JCaXhydkY5dTVmUzZqT1Y2Szc1c0FKTHJFNkhJc3lmR1FDQ0djQ3hwTXk2WTBxcWVsLXB6cWpWUC04RV9ydEt2NTZfMWc1aGxFa1N5RGhjNXZpbWkyZ19xMEp0TndJelhfT2x4aU4zVnFWMllIb2RwWHpUaHdhUzBROFpDUzlMNk1pUEZUQXdLc2tkdk93SThTUG5iMFlRNlhNeldR?oc=5",
+            "domaine": "nbcnews.com",
+            "date": "2026-11-07T14:46:05Z",
+            "officiel": false,
+            "source": "Google Actualités : élections (anglais)"
+          },
+          {
+            "titre": "What midterm election blue wave rebuke of Trump means for renewable energy",
+            "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxPUGhqVms1N0laV2g0enlDUzZiZzFPeC1acEdOdnpCQ21meEx6OURXb3FFc2dUY1ViOFpCWXZtd1lQYkRsSkZSZ3pxU3lIa3oyd0VnU1RnM1gyVUJPTzFmYU1RbHJsMHRaWG44dUtYYVAyazlERms2cWFNbzdVNzNWVUxCR0RGOC1vQVcyMHF0SQ?oc=5",
+            "domaine": "cnbc.com",
+            "date": "2026-11-07T14:24:38Z",
+            "officiel": false,
+            "source": "Google Actualités : élections (anglais)"
+          },
+          {
+            "titre": "Healthcare, Iran war & tariffs: Resurgent Democrats set stage to confront Trump",
+            "url": "https://news.google.com/rss/articles/CBMi5AFBVV95cUxPcGFIVng4RjNhMlF2ak4xLW1LOGJLaVQ4YmNRS2pWQnA2eENGYmR0Z1pNUFg1dWMzUWFJVGljNjZRTGFUUzREbjVjQjZ2TWxYcV9DWGFZRm9aWjNIQkxSdW5oQjR0ODl3SGU1WWl2RDJJZnl1M29LVE9YTmJpY3R2OS1lUVdBRThFTTJhckxwLUQxQnIwX19YZlczM290d1liY0poMnNPVGlQUUFOd21pZElCTXM5Rk9lUmhrWnVqMDgxODdUMTdqYjI1RWI5dU40WlQ3dW9SRTg1VWYzekZ3VnZiX0_SAeQBQVVfeXFMT3BhSFZ4OEYzYTJRdmpOMS1tSzhiS2lUOGJjUUtqVkJwNnhDRmJkdGdaTVBYNXVjM1FhSVRpYzY2UUxhVFM0RG41Y0I2dk1sWHFfQ1hhWUZvWlozSEJMUnVuaEI0dDg5d0hlNVlpdkQySWZ5dTNvS1RPWE5iaWN0djktZVFXQUU4RU0yYXJMcC1EMUJyMF9fWGZXMzNvdHdZYmNKaDJzT1RpUFFBTndtaWRJQk1zOUZPZVJoa1p1ajA4MTg3VDE3amIyNUViOXVONFpUN3VvUkU4NVVmM3pGd1Z2Yl9P?oc=5",
+            "domaine": "indiatimes.com",
+            "date": "2026-11-07T13:57:00Z",
+            "officiel": false,
+            "source": "Google Actualités : droits de douane (anglais)"
+          },
+          {
+            "titre": "The US election showed growing frustration with Israel on both sides of the aisle",
+            "url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxNY0ZpVXlxbV9WcXllZC1sVEdSSlkyM25tR0JpaUVqLU5YdGtXb1BuUEhXQjRYRUJiVVhPQ2JBcnExODE3ZG1oeG0yS0JlMW1WYUtsakNOc1hfZVRYVDhfdGc0SF83bUpvQ2R2aFJpb29PckFiWFBiNXE0T1lHMzYyVENIc3dyTHNJX3dpTzFzQ0xYRGJkNm1WZXdwTDB2U3FKZFExTXVaVjRqajVvc3Y4ZmZSRi1UeFo4OUFrbzc2RQ?oc=5",
+            "domaine": "sun-sentinel.com",
+            "date": "2026-11-07T13:38:56Z",
+            "officiel": false,
+            "source": "Google Actualités : élections (anglais)"
+          },
+          {
+            "titre": "Ukrainian President Zelensky reacts to US midterm election results",
+            "url": "https://news.google.com/rss/articles/CBMi5gFBVV95cUxPQjhjeXRYMnpRMjU3YVNtWDNScXpnVHFZWFFjQ1RiMWhKdjIzM2d0emFOdFRwcmZCMFpOMHRQRGFDN0JfZTM1WEVFS1RmcklZcjhMY1ZCNm9aNXRfcXRhSlVMQkVuTXRMWnpLQnc4ckE2cDFmdlRJMzdzWkQ0ak9GQ3FPejZyYjdXRGlmOU5LMnZDSFFOWk9XMDRWUy1IOGZaWUNlTEtzdV9uSk1mSjZRZ18xNmk2VlVFUzFuVEpkVVRMTm0ybTNURjFJbDFUMjAyR2RwQUc2T1VrOS12bVBqN1Y4azItdw?oc=5",
+            "domaine": "wkyc.com",
+            "date": "2026-11-07T13:21:00Z",
+            "officiel": false,
+            "source": "Google Actualités : élections (anglais)"
+          },
+          {
+            "titre": "Trump’s elevation of Stephen Miller a middle finger to millions of voters",
+            "url": "https://www.theguardian.com/us-news/2026/nov/07/trump-stephen-miller-midterms",
+            "domaine": "theguardian.com",
+            "date": "2026-11-07T13:00:12Z",
+            "officiel": false,
+            "source": "The Guardian, monde (RSS)"
+          },
+          {
+            "titre": "Ukraine's power network suffers further damage after fresh Russian strikes",
+            "url": "https://www.bbc.co.uk/news/articles/cm4g1nq8158po?at_medium=RSS&at_campaign=rss",
+            "domaine": "bbc.co.uk",
+            "date": "2026-11-07T12:49:36Z",
+            "officiel": false,
+            "source": "BBC News, monde (RSS)"
+          },
+          {
+            "titre": "((jump page)) ELECTION RESULTS",
+            "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxPbVJ3czRBNDFOMDVadVNjSXZvNWlXRGZFblBDUDFGSlRVdExleTVDOTJhQnI5QUx4RU82TTVIb0ZlMnNTZjhVcXhWR2J3S2VOWmc1VTB1c1hvcGNxOWFKZFZMbUkzWjNSU1NBNk9YaFBPdmlad01ZNTlDMWhFQXllTGIxV183dnplWDMzLTh6N1pBMmxReTZvbC1JUDRzLTZvR3UwTFQ3VEhVRFY1am0zM3gxVVRFR0VPdER0Tg?oc=5",
+            "domaine": "outlooknewspapers.com",
+            "date": "2026-11-07T17:02:00Z",
+            "officiel": false,
+            "source": "Google Actualités : élections (anglais)"
+          },
+          {
+            "titre": "Six Charts Explaining New York’s 2026 Elections",
+            "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTFBBRTl5UjFKUXRFQ0J6UWthOEdSMTlMbDlqeHhEYzBhWHRNenE2bU1xMmpTWDV3d1J1b0dIWXhCdWdUcjRKcDc2SjAyVi1ES25lcU9na2RpeDl3aE1iYzRyX19TbS1OVWxndks2dGc0ZUJuOEU?oc=5",
+            "domaine": "nysfocus.com",
+            "date": "2026-11-07T14:18:00Z",
+            "officiel": false,
+            "source": "Google Actualités : élections (anglais)"
+          },
+          {
+            "titre": "Make sense of Minnesota’s midterm election with these six charts",
+            "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxPLXBRUlRfNVE1QVFQc1JXajRSUmRoNURMSnVRZTNtT3U5ZU9fcm50N0daUmtLdGx5NTVOSkJ2a1JaV0h2VmwwNGNZMXdKeWJqVHN0OVJxLUloNTY2OXNFZkZ2cVkxOEdjNXZ1NkdDZXQ4OHBnX2ZKUmhXLWNQZmd3XzVFZDJqTFhIWGN0a3NUVzYzNVBIeFhGQzNwZTkydUtQbTYw?oc=5",
+            "domaine": "startribune.com",
+            "date": "2026-11-07T12:00:01Z",
+            "officiel": false,
+            "source": "Google Actualités : élections (anglais)"
+          }
+        ],
+        "nb_articles": 182,
+        "nb_domaines": 32,
+        "officiel": false,
+        "premier": "2026-11-02T00:25:12Z",
+        "dernier": "2026-11-07T17:55:44Z",
+        "tonalite_gdelt": -1.87,
+        "score_selection": 15.59,
+        "theme_confirme": true,
+        "nb_evenements": 7
+      },
+      {
+        "id": "evt-58f58d10283a",
+        "titre": "Coupe du monde 2026: l'Argentine va saisir le TAS pour ses sanctions après les incidents en finale",
+        "titre_origine": "Coupe du monde 2026: l'Argentine va saisir le TAS pour ses sanctions après les incidents en finale",
+        "categorie": "sanctions",
+        "titre_langue": "français",
+        "mention": null,
+        "categorie_libelle": "Sanctions",
+        "pays": [
+          "AR"
+        ],
+        "pays_noms": [
+          "Argentine"
+        ],
+        "mondial": false,
+        "pays_suivis": [
+          "AR"
+        ],
+        "lieux": [],
+        "lieux_noms": [],
+        "theme": false,
+        "chronologie": [],
+        "regions": [
+          "amerique_latine"
+        ],
+        "gravite": 2,
+        "gravite_regles": 2,
+        "note_gravite": null,
+        "ia": false,
+        "modele": null,
+        "analyse_le": null,
+        "resume": [],
+        "actifs": [],
+        "horizon": null,
+        "confiance": "faible",
+        "contre": [],
+        "sources_independantes": null,
+        "sources": [
+          {
+            "titre": "L’Argentine mécontente du maintien des sanctions contre Paredes et la Fédé",
+            "url": "https://news.google.com/rss/articles/CBMi4AFBVV95cUxOZnFlLW4zSkFiZ0lXX0hPUUxBYWFoUXd1bURrZzNtcEpaQ0RRLWxnMHk3bzVlZjVGYnpGSWNjS1ptUFpnMlFWX2RwSXZESnpVTjdDQ0tPZVRPV3ZXVHN6cS1JUE84cTNwYTIxeFdlRm9uVnlVZGlfSGZKZm1RWks3T3FqbzhGWUp0THFWQXk1MTBVcVpkNC1TLUt6QUJveEtjRTJtTjdkbWdGQkc4R2IzTmtYbThZOEdMMU13eUQ2ZFFfdkVjTTZvMU9hM1UzUl9NcG0ybGN3cVJrc0FWbHgxcA?oc=5",
+            "domaine": "20minutes.fr",
+            "date": "2026-11-07T17:48:00Z",
+            "officiel": false,
+            "source": "Google Actualités : sanctions (français)"
+          },
+          {
+            "titre": "Coupe du monde 2026: l’Argentine fait appel des sanctions de la FIFA après les incidents lors de la finale contre l’Espagne",
+            "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxNRmN4UkFPdjZmWm4xTFk2UXRKdV9DUHIwNllNaVpra18zS1JkNGxKRjFFLUlGVWFyVlZybkZjMTNGSDN1akNndFpNZGlrb1Fka3hrNmNGNl82bDRtODJidmEzTDJfYy1aMkE1NFhrZHhaZ0Q4dHZDV0lYVk84cjJIdF9ZcGVYak1Od2NYSnkwczBQSWZwVTB3aWFuUjUzc1RXbEZtbTYxbkhBaGdCQ3NBUnpNdmNTMWlXVFppUjhDODJEeWwtaXdz?oc=5",
+            "domaine": "sudinfo.be",
+            "date": "2026-11-07T17:33:10Z",
+            "officiel": false,
+            "source": "Google Actualités : sanctions (français)"
+          },
+          {
+            "titre": "Coupe du monde 2026: l'Argentine va saisir le TAS pour ses sanctions après les incidents en finale",
+            "url": "https://news.google.com/rss/articles/CBMi_gFBVV95cUxNWXlQNm1IaWRYdmJfWG04WExteTViVGYwdFc1NU9kY09oRWNsbHBybVpfcExpUWx4cU1tb3lXU1hrOVFRZlQtckhtVVFobUNpdnZNbXQ1bUR1S0plakY0NDlNQTdOZXpjX0hOdE53akx3Z3ZWR0J3emhZRmFLdndUTkVLV1hLXzRrVUQ4MTd3bmk5aVRxdmMzNExETFBid2JIeU90QVJjWkZQM2ktOE4taFc4MnVJTGR2WWRsdVdwdkpLQWFpY1BOSWh1VUpOc2hMQmpPVWZYUlVybWNTWU1SWk1vYkpmWU1UNHN2YnV6dU9nVU9Jek9KLWZ2c0t5dw?oc=5",
+            "domaine": "bfmtv.com",
+            "date": "2026-11-07T17:31:06Z",
+            "officiel": false,
+            "source": "Google Actualités : sanctions (français)"
+          },
+          {
+            "titre": "Coupe du monde 2026: l’Argentine va saisir le Tribunal arbitral du sport pour contester les sanctions infligées après la finale",
+            "url": "https://news.google.com/rss/articles/CBMixwJBVV95cUxPeWhMTTR6bkNpQzJnZHAybHhXQjhtbU4yYlQ1Q2trdTlhU2tIRFBpam42QjJhMGs5NFJPZlVBdHVnbHRpMWd1TUUzTlY4Y041OUVCSHBVbmZMeDhoejRaLVhMQXhYcUNqeng0WlAtcE9MUlNzUW5ScjFiTGpzeG83NlROc1I4X2M5VGlkZjhiZll3Z2ZScU81aTJQS2tIVEg5TlZHQjJJTG9YUjJVeHZfY0F3cFRUdUh0cFJQbWtGeUVHY0U3dW9BbExtR1VmQ2NMeEhCV2p5akNma0NYbl9ET0pZUHljOFU0d2dzb1Nfc3JzT3l4Z3ludzY1RTF1OUQ3LURZOEFsZ2JPMk1Ed2cyaHFYZUFyMlluWG42WE45Y05Xei12X19ObVR0UERLaHNOYkVVQ2pMZlR6NkJ2NVVaR1pYM09qZTA?oc=5",
+            "domaine": "leparisien.fr",
+            "date": "2026-11-07T17:29:50Z",
+            "officiel": false,
+            "source": "Google Actualités : sanctions (français)"
+          },
+          {
+            "titre": "Football: L'Argentine veut saisir le TAS contre ses sanctions",
+            "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxObFAxY1VBSWNMdmQ2WTRxd1RibWtBUGNBUm1DZkNHakI0OHdzaTRIUXBiLWdtT0JkdHpQdmI2N2ZEcE1wQlFaS3FUUkg1d2V2NXVqeXVCTFcyR3RPTHU2d3JBS01KdVdGN2V0b2htYjVpNlVMUzEyZlUzeG5fbXJSd2JSZGxSM1I1Z1djMXRQRVVaVEhVaDk1a0RFYzBtYk1lWE9iYW14M0NIdw?oc=5",
+            "domaine": "blick.ch",
+            "date": "2026-11-07T17:19:43Z",
+            "officiel": false,
+            "source": "Google Actualités : sanctions (français)"
+          },
+          {
+            "titre": "Finale du Mondial-2026: l'Argentine va saisir le TAS contre ses sanctions - Sports - Sports",
+            "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTFBGck1xdDVMMWlqMTQzR3hDdnVlc2NlN3ZNZ293WTduWGpfS0t4QW5fTWdPQ2lYa1ZxSnN1dTJ3OU90MDFLMjVRRlBzelBGVno4SHh6WFpB?oc=5",
+            "domaine": "ahram.org.eg",
+            "date": "2026-11-07T17:09:40Z",
+            "officiel": false,
+            "source": "Google Actualités : sanctions (français)"
+          },
+          {
+            "titre": "Finale du Mondial 2026: l'Argentine va saisir le TAS contre ses sanctions",
+            "url": "https://news.google.com/rss/articles/CBMi5gFBVV95cUxOaTkwdWFHazd2VlBhVWx0Zk5FNm5mdmVFaDFFRHpURFN0MklrTS15UXUzME1hTW1FaFhsbHoxcmZYVFo4LUdjS0o4ZE9GNVFVcjFVZnJ0ME4wckNMR1pxMmpXdjZadTZmZUJEMnFkT1hGYXJSVEVtX3BNSTJ5TE42dmp6bkltWkNUVkFNMEU2cFFlbDB6d1FUeVRjR05xNUl4dE5veVBMRUFqYWd6TjRaeDA5SE51LTN5MnhpaXEyZkZPckl6RXBRTlM3cXhsMzB3elN3T3JpMEJsNFJGWFZTOGRfLXVMUQ?oc=5",
+            "domaine": "eurosport.fr",
+            "date": "2026-11-07T17:02:00Z",
+            "officiel": false,
+            "source": "Google Actualités : sanctions (français)"
+          },
+          {
+            "titre": "Coupe de monde. Après les échauffourées de la finale, l’Argentine va saisir le TAS pour contester ses sanctions",
+            "url": "https://news.google.com/rss/articles/CBMirgJBVV95cUxNNzRocTZkUXNocnh1VEdkZ0hQNkQ4RFp4cG5vemcxS3hfc1hYT1ZjdEVJUHRwMjFHR1RBMWhuNVUxRmg3UmJTcHJmOTVKb1ZQMExRN3BWQXdyUXZJdG93YkJBQmtVSWNXdEZnYW1XblAxeHczcU5wa2JrNXlrNGN4QVJnMGdEcV9FQ0RTbDRvSi1mdkdhT2hWcVZYUkQ0Uk9ZUWZQbGVYUnpTYkxHMzNYU0ZxTExVdzQ0Mzl6VnBaYXpMZzdhdjd3MVdOMXBaU2xkaWtYamhoRDdkNmhpWVJqdDB4TG9CUS1lRGZzRXE4YXRQRlJWV0x2eFg3MHpJaXdTVDFKZGVNTGZFMmp0OGZzRGs2a25NVExDZHVrUjBYX2pwTXVtTWNBcUh2aDlFQQ?oc=5",
+            "domaine": "ouest-france.fr",
+            "date": "2026-11-07T16:55:25Z",
+            "officiel": false,
+            "source": "Google Actualités : sanctions (français)"
+          }
+        ],
+        "nb_articles": 8,
+        "nb_domaines": 8,
+        "officiel": false,
+        "premier": "2026-11-07T16:55:25Z",
+        "dernier": "2026-11-07T17:48:00Z",
+        "tonalite_gdelt": -1.05,
+        "score_selection": 9.34
       },
       {
         "id": "theme-evt-8128960a2528",
@@ -5019,273 +5402,6 @@
         "nb_evenements": 2
       },
       {
-        "id": "theme-evt-c83d7138a76d",
-        "titre": "Conséquences politiques et économiques des élections de mi-mandat américaines",
-        "titre_origine": "Maps: See how Californians voted in November midterm elections",
-        "categorie": "election",
-        "titre_langue": null,
-        "mention": null,
-        "categorie_libelle": "Élections",
-        "pays": [
-          "US"
-        ],
-        "pays_noms": [
-          "États-Unis"
-        ],
-        "mondial": false,
-        "pays_suivis": [
-          "US"
-        ],
-        "lieux": [],
-        "lieux_noms": [],
-        "theme": true,
-        "chronologie": [
-          {
-            "id": "evt-c83d7138a76d",
-            "date": "2026-11-06T06:43:00Z",
-            "titre": "Les résultats des élections locales américaines marquent des gains pour les démocrates",
-            "gravite": 2,
-            "resume": "Les scrutins locaux et d'inter-saison aux États-Unis, notamment dans l'Iowa et au Texas, enregistrent des victoires significatives pour le parti démocrate.",
-            "nb_sources": 6,
-            "source": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNaU01U2lMaG9JUTBjVW9LYWpQZmVMd2Z2aVF4bGNGNlAtWmRsQldodkoxMk55bzJGN0NsQzZoM3dpY0xBZy1OS0EzbTAtOE1nTElQc0FERHNNeWJRUXk4ZE1kdEExTllpVmp0UEpQMFV3Mlh2RDA3MnFUOVVvTldkREliTnVIbXM5bVVhWENDZjQ?oc=5"
-          },
-          {
-            "id": "evt-66c8cd956a20",
-            "date": "2026-11-06T18:10:28Z",
-            "titre": "Les résultats des élections de mi-mandat relancent le débat sur les tarifs douaniers",
-            "gravite": 2,
-            "resume": "Les élections de mi-mandat aux États-Unis entraînent des discussions politiques sur l'orientation future des taxes et des droits de douane.",
-            "nb_sources": 12,
-            "source": "https://news.google.com/rss/articles/CBMiigFBVV95cUxNTTlPWVM2SzF4RmJ1Ry1oX2NOMWc0MGJQREpBLTE5OEZ2RnVDT2JtZFZXR1JYWDRka19hUWkzTWJCR1ZrNVQ3R0RTUEFOcDJVSXJnWE54YjFlOUR6RkVUWTNiYWJweWsxQUI2TmpGWTdFZmtOc1VnVllRdWM1ajlhbjg5UXkxZ3Vid3c?oc=5"
-          },
-          {
-            "id": "evt-744b31d2306e",
-            "date": "2026-11-07T06:29:58Z",
-            "titre": "Impact des résultats des élections américaines sur les marchés boursiers",
-            "gravite": 2,
-            "resume": "Les marchés boursiers européens ont réagi négativement aux résultats des élections de mi-mandat aux États-Unis.",
-            "nb_sources": 12,
-            "source": "https://news.google.com/rss/articles/CBMi2gJBVV95cUxOSkcxNDlnTmt1NVUyVUZXalVOVThIM3c3RUFTdXJpS3pjNDdST0tBQ2x3WmJTdk12YjN1M2E0eUVNVFlxSXZqeExVN1JqTTUycDFnNlZKc3dHSG5GelZYbENnTTRhcGNpdWt0VFhCMXdFWFZqUEZVdzFhZ3NsN1h0ODJXaVg3dW9iTS1kaG1wS19NaFQteVZ6ZUdzS09UOGtud29kT0g5TkpiOTZ4cTR3dmMyMXJ0T19mUkxXckVwSm5VN2xxMGRhU3V5UmhFWVFjZU43cnR5LTQyMTV4N1B2TnhsTXN0aUJhNzRJeHNxSkxvWWlJSEVfQVVQMmlGVXNDb2FwR3F5UU42VVZpajNuajZNTlp3SEJkVUVBNjUyQm1EMVdJckxLZ1pBUTFOTW9ORzBRZjNQR0FvdWV3NDZmc0V1NVNlQUhndVBXcXRHckUwZ2lxR3pyeTRR?oc=5"
-          },
-          {
-            "id": "evt-d7010a592e52",
-            "date": "2026-11-07T09:26:07Z",
-            "titre": "Les marchés réagissent aux résultats des élections de mi-mandat aux États-Unis",
-            "gravite": 2,
-            "resume": "Les premiers résultats des élections de mi-mandat aux États-Unis montrent des gains pour l'opposition dans plusieurs États clés.",
-            "nb_sources": 12,
-            "source": "https://news.google.com/rss/articles/CBMiX0FVX3lxTFA0Y2tDNFZaNURMWEZtbE5ZazlhbjJBem9BSE1NMlgwcHlDdUtyX3k4UWhNbGZZSm9tZVhiUUw1bE0yVlFsOGRZSklaQ2FVczVldGxfellsd2w1OHJjZTI00gFkQVVfeXFMT1FCbkdnd29COER4N1IzRUtTXzVBZEtIZkVYUWcwLTJLdTl1X2ozUjdEWlBKZmg0R1lKSXZzeXk2WGQ0V1JNYnFKdl9UMU1IN1dqOW8zaFd5RnRfSUlYZkFrTktEdA?oc=5"
-          },
-          {
-            "id": "evt-bad80bc9e34d",
-            "date": "2026-11-07T15:31:07Z",
-            "titre": "Les résultats des élections de mi-mandat aux États-Unis continuent d'être traités",
-            "gravite": 2,
-            "resume": "Les autorités locales aux États-Unis procèdent au dépouillement et à la publication des résultats actualisés des élections de mi-mandat.",
-            "nb_sources": 12,
-            "source": "https://news.google.com/rss/articles/CBMirwFBVV95cUxNZjJCNkpQU1Uza3BibklzR3VBNjFHZGU3SVB0NWlfWER6Z1B1ZnNlY1I5TGE2cjVZek1jMWdJY0NEVGdxcHpTZ3g4ZkV5TzBpbnZxNk1iempYSDlHZks2LTliMFBveE10MTdrSmN5OHBqY0l0cENrNWFOSWdldlRZVUJxTmZfYUwzMzB2THp1SkU1ZFk5anprcG94SVgtX1JLRUo1TC1KRGhqb2g3alZJ?oc=5"
-          },
-          {
-            "id": "evt-f7a1968f92cb",
-            "date": "2026-11-07T15:41:00Z",
-            "titre": "Résultats des élections de mi-mandat et locales aux États-Unis",
-            "gravite": 2,
-            "resume": "Les résultats des élections de mi-mandat et des scrutins locaux se déroulent dans plusieurs États américains, incluant la Californie, le Nevada et le Dakota du Sud.",
-            "nb_sources": 12,
-            "source": "https://news.google.com/rss/articles/CBMiowFBVV95cUxPZHpQMkVMZ3NaMEoxOXd1emstTVRwUVBMV3NIU0pDMEZFSTNnWDNWVTlRUWJCNThPME50YXNuOFJiN1pRb1hCd0dCbTh6RzB5Y2tSQlpWMEhSWTdNVzZfR1MtUkJWcjFzQjR2UGVPZTRZVG1EQ0ZIcFJPVjd2SDluQ1NYZXVRaTl4VmE1LUFtdXN3T2UtT2Z0dTBJbWlsMzF1TVFr?oc=5"
-          },
-          {
-            "id": "evt-c080f6164bd4",
-            "date": "2026-11-07T17:02:00Z",
-            "titre": "Les élections de mi-mandat aux États-Unis modifient le paysage politique fédéral",
-            "gravite": 2,
-            "resume": "Les résultats des élections de mi-mandat de 2026 aux États-Unis marquent la fin de la campagne et préparent l'installation du nouveau Congrès et des législatures pour l'année suivante.",
-            "nb_sources": 12,
-            "source": "https://news.google.com/rss/articles/CBMivAFBVV95cUxPbVJ3czRBNDFOMDVadVNjSXZvNWlXRGZFblBDUDFGSlRVdExleTVDOTJhQnI5QUx4RU82TTVIb0ZlMnNTZjhVcXhWR2J3S2VOWmc1VTB1c1hvcGNxOWFKZFZMbUkzWjNSU1NBNk9YaFBPdmlad01ZNTlDMWhFQXllTGIxV183dnplWDMzLTh6N1pBMmxReTZvbC1JUDRzLTZvR3UwTFQ3VEhVRFY1am0zM3gxVVRFR0VPdER0Tg?oc=5"
-          }
-        ],
-        "regions": [
-          "amerique_nord"
-        ],
-        "gravite": 2,
-        "gravite_regles": 1,
-        "note_gravite": null,
-        "ia": true,
-        "modele": "gemini-3.5-flash-lite",
-        "analyse_le": "2026-11-07T17:16:50Z",
-        "resume": [
-          {
-            "texte": "Les résultats des élections de mi-mandat de 2026 aux États-Unis marquent la fin de la campagne et préparent l'installation du nouveau Congrès et des législatures pour l'année suivante.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMivAFBVV95cUxPbVJ3czRBNDFOMDVadVNjSXZvNWlXRGZFblBDUDFGSlRVdExleTVDOTJhQnI5QUx4RU82TTVIb0ZlMnNTZjhVcXhWR2J3S2VOWmc1VTB1c1hvcGNxOWFKZFZMbUkzWjNSU1NBNk9YaFBPdmlad01ZNTlDMWhFQXllTGIxV183dnplWDMzLTh6N1pBMmxReTZvbC1JUDRzLTZvR3UwTFQ3VEhVRFY1am0zM3gxVVRFR0VPdER0Tg?oc=5",
-              "https://news.google.com/rss/articles/CBMi4AFBVV95cUxPU3JNTFFuM3lvVUtWSDFicjc2MFhFTklTaWl3Y3pXTm1vRUo4b1ZiMlEySHNNU0huNDN1bHZsQWJQR3E3RTZQampjV1NfOWNqcUlqejBobHp4WHVKd3phSlVCYnUyXzVyMUNtTnZ6aEZzWHZsV3ZsS09tMlQ1a19RRm5abW8wRDVBSVhXNzBWeTZrQ0lYanQzZkZpYjFHRzk3amVJNzYwX2FwcWxOR21ranBWanN6RTAwV3g2Smk2akZlQWVQZU1NLWJPWjZmWFRrajdHeTlJalYycjZXYnFDbg?oc=5"
-            ]
-          },
-          {
-            "texte": "Le scrutin s'accompagne de votes locaux notables, tels que la proposition 39 en Californie et des scrutins spécifiques dans le Minnesota et le Nebraska.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMiowFBVV95cUxPLXBRUlRfNVE1QVFQc1JXajRSUmRoNURMSnVRZTNtT3U5ZU9fcm50N0daUmtLdGx5NTVOSkJ2a1JaV0h2VmwwNGNZMXdKeWJqVHN0OVJxLUloNTY2OXNFZkZ2cVkxOEdjNXZ1NkdDZXQ4OHBnX2ZKUmhXLWNQZmd3XzVFZDJqTFhIWGN0a3NUVzYzNVBIeFhGQzNwZTkydUtQbTYw?oc=5",
-              "https://news.google.com/rss/articles/CBMipAFBVV95cUxQTFQ1MTY0ZlRnWjJEbjB6aEFRVVlKeGVyOEQwUHpDOG1RYjJNbjRXQTYwdXpDaXo5dk5RYnhOdjN6MFpWRnk0NDBZR0F0aG5PVW56OFl0cUI0WExsWUJfVzhUVEEzNm9kOGVCQUJnS2sxZGUxZWpEVjBUZlhuUG53R3g1LU5OMjZzb0pZaUY4bWl4QlRuQzNST19OSWtxc1hPV0hJRg?oc=5",
-              "https://news.google.com/rss/articles/CBMingFBVV95cUxPc1IzSW4zb1drNXZzZl9JRktvYThmdFB4ckpjUHV3MjhmWnNKTWRZb2RQQ3E2NkRpSlpxN2JKRDZfdHpaRHVETHdvYnhuZkxFdDJrOVFkMkIybGROZS03aFBROWxKT2JrdVBjX19NQ09iM08zZkEzX3ZHQVhzLUxrbWFNdTZHR2JMRU8wcWlUUnVrY1kzT3F1ZHZTUVVmQdIBpgFBVV95cUxNbl9XbWNfbmlPR2hxdk5pZEVBMVpwSnNiVHhieFJRNzBROFVrQnhZU0FJWlpLcl9lTV84cGlJaWRsbVBrZ1NHVnhmYkNaaXpPRWpZbkMzQVFMdjRKeDM2MUNLdHplcUpEN1RaX1JPOGNrTElvUm5QN3hXb2ZhY1JmMHpaTjBaOFoyS0FsaUFDU1ZOTko2VU9JV1dTTDlzMjFTUnNTQ3hB?oc=5"
-            ]
-          }
-        ],
-        "actifs": [
-          {
-            "actif": "technologie",
-            "sens": "incertain",
-            "texte": "Les résultats des scrutins locaux soulèvent des interrogations sur l'avenir de la régulation de l'intelligence artificielle et des centres de données.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMinwFBVV95cUxOMF9Sc2xnLTZ2M0wtNF9TSksxVHFKX3JTWmxlRmJfYjNNUlZpRDZsNnVWYnBoOV95S1k2VzQzM0l2NWtqV1dnRUNnbS1POGlHM2NqSjdiYWdrOHJ0Q0VjMTBPTWdadnhCa2M2SXFIZU1XWW5PZEtQdUhvUGhuR2R4aUJRTUVXeVhoNHhtQlBCVnFOdzRRSWZFVmlKbGNnV0U?oc=5",
-              "https://news.google.com/rss/articles/CBMi0gFBVV95cUxNMXBWY3pnQ2RxYnpkZXl4U19GMHEyZFJnVkVZaGlMOGZOZjdWOUlMbUdEVm1BY1E4SnFuWk52eks0ZkNRTnVTNkJ0azRxakxEU1QtWjY3YXVUXzJySjhQamYxcEl4MlRsNjdQRW9BWElWMDl4Z3ZnUkxUVml3d2pVWUdPM2dIbGtla0tqTTNsNDBGU2tCUUMzejIwMWhPaVI0UVVDTEJoU0hJT1YxYlIwRHRrWnlZUkh0T0FWNWNXUWJsc2ZUaHZaaTVGVTc1QWJuZ1E?oc=5"
-            ]
-          }
-        ],
-        "horizon": "mois",
-        "confiance": "moyenne",
-        "contre": [
-          {
-            "texte": "L'absence de changement majeur dans la configuration globale du pouvoir législatif pourrait limiter l'impact immédiat des scrutins sur les marchés.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMipAFBVV95cUxQTFQ1MTY0ZlRnWjJEbjB6aEFRVVlKeGVyOEQwUHpDOG1RYjJNbjRXQTYwdXpDaXo5dk5RYnhOdjN6MFpWRnk0NDBZR0F0aG5PVW56OFl0cUI0WExsWUJfVzhUVEEzNm9kOGVCQUJnS2sxZGUxZWpEVjBUZlhuUG53R3g1LU5OMjZzb0pZaUY4bWl4QlRuQzNST19OSWtxc1hPV0hJRg?oc=5",
-              "https://news.google.com/rss/articles/CBMi4AFBVV95cUxPU3JNTFFuM3lvVUtWSDFicjc2MFhFTklTaWl3Y3pXTm1vRUo4b1ZiMlEySHNNU0huNDN1bHZsQWJQR3E3RTZQampjV1NfOWNqcUlqejBobHp4WHVKd3phSlVCYnUyXzVyMUNtTnZ6aEZzWHZsV3ZsS09tMlQ1a19RRm5abW8wRDVBSVhXNzBWeTZrQ0lYanQzZkZpYjFHRzk3amVJNzYwX2FwcWxOR21ranBWanN6RTAwV3g2Smk2akZlQWVQZU1NLWJPWjZmWFRrajdHeTlJalYycjZXYnFDbg?oc=5"
-            ]
-          }
-        ],
-        "sources_independantes": 7,
-        "sources": [
-          {
-            "titre": "((jump page)) ELECTION RESULTS",
-            "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxPbVJ3czRBNDFOMDVadVNjSXZvNWlXRGZFblBDUDFGSlRVdExleTVDOTJhQnI5QUx4RU82TTVIb0ZlMnNTZjhVcXhWR2J3S2VOWmc1VTB1c1hvcGNxOWFKZFZMbUkzWjNSU1NBNk9YaFBPdmlad01ZNTlDMWhFQXllTGIxV183dnplWDMzLTh6N1pBMmxReTZvbC1JUDRzLTZvR3UwTFQ3VEhVRFY1am0zM3gxVVRFR0VPdER0Tg?oc=5",
-            "domaine": "outlooknewspapers.com",
-            "date": "2026-11-07T17:02:00Z",
-            "officiel": false,
-            "source": "Google Actualités : élections (anglais)"
-          },
-          {
-            "titre": "Six Charts Explaining New York’s 2026 Elections",
-            "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTFBBRTl5UjFKUXRFQ0J6UWthOEdSMTlMbDlqeHhEYzBhWHRNenE2bU1xMmpTWDV3d1J1b0dIWXhCdWdUcjRKcDc2SjAyVi1ES25lcU9na2RpeDl3aE1iYzRyX19TbS1OVWxndks2dGc0ZUJuOEU?oc=5",
-            "domaine": "nysfocus.com",
-            "date": "2026-11-07T14:18:00Z",
-            "officiel": false,
-            "source": "Google Actualités : élections (anglais)"
-          },
-          {
-            "titre": "Make sense of Minnesota’s midterm election with these six charts",
-            "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxPLXBRUlRfNVE1QVFQc1JXajRSUmRoNURMSnVRZTNtT3U5ZU9fcm50N0daUmtLdGx5NTVOSkJ2a1JaV0h2VmwwNGNZMXdKeWJqVHN0OVJxLUloNTY2OXNFZkZ2cVkxOEdjNXZ1NkdDZXQ4OHBnX2ZKUmhXLWNQZmd3XzVFZDJqTFhIWGN0a3NUVzYzNVBIeFhGQzNwZTkydUtQbTYw?oc=5",
-            "domaine": "startribune.com",
-            "date": "2026-11-07T12:00:01Z",
-            "officiel": false,
-            "source": "Google Actualités : élections (anglais)"
-          },
-          {
-            "titre": "FACT CHECK: Nebraska did not experience a ‘red wave’ in the 2026 Midterm Election",
-            "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxQTFQ1MTY0ZlRnWjJEbjB6aEFRVVlKeGVyOEQwUHpDOG1RYjJNbjRXQTYwdXpDaXo5dk5RYnhOdjN6MFpWRnk0NDBZR0F0aG5PVW56OFl0cUI0WExsWUJfVzhUVEEzNm9kOGVCQUJnS2sxZGUxZWpEVjBUZlhuUG53R3g1LU5OMjZzb0pZaUY4bWl4QlRuQzNST19OSWtxc1hPV0hJRg?oc=5",
-            "domaine": "wowt.com",
-            "date": "2026-11-07T00:28:00Z",
-            "officiel": false,
-            "source": "Google Actualités : élections (anglais)"
-          },
-          {
-            "titre": "While the midterm election is over, new Legislature and Congress won't be seated until 2027. See link below ⬇️ 📸 Andrew Harnik / Staff",
-            "url": "https://news.google.com/rss/articles/CBMi4AFBVV95cUxPU3JNTFFuM3lvVUtWSDFicjc2MFhFTklTaWl3Y3pXTm1vRUo4b1ZiMlEySHNNU0huNDN1bHZsQWJQR3E3RTZQampjV1NfOWNqcUlqejBobHp4WHVKd3phSlVCYnUyXzVyMUNtTnZ6aEZzWHZsV3ZsS09tMlQ1a19RRm5abW8wRDVBSVhXNzBWeTZrQ0lYanQzZkZpYjFHRzk3amVJNzYwX2FwcWxOR21ranBWanN6RTAwV3g2Smk2akZlQWVQZU1NLWJPWjZmWFRrajdHeTlJalYycjZXYnFDbg?oc=5",
-            "domaine": "facebook.com",
-            "date": "2026-11-06T23:02:05Z",
-            "officiel": false,
-            "source": "Google Actualités : élections (anglais)"
-          },
-          {
-            "titre": "Three Things the Midterm Election Tells Us About AI and the Likely Future of AI Policy",
-            "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxOMF9Sc2xnLTZ2M0wtNF9TSksxVHFKX3JTWmxlRmJfYjNNUlZpRDZsNnVWYnBoOV95S1k2VzQzM0l2NWtqV1dnRUNnbS1POGlHM2NqSjdiYWdrOHJ0Q0VjMTBPTWdadnhCa2M2SXFIZU1XWW5PZEtQdUhvUGhuR2R4aUJRTUVXeVhoNHhtQlBCVnFOdzRRSWZFVmlKbGNnV0U?oc=5",
-            "domaine": "cato.org",
-            "date": "2026-11-06T21:09:51Z",
-            "officiel": false,
-            "source": "Google Actualités : élections (anglais)"
-          },
-          {
-            "titre": "See how California's 58 counties voted on Prop 39 in the November election",
-            "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxPc1IzSW4zb1drNXZzZl9JRktvYThmdFB4ckpjUHV3MjhmWnNKTWRZb2RQQ3E2NkRpSlpxN2JKRDZfdHpaRHVETHdvYnhuZkxFdDJrOVFkMkIybGROZS03aFBROWxKT2JrdVBjX19NQ09iM08zZkEzX3ZHQVhzLUxrbWFNdTZHR2JMRU8wcWlUUnVrY1kzT3F1ZHZTUVVmQdIBpgFBVV95cUxNbl9XbWNfbmlPR2hxdk5pZEVBMVpwSnNiVHhieFJRNzBROFVrQnhZU0FJWlpLcl9lTV84cGlJaWRsbVBrZ1NHVnhmYkNaaXpPRWpZbkMzQVFMdjRKeDM2MUNLdHplcUpEN1RaX1JPOGNrTElvUm5QN3hXb2ZhY1JmMHpaTjBaOFoyS0FsaUFDU1ZOTko2VU9JV1dTTDlzMjFTUnNTQ3hB?oc=5",
-            "domaine": "nbclosangeles.com",
-            "date": "2026-11-06T20:14:38Z",
-            "officiel": false,
-            "source": "Google Actualités : élections (anglais)"
-          },
-          {
-            "titre": "2 Justice Department officials resign in wake of the midterm elections",
-            "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxQM3plN3FqNjFyaUVUZUxiUDhOSEhkMXc1U0F6emNXWHQ2djVYVkxCaXZfOGdxMEl0UTQ5cUtZbVRVV1E2eU8xMmFITW5ySkNqZG55ZjZsODBRZE5uNTVsMFBveFBpNHdYSGoyU1FCN3ZDU0dGcXJyQ2c1Y2xjemlMRVk3SkVDNVBBME93VEt5d2x4MEdnNFlfZ9IBrAFBVV95cUxOTlNyOUcwbmRGQk12OHduU3FmOWdxeUtJV0RvNjRMZ1ExWTZMMlJnTE4wWE5SXzFtT0oxaFVORVNDOUJDeWx2VVZQRWpOYVY0QVZ6LUFZV2pUOW9taE5YdXdwZ2p6cHlxYlM5UE9TVDBDZjRjRnZRWUJZbkFsc0RtbGhvaUZJREZUVUtnZW4yMEFwczJtd0NVYWxQWlV5Y0Z5bzg4MEVNaTZPUENt?oc=5",
-            "domaine": "wndu.com",
-            "date": "2026-11-06T19:29:00Z",
-            "officiel": false,
-            "source": "Google Actualités : élections (anglais)"
-          },
-          {
-            "titre": "AI data centers took a beating in the midterm elections. A reckoning may be ahead for tech giants",
-            "url": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxNMXBWY3pnQ2RxYnpkZXl4U19GMHEyZFJnVkVZaGlMOGZOZjdWOUlMbUdEVm1BY1E4SnFuWk52eks0ZkNRTnVTNkJ0azRxakxEU1QtWjY3YXVUXzJySjhQamYxcEl4MlRsNjdQRW9BWElWMDl4Z3ZnUkxUVml3d2pVWUdPM2dIbGtla0tqTTNsNDBGU2tCUUMzejIwMWhPaVI0UVVDTEJoU0hJT1YxYlIwRHRrWnlZUkh0T0FWNWNXUWJsc2ZUaHZaaTVGVTc1QWJuZ1E?oc=5",
-            "domaine": "opb.org",
-            "date": "2026-11-06T16:56:39Z",
-            "officiel": false,
-            "source": "Google Actualités : élections (anglais)"
-          },
-          {
-            "titre": "Maps: See how Californians voted in November midterm elections",
-            "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxQVk42WFluLWNESmFLYl9oaVMtR1BCRjZkRkZncWM2ZHdkQW9TVVJpSFRSME5HZDB5LXpUNUc0UFhUdXVfYXp2OWVRcDJtczNXQTdWZ3Q5angwZHBLWFIwRlNJenhHTFQ4X3hiS2FZNUNoczNyWFcweVhkdHZsQ1phcHZ4YnJlVGl2U3puckhTQTA0UEFkNmZnczkzNzlMZ3RPb0E?oc=5",
-            "domaine": "nbcbayarea.com",
-            "date": "2026-11-06T16:48:03Z",
-            "officiel": false,
-            "source": "Google Actualités : élections (anglais)"
-          },
-          {
-            "titre": "Which sports figures won or lost in the midterm elections? Tracking 7 big names - The Athletic",
-            "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxNZl9UekNJNnVHYzY4cVFMWHNYZDk5ajFYdC0yQWNPcXo0V0dzVWMzbmpaNlliQmdqRmlYcGQzMTdnZFNnaFdwcUxDa2JHYnNJaFdWTGxLODBsR3lkcElUZHNSVENHMFoyQ0dFb2JfMDg2XzF2cFBZRkc3VHRqaXJlLVc0WENRNkFYa00tR2d0YTVLSjBmSmJfZEpBZ2diYm1vZ2hZZTJVaGw1QQ?oc=5",
-            "domaine": "nytimes.com",
-            "date": "2026-11-06T07:10:00Z",
-            "officiel": false,
-            "source": "Google Actualités : élections (anglais)"
-          },
-          {
-            "titre": "Democratic turnout soars across Alabama in midterm election - Chattanooga Times Free Press",
-            "url": "https://www.timesfreepress.com/news/2026/nov/05/democratic-turnout-soars-across-alabama-in-midterm-election/",
-            "domaine": "timesfreepress.com",
-            "date": "2026-11-06T05:30:00Z",
-            "officiel": false,
-            "source": "GDELT DOC 2.0"
-          },
-          {
-            "titre": "U.S. election showed growing frustration with Israel on both sides of the aisle",
-            "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxPZHpQMkVMZ3NaMEoxOXd1emstTVRwUVBMV3NIU0pDMEZFSTNnWDNWVTlRUWJCNThPME50YXNuOFJiN1pRb1hCd0dCbTh6RzB5Y2tSQlpWMEhSWTdNVzZfR1MtUkJWcjFzQjR2UGVPZTRZVG1EQ0ZIcFJPVjd2SDluQ1NYZXVRaTl4VmE1LUFtdXN3T2UtT2Z0dTBJbWlsMzF1TVFr?oc=5",
-            "domaine": "spectrumlocalnews.com",
-            "date": "2026-11-07T15:41:00Z",
-            "officiel": false,
-            "source": "Google Actualités : élections (anglais)"
-          },
-          {
-            "titre": "Israel mired in uncertainty and acrimony after contentious vote",
-            "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxQQ2JCaXhydkY5dTVmUzZqT1Y2Szc1c0FKTHJFNkhJc3lmR1FDQ0djQ3hwTXk2WTBxcWVsLXB6cWpWUC04RV9ydEt2NTZfMWc1aGxFa1N5RGhjNXZpbWkyZ19xMEp0TndJelhfT2x4aU4zVnFWMllIb2RwWHpUaHdhUzBROFpDUzlMNk1pUEZUQXdLc2tkdk93SThTUG5iMFlRNlhNeldR?oc=5",
-            "domaine": "nbcnews.com",
-            "date": "2026-11-07T14:46:05Z",
-            "officiel": false,
-            "source": "Google Actualités : élections (anglais)"
-          },
-          {
-            "titre": "What midterm election blue wave rebuke of Trump means for renewable energy",
-            "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxPUGhqVms1N0laV2g0enlDUzZiZzFPeC1acEdOdnpCQ21meEx6OURXb3FFc2dUY1ViOFpCWXZtd1lQYkRsSkZSZ3pxU3lIa3oyd0VnU1RnM1gyVUJPTzFmYU1RbHJsMHRaWG44dUtYYVAyazlERms2cWFNbzdVNzNWVUxCR0RGOC1vQVcyMHF0SQ?oc=5",
-            "domaine": "cnbc.com",
-            "date": "2026-11-07T14:24:38Z",
-            "officiel": false,
-            "source": "Google Actualités : élections (anglais)"
-          }
-        ],
-        "nb_articles": 181,
-        "nb_domaines": 30,
-        "officiel": false,
-        "premier": "2026-11-02T00:25:12Z",
-        "dernier": "2026-11-07T17:02:00Z",
-        "tonalite_gdelt": -1.86,
-        "score_selection": 9.64,
-        "theme_confirme": true,
-        "nb_evenements": 7
-      },
-      {
         "id": "evt-4a87273a286c",
         "titre": "Élections de mi-mandat aux États-Unis sur fond de guerres commerciales",
         "titre_origine": "Republicans ran away from Trump's Canadian tariffs, but not far enough",
@@ -5459,7 +5575,7 @@
         "officiel": false,
         "premier": "2026-11-02T19:41:33Z",
         "dernier": "2026-11-07T15:52:31Z",
-        "tonalite_gdelt": -1.13,
+        "tonalite_gdelt": -1.15,
         "score_selection": 14.41
       },
       {
@@ -5633,7 +5749,7 @@
         "officiel": false,
         "premier": "2026-11-03T13:54:43Z",
         "dernier": "2026-11-07T14:34:30Z",
-        "tonalite_gdelt": -1.86,
+        "tonalite_gdelt": -1.87,
         "score_selection": 10.14
       },
       {
@@ -6075,7 +6191,7 @@
         "officiel": false,
         "premier": "2026-11-06T18:59:24Z",
         "dernier": "2026-11-07T10:00:08Z",
-        "tonalite_gdelt": -1.65,
+        "tonalite_gdelt": -1.67,
         "score_selection": 8.64
       },
       {
@@ -6212,7 +6328,7 @@
         "officiel": false,
         "premier": "2026-11-04T21:22:34Z",
         "dernier": "2026-11-07T04:53:48Z",
-        "tonalite_gdelt": -1.29,
+        "tonalite_gdelt": -1.25,
         "score_selection": 8.61
       },
       {
@@ -6370,7 +6486,7 @@
         "officiel": false,
         "premier": "2026-11-02T17:14:23Z",
         "dernier": "2026-11-07T00:00:00Z",
-        "tonalite_gdelt": -1.86,
+        "tonalite_gdelt": -1.87,
         "score_selection": 8.14
       },
       {
@@ -6591,7 +6707,7 @@
         "officiel": false,
         "premier": "2026-11-02T22:43:33Z",
         "dernier": "2026-11-06T22:19:25Z",
-        "tonalite_gdelt": -1.1,
+        "tonalite_gdelt": -1.12,
         "score_selection": 9.92,
         "theme_confirme": true,
         "nb_evenements": 3
@@ -6776,7 +6892,7 @@
         "officiel": false,
         "premier": "2026-11-02T21:58:01Z",
         "dernier": "2026-11-06T22:15:23Z",
-        "tonalite_gdelt": -1.1,
+        "tonalite_gdelt": -1.12,
         "score_selection": 11.67
       },
       {
@@ -6928,7 +7044,7 @@
         "officiel": false,
         "premier": "2026-11-03T09:31:14Z",
         "dernier": "2026-11-06T19:04:24Z",
-        "tonalite_gdelt": -1.86,
+        "tonalite_gdelt": -1.87,
         "score_selection": 8.14
       },
       {
@@ -7086,7 +7202,7 @@
         "officiel": false,
         "premier": "2026-11-04T19:21:55Z",
         "dernier": "2026-11-06T17:27:54Z",
-        "tonalite_gdelt": -1.97,
+        "tonalite_gdelt": -1.98,
         "score_selection": 9.34,
         "titre_traduit": true
       },
@@ -7200,7 +7316,7 @@
         "officiel": false,
         "premier": "2026-11-03T11:22:52Z",
         "dernier": "2026-11-06T13:44:35Z",
-        "tonalite_gdelt": -1.86,
+        "tonalite_gdelt": -1.87,
         "score_selection": 6.14
       },
       {
@@ -7434,7 +7550,7 @@
         "officiel": true,
         "premier": "2026-11-04T12:00:00Z",
         "dernier": "2026-11-06T12:00:00Z",
-        "tonalite_gdelt": -1.86,
+        "tonalite_gdelt": -1.87,
         "score_selection": 6.17
       },
       {
@@ -7559,7 +7675,7 @@
         "officiel": false,
         "premier": "2026-11-03T09:10:00Z",
         "dernier": "2026-11-06T07:01:15Z",
-        "tonalite_gdelt": -1.02,
+        "tonalite_gdelt": -1.04,
         "score_selection": 9.14
       },
       {
@@ -7816,7 +7932,7 @@
         "officiel": false,
         "premier": "2026-11-03T12:20:14Z",
         "dernier": "2026-11-05T09:11:14Z",
-        "tonalite_gdelt": -0.86,
+        "tonalite_gdelt": -0.88,
         "score_selection": 7.5
       },
       {
@@ -7922,7 +8038,7 @@
         "officiel": false,
         "premier": "2026-11-04T16:51:33Z",
         "dernier": "2026-11-05T05:51:41Z",
-        "tonalite_gdelt": -0.13,
+        "tonalite_gdelt": -0.18,
         "score_selection": 7.0,
         "titre_traduit": true
       },
@@ -8042,7 +8158,7 @@
         "officiel": false,
         "premier": "2026-11-03T01:38:43Z",
         "dernier": "2026-11-04T20:33:00Z",
-        "tonalite_gdelt": -1.1,
+        "tonalite_gdelt": -1.12,
         "score_selection": 7.64
       },
       {
@@ -8180,7 +8296,7 @@
         "officiel": false,
         "premier": "2026-11-03T00:43:35Z",
         "dernier": "2026-11-04T18:18:01Z",
-        "tonalite_gdelt": -1.1,
+        "tonalite_gdelt": -1.12,
         "score_selection": 10.5
       },
       {
@@ -8294,7 +8410,7 @@
         "officiel": false,
         "premier": "2026-11-02T20:08:57Z",
         "dernier": "2026-11-04T13:28:42Z",
-        "tonalite_gdelt": -0.53,
+        "tonalite_gdelt": -0.55,
         "score_selection": 7.0
       },
       {
@@ -8394,7 +8510,7 @@
         "officiel": true,
         "premier": "2026-11-03T21:10:02Z",
         "dernier": "2026-11-04T12:00:00Z",
-        "tonalite_gdelt": -1.86,
+        "tonalite_gdelt": -1.87,
         "score_selection": 6.17
       },
       {
@@ -8738,6 +8854,121 @@
         "titre_traduit": true
       },
       {
+        "id": "evt-f8ab01eadf8a",
+        "titre": "Des recherches suggèrent que le roi britonnique Verica était une femme",
+        "titre_origine": "British Iron Age ‘king’ who prompted Roman invasion was probably a woman",
+        "categorie": "conflit",
+        "titre_langue": null,
+        "mention": null,
+        "categorie_libelle": "Conflit armé",
+        "pays": [
+          "GB",
+          "IT"
+        ],
+        "pays_noms": [
+          "Royaume-Uni",
+          "Italie"
+        ],
+        "mondial": false,
+        "pays_suivis": [
+          "GB",
+          "IT"
+        ],
+        "lieux": [],
+        "lieux_noms": [],
+        "theme": false,
+        "chronologie": [],
+        "regions": [
+          "europe"
+        ],
+        "gravite": 1,
+        "gravite_regles": 3,
+        "note_gravite": null,
+        "ia": true,
+        "modele": "gemini-3.5-flash-lite",
+        "analyse_le": "2026-11-06T23:00:18Z",
+        "resume": [
+          {
+            "texte": "Des analyses de pièces de monnaie et des recherches historiques suggèrent que le roi britonnique Verica, lié à l'invasion romaine, était probablement une femme.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMiuAFBVV95cUxPNjN1eTNQMUYxblNxeDhOcW0xQzc4bnZOUDJCZ0pYa0NtN2g4bUVLZ3owTkNYMzlMcUc0eFdtLUYxeE95OXFvM2Y2endIVXRMTVcteHNiTF9wcm40MjdpS2Zkdk5fM0xjN3ZaWTJFRFNwZHJOeVFkdmo5aHQ1N29rWmt3dkhKa3IyQnRkSzlhNUc2WVNJVWl1dEQzVk02MGlEOC13MmRYbmo1ZkxwZEpxcGZNWkRYNFBB?oc=5",
+              "https://news.google.com/rss/articles/CBMisgFBVV95cUxPakdMTHBJTEh5ejFHSThsamdTNUZHcXdjTlpzZHRDaWo1THJfa2prbW9uRjcyZDBjbXVBNE5VcXVELUhSOU5VR29RZ20yRHlDZmoyR3Z6dlZXOGNlTFM2UU1hQnJMNVhKdHJpRzVMMGNGX0ZiZlNCSEJETUZlbWJKemhrbmJfQ295cGZndGx3ek5TelNVcGI4UXJmYkQ1MTlrU0RJbXdORWZ1RUNGMkV6alVR?oc=5",
+              "https://news.google.com/rss/articles/CBMizwFBVV95cUxOVi1DdnVMMUNFOWNCVUdHaGhOR0JNSEMyclVuaHN2bHRVRmZLNkVPdkxYZHRJUk1NdG5VdTBQYWhKTUZwRXZqRVBVYlRVZ2pObVN3QjAxcVBsa2hqY0Y5emc2Z0RDakU0R2NtZjYwMDg1MHJxM2FaZ0g2SFhDZlRPZElrdEFOVmt2ZzB4OTFaSHFvVHNldHlMajZmTlNWZmJXRTZhX1hxV2ZST2Y5OUlNTjBoenRYMk1oNGxlRVB3Q044X1V1VV9HaUlqQWgzNlk?oc=5"
+            ]
+          },
+          {
+            "texte": "Cette hypothèse remet en question l'identité traditionnellement attribuée à cette figure centrale de l'âge du fer britannique.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMipgFBVV95cUxPRXJybWNYNnFmU0JzbUJWRVd2MWVTbXgyblgxLS10aFdJdXZKRDE4bFF6MXNUb013cC1GT1A5UlJnckZhTV9oRDYxMk1tRDlyQlk2S1FmRUZER19uSmtyd244Sms0N253ejU5OGowekRtbzJKNWRMYUcxb3NEbktaRkZrZllaWk4zLUZBb0ZmcW9JN0xkMHpZbTJDRVNDTWxGS1FYejZn?oc=5",
+              "https://www.theguardian.com/uk-news/2026/nov/05/verica-rome-invade-britain-queen-or-king",
+              "https://news.google.com/rss/articles/CBMitwFBVV95cUxQX2o5TmZsWHFrd291QW5DbmRFSk5lY3d6ek5KMkdhQXd1SzNfTGZjVkM0aUFlQnQ4Zkk0X28tQ09YNWtpbjcyd3Z3dzJyUl94ZHJ6MnNKNVNhNURsLXh5NlpsTEIyOVg5NjlTcUlwckVPWWljeDItZ1U5YThIOW1xX3oweS1IX0JJdmtWR2dveDJzdkd3eUJIWVMtRWNIalU3MjRTTHZNd1lZUWtjQTFva3pTVlpBZkk?oc=5"
+            ]
+          }
+        ],
+        "actifs": [],
+        "horizon": "jours",
+        "confiance": "élevée",
+        "contre": [],
+        "sources_independantes": 6,
+        "sources": [
+          {
+            "titre": "The Swift Space Telescope Finally Fell Back Down To Earth, Barbarian King Who Triggered Roman Invasion Of Britain Was Actually A Woman, And Much More This Week",
+            "url": "https://news.google.com/rss/articles/CBMimgJBVV95cUxQU2xjbjlvR256eWNuWlBRbU9VWGdsZ1F5cVBGY0hjcGhBODlRYkMyYm44YXhFdG9PYnE4TnVObkZBZ3RfdGtBc0F3LVhCV25aSHN3Mk43bkRyVFgzeEtxR0ZocHd4cFhTSXN5Rm9MY1p2d1E3cHgzWGtHemNxLW94RGRDVC13eHRYZ1hfajVpdHNna2NjRWg0RTc2M3gzMnRKWGMtSG9GNGp1dFZ6VXpRS0xJNXBaMXdfdlFJWjhMTDF4dU9MNFNfdkxpSlBrc01vNkhZeHJJVVgtdFZHSkk4TFhjTEF3RGVnbTFEdDNuUjljWm1VNVFJeENYeGdpVC1PVFExZVVQczJkbnZCR2c5ejVzejA1Y3BnUkE?oc=5",
+            "domaine": "iflscience.com",
+            "date": "2026-11-07T07:00:54Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
+            "titre": "Researcher argues Verica, who incited the Roman invasion of Britain, was a woman",
+            "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxPNjN1eTNQMUYxblNxeDhOcW0xQzc4bnZOUDJCZ0pYa0NtN2g4bUVLZ3owTkNYMzlMcUc0eFdtLUYxeE95OXFvM2Y2endIVXRMTVcteHNiTF9wcm40MjdpS2Zkdk5fM0xjN3ZaWTJFRFNwZHJOeVFkdmo5aHQ1N29rWmt3dkhKa3IyQnRkSzlhNUc2WVNJVWl1dEQzVk02MGlEOC13MmRYbmo1ZkxwZEpxcGZNWkRYNFBB?oc=5",
+            "domaine": "wildhunt.org",
+            "date": "2026-11-06T22:51:08Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
+            "titre": "2,000-Year-Old Coins Cast Doubt on the Identity of a British King Linked to Rome’s Invasion",
+            "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPakdMTHBJTEh5ejFHSThsamdTNUZHcXdjTlpzZHRDaWo1THJfa2prbW9uRjcyZDBjbXVBNE5VcXVELUhSOU5VR29RZ20yRHlDZmoyR3Z6dlZXOGNlTFM2UU1hQnJMNVhKdHJpRzVMMGNGX0ZiZlNCSEJETUZlbWJKemhrbmJfQ295cGZndGx3ek5TelNVcGI4UXJmYkQ1MTlrU0RJbXdORWZ1RUNGMkV6alVR?oc=5",
+            "domaine": "arkeonews.net",
+            "date": "2026-11-06T16:01:35Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
+            "titre": "Verica: Iron Age king central to Britain's invasion by Rome might actually have been a queen",
+            "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxPRXJybWNYNnFmU0JzbUJWRVd2MWVTbXgyblgxLS10aFdJdXZKRDE4bFF6MXNUb013cC1GT1A5UlJnckZhTV9oRDYxMk1tRDlyQlk2S1FmRUZER19uSmtyd244Sms0N253ejU5OGowekRtbzJKNWRMYUcxb3NEbktaRkZrZllaWk4zLUZBb0ZmcW9JN0xkMHpZbTJDRVNDTWxGS1FYejZn?oc=5",
+            "domaine": "independent.co.uk",
+            "date": "2026-11-05T12:23:00Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
+            "titre": "Historians say King Verica persuaded Rome to invade Britain. But could Verica actually have been a queen?",
+            "url": "https://www.theguardian.com/uk-news/2026/nov/05/verica-rome-invade-britain-queen-or-king",
+            "domaine": "theguardian.com",
+            "date": "2026-11-05T05:00:54Z",
+            "officiel": false,
+            "source": "The Guardian, monde (RSS)"
+          },
+          {
+            "titre": "British Iron Age ‘king’ who prompted Roman invasion was probably a woman",
+            "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxQX2o5TmZsWHFrd291QW5DbmRFSk5lY3d6ek5KMkdhQXd1SzNfTGZjVkM0aUFlQnQ4Zkk0X28tQ09YNWtpbjcyd3Z3dzJyUl94ZHJ6MnNKNVNhNURsLXh5NlpsTEIyOVg5NjlTcUlwckVPWWljeDItZ1U5YThIOW1xX3oweS1IX0JJdmtWR2dveDJzdkd3eUJIWVMtRWNIalU3MjRTTHZNd1lZUWtjQTFva3pTVlpBZkk?oc=5",
+            "domaine": "newscientist.com",
+            "date": "2026-11-05T00:00:09Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          }
+        ],
+        "nb_articles": 7,
+        "nb_domaines": 6,
+        "officiel": false,
+        "premier": "2026-11-05T00:00:09Z",
+        "dernier": "2026-11-07T07:00:54Z",
+        "tonalite_gdelt": -1.87,
+        "score_selection": 8.61
+      },
+      {
         "id": "evt-b2ca88a93fc8",
         "titre": "Sortie du contenu téléchargeable Marvel Cosmic Invasion Castle Doom",
         "titre_origine": "Marvel Cosmic Invasion DLC Shows Castle Doom Mode Gameplay",
@@ -8860,121 +9091,6 @@
         "dernier": "2026-11-06T23:59:51Z",
         "tonalite_gdelt": null,
         "score_selection": 6.0
-      },
-      {
-        "id": "evt-f8ab01eadf8a",
-        "titre": "Des recherches suggèrent que le roi britonnique Verica était une femme",
-        "titre_origine": "British Iron Age ‘king’ who prompted Roman invasion was probably a woman",
-        "categorie": "conflit",
-        "titre_langue": null,
-        "mention": null,
-        "categorie_libelle": "Conflit armé",
-        "pays": [
-          "GB",
-          "IT"
-        ],
-        "pays_noms": [
-          "Royaume-Uni",
-          "Italie"
-        ],
-        "mondial": false,
-        "pays_suivis": [
-          "GB",
-          "IT"
-        ],
-        "lieux": [],
-        "lieux_noms": [],
-        "theme": false,
-        "chronologie": [],
-        "regions": [
-          "europe"
-        ],
-        "gravite": 1,
-        "gravite_regles": 3,
-        "note_gravite": null,
-        "ia": true,
-        "modele": "gemini-3.5-flash-lite",
-        "analyse_le": "2026-11-06T23:00:18Z",
-        "resume": [
-          {
-            "texte": "Des analyses de pièces de monnaie et des recherches historiques suggèrent que le roi britonnique Verica, lié à l'invasion romaine, était probablement une femme.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMiuAFBVV95cUxPNjN1eTNQMUYxblNxeDhOcW0xQzc4bnZOUDJCZ0pYa0NtN2g4bUVLZ3owTkNYMzlMcUc0eFdtLUYxeE95OXFvM2Y2endIVXRMTVcteHNiTF9wcm40MjdpS2Zkdk5fM0xjN3ZaWTJFRFNwZHJOeVFkdmo5aHQ1N29rWmt3dkhKa3IyQnRkSzlhNUc2WVNJVWl1dEQzVk02MGlEOC13MmRYbmo1ZkxwZEpxcGZNWkRYNFBB?oc=5",
-              "https://news.google.com/rss/articles/CBMisgFBVV95cUxPakdMTHBJTEh5ejFHSThsamdTNUZHcXdjTlpzZHRDaWo1THJfa2prbW9uRjcyZDBjbXVBNE5VcXVELUhSOU5VR29RZ20yRHlDZmoyR3Z6dlZXOGNlTFM2UU1hQnJMNVhKdHJpRzVMMGNGX0ZiZlNCSEJETUZlbWJKemhrbmJfQ295cGZndGx3ek5TelNVcGI4UXJmYkQ1MTlrU0RJbXdORWZ1RUNGMkV6alVR?oc=5",
-              "https://news.google.com/rss/articles/CBMizwFBVV95cUxOVi1DdnVMMUNFOWNCVUdHaGhOR0JNSEMyclVuaHN2bHRVRmZLNkVPdkxYZHRJUk1NdG5VdTBQYWhKTUZwRXZqRVBVYlRVZ2pObVN3QjAxcVBsa2hqY0Y5emc2Z0RDakU0R2NtZjYwMDg1MHJxM2FaZ0g2SFhDZlRPZElrdEFOVmt2ZzB4OTFaSHFvVHNldHlMajZmTlNWZmJXRTZhX1hxV2ZST2Y5OUlNTjBoenRYMk1oNGxlRVB3Q044X1V1VV9HaUlqQWgzNlk?oc=5"
-            ]
-          },
-          {
-            "texte": "Cette hypothèse remet en question l'identité traditionnellement attribuée à cette figure centrale de l'âge du fer britannique.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMipgFBVV95cUxPRXJybWNYNnFmU0JzbUJWRVd2MWVTbXgyblgxLS10aFdJdXZKRDE4bFF6MXNUb013cC1GT1A5UlJnckZhTV9oRDYxMk1tRDlyQlk2S1FmRUZER19uSmtyd244Sms0N253ejU5OGowekRtbzJKNWRMYUcxb3NEbktaRkZrZllaWk4zLUZBb0ZmcW9JN0xkMHpZbTJDRVNDTWxGS1FYejZn?oc=5",
-              "https://www.theguardian.com/uk-news/2026/nov/05/verica-rome-invade-britain-queen-or-king",
-              "https://news.google.com/rss/articles/CBMitwFBVV95cUxQX2o5TmZsWHFrd291QW5DbmRFSk5lY3d6ek5KMkdhQXd1SzNfTGZjVkM0aUFlQnQ4Zkk0X28tQ09YNWtpbjcyd3Z3dzJyUl94ZHJ6MnNKNVNhNURsLXh5NlpsTEIyOVg5NjlTcUlwckVPWWljeDItZ1U5YThIOW1xX3oweS1IX0JJdmtWR2dveDJzdkd3eUJIWVMtRWNIalU3MjRTTHZNd1lZUWtjQTFva3pTVlpBZkk?oc=5"
-            ]
-          }
-        ],
-        "actifs": [],
-        "horizon": "jours",
-        "confiance": "élevée",
-        "contre": [],
-        "sources_independantes": 6,
-        "sources": [
-          {
-            "titre": "Researcher argues Verica, who incited the Roman invasion of Britain, was a woman",
-            "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxPNjN1eTNQMUYxblNxeDhOcW0xQzc4bnZOUDJCZ0pYa0NtN2g4bUVLZ3owTkNYMzlMcUc0eFdtLUYxeE95OXFvM2Y2endIVXRMTVcteHNiTF9wcm40MjdpS2Zkdk5fM0xjN3ZaWTJFRFNwZHJOeVFkdmo5aHQ1N29rWmt3dkhKa3IyQnRkSzlhNUc2WVNJVWl1dEQzVk02MGlEOC13MmRYbmo1ZkxwZEpxcGZNWkRYNFBB?oc=5",
-            "domaine": "wildhunt.org",
-            "date": "2026-11-06T22:51:08Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "2,000-Year-Old Coins Cast Doubt on the Identity of a British King Linked to Rome’s Invasion",
-            "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPakdMTHBJTEh5ejFHSThsamdTNUZHcXdjTlpzZHRDaWo1THJfa2prbW9uRjcyZDBjbXVBNE5VcXVELUhSOU5VR29RZ20yRHlDZmoyR3Z6dlZXOGNlTFM2UU1hQnJMNVhKdHJpRzVMMGNGX0ZiZlNCSEJETUZlbWJKemhrbmJfQ295cGZndGx3ek5TelNVcGI4UXJmYkQ1MTlrU0RJbXdORWZ1RUNGMkV6alVR?oc=5",
-            "domaine": "arkeonews.net",
-            "date": "2026-11-06T16:01:35Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "Iron Age Barbarian King Who Triggered Roman Invasion Of Britain Was Actually A Woman, Historian Argues",
-            "url": "https://news.google.com/rss/articles/CBMizwFBVV95cUxOVi1DdnVMMUNFOWNCVUdHaGhOR0JNSEMyclVuaHN2bHRVRmZLNkVPdkxYZHRJUk1NdG5VdTBQYWhKTUZwRXZqRVBVYlRVZ2pObVN3QjAxcVBsa2hqY0Y5emc2Z0RDakU0R2NtZjYwMDg1MHJxM2FaZ0g2SFhDZlRPZElrdEFOVmt2ZzB4OTFaSHFvVHNldHlMajZmTlNWZmJXRTZhX1hxV2ZST2Y5OUlNTjBoenRYMk1oNGxlRVB3Q044X1V1VV9HaUlqQWgzNlk?oc=5",
-            "domaine": "iflscience.com",
-            "date": "2026-11-05T15:23:30Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "Verica: Iron Age king central to Britain's invasion by Rome might actually have been a queen",
-            "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxPRXJybWNYNnFmU0JzbUJWRVd2MWVTbXgyblgxLS10aFdJdXZKRDE4bFF6MXNUb013cC1GT1A5UlJnckZhTV9oRDYxMk1tRDlyQlk2S1FmRUZER19uSmtyd244Sms0N253ejU5OGowekRtbzJKNWRMYUcxb3NEbktaRkZrZllaWk4zLUZBb0ZmcW9JN0xkMHpZbTJDRVNDTWxGS1FYejZn?oc=5",
-            "domaine": "independent.co.uk",
-            "date": "2026-11-05T12:23:00Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "Historians say King Verica persuaded Rome to invade Britain. But could Verica actually have been a queen?",
-            "url": "https://www.theguardian.com/uk-news/2026/nov/05/verica-rome-invade-britain-queen-or-king",
-            "domaine": "theguardian.com",
-            "date": "2026-11-05T05:00:54Z",
-            "officiel": false,
-            "source": "The Guardian, monde (RSS)"
-          },
-          {
-            "titre": "British Iron Age ‘king’ who prompted Roman invasion was probably a woman",
-            "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxQX2o5TmZsWHFrd291QW5DbmRFSk5lY3d6ek5KMkdhQXd1SzNfTGZjVkM0aUFlQnQ4Zkk0X28tQ09YNWtpbjcyd3Z3dzJyUl94ZHJ6MnNKNVNhNURsLXh5NlpsTEIyOVg5NjlTcUlwckVPWWljeDItZ1U5YThIOW1xX3oweS1IX0JJdmtWR2dveDJzdkd3eUJIWVMtRWNIalU3MjRTTHZNd1lZUWtjQTFva3pTVlpBZkk?oc=5",
-            "domaine": "newscientist.com",
-            "date": "2026-11-05T00:00:09Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          }
-        ],
-        "nb_articles": 6,
-        "nb_domaines": 6,
-        "officiel": false,
-        "premier": "2026-11-05T00:00:09Z",
-        "dernier": "2026-11-06T22:51:08Z",
-        "tonalite_gdelt": -1.86,
-        "score_selection": 8.61
       },
       {
         "id": "evt-8ef7e09254ec",
@@ -9434,7 +9550,7 @@
         "officiel": true,
         "premier": "2026-11-03T00:00:00Z",
         "dernier": "2026-11-03T00:00:00Z",
-        "tonalite_gdelt": -1.6,
+        "tonalite_gdelt": -1.61,
         "score_selection": 6.0
       }
     ],
@@ -9445,10 +9561,10 @@
         "variation_7j": null,
         "composantes": {
           "evenements": 100.0,
-          "tonalite": 27.8,
+          "tonalite": 28.0,
           "tendance": null
         },
-        "tonalite_gdelt": -1.86,
+        "tonalite_gdelt": -1.87,
         "evenements_14j": 51,
         "composantes_manquantes": [
           "tendance"
@@ -9460,12 +9576,23 @@
             "id": "theme-evt-c83d7138a76d",
             "titre": "Conséquences politiques et économiques des élections de mi-mandat américaines",
             "gravite": 2,
-            "date": "2026-11-07T17:02:00Z",
+            "date": "2026-11-07T17:55:44Z",
             "categorie_libelle": "Élections",
             "titre_langue": null,
             "mention": null,
-            "resume": "Les résultats des élections de mi-mandat de 2026 aux États-Unis marquent la fin de la campagne et préparent l'installation du nouveau Congrès et des législatures pour l'année suivante.",
-            "source": "https://news.google.com/rss/articles/CBMivAFBVV95cUxPbVJ3czRBNDFOMDVadVNjSXZvNWlXRGZFblBDUDFGSlRVdExleTVDOTJhQnI5QUx4RU82TTVIb0ZlMnNTZjhVcXhWR2J3S2VOWmc1VTB1c1hvcGNxOWFKZFZMbUkzWjNSU1NBNk9YaFBPdmlad01ZNTlDMWhFQXllTGIxV183dnplWDMzLTh6N1pBMmxReTZvbC1JUDRzLTZvR3UwTFQ3VEhVRFY1am0zM3gxVVRFR0VPdER0Tg?oc=5"
+            "resume": "Les résultats des élections de mi-mandat et des scrutins locaux se déroulent dans plusieurs États américains, incluant la Californie, le Nevada et le Dakota du Sud.",
+            "source": "https://news.google.com/rss/articles/CBMi_gFBVV95cUxOUDZ1V19IVzZBblk3OEhLOW5EOVFOUFNkZGFENTNxTkNCM2M4TlUyeGdjYUptQU1WaWlvZzhtQ0YzeVl0OEZudmdqR0o1YTBSR1FoZ3AzbzN5c2NwRk82bVQ3eEhqcUJOYWxoQmZiM1RmbGFwQU0yZ240TWZPNkl1N0Jfems4NTFDZnhDMUxGZ1lVWS1fX2lTVjNCcFJUbWN6a2VhWlIydWhjTWkxMkE1XzF2cmV3RXF2YTRPZVFkVEgxbDJJbWZUZTBoYlFQZHFJaDNCdFpPaUs5WEdqRkk4d1p6cERGSFU3TWM3dzJFUW5FbmVMS1pRWS1wQkNNZw?oc=5"
+          },
+          {
+            "id": "theme-evt-6b9906d3de52",
+            "titre": "Frappes militaires américaines et tensions croissantes avec l'Iran",
+            "gravite": 4,
+            "date": "2026-11-07T17:32:24Z",
+            "categorie_libelle": "Conflit armé",
+            "titre_langue": null,
+            "mention": null,
+            "resume": "Les États-Unis ont conduit des frappes aériennes sur l'île iranienne de Qeshm, tout en indiquant ne pas planifier d'attaques immédiates supplémentaires.",
+            "source": "https://news.google.com/rss/articles/CBMizAFBVV95cUxNVkJlVVFDT3NEUHp6LVVCLTAyeUdIZUhwbnUwV2pRajJGMEZfUGx4YnBzakV2MnQ2enFUeFhEMHlDejViUjN2UHpXbzg5VnBubWt4WExMZmJNYURUV3lzTkdLdTdRaWszSVRwWGdreHE1UjRUelVQRU9zR0F0TGlpLThSelpqeVhfQXZueHNTNmQ5UGNhNXlEdF9QdUVwTGhWLVhOeXBHeHp5aTZ3OGRGVVdpdzMyZGF5cmZEWDZOUmZmbFppNDhlTjU1aTPSAdIBQVVfeXFMUFpaYkZxRWgwbzhwRXdSTDA4bmhkS1NBOHdBTVNNM1RwMEJTVXp6b3Y3dzJlWHJGZ0RfX29tNmdkdVAydXFzcGtaN3BPRkUyS29NWDRBb2ppaWwtUXE1UEZRbGQyOS1JOUxDeVU2SE12VUJycDNvUGlIdFdXR2FLUnA3U3RscDVINUd4UkEzdUJ4cFFUcTY0bnpmWWRHQjlKSFpXRU42bWRlOFlmN3lKYTNMaWh1Zzl6cFdyZE1mQXJnekpHeTlsNjV5SEVmbFhtRXBB?oc=5"
           },
           {
             "id": "evt-84096675c6d9",
@@ -9477,17 +9604,6 @@
             "mention": null,
             "resume": "Les États-Unis ont imposé des sanctions à l'encontre de plusieurs entreprises chinoises accusées de fournir du matériel militaire à Cuba, ainsi qu'à des sociétés de services financiers canadiennes pour contournement des sanctions contre l'Iran.",
             "source": "https://news.google.com/rss/articles/CBMirgFBVV95cUxQVUJfcnlUVDYtT1piMEw4bVk2QkRDSGlHNU1RNW1jdE5NVUxqZlF6dWFfY3JBQm9vcDlpVmxBejVXLWgweUF5cWdIZFZhQlJqMFZHZWJMa1V5Um12X1ZwTTF1bjVTLVMyendzN2xIMnBOdV9oMVlsaVd1SVE2X0Y5ZkdxdlZVdlVKQUw2OVZMMEowSV9NcGV5Rl9PVGVQRmwyTk1MSkowUDZvV1UzcEE?oc=5"
-          },
-          {
-            "id": "evt-4a87273a286c",
-            "titre": "Élections de mi-mandat aux États-Unis sur fond de guerres commerciales",
-            "gravite": 2,
-            "date": "2026-11-07T15:52:31Z",
-            "categorie_libelle": "Élections",
-            "titre_langue": null,
-            "mention": null,
-            "resume": "Les élections de mi-mandat aux États-Unis ont été marquées par des débats intenses autour des droits de douane et des relations commerciales avec le Canada, l'Inde et d'autres partenaires internationaux.",
-            "source": "https://news.google.com/rss/articles/CBMilgFBVV95cUxPQ19kVXpiamlwUVNoSVR1c1FoeWl4SkpxV0hoUFJNX1EtM0NXQ1hqUVJELU56MWo1LUZ0S0FuczJWb0F6QkZNM181dVlUcTFodklQUUpwcDNEaEpLTGl6clMzSmVhQWhYVHpOaUxOb0NDOW5VZVVJV3M3Mk5QaGlMZGN3RUwzcktBeFJzNHE3T0tSejZ0NGc?oc=5"
           }
         ]
       },
@@ -9496,11 +9612,11 @@
         "niveau": "modéré",
         "variation_7j": null,
         "composantes": {
-          "evenements": 81.6,
-          "tonalite": 12.8,
+          "evenements": 81.3,
+          "tonalite": 12.7,
           "tendance": null
         },
-        "tonalite_gdelt": -0.35,
+        "tonalite_gdelt": -0.38,
         "evenements_14j": 10,
         "composantes_manquantes": [
           "tendance"
@@ -9544,12 +9660,12 @@
         ]
       },
       "MX": {
-        "score": 22,
+        "score": 21,
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
-          "evenements": 8.7,
-          "tonalite": 42.9,
+          "evenements": 8.6,
+          "tonalite": 42.8,
           "tendance": null
         },
         "tonalite_gdelt": -2.91,
@@ -9567,10 +9683,10 @@
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 15.8,
+          "tonalite": 16.1,
           "tendance": null
         },
-        "tonalite_gdelt": -1.41,
+        "tonalite_gdelt": -1.44,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -9580,22 +9696,34 @@
         "derniers_evenements": []
       },
       "AR": {
-        "score": 2,
+        "score": 11,
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
-          "evenements": 0.0,
-          "tonalite": 6.0,
+          "evenements": 14.7,
+          "tonalite": 5.1,
           "tendance": null
         },
-        "tonalite_gdelt": -1.12,
-        "evenements_14j": 0,
+        "tonalite_gdelt": -1.05,
+        "evenements_14j": 1,
         "composantes_manquantes": [
           "tendance"
         ],
         "nom": "Argentine",
         "region": "amerique_latine",
-        "derniers_evenements": []
+        "derniers_evenements": [
+          {
+            "id": "evt-58f58d10283a",
+            "titre": "Coupe du monde 2026: l'Argentine va saisir le TAS pour ses sanctions après les incidents en finale",
+            "gravite": 2,
+            "date": "2026-11-07T17:48:00Z",
+            "categorie_libelle": "Sanctions",
+            "titre_langue": "français",
+            "mention": null,
+            "resume": null,
+            "source": "https://news.google.com/rss/articles/CBMi4AFBVV95cUxOZnFlLW4zSkFiZ0lXX0hPUUxBYWFoUXd1bURrZzNtcEpaQ0RRLWxnMHk3bzVlZjVGYnpGSWNjS1ptUFpnMlFWX2RwSXZESnpVTjdDQ0tPZVRPV3ZXVHN6cS1JUE84cTNwYTIxeFdlRm9uVnlVZGlfSGZKZm1RWks3T3FqbzhGWUp0THFWQXk1MTBVcVpkNC1TLUt6QUJveEtjRTJtTjdkbWdGQkc4R2IzTmtYbThZOEdMMU13eUQ2ZFFfdkVjTTZvMU9hM1UzUl9NcG0ybGN3cVJrc0FWbHgxcA?oc=5"
+          }
+        ]
       },
       "GB": {
         "score": 24,
@@ -9603,7 +9731,7 @@
         "variation_7j": null,
         "composantes": {
           "evenements": 23.7,
-          "tonalite": 24.5,
+          "tonalite": 24.6,
           "tendance": null
         },
         "tonalite_gdelt": -1.68,
@@ -9618,12 +9746,12 @@
             "id": "evt-f8ab01eadf8a",
             "titre": "Des recherches suggèrent que le roi britonnique Verica était une femme",
             "gravite": 1,
-            "date": "2026-11-06T22:51:08Z",
+            "date": "2026-11-07T07:00:54Z",
             "categorie_libelle": "Conflit armé",
             "titre_langue": null,
             "mention": null,
             "resume": "Des analyses de pièces de monnaie et des recherches historiques suggèrent que le roi britonnique Verica, lié à l'invasion romaine, était probablement une femme.",
-            "source": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxPNjN1eTNQMUYxblNxeDhOcW0xQzc4bnZOUDJCZ0pYa0NtN2g4bUVLZ3owTkNYMzlMcUc0eFdtLUYxeE95OXFvM2Y2endIVXRMTVcteHNiTF9wcm40MjdpS2Zkdk5fM0xjN3ZaWTJFRFNwZHJOeVFkdmo5aHQ1N29rWmt3dkhKa3IyQnRkSzlhNUc2WVNJVWl1dEQzVk02MGlEOC13MmRYbmo1ZkxwZEpxcGZNWkRYNFBB?oc=5"
+            "source": "https://news.google.com/rss/articles/CBMimgJBVV95cUxQU2xjbjlvR256eWNuWlBRbU9VWGdsZ1F5cVBGY0hjcGhBODlRYkMyYm44YXhFdG9PYnE4TnVObkZBZ3RfdGtBc0F3LVhCV25aSHN3Mk43bkRyVFgzeEtxR0ZocHd4cFhTSXN5Rm9MY1p2d1E3cHgzWGtHemNxLW94RGRDVC13eHRYZ1hfajVpdHNna2NjRWg0RTc2M3gzMnRKWGMtSG9GNGp1dFZ6VXpRS0xJNXBaMXdfdlFJWjhMTDF4dU9MNFNfdkxpSlBrc01vNkhZeHJJVVgtdFZHSkk4TFhjTEF3RGVnbTFEdDNuUjljWm1VNVFJeENYeGdpVC1PVFExZVVQczJkbnZCR2c5ejVzejA1Y3BnUkE?oc=5"
           },
           {
             "id": "evt-690ea6470d1f",
@@ -9654,8 +9782,8 @@
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
-          "evenements": 20.7,
-          "tonalite": 30.2,
+          "evenements": 20.5,
+          "tonalite": 30.4,
           "tendance": null
         },
         "tonalite_gdelt": -2.34,
@@ -9706,11 +9834,11 @@
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
-          "evenements": 7.7,
-          "tonalite": 19.4,
+          "evenements": 7.6,
+          "tonalite": 19.9,
           "tendance": null
         },
-        "tonalite_gdelt": -1.26,
+        "tonalite_gdelt": -1.27,
         "evenements_14j": 1,
         "composantes_manquantes": [
           "tendance"
@@ -9724,8 +9852,8 @@
         "niveau": "modéré",
         "variation_7j": null,
         "composantes": {
-          "evenements": 53.9,
-          "tonalite": 9.5,
+          "evenements": 53.6,
+          "tonalite": 9.4,
           "tendance": null
         },
         "tonalite_gdelt": -1.23,
@@ -9765,11 +9893,11 @@
         "niveau": "modéré",
         "variation_7j": null,
         "composantes": {
-          "evenements": 71.3,
-          "tonalite": 30.8,
+          "evenements": 71.6,
+          "tonalite": 29.9,
           "tendance": null
         },
-        "tonalite_gdelt": -1.76,
+        "tonalite_gdelt": -1.72,
         "evenements_14j": 3,
         "composantes_manquantes": [
           "tendance"
@@ -9781,12 +9909,12 @@
             "id": "theme-evt-774117620112",
             "titre": "Frappes aériennes et militaires au Yémen",
             "gravite": 4,
-            "date": "2026-11-07T15:27:00Z",
+            "date": "2026-11-07T18:00:00Z",
             "categorie_libelle": "Conflit armé",
             "titre_langue": null,
             "mention": null,
             "resume": "Des frappes aériennes attribuées à la coalition saoudienne ont touché un marché dans la province de Taïz, faisant de nombreuses victimes selon les autorités houthies.",
-            "source": "https://news.google.com/rss/articles/CBMitwFBVV95cUxQSldBcXptZTgxNEZteWg4T1NNVmpieDZHMDV3T2oyaEx4YVdGempITlhBeWVzRDVldUJzWnJsYmtPMDgzYVRzWTdXeGFReV9vTjJMSk5yelZhWDFCV0plWVFHV1YyamlMSlktUS13Z1oyUWl4ZHk1NjZlTl9XVUZUMUdhcEZYWm9YOGRkajRzd0ZUMW5JdmFpZ1dTQnBTX09udTFCbHR0cUFGaEFUanBYRjc4aUlaaDg?oc=5"
+            "source": "https://news.google.com/rss/articles/CBMirwFBVV95cUxPTVZQdmEzUzJEak1DS2RrRE9lMTdLbktQQmtRTWIzMmVVck84bXpKa3VyVF9rU2wwZ1RRVzhWSHRGei1udEw1TTIyeWk2RU42UFFOWWdrX2piZlRtMEtlbV9HX0xBeFU3d3RiYlRKZVZwNjdpcEFLOEhBRDhmS0xFUlhGUmxabEU2TmlNX0Z3TnJmR0hKZnBZUVB2UDNxUVV2U0lmT2lnR2dvdVoxa1M4?oc=5"
           },
           {
             "id": "evt-a3e69fde45a7",
@@ -9806,11 +9934,11 @@
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
-          "evenements": 31.6,
-          "tonalite": 17.1,
+          "evenements": 31.3,
+          "tonalite": 17.2,
           "tendance": null
         },
-        "tonalite_gdelt": -0.86,
+        "tonalite_gdelt": -0.88,
         "evenements_14j": 4,
         "composantes_manquantes": [
           "tendance"
@@ -9858,11 +9986,11 @@
         "niveau": "modéré",
         "variation_7j": null,
         "composantes": {
-          "evenements": 70.2,
-          "tonalite": 25.2,
+          "evenements": 69.9,
+          "tonalite": 25.4,
           "tendance": null
         },
-        "tonalite_gdelt": -1.44,
+        "tonalite_gdelt": -1.47,
         "evenements_14j": 5,
         "composantes_manquantes": [
           "tendance"
@@ -9906,15 +10034,15 @@
         ]
       },
       "CN": {
-        "score": 43,
+        "score": 42,
         "niveau": "modéré",
         "variation_7j": null,
         "composantes": {
-          "evenements": 61.6,
-          "tonalite": 11.1,
+          "evenements": 61.3,
+          "tonalite": 10.8,
           "tendance": null
         },
-        "tonalite_gdelt": 0.09,
+        "tonalite_gdelt": 0.02,
         "evenements_14j": 4,
         "composantes_manquantes": [
           "tendance"
@@ -9962,11 +10090,11 @@
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
-          "evenements": 23.7,
-          "tonalite": 4.5,
+          "evenements": 23.5,
+          "tonalite": 4.4,
           "tendance": null
         },
-        "tonalite_gdelt": 0.36,
+        "tonalite_gdelt": 0.38,
         "evenements_14j": 1,
         "composantes_manquantes": [
           "tendance"
@@ -9992,11 +10120,11 @@
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
-          "evenements": 13.2,
-          "tonalite": 17.8,
+          "evenements": 13.1,
+          "tonalite": 17.3,
           "tendance": null
         },
-        "tonalite_gdelt": -0.71,
+        "tonalite_gdelt": -0.63,
         "evenements_14j": 1,
         "composantes_manquantes": [
           "tendance"
@@ -10022,11 +10150,11 @@
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
-          "evenements": 11.9,
-          "tonalite": 27.7,
+          "evenements": 11.8,
+          "tonalite": 27.6,
           "tendance": null
         },
-        "tonalite_gdelt": -2.26,
+        "tonalite_gdelt": -2.27,
         "evenements_14j": 1,
         "composantes_manquantes": [
           "tendance"
@@ -10048,15 +10176,15 @@
         ]
       },
       "IT": {
-        "score": 10,
+        "score": 11,
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
-          "evenements": 3.3,
-          "tonalite": 22.3,
+          "evenements": 3.5,
+          "tonalite": 22.7,
           "tendance": null
         },
-        "tonalite_gdelt": -2.04,
+        "tonalite_gdelt": -2.06,
         "evenements_14j": 1,
         "composantes_manquantes": [
           "tendance"
@@ -10068,12 +10196,12 @@
             "id": "evt-f8ab01eadf8a",
             "titre": "Des recherches suggèrent que le roi britonnique Verica était une femme",
             "gravite": 1,
-            "date": "2026-11-06T22:51:08Z",
+            "date": "2026-11-07T07:00:54Z",
             "categorie_libelle": "Conflit armé",
             "titre_langue": null,
             "mention": null,
             "resume": "Des analyses de pièces de monnaie et des recherches historiques suggèrent que le roi britonnique Verica, lié à l'invasion romaine, était probablement une femme.",
-            "source": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxPNjN1eTNQMUYxblNxeDhOcW0xQzc4bnZOUDJCZ0pYa0NtN2g4bUVLZ3owTkNYMzlMcUc0eFdtLUYxeE95OXFvM2Y2endIVXRMTVcteHNiTF9wcm40MjdpS2Zkdk5fM0xjN3ZaWTJFRFNwZHJOeVFkdmo5aHQ1N29rWmt3dkhKa3IyQnRkSzlhNUc2WVNJVWl1dEQzVk02MGlEOC13MmRYbmo1ZkxwZEpxcGZNWkRYNFBB?oc=5"
+            "source": "https://news.google.com/rss/articles/CBMimgJBVV95cUxQU2xjbjlvR256eWNuWlBRbU9VWGdsZ1F5cVBGY0hjcGhBODlRYkMyYm44YXhFdG9PYnE4TnVObkZBZ3RfdGtBc0F3LVhCV25aSHN3Mk43bkRyVFgzeEtxR0ZocHd4cFhTSXN5Rm9MY1p2d1E3cHgzWGtHemNxLW94RGRDVC13eHRYZ1hfajVpdHNna2NjRWg0RTc2M3gzMnRKWGMtSG9GNGp1dFZ6VXpRS0xJNXBaMXdfdlFJWjhMTDF4dU9MNFNfdkxpSlBrc01vNkhZeHJJVVgtdFZHSkk4TFhjTEF3RGVnbTFEdDNuUjljWm1VNVFJeENYeGdpVC1PVFExZVVQczJkbnZCR2c5ejVzejA1Y3BnUkE?oc=5"
           }
         ]
       },
@@ -10083,10 +10211,10 @@
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 13.8,
+          "tonalite": 13.4,
           "tendance": null
         },
-        "tonalite_gdelt": -1.22,
+        "tonalite_gdelt": -1.19,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -10101,10 +10229,10 @@
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 26.0,
+          "tonalite": 25.7,
           "tendance": null
         },
-        "tonalite_gdelt": -2.51,
+        "tonalite_gdelt": -2.49,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -10114,15 +10242,15 @@
         "derniers_evenements": []
       },
       "SE": {
-        "score": 4,
+        "score": 3,
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 9.6,
+          "tonalite": 9.2,
           "tendance": null
         },
-        "tonalite_gdelt": 0.18,
+        "tonalite_gdelt": 0.11,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -10132,15 +10260,15 @@
         "derniers_evenements": []
       },
       "PL": {
-        "score": 16,
+        "score": 18,
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 42.6,
+          "tonalite": 48.0,
           "tendance": null
         },
-        "tonalite_gdelt": -3.65,
+        "tonalite_gdelt": -4.28,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -10154,11 +10282,11 @@
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
-          "evenements": 18.2,
-          "tonalite": 12.4,
+          "evenements": 18.1,
+          "tonalite": 13.0,
           "tendance": null
         },
-        "tonalite_gdelt": -0.63,
+        "tonalite_gdelt": -0.99,
         "evenements_14j": 1,
         "composantes_manquantes": [
           "tendance"
@@ -10203,10 +10331,10 @@
         "variation_7j": null,
         "composantes": {
           "evenements": 7.4,
-          "tonalite": 10.5,
+          "tonalite": 11.1,
           "tendance": null
         },
-        "tonalite_gdelt": 0.81,
+        "tonalite_gdelt": 0.77,
         "evenements_14j": 1,
         "composantes_manquantes": [
           "tendance"
@@ -10233,10 +10361,10 @@
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 11.0,
+          "tonalite": 10.6,
           "tendance": null
         },
-        "tonalite_gdelt": -0.35,
+        "tonalite_gdelt": -0.4,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -10246,15 +10374,15 @@
         "derniers_evenements": []
       },
       "TH": {
-        "score": 8,
+        "score": 9,
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 22.2,
+          "tonalite": 23.9,
           "tendance": null
         },
-        "tonalite_gdelt": -1.99,
+        "tonalite_gdelt": -2.1,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -10269,10 +10397,10 @@
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 45.4,
+          "tonalite": 44.1,
           "tendance": null
         },
-        "tonalite_gdelt": -2.91,
+        "tonalite_gdelt": -2.86,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -10304,11 +10432,11 @@
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
-          "evenements": 3.8,
-          "tonalite": 8.2,
+          "evenements": 3.7,
+          "tonalite": 8.0,
           "tendance": null
         },
-        "tonalite_gdelt": -0.04,
+        "tonalite_gdelt": -0.03,
         "evenements_14j": 1,
         "composantes_manquantes": [
           "tendance"
@@ -10334,11 +10462,11 @@
         "niveau": "faible",
         "variation_7j": null,
         "composantes": {
-          "evenements": 26.9,
-          "tonalite": 8.6,
+          "evenements": 26.7,
+          "tonalite": 8.5,
           "tendance": null
         },
-        "tonalite_gdelt": -0.86,
+        "tonalite_gdelt": -0.85,
         "evenements_14j": 1,
         "composantes_manquantes": [
           "tendance"
@@ -10365,10 +10493,10 @@
         "variation_7j": null,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 26.6,
+          "tonalite": 25.9,
           "tendance": null
         },
-        "tonalite_gdelt": -1.96,
+        "tonalite_gdelt": -1.94,
         "evenements_14j": 0,
         "composantes_manquantes": [
           "tendance"
@@ -10607,7 +10735,7 @@
     },
     "quota_ia": {
       "jour": "2026-11-07",
-      "appels": 31,
+      "appels": 33,
       "quota_jour": 825,
       "modeles": [
         {
@@ -10620,7 +10748,7 @@
         },
         {
           "modele": "gemini-3.5-flash-lite",
-          "appels": 25,
+          "appels": 27,
           "limite_jour": 800,
           "limite_minute": 12,
           "epuise": false,
