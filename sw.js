@@ -11,11 +11,12 @@
      le premier chargement, mis à jour en arrière-plan.
    - TradingView (scripts des widgets, cotations) : jamais mis en cache, le service
      worker laisse passer ces requêtes telles quelles.
-   - Séries de cours des graphiques (data/cours/) : non préchargées, lues à la demande.
+   - Séries de cours des graphiques (data/cours/) et matières premières (data/matieres_premieres.json) :
+     non préchargées, lues à la demande.
    Changer VERSION vide les anciens caches chez tous les utilisateurs.
    ========================================================================== */
 
-const VERSION = 'salle-controle-v33';
+const VERSION = 'salle-controle-v34';
 
 const FICHIERS_APPLI = [
   './',
@@ -40,6 +41,7 @@ const FICHIERS_APPLI = [
   'js/macro.js',
   'js/geopolitique.js',
   'js/risque.js',
+  'js/matieres-premieres.js',
   'js/pepites.js',
   'js/analyses.js',
   'js/graphiques.js',

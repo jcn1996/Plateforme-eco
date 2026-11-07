@@ -1,0 +1,240 @@
+{
+  "_commentaire": "Agent matières premières. Pondérations des sous-notes par famille, seuils des verdicts, périmètre (symboles Yahoo, mois cotés des contrats, codes CFTC, séries EIA, codes USDA), producteurs (pays : liste statique, rang mondial ; sources : USGS Mineral Commodity Summaries 2025, AIE, USDA PSD, FAO, ICO, ICCO, World Nuclear Association ; seuls les pays suivis par l'agent pays sont mis en surbrillance sur le globe) et sociétés productrices (tickers de l'univers de l'agent entreprises).",
+  "horizon": "3 à 12 mois",
+  "familles": {
+    "metaux_precieux": {"nom": "Métaux précieux", "ponderations": {"tendance": 15, "courbe": 5, "stocks": 0, "positionnement": 15, "macro": 30, "geopolitique": 10, "flux": 15, "niveau": 10}},
+    "metaux_industriels": {"nom": "Métaux industriels", "ponderations": {"tendance": 20, "courbe": 15, "stocks": 10, "positionnement": 15, "macro": 20, "geopolitique": 5, "flux": 5, "niveau": 10}},
+    "energie": {"nom": "Énergie", "ponderations": {"tendance": 15, "courbe": 20, "stocks": 25, "positionnement": 10, "macro": 10, "geopolitique": 10, "flux": 5, "niveau": 5}},
+    "agricoles": {"nom": "Agricoles", "ponderations": {"tendance": 15, "courbe": 15, "stocks": 25, "positionnement": 15, "macro": 5, "geopolitique": 10, "flux": 5, "niveau": 10}}
+  },
+  "sous_notes": {
+    "tendance": "Tendance et momentum",
+    "courbe": "Structure de la courbe",
+    "stocks": "Stocks par rapport à la normale",
+    "positionnement": "Positionnement des investisseurs",
+    "macro": "Moteurs macro",
+    "geopolitique": "Contexte géopolitique",
+    "flux": "Flux des ETF",
+    "niveau": "Niveau historique"
+  },
+  "verdicts": {
+    "surponderer": 60,
+    "sous_ponderer": 40,
+    "signal_favorable": 60,
+    "signal_defavorable": 40,
+    "signaux_concordants_min": 2,
+    "hysteresis": 2
+  },
+  "seuils": {
+    "structure_pct_an": 2.0,
+    "percentile_encombre": 90,
+    "percentile_capitulation": 10,
+    "choc_stocks_z": 2.0,
+    "choc_stocks_ecart_pct": 10,
+    "revision_wasde_pct": 3.0,
+    "fraicheur_cours_jours": 7,
+    "fraicheur_cftc_jours": 14,
+    "fraicheur_eia_jours": 14,
+    "geopolitique_jours": 14,
+    "tolerance_wasde_psd_pct": 3.0
+  },
+  "mois_codes": "FGHJKMNQUVXZ",
+  "courbe_contrats": 8,
+  "fred": {"taux_reel": "DFII10", "dollar": "DTWEXBGS", "inflation": "CPIAUCSL"},
+  "dollar_yahoo": "DX-Y.NYB",
+  "etf_flux": {
+    "GLD": {"nom": "SPDR Gold Shares", "matieres": ["or"]},
+    "IAU": {"nom": "iShares Gold Trust", "matieres": ["or"]},
+    "SLV": {"nom": "iShares Silver Trust", "matieres": ["argent"]},
+    "USO": {"nom": "United States Oil Fund", "matieres": ["wti", "brent"]},
+    "CPER": {"nom": "United States Copper Index Fund", "matieres": ["cuivre"]},
+    "DBA": {"nom": "Invesco DB Agriculture Fund", "matieres": ["ble", "mais", "soja", "cafe", "sucre", "cacao", "coton"]}
+  },
+  "eia": {
+    "brut": {"serie": "PET.WCESTUS1.W", "libelle": "stocks commerciaux de brut américains (hors réserve stratégique)", "unite": "Mb"},
+    "cushing": {"serie": "PET.W_EPC0_SAX_YCUOK_MBBL.W", "libelle": "stocks de brut à Cushing (Oklahoma)", "unite": "Mb"},
+    "essence": {"serie": "PET.WGTSTUS1.W", "libelle": "stocks d'essence américains", "unite": "Mb"},
+    "distillats": {"serie": "PET.WDISTUS1.W", "libelle": "stocks de distillats américains", "unite": "Mb"},
+    "gaz": {"serie": "NG.NW2_EPG0_SWO_R48_BCF.W", "libelle": "stocks de gaz naturel américains (48 États)", "unite": "Gpi³"}
+  },
+  "usda": {
+    "ble": {"psd": "0410000", "fichier": "grains", "wasde": "World Wheat Supply and Use"},
+    "mais": {"psd": "0440000", "fichier": "grains", "wasde": "World Corn Supply and Use"},
+    "soja": {"psd": "2222000", "fichier": "oleagineux", "wasde": "World Soybean Supply and Use"}
+  },
+  "publications": [
+    {"source": "EIA, stocks pétroliers hebdomadaires", "rythme": "chaque mercredi (jeudi si jour férié), 10 h 30 à New York"},
+    {"source": "EIA, stocks de gaz naturel", "rythme": "chaque jeudi, 10 h 30 à New York"},
+    {"source": "CFTC, Commitments of Traders", "rythme": "chaque vendredi, 15 h 30 à New York (positions du mardi)"},
+    {"source": "USDA, WASDE et base PSD", "rythme": "une fois par mois, vers le 10"}
+  ],
+  "matieres": [
+    {"cle": "or", "nom": "Or", "famille": "metaux_precieux", "symbole": "GC=F", "racine": "GC", "place": "CMX", "mois": "GJMQVZ", "unite": "$/once",
+     "cftc": "088691", "flux": ["GLD", "IAU"], "macro": "or", "geopolitique": {"refuge": true, "categories": ["conflit", "sanctions", "monetaire"]},
+     "producteurs": [["CN", 1], ["RU", 2], ["AU", 3], ["CA", 4], ["US", 5], ["GH", 6], ["MX", 7], ["ID", 8], ["PE", 9], ["ZA", 12]],
+     "societes": ["NEM", "AEM.TO", "ABX.TO", "K.TO", "ANG.JO", "GFI.JO", "NST.AX", "EVN.AX", "EDV.L", "FNV.TO", "RGLD", "2899.HK", "HAR.JO"],
+     "supports": [
+       {"type": "ETC physique", "detail": "adossé à des lingots en coffre (ex. Xetra-Gold, iShares Physical Gold) : pas de coût de roulement, frais annuels de 0,1 à 0,4 %"},
+       {"type": "Actions de producteurs", "detail": "effet de levier sur le cours de l'or, mais risques propres (coûts, pays, exécution)"}
+     ],
+     "risque_specifique": "une remontée des taux réels américains ou un dollar plus fort"},
+    {"cle": "argent", "nom": "Argent", "famille": "metaux_precieux", "symbole": "SI=F", "racine": "SI", "place": "CMX", "mois": "HKNUZ", "unite": "$/once",
+     "cftc": "084691", "flux": ["SLV"], "macro": "argent", "geopolitique": {"refuge": true, "categories": ["conflit", "sanctions"]},
+     "producteurs": [["MX", 1], ["CN", 2], ["PE", 3], ["BO", 4], ["CL", 5], ["PL", 6], ["RU", 7], ["AU", 8], ["US", 9], ["AR", 10]],
+     "societes": ["WPM.TO", "PE&OLES.MX", "HL", "CDE", "FNV.TO", "KGH.WA"],
+     "supports": [
+       {"type": "ETC physique", "detail": "adossé à des barres en coffre (ex. iShares Physical Silver) : pas de coût de roulement"},
+       {"type": "Actions de producteurs", "detail": "l'argent est souvent un sous-produit (cuivre, zinc, or) : exposition indirecte"}
+     ],
+     "risque_specifique": "un ralentissement industriel (la moitié de la demande est industrielle) ou une remontée des taux réels"},
+    {"cle": "platine", "nom": "Platine", "famille": "metaux_precieux", "symbole": "PL=F", "racine": "PL", "place": "NYM", "mois": "FJNV", "unite": "$/once",
+     "cftc": "076651", "flux": [], "macro": "industriel", "geopolitique": {"refuge": false, "categories": ["sanctions", "conflit"]},
+     "producteurs": [["ZA", 1], ["RU", 2], ["ZW", 3], ["CA", 4], ["US", 5]],
+     "societes": ["VAL.JO", "IMP.JO"],
+     "supports": [
+       {"type": "ETC physique", "detail": "adossé à du métal en coffre (ex. WisdomTree Physical Platinum)"},
+       {"type": "Actions de producteurs", "detail": "concentrées en Afrique du Sud : risque pays et électricité"}
+     ],
+     "risque_specifique": "une demande automobile plus faible (pots catalytiques) ou un retour d'offre sud-africaine"},
+    {"cle": "palladium", "nom": "Palladium", "famille": "metaux_precieux", "symbole": "PA=F", "racine": "PA", "place": "NYM", "mois": "HMUZ", "unite": "$/once",
+     "cftc": "075651", "flux": [], "macro": "industriel", "geopolitique": {"refuge": false, "categories": ["sanctions", "conflit"]},
+     "producteurs": [["RU", 1], ["ZA", 2], ["CA", 3], ["US", 4], ["ZW", 5]],
+     "societes": ["IMP.JO", "VAL.JO"],
+     "supports": [
+       {"type": "ETC physique", "detail": "adossé à du métal en coffre (ex. WisdomTree Physical Palladium) ; marché étroit"},
+       {"type": "Actions de producteurs", "detail": "peu de producteurs cotés hors de Russie et d'Afrique du Sud"}
+     ],
+     "risque_specifique": "la baisse de la demande liée aux véhicules électriques ou une levée de sanctions sur l'offre russe"},
+    {"cle": "cuivre", "nom": "Cuivre", "famille": "metaux_industriels", "symbole": "HG=F", "racine": "HG", "place": "CMX", "mois": "HKNUZ", "unite": "$/livre",
+     "cftc": "085692", "flux": ["CPER"], "macro": "industriel", "geopolitique": {"refuge": false, "categories": ["commerce", "sanctions", "conflit"]},
+     "producteurs": [["CL", 1], ["CD", 2], ["PE", 3], ["CN", 4], ["ID", 5], ["US", 6], ["RU", 7], ["AU", 8], ["KZ", 9], ["MX", 10]],
+     "societes": ["FCX", "SCCO", "GMEXICOB.MX", "ANTO.L", "BHP.AX", "RIO.L", "GLEN.L", "TECK-B.TO", "601899.SS", "KGH.WA", "BOL.ST", "603993.SS", "AAL.L"],
+     "supports": [
+       {"type": "ETF de contrats à terme", "detail": "ex. United States Copper Index Fund (CPER) : supporte le coût du contango lors des roulements"},
+       {"type": "ETC de contrats à terme", "detail": "ex. WisdomTree Copper : même coût de roulement"},
+       {"type": "Actions de producteurs", "detail": "souvent diversifiées (fer, or, charbon) : exposition partielle"}
+     ],
+     "risque_specifique": "un ralentissement chinois (environ la moitié de la demande mondiale)"},
+    {"cle": "aluminium", "nom": "Aluminium", "famille": "metaux_industriels", "symbole": "ALI=F", "racine": "ALI", "place": "CMX", "mois": "FGHJKMNQUVXZ", "unite": "$/tonne",
+     "cftc": "191693", "flux": [], "macro": "industriel", "geopolitique": {"refuge": false, "categories": ["commerce", "sanctions"]},
+     "producteurs": [["CN", 1], ["IN", 2], ["RU", 3], ["CA", 4], ["AE", 5], ["BH", 6], ["AU", 7], ["NO", 8], ["BR", 9], ["SA", 10]],
+     "societes": ["AA", "1378.HK", "HINDALCO.NS", "S32.AX", "RIO.L", "NHY.OL"],
+     "supports": [
+       {"type": "ETC de contrats à terme", "detail": "ex. WisdomTree Aluminium : supporte le coût du contango lors des roulements"},
+       {"type": "Actions de producteurs", "detail": "marges très sensibles au prix de l'électricité"}
+     ],
+     "risque_specifique": "une hausse des exportations chinoises ou une baisse du coût de l'énergie qui relance l'offre"},
+    {"cle": "uranium", "nom": "Uranium", "famille": "metaux_industriels", "symbole": "URA", "indirect": true, "unite": "$ (ETF URA)",
+     "mention": "indicateur indirect : ETF Global X Uranium (URA, producteurs et activités du cycle du combustible), faute de contrat à terme coté sur Yahoo",
+     "cftc": null, "flux": [], "macro": "industriel", "geopolitique": {"refuge": false, "categories": ["sanctions", "coup"]},
+     "producteurs": [["KZ", 1], ["CA", 2], ["NA", 3], ["AU", 4], ["UZ", 5], ["RU", 6], ["NE", 7], ["CN", 8]],
+     "societes": ["CCO.TO"],
+     "supports": [
+       {"type": "Fonds détenant de l'uranium physique", "detail": "ex. Sprott Physical Uranium Trust (cotation à Toronto), sans coût de roulement"},
+       {"type": "ETF d'actions", "detail": "ex. Global X Uranium (URA), Sprott Uranium Miners (URNM) : exposition indirecte"}
+     ],
+     "risque_specifique": "un report de mises en service de réacteurs ou une offre kazakhe plus forte que prévu"},
+    {"cle": "wti", "nom": "Pétrole WTI", "famille": "energie", "symbole": "CL=F", "racine": "CL", "place": "NYM", "mois": "FGHJKMNQUVXZ", "unite": "$/baril",
+     "cftc": "067651", "stocks": ["brut", "cushing"], "flux": ["USO"], "macro": "industriel", "geopolitique": {"refuge": false, "categories": ["conflit", "sanctions", "maritime"], "zones": ["IR", "IQ", "SA", "AE", "KW", "QA", "YE", "RU", "LY", "VE"]},
+     "producteurs": [["US", 1], ["SA", 2], ["RU", 3], ["CA", 4], ["IQ", 5], ["CN", 6], ["AE", 7], ["BR", 8], ["IR", 9], ["KW", 10], ["MX", 12]],
+     "societes": ["XOM", "CVX", "COP", "EOG", "OXY", "DVN", "FANG", "APA", "OVV", "PR", "CNQ.TO", "SU.TO", "CVE.TO", "IMO.TO"],
+     "supports": [
+       {"type": "ETF de contrats à terme", "detail": "ex. United States Oil Fund (USO) : supporte le coût du contango lors des roulements"},
+       {"type": "ETC de contrats à terme", "detail": "ex. WisdomTree WTI Crude Oil : même coût de roulement"},
+       {"type": "Actions de producteurs", "detail": "dividendes et rachats, mais sensibles aussi aux marges de raffinage et aux coûts"}
+     ],
+     "risque_specifique": "une hausse de production de l'OPEP+ ou un ralentissement de la demande mondiale"},
+    {"cle": "brent", "nom": "Pétrole Brent", "famille": "energie", "symbole": "BZ=F", "racine": "BZ", "place": "NYM", "mois": "FGHJKMNQUVXZ", "unite": "$/baril",
+     "cftc": "06765T", "stocks": ["brut", "essence", "distillats"], "flux": ["USO"], "macro": "industriel", "geopolitique": {"refuge": false, "categories": ["conflit", "sanctions", "maritime"], "zones": ["IR", "IQ", "SA", "AE", "KW", "QA", "YE", "RU", "LY", "VE"]},
+     "producteurs": [["US", 1], ["SA", 2], ["RU", 3], ["CA", 4], ["IQ", 5], ["CN", 6], ["AE", 7], ["BR", 8], ["IR", 9], ["KW", 10], ["NO", 14]],
+     "societes": ["SHEL.L", "BP.L", "TTE.PA", "ENI.MI", "REP.MC", "PETR4.SA", "WDS.AX", "ECOPETROL.CL", "600938.SS"],
+     "supports": [
+       {"type": "ETC de contrats à terme", "detail": "ex. WisdomTree Brent Crude Oil : supporte le coût du contango lors des roulements"},
+       {"type": "Actions de producteurs", "detail": "majors européennes : exposition partielle (gaz, raffinage, renouvelables)"}
+     ],
+     "risque_specifique": "une hausse de production de l'OPEP+ ou une détente au Moyen-Orient"},
+    {"cle": "gaz_us", "nom": "Gaz naturel américain", "famille": "energie", "symbole": "NG=F", "racine": "NG", "place": "NYM", "mois": "FGHJKMNQUVXZ", "unite": "$/MMBtu",
+     "cftc": "023651", "stocks": ["gaz"], "flux": [], "macro": "industriel", "geopolitique": {"refuge": false, "categories": ["maritime", "sanctions"], "zones": ["QA", "RU"]},
+     "producteurs": [["US", 1], ["RU", 2], ["IR", 3], ["CN", 4], ["CA", 5], ["QA", 6], ["AU", 7], ["NO", 8], ["SA", 9]],
+     "societes": ["EQT", "EXE", "AR", "RRC", "TOU.TO"],
+     "supports": [
+       {"type": "ETF de contrats à terme", "detail": "ex. United States Natural Gas Fund (UNG) : contango souvent marqué, coût de roulement élevé"},
+       {"type": "Actions de producteurs", "detail": "producteurs des Appalaches : exposition plus durable que les contrats"}
+     ],
+     "risque_specifique": "un hiver doux ou une production record qui gonfle les stocks"},
+    {"cle": "gaz_europe", "nom": "Gaz européen (TTF)", "famille": "energie", "symbole": "TTF=F", "unite": "€/MWh",
+     "cftc": null, "flux": [], "macro": "industriel", "geopolitique": {"refuge": false, "categories": ["conflit", "sanctions", "maritime"], "zones": ["RU", "UA", "NO", "QA", "DZ"]},
+     "producteurs": [["NO", 1], ["US", 2], ["QA", 3], ["RU", 4], ["DZ", 5], ["NL", 6], ["GB", 7]],
+     "note_producteurs": "principaux fournisseurs de l'Europe (gazoducs et GNL)",
+     "societes": ["EQT", "SHEL.L", "TTE.PA", "ENI.MI"],
+     "supports": [
+       {"type": "ETC de contrats à terme", "detail": "rares et peu liquides ; coût de roulement important"},
+       {"type": "Actions de producteurs", "detail": "exportateurs de GNL et majors européennes : exposition partielle"}
+     ],
+     "risque_specifique": "des stocks européens élevés ou un hiver doux"},
+    {"cle": "ble", "nom": "Blé", "famille": "agricoles", "symbole": "ZW=F", "racine": "ZW", "place": "CBT", "mois": "HKNUZ", "unite": "cents/boisseau",
+     "cftc": "001602", "usda": "ble", "flux": ["DBA"], "macro": "agricole", "geopolitique": {"refuge": false, "categories": ["conflit", "commerce", "maritime"], "zones": ["RU", "UA"]},
+     "producteurs": [["CN", 1], ["IN", 2], ["RU", 3], ["US", 4], ["FR", 5], ["CA", 6], ["UA", 7], ["AU", 8], ["PK", 9], ["DE", 10], ["AR", 11], ["TR", 12]],
+     "societes": [],
+     "supports": [
+       {"type": "ETF de contrats à terme", "detail": "ex. Teucrium Wheat (WEAT) ou panier agricole (DBA) : coût de roulement"},
+       {"type": "Actions", "detail": "négociants et engrais (ex. Nutrien, CF Industries) : exposition très indirecte"}
+     ],
+     "risque_specifique": "une récolte abondante dans l'hémisphère sud ou des exportations russes plus fortes"},
+    {"cle": "mais", "nom": "Maïs", "famille": "agricoles", "symbole": "ZC=F", "racine": "ZC", "place": "CBT", "mois": "HKNUZ", "unite": "cents/boisseau",
+     "cftc": "002602", "usda": "mais", "flux": ["DBA"], "macro": "agricole", "geopolitique": {"refuge": false, "categories": ["commerce", "conflit"]},
+     "producteurs": [["US", 1], ["CN", 2], ["BR", 3], ["AR", 4], ["UA", 5], ["IN", 6], ["MX", 7], ["ZA", 8]],
+     "societes": [],
+     "supports": [
+       {"type": "ETF de contrats à terme", "detail": "ex. Teucrium Corn (CORN) ou panier agricole (DBA) : coût de roulement"},
+       {"type": "Actions", "detail": "engrais et machinisme agricole : exposition très indirecte"}
+     ],
+     "risque_specifique": "une récolte américaine record ou une baisse de la demande d'éthanol"},
+    {"cle": "soja", "nom": "Soja", "famille": "agricoles", "symbole": "ZS=F", "racine": "ZS", "place": "CBT", "mois": "FHKNQUX", "unite": "cents/boisseau",
+     "cftc": "005602", "usda": "soja", "flux": ["DBA"], "macro": "agricole", "geopolitique": {"refuge": false, "categories": ["commerce"]},
+     "producteurs": [["BR", 1], ["US", 2], ["AR", 3], ["CN", 4], ["IN", 5], ["PY", 6]],
+     "societes": [],
+     "supports": [
+       {"type": "ETF de contrats à terme", "detail": "ex. Teucrium Soybean (SOYB) ou panier agricole (DBA) : coût de roulement"},
+       {"type": "Actions", "detail": "négociants et transformateurs : exposition très indirecte"}
+     ],
+     "risque_specifique": "une récolte brésilienne record ou un recul des achats chinois"},
+    {"cle": "cafe", "nom": "Café", "famille": "agricoles", "symbole": "KC=F", "racine": "KC", "place": "NYB", "mois": "HKNUZ", "unite": "cents/livre",
+     "cftc": "083731", "flux": ["DBA"], "macro": "agricole", "geopolitique": {"refuge": false, "categories": ["commerce"]},
+     "producteurs": [["BR", 1], ["VN", 2], ["CO", 3], ["ID", 4], ["ET", 5], ["HN", 6]],
+     "societes": [],
+     "supports": [
+       {"type": "ETC de contrats à terme", "detail": "ex. WisdomTree Coffee : coût de roulement"},
+       {"type": "Panier agricole", "detail": "ex. Invesco DB Agriculture (DBA)"}
+     ],
+     "risque_specifique": "une météo favorable au Brésil et au Vietnam"},
+    {"cle": "sucre", "nom": "Sucre", "famille": "agricoles", "symbole": "SB=F", "racine": "SB", "place": "NYB", "mois": "HKNV", "unite": "cents/livre",
+     "cftc": "080732", "flux": ["DBA"], "macro": "agricole", "geopolitique": {"refuge": false, "categories": ["commerce"]},
+     "producteurs": [["BR", 1], ["IN", 2], ["TH", 3], ["CN", 4], ["US", 5], ["MX", 6]],
+     "societes": [],
+     "supports": [
+       {"type": "ETC de contrats à terme", "detail": "ex. WisdomTree Sugar : coût de roulement"},
+       {"type": "Panier agricole", "detail": "ex. Invesco DB Agriculture (DBA)"}
+     ],
+     "risque_specifique": "une mousson favorable en Inde ou un arbitrage brésilien vers le sucre plutôt que l'éthanol"},
+    {"cle": "cacao", "nom": "Cacao", "famille": "agricoles", "symbole": "CC=F", "racine": "CC", "place": "NYB", "mois": "HKNUZ", "unite": "$/tonne",
+     "cftc": "073732", "flux": ["DBA"], "macro": "agricole", "geopolitique": {"refuge": false, "categories": ["coup", "commerce"]},
+     "producteurs": [["CI", 1], ["GH", 2], ["EC", 3], ["CM", 4], ["NG", 5], ["ID", 6], ["BR", 7]],
+     "note_producteurs": "la Côte d'Ivoire et le Ghana (environ 55 % de l'offre) ne sont pas suivis par l'agent pays",
+     "societes": [],
+     "supports": [
+       {"type": "ETC de contrats à terme", "detail": "ex. WisdomTree Cocoa : coût de roulement, marché très volatil"},
+       {"type": "Panier agricole", "detail": "ex. Invesco DB Agriculture (DBA)"}
+     ],
+     "risque_specifique": "une récolte ouest-africaine meilleure que prévu ou une destruction de demande"},
+    {"cle": "coton", "nom": "Coton", "famille": "agricoles", "symbole": "CT=F", "racine": "CT", "place": "NYB", "mois": "HKNVZ", "unite": "cents/livre",
+     "cftc": "033661", "flux": ["DBA"], "macro": "agricole", "geopolitique": {"refuge": false, "categories": ["commerce"]},
+     "producteurs": [["CN", 1], ["IN", 2], ["BR", 3], ["US", 4], ["PK", 5], ["AU", 6], ["TR", 7]],
+     "societes": [],
+     "supports": [
+       {"type": "ETC de contrats à terme", "detail": "ex. WisdomTree Cotton : coût de roulement"},
+       {"type": "Panier agricole", "detail": "ex. Invesco DB Agriculture (DBA)"}
+     ],
+     "risque_specifique": "une demande textile plus faible ou des tensions commerciales sino-américaines"}
+  ]
+}

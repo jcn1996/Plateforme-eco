@@ -1,0 +1,288 @@
+{
+  "meta": {
+    "genere_le": "2026-11-07T16:31:57Z",
+    "source": "agent-matieres-premieres",
+    "version_agent": "1.0",
+    "description": "État des sources et signaux, à chaque exécution",
+    "sante": {
+      "agent": "matieres-premieres",
+      "libelle": "Agent matières premières",
+      "ordre": 8,
+      "workflow": "agent-matieres-premieres.yml",
+      "derniere_execution": "2026-11-07T16:31:57Z",
+      "prochaine_prevue": "2026-11-09T22:15:00Z",
+      "intervalle_min": 4320,
+      "planning": {
+        "crons": [
+          "15 22 * * 1-5"
+        ],
+        "fuseau": "UTC"
+      },
+      "sources_total": 9,
+      "sources_ok": 9,
+      "sources": [
+        {
+          "nom": "Yahoo Finance via yfinance (contrat le plus proche, 10 ans)",
+          "etat": "ok",
+          "detail": null,
+          "derniere_donnee_valide": "2026-11-07T16:31:57Z"
+        },
+        {
+          "nom": "Yahoo Finance via yfinance (contrats des échéances suivantes)",
+          "etat": "ok",
+          "detail": null,
+          "derniere_donnee_valide": "2026-11-07T16:31:57Z"
+        },
+        {
+          "nom": "Yahoo Finance via yfinance (parts en circulation et VL des ETF)",
+          "etat": "ok",
+          "detail": null,
+          "derniere_donnee_valide": "2026-11-07T16:31:57Z"
+        },
+        {
+          "nom": "CFTC, Commitments of Traders (API publique Socrata)",
+          "etat": "ok",
+          "detail": null,
+          "derniere_donnee_valide": "2026-11-07T16:31:57Z"
+        },
+        {
+          "nom": "EIA, stocks hebdomadaires (API v2, clé EIA_API_KEY)",
+          "etat": "non configurée",
+          "detail": "secret EIA_API_KEY absent : source ignorée",
+          "derniere_donnee_valide": null
+        },
+        {
+          "nom": "USDA, base PSD (fichiers CSV publics)",
+          "etat": "ok",
+          "detail": null,
+          "derniere_donnee_valide": "2026-11-07T16:31:57Z"
+        },
+        {
+          "nom": "USDA, rapport WASDE (fichier texte mensuel)",
+          "etat": "ok",
+          "detail": null,
+          "derniere_donnee_valide": "2026-11-07T16:31:57Z"
+        },
+        {
+          "nom": "FRED, taux réel américain à 10 ans (DFII10)",
+          "etat": "ok",
+          "detail": "CSV public",
+          "derniere_donnee_valide": "2026-11-07T16:31:57Z"
+        },
+        {
+          "nom": "FRED, indice dollar large (DTWEXBGS)",
+          "etat": "ok",
+          "detail": "CSV public",
+          "derniere_donnee_valide": "2026-11-07T16:31:57Z"
+        },
+        {
+          "nom": "FRED, prix à la consommation américains (CPIAUCSL)",
+          "etat": "ok",
+          "detail": "CSV public",
+          "derniere_donnee_valide": "2026-11-07T16:31:57Z"
+        }
+      ],
+      "degrade": false,
+      "raisons": [],
+      "references": {
+        "Cours · Or": [
+          "Yahoo"
+        ],
+        "Courbe · Or": [
+          "Yahoo contrats"
+        ],
+        "Positionnement · Or": [
+          "CFTC"
+        ],
+        "Cours · Argent": [
+          "Yahoo"
+        ],
+        "Courbe · Argent": [
+          "Yahoo contrats"
+        ],
+        "Positionnement · Argent": [
+          "CFTC"
+        ],
+        "Cours · Platine": [
+          "Yahoo"
+        ],
+        "Courbe · Platine": [
+          "Yahoo contrats"
+        ],
+        "Positionnement · Platine": [
+          "CFTC"
+        ],
+        "Cours · Palladium": [
+          "Yahoo"
+        ],
+        "Courbe · Palladium": [
+          "Yahoo contrats"
+        ],
+        "Positionnement · Palladium": [
+          "CFTC"
+        ],
+        "Cours · Cuivre": [
+          "Yahoo"
+        ],
+        "Courbe · Cuivre": [
+          "Yahoo contrats"
+        ],
+        "Positionnement · Cuivre": [
+          "CFTC"
+        ],
+        "Cours · Aluminium": [
+          "Yahoo"
+        ],
+        "Courbe · Aluminium": [
+          "Yahoo contrats"
+        ],
+        "Positionnement · Aluminium": [
+          "CFTC"
+        ],
+        "Cours · Uranium": [
+          "Yahoo"
+        ],
+        "Cours · Pétrole WTI": [
+          "Yahoo"
+        ],
+        "Courbe · Pétrole WTI": [
+          "Yahoo contrats"
+        ],
+        "Positionnement · Pétrole WTI": [
+          "CFTC"
+        ],
+        "Cours · Pétrole Brent": [
+          "Yahoo"
+        ],
+        "Courbe · Pétrole Brent": [
+          "Yahoo contrats"
+        ],
+        "Positionnement · Pétrole Brent": [
+          "CFTC"
+        ],
+        "Cours · Gaz naturel américain": [
+          "Yahoo"
+        ],
+        "Courbe · Gaz naturel américain": [
+          "Yahoo contrats"
+        ],
+        "Positionnement · Gaz naturel américain": [
+          "CFTC"
+        ],
+        "Cours · Gaz européen (TTF)": [
+          "Yahoo"
+        ],
+        "Cours · Blé": [
+          "Yahoo"
+        ],
+        "Courbe · Blé": [
+          "Yahoo contrats"
+        ],
+        "Positionnement · Blé": [
+          "CFTC"
+        ],
+        "Stocks · Blé": [
+          "PSD",
+          "WASDE"
+        ],
+        "Cours · Maïs": [
+          "Yahoo"
+        ],
+        "Courbe · Maïs": [
+          "Yahoo contrats"
+        ],
+        "Positionnement · Maïs": [
+          "CFTC"
+        ],
+        "Stocks · Maïs": [
+          "PSD",
+          "WASDE"
+        ],
+        "Cours · Soja": [
+          "Yahoo"
+        ],
+        "Courbe · Soja": [
+          "Yahoo contrats"
+        ],
+        "Positionnement · Soja": [
+          "CFTC"
+        ],
+        "Stocks · Soja": [
+          "PSD",
+          "WASDE"
+        ],
+        "Cours · Café": [
+          "Yahoo"
+        ],
+        "Courbe · Café": [
+          "Yahoo contrats"
+        ],
+        "Positionnement · Café": [
+          "CFTC"
+        ],
+        "Cours · Sucre": [
+          "Yahoo"
+        ],
+        "Courbe · Sucre": [
+          "Yahoo contrats"
+        ],
+        "Positionnement · Sucre": [
+          "CFTC"
+        ],
+        "Cours · Cacao": [
+          "Yahoo"
+        ],
+        "Courbe · Cacao": [
+          "Yahoo contrats"
+        ],
+        "Positionnement · Cacao": [
+          "CFTC"
+        ],
+        "Cours · Coton": [
+          "Yahoo"
+        ],
+        "Courbe · Coton": [
+          "Yahoo contrats"
+        ],
+        "Positionnement · Coton": [
+          "CFTC"
+        ]
+      }
+    }
+  },
+  "donnees": [
+    {
+      "genere_le": "2026-11-07T16:31:57Z",
+      "etat_des_sources": {
+        "yahoo_cours": "ok",
+        "yahoo_courbes": "ok",
+        "yahoo_etf": "ok",
+        "cftc": "ok",
+        "eia": "non configurée",
+        "usda_psd": "ok",
+        "usda_wasde": "ok",
+        "fred_DFII10": "ok",
+        "fred_DTWEXBGS": "ok",
+        "fred_CPIAUCSL": "ok"
+      },
+      "signaux": [
+        "Argent : positionnement très vendeur (percentile 5 sur 3 ans)",
+        "Palladium : positionnement très vendeur (percentile 3 sur 3 ans)",
+        "Gaz naturel américain : positionnement très vendeur (percentile 1 sur 3 ans)",
+        "Maïs : stocks mondiaux révisés de +3,1 % (WASDE)",
+        "Café : positionnement très vendeur (percentile 2 sur 3 ans)",
+        "Sucre : positionnement très encombré à l’achat (percentile 96 sur 3 ans)",
+        "Cacao : positionnement très vendeur (percentile 9 sur 3 ans)"
+      ]
+    }
+  ],
+  "derniere_execution": "2026-11-07T16:31:57Z",
+  "prochaine_prevue": "2026-11-09T22:15:00Z",
+  "intervalle_min": 4320,
+  "planning": {
+    "crons": [
+      "15 22 * * 1-5"
+    ],
+    "fuseau": "UTC"
+  }
+}

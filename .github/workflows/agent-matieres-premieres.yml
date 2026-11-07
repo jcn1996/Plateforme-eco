@@ -1,0 +1,72 @@
+# Agent matières premières (sans IA) : faut-il s'exposer à chaque grande matière première sur 3 à 12 mois ?
+# Cours, courbe des prix à terme, positionnement CFTC, stocks (EIA, USDA), moteurs macro, flux des ETF,
+# puis commit du résultat sur main.
+# - en semaine à 22 h 15 UTC (après la clôture américaine) : cours, courbe et macro chaque soir ; les
+#   publications hebdomadaires (EIA le mercredi, gaz le jeudi, CFTC le vendredi soir) et mensuelles
+#   (WASDE) sont prises en compte à l'exécution qui suit leur parution ;
+# - lancé par le planificateur (réveil externe) ; ce planning GitHub reste en secours ;
+# - à la main : onglet Actions → « Agent matières premières » → « Run workflow ».
+name: Agent matières premières
+
+on:
+  schedule:
+    - cron: "15 22 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: agent-matieres-premieres
+  cancel-in-progress: false
+
+jobs:
+  agent-matieres-premieres:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Récupérer le dépôt (branche main)
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Installer Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: agents/requirements.txt
+
+      - name: Installer les dépendances
+        run: pip install -r agents/requirements.txt
+
+      - name: Tester l'agent et le module commun (données de test, sans réseau)
+        run: |
+          python -m unittest discover -s agents/matieres_premieres -t .
+          python -m unittest discover -s agents/commun -t .
+
+      - name: Lancer l'agent matières premières
+        env:
+          # Facultatif : stocks hebdomadaires de pétrole et de gaz (EIA) ; sans clé, cette source est ignorée
+          EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
+          # Facultatif : FRED par son API (sinon fichier CSV public)
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: python -m agents.matieres_premieres
+
+      - name: Commiter les données si elles ont changé
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/matieres_premieres.json data/signaux/ data/historique/matieres_premieres/ data/recap/ data/journal/
+          if git diff --cached --quiet; then
+            echo "Aucun changement : pas de commit."
+            exit 0
+          fi
+          git commit -m "Agent matières premières : mise à jour du $(date -u +%d/%m/%Y)"
+          # main a pu bouger entre-temps : nouvelle tentative en cas de conflit
+          for essai in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            git rebase --abort 2>/dev/null || true
+            sleep $((essai * 5))
+          done
+          exit 1

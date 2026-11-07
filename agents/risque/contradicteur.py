@@ -96,6 +96,10 @@ class Sources:
     def geopolitique(self) -> dict | None:
         return self._json("geopolitique.json")
 
+    def matieres_premieres(self) -> dict | None:
+        d = self._json("matieres_premieres.json")
+        return None if d is None else {m["cle"]: m for m in d.get("matieres", []) if isinstance(m, dict)}
+
     def pays(self) -> dict | None:
         d = self._json("pays.json")
         return None if d is None else {p["code"]: p for p in d if isinstance(p, dict)}
@@ -180,6 +184,19 @@ def valide(fichier: str, s: dict, src: Sources, config: dict, aujourdhui: str) -
             v = p.get("variation_7j")
             return (True, "hausse toujours visible") if v is not None and v > 0 else (False, "le score géopolitique ne monte plus")
         return True, "âge seul vérifié"
+    if agent == "matieres_premieres":
+        mp = src.matieres_premieres()
+        if mp is None:
+            return True, "données de l'agent matières premières absentes : âge seul vérifié"
+        m = mp.get(str(cle).split("-")[0] if t == "choc_stocks" else cle)
+        if m is None:
+            return False, "matière première absente des données de l'agent"
+        if t == "changement_verdict":
+            cible = _phase_cible(s.get("titre"))
+            if cible and m.get("verdict") != cible:
+                return False, f"verdict actuel « {m.get('verdict')} », plus « {cible} »"
+            return True, "verdict toujours en vigueur"
+        return True, "matière première toujours suivie"
     if agent == "pays":
         p = src.pays()
         if p is not None and cle not in p and not s.get("pays"):
