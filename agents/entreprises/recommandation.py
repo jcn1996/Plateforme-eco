@@ -9,9 +9,11 @@ Deux lectures :
 Fourchette de valeur estimée par deux méthodes : multiples (PER et VE/EBITDA) comparés à la médiane
 du secteur, et actualisation simplifiée des flux de trésorerie disponibles (hypothèses affichées).
 
-Quatre signaux : note globale, valorisation (écart au cours), momentum 12 mois, qualité comptable.
+Cinq signaux : note globale, valorisation (écart au cours), momentum 12 mois, qualité comptable, dynamique
+des résultats (guidance, révisions des analystes, surprises).
 « Acheter » ou « Vendre » exigent une confiance « moyen » ou « élevé » et au moins 3 signaux concordants ;
-un signal d'alerte comptable interdit « Acheter » (et « Renforcer »).
+un signal d'alerte comptable interdit « Acheter » (et « Renforcer ») ; une guidance abaissée ou retirée depuis
+moins de 90 jours aussi, sauf si la valorisation intègre déjà une forte baisse (exception justifiée).
 """
 from __future__ import annotations
 
@@ -21,7 +23,7 @@ MENTION = "Avis indicatif généré automatiquement, sans prise en compte d'un p
 NON_DETENU = ("Acheter", "Acheter sur repli", "Attendre", "Éviter")
 DETENU = ("Renforcer", "Conserver", "Alléger", "Vendre")
 LIBELLES_SIGNAUX = {"note": "Note globale", "valorisation": "Valorisation", "momentum": "Momentum 12 mois",
-                    "qualite": "Qualité comptable"}
+                    "qualite": "Qualité comptable", "dynamique": "Dynamique des résultats"}
 
 
 def _moyenne(v):
@@ -130,7 +132,7 @@ def valeur_estimee(m: dict, s: dict, cfg: dict) -> dict | None:
 
 # ------------------------------------------------------------------ signaux
 
-def signaux(note: int, m: dict, valeur: dict | None, financier, cfg: dict) -> list[dict]:
+def signaux(note: int, m: dict, valeur: dict | None, financier, cfg: dict, dynamique: dict | None = None) -> list[dict]:
     s = cfg["signaux"]
     res = []
     sens = 1 if note >= s["note_positive"] else -1 if note < s["note_negative"] else 0
@@ -157,6 +159,12 @@ def signaux(note: int, m: dict, valeur: dict | None, financier, cfg: dict) -> li
         sens = 1 if f >= s["fscore_positif"] else -1 if f <= s["fscore_negatif"] else 0
         texte = f"aucun signal d'alerte, F-score {f}/9"
     res.append({"cle": "qualite", "sens": sens, "texte": texte})
+    if dynamique is not None:
+        if dynamique.get("note") is None:
+            res.append({"cle": "dynamique", "sens": 0, "texte": dynamique.get("texte") or "non disponible"})
+        else:
+            res.append({"cle": "dynamique", "sens": dynamique["sens"], "texte": dynamique["texte"]
+                        + (" (données indicatives : peu d'analystes)" if dynamique.get("fiabilite") == "indicative" else "")})
     for x in res:
         x["libelle"] = LIBELLES_SIGNAUX[x["cle"]]
     return res
@@ -201,19 +209,40 @@ def _condition(sig: dict, but: str, note: int, m: dict, valeur: dict | None, pri
             return ("Disparition du signal d'alerte comptable au prochain rapport annuel." if m.get("alertes")
                     else f"F-score remonté au-dessus de {s['fscore_negatif']}/9 au prochain rapport annuel.")
         return f"F-score d'au moins {s['fscore_positif']}/9 sans signal d'alerte comptable au prochain rapport annuel."
+    if c == "dynamique":
+        if but == "annuler":
+            return "Guidance abaissée ou retirée au prochain communiqué de résultats, ou estimations de BPA révisées en baisse sur 30 jours."
+        if but == "retourner":
+            return "Guidance relevée ou maintenue au prochain communiqué de résultats, et estimations de BPA stabilisées sur 30 jours."
+        return "Guidance relevée ou estimations de BPA révisées en hausse sur 30 et 90 jours."
     return None
 
 
 # ------------------------------------------------------------------ recommandation
 
-def recommander(s: dict, m: dict, note: int | None, confiance: str, risques: list[str], cfg: dict) -> dict | None:
+def exception_guidance(gn: dict | None, valeur: dict | None, m: dict, exc: dict | None) -> str | None:
+    """Guidance abaissée ou retirée récemment : justification de l'exception si la valorisation intègre déjà une forte
+    baisse (valeur estimée fiable au moins decote_min_pct % au-dessus du cours et momentum 12 mois ≤ momentum_max_pct %)."""
+    if not gn or not exc or not valeur or not valeur.get("fiable") or valeur.get("ecart_pct") is None:
+        return None
+    mo = m.get("momentum_12m")
+    if valeur["ecart_pct"] >= exc["decote_min_pct"] and mo is not None and mo <= exc["momentum_max_pct"]:
+        return (f"Guidance {gn['evolution']} le {gn['date'][8:10]}/{gn['date'][5:7]}/{gn['date'][:4]}, mais le cours a déjà reculé de "
+                f"{nb(abs(mo), 1)} % sur 12 mois et se situe {nb(valeur['ecart_pct'], 1)} % sous la valeur estimée : la baisse paraît "
+                "intégrée dans la valorisation, « Acheter » reste possible")
+    return None
+
+
+def recommander(s: dict, m: dict, note: int | None, confiance: str, risques: list[str], cfg: dict,
+                dynamique: dict | None = None, exc_guidance: dict | None = None) -> dict | None:
     """s : société (prix, devise_cours, actions, annuel, fx_comptes, fx_cours, region, financier) ;
-    m : mesures après comparaison sectorielle ; note : note globale ; confiance : « élevé », « moyen » ou « faible »."""
+    m : mesures après comparaison sectorielle ; note : note globale ; confiance : « élevé », « moyen » ou « faible » ;
+    dynamique : bloc « Dynamique des résultats » (dynamique.bloc) ; exc_guidance : config dynamique.exception_guidance."""
     if note is None or not s.get("prix"):
         return None
     prix, devise = s["prix"], s.get("devise_cours")
     valeur = valeur_estimee(m, s, cfg)
-    sig = signaux(note, m, valeur, s.get("financier"), cfg)
+    sig = signaux(note, m, valeur, s.get("financier"), cfg, dynamique)
     pos = [x for x in sig if x["sens"] > 0]
     neg = [x for x in sig if x["sens"] < 0]
     r = cfg["regles"]
@@ -224,9 +253,13 @@ def recommander(s: dict, m: dict, note: int | None, confiance: str, risques: lis
     prix_repli = None
     exclusions = []
 
-    achat = len(pos) >= r["signaux_concordants_min"] and not neg and conf_ok and not alerte
+    gn = (dynamique or {}).get("guidance_negative")
+    exception = exception_guidance(gn, valeur, m, exc_guidance)
+    bloque_guidance = bool(gn) and not exception
+    achat = len(pos) >= r["signaux_concordants_min"] and not neg and conf_ok and not alerte and not bloque_guidance
     if len(pos) >= r["signaux_concordants_min"] and not neg and not achat:
-        exclusions.append("« Acheter » exclu : " + ("signal d'alerte comptable" if alerte else f"confiance {confiance}"))
+        exclusions.append("« Acheter » exclu : " + ("signal d'alerte comptable" if alerte else f"confiance {confiance}" if not conf_ok
+                                                     else f"guidance {gn['evolution']} le {gn['date'][8:10]}/{gn['date'][5:7]}/{gn['date'][:4]} (moins de 90 jours)"))
     # « Acheter sur repli » : tout est réuni sauf la valorisation, qui deviendrait favorable plus bas
     repli = (not achat and conf_ok and not alerte and valeur and valeur["fiable"] and valeur.get("ecart_pct") is not None
              and v["sens"] <= 0 and sum(1 for x in autres if x["sens"] > 0) >= r["signaux_concordants_min"] - 1
@@ -278,10 +311,15 @@ def recommander(s: dict, m: dict, note: int | None, confiance: str, risques: lis
 
     def compte(liste, mot):
         return f"{len(liste)} {mot}{'s' if len(liste) > 1 else ''}" + (f" ({', '.join(x['libelle'].lower() for x in liste)})" if liste else "")
-    justif = f"Signaux sur 4 : {compte(pos, 'favorable')}, {compte(neg, 'défavorable')} ; niveau de confiance : {confiance}."
+    justif = f"Signaux sur {len(sig)} : {compte(pos, 'favorable')}, {compte(neg, 'défavorable')} ; niveau de confiance : {confiance}."
     if exclusions:
         justif += " " + " ; ".join(exclusions) + "."
-    if prix_repli and nd == "Acheter sur repli":
+    if exception:
+        justif += f" {exception}."
+    if prix_repli and nd == "Acheter sur repli" and bloque_guidance:
+        justif += (f" Repli sous {prix_texte(prix_repli, devise)} (aujourd'hui {prix_texte(prix, devise)}) : la valorisation deviendrait favorable,"
+                   f" mais « Acheter » reste exclu tant que la guidance {gn['evolution']} a moins de 90 jours.")
+    elif prix_repli and nd == "Acheter sur repli":
         justif += f" Passerait à « Acheter » sous {prix_texte(prix_repli, devise)} (aujourd'hui {prix_texte(prix, devise)}), comptes inchangés."
     elif prix_repli:
         justif += (f" Passerait à « Acheter » sous {prix_texte(prix_repli, devise)}, soit {nb((1 - prix_repli / prix) * 100, 0)} % sous le cours :"
@@ -294,7 +332,7 @@ def recommander(s: dict, m: dict, note: int | None, confiance: str, risques: lis
         "cours": arrondi(prix), "devise": devise, "date_cours": s.get("date_cours"),
         "valeur": valeur, "ecart_pct": ecart, "prix_repli": prix_repli,
         "signaux": sig, "concordants": {"favorables": len(pos), "defavorables": len(neg)},
-        "confiance": confiance, "justification": justif,
+        "confiance": confiance, "justification": justif, "exception_guidance": exception,
         "conditions_invalidation": conditions, "risques": risques[:3], "mention": MENTION,
     }
 

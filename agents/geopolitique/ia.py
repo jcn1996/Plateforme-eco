@@ -145,6 +145,9 @@ class QuotaModele:
         return max(0, plafond - self.e["appels"])
 
     def executions_restantes(self, t: datetime) -> int:
+        # Agent lancé une fois par jour (agent entreprises) : tout le reste du jour peut servir à cette exécution
+        if not self.cfg.get("repartir_sur_la_journee", True):
+            return 1
         local = t.astimezone(ZoneInfo(self.cfg["fuseau_quota"]))
         minuit = (local + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
         return max(1, math.ceil((minuit - local).total_seconds() / 3600))

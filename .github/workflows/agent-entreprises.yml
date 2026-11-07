@@ -1,6 +1,9 @@
-# Agent entreprises (sans IA) : environ 1 200 sociétés cotées dans les pays suivis.
+# Agent entreprises : environ 1 200 sociétés cotées dans les pays suivis (Gemini seulement pour la guidance).
 # - du lundi au vendredi à 22 h 30 UTC : cours, momentum, valorisation, sociétés ayant publié de nouveaux comptes ;
-# - le samedi à 3 h 10 UTC : révision complète, découpée en lots (un job par lot, en parallèle), puis assemblage ;
+#   dynamique des résultats : nouveaux communiqués de résultats (8-K Item 2.02, guidance extraite par Gemini),
+#   révisions des analystes, objectifs de cours et surprises (Yahoo Finance) ;
+# - le samedi à 3 h 10 UTC : révision complète, découpée en lots (un job par lot, en parallèle), puis assemblage
+#   (l'assemblage recalcule aussi la dynamique des résultats de toutes les sociétés) ;
 # - après chaque publication : suivi des recommandations (data/historique/recommandations.json) ;
 # - à la main : onglet Actions → « Agent entreprises » → « Run workflow » (choisir le mode).
 name: Agent entreprises
@@ -34,6 +37,8 @@ env:
   SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
   EDINET_API_KEY: ${{ secrets.EDINET_API_KEY }}
   DART_API_KEY: ${{ secrets.DART_API_KEY }}
+  # Facultatif : sans ce secret, la guidance des communiqués reste « non analysée » (reprise à l'exécution suivante)
+  GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
 jobs:
   # ---------------------------------------------------------------- quotidien ou échantillon
@@ -101,7 +106,7 @@ jobs:
     needs: lots
     if: always() && needs.lots.result != 'skipped'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 120   # analystes de toutes les sociétés (une requête Yahoo chacune) et communiqués en attente
     steps:
       - uses: actions/checkout@v4
         with:

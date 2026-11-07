@@ -138,6 +138,32 @@ class Yahoo:
                 "nom": meta.get("longName") or info.get("longName") or meta.get("shortName"),
                 "annuel": annuel, "trimestriel": trimestres, "info": info}
 
+    def analystes(self, ticker: str) -> dict | None:
+        """Estimations des analystes, révisions, surprises et objectifs de cours : une seule requête quoteSummary
+        (modules earningsTrend, earningsHistory, financialData) ; à défaut, propriétés publiques de yfinance."""
+        t = self.yf.Ticker(ticker)
+        modules = ["earningsTrend", "earningsHistory", "financialData"]
+        try:
+            d = t._analysis._fetch(modules)
+            r = ((d or {}).get("quoteSummary") or {}).get("result") or []
+            return r[0] if r else None
+        except AttributeError:  # API interne de yfinance modifiée : propriétés publiques (plusieurs requêtes)
+            return self._analystes_public(t)
+
+    @staticmethod
+    def _analystes_public(t) -> dict:
+        def lignes(df):
+            return {} if df is None or getattr(df, "empty", True) else {str(i): r.to_dict() for i, r in df.iterrows()}
+        tendance, revisions, estimations = lignes(t.eps_trend), lignes(t.eps_revisions), lignes(t.earnings_estimate)
+        trend = [{"period": p, "epsTrend": {k: v for k, v in tendance.get(p, {}).items() if k != "currency"},
+                  "epsRevisions": {k: v for k, v in revisions.get(p, {}).items() if k != "currency"},
+                  "earningsEstimate": {"numberOfAnalysts": estimations.get(p, {}).get("numberOfAnalysts")}} for p in tendance]
+        hist = [{"quarter": q[:10], **{k: v for k, v in r.items()}} for q, r in lignes(t.earnings_history).items()]
+        o = t.analyst_price_targets or {}
+        fd = {"currentPrice": o.get("current"), "targetMeanPrice": o.get("mean"), "targetHighPrice": o.get("high"),
+              "targetLowPrice": o.get("low"), "targetMedianPrice": o.get("median")}
+        return {"earningsTrend": {"trend": trend}, "earningsHistory": {"history": hist}, "financialData": fd}
+
     def secteur(self, ticker: str) -> tuple[str | None, str | None]:
         """Secteur et industrie selon la recherche Yahoo (classification Yahoo, proche de GICS), quand
         ni le fichier de composition ni .info ne les donnent."""
@@ -247,6 +273,46 @@ class Sec:
                 res.append({"formulaire": form, "date": date_dep, "periode": periode,
                             "url": f"https://www.sec.gov/Archives/edgar/data/{int(cik)}/{acc.replace('-', '')}/{doc}"})
         return res
+
+    def resultats_8k(self, cik: str, fenetre_jours: int, aujourdhui: date) -> list[dict]:
+        """Dépôts 8-K « Item 2.02 Results of Operations » (communiqués de résultats) des `fenetre_jours` derniers jours,
+        du plus récent au plus ancien. Même flux submissions que publications() (réponse en cache)."""
+        d = self._get(f"https://data.sec.gov/submissions/CIK{cik}.json")
+        r = d.get("filings", {}).get("recent", {})
+        limite = (aujourdhui - timedelta(days=fenetre_jours)).isoformat()
+        res = []
+        for form, date_dep, acc, items, periode in zip(r.get("form", []), r.get("filingDate", []), r.get("accessionNumber", []),
+                                                       r.get("items", []), r.get("reportDate", [])):
+            if form not in ("8-K", "8-K/A") or "2.02" not in [i.strip() for i in (items or "").split(",")] or date_dep < limite:
+                continue
+            base = f"https://www.sec.gov/Archives/edgar/data/{int(cik)}/{acc.replace('-', '')}"
+            res.append({"cik": cik, "accession": acc, "date": date_dep, "formulaire": form, "periode": periode or None,
+                        "url_depot": f"{base}/{acc}-index.htm", "base": base})
+        return sorted(res, key=lambda x: x["date"], reverse=True)
+
+    def pieces_jointes(self, depot: dict) -> list[dict]:
+        """Pièces d'un dépôt (type et lien), lues dans sa page d'index."""
+        h = self._texte(depot["url_depot"])
+        res = []
+        for ligne in re.findall(r"<tr[^>]*>(.*?)</tr>", h, re.S | re.I):
+            cellules = [re.sub(r"<[^>]+>", "", c).strip() for c in re.findall(r"<td[^>]*>(.*?)</td>", ligne, re.S | re.I)]
+            lien = re.search(r'href="([^"]+\.(?:htm|html|txt))"', ligne, re.I)
+            if len(cellules) >= 4 and lien and not lien.group(1).startswith("/ix?"):
+                url = lien.group(1)
+                res.append({"type": cellules[3], "url": url if url.startswith("http") else f"https://www.sec.gov{url}"})
+        return res
+
+    def document(self, url: str) -> str:
+        return self._texte(url)
+
+    def _texte(self, url: str) -> str:
+        if not self.actif:
+            raise ErreurSource("secret SEC_USER_AGENT absent : source ignorée")
+        attente = self.intervalle - (time.monotonic() - self._dernier)
+        if attente > 0:
+            time.sleep(attente)
+        self._dernier = time.monotonic()
+        return self.t.texte(url, entetes={"User-Agent": self.ua, "Accept-Encoding": "gzip, deflate"})
 
     def comptes(self, cik: str) -> list[dict]:
         """Exercices annuels (10-K) : chiffre d'affaires, résultat net, flux de trésorerie d'exploitation, résultat opérationnel."""

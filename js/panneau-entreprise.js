@@ -1,6 +1,7 @@
 /* ==========================================================================
    Fiche entreprise (données réelles de l'agent entreprises) :
    note et verdict, confiance, indicateurs, montants (devise locale et dollars),
+   dynamique des résultats (guidance, révisions, surprises, objectifs de cours),
    F-score, signaux d'alerte, revue critique (pépites), contexte pays,
    « Ce qui pourrait me donner tort », lecture des agents, étude complète, sources.
    Les anciennes données fictives restent affichables (champs absents ignorés).
@@ -9,6 +10,7 @@
 import { el, nombre, AGENTS, tendanceNote, variation } from './outils.js';
 import { pastilleReco, fichierAnalyse } from './analyses.js';
 import { graphiqueAvance } from './graphiques.js';
+import { blocDynamique } from './dynamique-resultats.js';
 import { enteteFiche, listeIndicateurs, titreSection, carteAgent, piedFraicheur } from './panneau-pays.js';
 
 /** Ordre d'affichage des onglets. */
@@ -86,6 +88,7 @@ export function ficheEntreprise(d, e, nav = {}) {
     e.holding ? el('p', { class: 'entreprise-cotations' }, 'Holding ou société d’investissement : exclue des pépites (la décote sur l’actif net n’est pas mesurée).') : null,
     blocConfiance(e.confiance),
     blocRecommandation(e.recommandation, nav),
+    blocDynamique(e.dynamique),
     blocContexte(e.contexte),
     blocRang(e.rang_secteur),
 
@@ -118,7 +121,7 @@ export function ficheEntreprise(d, e, nav = {}) {
     etudeComplete(e),
     blocSources(e),
     e.analyseDemande
-      ? el('p', { class: 'fraicheur' }, `Analyse à la demande du ${dateFr(e.demande?.date)}${e.demande?.issue ? ` · issue #${e.demande.issue}` : ''} · même grille que l’agent entreprises (règles, sans IA)`,
+      ? el('p', { class: 'fraicheur' }, `Analyse à la demande du ${dateFr(e.demande?.date)}${e.demande?.issue ? ` · issue #${e.demande.issue}` : ''} · même grille que l’agent entreprises (règles)`,
         e.demande?.url_issue ? [' · ', el('a', { href: e.demande.url_issue, target: '_blank', rel: 'noopener' }, 'demande ↗')] : null)
       : piedFraicheur(d.meta.entreprises),
 

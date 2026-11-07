@@ -1,7 +1,8 @@
 /* ==========================================================================
    Écran « Pépites » : pépites candidates de l'agent entreprises (data/pepites.json).
    Filtres par région et par secteur ; pour chaque société : note, ajustement de
-   contexte (pays et cycle, affiché à part), 3 indicateurs clés, verdict.
+   contexte (pays et cycle, affiché à part), 3 indicateurs clés, verdict ; badge quand
+   la guidance a été relevée ou abaissée récemment.
    Toucher une ligne ouvre la fiche entreprise. Mini-graphique TradingView sur 12 mois.
    ========================================================================== */
 
@@ -9,6 +10,7 @@ import { el, nombre, variation, classeNote } from './outils.js';
 import { boutonAnalyser, pastilleReco } from './analyses.js';
 import { graphiqueMini } from './graphiques.js';
 import { historiqueEntreprise } from './panneau-entreprise.js';
+import { badgeGuidance } from './dynamique-resultats.js';
 
 const FICHIER = 'data/pepites.json';
 const filtres = { liste: 'pepites', region: 'toutes', secteur: 'tous' }; // mémorisés pendant la session
@@ -105,7 +107,7 @@ export function ecranPepites(p, d, nav) {
         el('li', {}, 'Holdings et sociétés d’investissement exclues (la décote sur l’actif net n’est pas mesurable avec des sources gratuites)'),
         el('li', {}, `Pépites : capitalisation de ${nombre((crit.cap_min_md ?? 0.3) * 1000)} M$ à ${nombre(crit.cap_max_md ?? 20)} Md$ et au plus ${crit.analystes_max ?? 8} analystes (quand Yahoo le fournit)`),
       )),
-    el('p', { class: 'fraicheur' }, `Mis à jour le ${(p.meta.genere_le ?? '').slice(8, 10)}/${(p.meta.genere_le ?? '').slice(5, 7)}/${(p.meta.genere_le ?? '').slice(0, 4)} · Agent entreprises (règles, sans IA)`),
+    el('p', { class: 'fraicheur' }, `Mis à jour le ${(p.meta.genere_le ?? '').slice(8, 10)}/${(p.meta.genere_le ?? '').slice(5, 7)}/${(p.meta.genere_le ?? '').slice(0, 4)} · Agent entreprises (règles ; guidance des communiqués lue par Gemini, citations vérifiées)`),
     el('p', { class: 'mention-legale' }, 'Liste de candidates à étudier : chaque fiche comporte une revue critique et des points à vérifier soi-même. Recommandations : avis indicatif généré automatiquement, sans prise en compte d’un profil ou d’une situation personnelle. Ne constitue pas un conseil en investissement.'),
   ];
 }
@@ -118,7 +120,7 @@ function ligne(x, d, nav) {
   const bouton = el('button', { class: `ligne-pepite ${classeNote(x.note)}`, type: 'button', onclick: () => nav.ouvrirEntreprise(x.ticker),
     'aria-label': `${x.nom}, ${pays}, ${x.secteur_nom}, note ${x.note} sur 100, ajustement de contexte ${variation(ctx, 1, ' point')}` },
   el('div', { class: 'ligne-pepite-tete' },
-    el('span', { class: 'ligne-pepite-nom' }, x.nom),
+    el('span', { class: 'ligne-pepite-nom' }, x.nom, x.guidance ? [' ', badgeGuidance(x.guidance.evolution, x.guidance.date)] : null),
     el('span', { class: 'ligne-pepite-note' }, nombre(x.note), el('small', {}, '/100'),
       el('small', { class: `ligne-pepite-ctx ${ctx > 0 ? 'hausse' : ctx < 0 ? 'baisse' : ''}` }, ` ${variation(ctx, 1, '')} contexte`)),
   ),

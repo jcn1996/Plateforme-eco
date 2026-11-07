@@ -765,5 +765,150 @@
         }
       }
     }
+  },
+  "dynamique": {
+    "_commentaire": "Bloc « Dynamique des résultats » (voir agents/entreprises/dynamique.md) : guidance (8-K Item 2.02 de la SEC, extraction par Gemini avec citation obligatoire), révisions des estimations, objectifs de cours et surprises (Yahoo Finance). poids_note_globale : part du bloc dans la note globale (pondération modérée). Les révisions et surprises ne comptent que pour les sociétés suivies par au moins analystes_min analystes (sinon affichées à titre indicatif).",
+    "poids_note_globale": 0.08,
+    "analystes_min": 3,
+    "poids": {
+      "guidance": 0.35,
+      "revisions_30j": 0.25,
+      "revisions_90j": 0.2,
+      "surprises": 0.2
+    },
+    "scores_guidance": {
+      "relevée": 85,
+      "initiée": 60,
+      "maintenue": 55,
+      "abaissée": 20,
+      "retirée": 15
+    },
+    "guidance_validite_jours": 120,
+    "guidance_negative_jours": 90,
+    "seuil_evolution_pct": 0.5,
+    "bareme_revisions_30j": [
+      [
+        -10,
+        10
+      ],
+      [
+        -3,
+        30
+      ],
+      [
+        0,
+        50
+      ],
+      [
+        3,
+        70
+      ],
+      [
+        10,
+        90
+      ]
+    ],
+    "bareme_revisions_90j": [
+      [
+        -20,
+        10
+      ],
+      [
+        -6,
+        30
+      ],
+      [
+        0,
+        50
+      ],
+      [
+        6,
+        70
+      ],
+      [
+        20,
+        90
+      ]
+    ],
+    "bareme_surprises": [
+      [
+        -15,
+        10
+      ],
+      [
+        -3,
+        35
+      ],
+      [
+        0,
+        45
+      ],
+      [
+        3,
+        60
+      ],
+      [
+        10,
+        80
+      ],
+      [
+        25,
+        90
+      ]
+    ],
+    "signal_positif": 65,
+    "signal_negatif": 40,
+    "exception_guidance": {
+      "_commentaire": "Une guidance abaissée ou retirée depuis moins de guidance_negative_jours jours interdit « Acheter » et « Renforcer », sauf si la valorisation intègre déjà une forte baisse : valeur estimée (fiable) au moins decote_min_pct % au-dessus du cours ET momentum 12 mois inférieur ou égal à momentum_max_pct %.",
+      "decote_min_pct": 30.0,
+      "momentum_max_pct": -15.0
+    },
+    "badge_jours": 45,
+    "signaux": {
+      "forte_revision_pct": 10.0,
+      "grosse_surprise_pct": 20.0,
+      "guidance_recente_jours": 14
+    },
+    "sec": {
+      "fenetre_jours": 120,
+      "communiques_par_societe": 1,
+      "communiques_max_par_execution": 400,
+      "pieces_max": 2,
+      "caracteres_max": 12000,
+      "historique_max": 12,
+      "tentatives_max": 6
+    },
+    "yahoo": {
+      "pause_secondes": 0.2,
+      "conservation_jours": 7,
+      "societes_max_par_execution": 2000
+    },
+    "gemini": {
+      "_commentaire": "Budget propre à l'agent entreprises (compté à part des agents géopolitique et risque, même jour du Pacifique, état dans data/entreprises/etat_dynamique.json). Somme des budgets par modèle, quotas gratuits par projet : Flash-Lite 800 (géopolitique, 1 000 − 20 %) + 40 (risque) + 60 (entreprises) = 900 ≤ 1 000 ; Flash génération précédente 200 (géopolitique) + 20 (entreprises) = 220 ≤ 250. L'agent tourne une fois par jour : tout le budget restant du jour peut servir à une exécution (repartir_sur_la_journee faux). Un communiqué par appel.",
+      "modeles": [
+        {
+          "nom": "gemini-3.5-flash-lite",
+          "libelle": "Flash-Lite",
+          "rpm": 4,
+          "rpd": 60
+        },
+        {
+          "nom": "gemini-3.6-flash",
+          "libelle": "Flash de la génération précédente",
+          "rpm": 3,
+          "rpd": 20
+        }
+      ],
+      "marge": 0.0,
+      "repartir_sur_la_journee": false,
+      "appels_max_par_execution": 80,
+      "essais": 2,
+      "attentes_reprise_secondes": [
+        10
+      ],
+      "attente_429_minute_max_secondes": 30,
+      "fuseau_quota": "America/Los_Angeles",
+      "delai_reponse_secondes": 90
+    }
   }
 }

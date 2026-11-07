@@ -1,22 +1,26 @@
 """
-Agent entreprises (sans IA) : environ 1 200 sociétés cotées dans les pays suivis.
+Agent entreprises : environ 1 200 sociétés cotées dans les pays suivis (règles ; Gemini lit seulement la guidance
+des communiqués de résultats, voir dynamique.py).
 
 Modes :
   --mode complet --lot <nom>   révision complète d'un lot (samedi) → fichier de lot (--sortie-lot)
   --mode assembler             fusionne les lots dans data/entreprises/comptes.json puis publie
-  --mode quotidien             cours, momentum, valorisation ; sociétés ayant publié de nouveaux comptes
+  --mode quotidien             cours, momentum, valorisation ; sociétés ayant publié de nouveaux comptes ;
+                               dynamique des résultats (guidance des nouveaux 8-K, révisions des analystes)
   --mode complet --echantillon N   révision complète d'un échantillon puis publication (essai local)
   --test                       données de test enregistrées (sans réseau)
 
 Fichiers écrits : data/entreprises.json, data/secteurs.json, data/pepites.json,
 data/signaux/entreprises.json, data/historique/entreprises/AAAA-MM-JJ.json,
-data/recap/entreprises-AAAA-MM-JJ.md, data/journal/agent-entreprises.json ;
-stockage : data/entreprises/univers.json (dernière liste connue), data/entreprises/comptes.json.
+data/recap/entreprises-AAAA-MM-JJ.md, data/journal/agent-entreprises.json, data/historique/guidance/TICKER.json ;
+stockage : data/entreprises/univers.json (dernière liste connue), data/entreprises/comptes.json,
+data/entreprises/dynamique.json et data/entreprises/etat_dynamique.json (dynamique des résultats).
 """
 from __future__ import annotations
 
 import argparse
 import json
+import os
 import statistics
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
@@ -28,11 +32,12 @@ from ..commun.sortie import ecrire_json, enveloppe, lire_json
 from ..commun.telechargement import Telechargeur
 from . import analyse as A
 from . import comptes as C
+from . import dynamique as D
 from . import recommandation as R
 from . import univers as U
 
 LOG = journal("agent-entreprises")
-VERSION_AGENT = "1.0"
+VERSION_AGENT = "1.1"
 DOSSIER = Path(__file__).resolve().parent
 RACINE = DOSSIER.parents[1]
 DEVISE_PAYS = {"US": "USD", "CA": "CAD", "MX": "MXN", "BR": "BRL", "AR": "ARS", "CL": "CLP", "CO": "COP", "GB": "GBP", "FR": "EUR",
@@ -113,6 +118,9 @@ class Capture:
 
             def cours_groupes(self, tickers, periode="13mo"):
                 return f.yahoo.cours_groupes(tickers, periode)
+
+            def analystes(self, t):
+                return f.yahoo.analystes(t)
         self.yahoo = _Y()
 
     def officiel(self, s, ids):
@@ -148,6 +156,11 @@ class FournisseurTest:
 
         def cours_groupes(self, tickers, periode="13mo"):
             return {t: self.d["yahoo"][t]["cours"] for t in tickers if t in self.d["yahoo"]}
+
+        def analystes(self, t):
+            if t not in self.d.get("analystes", {}):
+                raise C.ErreurSource(f"analystes de test absents : {t}")
+            return self.d["analystes"][t]
 
     @property
     def yahoo(self):
@@ -324,6 +337,7 @@ def echantillon(liste: list[dict], n: int, config: dict) -> list[dict]:
 
 def publier(base: dict, config: dict, change: dict, data: Path, aujourdhui: date, etats_sources: dict) -> dict:
     cfg_u = config["univers"]
+    stock_dyn = D.lire_stock(data)  # dynamique des résultats (guidance, analystes), mise à jour juste avant
     pays_json = {p["code"]: p for p in ((lire_json(data / "pays.json") or {}).get("donnees") or [])}
     macro = (lire_json(data / "macro.json") or {}).get("donnees") or {}
     zones = {z["cle"]: z["phase"] for z in (macro.get("cycle") or {}).get("zones", [])}
@@ -356,7 +370,7 @@ def publier(base: dict, config: dict, change: dict, data: Path, aujourdhui: date
     # 2. Notes, textes, pépites
     entreprises, candidats = [], []
     for s in societes:
-        r = analyser_societe(s, med, config, pays_json, zones, zone_par_pays, aujourdhui)
+        r = analyser_societe(s, med, config, pays_json, zones, zone_par_pays, aujourdhui, dyn=stock_dyn.get(s["ticker"]))
         if not r:
             continue
         e, m, ind, crit = r
@@ -392,7 +406,8 @@ def publier(base: dict, config: dict, change: dict, data: Path, aujourdhui: date
                             "note": e["note"], "contexte": e["contexte"], "verdict": e["verdict"], "confiance": e["confiance"]["niveau"],
                             "cles": {k: ind[k]["affichage"] for k in ("croissance_ca", "marge_op", "per_secteur", "roe", "fscore") if k in ind},
                             "autres_cotations": e["autres_cotations"], "revue_critique": e["revue_critique"],
-                            "recommandation": R.resume(e["recommandation"])})
+                            "recommandation": R.resume(e["recommandation"]),
+                            "guidance": D.badge_guidance(e.get("dynamique"), config["dynamique"], aujourdhui)})
 
     # 4. Secteurs par pays (bulles des fiches pays)
     secteurs = {}
@@ -435,6 +450,7 @@ def publier(base: dict, config: dict, change: dict, data: Path, aujourdhui: date
         if p and p.get("note") is not None and abs(e["note"] - p["note"]) >= 10:
             signaux.append({"date": aujourdhui.isoformat(), "type": "variation_de_note", "cle": e["ticker"], "importance": "faible",
                             "titre": f"{e['nom']} : note de {p['note']} à {e['note']}", "explication": e["verdict"], "source": e["sources"]["comptes"]})
+        signaux += D.signaux(e, p, config["dynamique"], aujourdhui, e["sources"]["comptes"])
         if p and (p.get("sources") or {}).get("exercice") != e["sources"]["exercice"]:
             signaux.append({"date": aujourdhui.isoformat(), "type": "nouveaux_comptes", "cle": e["ticker"], "importance": "faible",
                             "titre": f"{e['nom']} : comptes de l'exercice clos le {e['sources']['exercice']}", "explication": e["verdict"], "source": e["sources"]["comptes"]})
@@ -489,15 +505,32 @@ def publier(base: dict, config: dict, change: dict, data: Path, aujourdhui: date
             "divergences": sum(1 for e in entreprises if (e["sources"]["verification"] or {}).get("statut") == "divergent")}
 
 
+def note_avec_dynamique(n: dict, ponderations: dict, note_dyn: int | None, poids_dyn: float) -> dict:
+    """Note globale ; le bloc « Dynamique des résultats » y pèse `poids_dyn` (part des pondérations disponibles).
+    La couverture reste celle des indicateurs comptables et de marché."""
+    g = A.note_globale(n, ponderations)
+    if g["note"] is None or note_dyn is None:
+        return {**g, "note_sans_dynamique": g["note"]}
+    poids = {k: v for k, v in ponderations.items() if not k.startswith("_")}
+    dispo = sum(v for k, v in poids.items() if k in n)
+    poids["dynamique_resultats"] = poids_dyn / (1 - poids_dyn) * dispo
+    g2 = A.note_globale({**n, "dynamique_resultats": note_dyn}, poids)
+    return {**g2, "couverture": g["couverture"], "note_sans_dynamique": g["note"]}
+
+
 def analyser_societe(s: dict, med: dict, config: dict, pays_json: dict, zones: dict, zone_par_pays: dict,
-                     aujourdhui: date, revue: bool = False) -> tuple[dict, dict, dict, dict] | None:
+                     aujourdhui: date, revue: bool = False, dyn: dict | None = None) -> tuple[dict, dict, dict, dict] | None:
     """Analyse complète d'une société (mesures déjà calculées dans s["mesures"]) : comparaison sectorielle, notes,
-    verdict, confiance, contexte, critères de pépite, recommandation. Partagée avec l'analyse à la demande.
+    verdict, confiance, contexte, critères de pépite, dynamique des résultats, recommandation. Partagée avec
+    l'analyse à la demande. dyn : données de data/entreprises/dynamique.json pour cette société (ou None).
     Renvoie (fiche, mesures, indicateurs affichés, critères de pépite), ou None si la société ne peut être notée."""
     m = s["mesures"]
     m.update(A.comparer(m, s.get("secteur_gics"), s["region"], med))
     n = A.notes(m, s["financier"])
-    g = A.note_globale(n, config["ponderations_financieres"] if s["financier"] else config["ponderations"])
+    cfg_d = config["dynamique"]
+    bloc_dyn = D.bloc(dyn, s["pays"], cfg_d, aujourdhui)
+    g = note_avec_dynamique(n, config["ponderations_financieres"] if s["financier"] else config["ponderations"],
+                            bloc_dyn["note"], cfg_d["poids_note_globale"])
     if g["note"] is None:
         return None
     ind = A.indicateurs_affiches(m, n)
@@ -520,7 +553,8 @@ def analyser_societe(s: dict, med: dict, config: dict, pays_json: dict, zones: d
     off = s.get("officiel") or {}
     devise_3m = (((pays_j or {}).get("detail") or {}).get("devise_3m") or {}).get("valeur")
     revue_c = A.revue_critique(s, m, ind, pays_j, devise_3m)
-    reco = R.recommander(s, m, g["note"], conf["niveau"], revue_c["risques"] + contre, config["recommandation"])
+    reco = R.recommander(s, m, g["note"], conf["niveau"], revue_c["risques"] + contre, config["recommandation"],
+                         dynamique=bloc_dyn, exc_guidance=cfg_d["exception_guidance"])
     e = {
         "ticker": s["ticker"], "nom": s["nom"], "pays": s["pays"], "region": s["region"],
         "secteur": f"{s['pays']}-{slug}", "secteur_gics": secteur_gics, "secteur_nom": nom_s,
@@ -528,6 +562,7 @@ def analyser_societe(s: dict, med: dict, config: dict, pays_json: dict, zones: d
         "capitalisation_md": round(s["capitalisation_usd"] / 1e9, 2) if s.get("capitalisation_usd") else None,
         "liquidite_musd": round(s["liquidite_musd"], 1) if s.get("liquidite_musd") is not None else None,
         "note": g["note"], "niveau": A.niveau(g["note"]), "note_brute": g["brute"], "couverture": g["couverture"],
+        "note_sans_dynamique": g["note_sans_dynamique"], "dynamique": bloc_dyn,
         "verdict": verdict, "confiance": conf, "indicateurs": ind,
         "fscore": m.get("fscore"), "alertes": m.get("alertes", []),
         "momentum": {"m3": m.get("momentum_3m"), "m6": m.get("momentum_6m"), "m12": m.get("momentum_12m")},
@@ -613,7 +648,32 @@ def recap_markdown(jour, entreprises, pepites, signaux, etats, candidats, cfg_p)
 LISTE_MANUELLE_MAX_JOURS = 183  # au-delà de 6 mois, une liste manuelle doit être revérifiée
 
 
-def enregistrer_sante(data: Path, etats_compo: dict, etats_rev: dict | None, f, publication: dict, base: dict, quand: datetime):
+def sources_dynamique(r: dict | None) -> list[dict]:
+    """États des sources de la dynamique des résultats (informatives : elles ne rendent pas l'agent « dégradé »)."""
+    if not r:
+        return []
+    res = []
+    a = r["analystes"]
+    if not a.get("absent"):
+        total = a["ok"] + a["echecs"]
+        res.append({"nom": "Yahoo Finance (estimations des analystes)", "etat": "ok" if a["echecs"] <= 0.1 * max(1, total) else "partielle",
+                    "detail": f"{a['echecs']} échec(s) sur {total}" if a["echecs"] else None})
+    g = r["guidance"]
+    nom = "Gemini (guidance des communiqués de résultats)"
+    q = g.get("quota") or {}
+    if not g.get("cle"):
+        res.append({"nom": nom, "etat": "non configurée", "detail": "secret GEMINI_API_KEY absent : guidance non analysée, reprise à l'exécution suivante"})
+    elif g.get("erreurs") and not g.get("reussites") and g.get("appels"):
+        res.append({"nom": nom, "etat": "échec", "detail": "; ".join(g["erreurs"])[-300:]})
+    else:
+        res.append({"nom": nom, "etat": "partielle" if g.get("en_attente") else "ok",
+                    "detail": f"{g.get('appels', 0)} appel(s) ; {q.get('appels', 0)}/{q.get('quota_jour', '?')} aujourd'hui (budget propre à l'agent entreprises) ; "
+                              f"{g.get('analyses', 0)} communiqué(s) avec guidance, {g.get('aucune', 0)} sans, {g.get('en_attente', 0)} en attente"})
+    return res
+
+
+def enregistrer_sante(data: Path, etats_compo: dict, etats_rev: dict | None, f, publication: dict, base: dict, quand: datetime,
+                      rapport_dyn: dict | None = None):
     sources, raisons = [], []
     for code, e in etats_compo.items():
         if e["etat"] == "manuelle":
@@ -638,6 +698,7 @@ def enregistrer_sante(data: Path, etats_compo: dict, etats_rev: dict | None, f, 
         raisons.append("SEC : secret SEC_USER_AGENT absent")
     for nom, actif in (("EDINET (Japon)", getattr(getattr(f, "edinet", None), "actif", False)), ("DART (Corée)", getattr(getattr(f, "dart", None), "actif", False))):
         sources.append({"nom": nom, "etat": "ok" if actif else "non configurée", "detail": None if actif else "clé absente : source ignorée"})
+    sources += sources_dynamique(rapport_dyn)
     if etats_rev:
         total = etats_rev["ok"] + etats_rev["echec"]
         sources.append({"nom": "Yahoo Finance (comptes et cours)", "etat": "ok" if etats_rev["echec"] <= 0.1 * max(1, total) else "partielle",
@@ -665,7 +726,8 @@ def enregistrer_sante(data: Path, etats_compo: dict, etats_rev: dict | None, f, 
     journal_e["donnees"] = (journal_e.get("donnees", []) + [{"genere_le": maintenant(), "composition": etats_compo,
                                                               "comptes_officiels": resume_officiel,
                                                               "revision": {k: v for k, v in (etats_rev or {}).items() if k != "echecs"},
-                                                              "echecs": (etats_rev or {}).get("echecs", [])[:50], "publication": publication}])[-60:]
+                                                              "echecs": (etats_rev or {}).get("echecs", [])[:50], "publication": publication,
+                                                              "dynamique": rapport_dyn}])[-60:]
     journal_e["meta"] = {**journal_e.get("meta", {}), "genere_le": maintenant(), "source": "agent-entreprises", "version_agent": VERSION_AGENT,
                          "description": "Composition, révision des comptes et publication, à chaque exécution"}
     ecrire_json(chemin, journal_e)
@@ -694,6 +756,7 @@ def main(argv=None) -> int:
                     help="liste de surveillance (les tests passent une copie de test)")
     ap.add_argument("--compositions-manuelles", default=str(RACINE / "config" / "compositions_manuelles.json"),
                     help="listes manuelles de composition (les tests passent une copie de test)")
+    ap.add_argument("--sans-ia", action="store_true", help="n'appelle pas Gemini (guidance non analysée, reprise plus tard)")
     ap.add_argument("--date")
     args = ap.parse_args(argv)
 
@@ -768,9 +831,16 @@ def main(argv=None) -> int:
     ecrire_json(fichier_base, compact=True, objet={"meta": {"genere_le": maintenant(), "source": "agent-entreprises", "version_agent": VERSION_AGENT,
                                         "description": "Comptes normalisés par société (base de travail de l'agent entreprises)"},
                                "societes": base})
+    # Dynamique des résultats : nouveaux 8-K (guidance, Gemini) et analystes ; une panne n'empêche pas la publication
+    rapport_dyn = None
+    try:
+        cle = "" if (args.test or args.sans_ia) else os.environ.get("GEMINI_API_KEY", "")
+        rapport_dyn = D.executer(f, base, config, data, aujourdhui, cle)
+    except Exception as e:
+        LOG.error("Dynamique des résultats indisponible (dernières données conservées) : %s", str(e)[:200])
     publication = publier(base, config, change, data, aujourdhui,
                           {k: f"{v['source'] or 'aucune'} ({v['nombre']})" for k, v in etats_compo.items()})
-    bloc = enregistrer_sante(data, etats_compo, etats_rev, f, publication, base, quand)
+    bloc = enregistrer_sante(data, etats_compo, etats_rev, f, publication, base, quand, rapport_dyn)
     if isinstance(f, Capture):
         f.ecrire(DOSSIER / "tests" / "donnees")
     LOG.info("Publication : %s ; santé : %s", publication, "dégradé" if bloc["degrade"] else "OK")
