@@ -16,6 +16,7 @@ MOIS_FR = {"janvier": 1, "février": 2, "fevrier": 2, "mars": 3, "avril": 4, "ma
            "septembre": 9, "octobre": 10, "novembre": 11, "décembre": 12, "decembre": 12}
 LIBELLES_FONCTION = {"pdg_daf": "PDG ou directeur financier", "dirigeant": "dirigeant", "administrateur": "administrateur",
                      "actionnaire_10pct": "actionnaire de plus de 10 %", "autre": "autre initié"}
+PAYS_FR = {"IN": "Inde", "TR": "Turquie", "KR": "Corée", "JP": "Japon", "FR": "France", "DE": "Allemagne", "US": "États-Unis"}
 MENTION_13F = "13F : positions américaines uniquement, avec jusqu'à 45 jours de retard"
 MENTION_HORS_US = "positions hors États-Unis visibles uniquement au-dessus des seuils légaux"
 MENTION_ELUS = "Élus du Congrès : affiché pour information, sans effet sur les notes"
@@ -532,6 +533,58 @@ def chercher_entites(texte: str, alias: list[str]) -> tuple[str, float | None] |
         detenus = [v for p, v in trouves if re.search(r"d[ée]ten|holds?|holding|repr[ée]sent|soit|oran", apres[max(0, p - 40):p], re.I)]
         return a, (detenus[-1] if detenus else max(v for _, v in trouves))
     return None
+
+
+def nom_correspond(nom: str | None, alias: list[str]) -> str | None:
+    """Alias de l'investisseur contenu dans un nom de déclarant ou d'actionnaire (casse et espaces ignorés).
+    Comparaison sur le seul nom, jamais sur une adresse (« Dalal Street » est aussi l'adresse de la BSE)."""
+    n = re.sub(r"\s+", " ", (nom or "").lower())
+    return next((a for a in sorted(alias, key=len, reverse=True) if re.sub(r"\s+", " ", a.lower()) in n), None)
+
+
+def lire_actionnariat_xbrl(xml: str) -> dict:
+    """Répartition trimestrielle de l'actionnariat (XBRL de la NSE / BSE, taxonomie in-bse-shp) : date de fin de
+    trimestre et actionnaires nommés (plus de 1 % pour les actionnaires publics, et promoteurs), avec leur part en %.
+    Le nom est porté par le contexte « D_<x> », les nombres par le contexte « <x> » ; la part est une fraction."""
+    fin = re.search(r"<xbrli:endDate>(\d{4}-\d\d-\d\d)</xbrli:endDate>", xml) or re.search(r"<xbrli:instant>(\d{4}-\d\d-\d\d)</xbrli:instant>", xml)
+    valeurs: dict[str, dict] = defaultdict(dict)
+    for m in re.finditer(r'<in-bse-shp:(NameOfTheShareholder|ShareholdingAsAPercentageOfTotalNumberOfShares|NumberOfShares)\s+contextRef="([^"]+)"[^>]*>([^<]*)<', xml):
+        champ, ctx, v = m.groups()
+        valeurs[ctx.removeprefix("D_")][champ] = v.strip()
+    res = []
+    for ctx, v in valeurs.items():
+        nom = v.get("NameOfTheShareholder")
+        pct = _nombre(v.get("ShareholdingAsAPercentageOfTotalNumberOfShares"))
+        if not nom or pct is None:
+            continue
+        res.append({"nom": nom, "pct": round(pct * 100, 2) if pct <= 1 else round(pct, 2), "actions": _nombre(v.get("NumberOfShares")),
+                    "categorie": re.sub(r"_Context\d+$", "", ctx)})
+    return {"date": fin.group(1) if fin else None, "actionnaires": res}
+
+
+def pct_kap(texte: str) -> float | None:
+    """Pourcentage détenu après l'opération dans une notification turque (« … %6,25 sınırına ulaşmıştır »,
+    « sermayedeki payım %5,40 »)."""
+    for motif in (r"%\.?\s*(\d{1,2}(?:[.,]\d+)?)\s*(?:sınır|oran|seviye)", r"(\d{1,2}(?:[.,]\d+)?)\s*%?\s*(?:sınırına|oranına|seviyesine)",
+                  r"%\.?\s*(\d{1,2}(?:[.,]\d+)?)"):
+        trouves = re.findall(motif, texte, re.I)
+        if trouves:
+            return _nombre(trouves[-1].replace(",", "."))
+    return None
+
+
+def positions_hors_us(evenements: list[dict]) -> list[dict]:
+    """Dernière déclaration connue par investisseur et par société : position visible au-dessus des seuils légaux,
+    ou passée sous le seuil (cession sous 5 %, absente de la liste des actionnaires de plus de 1 %)."""
+    dernier: dict[tuple, dict] = {}
+    for e in sorted(evenements, key=lambda e: (e.get("date") or "", e.get("priorite", 0))):
+        cle = (e["investisseur"], e["pays"], e.get("ticker") or normaliser_nom(e.get("societe")))
+        dernier[cle] = e
+    res = []
+    for e in dernier.values():
+        sous = e.get("type") == "sortie" or (e.get("pct") is not None and e.get("seuil") is not None and e["pct"] < e["seuil"])
+        res.append({**e, "statut": "sous le seuil" if sous else "détenue"})
+    return sorted(res, key=lambda e: (e["statut"] != "détenue", -(e.get("pct") or 0)))
 
 
 # ------------------------------------------------------------------ élus du Congrès

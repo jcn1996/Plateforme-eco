@@ -16,14 +16,64 @@
   },
   "score": {
     "_commentaire": "Score « achats d'initiés » /100 par société, moyenne pondérée de 5 composantes notées de 0 à 1.",
-    "poids": {"opportuniste": 25, "groupe": 25, "fonction": 20, "montant_relatif": 20, "taille": 10},
+    "poids": {
+      "opportuniste": 25,
+      "groupe": 25,
+      "fonction": 20,
+      "montant_relatif": 20,
+      "taille": 10
+    },
     "baisse_cours_pct": 15.0,
     "historique_min_jours": 365,
     "routinier_achats_min": 3,
-    "groupe": {"1": 0.2, "2": 0.6, "3": 1.0},
-    "fonction": {"pdg_daf": 1.0, "dirigeant": 0.7, "administrateur": 0.5, "actionnaire_10pct": 0.3, "autre": 0.3},
-    "montant_relatif": [[50, 1.0], [20, 0.7], [5, 0.4], [0, 0.15]],
-    "taille_md": [[2, 1.0], [10, 0.7], [50, 0.4], [1000000, 0.2]],
+    "groupe": {
+      "1": 0.2,
+      "2": 0.6,
+      "3": 1.0
+    },
+    "fonction": {
+      "pdg_daf": 1.0,
+      "dirigeant": 0.7,
+      "administrateur": 0.5,
+      "actionnaire_10pct": 0.3,
+      "autre": 0.3
+    },
+    "montant_relatif": [
+      [
+        50,
+        1.0
+      ],
+      [
+        20,
+        0.7
+      ],
+      [
+        5,
+        0.4
+      ],
+      [
+        0,
+        0.15
+      ]
+    ],
+    "taille_md": [
+      [
+        2,
+        1.0
+      ],
+      [
+        10,
+        0.7
+      ],
+      [
+        50,
+        0.4
+      ],
+      [
+        1000000,
+        0.2
+      ]
+    ],
     "taille_inconnue": 0.5
   },
   "ventes": {
@@ -35,7 +85,24 @@
   },
   "super_investisseurs": {
     "_commentaire": "Conviction par société : points par investisseur selon le poids de la position (paliers_poids_pct : [poids minimal, points]) + bonus si la position est nouvelle ou renforcée ; score = min(100, points × points_vers_score). Mouvement « important » : variation du nombre d'actions d'au moins mouvement_min_pct % sur une position pesant au moins poids_min_mouvement_pct %. Positions sous poids_min_affiche_pct % : non converties en ticker (OpenFIGI) ni affichées. Un investisseur dont le dernier 13F couvre un trimestre plus ancien que inactif_trimestres trimestres est signalé comme inactif.",
-    "paliers_poids_pct": [[10, 3.0], [5, 2.0], [2, 1.0], [0, 0.5]],
+    "paliers_poids_pct": [
+      [
+        10,
+        3.0
+      ],
+      [
+        5,
+        2.0
+      ],
+      [
+        2,
+        1.0
+      ],
+      [
+        0,
+        0.5
+      ]
+    ],
     "bonus_achat": 1.0,
     "points_vers_score": 15,
     "mouvement_min_pct": 25.0,
@@ -57,9 +124,45 @@
     "franchissements_max_par_execution": 120
   },
   "hors_us": {
-    "_commentaire": "Positions hors États-Unis des super-investisseurs, visibles seulement au-dessus des seuils légaux. Inde : actionnaires de plus de 1 % (répartition trimestrielle de l'actionnariat, BSE, société par société, liste dans config/super_investisseurs.json) ; Turquie : KAP (seuils de 5 %) ; Corée : DART (règle des 5 %, secret DART_API_KEY facultatif) ; Japon : EDINET (déclarations de grands actionnaires, secret EDINET_API_KEY facultatif) ; France : franchissements de seuil (AMF).",
+    "_commentaire": "Positions hors États-Unis des super-investisseurs, visibles seulement au-dessus des seuils légaux, cherchées par nom d'entité (config/super_investisseurs.json, « entites »), comparé au seul nom du déclarant ou de l'actionnaire. Chaque source récente est relue (recent_jours) et l'historique est rattrapé progressivement (curseur dans data/inities/etat.json), dans la limite de chaque budget par exécution. Inde : NSE (déclarations SAST, toutes sociétés, depuis rattrapage_depuis ; puis répartition trimestrielle de l'actionnariat, actionnaires de plus de 1 %, des sociétés repérées, de celles listées dans « inde_nse » et des sociétés indiennes de l'agent entreprises si inclure_univers, relue au plus tous les actionnariat_intervalle_jours jours). Corée : DART (DART_API_KEY). Japon : EDINET (EDINET_API_KEY). Turquie : KAP, source secondaire (sources_secondaires : son échec n'est affiché que pour information et ne dégrade pas l'agent). France : franchissements de seuil de l'AMF sur « jours » jours. KAP renvoie au plus 2 000 annonces par requête : fenêtre d'un jour.",
     "jours": 10,
-    "conservation_jours": 1100
+    "conservation_jours": 3650,
+    "sources_secondaires": [
+      "kap"
+    ],
+    "nse": {
+      "rattrapage_depuis": "2021-01-01",
+      "fenetre_jours": 180,
+      "recent_jours": 20,
+      "requetes_sast_max_par_execution": 14,
+      "inclure_univers": true,
+      "actionnariat_max_par_execution": 160,
+      "actionnariat_intervalle_jours": 7
+    },
+    "dart": {
+      "recent_jours": 10,
+      "rattrapage_jours": 1095,
+      "fenetre_jours": 90,
+      "periodes_max_par_execution": 4
+    },
+    "edinet": {
+      "recent_jours": 7,
+      "rattrapage_jours": 1095,
+      "jours_max_par_execution": 90
+    },
+    "kap": {
+      "recent_jours": 10,
+      "rattrapage_jours": 1095,
+      "fenetre_jours": 1,
+      "listes_max_par_execution": 60,
+      "pdf_max_par_execution": 300,
+      "sujets": [
+        "Pay Alım Satım Bildirimi"
+      ],
+      "classes": [
+        "DKB"
+      ]
+    }
   },
   "elus": {
     "_commentaire": "Déclarations de transactions (Periodic Transaction Reports) des élus du Congrès, pour information seulement : aucun effet sur les notes. Chambre : fichiers officiels du greffe (index annuel + PDF). Sénat : le site efdsearch.senate.gov impose d'accepter ses conditions d'utilisation avant toute consultation ; la source n'est donc activée que si vous passez senat_actif à true (vous acceptez alors ces conditions).",

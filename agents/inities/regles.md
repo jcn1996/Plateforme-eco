@@ -75,14 +75,33 @@ position est nouvelle ou renforcée ; score = min(100, points × 15). Une positi
 plus qu'une ligne marginale, et plusieurs détenteurs plus qu'un seul.
 
 **Positions hors États-Unis** (mention : « positions hors États-Unis visibles uniquement au-dessus des seuils
-légaux ») : recherche des noms d'entités de chaque investisseur (`entites`, ex. Pabrai : Pabrai Investment
-Funds, Dalal Street, Pabrai Wagons Fund) dans :
-- France : franchissements de seuil (base BDIF de l'AMF, PDF) ;
-- Corée : DART, déclarations de participation (règle des 5 %), secret `DART_API_KEY` facultatif ;
-- Japon : EDINET, déclarations de grands actionnaires, secret `EDINET_API_KEY` facultatif ;
-- Turquie : annonces KAP (seuils de 5 %) ;
-- Inde : actionnaires de plus de 1 % de la répartition trimestrielle de l'actionnariat (BSE), pour les
-  sociétés listées dans `hors_us.inde_bse` de chaque investisseur (pas de recherche globale par nom à la BSE).
+légaux ») : code `agents/inities/hors_us.py`, paramètres `hors_us` de la config. Les noms des entités de chaque
+investisseur (`entites`, ex. Pabrai : « Pabrai » pour Pabrai Investment Fund(s) II / 3 / IV et Pabrai Wagons Fund,
+« Dalal Street, LLC », « Dhandho India Zero Fee Fund ») sont comparés au **seul nom** du déclarant ou de
+l'actionnaire, jamais au texte entier (« Dalal Street » seul est exclu : nom courant en Inde et adresse de la BSE).
+
+| Pays | Source | Seuil | Ce qui est lu |
+|---|---|---|---|
+| Inde | NSE, déclarations SAST (règlement 29) | 5 %, puis variations de 2 % | toutes sociétés, nom de l'acquéreur ; historique depuis `nse.rattrapage_depuis` (2021) |
+| Inde | NSE, répartition trimestrielle de l'actionnariat (XBRL) | 1 % | sociétés repérées par SAST, listées dans `hors_us.inde_nse`, et sociétés indiennes de l'agent entreprises ; relue au plus une fois par semaine, XBRL lu seulement s'il est nouveau ; un investisseur qui disparaît de la liste est « passé sous le seuil » |
+| Corée | DART (`DART_API_KEY`) | 5 % | toutes les déclarations de participation ; historique de 3 ans rattrapé par trimestres |
+| Japon | EDINET (`EDINET_API_KEY`) | 5 % | déclarations de grands actionnaires ; historique de 3 ans rattrapé jour par jour |
+| Turquie | KAP, **source secondaire** | 5 % | notifications « Pay Alım Satım Bildirimi » du dépositaire central (classe DKB), pièce jointe PDF lue (nom et % détenu) ; historique de 3 ans rattrapé jour par jour (KAP renvoie au plus 2 000 annonces par requête) |
+| France | AMF, franchissements de seuil | 5 % | 10 derniers jours |
+
+Sans clé, DART et EDINET sont indiqués « clé non configurée ». Le rattrapage de l'historique avance à chaque
+exécution, dans la limite d'un budget par source (curseurs dans `data/inities/etat.json`) : une source en panne
+reprend là où elle s'est arrêtée. KAP n'est qu'une source secondaire : son échec est affiché pour information
+dans l'écran Santé, sans dégrader l'agent (l'ancien point d'accès `memberDisclosureQuery` ne répond plus depuis la
+refonte du site ; le nouveau est `api/disclosure/members/byCriteria`).
+
+**Position retenue** : dernière déclaration connue par investisseur et par société (une répartition de
+l'actionnariat prime sur une déclaration du même jour) ; « détenue » au-dessus du seuil, « passée sous le seuil »
+sinon. Les positions détenues comptent dans la conviction (ticker NSE `.NS`, KAP `.IS`, DART `.KS`).
+
+**Journal de la recherche** : à chaque exécution, `recherche_hors_us` (dans `data/inities.json`, le journal de
+l'agent et le récapitulatif) indique pour chaque source son état, la période couverte, le nombre de documents
+examinés, les noms cherchés et ce qui a été trouvé.
 
 ## 4. Élus du Congrès (information seulement)
 

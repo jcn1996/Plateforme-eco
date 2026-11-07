@@ -8,8 +8,10 @@ Sources de l'agent initiés (toutes gratuites).
 - Yahoo Finance (yfinance) : cours sur 6 mois des sociétés achetées (achat après une baisse du cours).
 - AMF, base BDIF : déclarations des dirigeants (PDF) et franchissements de seuil.
 - BaFin : base des « Directors' Dealings » (export CSV).
-- Hors États-Unis : DART (Corée, secret DART_API_KEY facultatif), EDINET (Japon, secret EDINET_API_KEY facultatif),
-  KAP (Turquie), BSE (Inde, actionnaires de plus de 1 %, sociétés listées dans config/super_investisseurs.json).
+- Hors États-Unis : NSE (Inde : déclarations SAST d'acquisition ou de cession avec le nom de l'acquéreur, et
+  répartition trimestrielle de l'actionnariat en XBRL, actionnaires de plus de 1 %), DART (Corée, secret
+  DART_API_KEY facultatif), EDINET (Japon, secret EDINET_API_KEY facultatif), KAP (Turquie, source secondaire :
+  annonces « Pay Alım Satım Bildirimi » et leurs pièces jointes PDF).
 - Congrès : greffe de la Chambre (index annuel zippé + PDF des déclarations) ; Sénat (efdsearch.senate.gov,
   seulement si elus.senat_actif est vrai dans la config : le site impose d'accepter ses conditions d'utilisation).
 
@@ -38,10 +40,13 @@ CHAMBRE_PTR = "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/{annee}/
 SENAT = "https://efdsearch.senate.gov"
 DART_LIST = "https://opendart.fss.or.kr/api/list.json"
 EDINET_LIST = "https://api.edinet-fsa.go.jp/api/v2/documents.json"
-KAP_LIST = "https://www.kap.org.tr/tr/api/memberDisclosureQuery"
-BSE_ACTIONNAIRES = "https://api.bseindia.com/BseIndiaAPI/api/ShareholdingPattern/w"
+KAP_LIST = "https://www.kap.org.tr/tr/api/disclosure/members/byCriteria"
+KAP_PAGE = "https://www.kap.org.tr/tr/Bildirim"
+NSE = "https://www.nseindia.com"
 OPENFIGI = "https://api.openfigi.com/v3/mapping"
 NAVIGATEUR = "Mozilla/5.0 (X11; Linux x86_64) SalleDeControle-AgentInities/1.0 (+https://github.com/jcn1996/Plateforme-eco)"
+# La NSE n'accepte que des en-têtes de navigateur complets
+NAVIGATEUR_COMPLET = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
 
 
 def cle_args(*args) -> str:
@@ -186,12 +191,13 @@ class FournisseurReel:
                                                "d-4000784-e": "1", "6578706f7274": "1"}, entetes={"User-Agent": NAVIGATEUR})
 
     # ---------------------------------------------------------------- hors États-Unis
-    def dart(self, depuis: str, jusqua: str) -> list[dict] | None:
-        """Déclarations de participation (지분공시, type D) de toutes les sociétés coréennes sur la période. None sans clé."""
+    def dart(self, depuis: str, jusqua: str, pages_max: int = 100) -> list[dict] | None:
+        """Déclarations de participation (지분공시, type D) de toutes les sociétés coréennes sur la période
+        (3 mois au plus, limite de l'API sans code de société). None sans clé."""
         if not self.cle_dart:
             return None
         res, page = [], 1
-        while page <= 10:
+        while page <= pages_max:
             d = self.t.json(DART_LIST, params={"crtfc_key": self.cle_dart, "pblntf_ty": "D", "bgn_de": depuis.replace("-", ""),
                                                "end_de": jusqua.replace("-", ""), "page_no": page, "page_count": 100})
             if d.get("status") not in ("000", "013"):
@@ -210,28 +216,71 @@ class FournisseurReel:
         if not self.cle_edinet:
             return None
         d = self.t.json(EDINET_LIST, params={"date": jour, "type": 2, "Subscription-Key": self.cle_edinet})
+        if str(d.get("statusCode") or (d.get("metadata") or {}).get("status") or "200") not in ("200",):
+            raise ErreurSource(f"EDINET : {d.get('message') or (d.get('metadata') or {}).get('message')}")
         return [{"societe": x.get("issuerEdinetCode") or x.get("subjectEdinetCode"), "declarant": x.get("filerName"), "titre": x.get("docDescription"),
                  "date": (x.get("submitDateTime") or jour)[:10], "id": x.get("docID"),
                  "url": f"https://disclosure2.edinet-fsa.go.jp/WZEK0040.aspx?{x.get('docID')}"}
                 for x in d.get("results") or [] if x.get("docTypeCode") in ("350", "360")]
 
-    def kap(self, depuis: str, jusqua: str) -> list[dict]:
-        """Annonces publiées sur KAP (Turquie) sur la période : titre, société, résumé."""
+    def kap_liste(self, depuis: str, jusqua: str) -> list[dict]:
+        """Annonces KAP (Turquie) publiées sur la période (nouveau point d'accès du site refait en 2025 :
+        api/disclosure/members/byCriteria ; l'ancien memberDisclosureQuery ne répond plus)."""
         import requests
-        r = requests.post(KAP_LIST, json={"fromDate": depuis, "toDate": jusqua, "year": "", "prd": "", "term": "", "ruleType": "", "bdkReview": "",
-                                          "disclosureClass": "", "index": "", "market": "", "isLate": "", "subjectList": [], "mkkMemberOidList": [],
-                                          "inactiveMkkMemberOidList": [], "bdkMemberOidList": [], "mainSector": "", "sector": "", "subSector": "",
-                                          "memberType": "IGS", "fromSrc": "N", "srcCategory": "", "discIndex": []},
-                          headers={"User-Agent": NAVIGATEUR}, timeout=40)
+        corps = {"fromDate": depuis, "toDate": jusqua, "memberType": "IGS", "disclosureClass": "", "subjectList": [], "mkkMemberOidList": [],
+                 "inactiveMkkMemberOidList": [], "bdkMemberOidList": [], "mainSector": "", "sector": "", "subSector": "", "fromSrc": False,
+                 "srcCategory": "", "discIndex": [], "isLate": "", "term": "", "ruleType": "", "period": "", "year": "", "bdkReview": "",
+                 "index": "", "market": ""}
+        r = requests.post(KAP_LIST, json=corps, headers={"User-Agent": NAVIGATEUR, "Accept": "application/json"}, timeout=60)
         r.raise_for_status()
-        return [{"societe": x.get("kapTitle") or x.get("companyName"), "titre": x.get("subject"), "resume": x.get("summary"),
-                 "date": (x.get("publishDate") or "")[:10], "id": x.get("disclosureIndex"),
-                 "url": f"https://www.kap.org.tr/tr/Bildirim/{x.get('disclosureIndex')}"} for x in r.json()]
+        # Au plus 2 000 annonces par réponse (environ 400 par jour ouvré) : interroger jour par jour
+        return [{"id": x.get("disclosureIndex"), "date": "-".join(reversed((x.get("publishDate") or "")[:10].split("."))),
+                 "emetteur": x.get("kapTitle"), "classe": x.get("disclosureClass"), "sujet": x.get("subject"), "resume": x.get("summary"),
+                 "titres": x.get("relatedStocks") or x.get("stockCodes")} for x in r.json()]
 
-    def bse(self, code: str) -> str:
-        """Répartition de l'actionnariat (dernier trimestre) d'une société cotée à la BSE : texte brut de la réponse."""
-        return self.t.texte(BSE_ACTIONNAIRES, params={"scripcode": code, "qtrid": "", "Flag": "S"},
-                            entetes={"User-Agent": NAVIGATEUR, "Referer": "https://www.bseindia.com/"})
+    def kap_texte(self, index) -> str:
+        """Texte d'une annonce KAP : page de l'annonce et pièces jointes PDF (le nom de l'investisseur et le pourcentage
+        détenu figurent dans la pièce jointe des « Pay Alım Satım Bildirimi »)."""
+        page = self.t.texte(f"{KAP_PAGE}/{index}", entetes={"User-Agent": NAVIGATEUR})
+        morceaux = [re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", re.sub(r"<script.*?</script>", " ", page, flags=re.S)))]
+        for lien in list(dict.fromkeys(re.findall(r"https://www\.kap\.org\.tr/tr/api/file/download/[0-9a-f]+", page)))[:3]:
+            octets = self.t.octets(lien, entetes={"User-Agent": NAVIGATEUR})
+            debut = octets.find(b"%PDF")  # en-tête de sérialisation Java avant le PDF
+            try:
+                morceaux.append(texte_pdf(octets[debut:] if debut > 0 else octets))
+            except Exception:  # noqa: BLE001 — pièce illisible : le texte de la page reste
+                continue
+        return "\n".join(morceaux)
+
+    def _nse(self, url: str, params: dict | None = None) -> str:
+        """API de la NSE (Inde) : en-têtes de navigateur ; cookie d'accueil demandé une fois (sans lui, certaines
+        adresses répondent 401 ou 403 depuis des serveurs de centres de données)."""
+        if not getattr(self, "_nse_amorce", False):
+            self._nse_amorce = True
+            try:
+                self.t.session.get(NSE, headers={"User-Agent": NAVIGATEUR_COMPLET}, timeout=20)
+            except Exception:  # noqa: BLE001
+                pass
+        return self.t.texte(url, params=params, entetes={"User-Agent": NAVIGATEUR_COMPLET, "Accept": "application/json, text/plain, */*",
+                                                         "Referer": f"{NSE}/"})
+
+    def nse_sast(self, depuis: str, jusqua: str) -> list[dict]:
+        """Déclarations d'acquisition ou de cession de la NSE (règlement SAST 29 : franchissements de 5 % puis
+        variations de 2 %), toutes sociétés, avec le nom de l'acquéreur."""
+        f = lambda d: f"{d[8:10]}-{d[5:7]}-{d[:4]}"  # noqa: E731
+        d = json.loads(self._nse(f"{NSE}/api/corporate-sast-reg29", {"index": "equities", "from_date": f(depuis), "to_date": f(jusqua)}))
+        return [{"societe": x.get("company"), "symbole": x.get("symbol"), "acquereur": x.get("acquirerName"), "sens": x.get("acqSaleType"),
+                 "pct_apres": x.get("totAftShare"), "pct_operation": x.get("totAcqShare") or x.get("totSaleShare"), "date": x.get("timestamp"),
+                 "periode": x.get("acquirerDate"), "url": x.get("attachement"), "id": x.get("application_no")} for x in d.get("data") or []]
+
+    def nse_actionnariat(self, symbole: str) -> list[dict]:
+        """Répartitions trimestrielles de l'actionnariat publiées à la NSE pour une société (la plus récente d'abord)."""
+        d = json.loads(self._nse(f"{NSE}/api/corporate-share-holdings-master", {"index": "equities", "symbol": symbole}))
+        return [{"date": x.get("date"), "id": x.get("recordId"), "xbrl": x.get("xbrl"), "societe": x.get("name"), "depot": x.get("submissionDate")}
+                for x in d if isinstance(x, dict)]
+
+    def nse_xbrl(self, url: str) -> str:
+        return self.t.texte(url, entetes={"User-Agent": NAVIGATEUR_COMPLET, "Referer": f"{NSE}/"})
 
     # ---------------------------------------------------------------- Congrès
     def chambre_index(self, annee: int) -> str:
@@ -297,7 +346,7 @@ class FournisseurTest:
             if nom == "tickers_sec":
                 return d
             v = d.get(cle_args(*args))
-            if v is None and nom in ("depot", "amf_pdf", "chambre_ptr", "bse"):
+            if v is None and nom in ("depot", "amf_pdf", "chambre_ptr", "kap_texte", "nse_xbrl"):
                 raise ErreurSource(f"{nom} {cle_args(*args)} : HTTP 404 (test)")
             return v if v is not None else ([] if nom not in ("soumissions", "bafin", "chambre_index") else
                                            {"nom": None, "depots": []} if nom == "soumissions" else "")

@@ -152,7 +152,8 @@ function ongletSuper(d, nav) {
           el('span', {}, el('small', {}, 'Trimestre'), i.trimestre_texte),
           el('span', {}, el('small', {}, 'Positions'), i.nb_positions ?? '—'),
           el('span', {}, el('small', {}, 'Nouvelles'), i.nouvelles?.length ?? 0)),
-        i.hors_us?.length ? el('small', { class: 'hausse' }, `${i.hors_us.length} déclaration(s) hors États-Unis`) : null))),
+        i.positions_hors_us?.some((h) => h.statut === 'détenue')
+          ? el('small', { class: 'hausse' }, `${i.positions_hors_us.filter((h) => h.statut === 'détenue').length} position(s) hors États-Unis`) : null))),
     ),
     el('section', {},
       titre('Conviction des super-investisseurs', 'par société : nombre de détenteurs et poids dans leurs portefeuilles'),
@@ -202,14 +203,33 @@ function pageInvestisseur(i, d, nav) {
     ),
     el('section', {},
       titre('Positions hors États-Unis', d.mentions?.hors_us),
-      i.hors_us?.length ? el('ul', { class: 'ini-liste' }, i.hors_us.map((h) => el('li', { class: 'ini-ligne' },
-        el('span', { class: 'ini-badge' }, PAYS[h.pays] ?? h.pays),
+      i.positions_hors_us?.length ? el('ul', { class: 'ini-liste' }, i.positions_hors_us.map((h) => el('li', { class: 'ini-ligne' },
+        el('span', { class: `ini-badge ${h.statut === 'détenue' ? '' : 'ini-badge--neutre'}` }, PAYS[h.pays] ?? h.pays),
         el('div', { class: 'ini-ligne-corps' },
-          el('div', { class: 'ini-ligne-tete' }, el('strong', {}, h.societe ?? 'Société n. d.'), h.pct != null ? el('span', { class: 'mono' }, `${nombre(h.pct, 2)} %`) : null),
-          el('div', { class: 'ini-ligne-texte' }, `${h.titre ?? ''} · ${h.source} · ${dateFr(h.date)} `, lien(h.url)))))) : el('p', { class: 'sante-ligne' }, 'Aucune déclaration de franchissement de seuil relevée.'),
+          el('div', { class: 'ini-ligne-tete' }, societe(nav, h.ticker, h.societe ?? 'Société n. d.'),
+            h.pct != null ? el('span', { class: 'mono' }, `${nombre(h.pct, 2)} %`) : null,
+            el('small', {}, h.statut === 'détenue' ? 'au-dessus du seuil' : 'passée sous le seuil')),
+          el('div', { class: 'ini-ligne-texte' }, `${h.titre ?? ''} · ${h.entite && !(h.titre ?? '').includes(h.entite) ? `${h.entite} · ` : ''}${h.source} · ${dateFr(h.date)} `, lien(h.url)))))) : el('p', { class: 'sante-ligne' }, 'Aucune position relevée au-dessus des seuils légaux.'),
+      i.hors_us?.length > (i.positions_hors_us?.length ?? 0) ? el('details', { class: 'ini-details' },
+        el('summary', {}, `Historique des déclarations (${i.hors_us.length})`),
+        el('ul', { class: 'ini-mini' }, i.hors_us.map((h) => el('li', {}, el('span', { class: 'mono' }, dateFr(h.date)),
+          ` ${PAYS[h.pays] ?? h.pays} · ${h.societe ?? ''} : ${h.pct != null ? `${nombre(h.pct, 2)} %` : 'n. d.'} (${h.source}) `, lien(h.url))))) : null,
+      blocRecherche(d.recherche_hors_us),
     ),
     el('p', { class: 'fraicheur' }, 'Source : SEC EDGAR (13F) ', lien(i.url, 'dépôts ↗')),
   ];
+}
+
+/** Ce qui a été cherché hors des États-Unis (sources, périodes, documents examinés, résultats). */
+function blocRecherche(r) {
+  if (!r?.sources) return null;
+  return el('details', { class: 'ini-details' },
+    el('summary', {}, 'Recherche effectuée (dernière exécution)'),
+    el('ul', { class: 'ini-mini' }, Object.values(r.sources).map((s) => el('li', {},
+      el('strong', {}, s.source), ` : ${s.etat === 'ok' ? 'ok' : s.etat}`,
+      s.periodes ? ` · du ${dateFr(s.periodes[0])} au ${dateFr(s.periodes[1])}` : '',
+      ` · ${s.documents_examines} document(s) examiné(s)`, s.detail ? ` · ${s.detail}` : '',
+      ` · trouvé : ${s.trouves?.length ? s.trouves.join(' ; ') : 'rien'}`))));
 }
 
 /* ------------------------------------------------------------------ activistes */
