@@ -238,5 +238,32 @@ class TestMatieresPremieres(Base):
         self.assertEqual(self.lances_mp(), [])
 
 
+class TestInities(Base):
+    """Agent initiés : planning réel ; « complet » du mardi au samedi (formulaires 4, 13D, AMF de la veille),
+    « leger » le dimanche et le lundi (vérification quotidienne des 13F et des élus)."""
+
+    def setUp(self):
+        super().setUp()
+        reel = Path(__file__).resolve().parents[3] / ".github" / "workflows" / "agent-inities.yml"
+        shutil.copy(reel, self.wf / "agent-inities.yml")
+        for w in ("agent-marches.yml", "agent-pays.yml", "agent-entreprises.yml", "maintien.yml"):
+            (self.wf / w).unlink()
+
+    def lances_i(self):
+        return [l for l in self.lances if l[0] == "agent-inities.yml"]
+
+    def test_complet_en_semaine(self):
+        self.journal("agent-inities.yml", "2026-11-02T06:40:00Z")  # lundi (léger) fait
+        self.appel("2026-11-03T06:45:00Z")  # mardi
+        self.assertEqual(self.lances_i(), [("agent-inities.yml", {"mode": "complet"})])
+
+    def test_leger_le_dimanche(self):
+        self.journal("agent-inities.yml", "2026-11-07T06:40:00Z")  # samedi (complet) fait
+        self.appel("2026-11-08T07:00:00Z")  # dimanche
+        self.assertEqual(self.lances_i(), [("agent-inities.yml", {"mode": "leger"})])
+        self.appel("2026-11-08T07:15:00Z")  # déjà lancé pour ce créneau
+        self.assertEqual(len(self.lances_i()), 1)
+
+
 if __name__ == "__main__":
     unittest.main()

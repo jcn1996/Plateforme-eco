@@ -1574,3 +1574,48 @@ body.mode-leger .puce--pulsations { opacity: 0.55; }
 .mp-alerte { margin: 8px 0; padding: 8px 10px; border-left: 3px solid var(--orange); background: rgba(255, 181, 71, 0.08); font-size: 12.5px; }
 .mp-publications { display: grid; gap: 4px; margin: 0; padding-left: 18px; font-size: 12px; color: var(--texte-2); }
 .puce--producteurs { border-color: var(--ambre); color: var(--ambre-clair); }
+
+/* ---------- Écran « Initiés » (agent initiés) et bloc de la fiche entreprise ---------- */
+.ini-onglets { display: flex; gap: 6px; overflow-x: auto; margin: 10px 0 4px; padding-bottom: 2px; scrollbar-width: none; }
+.ini-onglet { flex: 0 0 auto; padding: 6px 12px; border: 1px solid var(--ligne); border-radius: 999px; background: none; color: var(--texte-2);
+  font: inherit; font-size: 12.5px; cursor: pointer; }
+.ini-onglet.est-actif { border-color: var(--ligne-forte); background: var(--cyan-doux); color: var(--texte); }
+.ini-mention { margin: 8px 0; font-size: 11.5px; line-height: 1.45; color: var(--orange); }
+.ini-liste { display: grid; list-style: none; margin: 0; padding: 0; }
+.ini-ligne { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: start; padding: 9px 0; border-top: 1px solid var(--ligne); }
+.ini-ligne-corps { min-width: 0; display: grid; gap: 3px; }
+.ini-ligne-tete { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; font-size: 13.5px; }
+.ini-ligne-tete small { font-size: 11px; color: var(--texte-3); }
+.ini-ligne-texte { font-size: 12px; line-height: 1.45; color: var(--texte-2); overflow-wrap: anywhere; }
+.ini-score { display: inline-block; min-width: 54px; padding: 2px 6px; border: 1px solid var(--ligne); border-radius: 8px; text-align: center; font-size: 13px; }
+.ini-score.hausse { border-color: currentColor; background: rgba(46, 229, 157, 0.08); }
+.ini-badge { display: inline-block; padding: 1px 7px; border: 1px solid var(--ligne-forte); border-radius: 999px; font-size: 10.5px; color: var(--cyan); white-space: nowrap; }
+.ini-badge--fort { color: var(--vert); border-color: currentColor; }
+.ini-badge--neg { color: var(--rouge); border-color: currentColor; }
+.ini-badge--neutre { color: var(--texte-3); border-color: var(--ligne); }
+.ini-tableau { display: grid; font-size: 12.5px; }
+.ini-tr { display: grid; grid-template-columns: 76px minmax(0, 1.2fr) minmax(0, 1.2fr) auto auto; gap: 8px; align-items: start; padding: 7px 0; border-top: 1px solid var(--ligne); }
+.ini-tr > span { display: flex; flex-direction: column; gap: 1px; min-width: 0; overflow-wrap: anywhere; }
+.ini-tr small { font-size: 10.5px; color: var(--texte-3); }
+.ini-tr small.hausse { color: var(--vert); }
+.ini-tr small.baisse { color: var(--rouge); }
+.ini-tr--tete { font-size: 10.5px; color: var(--texte-3); text-transform: uppercase; letter-spacing: 0.04em; border-top: 0; }
+.ini-tr a { color: var(--cyan); font-size: 11px; }
+@media (max-width: 520px) {
+  .ini-tr { grid-template-columns: 80px minmax(0, 1fr) auto; }
+  .ini-tr > span:nth-child(3) { grid-column: 2; grid-row: 2; }
+  .ini-tr > span:nth-child(5) { grid-column: 3; grid-row: 2; }
+  .ini-tr--tete > span:nth-child(3), .ini-tr--tete > span:nth-child(5) { display: none; }
+}
+.ini-cartes { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+.ini-carte { display: grid; gap: 4px; text-align: left; color: inherit; font: inherit; cursor: pointer; }
+.ini-carte:hover, .ini-carte:focus-visible { border-color: var(--ligne-forte); }
+.ini-carte > small { font-size: 11px; color: var(--texte-3); }
+.ini-carte-chiffres { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 4px 0; font-size: 13px; }
+.ini-carte-chiffres > span { display: flex; flex-direction: column; gap: 2px; }
+.ini-carte-chiffres small { font-size: 10.5px; color: var(--texte-3); }
+.ini-positions { display: grid; gap: 8px; list-style: none; margin: 0 0 8px; padding: 0; }
+.ini-poids { display: grid; grid-template-columns: minmax(60px, 1fr) auto auto auto; gap: 8px; align-items: center; font-size: 12px; }
+.ini-poids small { color: var(--texte-3); }
+.ini-mini { display: grid; gap: 4px; list-style: none; margin: 0 0 6px; padding: 0; font-size: 12.5px; }
+.ini-bloc h4 { margin: 10px 0 4px; font-size: 12.5px; color: var(--texte-2); }

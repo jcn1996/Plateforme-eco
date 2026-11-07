@@ -2,6 +2,7 @@
    Fiche entreprise (données réelles de l'agent entreprises) :
    note et verdict, confiance, indicateurs, montants (devise locale et dollars),
    dynamique des résultats (guidance, révisions, surprises, objectifs de cours),
+   initiés (achats des dirigeants, super-investisseurs, 13D : agent initiés),
    F-score, signaux d'alerte, revue critique (pépites), contexte pays,
    « Ce qui pourrait me donner tort », lecture des agents, étude complète, sources.
    Les anciennes données fictives restent affichables (champs absents ignorés).
@@ -11,6 +12,7 @@ import { el, nombre, AGENTS, tendanceNote, variation } from './outils.js';
 import { pastilleReco, fichierAnalyse } from './analyses.js';
 import { graphiqueAvance } from './graphiques.js';
 import { blocDynamique } from './dynamique-resultats.js';
+import { blocInities } from './inities.js';
 import { enteteFiche, listeIndicateurs, titreSection, carteAgent, piedFraicheur } from './panneau-pays.js';
 
 /** Ordre d'affichage des onglets. */
@@ -89,6 +91,7 @@ export function ficheEntreprise(d, e, nav = {}) {
     blocConfiance(e.confiance),
     blocRecommandation(e.recommandation, nav),
     blocDynamique(e.dynamique),
+    blocInities(e.ticker, nav),
     blocContexte(e.contexte),
     blocRang(e.rang_secteur),
 

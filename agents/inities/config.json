@@ -1,0 +1,76 @@
+{
+  "_commentaire": "Agent initiés (voir agents/inities/regles.md). Seuils modifiables sans toucher au code.",
+  "edgar": {
+    "_commentaire": "EDGAR exige un User-Agent identifiant (secret SEC_USER_AGENT, déjà utilisé par l'agent entreprises) ; requetes_par_seconde reste sous la limite de 10 de la SEC. form4_max_par_execution borne le nombre de formulaires 4 lus à chaque exécution (les autres le seront à la suivante) ; jours_rattrapage : jours ouvrés lus au premier lancement ; jours_relus : jours d'index relus à chaque exécution (dépôts tardifs). Un formulaire 4 non lu attend 30 jours s'il concerne une société suivie par l'agent entreprises, 7 jours sinon.",
+    "requetes_par_seconde": 8,
+    "form4_max_par_execution": 1500,
+    "jours_rattrapage": 20,
+    "jours_relus": 4
+  },
+  "achats": {
+    "_commentaire": "Achats sur le marché (code P) retenus, hors opérations programmées (case 10b5-1 cochée ou mention 10b5-1). Un achat de moins de montant_min_usd est ignoré (bruit).",
+    "montant_min_usd": 10000,
+    "conservation_jours": 400,
+    "fenetre_score_jours": 60,
+    "fenetre_groupe_jours": 30
+  },
+  "score": {
+    "_commentaire": "Score « achats d'initiés » /100 par société, moyenne pondérée de 5 composantes notées de 0 à 1.",
+    "poids": {"opportuniste": 25, "groupe": 25, "fonction": 20, "montant_relatif": 20, "taille": 10},
+    "baisse_cours_pct": 15.0,
+    "historique_min_jours": 365,
+    "routinier_achats_min": 3,
+    "groupe": {"1": 0.2, "2": 0.6, "3": 1.0},
+    "fonction": {"pdg_daf": 1.0, "dirigeant": 0.7, "administrateur": 0.5, "actionnaire_10pct": 0.3, "autre": 0.3},
+    "montant_relatif": [[50, 1.0], [20, 0.7], [5, 0.4], [0, 0.15]],
+    "taille_md": [[2, 1.0], [10, 0.7], [50, 0.4], [1000000, 0.2]],
+    "taille_inconnue": 0.5
+  },
+  "ventes": {
+    "_commentaire": "Les ventes des dirigeants ne sont pas un signal négatif, sauf ventes massives et groupées : au moins vendeurs_min dirigeants vendent sur le marché (hors 10b5-1) en fenetre_jours jours, pour au moins montant_min_usd au total, en cédant en moyenne au moins part_moyenne_min_pct % de ce qu'ils détenaient.",
+    "fenetre_jours": 30,
+    "vendeurs_min": 3,
+    "montant_min_usd": 5000000,
+    "part_moyenne_min_pct": 20.0
+  },
+  "super_investisseurs": {
+    "_commentaire": "Conviction par société : points par investisseur selon le poids de la position (paliers_poids_pct : [poids minimal, points]) + bonus si la position est nouvelle ou renforcée ; score = min(100, points × points_vers_score). Mouvement « important » : variation du nombre d'actions d'au moins mouvement_min_pct % sur une position pesant au moins poids_min_mouvement_pct %. Positions sous poids_min_affiche_pct % : non converties en ticker (OpenFIGI) ni affichées. Un investisseur dont le dernier 13F couvre un trimestre plus ancien que inactif_trimestres trimestres est signalé comme inactif.",
+    "paliers_poids_pct": [[10, 3.0], [5, 2.0], [2, 1.0], [0, 0.5]],
+    "bonus_achat": 1.0,
+    "points_vers_score": 15,
+    "mouvement_min_pct": 25.0,
+    "poids_min_mouvement_pct": 1.0,
+    "poids_min_affiche_pct": 0.5,
+    "principales_positions": 15,
+    "inactif_trimestres": 2,
+    "openfigi_max_par_execution": 400
+  },
+  "activistes": {
+    "_commentaire": "Formulaires 13D (participation de plus de 5 % avec intention d'influencer) : originaux conservés conservation_jours jours, amendements conservation_amendements_jours jours. Signal « nouveau 13D » : importance forte si le déclarant est un super-investisseur suivi, moyenne si la société est suivie par l'agent entreprises, faible sinon.",
+    "conservation_jours": 180,
+    "conservation_amendements_jours": 60
+  },
+  "europe": {
+    "_commentaire": "France : déclarations des dirigeants (base BDIF de l'AMF, PDF) ; Allemagne : base des « Directors' Dealings » de la BaFin (export CSV). Royaume-Uni : aucune source gratuite structurée exploitable n'a été trouvée (le NSM de la FCA ne publie que les communiqués au format libre) : non suivi.",
+    "amf_max_par_execution": 150,
+    "jours_rattrapage": 30,
+    "franchissements_max_par_execution": 120
+  },
+  "hors_us": {
+    "_commentaire": "Positions hors États-Unis des super-investisseurs, visibles seulement au-dessus des seuils légaux. Inde : actionnaires de plus de 1 % (répartition trimestrielle de l'actionnariat, BSE, société par société, liste dans config/super_investisseurs.json) ; Turquie : KAP (seuils de 5 %) ; Corée : DART (règle des 5 %, secret DART_API_KEY facultatif) ; Japon : EDINET (déclarations de grands actionnaires, secret EDINET_API_KEY facultatif) ; France : franchissements de seuil (AMF).",
+    "jours": 10,
+    "conservation_jours": 1100
+  },
+  "elus": {
+    "_commentaire": "Déclarations de transactions (Periodic Transaction Reports) des élus du Congrès, pour information seulement : aucun effet sur les notes. Chambre : fichiers officiels du greffe (index annuel + PDF). Sénat : le site efdsearch.senate.gov impose d'accepter ses conditions d'utilisation avant toute consultation ; la source n'est donc activée que si vous passez senat_actif à true (vous acceptez alors ces conditions).",
+    "senat_actif": false,
+    "pdf_max_par_execution": 60,
+    "conservation_jours": 120
+  },
+  "signaux": {
+    "_commentaire": "Signaux pour le chef d'orchestre (data/signaux/inities.json). Achats groupés : au moins acheteurs_min dirigeants distincts en 30 jours. Signal favorable dans l'agent entreprises : score_favorable ou plus.",
+    "acheteurs_min": 3,
+    "score_favorable": 60,
+    "conviction_favorable": 45
+  }
+}

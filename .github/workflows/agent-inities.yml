@@ -1,0 +1,90 @@
+# Agent initiés (sans IA) : achats des dirigeants (formulaires 4 de la SEC, AMF, BaFin), activistes (13D),
+# super-investisseurs (13F et franchissements de seuil hors États-Unis), élus du Congrès (information seulement),
+# puis commit du résultat sur main.
+# - du mardi au samedi à 6 h 35 UTC (mode « complet ») : formulaires 4, 13D et déclarations AMF / BaFin de la
+#   veille (jours ouvrés américains), nouveaux 13F, élus ;
+# - le dimanche et le lundi à 6 h 35 UTC (mode « leger ») : vérification quotidienne des nouveaux 13F et des élus ;
+# - avant l'agent entreprises (22 h 30 UTC) : ses deux signaux « achats d'initiés » et « super-investisseurs » sont à jour ;
+# - lancé par le planificateur (réveil externe) ; ce planning GitHub reste en secours ;
+# - à la main : onglet Actions → « Agent initiés » → « Run workflow ».
+name: Agent initiés
+
+on:
+  schedule:
+    - cron: "35 6 * * 2-6"   # complet
+    - cron: "35 6 * * 0,1"   # léger (13F et élus)
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "complet (toutes les sources) ou leger (13F et élus seulement)"
+        required: false
+        default: complet
+        type: choice
+        options: [complet, leger]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: agent-inities
+  cancel-in-progress: false
+
+jobs:
+  agent-inities:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Récupérer le dépôt (branche main)
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Installer Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: agents/requirements.txt
+
+      - name: Installer les dépendances
+        run: pip install -r agents/requirements.txt
+
+      - name: Tester l'agent et le module commun (données de test, sans réseau)
+        run: |
+          python -m unittest discover -s agents/inities -t .
+          python -m unittest discover -s agents/commun -t .
+
+      - name: Lancer l'agent initiés
+        env:
+          # User-Agent identifiant exigé par la SEC (déjà utilisé par l'agent entreprises) ; sans lui, EDGAR est ignoré
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+          # Facultatifs : Corée (DART) et Japon (EDINET) ; sans clé, ces sources sont ignorées
+          DART_API_KEY: ${{ secrets.DART_API_KEY }}
+          EDINET_API_KEY: ${{ secrets.EDINET_API_KEY }}
+          # Mode : celui demandé (planificateur ou lancement à la main), sinon d'après le planning GitHub
+          MODE_DEMANDE: ${{ github.event.inputs.mode }}
+          PLANNING: ${{ github.event.schedule }}
+        run: |
+          MODE="$MODE_DEMANDE"
+          if [ -z "$MODE" ]; then
+            if [ "$PLANNING" = "35 6 * * 0,1" ]; then MODE=leger; else MODE=complet; fi
+          fi
+          python -m agents.inities --mode "$MODE"
+
+      - name: Commiter les données si elles ont changé
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/inities.json data/inities/ data/signaux/ data/historique/inities/ data/recap/ data/journal/
+          if git diff --cached --quiet; then
+            echo "Aucun changement : pas de commit."
+            exit 0
+          fi
+          git commit -m "Agent initiés : mise à jour du $(date -u +%d/%m/%Y)"
+          # main a pu bouger entre-temps : nouvelle tentative en cas de conflit
+          for essai in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            git rebase --abort 2>/dev/null || true
+            sleep $((essai * 5))
+          done
+          exit 1

@@ -51,6 +51,18 @@ valorisation (mais reste affichée) quand les deux méthodes divergent de plus d
 
 Un signal non calculable est neutre.
 
+**Signaux de l'agent initiés** (section `inities`, données `data/inities.json` de moins de `fraicheur_jours`
+jours ; absents sinon) : deux signaux de **pondération modérée** (`poids` : 0,5 chacun) :
+
+| Signal | Favorable | Défavorable |
+|---|---|---|
+| Achats d'initiés | score « achats d'initiés » ≥ `score_favorable` (60/100) | ventes massives et groupées des dirigeants seulement |
+| Super-investisseurs | conviction ≥ `conviction_favorable` (45/100) | jamais |
+
+Dans les règles ci-dessous, « au moins 3 signaux concordants » se lit en somme des pondérations : 1 par signal
+habituel, 0,5 pour chacun des deux signaux de l'agent initiés (deux signaux pleins et les deux signaux de
+l'agent initiés font donc 3). La justification indique le total pondéré quand il diffère du nombre de signaux.
+
 ## 3. Règles
 
 Section `regles` ; « concordants » = de même sens.

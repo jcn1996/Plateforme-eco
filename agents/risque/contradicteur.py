@@ -197,6 +197,16 @@ def valide(fichier: str, s: dict, src: Sources, config: dict, aujourdhui: str) -
                 return False, f"verdict actuel « {m.get('verdict')} », plus « {cible} »"
             return True, "verdict toujours en vigueur"
         return True, "matière première toujours suivie"
+    if agent == "inities":
+        ini = src._json("inities.json")
+        if ini is None:
+            return True, "données de l'agent initiés absentes : âge seul vérifié"
+        soc = (ini.get("societes") or {}).get(cle) if isinstance(ini, dict) else None
+        if t == "achats_groupes":
+            if not soc or not soc.get("acheteurs_30j"):
+                return False, "plus d'achats de dirigeants sur 30 jours"
+            return True, f"{soc['acheteurs_30j']} acheteurs sur 30 jours"
+        return True, "âge seul vérifié"
     if agent == "pays":
         p = src.pays()
         if p is not None and cle not in p and not s.get("pays"):
@@ -449,6 +459,9 @@ def regles(fichier: str, s: dict, ctx: dict, config: dict) -> dict:
     positif = True
     if agent == "entreprises":
         positif = t != "alerte_comptable"
+        objections_entreprise(o, s, ctx, config)
+    elif agent == "inities":
+        # Achats de dirigeants, nouvelle position d'un super-investisseur, 13D : signaux positifs sur une société
         objections_entreprise(o, s, ctx, config)
     elif agent == "macro" and t == "changement_de_phase":
         objections_zone(o, s, ctx, config)
