@@ -213,5 +213,30 @@ class TestRisque(Base):
         self.assertEqual(self.risque(), [])
 
 
+class TestMatieresPremieres(Base):
+    """Agent matières premières : planning réel, en semaine à 22 h 15 UTC (rien le week-end)."""
+
+    def setUp(self):
+        super().setUp()
+        reel = Path(__file__).resolve().parents[3] / ".github" / "workflows" / "agent-matieres-premieres.yml"
+        shutil.copy(reel, self.wf / "agent-matieres-premieres.yml")
+        for w in ("agent-marches.yml", "agent-pays.yml", "agent-entreprises.yml", "maintien.yml"):
+            (self.wf / w).unlink()
+
+    def lances_mp(self):
+        return [l for l in self.lances if l[0] == "agent-matieres-premieres.yml"]
+
+    def test_lance_le_soir_en_semaine(self):
+        self.journal("agent-matieres-premieres.yml", "2026-11-02T22:20:00Z")  # lundi soir fait
+        self.appel("2026-11-03T22:20:00Z")  # mardi, créneau de 22 h 15 dû
+        self.assertEqual(self.lances_mp(), [("agent-matieres-premieres.yml", {})])
+
+    def test_vendredi_soir_puis_rien_le_week_end(self):
+        self.journal("agent-matieres-premieres.yml", "2026-11-06T22:18:00Z")  # vendredi soir (rapport CFTC du jour)
+        self.appel("2026-11-07T14:20:00Z")  # samedi
+        self.appel("2026-11-08T23:00:00Z")  # dimanche soir
+        self.assertEqual(self.lances_mp(), [])
+
+
 if __name__ == "__main__":
     unittest.main()

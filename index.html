@@ -72,6 +72,11 @@
           <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2.5 10h15M10 2.5c2.4 2.2 2.4 12.8 0 15M10 2.5c-2.4 2.2-2.4 12.8 0 15" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M14.5 3.2 16.8 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
           <span class="bouton-libelle">Géopolitique</span>
         </button>
+        <!-- Matières premières (en attendant la refonte de la navigation) -->
+        <button id="btn-matieres" class="bouton bouton--icone-texte" type="button" title="Matières premières : faut-il s'exposer sur 3 à 12 mois ?">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 15.5 6 9.5h8l3 6z M7.5 9.5 9 6.5h2l1.5 3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M10 3v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span class="bouton-libelle">Matières</span>
+        </button>
         <!-- Pastille permanente du palier de risque mondial (agent risque) : ouvre l'écran « Risque » -->
         <button id="btn-risque" class="bouton pastille-risque" type="button" title="Risque mondial" hidden></button>
         <button id="btn-sante" class="bouton bouton--icone bouton-sante" type="button" title="Santé des agents">
@@ -151,6 +156,10 @@
     <button id="btn-pulsations" class="puce puce--pulsations" type="button" aria-pressed="true" hidden title="Masquer les pulsations des flux d'investissement">
       <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="2.2" fill="currentColor"/><circle cx="10" cy="10" r="5.2" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.75"/><circle cx="10" cy="10" r="8.2" fill="none" stroke="currentColor" stroke-width="1.3" opacity="0.4"/></svg>
       <span>Flux ETF</span>
+    </button>
+    <!-- Surbrillance des pays producteurs d'une matière première : toucher pour revenir au filtre choisi -->
+    <button id="btn-producteurs" class="puce puce--producteurs" type="button" hidden title="Revenir au filtre choisi">
+      <span>Producteurs</span><span aria-hidden="true"> ✕</span>
     </button>
   </nav>
 
@@ -268,6 +277,15 @@
       <ol class="ariane js-ariane"></ol>
     </nav>
     <div id="risque-contenu" class="ecran-contenu"></div>
+  </section>
+
+  <!-- ===================== ÉCRAN MATIÈRES PREMIÈRES ===================== -->
+  <section id="ecran-matieres" class="ecran" hidden aria-label="Matières premières">
+    <nav class="navigation navigation--ecran" aria-label="Fil d'Ariane">
+      <button class="bouton bouton--icone js-retour" type="button" title="Retour"><span aria-hidden="true">‹</span><span class="visuellement-cache">Retour</span></button>
+      <ol class="ariane js-ariane"></ol>
+    </nav>
+    <div id="matieres-contenu" class="ecran-contenu"></div>
   </section>
 
   <!-- ===================== ÉCRAN SANTÉ DES AGENTS ===================== -->

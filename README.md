@@ -276,6 +276,45 @@ python -m agents.risque --test --data /tmp/essai   # données de test, sans rés
 python -m agents.risque.tests.capturer_donnees_test # met à jour les données de test
 ```
 
+## Agent matières premières (sans IA)
+
+L'agent dit s'il est pertinent de s'exposer à chaque grande matière première sur un horizon de 3 à 12 mois : « Surpondérer », « Neutre » ou « Sous-pondérer ». Il tourne en semaine à 22 h 15 UTC.
+
+**Périmètre** : or, argent, platine, palladium ; cuivre, aluminium, uranium (ETF URA, « indicateur indirect ») ; pétrole WTI et Brent, gaz naturel américain, gaz européen TTF ; blé, maïs, soja, café, sucre, cacao, coton.
+
+**Sources** (gratuites, croisées quand c'est possible) :
+- Yahoo Finance : cours sur 10 ans et courbe des prix à terme (contrat le plus proche et 8 échéances suivantes, ex. `CLZ26.NYM`, `CLF27.NYM`) : contango ou backwardation, rendement de roulement ;
+- CFTC, Commitments of Traders (API Socrata, sans clé) : position nette des « managed money » et son percentile sur 3 ans ;
+- EIA (secret facultatif `EIA_API_KEY`, voir ci-dessous) : stocks hebdomadaires de brut, Cushing, essence, distillats et gaz, comparés à la moyenne sur 5 ans ;
+- USDA : rapport WASDE et base PSD (comparés entre eux) : ratio stocks / consommation mondiale du blé, du maïs et du soja ;
+- FRED : taux réel à 10 ans (DFII10), dollar (DTWEXBGS), inflation (CPIAUCSL, pour le niveau corrigé de l'inflation) ;
+- autres agents : indicateur avancé de l'OCDE et phase du cycle (`data/macro.json`), événements (`data/geopolitique.json`), palier de risque (`data/risque.json`), sociétés productrices (`data/entreprises.json`) ;
+- flux des ETF GLD, IAU, SLV, USO, CPER et DBA (variation des parts × VL, méthode des ETF pays ; historique accumulé, « en cours de constitution » le premier mois).
+
+**Analyse** : 8 sous-notes /100 (tendance et momentum, courbe, stocks, positionnement lu à contre-courant aux extrêmes, moteurs macro, géopolitique, flux des ETF, niveau historique), note globale pondérée par famille (`agents/matieres_premieres/config.json`), verdict avec deux signaux concordants au minimum, confiance, 3 arguments pour, 3 contre, « Ce qui pourrait me donner tort » et 2 conditions d'invalidation. Synthèse par famille. Moyens de s'exposer (ETC physique, ETF de contrats à terme avec le coût du contango, producteurs analysés par l'agent entreprises, double exposition signalée). Détails : [`agents/matieres_premieres/regles.md`](agents/matieres_premieres/regles.md).
+
+**Sorties** :
+- `data/matieres_premieres.json` ;
+- `data/signaux/matieres_premieres.json` : changement de verdict, positionnement extrême, retournement de la courbe, choc de stocks (lus par le contradicteur de l'agent risque) ;
+- `data/historique/matieres_premieres/AAAA-MM-JJ.json` : notes du jour et relevés des ETF ;
+- `data/recap/matieres-premieres-AAAA-MM-JJ.md` ;
+- `data/journal/agent-matieres-premieres.json` : écran « Santé ».
+
+**Appli** : bouton « Matières » dans l'en-tête → écran « Matières premières » (synthèse par famille, une ligne par matière première avec cours, variations, mini-graphique, note, verdict et confiance) ; toucher une ligne ouvre sa fiche (sous-notes, courbe des prix à terme, positionnement CFTC, stocks, arguments, moyens de s'exposer, sources et dates). Le bouton « Voir les pays producteurs » met en surbrillance sur le globe les principaux producteurs parmi les pays suivis (liste statique dans la configuration) ; la puce « Producteurs : … ✕ » revient au filtre choisi.
+
+**Clé EIA (facultative, gratuite)** : sans elle, les stocks de pétrole et de gaz ne sont pas notés (source « non configurée » dans l'écran Santé, sans alerte).
+1. Demander une clé sur [eia.gov/opendata/register.php](https://www.eia.gov/opendata/register.php) (nom et adresse e-mail) ; elle arrive par e-mail en quelques minutes.
+2. Dans le dépôt GitHub : **Settings** → **Secrets and variables** → **Actions** → **New repository secret** ; nom `EIA_API_KEY`, valeur : la clé reçue.
+3. Elle est utilisée dès l'exécution suivante (ou onglet **Actions** → **Agent matières premières** → **Run workflow**).
+
+**Exécution** : `.github/workflows/agent-matieres-premieres.yml`, lancé par le planificateur, en semaine à 22 h 15 UTC. Les publications hebdomadaires (EIA le mercredi, gaz le jeudi, CFTC le vendredi soir) et mensuelles (WASDE) sont prises en compte à l'exécution qui suit leur parution ; le récapitulatif indique les nouvelles. Le workflow ne lance que ses propres tests et ceux du module commun.
+
+```
+python -m agents.matieres_premieres                       # vraies sources (EIA si EIA_API_KEY existe)
+python -m agents.matieres_premieres --test --data /tmp/essai   # données de test, sans réseau
+python -m agents.matieres_premieres --capturer --data /tmp/essai   # met à jour les données de test
+```
+
 ## Agent entreprises (environ 1 200 sociétés ; Gemini seulement pour lire la guidance)
 
 L'agent entreprises se trouve dans `agents/entreprises/`. Les règles de conduite sont les mêmes que pour l'agent pays.
@@ -462,6 +501,7 @@ js/sante.js           écran « Santé des agents »
 js/planning.js        planning cron des agents : statut (OK, en pause, en retard, en panne)
 js/macro.js           écran « Vue macro » et rubrique « Agent macro » de la fiche pays
 js/risque.js          pastille et écran « Risque », rubrique « Agent risque » de la fiche pays, filtre du globe
+js/matieres-premieres.js  écran « Matières premières » (liste, fiches, pays producteurs sur le globe)
 js/pepites.js         écran « Pépites »
 js/analyses.js        analyse à la demande (bouton, « Mes analyses »), écran « Fiabilité des recommandations »
 js/panneau-pays.js    fiches pays et secteur
@@ -483,7 +523,7 @@ config/surveillance.json  liste de surveillance (complétée par les analyses à
 data/historique/flux_etf/  relevés quotidiens des ETF pays (parts en circulation, VL), flux d'investissement
 data/signaux/pays.json     signaux de l'agent pays (flux des ETF) pour le futur chef d'orchestre
 data/*.json           autres données (fictives pour l'instant)
-agents/               agents Python (agents/commun : téléchargement, cache, journal, écriture ; agents/pays : agent pays ; agents/marches : agent marchés ; agents/macro : agent macro ; agents/rattrapage : relance des exécutions manquées ; agents/entreprises : agent entreprises, recommandation et suivi ; agents/analyse_demande : analyse à la demande ; agents/risque : agent risque et contradicteur)
+agents/               agents Python (agents/commun : téléchargement, cache, journal, écriture ; agents/pays : agent pays ; agents/marches : agent marchés ; agents/macro : agent macro ; agents/rattrapage : relance des exécutions manquées ; agents/entreprises : agent entreprises, recommandation et suivi ; agents/analyse_demande : analyse à la demande ; agents/risque : agent risque et contradicteur ; agents/matieres_premieres : agent matières premières)
 .github/workflows/    exécution planifiée des agents (GitHub Actions)
 data/countries-110m.json, countries-50m.json  frontières des pays (voir data/LICENCE-countries-110m.txt)
 outils/generer_donnees_fictives.py  régénère les données fictives
