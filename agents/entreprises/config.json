@@ -1,12 +1,36 @@
 {
   "_commentaire": "Configuration de l'agent entreprises. Seuils, pondérations et plafonds modifiables sans toucher au code.",
   "univers": {
-    "_commentaire": "Composition : 1) fichiers iShares (point d'accès CSV officiel de la page du fonds) ; 2) membres de l'indice national sur Wikipédia (API MediaWiki), classés par montant échangé ; 3) filtre d'actions Yahoo si « filtre_yahoo » est vrai ; 4) dernière liste connue (data/entreprises/univers.json), puis liste de départ, signalées « périmées ». États-Unis : SSGA SPY/MDY en secours d'iShares. Colombie : Global X COLO (ex-GXG) ; Vietnam et Égypte : VanEck VNM et EGPT. Ensuite : liste manuelle vérifiée (config/compositions_manuelles.json).",
-    "sp400_max": 150,
+    "_commentaire": "Composition : grandes valeurs (ETF pays, S&P 500 et S&P 400 complet), puis petites et moyennes valeurs (« petites_valeurs » : S&P 600 et ETF iShares de petites capitalisations). Sources des grandes valeurs : 1) fichiers iShares (point d'accès CSV officiel de la page du fonds) ; 2) membres de l'indice national sur Wikipédia (API MediaWiki), classés par montant échangé ; 3) filtre d'actions Yahoo si « filtre_yahoo » est vrai ; 4) dernière liste connue (data/entreprises/univers.json), puis liste de départ, signalées « périmées ». États-Unis : SSGA SPY/MDY en secours d'iShares. Colombie : Global X COLO (ex-GXG) ; Vietnam et Égypte : VanEck VNM et EGPT. Ensuite : liste manuelle vérifiée (config/compositions_manuelles.json).",
+    "sp400_max": null,
+    "petites_valeurs": {
+      "_commentaire": "Petites et moyennes valeurs, ajoutées à la composition de chaque pays : ETF iShares de petites capitalisations (identifiants vérifiés dans le sélecteur de produits iShares, nov. 2026). IEUS (MSCI Europe Small-Cap) est réparti par pays d'après la colonne « Location ». Plafond par pays avant le filtre de capitalisation (≥ 300 M$) et de liquidité. Corée : pas d'ETF iShares de petites capitalisations, ni de liste Wikipédia exploitable (KOSDAQ) : non couvert. Brésil : le fichier EWZS donne peu de symboles reconnus.",
+      "US": [{"etf": "IJR", "plafond": null}],
+      "JP": [{"etf": "SCJ", "plafond": 150}],
+      "IN": [{"etf": "SMIN", "plafond": 100}],
+      "CN": [{"etf": "ECNS", "plafond": 80}],
+      "BR": [{"etf": "EWZS", "plafond": 40}],
+      "GB": [{"etf": "EWUS", "plafond": 100}],
+      "FR": [{"etf": "IEUS", "plafond": 50}],
+      "DE": [{"etf": "IEUS", "plafond": 50}],
+      "CH": [{"etf": "IEUS", "plafond": 40}],
+      "IT": [{"etf": "IEUS", "plafond": 40}],
+      "ES": [{"etf": "IEUS", "plafond": 30}],
+      "NL": [{"etf": "IEUS", "plafond": 25}],
+      "SE": [{"etf": "IEUS", "plafond": 50}],
+      "PL": [{"etf": "IEUS", "plafond": 15}]
+    },
     "capitalisation_min_musd": 300,
     "volume_min_musd_jour": 1.0,
     "url_ishares": "https://www.ishares.com/us/products/{id}/{slug}/1467271812596.ajax?fileType=csv&fileName={t}_holdings&dataType=fund",
     "ishares": {
+      "IJR": {"id": 239774, "slug": "ishares-core-s-p-small-cap-etf", "verifie": true},
+      "SCJ": {"id": 239666, "slug": "ishares-msci-japan-small-cap-etf", "verifie": true},
+      "SMIN": {"id": 239660, "slug": "ishares-msci-india-small-cap-etf", "verifie": true},
+      "EWZS": {"id": 239613, "slug": "ishares-msci-brazil-small-cap-etf", "verifie": true},
+      "ECNS": {"id": 239620, "slug": "ishares-msci-china-small-cap-etf", "verifie": true},
+      "EWUS": {"id": 239691, "slug": "ishares-msci-united-kingdom-small-cap-etf", "verifie": true},
+      "IEUS": {"id": 239537, "slug": "ishares-msci-europe-small-cap-etf", "verifie": true},
       "IVV": {
         "id": 239726,
         "slug": "ishares-core-sp-500-etf",
@@ -531,14 +555,14 @@
     "_suffixes_sans_cours": "Places dont Yahoo Finance ne publie pas les cours (Abu Dhabi) : positions écartées avant le plafond du pays."
   },
   "lots": {
-    "_commentaire": "Révision complète du samedi, découpée en lots (durée maximale d'un job GitHub : 6 h).",
+    "_commentaire": "Révision complète du samedi, découpée en lots (durée maximale d'un job GitHub : 6 h). Depuis l'ajout des petites et moyennes valeurs (environ 3 000 sociétés), les États-Unis sont répartis en 4 tranches, l'Europe et l'Asie-Pacifique en 2.",
     "etats_unis_1": {
       "pays": [
         "US"
       ],
       "tranche": [
         0,
-        2
+        4
       ]
     },
     "etats_unis_2": {
@@ -547,7 +571,25 @@
       ],
       "tranche": [
         1,
-        2
+        4
+      ]
+    },
+    "etats_unis_3": {
+      "pays": [
+        "US"
+      ],
+      "tranche": [
+        2,
+        4
+      ]
+    },
+    "etats_unis_4": {
+      "pays": [
+        "US"
+      ],
+      "tranche": [
+        3,
+        4
       ]
     },
     "ameriques": {
@@ -560,7 +602,7 @@
         "CO"
       ]
     },
-    "europe": {
+    "europe_1": {
       "pays": [
         "GB",
         "FR",
@@ -571,9 +613,30 @@
         "NL",
         "SE",
         "PL"
+      ],
+      "tranche": [
+        0,
+        2
       ]
     },
-    "asie_pacifique": {
+    "europe_2": {
+      "pays": [
+        "GB",
+        "FR",
+        "DE",
+        "CH",
+        "IT",
+        "ES",
+        "NL",
+        "SE",
+        "PL"
+      ],
+      "tranche": [
+        1,
+        2
+      ]
+    },
+    "asie_pacifique_1": {
       "pays": [
         "JP",
         "CN",
@@ -585,6 +648,28 @@
         "SG",
         "TH",
         "VN"
+      ],
+      "tranche": [
+        0,
+        2
+      ]
+    },
+    "asie_pacifique_2": {
+      "pays": [
+        "JP",
+        "CN",
+        "IN",
+        "KR",
+        "TW",
+        "AU",
+        "ID",
+        "SG",
+        "TH",
+        "VN"
+      ],
+      "tranche": [
+        1,
+        2
       ]
     },
     "moyen_orient_afrique": {
@@ -630,7 +715,7 @@
   },
   "ecart_officiel_max_pct": 5.0,
   "pepites": {
-    "_commentaire": "Deux listes. « pepites » : capitalisation entre cap_min et cap_max (Md$), peu suivies (analystes ≤ analystes_max quand Yahoo le fournit). « qualite_prix_raisonnable » : grandes sociétés (au-dessus de cap_max) qui remplissent les mêmes critères. plafond_par_secteur : au plus N sociétés d'un même secteur GICS par liste. Holdings, sociétés d'investissement, fonds fermés, BDC et SPAC exclus (et jamais « Acheter » sur une valorisation PER). Holding = industrie exclue, ou « Asset Management » avec un mot de holdings_mots dans le nom ; fonds fermé ou BDC = un mot de fonds_mots dans le nom et une industrie de fonds_industries (ou secteur Finance, industrie inconnue) ; SPAC = industrie « Shell Companies » ou un mot de spac_mots dans le nom.",
+    "_commentaire": "Deux listes. « pepites » : capitalisation entre cap_min et cap_max (Md$), peu suivies (analystes ≤ analystes_max quand Yahoo le fournit). « qualite_prix_raisonnable » : grandes sociétés (au-dessus de cap_max) qui remplissent les mêmes critères. plafond_par_secteur et plafond_par_pays : au plus N sociétés d'un même secteur GICS et d'un même pays par liste ; nombre_min : objectif de pépites par révision (avertissement publié en deçà). Holdings, sociétés d'investissement, fonds fermés, BDC et SPAC exclus (et jamais « Acheter » sur une valorisation PER). Holding = industrie exclue, ou « Asset Management » avec un mot de holdings_mots dans le nom ; fonds fermé ou BDC = un mot de fonds_mots dans le nom et une industrie de fonds_industries (ou secteur Finance, industrie inconnue) ; SPAC = industrie « Shell Companies » ou un mot de spac_mots dans le nom.",
     "croissance_ca_min": 10.0,
     "fscore_min": 7,
     "dette_ebitda_max": 2.0,
@@ -641,6 +726,7 @@
     "cap_max_md": 20.0,
     "analystes_max": 8,
     "plafond_par_secteur": 3,
+    "plafond_par_pays": 5,
     "nombre_max_qpr": 25,
     "concentration_seuil": 0.15,
     "concentration_min": 4,

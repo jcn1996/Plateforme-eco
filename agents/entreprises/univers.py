@@ -449,6 +449,34 @@ class Composition:
         return sorted([s for s in liste if s["poids"] >= 0], key=lambda x: -x["poids"])
 
     def pays(self, code: str, plafond: int | None) -> tuple[list[dict], str]:
+        """Grandes valeurs du pays (voir grandes_valeurs), puis petites et moyennes valeurs (petites_valeurs)."""
+        liste, source = self.grandes_valeurs(code, plafond)
+        petites, src_petites = self.petites_valeurs(code)
+        if petites:
+            vus = {s["ticker"] for s in liste}
+            liste = liste + [s for s in petites if s["ticker"] not in vus]
+        if src_petites:
+            source += " ; petites et moyennes valeurs : " + src_petites
+        return liste, source
+
+    def petites_valeurs(self, code: str) -> tuple[list[dict], str]:
+        """Petites et moyennes valeurs (S&P 600, ETF iShares de petites capitalisations ; IEUS réparti par pays).
+        Un fonds en échec n'empêche pas la composition du pays : ses grandes valeurs restent analysées."""
+        res, sources = [], []
+        for x in self.cfg.get("petites_valeurs", {}).get(code, []):
+            try:
+                liste = [s for s in self.cotees(self.etf_ishares(x["etf"], code)) if s["pays"] == code]
+                liste = liste[:x["plafond"]] if x.get("plafond") else liste
+                for s in liste:
+                    s["segment"] = "petites et moyennes valeurs"
+                res += liste
+                sources.append(f"iShares {x['etf']} ({len(liste)})")
+            except Exception as e:
+                sources.append(f"iShares {x['etf']} en échec ({str(e)[:80]})")
+                LOG.warning("Petites valeurs %s (%s) indisponibles : %s", code, x["etf"], str(e)[:160])
+        return res, ", ".join(sources)
+
+    def grandes_valeurs(self, code: str, plafond: int | None) -> tuple[list[dict], str]:
         """Liste des sociétés d'un pays et source utilisée. Ordre : iShares, puis Wikipédia, puis (si activé)
         filtre d'actions Yahoo. Lève une erreur si toutes échouent (la dernière liste connue prend alors le relais)."""
         p = self.cfg["pays"][code]

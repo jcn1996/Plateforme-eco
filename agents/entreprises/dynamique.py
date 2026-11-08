@@ -536,6 +536,9 @@ def collecter_analystes(yahoo, tickers: list[str], soc: dict, cfg: dict, aujourd
     ok, echecs = 0, []
     if not hasattr(yahoo, "analystes"):
         return {"ok": 0, "echecs": 0, "absent": True}
+    # Les données d'analystes les plus anciennes d'abord : avec un univers plus grand que le plafond par exécution,
+    # chaque société est rafraîchie à tour de rôle
+    tickers = sorted(tickers, key=lambda t: ((soc.get(t) or {}).get("analystes") or {}).get("maj") or "")
     for k, t in enumerate(tickers[:cfg["yahoo"]["societes_max_par_execution"]], 1):
         try:
             a = lire_analystes(yahoo.analystes(t))

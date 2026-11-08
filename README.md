@@ -444,11 +444,12 @@ python -m agents.trader --test --data /tmp/essai         # cours simulés, sans 
 python -m agents.trader.tests.simulation                 # simulation de 3 mois sur données de test
 ```
 
-## Agent entreprises (environ 1 200 sociétés ; Gemini seulement pour lire la guidance)
+## Agent entreprises (environ 3 000 sociétés ; Gemini seulement pour lire la guidance)
 
 L'agent entreprises se trouve dans `agents/entreprises/`. Les règles de conduite sont les mêmes que pour l'agent pays.
 
-**Univers** : S&P 500 et les 150 plus grandes valeurs du S&P 400, puis les plus grosses positions des ETF iShares MSCI de chaque pays suivi, avec un plafond par pays (`config.json`) ; à cela s'ajoute la liste de surveillance personnelle (`config/surveillance.json`).
+**Univers** : S&P 500 et S&P 400 complet, puis les plus grosses positions des ETF iShares MSCI de chaque pays suivi, avec un plafond par pays (`config.json`) ; à cela s'ajoute la liste de surveillance personnelle (`config/surveillance.json`).
+- **Petites et moyennes valeurs** (`univers.petites_valeurs`) : S&P 600 (iShares IJR) et ETF iShares de petites capitalisations, avec un plafond par pays : Japon (SCJ), Inde (SMIN), Chine (ECNS), Brésil (EWZS), Royaume-Uni (EWUS), Europe continentale (IEUS, réparti par pays : France, Allemagne, Suisse, Italie, Espagne, Pays-Bas, Suède, Pologne). Identifiants vérifiés dans le sélecteur de produits iShares. Corée : pas de source gratuite exploitable pour les petites valeurs. Un fonds en échec n'empêche pas l'analyse des grandes valeurs du pays.
 - Filtre : capitalisation d'au moins 300 M$ et volume suffisant.
 - Doublons écartés : catégories d'actions (GOOGL / GOOG) et doubles cotations.
 - Ordre des sources de composition :
@@ -492,14 +493,14 @@ Chaque société reçoit une note sur 100 (pondérations dans `config.json`), un
 - budget Gemini propre à l'agent entreprises, à l'intérieur des quotas gratuits partagés avec les agents géopolitique et risque.
 
 **Pépites candidates** (`data/pepites.json`) : sociétés qui remplissent tous les critères de `config.json`, réparties en deux listes :
-- « Pépites » : capitalisation de 300 M$ à 20 Md$, peu suivies (au plus 8 analystes quand Yahoo le fournit) ;
+- « Pépites » : capitalisation de 300 M$ à 20 Md$, peu suivies (au plus 8 analystes quand Yahoo le fournit) ; au plus 3 par secteur et 5 par pays dans chaque liste ; objectif d'au moins 15 pépites par révision, avec les mêmes critères stricts et la revue critique (un avertissement est publié quand l'objectif n'est pas atteint) ;
 - « Qualité à prix raisonnable » : grandes sociétés.
 
 Au plus 3 sociétés par secteur dans chaque liste ; un avertissement apparaît quand une industrie ou un secteur est surreprésenté parmi les candidates. Les holdings et sociétés d'investissement sont exclues. Elles sont classées par note ajustée selon le contexte : note du pays et phase du cycle de sa zone, un ajustement modéré affiché à part. Chacune a une revue critique : risques, piège de valeur possible, risque de change, risque pays, points à vérifier soi-même et lien vers le dernier rapport officiel.
 
 **Exécution** (`.github/workflows/agent-entreprises.yml`) :
 - en semaine à 22 h 30 UTC : cours, momentum, valorisation, révision des sociétés ayant publié, nouveaux communiqués de résultats (guidance) et révisions des analystes ;
-- le samedi : révision complète en 6 lots parallèles, puis assemblage (qui recalcule aussi la dynamique des résultats) ;
+- le samedi : révision complète en 10 lots (4 parallèles au plus : États-Unis en 4 tranches, Europe et Asie-Pacifique en 2), puis assemblage (qui recalcule aussi la dynamique des résultats) ;
 - à la main : onglet **Actions** → **Agent entreprises** → **Run workflow** (mode `quotidien`, `complet` ou `echantillon`).
 
 ```
