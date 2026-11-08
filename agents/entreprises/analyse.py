@@ -557,9 +557,11 @@ def est_holding(nom: str, industrie: str | None, ticker: str, cfg: dict, secteur
 def selection_listes(candidats: list[dict], cfg: dict) -> dict[str, list[dict]]:
     """candidats : sociétés qui remplissent tous les critères ({ticker, cap, analystes, secteur, note_ajustee}).
     « pepites » : capitalisation entre cap_min et cap_max (Md$), peu suivies ; « qpr » : au-dessus de cap_max.
-    Au plus plafond_par_secteur sociétés d'un même secteur dans chaque liste."""
+    Au plus plafond_par_secteur sociétés d'un même secteur et plafond_par_pays d'un même pays dans chaque liste,
+    pour une sélection répartie sur plusieurs secteurs et pays."""
     listes = {"pepites": [], "qpr": []}
     par_secteur = {"pepites": {}, "qpr": {}}
+    par_pays = {"pepites": {}, "qpr": {}}
     for c in sorted(candidats, key=lambda c: -c["note_ajustee"]):
         cap = c.get("cap") or 0
         if cap >= cfg["cap_max_md"]:
@@ -569,9 +571,11 @@ def selection_listes(candidats: list[dict], cfg: dict) -> dict[str, list[dict]]:
         else:
             continue  # trop suivie pour une pépite, trop petite pour la liste « qualité à prix raisonnable »
         n = par_secteur[liste].get(c["secteur"], 0)
-        if n >= cfg["plafond_par_secteur"] or len(listes[liste]) >= maximum:
+        np = par_pays[liste].get(c.get("pays"), 0)
+        if n >= cfg["plafond_par_secteur"] or len(listes[liste]) >= maximum or np >= cfg.get("plafond_par_pays", 10 ** 6):
             continue
         par_secteur[liste][c["secteur"]] = n + 1
+        par_pays[liste][c.get("pays")] = np + 1
         listes[liste].append(c)
     return listes
 

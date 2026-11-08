@@ -312,3 +312,74 @@ class TestAgent(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestUniversElargi(unittest.TestCase):
+    """Petites et moyennes valeurs, lots de la révision du samedi, pépites réparties, rotation des analystes."""
+
+    def test_petites_valeurs_ajoutees_par_pays(self):
+        cfg = json.loads(json.dumps(CFG))
+
+        class Compo(U.Composition):
+            def etf_ishares(self, etf, pays):
+                if etf == "EWQ":
+                    return [{"ticker": "MC.PA", "nom": "Lvmh", "pays": "FR", "secteur": "Consumer Discretionary", "poids": 5.0}]
+                if etf == "IEUS":
+                    return [{"ticker": "IMI.L", "nom": "Imi", "pays": "GB", "secteur": "Industrials", "poids": 1.0},
+                            {"ticker": "SOI.PA", "nom": "Soitec", "pays": "FR", "secteur": "Information Technology", "poids": 0.8},
+                            {"ticker": "MC.PA", "nom": "Lvmh", "pays": "FR", "secteur": "Consumer Discretionary", "poids": 0.1}]
+                raise ValueError("inconnu")
+        c = Compo(None, cfg)
+        liste, source = c.pays("FR", cfg["univers"]["pays"]["FR"]["plafond"])
+        self.assertEqual([s["ticker"] for s in liste], ["MC.PA", "SOI.PA"])  # IEUS réparti par pays, sans doublon
+        self.assertEqual(liste[1]["segment"], "petites et moyennes valeurs")
+        self.assertIn("IEUS", source)
+
+        class CompoPanne(Compo):
+            def etf_ishares(self, etf, pays):
+                if etf == "IEUS":
+                    raise ValueError("HTTP 503")
+                return super().etf_ishares(etf, pays)
+        liste, source = CompoPanne(None, cfg).pays("FR", None)
+        self.assertEqual([s["ticker"] for s in liste], ["MC.PA"])  # les grandes valeurs restent analysées
+        self.assertIn("en échec", source)
+
+    def test_identifiants_ishares_et_lots(self):
+        u = CFG["univers"]
+        for code, fonds in u["petites_valeurs"].items():
+            if code.startswith("_"):
+                continue
+            self.assertIn(code, u["pays"])
+            for x in fonds:
+                self.assertIn(x["etf"], u["ishares"], x["etf"])
+        self.assertIsNone(u["sp400_max"])  # S&P 400 complet
+        lots = {k: v for k, v in CFG["lots"].items() if not k.startswith("_")}
+        couverts = {p for v in lots.values() for p in v["pays"]}
+        self.assertEqual(couverts, set(u["pays"]))
+        us = sorted(tuple(v["tranche"]) for v in lots.values() if v["pays"] == ["US"])
+        self.assertEqual(us, [(i, 4) for i in range(4)])
+        texte = (Path(__file__).resolve().parents[3] / ".github" / "workflows" / "agent-entreprises.yml").read_text(encoding="utf-8")
+        for k in lots:
+            self.assertIn(k, texte)
+
+    def test_pepites_reparties_par_pays(self):
+        cfg = {**CFG["pepites"], "plafond_par_pays": 2, "plafond_par_secteur": 10, "nombre_max": 25}
+        cands = [{"ticker": f"T{i}", "pays": "US" if i < 6 else "JP", "cap": 1.0, "analystes": 2, "secteur": f"S{i}", "note_ajustee": 90 - i}
+                 for i in range(8)]
+        l = A.selection_listes(cands, cfg)["pepites"]
+        self.assertEqual([c["ticker"] for c in l], ["T0", "T1", "T6", "T7"])
+
+    def test_rotation_des_analystes(self):
+        from datetime import date
+        from agents.entreprises import dynamique as D
+        vus = []
+
+        class Y:
+            def analystes(self, t):
+                vus.append(t)
+                return {}
+        soc = {"A": {"analystes": {"maj": "2026-11-07"}}, "B": {"analystes": {"maj": "2026-11-01"}}, "C": {}}
+        cfg_d = json.loads(json.dumps(CFG["dynamique"]))
+        cfg_d["yahoo"].update({"societes_max_par_execution": 2, "pause_secondes": 0})
+        D.collecter_analystes(Y(), ["A", "B", "C"], soc, cfg_d, date(2026, 11, 8))
+        self.assertEqual(vus, ["C", "B"])  # jamais lues, puis les plus anciennes

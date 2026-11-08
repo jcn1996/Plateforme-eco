@@ -388,7 +388,7 @@ Le chef d'orchestre réunit les sorties de tous les agents. Méthode complète :
 
 **Entrées** : `data/pays.json`, `macro.json`, `marches.json`, `risque.json`, `geopolitique.json`, `matieres_premieres.json`, `entreprises.json` (et fiches), `pepites.json`, `inities.json`, flux des ETF (dans `pays.json`), analyses à la demande, `data/signaux/*.json` et `revues.json` (objections du contradicteur). Chaque entrée est pondérée par sa fraîcheur, la santé de son agent et sa confiance ; une donnée périmée ou d'un agent dégradé pèse moins, et c'est signalé.
 
-**Univers** : actions des 31 pays suivis (avec les 3 meilleures sociétés de chaque pays attractif), matières premières, or (à part, valeur refuge), obligations d'État américaines et de la zone euro (courtes et longues), liquidités en dollars et en euros (rendement réel), entreprises (pépites, qualité à prix raisonnable, liste de surveillance, analyses à la demande, meilleures sociétés des pays attractifs).
+**Univers** : actions des 31 pays suivis (avec les 3 meilleures sociétés de chaque pays attractif), les 11 secteurs GICS dans le monde, aux États-Unis, en Europe et dans les émergents (signaux agrégés des sociétés, ETF sectoriels XLK…, iShares Global…, iShares STOXX Europe 600 : momentum et flux, rotation sectorielle selon le cycle, initiés, risque et géopolitique), matières premières, or (à part, valeur refuge), obligations d'État américaines et de la zone euro (courtes et longues), liquidités en dollars et en euros (rendement réel), entreprises (pépites, qualité à prix raisonnable, liste de surveillance, analyses à la demande, meilleures sociétés des pays attractifs).
 
 **Moteur** :
 - familles de signaux normalisées (percentiles dans la classe, mélangés à la note absolue de l'agent) : fondamentaux, valorisation, tendance, flux, adéquation au cycle (tableau des phases), risque, géopolitique, initiés, dynamique des résultats ;
@@ -412,7 +412,7 @@ Le chef d'orchestre réunit les sorties de tous les agents. Méthode complète :
 
 **Appli** :
 - le globe reste le premier écran ; le panneau « Synthèse » remplace le bandeau des alertes ;
-- écran « Où investir » à onglets : « Panorama » (top 5 diversifié, top 5 des pays, top 3 des matières premières, or, obligations et liquidités, au moins 10 entreprises sur 4 secteurs et 4 pays au minimum, liste « À surveiller »), puis Pays, Matières premières, Obligations et liquidités, Entreprises, Allocation) : pour chaque ligne, score, verdict, conviction, flèche de tendance, 3 arguments pour, 3 contre, objection du contradicteur et date du dernier changement ; toucher une ligne ouvre sa fiche détaillée (familles de signaux et leurs sources, conviction, objections, « Ce qui pourrait me donner tort ») ;
+- écran « Où investir » à onglets : « Panorama » (top 5 diversifié, top 5 des pays, top 3 des secteurs, top 3 des matières premières, or, obligations et liquidités, au moins 10 entreprises sur 4 secteurs et 4 pays au minimum, liste « À surveiller »), puis Pays, Secteurs (choix de la zone), Matières premières, Obligations et liquidités, Entreprises, Allocation) : pour chaque ligne, score, verdict, conviction, flèche de tendance, 3 arguments pour, 3 contre, objection du contradicteur et date du dernier changement ; toucher une ligne ouvre sa fiche détaillée (familles de signaux et leurs sources, conviction, objections, « Ce qui pourrait me donner tort ») ;
 - filtre du globe « Attractivité » ;
 - sous chaque recommandation : « Avis indicatif généré automatiquement, sans prise en compte d'un profil ou d'une situation personnelle. »
 
@@ -444,11 +444,12 @@ python -m agents.trader --test --data /tmp/essai         # cours simulés, sans 
 python -m agents.trader.tests.simulation                 # simulation de 3 mois sur données de test
 ```
 
-## Agent entreprises (environ 1 200 sociétés ; Gemini seulement pour lire la guidance)
+## Agent entreprises (environ 3 000 sociétés ; Gemini seulement pour lire la guidance)
 
 L'agent entreprises se trouve dans `agents/entreprises/`. Les règles de conduite sont les mêmes que pour l'agent pays.
 
-**Univers** : S&P 500 et les 150 plus grandes valeurs du S&P 400, puis les plus grosses positions des ETF iShares MSCI de chaque pays suivi, avec un plafond par pays (`config.json`) ; à cela s'ajoute la liste de surveillance personnelle (`config/surveillance.json`).
+**Univers** : S&P 500 et S&P 400 complet, puis les plus grosses positions des ETF iShares MSCI de chaque pays suivi, avec un plafond par pays (`config.json`) ; à cela s'ajoute la liste de surveillance personnelle (`config/surveillance.json`).
+- **Petites et moyennes valeurs** (`univers.petites_valeurs`) : S&P 600 (iShares IJR) et ETF iShares de petites capitalisations, avec un plafond par pays : Japon (SCJ), Inde (SMIN), Chine (ECNS), Brésil (EWZS), Royaume-Uni (EWUS), Europe continentale (IEUS, réparti par pays : France, Allemagne, Suisse, Italie, Espagne, Pays-Bas, Suède, Pologne). Identifiants vérifiés dans le sélecteur de produits iShares. Corée : pas de source gratuite exploitable pour les petites valeurs. Un fonds en échec n'empêche pas l'analyse des grandes valeurs du pays.
 - Filtre : capitalisation d'au moins 300 M$ et volume suffisant.
 - Doublons écartés : catégories d'actions (GOOGL / GOOG) et doubles cotations.
 - Ordre des sources de composition :
@@ -492,14 +493,14 @@ Chaque société reçoit une note sur 100 (pondérations dans `config.json`), un
 - budget Gemini propre à l'agent entreprises, à l'intérieur des quotas gratuits partagés avec les agents géopolitique et risque.
 
 **Pépites candidates** (`data/pepites.json`) : sociétés qui remplissent tous les critères de `config.json`, réparties en deux listes :
-- « Pépites » : capitalisation de 300 M$ à 20 Md$, peu suivies (au plus 8 analystes quand Yahoo le fournit) ;
+- « Pépites » : capitalisation de 300 M$ à 20 Md$, peu suivies (au plus 8 analystes quand Yahoo le fournit) ; au plus 3 par secteur et 5 par pays dans chaque liste ; objectif d'au moins 15 pépites par révision, avec les mêmes critères stricts et la revue critique (un avertissement est publié quand l'objectif n'est pas atteint) ;
 - « Qualité à prix raisonnable » : grandes sociétés.
 
 Au plus 3 sociétés par secteur dans chaque liste ; un avertissement apparaît quand une industrie ou un secteur est surreprésenté parmi les candidates. Les holdings et sociétés d'investissement sont exclues. Elles sont classées par note ajustée selon le contexte : note du pays et phase du cycle de sa zone, un ajustement modéré affiché à part. Chacune a une revue critique : risques, piège de valeur possible, risque de change, risque pays, points à vérifier soi-même et lien vers le dernier rapport officiel.
 
 **Exécution** (`.github/workflows/agent-entreprises.yml`) :
 - en semaine à 22 h 30 UTC : cours, momentum, valorisation, révision des sociétés ayant publié, nouveaux communiqués de résultats (guidance) et révisions des analystes ;
-- le samedi : révision complète en 6 lots parallèles, puis assemblage (qui recalcule aussi la dynamique des résultats) ;
+- le samedi : révision complète en 10 lots (4 parallèles au plus : États-Unis en 4 tranches, Europe et Asie-Pacifique en 2), puis assemblage (qui recalcule aussi la dynamique des résultats) ;
 - à la main : onglet **Actions** → **Agent entreprises** → **Run workflow** (mode `quotidien`, `complet` ou `echantillon`).
 
 ```

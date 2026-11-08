@@ -14,9 +14,9 @@ import { el, nombre, classeNote } from './outils.js';
 const FICHIER = 'data/chef.json';
 const MENTION = 'Avis indicatif généré automatiquement, sans prise en compte d’un profil ou d’une situation personnelle.';
 export const ONGLETS_INVESTIR = {
-  panorama: 'Panorama', pays: 'Pays', matieres: 'Matières premières', obligations: 'Obligations et liquidités', entreprises: 'Entreprises', allocation: 'Allocation',
+  panorama: 'Panorama', pays: 'Pays', secteurs: 'Secteurs', matieres: 'Matières premières', obligations: 'Obligations et liquidités', entreprises: 'Entreprises', allocation: 'Allocation',
 };
-const TYPES = { pays: 'Actions · pays', matieres: 'Matière première', or: 'Or · valeur refuge', obligations: 'Obligations', liquidites: 'Liquidités', entreprises: 'Entreprise' };
+const TYPES = { pays: 'Actions · pays', secteurs: 'Secteur', matieres: 'Matière première', or: 'Or · valeur refuge', obligations: 'Obligations', liquidites: 'Liquidités', entreprises: 'Entreprise' };
 const AGENTS = {
   pays: 'Agent pays', macro: 'Agent macro', entreprises: 'Agent entreprises', geopolitique: 'Agent géopolitique', risque: 'Agent risque',
   matieres_premieres: 'Matières premières', inities: 'Agent initiés', chef: 'Chef d’orchestre',
@@ -67,7 +67,7 @@ const mention = () => el('p', { class: 'chef-mention' }, MENTION);
 /** Toutes les opportunités, à plat. */
 function toutes(chef) {
   if (!chef) return [];
-  return [...(chef.pays ?? []), ...(chef.matieres ?? []), ...(chef.or ? [chef.or] : []), ...(chef.obligations ?? []), ...(chef.liquidites ?? []), ...(chef.entreprises ?? [])];
+  return [...(chef.pays ?? []), ...(chef.secteurs ?? []), ...(chef.matieres ?? []), ...(chef.or ? [chef.or] : []), ...(chef.obligations ?? []), ...(chef.liquidites ?? []), ...(chef.entreprises ?? [])];
 }
 
 /* ------------------------------------------------------------------ globe */
@@ -286,8 +286,10 @@ export function ecranInvestir(chef, nav, id) {
   } else if (onglet === 'obligations') {
     corps = [titre('Obligations d’État', 'États-Unis et zone euro, courtes et longues'), liste(chef.obligations, nav),
       titre('Liquidités', 'rendement monétaire réel = taux court − inflation'), liste(chef.liquidites, nav)];
+  } else if (onglet === 'secteurs') {
+    corps = ongletSecteurs(chef, nav);
   } else if (onglet === 'entreprises') {
-    corps = [titre('Entreprises', 'pépites, qualité à prix raisonnable, liste de surveillance, meilleures sociétés des pays attractifs'), liste(chef.entreprises, nav)];
+    corps = ongletEntreprises(chef, nav);
   } else corps = ongletAllocation(chef, nav);
   return [
     entete,
@@ -314,6 +316,7 @@ function blocEntrees(chef) {
 function lignePanorama(x, nav, raison) {
   return el('li', {}, el('button', { class: `chef-ligne chef-ligne--compacte ${classeVerdict(x.verdict)}`, type: 'button', onclick: () => nav.ouvrir({ type: 'investir', id: `o-${x.id}` }) },
     el('div', { class: 'chef-ligne-tete' }, el('strong', { class: 'chef-ligne-nom' }, x.nom), badgeScore(x.score), fleche(x.fleche), pastilleVerdict(x.verdict), pastilleConviction(x.conviction)),
+    !raison && x.a_surveiller ? el('div', { class: 'chef-petit chef-attente' }, 'À surveiller : objection à lever ou hausse passée extrême (voir la fiche).') : null,
     raison ? el('div', { class: 'chef-petit chef-attente' }, raison) : null,
     !raison && x.argument ? el('div', { class: 'chef-petit' }, `+ ${resume(x.argument, 140)}`) : null,
     !raison && x.contre ? el('div', { class: 'chef-petit' }, `− ${resume(x.contre, 140)}`) : null));
@@ -326,6 +329,7 @@ function ongletPanorama(chef, nav) {
   return [
     ...bloc('Top 5', 'verdict positif au-dessus du seuil, sans objection à lever ; une ligne par catégorie d’abord', p.top, 'Aucune opportunité à verdict positif sans objection à lever.'),
     ...bloc('Pays', 'top 5', p.pays),
+    ...bloc('Secteurs', 'top 3, une zone par secteur', p.secteurs),
     ...bloc('Matières premières', 'top 3', p.matieres),
     ...bloc('Or', 'valeur refuge', p.or ? [p.or] : []),
     ...bloc('Obligations et liquidités', 'position sur chaque ligne', [...(p.obligations ?? []), ...(p.liquidites ?? [])]),
@@ -342,6 +346,7 @@ function lienSource(l, nav) {
   if (l.type === 'pays') return el('button', { class: 'bouton', type: 'button', onclick: () => nav.ouvrirPays(l.cle) }, 'Voir la fiche pays');
   if (l.type === 'matieres' || l.type === 'or') return el('button', { class: 'bouton', type: 'button', onclick: () => nav.ouvrir({ type: 'matieres', id: l.cle }) }, 'Voir la fiche matière première');
   if (l.type === 'entreprises' && nav.entrepriseExiste?.(l.cle)) return el('button', { class: 'bouton', type: 'button', onclick: () => nav.ouvrirEntreprise(l.cle) }, 'Voir la fiche entreprise');
+  if (l.type === 'secteurs') return el('button', { class: 'bouton', type: 'button', onclick: () => { zoneSecteurs = l.zone_secteur ?? 'monde'; nav.ouvrir({ type: 'investir', id: 'secteurs' }); } }, 'Voir les secteurs de la zone');
   if (l.type === 'obligations' || l.type === 'liquidites') return el('button', { class: 'bouton', type: 'button', onclick: () => nav.ouvrir({ type: 'macro' }) }, 'Voir la vue macro');
   return null;
 }
@@ -350,7 +355,7 @@ function ficheOpportunite(l, chef, nav) {
   const familles = Object.entries(l.familles ?? {}).sort((a, b) => (l.poids_effectifs?.[b[0]] ?? 0) - (l.poids_effectifs?.[a[0]] ?? 0));
   return [
     el('header', { class: 'chef-entete' },
-      el('div', { class: 'fiche-surtitre' }, `${TYPES[l.type] ?? l.type}${l.provenances?.length ? ` · ${l.provenances.join(', ')}` : ''}`),
+      el('div', { class: 'fiche-surtitre' }, `${TYPES[l.type] ?? l.type}${l.provenances?.length ? ` · ${l.provenances.join(', ')}` : ''}${l.type === 'secteurs' ? ` · ${l.nb_societes} sociétés analysées${l.symbole ? ` · ETF ${l.symbole}` : ''}${l.etf_approche ? ` (${l.etf_approche})` : ''}` : ''}`),
       el('h2', { class: 'fiche-titre' }, l.nom),
       el('div', { class: 'chef-ligne-tete' }, badgeScore(l.score), fleche(l.fleche), pastilleVerdict(l.verdict), pastilleConviction(l.conviction)),
       el('p', { class: 'chef-petit' }, `Verdict depuis le ${dateFr(l.depuis)}${l.score_precedent != null ? ` · score précédent ${nombre(l.score_precedent)}/100` : ''}${l.qualite != null ? ` · qualité des données ${nombre(l.qualite * 100)} %` : ''}`),
@@ -384,6 +389,48 @@ function ficheOpportunite(l, chef, nav) {
 }
 
 /* ------------------------------------------------------------------ allocation */
+
+/* ------------------------------------------------------------------ secteurs et filtres */
+
+let zoneSecteurs = 'monde';
+let filtreSecteur = 'tous';
+
+/** Puces de filtre (zone, secteur) ; `choisir` redessine le contenu sans quitter l'onglet. */
+function puces(options, actif, choisir) {
+  return el('div', { class: 'ini-onglets chef-filtre', role: 'group' }, options.map(([cle, libelle, n]) => el('button', {
+    class: `ini-onglet${cle === actif ? ' est-actif' : ''}`, type: 'button', 'aria-pressed': String(cle === actif), onclick: () => choisir(cle),
+  }, libelle, n != null ? el('small', {}, ` ${n}`) : null)));
+}
+
+function ongletSecteurs(chef, nav) {
+  const zones = chef.zones_secteurs ?? { monde: 'Monde' };
+  const conteneur = el('div', {});
+  const rendre = () => {
+    const lignes = (chef.secteurs ?? []).filter((l) => l.zone_secteur === zoneSecteurs).sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
+    conteneur.replaceChildren(
+      puces(Object.entries(zones).map(([k, v]) => [k, v, (chef.secteurs ?? []).filter((l) => l.zone_secteur === k).length]), zoneSecteurs, (k) => { zoneSecteurs = k; rendre(); }),
+      lignes.length ? liste(lignes, nav) : el('p', { class: 'chef-petit' }, 'Pas assez de sociétés analysées dans cette zone pour noter les secteurs.'),
+    );
+  };
+  rendre();
+  return [titre('Secteurs', '11 secteurs GICS ; signaux agrégés des sociétés, ETF sectoriels, cycle, initiés, risque'), conteneur,
+    el('p', { class: 'chef-petit' }, 'Momentum et flux : ETF sectoriels (XLK… aux États-Unis, iShares Global… dans le monde, iShares STOXX Europe 600 en Europe, secteurs ICB approchés). Émergents : pas d’ETF sectoriel exploitable, momentum tiré des sociétés.')];
+}
+
+function ongletEntreprises(chef, nav) {
+  const conteneur = el('div', {});
+  const rendre = () => {
+    const toutes = chef.entreprises ?? [];
+    const secteurs = [...new Set(toutes.map((l) => l.secteur_nom).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'fr'));
+    const lignes = filtreSecteur === 'tous' ? toutes : toutes.filter((l) => l.secteur_nom === filtreSecteur);
+    conteneur.replaceChildren(
+      puces([['tous', 'Tous les secteurs', toutes.length], ...secteurs.map((s) => [s, s, toutes.filter((l) => l.secteur_nom === s).length])], filtreSecteur, (k) => { filtreSecteur = k; rendre(); }),
+      liste(lignes, nav),
+    );
+  };
+  rendre();
+  return [titre('Entreprises', 'pépites, qualité à prix raisonnable, liste de surveillance, meilleures sociétés des pays attractifs et de chaque secteur'), conteneur];
+}
 
 let profilActif = 'equilibre';
 

@@ -517,7 +517,7 @@ function filAriane(route) {
       if (!route.id) return [racine, ecran];
       if (route.id.startsWith('o-')) {
         const id = route.id.slice(2);
-        const l = [...(chef?.pays ?? []), ...(chef?.matieres ?? []), ...(chef?.or ? [chef.or] : []), ...(chef?.obligations ?? []), ...(chef?.liquidites ?? []), ...(chef?.entreprises ?? [])].find((x) => x.id === id);
+        const l = [...(chef?.pays ?? []), ...(chef?.secteurs ?? []), ...(chef?.matieres ?? []), ...(chef?.or ? [chef.or] : []), ...(chef?.obligations ?? []), ...(chef?.liquidites ?? []), ...(chef?.entreprises ?? [])].find((x) => x.id === id);
         return [racine, ecran, { libelle: l?.nom ?? id, route }];
       }
       return [racine, ecran, { libelle: ONGLETS_INVESTIR[route.id] ?? route.id, route }];

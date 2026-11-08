@@ -26,7 +26,7 @@ from . import portefeuille as P
 
 SORTIE = ("Alléger", "Éviter")
 RANG_CONVICTION = {"forte": 3, "moyenne": 2, "faible": 1}
-CLASSE_DE = {"pays": "actions", "entreprises": "actions", "obligations": "obligations", "or": "or", "matieres": "matieres", "liquidites": "liquidites"}
+CLASSE_DE = {"pays": "actions", "secteurs": "actions", "entreprises": "actions", "obligations": "obligations", "or": "or", "matieres": "matieres", "liquidites": "liquidites"}
 LIBELLES_CLASSES = {"actions": "Actions", "obligations": "Obligations", "or": "Or", "matieres": "Matières premières", "liquidites": "Liquidités"}
 
 
@@ -38,7 +38,7 @@ def ent(x) -> str:
 
 def lignes_chef(chef: dict) -> dict[str, dict]:
     res = {}
-    for t in ("pays", "matieres", "obligations", "liquidites", "entreprises"):
+    for t in ("pays", "secteurs", "matieres", "obligations", "liquidites", "entreprises"):
         for l in chef.get(t) or []:
             res[l["id"]] = l
     if chef.get("or"):

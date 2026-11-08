@@ -41,6 +41,7 @@
     "or":          {"fondamentaux": 20, "valorisation": 10, "tendance": 18, "flux": 12, "cycle": 15, "risque": 15, "geopolitique": 10},
     "obligations": {"fondamentaux": 20, "valorisation": 30, "tendance": 15, "cycle": 20, "risque": 15},
     "liquidites":  {"valorisation": 45, "cycle": 20, "risque": 35},
+    "secteurs":    {"fondamentaux": 10, "valorisation": 18, "tendance": 15, "flux": 8, "cycle": 18, "risque": 8, "geopolitique": 5, "inities": 5, "resultats": 13},
     "entreprises": {"fondamentaux": 22, "valorisation": 16, "tendance": 12, "flux": 4, "cycle": 8, "risque": 10, "geopolitique": 5, "inities": 8, "resultats": 15}
   },
 
@@ -115,9 +116,10 @@
   "risque_frein": {
     "_commentaire": "Le risque sert de frein, pas de moteur : pour ces types, les familles « Risque » et « Géopolitique » sont plafonnées à `plafond` (un risque faible ne peut pas porter la note), et un verdict positif exige au moins une famille motrice (`moteurs`) au-dessus du seuil de concordance.",
     "types": ["pays", "entreprises", "matieres"],
+    "types_moteur_seul": ["secteurs"],
     "familles": ["risque", "geopolitique"],
     "plafond": 55,
-    "moteurs": ["fondamentaux", "valorisation", "tendance", "flux"]
+    "moteurs": ["fondamentaux", "valorisation", "tendance", "flux", "resultats"]
   },
 
   "momentum": {
@@ -128,9 +130,85 @@
     "positionnement_min": 40
   },
 
+  "secteurs": {
+    "_commentaire": "Catégorie « Secteurs » : les 11 secteurs GICS au niveau mondial et par grande zone. Signaux agrégés à partir des sociétés de l'agent entreprises (holdings et fonds exclus), des ETF sectoriels (momentum ; flux par la méthode des ETF pays : parts en circulation × VL, émetteur puis Yahoo) et des autres agents. Une ligne exige au moins `societes_min` sociétés analysées dans la zone. Europe : ETF iShares STOXX Europe 600 par secteur ICB (Xetra), équivalents approchés des secteurs GICS (indiqué « approché »). Émergents : pas d'ETF sectoriel coté exploitable, momentum tiré des sociétés.",
+    "societes_min": 5,
+    "zones": {
+      "monde": {"libelle": "Monde", "pays": null, "phase": "monde", "devise": "USD"},
+      "etats_unis": {"libelle": "États-Unis", "pays": ["US"], "phase": "etats_unis", "devise": "USD"},
+      "europe": {"libelle": "Europe", "pays": ["GB", "FR", "DE", "CH", "IT", "ES", "NL", "SE", "PL"], "phase": "zone_euro", "devise": "EUR"},
+      "emergents": {"libelle": "Émergents", "pays": ["CN", "IN", "BR", "MX", "ID", "TH", "VN", "TR", "ZA", "SA", "AE", "CL", "CO", "EG", "AR", "TW", "KR"], "phase": "emergents", "devise": null}
+    },
+    "etf": {
+      "Information Technology": {"monde": "IXN", "etats_unis": "XLK", "europe": "EXV3.DE"},
+      "Health Care": {"monde": "IXJ", "etats_unis": "XLV", "europe": "EXV4.DE"},
+      "Energy": {"monde": "IXC", "etats_unis": "XLE", "europe": "EXH1.DE"},
+      "Financials": {"monde": "IXG", "etats_unis": "XLF", "europe": "EXV1.DE"},
+      "Industrials": {"monde": "EXI", "etats_unis": "XLI", "europe": "EXH4.DE"},
+      "Materials": {"monde": "MXI", "etats_unis": "XLB", "europe": "EXV6.DE"},
+      "Consumer Discretionary": {"monde": "RXI", "etats_unis": "XLY", "europe": "EXV5.DE"},
+      "Consumer Staples": {"monde": "KXI", "etats_unis": "XLP", "europe": "EXH3.DE"},
+      "Utilities": {"monde": "JXI", "etats_unis": "XLU", "europe": "EXH9.DE"},
+      "Real Estate": {"monde": "REET", "etats_unis": "XLRE", "europe": "EXI5.DE"},
+      "Communication": {"monde": "IXP", "etats_unis": "XLC", "europe": "EXV2.DE"}
+    },
+    "etf_europe_approche": {"EXV1.DE": "banques (ICB) pour la finance", "EXH4.DE": "biens et services industriels (ICB)", "EXV6.DE": "ressources de base (ICB) pour les matériaux", "EXV5.DE": "automobile (ICB) pour la consommation discrétionnaire", "EXH3.DE": "alimentation et boissons (ICB) pour la consommation de base", "EXV2.DE": "télécommunications (ICB) pour les services de communication", "EXH1.DE": "pétrole et gaz (ICB) pour l'énergie"},
+    "flux_emetteurs": {
+      "XLK": {"emetteur": "ssga", "fichier": "/library-content/products/fund-data/etfs/us/navhist-us-en-xlk.xlsx"},
+      "XLV": {"emetteur": "ssga", "fichier": "/library-content/products/fund-data/etfs/us/navhist-us-en-xlv.xlsx"},
+      "XLE": {"emetteur": "ssga", "fichier": "/library-content/products/fund-data/etfs/us/navhist-us-en-xle.xlsx"},
+      "XLF": {"emetteur": "ssga", "fichier": "/library-content/products/fund-data/etfs/us/navhist-us-en-xlf.xlsx"},
+      "XLI": {"emetteur": "ssga", "fichier": "/library-content/products/fund-data/etfs/us/navhist-us-en-xli.xlsx"},
+      "XLB": {"emetteur": "ssga", "fichier": "/library-content/products/fund-data/etfs/us/navhist-us-en-xlb.xlsx"},
+      "XLY": {"emetteur": "ssga", "fichier": "/library-content/products/fund-data/etfs/us/navhist-us-en-xly.xlsx"},
+      "XLP": {"emetteur": "ssga", "fichier": "/library-content/products/fund-data/etfs/us/navhist-us-en-xlp.xlsx"},
+      "XLU": {"emetteur": "ssga", "fichier": "/library-content/products/fund-data/etfs/us/navhist-us-en-xlu.xlsx"},
+      "XLRE": {"emetteur": "ssga", "fichier": "/library-content/products/fund-data/etfs/us/navhist-us-en-xlre.xlsx"},
+      "XLC": {"emetteur": "ssga", "fichier": "/library-content/products/fund-data/etfs/us/navhist-us-en-xlc.xlsx"},
+      "IXN": {"emetteur": "ishares", "page": "/us/products/239750/ishares-global-tech-etf"},
+      "IXJ": {"emetteur": "ishares", "page": "/us/products/239744/ishares-global-healthcare-etf"},
+      "IXC": {"emetteur": "ishares", "page": "/us/products/239741/ishares-global-energy-etf"},
+      "IXG": {"emetteur": "ishares", "page": "/us/products/239742/ishares-global-financials-etf"},
+      "EXI": {"emetteur": "ishares", "page": "/us/products/239745/ishares-global-industrials-etf"},
+      "MXI": {"emetteur": "ishares", "page": "/us/products/239748/ishares-global-materials-etf"},
+      "RXI": {"emetteur": "ishares", "page": "/us/products/239739/ishares-global-consumer-discretionary-etf"},
+      "KXI": {"emetteur": "ishares", "page": "/us/products/239740/ishares-global-consumer-staples-etf"},
+      "JXI": {"emetteur": "ishares", "page": "/us/products/239753/ishares-global-utilities-etf"},
+      "REET": {"emetteur": "ishares", "page": "/us/products/268752/ishares-global-reit-etf"},
+      "IXP": {"emetteur": "ishares", "page": "/us/products/239751/ishares-global-comm-services-etf"}
+    },
+    "rotation": {
+      "_commentaire": "Adéquation au cycle par secteur et par phase de l'agent macro (score /100). Rotation sectorielle classique : début de cycle (Reprise) favorable aux cycliques et à la finance ; fin de cycle (Surchauffe) à l'énergie et aux matériaux ; Ralentissement inflationniste aux défensives et à l'énergie ; Expansion sans inflation (désinflation) aux secteurs de croissance et aux défensives sensibles aux taux. Adapté de l'horloge des investissements (Merrill Lynch, 2004) et des études de rotation sectorielle (Fidelity, « business cycle approach to sector investing »).",
+      "Reprise":                       {"Information Technology": 70, "Health Care": 45, "Energy": 45, "Financials": 72, "Industrials": 72, "Materials": 65, "Consumer Discretionary": 78, "Consumer Staples": 35, "Utilities": 35, "Real Estate": 65, "Communication": 60},
+      "Surchauffe":                    {"Information Technology": 50, "Health Care": 55, "Energy": 82, "Financials": 55, "Industrials": 62, "Materials": 78, "Consumer Discretionary": 42, "Consumer Staples": 50, "Utilities": 45, "Real Estate": 40, "Communication": 45},
+      "Ralentissement inflationniste": {"Information Technology": 35, "Health Care": 72, "Energy": 70, "Financials": 40, "Industrials": 38, "Materials": 50, "Consumer Discretionary": 28, "Consumer Staples": 78, "Utilities": 72, "Real Estate": 35, "Communication": 48},
+      "Expansion sans inflation":      {"Information Technology": 72, "Health Care": 65, "Energy": 32, "Financials": 50, "Industrials": 48, "Materials": 35, "Consumer Discretionary": 55, "Consumer Staples": 62, "Utilities": 66, "Real Estate": 62, "Communication": 66}
+    },
+    "sensibilite": {"Information Technology": "cyclique", "Health Care": "defensif", "Energy": "cyclique", "Financials": "cyclique", "Industrials": "cyclique", "Materials": "cyclique", "Consumer Discretionary": "cyclique", "Consumer Staples": "defensif", "Utilities": "defensif", "Real Estate": "neutre", "Communication": "neutre"},
+    "risque_par_palier": {"defensif": {"Calme": 45, "Vigilance": 55, "Tension": 70, "Crise": 80}, "cyclique": {"Calme": 60, "Vigilance": 50, "Tension": 35, "Crise": 25}, "neutre": {"Calme": 52, "Vigilance": 50, "Tension": 45, "Crise": 40}},
+    "geopolitique": {
+      "_commentaire": "Exposition des secteurs aux actifs cités par les événements géopolitiques (agent géopolitique, gravité ≥ gravite_min, 14 derniers jours) : +1 quand une hausse de l'actif profite au secteur, −1 quand elle lui nuit ; « défense » et « armement » profitent à l'industrie. Note = 50 + pas × somme (bornée). Secteur sans exposition : famille absente.",
+      "gravite_min": 3, "jours": 14, "pas": 5, "min": 25, "max": 80,
+      "expositions": {
+        "Energy": {"pétrole": 1, "gaz": 1, "énergie": 1},
+        "Materials": {"or": 1, "métaux": 1, "cuivre": 1, "agriculture": 1},
+        "Industrials": {"défense": 1, "armement": 1, "transport maritime": -1},
+        "Consumer Discretionary": {"pétrole": -1, "automobile": 1},
+        "Information Technology": {"semi-conducteurs": 1, "technologie": 1},
+        "Utilities": {"gaz": -1, "énergie": -1}
+      }
+    },
+    "valorisation": {"_commentaire": "Rendement des bénéfices médian (100 / PER médian) + poids_croissance × croissance médiane des bénéfices (bornée entre croissance_min et croissance_max), comparé à la médiane des secteurs de la zone : note = 50 + pente × écart.", "poids_croissance": 0.25, "croissance_min": -20, "croissance_max": 30, "pente": 4},
+    "momentum": {"_commentaire": "Performance de l'ETF sectoriel sur 12 mois (ou médiane des sociétés sans ETF) : note = 50 + pente × performance (bornée).", "pente": 1.2},
+    "inities": {"_commentaire": "Sociétés du secteur et de la zone avec des achats de dirigeants (score ≥ 60) ou une conviction des super-investisseurs (≥ 50), moins les ventes massives : note = 50 + pas × solde (bornée 30–80).", "pas": 6},
+    "panorama": 3,
+    "allocation_part_actions": 0.3,
+    "allocation_max_lignes": 4
+  },
+
   "panorama": {
     "_commentaire": "Tour d'horizon de « Où investir » : top par catégorie, entreprises diversifiées (au plus `max_par_secteur` par secteur et `max_par_pays` par pays, au moins `min_secteurs` secteurs et `min_pays` pays quand les données le permettent), liste « À surveiller » (score à moins de `ecart_seuil` points du seuil « Renforcer », ou verdict positif avec une objection sérieuse à lever).",
-    "pays": 5, "matieres": 3, "entreprises_min": 10, "entreprises_max": 12,
+    "pays": 5, "matieres": 3, "secteurs": 3, "entreprises_min": 10, "entreprises_max": 12,
     "max_par_secteur": 2, "max_par_pays": 3, "min_secteurs": 4, "min_pays": 4,
     "ecart_seuil": 4, "a_surveiller_max": 8, "a_surveiller_par_type": 3, "top": 5
   },
@@ -207,7 +285,7 @@
   "suivi": {
     "_commentaire": "Suivi de performance de chaque verdict (au plus une entrée par opportunité et par jour ; nouvelle entrée à chaque changement de verdict). Réussite par rapport à l'indice de référence de la classe.",
     "horizons_mois": [1, 3, 6, 12],
-    "indices": {"pays": "URTH", "entreprises": "URTH", "matieres": "DBC", "or": "DBC", "obligations_us": "AGG", "obligations_euro": "IEAG.AS", "liquidites": "URTH"},
+    "indices": {"pays": "URTH", "entreprises": "URTH", "secteurs": "URTH", "matieres": "DBC", "or": "DBC", "obligations_us": "AGG", "obligations_euro": "IEAG.AS", "liquidites": "URTH"},
     "indices_noms": {"URTH": "MSCI World (ETF URTH)", "DBC": "Indice large des matières premières (ETF DBC)", "AGG": "Obligations américaines (ETF AGG)", "IEAG.AS": "Obligations en euros (ETF IEAG)"},
     "reussite": {
       "Renforcer fortement": {"relative_min": 0.0}, "Renforcer": {"relative_min": 0.0},

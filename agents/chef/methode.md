@@ -41,6 +41,42 @@ Le coefficient d'une famille de signaux = coefficient de l'entrée × confiance 
 - **Entreprises** : pépites, « qualité à prix raisonnable », liste de surveillance, analyses à la demande, meilleures sociétés des pays attractifs et 3 meilleures sociétés de chaque secteur (au plus 130 ; une société cotée plusieurs fois n'apparaît qu'une fois).
 - **Exclusions** : holdings, sociétés d'investissement (ex. Investor AB), fonds fermés, BDC, véhicules de crédit et SPAC sont écartés du classement, des « meilleures sociétés » des pays et des alertes. Leur valeur se lit sur la décote par rapport à l'actif net, que les sources gratuites ne donnent pas ; une conviction ne peut donc jamais s'appuyer sur leur PER. Détection : drapeau « holding » de l'agent entreprises (industries exclues, mots du nom, fonds et BDC, SPAC : `pepites` dans `agents/entreprises/config.json`). L'agent entreprises applique la même règle : ces sociétés sont exclues des pépites et ne reçoivent jamais « Acheter » ni « Renforcer ». La liste des sociétés écartées est publiée (`exclues` dans `data/chef.json`).
 
+### Secteurs
+
+Les 11 secteurs GICS au niveau mondial et par grande zone (États-Unis, Europe, émergents), quand au moins 5 sociétés analysées par l'agent entreprises le permettent (`secteurs` dans la configuration ; holdings, fonds, BDC et SPAC exclus des agrégats).
+
+| Famille | Signal |
+|---|---|
+| Fondamentaux | note médiane des sociétés du secteur dans la zone |
+| Valorisation | rendement des bénéfices médian (100 / PER médian) + 0,25 × croissance médiane des bénéfices (bornée entre −20 et +30 %), comparé à la médiane des secteurs de la zone : note = 50 + 4 × écart |
+| Dynamique des résultats | note médiane « Dynamique des résultats » (guidance, révisions des analystes, surprises) |
+| Tendance | performance sur 12 mois de l'ETF sectoriel (50 + 1,2 × performance) ; sans ETF : momentum médian des sociétés |
+| Flux | flux de l'ETF sectoriel, même méthode et même note que les ETF pays (parts en circulation × VL ; SSGA pour les XL*, avec leur historique publié ; iShares pour les ETF mondiaux ; Yahoo Finance en secours et en vérification) ; historique dans `data/chef/flux_secteurs/` |
+| Adéquation au cycle | tableau de rotation sectorielle selon la phase de l'agent macro (zone du secteur) |
+| Initiés | sociétés avec achats de dirigeants (score ≥ 60) ou conviction des super-investisseurs (≥ 50), moins les ventes massives : 50 + 6 × solde (30 à 80) |
+| Risque | sensibilité défensive, cyclique ou neutre, selon le palier de risque (ex. défensif : 45 en Calme, 80 en Crise) |
+| Géopolitique | exposition aux actifs cités par les événements de gravité ≥ 3 des 14 derniers jours (pétrole, gaz et énergie pour l'énergie ; défense pour l'industrie ; pétrole en hausse défavorable à la consommation discrétionnaire…) |
+
+ETF : États-Unis XLK, XLV, XLE, XLF, XLI, XLB, XLY, XLP, XLU, XLRE, XLC ; monde iShares Global (IXN, IXJ, IXC, IXG, EXI, MXI, RXI, KXI, JXI, REET, IXP) ; Europe iShares STOXX Europe 600 (Xetra), dont certains secteurs ICB ne recouvrent qu'en partie le secteur GICS (banques pour la finance, automobile pour la consommation discrétionnaire, alimentation et boissons pour la consommation de base…) : c'est indiqué sur la fiche. Émergents : pas d'ETF sectoriel exploitable.
+
+Rotation sectorielle (score /100 de la famille « Adéquation au cycle », adaptée de l'horloge des investissements et de l'approche par le cycle économique) :
+
+| Secteur | Reprise | Surchauffe | Ralentissement inflationniste | Expansion sans inflation |
+|---|---|---|---|---|
+| Technologies de l'information | 70 | 50 | 35 | 72 |
+| Santé | 45 | 55 | 72 | 65 |
+| Énergie | 45 | 82 | 70 | 32 |
+| Finance | 72 | 55 | 40 | 50 |
+| Industrie | 72 | 62 | 38 | 48 |
+| Matériaux | 65 | 78 | 50 | 35 |
+| Consommation discrétionnaire | 78 | 42 | 28 | 55 |
+| Consommation de base | 35 | 50 | 78 | 62 |
+| Services aux collectivités | 35 | 45 | 72 | 66 |
+| Immobilier | 65 | 40 | 35 | 62 |
+| Services de communication | 60 | 45 | 48 | 66 |
+
+Les secteurs suivent les mêmes règles que les autres catégories (percentiles dans la zone, pondérations selon le palier, verdict, conviction, hystérésis, momentum extrême, contrôle de cohérence) ; un verdict positif exige une famille motrice (fondamentaux, valorisation, tendance, flux ou résultats). Dans l'allocation modèle, 30 % de la part « cœur » des actions va aux secteurs à verdict positif dotés d'un ETF (une zone par secteur, la mieux notée ; 4 secteurs au plus), le reste aux pays ; les secteurs ne sont pas des satellites.
+
 ## 3. Moteur de décision
 
 ### Familles de signaux
@@ -150,11 +186,11 @@ Cette allocation servira de base au futur agent trader démo.
 **Panorama « Où investir »** (`panorama`) : un tour d'horizon large et équilibré plutôt qu'une seule pépite.
 - Top 5 : verdicts positifs dont le score dépasse le seuil « Renforcer » (pas seulement maintenus par l'hystérésis), sans objection sérieuse à lever ni momentum extrême ; d'abord une ligne par catégorie (pays, entreprises, matières premières, or, obligations, liquidités), puis deux, puis trois en dernier recours quand les autres catégories n'ont aucune ligne éligible.
 - Listes par catégorie triées par score.
-- Par catégorie : top 5 des pays, top 3 des matières premières, position sur l'or, sur chaque ligne obligataire et sur les liquidités.
+- Par catégorie : top 5 des pays, top 3 des secteurs (une zone par secteur), top 3 des matières premières, position sur l'or, sur chaque ligne obligataire et sur les liquidités.
 - Entreprises : au moins 10 quand les données le permettent (verdicts positifs d'abord, puis meilleurs « Neutre »), au plus 2 par secteur et 3 par pays, au moins 4 secteurs et 4 pays ; un écart à ces objectifs est signalé.
 - « À surveiller » (8 au plus, 3 par catégorie) : opportunités à moins de 4 points du seuil « Renforcer », verdict maintenu par l'hystérésis sous le seuil, ou bien notées mais avec une objection sérieuse à lever ou un momentum extrême.
 
-**Briefing quotidien** (`data/chef/briefing-AAAA-MM-JJ.md` et `.json`) : l'essentiel en 5 lignes, une par catégorie (risque et cycle ; pays ; matières premières et or ; obligations et liquidités ; entreprises) ; le panorama complet ; « Ce qui a changé depuis hier » ; points de vigilance ; scénario central et scénario alternatif avec leurs déclencheurs ; agenda des 7 prochains jours ; « Ce qui pourrait me donner tort » ; état des données ; liste des faits utilisés.
+**Briefing quotidien** (`data/chef/briefing-AAAA-MM-JJ.md` et `.json`) : l'essentiel en 5 lignes, une par catégorie (risque et cycle ; pays ; matières premières et or ; obligations et liquidités ; secteurs et entreprises) ; le panorama complet ; « Ce qui a changé depuis hier » ; points de vigilance ; scénario central et scénario alternatif avec leurs déclencheurs ; agenda des 7 prochains jours ; « Ce qui pourrait me donner tort » ; état des données ; liste des faits utilisés.
 
 - Version par règles toujours produite. Avec `GEMINI_API_KEY`, Gemini reformule « l'essentiel » et la vigilance (budget propre : 4 appels par exécution au plus), avec la même chaîne de modèles de secours que l'agent géopolitique (Flash le plus récent, Flash-Lite, Flash précédent : quota du jour atteint ou panne, modèle suivant). Quand le briefing reste par règles, la raison est affichée dans le briefing et journalisée : clé absente, budget épuisé, Gemini indisponible sur toute la chaîne, réponse rejetée. Chaque phrase doit citer un fait fourni (`[F3]`) et ne contenir que des chiffres présents dans les faits cités ; sinon elle est supprimée (liste publiée). Une rubrique avec trop peu de phrases valides reprend la version par règles.
 - Agenda : réunions des banques centrales (agent macro, calendriers officiels), publications de résultats des sociétés de la liste de surveillance (Yahoo Finance), EIA (mercredi, jeudi), WASDE (entre le 9 et le 12), emploi américain (premier vendredi), inflation américaine (10 à 15), inflation de la zone euro (fin de mois). Les dates tirées d'une règle de calendrier sont marquées « indicatives ».
@@ -168,7 +204,7 @@ Cette allocation servira de base au futur agent trader démo.
 
 | Classe | Indice de référence |
 |---|---|
-| Pays, entreprises, liquidités | MSCI World (ETF URTH) |
+| Pays, secteurs, entreprises, liquidités | MSCI World (ETF URTH) |
 | Matières premières, or | indice large des matières premières (ETF DBC) |
 | Obligations américaines | ETF AGG |
 | Obligations en euros | ETF IEAG |

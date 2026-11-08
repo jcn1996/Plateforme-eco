@@ -1,5 +1,5 @@
 """
-Agent entreprises : environ 1 200 sociétés cotées dans les pays suivis (règles ; Gemini lit seulement la guidance
+Agent entreprises : environ 3 000 sociétés cotées dans les pays suivis (grandes, moyennes et petites valeurs) (règles ; Gemini lit seulement la guidance
 des communiqués de résultats, voir dynamique.py).
 
 Modes :
@@ -389,11 +389,16 @@ def publier(base: dict, config: dict, change: dict, data: Path, aujourdhui: date
     #    classées par note ajustée selon le contexte, au plus N sociétés par secteur dans chaque liste
     cfg_p = config["pepites"]
     par_ticker = {e["ticker"]: (e, s, m, ind) for e, s, m, ind in candidats}
-    resume_candidats = [{"ticker": e["ticker"], "cap": e["capitalisation_md"], "analystes": e["analystes"], "secteur": e["secteur_gics"],
+    resume_candidats = [{"ticker": e["ticker"], "pays": e["pays"], "cap": e["capitalisation_md"], "analystes": e["analystes"], "secteur": e["secteur_gics"],
                          "secteur_nom": e["secteur_nom"], "industrie": e["industrie"], "note_ajustee": e["contexte"]["note_ajustee"]}
                         for e, *_ in candidats]
     listes = A.selection_listes(resume_candidats, cfg_p)
     avertissements = A.concentration(resume_candidats, cfg_p)
+    n_pep = len(listes["pepites"])
+    if n_pep < cfg_p["nombre_min"]:
+        avertissements.append(f"{n_pep} pépites seulement (objectif : au moins {cfg_p['nombre_min']}) : les critères restent stricts ; "
+                              f"{len(candidats)} sociétés remplissent tous les critères, l'univers des petites et moyennes valeurs "
+                              "est complété à chaque révision complète du samedi.")
     pepites = []
     for nom_liste, choisis in listes.items():
         for c in choisis:

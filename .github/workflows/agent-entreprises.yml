@@ -81,9 +81,10 @@ jobs:
     timeout-minutes: 300
     strategy:
       fail-fast: false
-      max-parallel: 3   # limite la charge sur Yahoo Finance
+      max-parallel: 4   # limite la charge sur Yahoo Finance
       matrix:
-        lot: [etats_unis_1, etats_unis_2, ameriques, europe, asie_pacifique, moyen_orient_afrique]
+        # environ 3 000 sociétés depuis l'ajout des petites et moyennes valeurs : lots plus fins (agents/entreprises/config.json, « lots »)
+        lot: [etats_unis_1, etats_unis_2, etats_unis_3, etats_unis_4, ameriques, europe_1, europe_2, asie_pacifique_1, asie_pacifique_2, moyen_orient_afrique]
     steps:
       - uses: actions/checkout@v4
         with:

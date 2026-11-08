@@ -13,7 +13,7 @@ from __future__ import annotations
 from ..risque.calculs import fr
 from .moteur import ent
 
-CLASSE_DE = {"pays": "actions", "entreprises": "actions", "obligations": "obligations", "or": "or", "matieres": "matieres", "liquidites": "liquidites"}
+CLASSE_DE = {"pays": "actions", "secteurs": "actions", "entreprises": "actions", "obligations": "obligations", "or": "or", "matieres": "matieres", "liquidites": "liquidites"}
 LIBELLES = {"actions": "Actions", "obligations": "Obligations", "or": "Or", "matieres": "Matières premières", "liquidites": "Liquidités"}
 
 
@@ -104,7 +104,8 @@ def profil(cle: str, prof: dict, par_classe: dict, scores_classe: dict, liq_min:
             classes[c] = classes[c] * (100 - classes["liquidites"]) / autres
     # 2. satellites
     toutes = [l for ls in par_classe.values() for l in ls]
-    sat = [l for l in toutes if l.get("conviction") == "forte" and l.get("verdict") in ("Renforcer", "Renforcer fortement") and CLASSE_DE[l["type"]] in ("actions", "or", "matieres")]
+    sat = [l for l in toutes if l.get("conviction") == "forte" and l.get("verdict") in ("Renforcer", "Renforcer fortement") and CLASSE_DE[l["type"]] in ("actions", "or", "matieres")
+           and l["type"] != "secteurs"]  # secteurs : dans le cœur (une zone par secteur)
     sat.sort(key=lambda l: -l["score"])
     sat = sat[:ca["satellites_max"]]
     budget = prof["satellite"] if sat else 0
@@ -125,7 +126,17 @@ def profil(cle: str, prof: dict, par_classe: dict, scores_classe: dict, liq_min:
     for c, total in classes.items():
         cands = [l for l in par_classe.get(c, []) if l["type"] != "entreprises" and l.get("verdict") not in exclus and l["id"] not in poids_sat]
         if c == "actions":
-            cands = sorted(cands, key=lambda l: -l["score"])[:ca["pays_coeur_max"]]
+            # Actions : pays, et une part pour les secteurs (verdict positif, ETF coté ; une zone par secteur, la mieux notée)
+            cs = config["secteurs"]
+            meilleurs = {}
+            for l in sorted((l for l in cands if l["type"] == "secteurs" and l.get("symbole") and l.get("verdict") in ("Renforcer", "Renforcer fortement")),
+                            key=lambda l: -l["score"]):
+                meilleurs.setdefault(l.get("secteur"), l)
+            sect = list(meilleurs.values())[:cs["allocation_max_lignes"]]
+            pays = sorted((l for l in cands if l["type"] == "pays"), key=lambda l: -l["score"])[:ca["pays_coeur_max"]]
+            part_s = total * cs["allocation_part_actions"] if sect and pays else (total if sect else 0)
+            coeur.update(repartir(sect, part_s, 40))
+            cands, total = pays, total - part_s
         if c == "matieres":
             cands = sorted(cands, key=lambda l: -l["score"])[:3]
         if not cands and total > 0:
@@ -163,13 +174,10 @@ def profil(cle: str, prof: dict, par_classe: dict, scores_classe: dict, liq_min:
     poids = plafonner(poids, cap, groupes, max_groupe)
     # 5. rotation limitée
     anciens = {l["id"]: l["poids"] for l in (precedent or {}).get("lignes", [])}
+    # Les lignes dont l'écart est sous le seuil gardent leur poids précédent ; l'ensemble est ensuite ramené à 100 %
+    # (une nouvelle catégorie n'est pas écrasée par les lignes inchangées)
     stables = {k: anciens[k] for k, v in poids.items() if k in anciens and abs(v - anciens[k]) < ca["rotation_seuil"]}
-    mobiles = {k: v for k, v in poids.items() if k not in stables}
-    reste = 100 - sum(stables.values())
-    s = sum(mobiles.values())
-    if s > 0 and reste > 0:
-        mobiles = {k: v * reste / s for k, v in mobiles.items()}
-    poids = {**stables, **mobiles}
+    poids = {**{k: v for k, v in poids.items() if k not in stables}, **stables}
     poids = {k: v for k, v in poids.items() if v >= ca["ligne_min"]}
     s = sum(poids.values())
     poids = {k: v * 100 / s for k, v in poids.items()} if s else poids

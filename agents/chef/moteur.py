@@ -92,9 +92,10 @@ def familles_motrices(o: dict, config: dict) -> list[str]:
 
 def exiger_moteur(o: dict, v: str, config: dict) -> tuple[str, str | None]:
     """Verdict positif : au moins une famille motrice (fondamentaux, valorisation, tendance, flux) au-dessus du seuil."""
-    if DIRECTION.get(v) != 1 or o["type"] not in config["risque_frein"]["types"] or familles_motrices(o, config):
+    rf = config["risque_frein"]
+    if DIRECTION.get(v) != 1 or o["type"] not in rf["types"] + rf.get("types_moteur_seul", []) or familles_motrices(o, config):
         return v, None
-    return "Neutre", (f"« {v} » exclu : aucun signal positif de fondamentaux, de valorisation, de tendance ou de flux "
+    return "Neutre", (f"« {v} » exclu : aucun signal positif de fondamentaux, de valorisation, de tendance, de flux ou de résultats "
                       "(un risque faible ne suffit pas à recommander)")
 
 
@@ -396,7 +397,8 @@ def ligne_publique(o: dict, objections: list[dict], config: dict) -> dict:
     garde = ("id", "type", "cle", "nom", "pays", "zone", "secteur", "secteur_nom", "symbole", "cours", "date_cours", "devise", "themes",
              "score", "score_brut", "qualite", "verdict", "verdict_brut", "plafond", "conviction", "fleche", "score_precedent", "depuis", "changement",
              "en_attente", "familles_manquantes", "poids_effectifs", "provenances", "societes", "note_agent", "verdict_agent", "recommandation_agent",
-             "rendement_reel", "famille_mp", "momentum_extreme", "verification_momentum", "industrie")
+             "rendement_reel", "famille_mp", "momentum_extreme", "verification_momentum", "industrie",
+             "zone_secteur", "zone_libelle", "nb_societes", "etf_approche")
     ligne = {k: o[k] for k in garde if k in o and o[k] is not None}
     ligne["familles"] = {f: {"libelle": config["familles"][f]["libelle"], **{k: v for k, v in x.items() if k != "percentile"}} for f, x in o["familles"].items()}
     ligne["pour"], ligne["contre"] = pour, contre
