@@ -388,7 +388,7 @@ Le chef d'orchestre réunit les sorties de tous les agents. Méthode complète :
 
 **Entrées** : `data/pays.json`, `macro.json`, `marches.json`, `risque.json`, `geopolitique.json`, `matieres_premieres.json`, `entreprises.json` (et fiches), `pepites.json`, `inities.json`, flux des ETF (dans `pays.json`), analyses à la demande, `data/signaux/*.json` et `revues.json` (objections du contradicteur). Chaque entrée est pondérée par sa fraîcheur, la santé de son agent et sa confiance ; une donnée périmée ou d'un agent dégradé pèse moins, et c'est signalé.
 
-**Univers** : actions des 31 pays suivis (avec les 3 meilleures sociétés de chaque pays attractif), matières premières, or (à part, valeur refuge), obligations d'État américaines et de la zone euro (courtes et longues), liquidités en dollars et en euros (rendement réel), entreprises (pépites, qualité à prix raisonnable, liste de surveillance, analyses à la demande, meilleures sociétés des pays attractifs).
+**Univers** : actions des 31 pays suivis (avec les 3 meilleures sociétés de chaque pays attractif), les 11 secteurs GICS dans le monde, aux États-Unis, en Europe et dans les émergents (signaux agrégés des sociétés, ETF sectoriels XLK…, iShares Global…, iShares STOXX Europe 600 : momentum et flux, rotation sectorielle selon le cycle, initiés, risque et géopolitique), matières premières, or (à part, valeur refuge), obligations d'État américaines et de la zone euro (courtes et longues), liquidités en dollars et en euros (rendement réel), entreprises (pépites, qualité à prix raisonnable, liste de surveillance, analyses à la demande, meilleures sociétés des pays attractifs).
 
 **Moteur** :
 - familles de signaux normalisées (percentiles dans la classe, mélangés à la note absolue de l'agent) : fondamentaux, valorisation, tendance, flux, adéquation au cycle (tableau des phases), risque, géopolitique, initiés, dynamique des résultats ;
@@ -412,7 +412,7 @@ Le chef d'orchestre réunit les sorties de tous les agents. Méthode complète :
 
 **Appli** :
 - le globe reste le premier écran ; le panneau « Synthèse » remplace le bandeau des alertes ;
-- écran « Où investir » à onglets : « Panorama » (top 5 diversifié, top 5 des pays, top 3 des matières premières, or, obligations et liquidités, au moins 10 entreprises sur 4 secteurs et 4 pays au minimum, liste « À surveiller »), puis Pays, Matières premières, Obligations et liquidités, Entreprises, Allocation) : pour chaque ligne, score, verdict, conviction, flèche de tendance, 3 arguments pour, 3 contre, objection du contradicteur et date du dernier changement ; toucher une ligne ouvre sa fiche détaillée (familles de signaux et leurs sources, conviction, objections, « Ce qui pourrait me donner tort ») ;
+- écran « Où investir » à onglets : « Panorama » (top 5 diversifié, top 5 des pays, top 3 des secteurs, top 3 des matières premières, or, obligations et liquidités, au moins 10 entreprises sur 4 secteurs et 4 pays au minimum, liste « À surveiller »), puis Pays, Secteurs (choix de la zone), Matières premières, Obligations et liquidités, Entreprises, Allocation) : pour chaque ligne, score, verdict, conviction, flèche de tendance, 3 arguments pour, 3 contre, objection du contradicteur et date du dernier changement ; toucher une ligne ouvre sa fiche détaillée (familles de signaux et leurs sources, conviction, objections, « Ce qui pourrait me donner tort ») ;
 - filtre du globe « Attractivité » ;
 - sous chaque recommandation : « Avis indicatif généré automatiquement, sans prise en compte d'un profil ou d'une situation personnelle. »
 

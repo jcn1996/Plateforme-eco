@@ -36,6 +36,7 @@ from . import entrees as E
 from . import moteur as M
 from . import suivi as S
 from . import synthese as Y
+from . import secteurs as SE
 from . import univers as U
 from .sources import FournisseurReel, FournisseurTest
 
@@ -44,7 +45,8 @@ VERSION_AGENT = "1.0"
 DOSSIER = Path(__file__).resolve().parent
 RACINE = DOSSIER.parents[1]
 WORKFLOW = "agent-chef.yml"
-TYPES_CHOC = ("pays", "entreprises", "matieres", "or")
+TYPES_CHOC = ("pays", "entreprises", "matieres", "or", "secteurs")
+TYPES = ("pays", "secteurs", "matieres", "obligations", "liquidites", "entreprises")
 
 
 def charger_config() -> dict:
@@ -226,6 +228,7 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
     recalcul = mode == "complet" or not precedent or bool(raisons_leger)
 
     lignes, alloc, conc, chg = [], prec_donnees.get("allocation"), prec_donnees.get("concentrations") or [], []
+    sources_secteurs: dict = {}
     rapport_gemini = {"cle": bool(cle_gemini), "appels": 0, "reussites": 0, "rejets": [], "erreurs": [], "quota_atteint": False}
     briefing, suivi_r = None, None
     if recalcul:
@@ -247,10 +250,22 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
         selection = U.selection_entreprises(ctx, attractifs)
         entreprises = U.opportunites_entreprises(ctx, selection, fam_pays)
         decider(entreprises, ctx, objections, entrees, etat_travail, jour, config)
-        anciennes = {l["id"]: l for t in ("pays", "matieres", "obligations", "liquidites", "entreprises") for l in (prec_donnees.get(t) or [])}
+        # Secteurs : 11 secteurs GICS, monde et grandes zones (cours et flux des ETF sectoriels)
+        etf_secteurs = sorted({s for z in config["secteurs"]["etf"].values() for s in z.values()})
+        try:
+            series_s = f.series(etf_secteurs)
+            sources_secteurs["cours"] = {"etat": "ok" if len(series_s) == len(etf_secteurs) else "partielle",
+                                         "detail": f"{len(series_s)}/{len(etf_secteurs)} ETF sectoriels"}
+        except Exception as e:  # noqa: BLE001 — sans cours : tendance tirée des sociétés quand c'est possible
+            series_s = {}
+            sources_secteurs["cours"] = {"etat": "échec", "detail": str(e)[:200]}
+        flux_s, sources_secteurs["flux"] = SE.flux(f, data, config, maintenant.date())
+        secteurs = SE.opportunites(ctx, series_s, flux_s, jour)
+        decider(secteurs, ctx, objections, entrees, etat_travail, jour, config)
+        anciennes = {l["id"]: l for t in TYPES for l in (prec_donnees.get(t) or [])}
         if prec_donnees.get("or"):
             anciennes["or"] = prec_donnees["or"]
-        for o in premiers + entreprises:
+        for o in premiers + secteurs + entreprises:
             if mode == "leger" and not est_touche(o, touches) and o["id"] in anciennes:
                 lignes.append(anciennes[o["id"]])
                 continue
@@ -268,12 +283,12 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
             etat["scores_precedents"] = {l["id"]: l.get("score") for l in lignes}
         etat["palier"] = ctx.palier
     else:
-        for t in ("pays", "matieres", "obligations", "liquidites", "entreprises"):
+        for t in TYPES:
             lignes += prec_donnees.get(t) or []
         if prec_donnees.get("or"):
             lignes.append(prec_donnees["or"])
 
-    lignes_par = {t: [l for l in lignes if l["type"] == t] for t in ("pays", "matieres", "obligations", "liquidites", "entreprises", "or")}
+    lignes_par = {t: [l for l in lignes if l["type"] == t] for t in TYPES + ("or",)}
     for t in lignes_par:
         lignes_par[t].sort(key=lambda l: -(l.get("score") or 0))
     vig = vigilance(lignes, conc, entrees, ctx, jour)
@@ -356,6 +371,7 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
                      "alertes": len(al)},
         "pays": lignes_par["pays"], "matieres": lignes_par["matieres"], "or": (lignes_par["or"] or [None])[0],
         "obligations": lignes_par["obligations"], "liquidites": lignes_par["liquidites"], "entreprises": lignes_par["entreprises"],
+        "secteurs": lignes_par["secteurs"], "zones_secteurs": {z: c["libelle"] for z, c in config["secteurs"]["zones"].items()},
         "panorama": pano, "exclues": [{"ticker": k, "nom": v} for k, v in sorted(ctx.exclues.items())],
         "alertes_ecartees": ecartees[:30],
         "concentrations": conc, "changements": chg if recalcul else prec_donnees.get("changements", []), "vigilance": vig, "allocation": alloc,
@@ -407,7 +423,7 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
     ecrire_json(chemin_journal, jrn)
     bloc = sante.bloc_sante("chef", "Chef d'orchestre", 10, WORKFLOW,
                             sources_sante(entrees, rapport_gemini if mode == "complet" else None, (briefing or {}).get("drive") if mode == "complet" else None,
-                                          suivi_r if mode == "complet" else None),
+                                          suivi_r if mode == "complet" else None, sources_secteurs),
                             maintenant, (jrn.get("meta") or {}).get("sante"), raisons_supplementaires=raisons_sante)
     bloc["palier"] = ctx.palier
     sante.enregistrer_sante(chemin_journal, bloc, forcer=True)
@@ -459,8 +475,11 @@ def alerte_admissible(ctx: U.Contexte, agent: str, s: dict, config: dict) -> tup
     return True, None
 
 
-def sources_sante(entrees: dict, gemini: dict | None, depot: dict | None, suivi_r: dict | None) -> list[dict]:
+def sources_sante(entrees: dict, gemini: dict | None, depot: dict | None, suivi_r: dict | None, secteurs: dict | None = None) -> list[dict]:
     res = []
+    noms = {"cours": "Yahoo Finance (cours des ETF sectoriels)", "flux": "Émetteurs et Yahoo Finance (flux des ETF sectoriels : SSGA, iShares)"}
+    for cle, s in (secteurs or {}).items():
+        res.append({"nom": noms[cle], "etat": s["etat"], "detail": s.get("detail")})
     for x in entrees.values():
         if x.etat == "manquante":
             etat, detail = "échec", "fichier absent ou illisible"

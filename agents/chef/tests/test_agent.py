@@ -454,7 +454,7 @@ class TestCorrectionsQualite(BaseChef):
         self.assertLessEqual(max(Counter(x["type"] for x in p["a_surveiller"]).values() or [0]), cp["a_surveiller_par_type"])
         # le briefing résume par catégorie
         textes = [x["texte"] for x in r["briefing"]["essentiel"]]
-        for debut in ("Pays :", "Matières premières :", "Obligations et liquidités :", "Entreprises :"):
+        for debut in ("Pays :", "Matières premières :", "Obligations et liquidités :", "Secteurs :"):
             self.assertTrue(any(t.startswith(debut) for t in textes), debut)
 
     def test_raison_sans_gemini_et_chaine_de_secours(self):
@@ -522,3 +522,74 @@ class TestMoteurRegles(unittest.TestCase):
         l2 = {"verdict": "Renforcer", "conviction": "forte", "familles": {"fondamentaux": {"note": 70}, "valorisation": {"note": 65}, "flux": {"note": 61}}}
         self.assertIsNone(M.controle_coherence(l2, self.config))
         self.assertEqual(l2["conviction"], "forte")
+
+
+class TestSecteurs(BaseChef):
+    def test_secteurs_par_zone(self):
+        from collections import Counter
+        r = self.lancer()
+        d = r["donnees"]
+        sect = d["secteurs"]
+        self.assertTrue(sect)
+        par_zone = Counter(l["zone_secteur"] for l in sect)
+        self.assertEqual(par_zone["monde"], 11)
+        self.assertTrue(all(n <= 11 for n in par_zone.values()))
+        self.assertEqual(set(par_zone) - set(self.config["secteurs"]["zones"]), set())
+        tech_us = next(l for l in sect if l["id"] == "secteur-etats_unis-technologie")
+        self.assertEqual(tech_us["symbole"], "XLK")
+        self.assertIn("XLK", tech_us["familles"]["tendance"]["texte"])
+        self.assertIn("flux", tech_us["familles"])  # historique SSGA : flux disponibles d'emblée
+        self.assertIn("cycle", tech_us["familles"])
+        self.assertIn("valorisation", tech_us["familles"])
+        for l in sect:
+            self.assertIn(l["verdict"], VERDICTS)
+            self.assertGreaterEqual(l["nb_societes"], self.config["secteurs"]["societes_min"])
+            if l["zone_secteur"] == "emergents":
+                self.assertIsNone(l.get("symbole"))
+                if "tendance" in l["familles"]:
+                    self.assertIn("sociétés", l["familles"]["tendance"]["texte"])
+        self.assertTrue(list((self.data / "chef" / "flux_secteurs").glob("*.json")))
+        j = lire(self.data / "journal" / "agent-chef.json")
+        noms = [s["nom"] for s in j["meta"]["sante"]["sources"]]
+        self.assertTrue(any("ETF sectoriels" in n for n in noms))
+
+    def test_rotation_complete(self):
+        from agents.entreprises.univers import GICS
+        rot = self.config["secteurs"]["rotation"]
+        for phase in self.config["cycle"]["phases"]:
+            self.assertEqual(set(rot[phase]), set(GICS), phase)
+        self.assertEqual(set(self.config["secteurs"]["etf"]), set(GICS))
+        self.assertEqual(set(self.config["secteurs"]["sensibilite"]), set(GICS))
+
+    def test_panorama_briefing_allocation(self):
+        r = self.lancer()
+        d = r["donnees"]
+        p = d["panorama"]
+        self.assertLessEqual(len(p["secteurs"]), 3)
+        self.assertEqual(len({x["nom"].split(" — ")[0] for x in p["secteurs"]}), len(p["secteurs"]))
+        self.assertTrue(any(x["texte"].startswith("Secteurs :") for x in r["briefing"]["essentiel"]))
+        self.assertIn("Secteurs (top 3", (self.data / "chef" / "briefing-2026-11-07.md").read_text(encoding="utf-8"))
+        lignes = {l["id"]: l for l in r["lignes"]}
+        cs = self.config["secteurs"]
+        for prof in d["allocation"]["profils"].values():
+            sect = [x for x in prof["lignes"] if x["type"] == "secteurs" and x["poids"] > 0]
+            self.assertLessEqual(len(sect), cs["allocation_max_lignes"])
+            self.assertEqual(len({lignes[x["id"]]["secteur"] for x in sect}), len(sect))  # une zone par secteur
+            for x in sect:
+                self.assertTrue(lignes[x["id"]].get("symbole"))
+                self.assertIn(lignes[x["id"]]["verdict"], ("Renforcer", "Renforcer fortement"))
+            self.assertAlmostEqual(sum(x["poids"] for x in prof["lignes"]), 100, delta=0.6)
+
+    def test_secteur_sans_signal_moteur_reste_neutre(self):
+        o = {"id": "s", "type": "secteurs", "familles": {f: {"note": n, "coef": 1, "texte": f, "source": "s", "agent": "x"}
+                                                         for f, n in {"cycle": 90, "risque": 85, "fondamentaux": 52}.items()}}
+        self.assertEqual(M.exiger_moteur(o, "Renforcer", self.config)[0], "Neutre")
+
+
+class TestTraderSecteurs(unittest.TestCase):
+    def test_lignes_secteurs_lues_par_le_trader(self):
+        from agents.trader import strategie as T
+        chef = {"secteurs": [{"id": "secteur-monde-technologie", "type": "secteurs", "symbole": "IXN", "nom": "Tech — Monde", "devise": "USD"}]}
+        self.assertIn("secteur-monde-technologie", T.lignes_chef(chef))
+        self.assertEqual(T.CLASSE_DE["secteurs"], "actions")
+        self.assertEqual(T.supports_de(chef["secteurs"][0], {"supports": {}})[0]["symbole"], "IXN")
