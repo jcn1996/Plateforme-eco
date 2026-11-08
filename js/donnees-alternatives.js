@@ -77,7 +77,9 @@ function ligneIndicateur(i, { avecPays = false, nomsPays = {} } = {}) {
   return el('div', { class: `alt-ligne${i.perimee ? ' alt-ligne--perimee' : ''}`, title: i.lecture ?? '' },
     el('span', { class: 'alt-ligne-nom' },
       avecPays ? `${nomPays} · ${i.nom}` : i.nom,
-      el('small', {}, `${valeurTexte(i)} ${i.unite ?? ''} · ${dateFr(i.date, i.frequence)}${i.perimee ? ' · ancienne, hors score' : ''}`)),
+      el('small', {}, i.perimee
+        ? `dernière donnée : ${dateFr(i.date, i.frequence)} (${i.age_jours} j) · trop ancienne, hors score`
+        : `${valeurTexte(i)} ${i.unite ?? ''} · ${dateFr(i.date, i.frequence)}${i.etat_source === 'secours' ? ' · source de secours' : ''}`)),
     el('span', { class: 'mp-ligne-var' }, el('small', {}, '1 mois'), varTexte(i.variation_1m), el('small', {}, '12 mois'), varTexte(i.variation_12m)),
     sparkline(i.serie),
     el('span', { class: `alt-ligne-note mono ${classeNote(i.note)}`, title: i.percentile_12m != null ? `percentile ${nombre(i.percentile_12m, 0)} de l'historique` : (i.methode_note ?? '') },
@@ -90,7 +92,8 @@ function detailIndicateur(i) {
   if (i.ecart_tendance != null) morceaux.push(`écart à la tendance ${variation(i.ecart_tendance, 1)}`);
   if (i.ecart_saisonnier != null) morceaux.push(`écart à la normale saisonnière ${variation(i.ecart_saisonnier, 1)}`);
   if (i.percentile_12m != null) morceaux.push(`percentile ${nombre(i.percentile_12m, 0)} de l'historique`);
-  return el('p', { class: 'alt-detail' }, `${morceaux.join(' · ')}${morceaux.length ? ' — ' : ''}${i.source_nom}${i.mention ? ` (${i.mention})` : ''}.`);
+  const secours = i.etat_source === 'secours' && i.detail_source ? ` ${i.detail_source[0].toUpperCase()}${i.detail_source.slice(1)}.` : '';
+  return el('p', { class: 'alt-detail' }, `${morceaux.join(' · ')}${morceaux.length ? ' — ' : ''}${i.source_nom}${i.mention ? ` (${i.mention})` : ''}.${secours}`);
 }
 
 function blocPays(p, index, { complet = true } = {}) {

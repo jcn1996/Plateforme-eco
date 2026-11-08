@@ -323,11 +323,11 @@ L'activité réelle avant les statistiques officielles, à partir d'indicateurs 
 
 **Indicateurs** (`agents/donnees_alternatives/config.json`) :
 - transport : kilomètres parcourus par les poids lourds sur les autoroutes allemandes (Destatis, indice quotidien Lkw-Maut) ; tonnage du transport routier américain (FRED) ; fret vrac sec (ETF BDRY, approximation de l'indice Baltic Dry, non diffusé gratuitement) ; fret conteneurs (Drewry WCI, page publique hebdomadaire, historique accumulé par l'agent) ;
-- construction : ciment en Chine (Bureau national des statistiques via DBnomics) et aux États-Unis (USGS, rapports mensuels) ; mises en chantier (FRED) ;
-- commerce : exportations coréennes mensuelles (FRED) ; exportations des 20 premiers jours et commandes à l'export de Taïwan : CSV facultatifs (variables `COREE_EXPORTS_20J_URL`, `TAIWAN_COMMANDES_URL`), faute de source gratuite accessible sans compte ;
-- énergie : électricité en Chine (DBnomics), en Europe (ENTSO-E, clé `ENTSOE_API_KEY`), aux États-Unis (EIA, clé `EIA_API_KEY`) ;
+- construction : ciment en Chine (API du Bureau national des statistiques, data.stats.gov.cn ; DBnomics en secours, date de la dernière donnée affichée) et aux États-Unis (USGS, rapports mensuels) ; mises en chantier (FRED) ;
+- commerce : exportations mensuelles de la Corée (FRED, secours OMC via DBnomics) et de Taïwan (CSV ouvert des douanes, secours OMC), avec la mention « mensuel, pas de donnée anticipée gratuite » ; en option, CSV externes pour les exportations coréennes des 20 premiers jours et les commandes à l'export de Taïwan (variables `COREE_EXPORTS_20J_URL`, `TAIWAN_COMMANDES_URL`) ;
+- énergie : électricité en Chine (NBS, secours DBnomics), en Europe (ENTSO-E, clé `ENTSOE_API_KEY`), aux États-Unis (EIA, clé `EIA_API_KEY`) ;
 - emploi : offres d'emploi Indeed Hiring Lab (9 pays, dépôt public GitHub) ; mobilité : passagers TSA ;
-- satellites : NO2 (Sentinel-5P) et lumières nocturnes (Black Marble) pour les pays émergents, via un CSV mensuel (variable `SATELLITES_URL`, script `outils/satellites_gee.js` pour Google Earth Engine) ;
+- satellites : NO2 (Sentinel-5P) et lumières nocturnes (Black Marble) — **désactivés par défaut** (`"actif": false` dans la configuration) ; une fois réactivés, CSV mensuel (variable `SATELLITES_URL`, script `outils/satellites_gee.js` pour Google Earth Engine) ;
 - attention du public : Wikipédia et Google Trends (pytrends, non officiel, échec toléré) pour la liste de surveillance et les pépites — information seulement, hors score.
 
 **Analyse** : par indicateur, dernière valeur, variations sur 1 et 12 mois, écart à la tendance et à la normale saisonnière, percentile historique, note /100. Par pays (au moins 2 indicateurs à jour) : score /100, lecture « accélération », « stable » ou « ralentissement » (deux indicateurs concordants exigés), confiance, « Ce qui pourrait me donner tort », divergence avec les statistiques officielles de l'agent pays. Détails : [`agents/donnees_alternatives/regles.md`](agents/donnees_alternatives/regles.md).

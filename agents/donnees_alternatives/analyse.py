@@ -138,7 +138,8 @@ def proche(points: Serie, cible: date, tolerance: int) -> float | None:
     return min(cands)[1] if cands else None
 
 
-def analyser_serie(points: Serie, frequence: str, aujourdhui: date, sens: int = 1, fraicheur_jours: int = 110) -> dict | None:
+def analyser_serie(points: Serie, frequence: str, aujourdhui: date, sens: int = 1, fraicheur_jours: int = 110,
+                   brute: bool = False) -> dict | None:
     """Mesures d'un indicateur et note d'activité /100 (au-dessus de 50 : activité plus soutenue que d'habitude)."""
     points = sorted((str(d)[:10], float(v)) for d, v in points if v is not None)
     if len(points) < 2:
@@ -164,6 +165,8 @@ def analyser_serie(points: Serie, frequence: str, aujourdhui: date, sens: int = 
     tendance = t[-1][1] if t else None
     p12 = percentile(v12, g[:-1] if frequence == "mensuelle" else g) if v12 is not None else None
     pt = percentile(tendance, [x for _, x in t[:-1]]) if tendance is not None else None
+    if brute:  # série non corrigée des variations saisonnières : seule la variation sur 12 mois compte
+        pt = None
     if p12 is not None and pt is not None:
         note, methode = 0.6 * p12 + 0.4 * pt, "percentiles"
     elif p12 is not None:
