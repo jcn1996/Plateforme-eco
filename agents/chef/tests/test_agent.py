@@ -445,7 +445,8 @@ class TestCorrectionsQualite(BaseChef):
         self.assertEqual(len(p["liquidites"]), 2)
         self.assertLessEqual(len(p["top"]), 5)
         self.assertLessEqual(max(Counter(x["type"] for x in p["top"]).values()), 3)
-        self.assertEqual([x["score"] for x in p["pays"]], sorted((x["score"] for x in p["pays"]), reverse=True))
+        cle = [(x["a_surveiller"], -x["score"]) for x in p["pays"]]
+        self.assertEqual(cle, sorted(cle))  # par score, les lignes « à surveiller » après les autres
         lignes = {l["id"]: l for l in r["lignes"]}
         for x in p["top"]:
             l = lignes[x["id"]]

@@ -316,6 +316,7 @@ function blocEntrees(chef) {
 function lignePanorama(x, nav, raison) {
   return el('li', {}, el('button', { class: `chef-ligne chef-ligne--compacte ${classeVerdict(x.verdict)}`, type: 'button', onclick: () => nav.ouvrir({ type: 'investir', id: `o-${x.id}` }) },
     el('div', { class: 'chef-ligne-tete' }, el('strong', { class: 'chef-ligne-nom' }, x.nom), badgeScore(x.score), fleche(x.fleche), pastilleVerdict(x.verdict), pastilleConviction(x.conviction)),
+    !raison && x.a_surveiller ? el('div', { class: 'chef-petit chef-attente' }, 'À surveiller : objection à lever ou hausse passée extrême (voir la fiche).') : null,
     raison ? el('div', { class: 'chef-petit chef-attente' }, raison) : null,
     !raison && x.argument ? el('div', { class: 'chef-petit' }, `+ ${resume(x.argument, 140)}`) : null,
     !raison && x.contre ? el('div', { class: 'chef-petit' }, `− ${resume(x.contre, 140)}`) : null));

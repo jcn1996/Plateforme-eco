@@ -134,9 +134,14 @@ def _argument(l: dict, sens: str = "pour") -> str | None:
     return (l.get("familles") or {}).get(a["cle"], {}).get("texte") if a else None
 
 
+def a_surveiller(l: dict) -> bool:
+    """Ligne bien notée mais avec une réserve à lever : objection sérieuse ou hausse passée extrême."""
+    return bool((l.get("objection") or {}).get("serieuse") or l.get("momentum_extreme"))
+
+
 def resume_ligne(l: dict) -> dict:
     return {"id": l["id"], "nom": l["nom"], "type": l["type"], "verdict": l["verdict"], "conviction": l["conviction"], "score": l.get("score"),
-            "zone_secteur": l.get("zone_secteur"),
+            "zone_secteur": l.get("zone_secteur"), "a_surveiller": a_surveiller(l),
             "fleche": l.get("fleche"), "pays": l.get("pays"), "secteur": l.get("secteur_nom") or l.get("secteur"),
             "argument": _argument(l, "pour"), "contre": _argument(l, "contre"),
             "objection": (l.get("objection") or {}).get("objection") if (l.get("objection") or {}).get("serieuse") else None}
@@ -181,8 +186,8 @@ def panorama(lignes: list[dict], config: dict) -> dict:
     """Tour d'horizon par catégorie, top 5 diversifié et liste « À surveiller »."""
     cp = config["panorama"]
     seuil = config["verdicts"]["seuils"]["Renforcer"]
-    # Listes par catégorie : par score (le verdict et la conviction sont affichés à côté)
-    par = {t: sorted((l for l in lignes if l["type"] == t and l.get("score") is not None), key=lambda l: -l["score"]) for t in CATEGORIES}
+    # Listes par catégorie : par score, les lignes « à surveiller » (objection sérieuse, hausse passée extrême) après les autres
+    par = {t: sorted((l for l in lignes if l["type"] == t and l.get("score") is not None), key=lambda l: (a_surveiller(l), -l["score"])) for t in CATEGORIES}
     ent, bilan = selection_entreprises(lignes, cp)
     # Top 5 : verdicts positifs ; d'abord une ligne par catégorie, puis les suivantes (au plus 2 par catégorie)
     # Top 5 : verdict positif, score au-dessus du seuil (pas seulement maintenu par l'hystérésis), aucune objection
@@ -251,7 +256,7 @@ def ent_(x) -> str:
 
 
 def _liste_courte(items: list[dict], n: int) -> str:
-    return ", ".join(f"{x['nom']} ({x['verdict'].lower()}, {ent(x['score'])}/100)" for x in items[:n])
+    return ", ".join(f"{x['nom']} ({x['verdict'].lower()}, {ent(x['score'])}/100{', à surveiller' if x.get('a_surveiller') else ''})" for x in items[:n])
 
 
 def briefing_regles(ctx: dict) -> dict:
