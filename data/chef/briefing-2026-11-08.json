@@ -1,19 +1,19 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-08T14:19:27Z",
+    "genere_le": "2026-11-08T18:07:36Z",
     "source": "agent-chef",
     "fictif": false,
     "version_agent": "1.0"
   },
   "donnees": {
     "date": "2026-11-08",
-    "genere_le": "2026-11-08T14:16:18Z",
-    "mode": "gemini",
-    "modele": "gemini-3.5-flash-lite",
+    "genere_le": "2026-11-08T18:07:01Z",
+    "mode": "règles",
+    "modele": null,
     "palier": "Vigilance",
     "phase_monde": "Expansion sans inflation",
-    "raison_regles": null,
+    "raison_regles": "clé GEMINI_API_KEY absente (secret non transmis à l'agent, ou exécution de test)",
     "modeles_essayes": [
       "gemini-flash-latest",
       "gemini-3.5-flash-lite",
@@ -21,14 +21,14 @@
     ],
     "essentiel": [
       {
-        "texte": "Le palier de risque mondial est établi à « Vigilance » avec un score de stress de 68 sur 100, tandis que la phase du cycle mondial est « Expansion sans inflation ».",
+        "texte": "Risque mondial « Vigilance » (stress 68/100) ; cycle mondial en « Expansion sans inflation ».",
         "faits": [
           "F1",
           "F2"
         ]
       },
       {
-        "texte": "Pour les pays, la Corée du Sud est à « Renforcer » avec une conviction forte et un score de 63 sur 100, Taïwan et la Pologne sont à « Renforcer » avec une conviction faible et un score de 62 sur 100.",
+        "texte": "Pays : Corée du Sud (renforcer, 63/100), Thaïlande (renforcer, 60/100), Suède (renforcer, 59/100).",
         "faits": [
           "F3",
           "F4",
@@ -36,7 +36,7 @@
         ]
       },
       {
-        "texte": "Concernant les matières premières et l'or, le pétrole Brent est à « Renforcer » avec une conviction faible de 61 sur 100, le pétrole WTI à 60 sur 100, le gaz naturel américain et l'or affichent un statut « Neutre ».",
+        "texte": "Matières premières : Gaz naturel américain (neutre, 57/100), Coton (neutre, 51/100), Sucre (neutre, 50/100) ; or : neutre (46/100).",
         "faits": [
           "F6",
           "F7",
@@ -45,7 +45,7 @@
         ]
       },
       {
-        "texte": "Les obligations d'État américaines longues à 10 ans sont « Neutre » à 53 sur 100, les obligations courtes à 2 ans, les obligations de la zone euro longues et courtes sont à « Alléger », et les liquidités en dollars et en euros sont « Neutre ».",
+        "texte": "Obligations et liquidités : à alléger : Obligations d'État américaines courtes (2 ans), Obligations d'État de la zone euro longues (Bund 10 ans), Obligations d'État de la zone euro courtes (2 ans).",
         "faits": [
           "F10",
           "F11",
@@ -56,45 +56,53 @@
         ]
       },
       {
-        "texte": "Le suivi des entreprises comporte 12 entités réparties sur 8 secteurs et 8 pays, incluant The Allstate Corporation à « Renforcer fortement » avec 71 sur 100, Arch Capital Group Ltd. à 70 sur 100, et ASUSTeK Computer Inc. à 69 sur 100.",
+        "texte": "Secteurs : Technologies de l'information — Monde (renforcer, 66/100), Santé — Europe (renforcer, 64/100), Finance — États-Unis (renforcer, 61/100) ; entreprises : 12 retenues sur 8 secteurs et 8 pays, dont The Allstate Corporation (renforcer fortement, 70/100), Arch Capital Group Ltd. (renforcer, 70/100).",
         "faits": [
           "F16",
           "F17",
           "F18",
-          "F19"
+          "F19",
+          "F20",
+          "F21",
+          "F22"
         ]
       }
     ],
     "vigilance": [
       {
-        "texte": "Des frappes aériennes russes en Ukraine ont un impact sur les infrastructures à Kyiv avec une gravité de 4.",
-        "faits": [
-          "F20",
-          "F21"
-        ]
-      },
-      {
-        "texte": "La Pologne présente un momentum extrême avec une hausse passée du WIG20 de 31,2 % sur 12 mois en monnaie locale atteignant le percentile 92, soit 88 sur 100, pour une valorisation vérifiée de 62 sur 100.",
-        "faits": [
-          "F22"
-        ]
-      },
-      {
-        "texte": "Taïwan affiche un momentum extrême avec une hausse du TAIEX de 42,3 % sur 12 mois en monnaie locale au percentile 98 évalué à 100 sur 100, ainsi qu'une valorisation tendue à 3 sur 100 avec un PER de l'ETF EWT de 23,9 contre une médiane de 14,0 pour les pays suivis.",
+        "texte": "Données : Agent entreprises périmée — ses signaux pèsent moins.",
         "faits": [
           "F23"
         ]
       },
       {
-        "texte": "Le Vietnam fait l'objet d'une objection concernant ses réserves de change limitées à 2,1 mois d'importations.",
+        "texte": "Données : Agent entreprises (pépites) périmée — ses signaux pèsent moins.",
         "faits": [
           "F24"
         ]
       },
       {
-        "texte": "La Colombie enregistre un momentum extrême avec une hausse du MSCI COLCAP de 34,6 % sur 12 mois en monnaie locale au percentile 95 évalué à 92 sur 100, pour une valorisation vérifiée de 89 sur 100.",
+        "texte": "Géopolitique : Conflit entre l'Arabie saoudite et les rebelles houthis au Yémen (gravité 4).",
         "faits": [
           "F25"
+        ]
+      },
+      {
+        "texte": "Géopolitique : Frappes aériennes russes en Ukraine (gravité 4).",
+        "faits": [
+          "F26"
+        ]
+      },
+      {
+        "texte": "Pologne (renforcer) : objection du contradicteur — Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 92) : WIG20 +31,2 % sur 12 mois en monnaie locale (88/100) ; valorisation vérifiée (62/100). Une forte hausse passée ne suffit pas à porter une conviction forte.",
+        "faits": [
+          "F27"
+        ]
+      },
+      {
+        "texte": "Taïwan (renforcer) : objection du contradicteur — Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 98) : TAIEX +42,3 % sur 12 mois en monnaie locale (100/100) ; valorisation tendue (3/100) : PER de l'ETF EWT 23,9 contre une médiane de 14,0 pour les pays suivis (0/100) — valeur à vérifier selon l'agent pays. Une forte hausse passée ne suffit pas à porter une conviction forte.",
+        "faits": [
+          "F28"
         ]
       }
     ],
@@ -107,12 +115,14 @@
         "type": "entreprises",
         "verdict": "Renforcer fortement",
         "conviction": "forte",
-        "score": 70.5,
+        "score": 70.3,
+        "zone_secteur": null,
+        "a_surveiller": false,
         "fleche": "→",
         "pays": "US",
         "secteur": "Finance",
         "argument": "Note de l'agent entreprises 80/100 : Dossier solide sur les comptes ; points forts : roe : 33,6 %, croissance du bénéfice : +126,0 %.",
-        "contre": "États-Unis : Risque géopolitique 73/100, 54 événement(s) en 14 jours (agent géopolitique)",
+        "contre": "États-Unis : Risque géopolitique 73/100, 55 événement(s) en 14 jours (agent géopolitique)",
         "objection": null
       },
       {
@@ -121,25 +131,45 @@
         "type": "entreprises",
         "verdict": "Renforcer",
         "conviction": "forte",
-        "score": 70.0,
+        "score": 69.8,
+        "zone_secteur": null,
+        "a_surveiller": false,
         "fleche": "→",
         "pays": "US",
         "secteur": "Finance",
         "argument": "Note de l'agent entreprises 78/100 : Dossier solide sur les comptes ; points forts : per vs secteur : −44,2 %, croissance du ca : +17,7 %.",
-        "contre": "États-Unis : Risque géopolitique 73/100, 54 événement(s) en 14 jours (agent géopolitique)",
+        "contre": "États-Unis : Risque géopolitique 73/100, 55 événement(s) en 14 jours (agent géopolitique)",
         "objection": null
       },
       {
-        "id": "entreprise-2357.TW",
-        "nom": "ASUSTeK Computer Inc.",
-        "type": "entreprises",
+        "id": "secteur-monde-technologie",
+        "nom": "Technologies de l'information — Monde",
+        "type": "secteurs",
         "verdict": "Renforcer",
         "conviction": "forte",
-        "score": 69.3,
+        "score": 65.7,
+        "zone_secteur": "monde",
+        "a_surveiller": false,
         "fleche": "→",
-        "pays": "TW",
+        "pays": null,
         "secteur": "Technologies de l'information",
-        "argument": "Note de l'agent entreprises 76/100 : Dossier solide sur les comptes ; points forts : croissance du ca : +25,9 %, dette nette / ebitda : trésorerie nette ; point faible : marge opérationnelle : 4,7 ",
+        "argument": "Monde en phase « Expansion sans inflation » : rotation sectorielle favorable au secteur (72/100)",
+        "contre": null,
+        "objection": null
+      },
+      {
+        "id": "secteur-europe-sante",
+        "nom": "Santé — Europe",
+        "type": "secteurs",
+        "verdict": "Renforcer",
+        "conviction": "forte",
+        "score": 63.8,
+        "zone_secteur": "europe",
+        "a_surveiller": false,
+        "fleche": "→",
+        "pays": null,
+        "secteur": "Santé",
+        "argument": "PER médian 26,4, croissance médiane du bénéfice +45,3 % : rendement des bénéfices corrigé de la croissance de 11,3 contre 8,0 pour l'ensemble des secteurs de la zone",
         "contre": null,
         "objection": null
       },
@@ -150,25 +180,13 @@
         "verdict": "Renforcer",
         "conviction": "forte",
         "score": 63.1,
+        "zone_secteur": null,
+        "a_surveiller": false,
         "fleche": "→",
         "pays": "KR",
         "secteur": null,
         "argument": "PER de l'ETF EWY 9,3 contre une médiane de 14,0 pour les pays suivis (93/100)",
         "contre": "Dynamique des résultats médiane de 46/100 sur 50 sociétés du pays (révisions des analystes, surprises, guidance)",
-        "objection": null
-      },
-      {
-        "id": "pays-TH",
-        "nom": "Thaïlande",
-        "type": "pays",
-        "verdict": "Renforcer",
-        "conviction": "moyenne",
-        "score": 59.9,
-        "fleche": "→",
-        "pays": "TH",
-        "secteur": null,
-        "argument": "Croissance du pib 2,1 % (52/100) ; inflation 2,1 % (88/100) ; taux réel −1,1 % (61/100)",
-        "contre": null,
         "objection": null
       }
     ],
@@ -180,12 +198,14 @@
           "type": "entreprises",
           "verdict": "Renforcer fortement",
           "conviction": "forte",
-          "score": 70.5,
+          "score": 70.3,
+          "zone_secteur": null,
+          "a_surveiller": false,
           "fleche": "→",
           "pays": "US",
           "secteur": "Finance",
           "argument": "Note de l'agent entreprises 80/100 : Dossier solide sur les comptes ; points forts : roe : 33,6 %, croissance du bénéfice : +126,0 %.",
-          "contre": "États-Unis : Risque géopolitique 73/100, 54 événement(s) en 14 jours (agent géopolitique)",
+          "contre": "États-Unis : Risque géopolitique 73/100, 55 événement(s) en 14 jours (agent géopolitique)",
           "objection": null
         },
         {
@@ -194,25 +214,45 @@
           "type": "entreprises",
           "verdict": "Renforcer",
           "conviction": "forte",
-          "score": 70.0,
+          "score": 69.8,
+          "zone_secteur": null,
+          "a_surveiller": false,
           "fleche": "→",
           "pays": "US",
           "secteur": "Finance",
           "argument": "Note de l'agent entreprises 78/100 : Dossier solide sur les comptes ; points forts : per vs secteur : −44,2 %, croissance du ca : +17,7 %.",
-          "contre": "États-Unis : Risque géopolitique 73/100, 54 événement(s) en 14 jours (agent géopolitique)",
+          "contre": "États-Unis : Risque géopolitique 73/100, 55 événement(s) en 14 jours (agent géopolitique)",
           "objection": null
         },
         {
-          "id": "entreprise-2357.TW",
-          "nom": "ASUSTeK Computer Inc.",
-          "type": "entreprises",
+          "id": "secteur-monde-technologie",
+          "nom": "Technologies de l'information — Monde",
+          "type": "secteurs",
           "verdict": "Renforcer",
           "conviction": "forte",
-          "score": 69.3,
+          "score": 65.7,
+          "zone_secteur": "monde",
+          "a_surveiller": false,
           "fleche": "→",
-          "pays": "TW",
+          "pays": null,
           "secteur": "Technologies de l'information",
-          "argument": "Note de l'agent entreprises 76/100 : Dossier solide sur les comptes ; points forts : croissance du ca : +25,9 %, dette nette / ebitda : trésorerie nette ; point faible : marge opérationnelle : 4,7 ",
+          "argument": "Monde en phase « Expansion sans inflation » : rotation sectorielle favorable au secteur (72/100)",
+          "contre": null,
+          "objection": null
+        },
+        {
+          "id": "secteur-europe-sante",
+          "nom": "Santé — Europe",
+          "type": "secteurs",
+          "verdict": "Renforcer",
+          "conviction": "forte",
+          "score": 63.8,
+          "zone_secteur": "europe",
+          "a_surveiller": false,
+          "fleche": "→",
+          "pays": null,
+          "secteur": "Santé",
+          "argument": "PER médian 26,4, croissance médiane du bénéfice +45,3 % : rendement des bénéfices corrigé de la croissance de 11,3 contre 8,0 pour l'ensemble des secteurs de la zone",
           "contre": null,
           "objection": null
         },
@@ -223,25 +263,13 @@
           "verdict": "Renforcer",
           "conviction": "forte",
           "score": 63.1,
+          "zone_secteur": null,
+          "a_surveiller": false,
           "fleche": "→",
           "pays": "KR",
           "secteur": null,
           "argument": "PER de l'ETF EWY 9,3 contre une médiane de 14,0 pour les pays suivis (93/100)",
           "contre": "Dynamique des résultats médiane de 46/100 sur 50 sociétés du pays (révisions des analystes, surprises, guidance)",
-          "objection": null
-        },
-        {
-          "id": "pays-TH",
-          "nom": "Thaïlande",
-          "type": "pays",
-          "verdict": "Renforcer",
-          "conviction": "moyenne",
-          "score": 59.9,
-          "fleche": "→",
-          "pays": "TH",
-          "secteur": null,
-          "argument": "Croissance du pib 2,1 % (52/100) ; inflation 2,1 % (88/100) ; taux réel −1,1 % (61/100)",
-          "contre": null,
           "objection": null
         }
       ],
@@ -253,6 +281,8 @@
           "verdict": "Renforcer",
           "conviction": "forte",
           "score": 63.1,
+          "zone_secteur": null,
+          "a_surveiller": false,
           "fleche": "→",
           "pays": "KR",
           "secteur": null,
@@ -261,91 +291,71 @@
           "objection": null
         },
         {
-          "id": "pays-TW",
-          "nom": "Taïwan",
-          "type": "pays",
-          "verdict": "Renforcer",
-          "conviction": "faible",
-          "score": 62.2,
-          "fleche": "→",
-          "pays": "TW",
-          "secteur": null,
-          "argument": "TAIEX +42,3 % sur 12 mois en monnaie locale (100/100)",
-          "contre": "PER de l'ETF EWT 23,9 contre une médiane de 14,0 pour les pays suivis (0/100) — valeur à vérifier selon l'agent pays",
-          "objection": "Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 98) : TAIEX +42,3 % sur 12 mois en monnaie locale (100/100) ; valorisation tendue (3/100) : PER de l'ETF EWT 23,9 contre une médiane de 14,0 pour les pays suivis (0/100) — valeur à vérifier selon l'agent pays. Une forte hausse passée ne suffit pas à porter une conviction forte."
-        },
-        {
-          "id": "pays-PL",
-          "nom": "Pologne",
-          "type": "pays",
-          "verdict": "Renforcer",
-          "conviction": "faible",
-          "score": 61.6,
-          "fleche": "→",
-          "pays": "PL",
-          "secteur": null,
-          "argument": "WIG20 +31,2 % sur 12 mois en monnaie locale (88/100)",
-          "contre": "Risque géopolitique 37/100, 1 événement(s) en 14 jours (agent géopolitique)",
-          "objection": "Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 92) : WIG20 +31,2 % sur 12 mois en monnaie locale (88/100) ; valorisation vérifiée (62/100). Une forte hausse passée ne suffit pas à porter une conviction forte."
-        },
-        {
-          "id": "pays-VN",
-          "nom": "Vietnam",
-          "type": "pays",
-          "verdict": "Renforcer",
-          "conviction": "faible",
-          "score": 60.4,
-          "fleche": "→",
-          "pays": "VN",
-          "secteur": null,
-          "argument": "Croissance du pib 8,4 % (100/100) ; inflation 4,7 % (87/100)",
-          "contre": "VN-Index −0,9 % sur 12 mois en monnaie locale (49/100)",
-          "objection": "Objections spécifiques : réserves de change de 2,1 mois d'importations seulement."
-        },
-        {
           "id": "pays-TH",
           "nom": "Thaïlande",
           "type": "pays",
           "verdict": "Renforcer",
           "conviction": "moyenne",
           "score": 59.9,
+          "zone_secteur": null,
+          "a_surveiller": false,
           "fleche": "→",
           "pays": "TH",
           "secteur": null,
           "argument": "Croissance du pib 2,1 % (52/100) ; inflation 2,1 % (88/100) ; taux réel −1,1 % (61/100)",
           "contre": null,
           "objection": null
+        },
+        {
+          "id": "pays-SE",
+          "nom": "Suède",
+          "type": "pays",
+          "verdict": "Renforcer",
+          "conviction": "moyenne",
+          "score": 59.0,
+          "zone_secteur": null,
+          "a_surveiller": false,
+          "fleche": "→",
+          "pays": "SE",
+          "secteur": null,
+          "argument": "Croissance du pib 2,5 % (55/100) ; inflation 1,1 % (77/100) ; taux réel 0,6 % (80/100)",
+          "contre": "Dynamique des résultats médiane de 53/100 sur 21 sociétés du pays (révisions des analystes, surprises, guidance)",
+          "objection": null
+        },
+        {
+          "id": "pays-JP",
+          "nom": "Japon",
+          "type": "pays",
+          "verdict": "Neutre",
+          "conviction": "moyenne",
+          "score": 57.4,
+          "zone_secteur": null,
+          "a_surveiller": false,
+          "fleche": "→",
+          "pays": "JP",
+          "secteur": null,
+          "argument": "Dynamique des résultats médiane de 66/100 sur 83 sociétés du pays (révisions des analystes, surprises, guidance)",
+          "contre": null,
+          "objection": null
+        },
+        {
+          "id": "pays-SG",
+          "nom": "Singapour",
+          "type": "pays",
+          "verdict": "Neutre",
+          "conviction": "moyenne",
+          "score": 57.4,
+          "zone_secteur": null,
+          "a_surveiller": false,
+          "fleche": "→",
+          "pays": "SG",
+          "secteur": null,
+          "argument": "Croissance du pib 5,0 % (75/100) ; inflation 2,3 % (86/100)",
+          "contre": "PER de l'ETF EWS 18,2 contre une médiane de 14,0 pour les pays suivis (30/100)",
+          "objection": null
         }
       ],
       "matieres": [
-        {
-          "id": "matiere-brent",
-          "nom": "Pétrole Brent",
-          "type": "matieres",
-          "verdict": "Renforcer",
-          "conviction": "faible",
-          "score": 60.9,
-          "fleche": "→",
-          "pays": null,
-          "secteur": null,
-          "argument": "Cours +17,7 % sur 3 mois, +55,1 % sur 12 mois, au-dessus de sa moyenne 200 jours (93,34)",
-          "contre": "Cours corrigé de l’inflation américaine au percentile 78 de sa plage sur 10 ans (plus bas 21,44, plus haut 122,01 en valeur nominale)",
-          "objection": "Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 91) : Cours +17,7 % sur 3 mois, +55,1 % sur 12 mois, au-dessus de sa moyenne 200 jours (93,34) ; valorisation tendue (24/100) : Cours corrigé de l’inflation américaine au percentile 78 de sa plage sur 10 ans (plus bas 21,44, plus haut 122,01 en valeur nominale) ; positionnement vérifié (49/100) ; hausse liée en partie au contexte géopolitique, réversible en cas de détente. Une forte hausse passée ne suffit pas à porter une conviction forte."
-        },
-        {
-          "id": "matiere-wti",
-          "nom": "Pétrole WTI",
-          "type": "matieres",
-          "verdict": "Renforcer",
-          "conviction": "faible",
-          "score": 60.3,
-          "fleche": "→",
-          "pays": null,
-          "secteur": null,
-          "argument": "Cours +16,2 % sur 3 mois, +52,8 % sur 12 mois, au-dessus de sa moyenne 200 jours (87,16)",
-          "contre": "Cours corrigé de l’inflation américaine au percentile 75 de sa plage sur 10 ans (plus bas 16,94, plus haut 120,67 en valeur nominale)",
-          "objection": "Momentum extrême : hausse passée de +52,8 % sur 12 mois (seuil : +40 %) : Cours +16,2 % sur 3 mois, +52,8 % sur 12 mois, au-dessus de sa moyenne 200 jours (87,16) ; valorisation tendue (31/100) : Cours corrigé de l’inflation américaine au percentile 75 de sa plage sur 10 ans (plus bas 16,94, plus haut 120,67 en valeur nominale) ; positionnement vérifié (61/100) ; hausse liée en partie au contexte géopolitique, réversible en cas de détente. Une forte hausse passée ne suffit pas à porter une conviction forte."
-        },
         {
           "id": "matiere-gaz_us",
           "nom": "Gaz naturel américain",
@@ -353,11 +363,95 @@
           "verdict": "Neutre",
           "conviction": "faible",
           "score": 56.5,
+          "zone_secteur": null,
+          "a_surveiller": false,
           "fleche": "→",
           "pays": null,
           "secteur": null,
           "argument": "Position nette des gérants (managed money) de −225 359 contrats (−13,4 % de l’intérêt ouvert), percentile 1 sur 3 ans : position très vendeuse : lecture à contre-courant favorable",
           "contre": "Monde en phase « Expansion sans inflation » (agent macro) : historiquement défavorable aux matières premières (30/100) ; moteurs macro propres : Indicateur avancé de l'OCDE (G20) à 100,2 (−0,08 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +1,6 % sur 3 mois",
+          "objection": null
+        },
+        {
+          "id": "matiere-coton",
+          "nom": "Coton",
+          "type": "matieres",
+          "verdict": "Neutre",
+          "conviction": "faible",
+          "score": 50.9,
+          "zone_secteur": null,
+          "a_surveiller": false,
+          "fleche": "→",
+          "pays": null,
+          "secteur": null,
+          "argument": "Cours −4,9 % sur 3 mois, +22,6 % sur 12 mois, au-dessus de sa moyenne 200 jours (75,57)",
+          "contre": "Position nette des gérants (managed money) de +44 168 contrats (+11,4 % de l’intérêt ouvert), percentile 81 sur 3 ans : position dans sa plage habituelle",
+          "objection": null
+        },
+        {
+          "id": "matiere-sucre",
+          "nom": "Sucre",
+          "type": "matieres",
+          "verdict": "Neutre",
+          "conviction": "moyenne",
+          "score": 50.3,
+          "zone_secteur": null,
+          "a_surveiller": false,
+          "fleche": "→",
+          "pays": null,
+          "secteur": null,
+          "argument": "Cours +10,9 % sur 3 mois, +28,5 % sur 12 mois, au-dessus de sa moyenne 200 jours (15,80)",
+          "contre": "Position nette des gérants (managed money) de +223 784 contrats (+18,8 % de l’intérêt ouvert), percentile 96 sur 3 ans : position très encombrée à l'achat : risque de retournement",
+          "objection": null
+        }
+      ],
+      "secteurs": [
+        {
+          "id": "secteur-monde-technologie",
+          "nom": "Technologies de l'information — Monde",
+          "type": "secteurs",
+          "verdict": "Renforcer",
+          "conviction": "forte",
+          "score": 65.7,
+          "zone_secteur": "monde",
+          "a_surveiller": false,
+          "fleche": "→",
+          "pays": null,
+          "secteur": "Technologies de l'information",
+          "argument": "Monde en phase « Expansion sans inflation » : rotation sectorielle favorable au secteur (72/100)",
+          "contre": null,
+          "objection": null
+        },
+        {
+          "id": "secteur-europe-sante",
+          "nom": "Santé — Europe",
+          "type": "secteurs",
+          "verdict": "Renforcer",
+          "conviction": "forte",
+          "score": 63.8,
+          "zone_secteur": "europe",
+          "a_surveiller": false,
+          "fleche": "→",
+          "pays": null,
+          "secteur": "Santé",
+          "argument": "PER médian 26,4, croissance médiane du bénéfice +45,3 % : rendement des bénéfices corrigé de la croissance de 11,3 contre 8,0 pour l'ensemble des secteurs de la zone",
+          "contre": null,
+          "objection": null
+        },
+        {
+          "id": "secteur-etats_unis-finance",
+          "nom": "Finance — États-Unis",
+          "type": "secteurs",
+          "verdict": "Renforcer",
+          "conviction": "forte",
+          "score": 61.4,
+          "zone_secteur": "etats_unis",
+          "a_surveiller": false,
+          "fleche": "→",
+          "pays": null,
+          "secteur": "Finance",
+          "argument": "PER médian 13,4, croissance médiane du bénéfice +16,3 % : rendement des bénéfices corrigé de la croissance de 11,5 contre 6,2 pour l'ensemble des secteurs de la zone",
+          "contre": null,
           "objection": null
         }
       ],
@@ -368,6 +462,8 @@
         "verdict": "Neutre",
         "conviction": "faible",
         "score": 46.3,
+        "zone_secteur": null,
+        "a_surveiller": false,
         "fleche": "→",
         "pays": null,
         "secteur": null,
@@ -383,6 +479,8 @@
           "verdict": "Neutre",
           "conviction": "faible",
           "score": 52.6,
+          "zone_secteur": null,
+          "a_surveiller": false,
           "fleche": "→",
           "pays": null,
           "secteur": null,
@@ -397,6 +495,8 @@
           "verdict": "Alléger",
           "conviction": "moyenne",
           "score": 41.1,
+          "zone_secteur": null,
+          "a_surveiller": false,
           "fleche": "→",
           "pays": null,
           "secteur": null,
@@ -411,6 +511,8 @@
           "verdict": "Alléger",
           "conviction": "forte",
           "score": 34.9,
+          "zone_secteur": null,
+          "a_surveiller": false,
           "fleche": "→",
           "pays": null,
           "secteur": null,
@@ -425,6 +527,8 @@
           "verdict": "Alléger",
           "conviction": "forte",
           "score": 33.2,
+          "zone_secteur": null,
+          "a_surveiller": false,
           "fleche": "→",
           "pays": null,
           "secteur": null,
@@ -441,6 +545,8 @@
           "verdict": "Neutre",
           "conviction": "moyenne",
           "score": 50.1,
+          "zone_secteur": null,
+          "a_surveiller": false,
           "fleche": "→",
           "pays": null,
           "secteur": null,
@@ -455,6 +561,8 @@
           "verdict": "Neutre",
           "conviction": "faible",
           "score": 44.2,
+          "zone_secteur": null,
+          "a_surveiller": false,
           "fleche": "→",
           "pays": null,
           "secteur": null,
@@ -470,12 +578,14 @@
           "type": "entreprises",
           "verdict": "Renforcer fortement",
           "conviction": "forte",
-          "score": 70.5,
+          "score": 70.3,
+          "zone_secteur": null,
+          "a_surveiller": false,
           "fleche": "→",
           "pays": "US",
           "secteur": "Finance",
           "argument": "Note de l'agent entreprises 80/100 : Dossier solide sur les comptes ; points forts : roe : 33,6 %, croissance du bénéfice : +126,0 %.",
-          "contre": "États-Unis : Risque géopolitique 73/100, 54 événement(s) en 14 jours (agent géopolitique)",
+          "contre": "États-Unis : Risque géopolitique 73/100, 55 événement(s) en 14 jours (agent géopolitique)",
           "objection": null
         },
         {
@@ -484,12 +594,14 @@
           "type": "entreprises",
           "verdict": "Renforcer",
           "conviction": "forte",
-          "score": 70.0,
+          "score": 69.8,
+          "zone_secteur": null,
+          "a_surveiller": false,
           "fleche": "→",
           "pays": "US",
           "secteur": "Finance",
           "argument": "Note de l'agent entreprises 78/100 : Dossier solide sur les comptes ; points forts : per vs secteur : −44,2 %, croissance du ca : +17,7 %.",
-          "contre": "États-Unis : Risque géopolitique 73/100, 54 événement(s) en 14 jours (agent géopolitique)",
+          "contre": "États-Unis : Risque géopolitique 73/100, 55 événement(s) en 14 jours (agent géopolitique)",
           "objection": null
         },
         {
@@ -498,7 +610,9 @@
           "type": "entreprises",
           "verdict": "Renforcer",
           "conviction": "forte",
-          "score": 69.3,
+          "score": 69.1,
+          "zone_secteur": null,
+          "a_surveiller": false,
           "fleche": "→",
           "pays": "TW",
           "secteur": "Technologies de l'information",
@@ -512,7 +626,9 @@
           "type": "entreprises",
           "verdict": "Renforcer",
           "conviction": "forte",
-          "score": 68.7,
+          "score": 68.4,
+          "zone_secteur": null,
+          "a_surveiller": false,
           "fleche": "→",
           "pays": "VN",
           "secteur": "Immobilier",
@@ -526,12 +642,14 @@
           "type": "entreprises",
           "verdict": "Renforcer",
           "conviction": "forte",
-          "score": 67.8,
+          "score": 67.6,
+          "zone_secteur": null,
+          "a_surveiller": false,
           "fleche": "→",
           "pays": "US",
           "secteur": "Immobilier",
           "argument": "Note de l'agent entreprises 75/100 : Dossier solide sur les comptes ; points forts : f-score de piotroski : 9/9, croissance du bénéfice : +44,9 % ; point faible : marge opérationnelle : 4,5 %.",
-          "contre": "États-Unis : Risque géopolitique 73/100, 54 événement(s) en 14 jours (agent géopolitique)",
+          "contre": "États-Unis : Risque géopolitique 73/100, 55 événement(s) en 14 jours (agent géopolitique)",
           "objection": null
         },
         {
@@ -540,7 +658,9 @@
           "type": "entreprises",
           "verdict": "Renforcer",
           "conviction": "forte",
-          "score": 66.9,
+          "score": 66.7,
+          "zone_secteur": null,
+          "a_surveiller": false,
           "fleche": "→",
           "pays": "TH",
           "secteur": "Technologies de l'information",
@@ -554,7 +674,9 @@
           "type": "entreprises",
           "verdict": "Renforcer",
           "conviction": "forte",
-          "score": 64.8,
+          "score": 64.7,
+          "zone_secteur": null,
+          "a_surveiller": false,
           "fleche": "→",
           "pays": "KR",
           "secteur": "Industrie",
@@ -568,12 +690,14 @@
           "type": "entreprises",
           "verdict": "Renforcer",
           "conviction": "forte",
-          "score": 64.7,
+          "score": 64.6,
+          "zone_secteur": null,
+          "a_surveiller": false,
           "fleche": "→",
           "pays": "CA",
           "secteur": "Matériaux",
           "argument": "Note de l'agent entreprises 85/100 : Dossier solide sur les comptes ; points forts : marge opérationnelle : 47,2 %, f-score de piotroski : 9/9.",
-          "contre": "Canada : Risque géopolitique 55/100, 10 événement(s) en 14 jours (agent géopolitique)",
+          "contre": "Canada : Risque géopolitique 54/100, 10 événement(s) en 14 jours (agent géopolitique)",
           "objection": null
         },
         {
@@ -582,7 +706,9 @@
           "type": "entreprises",
           "verdict": "Renforcer",
           "conviction": "forte",
-          "score": 64.5,
+          "score": 64.3,
+          "zone_secteur": null,
+          "a_surveiller": false,
           "fleche": "→",
           "pays": "SE",
           "secteur": "Consommation discrétionnaire",
@@ -596,7 +722,9 @@
           "type": "entreprises",
           "verdict": "Renforcer",
           "conviction": "forte",
-          "score": 63.9,
+          "score": 63.7,
+          "zone_secteur": null,
+          "a_surveiller": false,
           "fleche": "→",
           "pays": "CN",
           "secteur": "Santé",
@@ -610,7 +738,9 @@
           "type": "entreprises",
           "verdict": "Renforcer",
           "conviction": "forte",
-          "score": 62.9,
+          "score": 62.7,
+          "zone_secteur": null,
+          "a_surveiller": false,
           "fleche": "→",
           "pays": "KR",
           "secteur": "Industrie",
@@ -624,12 +754,14 @@
           "type": "entreprises",
           "verdict": "Renforcer",
           "conviction": "forte",
-          "score": 61.6,
+          "score": 61.5,
+          "zone_secteur": null,
+          "a_surveiller": false,
           "fleche": "→",
           "pays": "CA",
           "secteur": "Consommation de base",
           "argument": "PER vs secteur −33,6 % ; VE/EBITDA vs secteur −37,2 % ; valeur estimée +22,0 % par rapport au cours",
-          "contre": "Canada : Risque géopolitique 55/100, 10 événement(s) en 14 jours (agent géopolitique)",
+          "contre": "Canada : Risque géopolitique 54/100, 10 événement(s) en 14 jours (agent géopolitique)",
           "objection": null
         }
       ],
@@ -648,14 +780,33 @@
           "type": "entreprises",
           "verdict": "Renforcer fortement",
           "conviction": "moyenne",
-          "score": 75.5,
+          "score": 75.2,
+          "zone_secteur": null,
+          "a_surveiller": true,
           "fleche": "→",
           "pays": "US",
           "secteur": "Énergie",
           "argument": "Note de l'agent entreprises 77/100 : Dossier solide sur les comptes ; points forts : croissance du bénéfice : +78,4 %, per vs secteur : −51,7 % ; point faible : croissance du ca : −8,4 %.",
-          "contre": "États-Unis : Risque géopolitique 73/100, 54 événement(s) en 14 jours (agent géopolitique)",
+          "contre": "États-Unis : Risque géopolitique 73/100, 55 événement(s) en 14 jours (agent géopolitique)",
           "objection": "Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 94) : Momentum sur 12 mois +94,2 % (6 mois : +27,0 %) ; valorisation vérifiée (92/100) ; positionnement vérifié (56/100). Une forte hausse passée ne suffit pas à porter une conviction forte.",
-          "raison": "bien noté (76/100) mais objection à lever : Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 94) : Momentum sur 12 mois +94,2 % (6 mois : +27,0 %) ; valorisation vérifiée (92/100) ; positionnement vérifié (56/100). Une forte haus"
+          "raison": "bien noté (75/100) mais objection à lever : Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 94) : Momentum sur 12 mois +94,2 % (6 mois : +27,0 %) ; valorisation vérifiée (92/100) ; positionnement vérifié (56/100). Une forte haus"
+        },
+        {
+          "id": "secteur-etats_unis-energie",
+          "nom": "Énergie — États-Unis",
+          "type": "secteurs",
+          "verdict": "Renforcer fortement",
+          "conviction": "moyenne",
+          "score": 73.8,
+          "zone_secteur": "etats_unis",
+          "a_surveiller": true,
+          "fleche": "→",
+          "pays": null,
+          "secteur": "Énergie",
+          "argument": "ETF XLE +43,6 % sur 12 mois, +12,1 % sur 6 mois (cours du 06/11/2026)",
+          "contre": null,
+          "objection": "Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 96) : ETF XLE +43,6 % sur 12 mois, +12,1 % sur 6 mois (cours du 06/11/2026) ; valorisation vérifiée (71/100) ; positionnement vérifié (63/100). Une forte hausse passée ne suffit pas à porter une conviction forte.",
+          "raison": "bien noté (74/100) mais objection à lever : Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 96) : ETF XLE +43,6 % sur 12 mois, +12,1 % sur 6 mois (cours du 06/11/2026) ; valorisation vérifiée (71/100) ; positionnement vérifié (6"
         },
         {
           "id": "entreprise-CF",
@@ -663,12 +814,14 @@
           "type": "entreprises",
           "verdict": "Renforcer fortement",
           "conviction": "moyenne",
-          "score": 73.8,
+          "score": 73.6,
+          "zone_secteur": null,
+          "a_surveiller": true,
           "fleche": "→",
           "pays": "US",
           "secteur": "Matériaux",
           "argument": "Note de l'agent entreprises 86/100 : Dossier solide sur les comptes ; points forts : marge opérationnelle : 33,5 %, roic : 23,7 %.",
-          "contre": "États-Unis : Risque géopolitique 73/100, 54 événement(s) en 14 jours (agent géopolitique)",
+          "contre": "États-Unis : Risque géopolitique 73/100, 55 événement(s) en 14 jours (agent géopolitique)",
           "objection": "Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 94) : Momentum sur 12 mois +49,6 % (6 mois : +4,8 %) ; valorisation vérifiée (92/100) ; positionnement vérifié (56/100). Une forte hausse passée ne suffit pas à porter une conviction forte.",
           "raison": "bien noté (74/100) mais objection à lever : Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 94) : Momentum sur 12 mois +49,6 % (6 mois : +4,8 %) ; valorisation vérifiée (92/100) ; positionnement vérifié (56/100). Une forte hauss"
         },
@@ -678,7 +831,9 @@
           "type": "entreprises",
           "verdict": "Renforcer",
           "conviction": "faible",
-          "score": 71.8,
+          "score": 71.5,
+          "zone_secteur": null,
+          "a_surveiller": true,
           "fleche": "→",
           "pays": "KR",
           "secteur": "Technologies de l'information",
@@ -688,12 +843,48 @@
           "raison": "bien noté (72/100) mais objection à lever : Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 94) : Momentum sur 12 mois +91,5 % (6 mois : −32,8 %) ; valorisation vérifiée (85/100). Une forte hausse passée ne suffit pas à porter u"
         },
         {
+          "id": "secteur-emergents-technologie",
+          "nom": "Technologies de l'information — Émergents",
+          "type": "secteurs",
+          "verdict": "Renforcer",
+          "conviction": "moyenne",
+          "score": 67.7,
+          "zone_secteur": "emergents",
+          "a_surveiller": true,
+          "fleche": "→",
+          "pays": null,
+          "secteur": "Technologies de l'information",
+          "argument": "Momentum médian des sociétés du secteur +36,0 % sur 12 mois (pas d'ETF sectoriel exploitable)",
+          "contre": null,
+          "objection": "Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 96) : Momentum médian des sociétés du secteur +36,0 % sur 12 mois (pas d'ETF sectoriel exploitable) ; valorisation vérifiée (66/100). Une forte hausse passée ne suffit pas à porter une conviction forte.",
+          "raison": "bien noté (68/100) mais objection à lever : Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 96) : Momentum médian des sociétés du secteur +36,0 % sur 12 mois (pas d'ETF sectoriel exploitable) ; valorisation vérifiée (66/100). Un"
+        },
+        {
+          "id": "secteur-europe-energie",
+          "nom": "Énergie — Europe",
+          "type": "secteurs",
+          "verdict": "Renforcer",
+          "conviction": "moyenne",
+          "score": 67.4,
+          "zone_secteur": "europe",
+          "a_surveiller": true,
+          "fleche": "→",
+          "pays": null,
+          "secteur": "Énergie",
+          "argument": "ETF EXH1.DE +41,8 % sur 12 mois, +5,9 % sur 6 mois (cours du 06/11/2026) — pétrole et gaz (ICB) pour l'énergie",
+          "contre": null,
+          "objection": "Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 96) : ETF EXH1.DE +41,8 % sur 12 mois, +5,9 % sur 6 mois (cours du 06/11/2026) — pétrole et gaz (ICB) pour l'énergie ; valorisation vérifiée (61/100). Une forte hausse passée ne suffit pas à porter une conviction forte.",
+          "raison": "bien noté (67/100) mais objection à lever : Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 96) : ETF EXH1.DE +41,8 % sur 12 mois, +5,9 % sur 6 mois (cours du 06/11/2026) — pétrole et gaz (ICB) pour l'énergie ; valorisation véri"
+        },
+        {
           "id": "pays-TW",
           "nom": "Taïwan",
           "type": "pays",
           "verdict": "Renforcer",
           "conviction": "faible",
           "score": 62.2,
+          "zone_secteur": null,
+          "a_surveiller": true,
           "fleche": "→",
           "pays": "TW",
           "secteur": null,
@@ -708,59 +899,16 @@
           "type": "pays",
           "verdict": "Renforcer",
           "conviction": "faible",
-          "score": 61.6,
+          "score": 61.7,
+          "zone_secteur": null,
+          "a_surveiller": true,
           "fleche": "→",
           "pays": "PL",
           "secteur": null,
           "argument": "WIG20 +31,2 % sur 12 mois en monnaie locale (88/100)",
-          "contre": "Risque géopolitique 37/100, 1 événement(s) en 14 jours (agent géopolitique)",
+          "contre": "Risque géopolitique 36/100, 1 événement(s) en 14 jours (agent géopolitique)",
           "objection": "Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 92) : WIG20 +31,2 % sur 12 mois en monnaie locale (88/100) ; valorisation vérifiée (62/100). Une forte hausse passée ne suffit pas à porter une conviction forte.",
           "raison": "bien noté (62/100) mais objection à lever : Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 92) : WIG20 +31,2 % sur 12 mois en monnaie locale (88/100) ; valorisation vérifiée (62/100). Une forte hausse passée ne suffit pas à por"
-        },
-        {
-          "id": "matiere-brent",
-          "nom": "Pétrole Brent",
-          "type": "matieres",
-          "verdict": "Renforcer",
-          "conviction": "faible",
-          "score": 60.9,
-          "fleche": "→",
-          "pays": null,
-          "secteur": null,
-          "argument": "Cours +17,7 % sur 3 mois, +55,1 % sur 12 mois, au-dessus de sa moyenne 200 jours (93,34)",
-          "contre": "Cours corrigé de l’inflation américaine au percentile 78 de sa plage sur 10 ans (plus bas 21,44, plus haut 122,01 en valeur nominale)",
-          "objection": "Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 91) : Cours +17,7 % sur 3 mois, +55,1 % sur 12 mois, au-dessus de sa moyenne 200 jours (93,34) ; valorisation tendue (24/100) : Cours corrigé de l’inflation américaine au percentile 78 de sa plage sur 10 ans (plus bas 21,44, plus haut 122,01 en valeur nominale) ; positionnement vérifié (49/100) ; hausse liée en partie au contexte géopolitique, réversible en cas de détente. Une forte hausse passée ne suffit pas à porter une conviction forte.",
-          "raison": "bien noté (61/100) mais objection à lever : Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 91) : Cours +17,7 % sur 3 mois, +55,1 % sur 12 mois, au-dessus de sa moyenne 200 jours (93,34) ; valorisation tendue (24/100) : Cours co"
-        },
-        {
-          "id": "pays-VN",
-          "nom": "Vietnam",
-          "type": "pays",
-          "verdict": "Renforcer",
-          "conviction": "faible",
-          "score": 60.4,
-          "fleche": "→",
-          "pays": "VN",
-          "secteur": null,
-          "argument": "Croissance du pib 8,4 % (100/100) ; inflation 4,7 % (87/100)",
-          "contre": "VN-Index −0,9 % sur 12 mois en monnaie locale (49/100)",
-          "objection": "Objections spécifiques : réserves de change de 2,1 mois d'importations seulement.",
-          "raison": "bien noté (60/100) mais objection à lever : Objections spécifiques : réserves de change de 2,1 mois d'importations seulement."
-        },
-        {
-          "id": "matiere-wti",
-          "nom": "Pétrole WTI",
-          "type": "matieres",
-          "verdict": "Renforcer",
-          "conviction": "faible",
-          "score": 60.3,
-          "fleche": "→",
-          "pays": null,
-          "secteur": null,
-          "argument": "Cours +16,2 % sur 3 mois, +52,8 % sur 12 mois, au-dessus de sa moyenne 200 jours (87,16)",
-          "contre": "Cours corrigé de l’inflation américaine au percentile 75 de sa plage sur 10 ans (plus bas 16,94, plus haut 120,67 en valeur nominale)",
-          "objection": "Momentum extrême : hausse passée de +52,8 % sur 12 mois (seuil : +40 %) : Cours +16,2 % sur 3 mois, +52,8 % sur 12 mois, au-dessus de sa moyenne 200 jours (87,16) ; valorisation tendue (31/100) : Cours corrigé de l’inflation américaine au percentile 75 de sa plage sur 10 ans (plus bas 16,94, plus haut 120,67 en valeur nominale) ; positionnement vérifié (61/100) ; hausse liée en partie au contexte géopolitique, réversible en cas de détente. Une forte hausse passée ne suffit pas à porter une conviction forte.",
-          "raison": "bien noté (60/100) mais objection à lever : Momentum extrême : hausse passée de +52,8 % sur 12 mois (seuil : +40 %) : Cours +16,2 % sur 3 mois, +52,8 % sur 12 mois, au-dessus de sa moyenne 200 jours (87,16) ; valorisation tendue (31/100) : Cours corrigé de l’infla"
         }
       ]
     },
@@ -820,22 +968,22 @@
       }
     ],
     "donner_tort": [
-      "Géopolitique (16/100) : États-Unis : Risque géopolitique 73/100, 54 événement(s) en 14 jours (agent géopolitique)",
+      "Géopolitique (16/100) : États-Unis : Risque géopolitique 73/100, 55 événement(s) en 14 jours (agent géopolitique)",
       "Croissance qui accélère (indicateur avancé de l'OCDE, deux signaux concordants) : passage en « Reprise ».",
       "Score de stress financier au-dessus de 74/100 avec deux familles d'indicateurs concordantes : palier « Tension »."
     ],
     "donnees": [
-      "Agent pays : à jour (1 h)",
-      "Agent macro : à jour (0 h)",
+      "Agent pays : à jour (5 h)",
+      "Agent macro : à jour (4 h)",
       "Agent marchés : à jour (1 h)",
-      "Agent risque : à jour (12 h)",
+      "Agent risque : à jour (16 h)",
       "Agent géopolitique : à jour (1 h)",
-      "Agent matières premières : à jour (21 h)",
-      "Agent entreprises : à jour (27 h)",
-      "Agent entreprises (pépites) : à jour (27 h)",
-      "Agent initiés : à jour (0 h)",
-      "Analyses à la demande : à jour (121 h)",
-      "Contradicteur (agent risque) : à jour (12 h)"
+      "Agent matières premières : à jour (25 h)",
+      "Agent entreprises : périmée (31 h)",
+      "Agent entreprises (pépites) : périmée (31 h)",
+      "Agent initiés : à jour (4 h)",
+      "Analyses à la demande : à jour (124 h)",
+      "Contradicteur (agent risque) : à jour (16 h)"
     ],
     "faits": [
       {
@@ -855,27 +1003,27 @@
       },
       {
         "id": "F4",
-        "texte": "Pays : Taïwan « Renforcer », conviction faible, 62/100",
+        "texte": "Pays : Thaïlande « Renforcer », conviction moyenne, 60/100",
         "source": "chef d'orchestre"
       },
       {
         "id": "F5",
-        "texte": "Pays : Pologne « Renforcer », conviction faible, 62/100",
+        "texte": "Pays : Suède « Renforcer », conviction moyenne, 59/100",
         "source": "chef d'orchestre"
       },
       {
         "id": "F6",
-        "texte": "Matière première : Pétrole Brent « Renforcer », conviction faible, 61/100",
+        "texte": "Matière première : Gaz naturel américain « Neutre », conviction faible, 57/100",
         "source": "chef d'orchestre"
       },
       {
         "id": "F7",
-        "texte": "Matière première : Pétrole WTI « Renforcer », conviction faible, 60/100",
+        "texte": "Matière première : Coton « Neutre », conviction faible, 51/100",
         "source": "chef d'orchestre"
       },
       {
         "id": "F8",
-        "texte": "Matière première : Gaz naturel américain « Neutre », conviction faible, 57/100",
+        "texte": "Matière première : Sucre « Neutre », conviction moyenne, 50/100",
         "source": "chef d'orchestre"
       },
       {
@@ -915,52 +1063,67 @@
       },
       {
         "id": "F16",
-        "texte": "Entreprises : 12 entreprises sur 8 secteurs et 8 pays (au plus 2 par secteur et 3 par pays)",
+        "texte": "Secteur : Technologies de l'information — Monde « Renforcer », conviction forte, 66/100",
         "source": "chef d'orchestre"
       },
       {
         "id": "F17",
-        "texte": "Entreprise : The Allstate Corporation « Renforcer fortement », conviction forte, 71/100",
+        "texte": "Secteur : Santé — Europe « Renforcer », conviction forte, 64/100",
         "source": "chef d'orchestre"
       },
       {
         "id": "F18",
-        "texte": "Entreprise : Arch Capital Group Ltd. « Renforcer », conviction forte, 70/100",
+        "texte": "Secteur : Finance — États-Unis « Renforcer », conviction forte, 61/100",
         "source": "chef d'orchestre"
       },
       {
         "id": "F19",
-        "texte": "Entreprise : ASUSTeK Computer Inc. « Renforcer », conviction forte, 69/100",
+        "texte": "Entreprises : 12 entreprises sur 8 secteurs et 8 pays (au plus 2 par secteur et 3 par pays)",
         "source": "chef d'orchestre"
       },
       {
         "id": "F20",
-        "texte": "Géopolitique : Frappes aériennes russes en Ukraine (gravité 4).",
+        "texte": "Entreprise : The Allstate Corporation « Renforcer fortement », conviction forte, 70/100",
         "source": "chef d'orchestre"
       },
       {
         "id": "F21",
-        "texte": "Géopolitique : Impact des frappes russes sur les infrastructures à Kyiv (gravité 4).",
+        "texte": "Entreprise : Arch Capital Group Ltd. « Renforcer », conviction forte, 70/100",
         "source": "chef d'orchestre"
       },
       {
         "id": "F22",
-        "texte": "Pologne (renforcer) : objection du contradicteur — Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 92) : WIG20 +31,2 % sur 12 mois en monnaie locale (88/100) ; valorisation vérifiée (62/100). Une forte hausse passée ne suffit pas à porter une conviction forte.",
+        "texte": "Entreprise : ASUSTeK Computer Inc. « Renforcer », conviction forte, 69/100",
         "source": "chef d'orchestre"
       },
       {
         "id": "F23",
-        "texte": "Taïwan (renforcer) : objection du contradicteur — Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 98) : TAIEX +42,3 % sur 12 mois en monnaie locale (100/100) ; valorisation tendue (3/100) : PER de l'ETF EWT 23,9 contre une médiane de 14,0 pour les pays suivis (0/100) — valeur à vérifier selon l'agent pays. Une forte hausse passée ne suffit pas à porter une conviction forte.",
+        "texte": "Données : Agent entreprises périmée — ses signaux pèsent moins.",
         "source": "chef d'orchestre"
       },
       {
         "id": "F24",
-        "texte": "Vietnam (renforcer) : objection du contradicteur — Objections spécifiques : réserves de change de 2,1 mois d'importations seulement.",
+        "texte": "Données : Agent entreprises (pépites) périmée — ses signaux pèsent moins.",
         "source": "chef d'orchestre"
       },
       {
         "id": "F25",
-        "texte": "Colombie (renforcer) : objection du contradicteur — Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 95) : MSCI COLCAP +34,6 % sur 12 mois en monnaie locale (92/100) ; valorisation vérifiée (89/100). Une forte hausse passée ne suffit pas à porter une conviction forte.",
+        "texte": "Géopolitique : Conflit entre l'Arabie saoudite et les rebelles houthis au Yémen (gravité 4).",
+        "source": "chef d'orchestre"
+      },
+      {
+        "id": "F26",
+        "texte": "Géopolitique : Frappes aériennes russes en Ukraine (gravité 4).",
+        "source": "chef d'orchestre"
+      },
+      {
+        "id": "F27",
+        "texte": "Pologne (renforcer) : objection du contradicteur — Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 92) : WIG20 +31,2 % sur 12 mois en monnaie locale (88/100) ; valorisation vérifiée (62/100). Une forte hausse passée ne suffit pas à porter une conviction forte.",
+        "source": "chef d'orchestre"
+      },
+      {
+        "id": "F28",
+        "texte": "Taïwan (renforcer) : objection du contradicteur — Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 98) : TAIEX +42,3 % sur 12 mois en monnaie locale (100/100) ; valorisation tendue (3/100) : PER de l'ETF EWT 23,9 contre une médiane de 14,0 pour les pays suivis (0/100) — valeur à vérifier selon l'agent pays. Une forte hausse passée ne suffit pas à porter une conviction forte.",
         "source": "chef d'orchestre"
       }
     ],
