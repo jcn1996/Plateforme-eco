@@ -57,6 +57,7 @@ Prototype d'une application personnelle de suivi économique mondial, pensée d'
   - la lecture de l'agent ;
   - les sources et les dates exactes de chaque valeur.
 - **Tendances** : une flèche ↑ ↓ → indique l'évolution depuis la mise à jour précédente, sur chaque indicateur et chaque note (pays, secteur, entreprise). Le vert signale une note qui s'améliore, le rouge une note qui se dégrade.
+- **En-tête et Menu** : sur téléphone et tablette, l'en-tête ne garde que le titre, la pastille du palier de risque, la recherche, le portefeuille démo (avec sa performance) et le bouton **Menu**. Le Menu ouvre un panneau qui regroupe tous les écrans, classés : *Synthèse* (Où investir, Briefing), *Analyses* (Vue macro, Pays · Classement, Pépites, Matières premières, Géopolitique, Risque, Initiés, Données alternatives), *Outils* (Analyser une entreprise, Mes analyses, Comparateur, Mes alertes), *Suivi* (Portefeuille démo, Fiabilité, Santé des agents) et *Affichage* (Légende des couleurs, Mode léger). Une pastille rouge sur « Menu » signale un problème dans la santé des agents. Sur grand écran (à partir de 1 280 px), des raccourcis supplémentaires s'ajoutent à l'en-tête (icônes, libellé au survol), mais tout reste accessible par le Menu. Les bandeaux et onglets qui défilent horizontalement se font glisser au doigt.
 - **Recherche** (loupe dans l'en-tête) : pays, secteurs et entreprises, par nom ou ticker, sans tenir compte des accents. Toucher un résultat ouvre la fiche et centre le globe.
 - **Fraîcheur des données** : sous chaque fiche, « Mis à jour le … · Source : … », lu dans le bloc `meta` des JSON.
 - **Filtres du globe** (puces en bas de l'écran) : la note globale, les 6 indicateurs des pays, les flux d'investissement et les risques.
@@ -572,7 +573,7 @@ Les plannings GitHub restent actifs en secours ; la `concurrency` de chaque work
 
 ## Santé des agents
 
-L'icône en forme de pouls, dans l'en-tête, ouvre l'écran **Santé des agents**. Une pastille rouge s'y affiche dès qu'un agent n'est pas « OK ».
+Menu → **Santé des agents** (sur grand écran, aussi l'icône en forme de pouls de l'en-tête). Une pastille rouge s'affiche sur le bouton « Menu » (et sur l'icône) dès qu'un agent n'est pas « OK ».
 Pour chaque agent (pays, marchés, puis les suivants), l'écran affiche :
 - la date et l'heure de la dernière exécution réussie ;
 - le statut :

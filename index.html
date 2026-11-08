@@ -42,6 +42,18 @@
   <!-- Étiquettes des pays, positionnées au-dessus du globe -->
   <div id="etiquettes" class="etiquettes"></div>
 
+  <!-- ===================== MENU (tous les écrans, classés) ===================== -->
+  <div id="menu" class="menu" hidden>
+    <div class="menu-fond js-menu-fermer"></div>
+    <nav class="menu-panneau" aria-label="Menu principal">
+      <div class="menu-tete">
+        <strong>Menu</strong>
+        <button class="bouton bouton--icone js-menu-fermer" type="button" title="Fermer le menu"><span aria-hidden="true">✕</span><span class="visuellement-cache">Fermer le menu</span></button>
+      </div>
+      <div id="menu-contenu" class="menu-contenu"></div>
+    </nav>
+  </div>
+
   <!-- ===================== EN-TÊTE ===================== -->
   <header class="entete">
     <!-- Ligne unique : titre, horloge, boutons -->
@@ -52,66 +64,70 @@
       </div>
       <time id="horloge" class="horloge mono">--:--</time>
       <div class="entete-actions">
+        <!-- Toujours visibles : pastille de risque, recherche, portefeuille démo, Menu.
+             Les autres boutons (classe « entete-large ») n'apparaissent que sur grand écran ;
+             tous les écrans restent accessibles par le Menu. -->
+        <!-- Pastille permanente du palier de risque mondial (agent risque) : ouvre l'écran « Risque » -->
+        <button id="btn-risque" class="bouton pastille-risque" type="button" title="Risque mondial" hidden></button>
         <button id="btn-recherche" class="bouton bouton--icone" type="button" aria-expanded="false" aria-controls="recherche" title="Rechercher un pays, un secteur, une entreprise">
           <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12.6 12.6 17 17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
           <span class="visuellement-cache">Rechercher</span>
         </button>
-        <!-- Chef d'orchestre : « Où investir maintenant, et avec quelle conviction ? » -->
-        <button id="btn-investir" class="bouton bouton--icone-texte bouton--accent" type="button" title="Où investir (chef d'orchestre)">
+        <button id="btn-investir" class="entete-large bouton bouton--icone-texte bouton--accent" type="button" title="Où investir (chef d'orchestre)">
           <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M13.2 6.8 11.2 11.2 6.8 13.2 8.8 8.8z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
           <span class="bouton-libelle">Où investir</span>
         </button>
-        <button id="btn-pepites" class="bouton bouton--icone-texte" type="button" title="Pépites candidates">
-          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 3h8l3 4.5L10 17 3 7.5z M3 7.5h14 M8 3 6.8 7.5 10 17 13.2 7.5 12 3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
-          <span class="bouton-libelle">Pépites</span>
-        </button>
-        <button id="btn-analyses" class="bouton bouton--icone-texte" type="button" title="Mes analyses (analyse à la demande)">
-          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 2.5h8l4 4V17.5H4z M12 2.5v4h4 M7 10.5h6 M7 13.5h4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
-          <span class="bouton-libelle">Analyses</span>
-        </button>
-        <button id="btn-macro" class="bouton bouton--icone-texte" type="button" title="Vue macro">
+        <button id="btn-macro" class="entete-large bouton bouton--icone-texte" type="button" title="Vue macro">
           <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2 12c2.2 0 2.6-6 5-6s2.8 8 5.2 8S15.6 8 18 8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M2 17h16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".5"/></svg>
           <span class="bouton-libelle">Macro</span>
         </button>
-        <button id="btn-geopolitique" class="bouton bouton--icone-texte" type="button" title="Géopolitique : événements et risque par pays">
-          <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2.5 10h15M10 2.5c2.4 2.2 2.4 12.8 0 15M10 2.5c-2.4 2.2-2.4 12.8 0 15" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M14.5 3.2 16.8 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-          <span class="bouton-libelle">Géopolitique</span>
+        <button id="btn-pepites" class="entete-large bouton bouton--icone-texte" type="button" title="Pépites candidates">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 3h8l3 4.5L10 17 3 7.5z M3 7.5h14 M8 3 6.8 7.5 10 17 13.2 7.5 12 3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          <span class="bouton-libelle">Pépites</span>
         </button>
-        <!-- Matières premières (en attendant la refonte de la navigation) -->
-        <button id="btn-matieres" class="bouton bouton--icone-texte" type="button" title="Matières premières : faut-il s'exposer sur 3 à 12 mois ?">
+        <button id="btn-matieres" class="entete-large bouton bouton--icone-texte" type="button" title="Matières premières : faut-il s'exposer sur 3 à 12 mois ?">
           <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 15.5 6 9.5h8l3 6z M7.5 9.5 9 6.5h2l1.5 3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M10 3v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
           <span class="bouton-libelle">Matières</span>
         </button>
-        <!-- Initiés : achats des dirigeants, super-investisseurs, activistes, élus (en attendant la refonte de la navigation) -->
-        <button id="btn-inities" class="bouton bouton--icone-texte" type="button" title="Initiés : achats des dirigeants, super-investisseurs, activistes, élus">
+        <button id="btn-geopolitique" class="entete-large bouton bouton--icone-texte" type="button" title="Géopolitique : événements et risque par pays">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2.5 10h15M10 2.5c2.4 2.2 2.4 12.8 0 15M10 2.5c-2.4 2.2-2.4 12.8 0 15" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M14.5 3.2 16.8 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <span class="bouton-libelle">Géopolitique</span>
+        </button>
+        <button id="btn-inities" class="entete-large bouton bouton--icone-texte" type="button" title="Initiés : achats des dirigeants, super-investisseurs, activistes, élus">
           <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="7.5" cy="6.5" r="2.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2.5 16.5c.4-3 2.4-4.8 5-4.8s4.6 1.8 5 4.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M13 9.5l2 2 3.5-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <span class="bouton-libelle">Initiés</span>
         </button>
-        <!-- Pastille permanente du palier de risque mondial (agent risque) : ouvre l'écran « Risque » -->
-        <button id="btn-risque" class="bouton pastille-risque" type="button" title="Risque mondial" hidden></button>
-        <button id="btn-sante" class="bouton bouton--icone bouton-sante" type="button" title="Santé des agents">
+        <button id="btn-classement" class="entete-large bouton bouton--icone-texte" type="button" title="Classement">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2 17h16M4 17v-5h4v5M8 17V5h4v12M12 17V9h4v8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+          <span class="bouton-libelle">Classement</span>
+        </button>
+        <button id="btn-analyses" class="entete-large bouton bouton--icone-texte" type="button" title="Mes analyses (analyse à la demande)">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 2.5h8l4 4V17.5H4z M12 2.5v4h4 M7 10.5h6 M7 13.5h4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          <span class="bouton-libelle">Analyses</span>
+        </button>
+        <button id="btn-sante" class="entete-large bouton bouton--icone bouton-sante" type="button" title="Santé des agents">
           <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2 10.5h3.5l2-4.5 3 9 2.2-6 1.3 1.5H18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <span class="pastille-probleme" aria-hidden="true"></span>
           <span class="visuellement-cache">Santé des agents</span>
         </button>
-        <button id="btn-legende" class="bouton bouton--icone" type="button" aria-expanded="false" aria-controls="legende" title="Légende des couleurs">
+        <button id="btn-legende" class="entete-large bouton bouton--icone" type="button" aria-expanded="false" aria-controls="legende" title="Légende des couleurs">
           <span aria-hidden="true">?</span><span class="visuellement-cache">Légende des couleurs</span>
         </button>
-        <button id="btn-leger" class="bouton bouton--icone" type="button" aria-pressed="false" title="Mode léger (économie de batterie)">
+        <button id="btn-leger" class="entete-large bouton bouton--icone" type="button" aria-pressed="false" title="Mode léger (économie de batterie)">
           <span aria-hidden="true">⚡</span><span class="visuellement-cache">Mode léger</span>
-        </button>
-        <button id="btn-classement" class="bouton bouton--icone-texte" type="button" title="Classement">
-          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2 17h16M4 17v-5h4v5M8 17V5h4v12M12 17V9h4v8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-          <span class="bouton-libelle">Classement</span>
         </button>
         <button id="btn-portefeuille" class="bouton bouton--icone-texte bouton--accent" type="button" title="Portefeuille démo">
           <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6.5h13.5v10H3zM3 6.5l10-3v3M12.5 11.5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
           <span class="bouton-libelle">Portefeuille démo</span>
           <span id="perf-portefeuille" class="bouton-perf" hidden></span>
         </button>
+        <button id="btn-menu" class="bouton bouton--icone-texte bouton-menu" type="button" aria-expanded="false" aria-controls="menu" title="Menu : tous les écrans">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5.5h14M3 10h14M3 14.5h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span class="bouton-libelle bouton-libelle--toujours">Menu</span>
+          <span class="pastille-probleme" aria-hidden="true"></span>
+        </button>
       </div>
     </div>
-
     <!-- Bandeau défilant des marchés (masqué quand un panneau est ouvert) -->
     <div class="bandeau-marches" aria-label="Marchés">
       <div id="bandeau-piste" class="bandeau-piste"></div>

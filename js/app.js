@@ -30,7 +30,8 @@ import { chargerInities, ecranInities, initiesCharges, ONGLETS_INITIES } from '.
 import { chargerAlternatives, alternativesChargees, ecranAlternatives, METRIQUE_ACTIVITE, lireActivite } from './donnees-alternatives.js';
 import { METRIQUE_FLUX, lireFlux, initialiserPeriodeFlux, periodeFlux } from './flux-investissement.js';
 import { choisirPulsations, bilanPulsations, libellePeriode } from './pulsations.js';
-import { chargerAnalyses, chargerEnCours, chargerAnalyse, chargerRecommandations, ecranAnalyses, ecranFiabilite } from './analyses.js';
+import { chargerAnalyses, chargerEnCours, chargerAnalyse, chargerRecommandations, ecranAnalyses, ecranFiabilite, ouvrirDialogue } from './analyses.js';
+import { initialiserMenu } from './menu.js';
 import {
   chargerChef, initialiserSynthese, ecranInvestir, ecranFiabiliteChef, chargerSuiviChef, METRIQUE_ATTRACTIVITE, lireAttractivite, ONGLETS_INVESTIR,
 } from './chef.js';
@@ -55,6 +56,7 @@ const dom = {
 };
 
 let d = null;      // données chargées
+let menu = null;   // panneau « Menu » (tous les écrans)
 let globe = null;  // instance du globe 3D (null si WebGL indisponible)
 let alertes = null;
 let recherche = null;
@@ -95,6 +97,7 @@ async function majSante() {
   const probleme = problemeDetecte(agentsSante);
   const bouton = $('#btn-sante');
   bouton.classList.toggle('a-un-probleme', probleme);
+  $('#btn-menu')?.classList.toggle('a-un-probleme', probleme); // le bouton Santé n'est visible que sur grand écran
   bouton.title = probleme ? 'Santé des agents : problème détecté' : 'Santé des agents';
   $('#btn-sante .visuellement-cache').textContent = bouton.title;
   if (routeActuelle?.type === 'sante') $('#sante-contenu').replaceChildren(...ecranSante(agentsSante));
@@ -232,6 +235,18 @@ async function demarrer() {
   $('#btn-pepites').addEventListener('click', () => naviguer({ type: 'pepites' }));
   $('#btn-investir').addEventListener('click', () => naviguer({ type: 'investir' }));
   $('#btn-analyses').addEventListener('click', () => naviguer({ type: 'analyses' }));
+  // Menu : tous les écrans, classés (sur téléphone, l'en-tête ne garde que l'essentiel)
+  menu = initialiserMenu({ bouton: $('#btn-menu'), menu: $('#menu'), contenu: $('#menu-contenu') }, naviguer, {
+    briefing: () => { if (routeActuelle.type !== 'globe') allerVers({ type: 'globe' }); alertes.ouvrirBriefing(); },
+    analyser: () => ouvrirDialogue(),
+    legende: () => {
+      if (routeActuelle.type !== 'globe') allerVers({ type: 'globe' });
+      // Après la fermeture du menu (le toucher qui l'a fermé ne doit pas refermer la légende)
+      setTimeout(() => { if (dom.legende.hidden) dom.btnLegende.click(); }, 0);
+    },
+    leger: () => dom.btnLeger.click(),
+  }, () => ({ routeType: routeActuelle?.type, probleme: $('#btn-sante').classList.contains('a-un-probleme'),
+    leger: dom.btnLeger.getAttribute('aria-pressed') === 'true' }));
   // Santé des agents : chargée à part (un journal manquant ne bloque pas l'appli),
   // puis recalculée chaque minute, car le statut « en panne » dépend de l'heure
   majSante();
@@ -248,7 +263,8 @@ async function demarrer() {
   document.querySelectorAll('.js-fermer').forEach((b) => b.addEventListener('click', () => allerVers({ type: 'globe' })));
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
-    if (recherche?.ouverte()) recherche.fermer();
+    if (menu?.ouvert()) menu.fermer();
+    else if (recherche?.ouverte()) recherche.fermer();
     else if (routeActuelle.type !== 'globe') retour();
   });
   brancherGlissementPanneau();
@@ -544,6 +560,7 @@ function routeValide(route) {
 /* ============================== Affichage ============================== */
 
 function afficher(route) {
+  menu?.fermer(false);
   if (!routeValide(route)) {
     history.replaceState(null, '', '#/');
     pile[pile.length - 1] = '#/';

@@ -185,6 +185,15 @@ export function initialiserSynthese({ bouton, liste, compte, apercu, titre }, pa
       rendre();
     },
     definirChef(c) { chef = c; rendre(); },
+    /** Déplie le panneau et ouvre le briefing complet (entrée « Briefing » du Menu). */
+    ouvrirBriefing() {
+      bouton.setAttribute('aria-expanded', 'true');
+      liste.hidden = false;
+      apercu.hidden = true;
+      document.body.classList.add('alertes-ouvertes');
+      if (!briefingOuvert) basculerBriefing();
+      liste.querySelector('.synthese-briefing')?.scrollIntoView({ block: 'start' });
+    },
   };
 }
 
