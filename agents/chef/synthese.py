@@ -442,7 +442,7 @@ def alertes(signaux: dict[str, list[dict]], revues: list[dict], changements: lis
     for imp, d, agent, s, note in choisis:
         pays = (s.get("pays") or [None])[0] if isinstance(s.get("pays"), list) else None
         cle = s.get("cle")
-        if agent in ("pays", "risque") and cle and len(str(cle)) == 2:
+        if agent in ("pays", "risque", "donnees_alternatives") and cle and len(str(cle)) == 2:
             pays = pays or cle
         route = None
         if agent == "matieres_premieres":

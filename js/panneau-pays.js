@@ -12,6 +12,7 @@ import { graphiqueAvance, historiqueFichier } from './graphiques.js';
 import { sectionGeopolitiquePays } from './geopolitique.js';
 import { sectionRisquePays } from './risque.js';
 import { sectionFluxPays } from './flux-investissement.js';
+import { sectionActivitePays } from './donnees-alternatives.js';
 import { INDICES_PAYS, MENTION_CFD } from './symboles-tradingview.js';
 
 /* ------------------------------ Composants ------------------------------ */
@@ -256,6 +257,9 @@ export function fichePays(d, p, nav) {
 
     // Flux d'investissement de l'ETF pays (coté aux États-Unis) : 1 semaine, 1 mois, 3 mois, flux cumulés
     sectionFluxPays(p),
+
+    // Activité réelle (agent données alternatives) : score, lecture, indicateurs avec mini-graphiques, divergence
+    sectionActivitePays(d.alternatives, p.code),
 
     // « Ce qui pourrait me donner tort » : contre-scénario de l'agent
     p.contre_scenario?.length ? el('section', {},

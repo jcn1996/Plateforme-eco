@@ -83,6 +83,9 @@ def description(cle: str, ind: dict) -> str:
         sens = "entrées" if v > 0 else "sorties"
         texte = f"{sens} nettes sur l'ETF {ind.get('symbole', '')} de {nb(abs(v))} % de l'encours sur {periode} (ETF cotés aux États-Unis)"
         return texte + (" ; position possiblement encombrée" if ind.get("encombrement") else "")
+    if cle == "activite_reelle":
+        return (f"activité réelle « {ind.get('lecture')} » selon {ind.get('indicateurs_utilises')} indicateurs alternatifs "
+                f"(score {nb(v, 0)}/100)")
     return ind.get("libelle", cle)
 
 
@@ -126,7 +129,7 @@ def lecture(indicateurs: dict, detail: dict) -> dict:
         return (morceaux[0][0].upper() + " ; ".join(morceaux)[1:] + ".") if morceaux else "Données indisponibles."
     tout = {**indicateurs, **detail}
     return {
-        "activite_et_prix": phrase(["croissance_pib", "indicateur_avance", "inflation"], tout),
+        "activite_et_prix": phrase(["croissance_pib", "indicateur_avance", "activite_reelle", "inflation"], tout),
         "politique_monetaire_et_risques": phrase(["taux_reel", "devise_3m", "solde_courant"], tout),
         "marches": phrase(["momentum", "valorisation", "flux_etrangers"], tout),
     }
@@ -139,6 +142,7 @@ CONTRE_SI_FORCE = {
     "taux_reel": "un retournement de la politique de la banque centrale",
     "valorisation": "une décote qui refléterait en fait une baisse des bénéfices attendus",
     "momentum": "un repli du marché qui effacerait la performance des 12 derniers mois",
+    "activite_reelle": "un retournement des indicateurs d'activité réelle (transport, énergie, emploi) lors des prochains relevés",
 }
 CONTRE_SI_FAIBLESSE = {
     "croissance_pib": "une reprise de l'activité plus rapide que les prévisions du FMI",
@@ -147,6 +151,7 @@ CONTRE_SI_FAIBLESSE = {
     "taux_reel": "un ajustement de la politique monétaire qui ramènerait le taux réel en zone neutre",
     "valorisation": "des bénéfices supérieurs aux attentes qui justifieraient la prime de valorisation",
     "momentum": "un rebond du marché après la baisse des 12 derniers mois",
+    "activite_reelle": "un redressement des indicateurs d'activité réelle (transport, énergie, emploi) lors des prochains relevés",
 }
 
 
