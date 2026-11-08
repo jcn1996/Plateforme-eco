@@ -20,7 +20,7 @@
    Changer VERSION vide les anciens caches chez tous les utilisateurs.
    ========================================================================== */
 
-const VERSION = 'salle-controle-v42';
+const VERSION = 'salle-controle-v43';
 
 const FICHIERS_APPLI = [
   './',
@@ -56,6 +56,7 @@ const FICHIERS_APPLI = [
   'js/dynamique-resultats.js',
   'js/chef.js',
   'js/donnees-alternatives.js',
+  'js/menu.js',
   'assets/icone.svg',
   'assets/icone-192.png',
   'assets/icone-512.png',

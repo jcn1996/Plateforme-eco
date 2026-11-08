@@ -86,7 +86,7 @@ export async function chargerRecommandations() {
 
 let dialogue = null;
 
-function ouvrirDialogue(texteInitial = '') {
+export function ouvrirDialogue(texteInitial = '') {
   if (!dialogue) {
     const champ = el('input', { type: 'text', class: 'analyse-champ', placeholder: 'Ticker ou nom : ASML, MC.PA, 7203.T, Hermès',
       autocomplete: 'off', autocapitalize: 'characters', spellcheck: 'false', maxlength: '60', 'aria-label': 'Société à analyser' });
