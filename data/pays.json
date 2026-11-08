@@ -1,10 +1,10 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-08T06:19:41Z",
+    "genere_le": "2026-11-08T13:16:22Z",
     "source": "agent-pays",
     "fictif": false,
-    "mise_a_jour_precedente": "2026-11-07T12:55:11Z",
+    "mise_a_jour_precedente": "2026-11-08T06:19:41Z",
     "version_agent": "1.2",
     "sources": {
       "source nationale officielle": [
@@ -79,10 +79,11 @@
       "inflation": 0.2,
       "taux_reel": 0.15,
       "valorisation": 0.15,
-      "momentum": 0.15
+      "momentum": 0.15,
+      "activite_reelle": 0.1
     },
     "alertes_qualite": [],
-    "flux_etf_mis_a_jour_le": "2026-11-08T06:19:41Z"
+    "flux_etf_mis_a_jour_le": "2026-11-08T13:16:22Z"
   },
   "donnees": [
     {
@@ -98,9 +99,9 @@
         "monnaie": "USD",
         "historique": true
       },
-      "note": 53,
+      "note": 52,
       "niveau": "neutre",
-      "note_brute": 53.2,
+      "note_brute": 52.1,
       "note_ramenee_en_zone_neutre": false,
       "verdict": "États-Unis : signaux partagés, avec d'un côté taux réel de +0,3 pt (banque centrale qui relève ses taux), de l'autre PER supérieur de 67 % à la médiane des pays suivis.",
       "confiance": {
@@ -125,7 +126,7 @@
         "Des bénéfices supérieurs aux attentes qui justifieraient la prime de valorisation."
       ],
       "lecture": {
-        "activite_et_prix": "Croissance du PIB de 2,3 % en 2026 selon le FMI ; indicateur avancé de l'OCDE au-dessus de 100 (101,0 et en hausse) ; inflation à 3,7 % pour une cible de 2,0 %.",
+        "activite_et_prix": "Croissance du PIB de 2,3 % en 2026 selon le FMI ; indicateur avancé de l'OCDE au-dessus de 100 (101,0 et en hausse) ; activité réelle « stable » selon 6 indicateurs alternatifs (score 41/100) ; inflation à 3,7 % pour une cible de 2,0 %.",
         "politique_monetaire_et_risques": "Taux réel de +0,3 pt (banque centrale qui relève ses taux) ; devise à +2,7 % contre le dollar sur 3 mois ; solde courant de −3,8 % du PIB.",
         "marches": "S&P 500 à +9,8 % sur 12 mois en monnaie locale (+12,4 % en euros) ; PER supérieur de 67 % à la médiane des pays suivis ; entrées nettes sur l'ETF SPY de 0,9 % de l'encours sur un mois (ETF cotés aux États-Unis)."
       },
@@ -378,6 +379,26 @@
             "note": 63,
             "date": "2026-11-06"
           }
+        },
+        "activite_reelle": {
+          "libelle": "Activité réelle",
+          "valeur": 41,
+          "unite": "/100",
+          "date": "2026-11-08",
+          "source": "agent données alternatives (demande d'électricité, expéditions de ciment, mises en chantier de logements, offres d'emploi en ligne, passagers contrôlés dans les aéroports, tonnage du transport routier)",
+          "source_courte": "les données alternatives",
+          "niveau_source": "alternative",
+          "frequence": "quotidienne",
+          "verification": "concordant",
+          "ecart_max": null,
+          "lecture": "stable",
+          "indicateurs_utilises": 6,
+          "confiance_alternative": "moyen",
+          "divergence": null,
+          "affichage": "41/100 · stable",
+          "complement": "6 indicateurs alternatifs (demande d'électricité, expéditions de ciment, mises en chantier de logements, offres d'emploi en ligne, passagers contrôlés dans les aéroports, tonnage du transport routier)",
+          "note": 41,
+          "confiance": "élevé"
         }
       },
       "detail": {
@@ -793,8 +814,8 @@
         }
       },
       "precedent": {
-        "note": 54,
-        "date": "2026-11-05"
+        "note": 53,
+        "date": "2026-11-08"
       }
     },
     {
@@ -3430,18 +3451,18 @@
         "monnaie": "EUR",
         "historique": true
       },
-      "note": 57,
+      "note": 56,
       "niveau": "neutre",
-      "note_brute": 56.6,
+      "note_brute": 56.1,
       "note_ramenee_en_zone_neutre": false,
       "verdict": "Allemagne : signaux partagés, avec d'un côté inflation à 3,3 % pour une cible de 2,0 %, de l'autre PER supérieur de 24 % à la médiane des pays suivis.",
       "confiance": {
-        "niveau": "élevé",
+        "niveau": "moyen",
         "score": 1.0,
         "raisons": [
-          "données complètes, récentes et confirmées par plusieurs sources"
+          "confiance plafonnée à « moyen » : une seule source pour indicateur avancé (OCDE), valorisation relative, momentum boursier 12 mois, activité réelle"
         ],
-        "plafonnee": false
+        "plafonnee": true
       },
       "qualite": {
         "sources_consultees": 12,
@@ -3456,7 +3477,7 @@
         "Des bénéfices supérieurs aux attentes qui justifieraient la prime de valorisation."
       ],
       "lecture": {
-        "activite_et_prix": "Croissance du PIB de 1,3 % en 2026 selon le FMI ; indicateur avancé de l'OCDE au-dessus de 100 (101,0 et en hausse) ; inflation à 3,3 % pour une cible de 2,0 %.",
+        "activite_et_prix": "Croissance du PIB de 1,3 % en 2026 selon le FMI ; indicateur avancé de l'OCDE au-dessus de 100 (101,0 et en hausse) ; activité réelle « stable » selon 2 indicateurs alternatifs (score 51/100) ; inflation à 3,3 % pour une cible de 2,0 %.",
         "politique_monetaire_et_risques": "Taux réel de −0,8 pt (banque centrale qui relève ses taux) ; devise à −3,2 % contre le dollar sur 3 mois ; solde courant de +4,5 % du PIB.",
         "marches": "DAX 40 à +8,8 % sur 12 mois en monnaie locale ; PER supérieur de 24 % à la médiane des pays suivis."
       },
@@ -3701,6 +3722,26 @@
             "note": 56,
             "date": "2026-11-06"
           }
+        },
+        "activite_reelle": {
+          "libelle": "Activité réelle",
+          "valeur": 51,
+          "unite": "/100",
+          "date": "2026-11-08",
+          "source": "agent données alternatives (kilomètres parcourus par les poids lourds sur autoroute, offres d'emploi en ligne)",
+          "source_courte": "les données alternatives",
+          "niveau_source": "alternative",
+          "frequence": "quotidienne",
+          "verification": "source_unique",
+          "ecart_max": null,
+          "lecture": "stable",
+          "indicateurs_utilises": 2,
+          "confiance_alternative": "moyen",
+          "divergence": null,
+          "affichage": "51/100 · stable",
+          "complement": "2 indicateurs alternatifs (kilomètres parcourus par les poids lourds sur autoroute, offres d'emploi en ligne)",
+          "note": 51,
+          "confiance": "moyen"
         }
       },
       "detail": {
@@ -3868,8 +3909,8 @@
         }
       },
       "precedent": {
-        "note": 56,
-        "date": "2026-11-07"
+        "note": 57,
+        "date": "2026-11-08"
       }
     },
     {
@@ -5152,7 +5193,7 @@
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 7,0 % en 2026 selon le FMI ; indicateur avancé de l'OCDE au-dessus de 100 (102,0 et en hausse) ; inflation à 5,6 % pour une cible de 4,0 %.",
         "politique_monetaire_et_risques": "Taux réel de −0,3 pt (banque centrale aux taux stables) ; devise à +1,4 % contre le dollar sur 3 mois ; solde courant de −0,7 % du PIB.",
-        "marches": "Nifty 50 à −1,9 % sur 12 mois en monnaie locale (−5,8 % en euros) ; PER supérieur de 63 % à la médiane des pays suivis."
+        "marches": "Nifty 50 à −2,0 % sur 12 mois en monnaie locale (−4,1 % en euros) ; PER supérieur de 63 % à la médiane des pays suivis."
       },
       "textes": "règles",
       "indicateurs": {
@@ -5333,9 +5374,9 @@
         },
         "momentum": {
           "libelle": "Momentum boursier 12 mois",
-          "valeur": -1.88,
+          "valeur": -1.98,
           "unite": "%",
-          "date": "2026-11-06",
+          "date": "2026-11-08",
           "source": "Yahoo Finance via yfinance, clôtures de l'indice Nifty 50 (^NSEI), en monnaie locale (INR)",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -5345,8 +5386,8 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, clôtures de l'indice Nifty 50 (^NSEI), en monnaie locale (INR)",
               "niveau": "marche",
-              "valeur": -1.88,
-              "date": "2026-11-06",
+              "valeur": -1.98,
+              "date": "2026-11-08",
               "statut": "retenue"
             }
           ],
@@ -5356,14 +5397,14 @@
           "base": "indice",
           "indice": "Nifty 50",
           "monnaie": "INR",
-          "performance_eur": -5.83,
-          "effet_change": -3.95,
+          "performance_eur": -4.14,
+          "effet_change": -2.16,
           "source_change": "Yahoo Finance via yfinance, cours EURINR=X (conversion en euros)",
           "note": 48,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -5.09,
-            "note": 44,
+            "valeur": -1.88,
+            "note": 48,
             "date": "2026-11-06"
           }
         }
