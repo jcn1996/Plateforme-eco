@@ -27,6 +27,7 @@ import { chargerRisque, ecranRisque, lireRisquePays, majPastilleRisque, METRIQUE
 import { chargerPepites, ecranPepites } from './pepites.js';
 import { chargerMatieres, ecranMatieres, matieresChargees, metriqueProducteurs } from './matieres-premieres.js';
 import { chargerInities, ecranInities, initiesCharges, ONGLETS_INITIES } from './inities.js';
+import { chargerAlternatives, alternativesChargees, ecranAlternatives, METRIQUE_ACTIVITE, lireActivite } from './donnees-alternatives.js';
 import { METRIQUE_FLUX, lireFlux, initialiserPeriodeFlux, periodeFlux } from './flux-investissement.js';
 import { choisirPulsations, bilanPulsations, libellePeriode } from './pulsations.js';
 import { chargerAnalyses, chargerEnCours, chargerAnalyse, chargerRecommandations, ecranAnalyses, ecranFiabilite } from './analyses.js';
@@ -181,7 +182,9 @@ async function demarrer() {
   // Filtres « Flux d'investissement » (ETF pays), « Risque » (agent risque) et « Risque géopolitique » :
   // seulement pour le globe (pas dans le comparateur ni les alertes)
   const avecFlux = d.pays.some((p) => p.detail?.flux_etrangers?.periodes);
-  const metriquesGlobe = [...METRIQUES_PAYS, ...(chef?.pays?.length ? [METRIQUE_ATTRACTIVITE] : []), ...(avecFlux ? [METRIQUE_FLUX] : []), ...(risque ? [METRIQUE_RISQUE_PAYS] : []), ...(geopolitique ? [METRIQUE_RISQUE] : [])];
+  // Filtre « Activité réelle » : seulement si l'agent pays publie la sous-note pour au moins un pays
+  const avecActivite = d.pays.some((p) => p.indicateurs?.activite_reelle?.valeur != null);
+  const metriquesGlobe = [...METRIQUES_PAYS, ...(avecActivite ? [METRIQUE_ACTIVITE] : []), ...(chef?.pays?.length ? [METRIQUE_ATTRACTIVITE] : []), ...(avecFlux ? [METRIQUE_FLUX] : []), ...(risque ? [METRIQUE_RISQUE_PAYS] : []), ...(geopolitique ? [METRIQUE_RISQUE] : [])];
   const estRisque = (cle) => cle === METRIQUE_RISQUE.cle || cle === METRIQUE_RISQUE_PAYS.cle;
   const estFlux = (cle) => cle === METRIQUE_FLUX.cle;
   // Sélecteur 1 semaine / 1 mois / 3 mois, visible seulement avec le filtre « Flux d'investissement » ;
@@ -303,6 +306,7 @@ function objetMetrique(cle) {
   if (cle === METRIQUE_RISQUE_PAYS.cle) return { cle, lire: (p) => lireRisquePays(risque, p.code) };
   if (cle === METRIQUE_FLUX.cle) return { cle, lire: (p) => lireFlux(p) };
   if (cle === METRIQUE_ATTRACTIVITE.cle) return { cle, lire: (p) => lireAttractivite(chef, p.code) };
+  if (cle === METRIQUE_ACTIVITE.cle) return { cle, lire: lireActivite };
   return { cle, lire: (p) => lireMetrique(p, cle) };
 }
 
@@ -474,6 +478,7 @@ function filAriane(route) {
     case 'mes-alertes': return [racine, { libelle: 'Mes alertes', route }];
     case 'sante': return [racine, { libelle: 'Santé des agents', route }];
     case 'macro': return [racine, { libelle: 'Vue macro', route }];
+    case 'alternatives': return [racine, { libelle: 'Vue macro', route: { type: 'macro' } }, { libelle: 'Données alternatives', route }];
     case 'geopolitique': return [racine, { libelle: 'Géopolitique', route }];
     case 'risque': return [racine, { libelle: 'Risque', route }];
     case 'matieres': {
@@ -527,7 +532,7 @@ function majAriane(route) {
 function routeValide(route) {
   switch (route.type) {
     case 'globe': case 'portefeuille': case 'classement': case 'comparaison': case 'mes-alertes': case 'sante': case 'macro': case 'geopolitique': case 'risque': case 'pepites':
-    case 'analyses': case 'fiabilite': case 'matieres': case 'inities': case 'investir': case 'fiabilite-chef': return true;
+    case 'analyses': case 'fiabilite': case 'matieres': case 'inities': case 'investir': case 'fiabilite-chef': case 'alternatives': return true;
     case 'analyse': return Boolean(route.id);
     case 'pays': return d.paysParCode.has(route.id);
     case 'secteur': return d.secteurParId.has(route.id);
@@ -615,7 +620,9 @@ function afficher(route) {
     comparaison: { section: '#ecran-comparaison', contenu: '#comparaison-contenu', titre: 'Comparaison', rendu: () => ecranComparaison(d, navigateurPanneau) },
     'mes-alertes': { section: '#ecran-mes-alertes', contenu: '#mes-alertes-contenu', titre: 'Mes alertes', rendu: () => ecranMesAlertes(d, { surChangement: majAlertes, ouvrir: naviguer }) },
     sante: { section: '#ecran-sante', contenu: '#sante-contenu', titre: 'Santé des agents', rendu: () => ecranSante(agentsSante) },
-    macro: { section: '#ecran-macro', contenu: '#macro-contenu', titre: 'Vue macro', rendu: () => ecranMacro(macro) },
+    macro: { section: '#ecran-macro', contenu: '#macro-contenu', titre: 'Vue macro', rendu: () => ecranMacro(macro, { ouvrirAlternatives: () => naviguer({ type: 'alternatives' }) }) },
+    alternatives: { section: '#ecran-alternatives', contenu: '#alternatives-contenu', titre: 'Données alternatives',
+      rendu: () => ecranAlternatives(alternativesChargees(), navigateurPanneau, Object.fromEntries(d.pays.map((p) => [p.code, p.nom]))) },
     geopolitique: { section: '#ecran-geopolitique', contenu: '#geopolitique-contenu', titre: 'Géopolitique', rendu: () => ecranGeopolitique(geopolitique) },
     risque: { section: '#ecran-risque', contenu: '#risque-contenu', titre: 'Risque', rendu: () => ecranRisque(risque, navigateurPanneau) },
     matieres: { section: '#ecran-matieres', contenu: '#matieres-contenu', titre: 'Matières premières', rendu: () => ecranMatieres(matieresChargees(), navigateurPanneau, route.id) },
@@ -631,6 +638,17 @@ function afficher(route) {
     Promise.all([chargerAnalyses(), chargerEnCours()]).then(([a, c]) => {
       analyses = a; enCours = c; d.analyses = a.liste;
       if (routeActuelle.type === 'analyses') $('#analyses-contenu').replaceChildren(...ecranAnalyses({ analyses, enCours }, navigateurPanneau).filter(Boolean));
+    });
+  }
+  // Données alternatives : fichier chargé à la première ouverture de l'écran ou d'une fiche pays (bloc « Activité réelle »)
+  if (['alternatives', 'pays'].includes(route.type) && alternativesChargees() === undefined) {
+    chargerAlternatives().then((alt) => {
+      d.alternatives = alt;
+      if (routeActuelle.type !== route.type || routeActuelle.id !== route.id) return;
+      if (route.type === 'alternatives') { afficher(routeActuelle); return; }
+      const defilement = dom.panneauContenu.scrollTop;
+      dom.panneauContenu.replaceChildren(...fichePays(d, d.paysParCode.get(route.id), navigateurPanneau).filter(Boolean));
+      dom.panneauContenu.scrollTop = defilement;
     });
   }
   // Matières premières : fichier chargé à la première ouverture de l'écran
@@ -690,7 +708,7 @@ function afficher(route) {
 
 /** Le globe ne se dessine que s'il est visible (économie de batterie). */
 function majActiviteGlobe() {
-  const masque = ['portefeuille', 'classement', 'comparaison', 'mes-alertes', 'sante', 'macro', 'geopolitique', 'risque', 'pepites', 'analyses', 'fiabilite', 'matieres', 'inities', 'investir', 'fiabilite-chef'].includes(routeActuelle.type)
+  const masque = ['portefeuille', 'classement', 'comparaison', 'mes-alertes', 'sante', 'macro', 'geopolitique', 'risque', 'pepites', 'analyses', 'fiabilite', 'matieres', 'inities', 'investir', 'fiabilite-chef', 'alternatives'].includes(routeActuelle.type)
     || (dom.panneau.classList.contains('est-ouvert') && etatPanneau === 'plein' && !estLarge());
   globe?.definirActif(!masque);
 }

@@ -149,7 +149,7 @@ def famille_cycle(ctx: Contexte, classe: str, cle_zone: str | None, nom_zone: st
 
 # ------------------------------------------------------------------ pays
 
-NOTES_FONDAMENTALES = ("croissance_pib", "indicateur_avance", "inflation", "taux_reel")
+NOTES_FONDAMENTALES = ("croissance_pib", "indicateur_avance", "inflation", "taux_reel", "activite_reelle")  # activité réelle : si l'agent pays la publie
 
 
 def opportunites_pays(ctx: Contexte) -> list[dict]:

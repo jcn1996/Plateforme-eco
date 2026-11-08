@@ -330,7 +330,7 @@ def objections_par_cible(revues: list[dict], signaux: dict[str, list[dict]], zon
         agent, cle = s.get("agent"), s.get("cle")
         orig = index.get((agent, s.get("type"), cle, s.get("date"))) or {}
         cibles = []  # (id d'opportunité, entité de l'objection)
-        if agent in ("pays", "risque") and cle and len(str(cle)) == 2:
+        if agent in ("pays", "risque", "donnees_alternatives") and cle and len(str(cle)) == 2:
             cibles.append((f"pays-{cle}", cle))
         elif agent in ("entreprises", "inities"):
             cibles.append((f"entreprise-{cle}", cle))

@@ -1,0 +1,117 @@
+{
+  "_commentaire": "Agent données alternatives : indicateurs avancés de l'activité réelle. Chaque indicateur : clé, nom, pays (code à 2 lettres, ou « monde »), catégorie, source et paramètres (voir sources.py), fréquence, unité, poids dans le score d'activité du pays, « sens » (1 : une hausse = plus d'activité). « mention » : précaution affichée avec la valeur. Les sources à clé (EIA, ENTSO-E) ou à adresse (csv_url) sont ignorées sans elle.",
+
+  "categories": {
+    "transport": "Transport et industrie",
+    "construction": "Construction",
+    "commerce": "Commerce mondial",
+    "energie": "Énergie",
+    "emploi": "Emploi",
+    "mobilite": "Mobilité",
+    "satellites": "Satellites",
+    "attention": "Attention du public"
+  },
+
+  "indicateurs": [
+    {"cle": "camions_de", "nom": "Kilomètres parcourus par les poids lourds sur autoroute", "pays": "DE", "categorie": "transport",
+     "source": "destatis_maut", "frequence": "quotidienne", "unite": "indice 2021 = 100", "poids": 1.5, "sens": 1,
+     "source_nom": "Destatis et BALM, indice Lkw-Maut (corrigé des variations saisonnières, expérimental)", "mention": "série quotidienne corrigée des variations saisonnières à titre expérimental"},
+    {"cle": "camions_us", "nom": "Tonnage du transport routier", "pays": "US", "categorie": "transport",
+     "source": "fred", "params": {"serie": "TRUCKD11"}, "frequence": "mensuelle", "unite": "indice 2015 = 100", "poids": 1.2, "sens": 1,
+     "source_nom": "American Trucking Associations via FRED (TRUCKD11, corrigé des variations saisonnières)"},
+    {"cle": "fret_vrac", "nom": "Fret vrac sec (Baltic Dry, approximation)", "pays": "monde", "categorie": "transport",
+     "source": "yahoo", "params": {"symbole": "BDRY"}, "frequence": "quotidienne", "unite": "$ (cours de l'ETF)", "poids": 1, "sens": 1,
+     "source_nom": "Yahoo Finance, ETF BDRY (contrats à terme sur le fret vrac sec, suit l'indice Baltic Dry de près)",
+     "mention": "approximation : l'indice Baltic Dry n'est pas diffusé gratuitement ; l'ETF BDRY porte des contrats à terme sur le fret vrac"},
+    {"cle": "fret_conteneurs", "nom": "Fret conteneurs (Drewry WCI)", "pays": "monde", "categorie": "transport",
+     "source": "drewry", "frequence": "hebdomadaire", "unite": "$ par conteneur de 40 pieds", "poids": 1, "sens": 1, "accumuler": true,
+     "source_nom": "Drewry World Container Index (page publique hebdomadaire)",
+     "mention": "un fret en hausse peut aussi refléter une offre contrainte (congestion, détournements), pas seulement la demande"},
+
+    {"cle": "ciment_cn", "nom": "Production de ciment", "pays": "CN", "categorie": "construction",
+     "source": "dbnomics", "params": {"fournisseur": "NBS", "jeu": "M_A02090Y", "serie": "A02090Y01"}, "frequence": "mensuelle", "unite": "10 000 t", "poids": 1, "sens": 1,
+     "source_nom": "Bureau national des statistiques de Chine via DBnomics (production du mois)",
+     "mention": "janvier et février sont publiés ensemble (pas de valeur mensuelle séparée)"},
+    {"cle": "ciment_us", "nom": "Expéditions de ciment", "pays": "US", "categorie": "construction",
+     "source": "usgs_ciment", "params": {"rapports": 14}, "frequence": "mensuelle", "fraicheur_jours": 150, "unite": "millions de tonnes", "poids": 0.8, "sens": 1,
+     "source_nom": "USGS, Mineral Industry Surveys — Cement (rapports mensuels)", "mention": "données estimées, publiées avec environ trois mois de décalage"},
+    {"cle": "mises_en_chantier_us", "nom": "Mises en chantier de logements", "pays": "US", "categorie": "construction",
+     "source": "fred", "params": {"serie": "HOUST"}, "frequence": "mensuelle", "unite": "milliers (rythme annuel)", "poids": 1, "sens": 1,
+     "source_nom": "Census Bureau via FRED (HOUST, corrigé des variations saisonnières)"},
+
+    {"cle": "exportations_kr", "nom": "Exportations (mensuelles)", "pays": "KR", "categorie": "commerce",
+     "source": "fred", "params": {"serie": "XTEXVA01KRM667S"}, "frequence": "mensuelle", "unite": "$", "poids": 1.5, "sens": 1,
+     "source_nom": "Douanes coréennes via OCDE et FRED (XTEXVA01KRM667S, corrigé des variations saisonnières)"},
+    {"cle": "exportations_kr_20j", "nom": "Exportations des 20 premiers jours", "pays": "KR", "categorie": "commerce",
+     "source": "csv_url", "params": {"variable": "COREE_EXPORTS_20J_URL", "pays": "KR", "indicateur": "exportations_20j"}, "frequence": "mensuelle", "unite": "$", "poids": 1, "sens": 1,
+     "source_nom": "Service des douanes coréen (fichier CSV fourni par la variable COREE_EXPORTS_20J_URL)"},
+    {"cle": "commandes_export_tw", "nom": "Commandes à l'export", "pays": "TW", "categorie": "commerce",
+     "source": "csv_url", "params": {"variable": "TAIWAN_COMMANDES_URL", "pays": "TW", "indicateur": "commandes_export"}, "frequence": "mensuelle", "unite": "$", "poids": 1.5, "sens": 1,
+     "source_nom": "Ministère de l'Économie de Taïwan (fichier CSV fourni par la variable TAIWAN_COMMANDES_URL)"},
+
+    {"cle": "electricite_cn", "nom": "Production d'électricité", "pays": "CN", "categorie": "energie",
+     "source": "dbnomics", "params": {"fournisseur": "NBS", "jeu": "M_A03010G", "serie": "A03010G01"}, "frequence": "mensuelle", "unite": "100 millions de kWh", "poids": 1.2, "sens": 1,
+     "source_nom": "Bureau national des statistiques de Chine via DBnomics (production du mois)",
+     "mention": "janvier et février sont publiés ensemble (pas de valeur mensuelle séparée)"},
+    {"cle": "electricite_us", "nom": "Demande d'électricité", "pays": "US", "categorie": "energie",
+     "source": "eia", "params": {"zone": "US48"}, "frequence": "quotidienne", "unite": "MWh par jour", "poids": 0.8, "sens": 1,
+     "source_nom": "EIA, demande quotidienne des 48 États contigus (API v2, clé EIA_API_KEY)", "mention": "très sensible aux températures"},
+    {"cle": "electricite_de", "nom": "Consommation d'électricité", "pays": "DE", "categorie": "energie", "source": "entsoe", "params": {"zone": "10Y1001A1001A82H"},
+     "frequence": "quotidienne", "unite": "MW (moyenne journalière)", "poids": 0.8, "sens": 1, "source_nom": "ENTSO-E, charge réalisée (zone Allemagne-Luxembourg, clé ENTSOE_API_KEY)", "mention": "très sensible aux températures"},
+    {"cle": "electricite_fr", "nom": "Consommation d'électricité", "pays": "FR", "categorie": "energie", "source": "entsoe", "params": {"zone": "10YFR-RTE------C"},
+     "frequence": "quotidienne", "unite": "MW (moyenne journalière)", "poids": 0.8, "sens": 1, "source_nom": "ENTSO-E, charge réalisée (France, clé ENTSOE_API_KEY)", "mention": "très sensible aux températures"},
+    {"cle": "electricite_it", "nom": "Consommation d'électricité", "pays": "IT", "categorie": "energie", "source": "entsoe", "params": {"zone": "10YIT-GRTN-----B"},
+     "frequence": "quotidienne", "unite": "MW (moyenne journalière)", "poids": 0.8, "sens": 1, "source_nom": "ENTSO-E, charge réalisée (Italie, clé ENTSOE_API_KEY)", "mention": "très sensible aux températures"},
+    {"cle": "electricite_es", "nom": "Consommation d'électricité", "pays": "ES", "categorie": "energie", "source": "entsoe", "params": {"zone": "10YES-REE------0"},
+     "frequence": "quotidienne", "unite": "MW (moyenne journalière)", "poids": 0.8, "sens": 1, "source_nom": "ENTSO-E, charge réalisée (Espagne, clé ENTSOE_API_KEY)", "mention": "très sensible aux températures"},
+    {"cle": "electricite_nl", "nom": "Consommation d'électricité", "pays": "NL", "categorie": "energie", "source": "entsoe", "params": {"zone": "10YNL----------L"},
+     "frequence": "quotidienne", "unite": "MW (moyenne journalière)", "poids": 0.8, "sens": 1, "source_nom": "ENTSO-E, charge réalisée (Pays-Bas, clé ENTSOE_API_KEY)", "mention": "très sensible aux températures"},
+    {"cle": "electricite_pl", "nom": "Consommation d'électricité", "pays": "PL", "categorie": "energie", "source": "entsoe", "params": {"zone": "10YPL-AREA-----S"},
+     "frequence": "quotidienne", "unite": "MW (moyenne journalière)", "poids": 0.8, "sens": 1, "source_nom": "ENTSO-E, charge réalisée (Pologne, clé ENTSOE_API_KEY)", "mention": "très sensible aux températures"},
+    {"cle": "electricite_se", "nom": "Consommation d'électricité", "pays": "SE", "categorie": "energie", "source": "entsoe", "params": {"zone": "10YSE-1--------K"},
+     "frequence": "quotidienne", "unite": "MW (moyenne journalière)", "poids": 0.8, "sens": 1, "source_nom": "ENTSO-E, charge réalisée (Suède, clé ENTSOE_API_KEY)", "mention": "très sensible aux températures"},
+    {"cle": "electricite_ch", "nom": "Consommation d'électricité", "pays": "CH", "categorie": "energie", "source": "entsoe", "params": {"zone": "10YCH-SWISSGRIDZ"},
+     "frequence": "quotidienne", "unite": "MW (moyenne journalière)", "poids": 0.8, "sens": 1, "source_nom": "ENTSO-E, charge réalisée (Suisse, clé ENTSOE_API_KEY)", "mention": "très sensible aux températures"},
+
+    {"cle": "tsa_us", "nom": "Passagers contrôlés dans les aéroports", "pays": "US", "categorie": "mobilite",
+     "source": "tsa", "params": {"annees": 3}, "frequence": "quotidienne", "unite": "passagers par jour", "poids": 0.6, "sens": 1,
+     "source_nom": "TSA (page publique « passenger volumes »)", "mention": "reflète surtout la consommation de services (voyages)"}
+  ],
+
+  "indeed": {
+    "_commentaire": "Offres d'emploi Indeed Hiring Lab : pays publiés dans le dépôt public (index corrigé des variations saisonnières, base 100 au 1er février 2020).",
+    "pays": ["US", "GB", "DE", "FR", "CA", "AU", "IT", "ES", "NL"],
+    "poids": 1, "nom": "Offres d'emploi en ligne", "unite": "indice 100 = février 2020"
+  },
+
+  "satellites": {
+    "_commentaire": "Agrégats mensuels par pays préparés hors de l'agent (Google Earth Engine ou Copernicus ; voir outils/satellites_gee.js) et publiés en CSV « date,pays,indicateur,valeur » à l'adresse de la variable SATELLITES_URL. Sans adresse : sources ignorées.",
+    "variable": "SATELLITES_URL",
+    "pays": ["IN", "ID", "BR", "MX", "TR", "VN", "ZA", "TH", "EG", "CO", "CL", "AR", "SA", "AE", "CN"],
+    "indicateurs": {
+      "no2": {"nom": "Pollution au dioxyde d'azote (Sentinel-5P)", "unite": "µmol/m²", "poids": 0.6, "source_nom": "Copernicus Sentinel-5P (TROPOMI), moyenne mensuelle par pays",
+              "mention": "dépend aussi de la météo et des politiques antipollution"},
+      "lumieres": {"nom": "Lumières nocturnes (NASA Black Marble)", "unite": "nW/cm²/sr", "poids": 0.6, "source_nom": "NASA Black Marble (VNP46A3), radiance mensuelle moyenne par pays",
+                   "mention": "sensible à la couverture nuageuse et aux coupures d'électricité"}
+    }
+  },
+
+  "attention": {
+    "_commentaire": "Attention du public pour les sociétés de la liste de surveillance et les pépites : information seulement, pondération faible (n'entre pas dans le score d'activité). Wikipédia sans clé ; Google Trends via pytrends (non officiel, limites strictes : nombre de requêtes plafonné, échec toléré).",
+    "max_societes": 40,
+    "max_trends": 8,
+    "hausse_pct": 30,
+    "signal_pct": 100,
+    "vues_min": 300
+  },
+
+  "fraicheur_jours": {"quotidienne": 21, "hebdomadaire": 21, "mensuelle": 110},
+  "score": {
+    "indicateurs_min": 2,
+    "acceleration": 60, "ralentissement": 40,
+    "concordants_min": 2, "seuil_concordant_haut": 55, "seuil_concordant_bas": 45,
+    "marque_haut": 70, "marque_bas": 30,
+    "divergence_officiel_haut": 60, "divergence_officiel_bas": 45, "divergence_alternatif_haut": 60, "divergence_alternatif_bas": 40
+  },
+  "historique_points": 110
+}

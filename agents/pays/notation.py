@@ -89,7 +89,12 @@ def niveau(note: float) -> str:
     return "attractif" if note >= 65 else "neutre" if note >= 50 else "defavorable"
 
 
-def note_globale(indicateurs: dict, ponderations: dict) -> dict:
+def note_activite_reelle(score: float) -> int:
+    """Score d'activité réelle de l'agent données alternatives (déjà sur 100, au moins 2 indicateurs)."""
+    return borner(score)
+
+
+def note_globale(indicateurs: dict, ponderations: dict, facultatifs=()) -> dict:
     """
     Moyenne pondérée des indicateurs disponibles.
     Règle de prudence : une note « attractive » (≥ 65) exige au moins deux
@@ -98,7 +103,8 @@ def note_globale(indicateurs: dict, ponderations: dict) -> dict:
     Sinon la note est ramenée dans la zone neutre (64 ou 50).
     """
     presents = {k: v for k, v in indicateurs.items() if k in ponderations and v.get("note") is not None}
-    poids_total = sum(ponderations.values())
+    # Un indicateur facultatif absent ne réduit pas la couverture
+    poids_total = sum(w for k, w in ponderations.items() if k not in facultatifs or k in presents)
     poids_presents = sum(ponderations[k] for k in presents)
     if not presents:
         return {"note": None, "couverture": 0.0, "brute": None, "ramenee": False}

@@ -317,6 +317,38 @@ python -m agents.matieres_premieres --test --data /tmp/essai   # données de tes
 python -m agents.matieres_premieres --capturer --data /tmp/essai   # met à jour les données de test
 ```
 
+## Agent données alternatives (sans IA)
+
+L'activité réelle avant les statistiques officielles, à partir d'indicateurs indirects gratuits. Aucune conclusion sur un seul indicateur.
+
+**Indicateurs** (`agents/donnees_alternatives/config.json`) :
+- transport : kilomètres parcourus par les poids lourds sur les autoroutes allemandes (Destatis, indice quotidien Lkw-Maut) ; tonnage du transport routier américain (FRED) ; fret vrac sec (ETF BDRY, approximation de l'indice Baltic Dry, non diffusé gratuitement) ; fret conteneurs (Drewry WCI, page publique hebdomadaire, historique accumulé par l'agent) ;
+- construction : ciment en Chine (Bureau national des statistiques via DBnomics) et aux États-Unis (USGS, rapports mensuels) ; mises en chantier (FRED) ;
+- commerce : exportations coréennes mensuelles (FRED) ; exportations des 20 premiers jours et commandes à l'export de Taïwan : CSV facultatifs (variables `COREE_EXPORTS_20J_URL`, `TAIWAN_COMMANDES_URL`), faute de source gratuite accessible sans compte ;
+- énergie : électricité en Chine (DBnomics), en Europe (ENTSO-E, clé `ENTSOE_API_KEY`), aux États-Unis (EIA, clé `EIA_API_KEY`) ;
+- emploi : offres d'emploi Indeed Hiring Lab (9 pays, dépôt public GitHub) ; mobilité : passagers TSA ;
+- satellites : NO2 (Sentinel-5P) et lumières nocturnes (Black Marble) pour les pays émergents, via un CSV mensuel (variable `SATELLITES_URL`, script `outils/satellites_gee.js` pour Google Earth Engine) ;
+- attention du public : Wikipédia et Google Trends (pytrends, non officiel, échec toléré) pour la liste de surveillance et les pépites — information seulement, hors score.
+
+**Analyse** : par indicateur, dernière valeur, variations sur 1 et 12 mois, écart à la tendance et à la normale saisonnière, percentile historique, note /100. Par pays (au moins 2 indicateurs à jour) : score /100, lecture « accélération », « stable » ou « ralentissement » (deux indicateurs concordants exigés), confiance, « Ce qui pourrait me donner tort », divergence avec les statistiques officielles de l'agent pays. Détails : [`agents/donnees_alternatives/regles.md`](agents/donnees_alternatives/regles.md).
+
+**Sorties** : `data/donnees_alternatives.json` ; `data/signaux/donnees_alternatives.json` (accélération ou ralentissement marqué, divergence avec l'officiel, attention en forte hausse) pour le chef d'orchestre ; `data/historique/donnees_alternatives/` ; `data/recap/donnees-alternatives-AAAA-MM-JJ.md` ; `data/journal/agent-donnees-alternatives.json` (écran « Santé »). L'agent pays reprend le score comme sous-note « Activité réelle » (pondération 0,10, seulement pour les pays qui en ont un).
+
+**Appli** : bouton « Données alternatives » en haut de l'écran « Vue macro » (tableau de bord mondial, activité par pays, attention du public) ; bloc « Activité réelle » de la fiche pays ; filtre du globe « Activité réelle ».
+
+**Clés et adresses facultatives** (sans elles, la source est ignorée, sans alerte) : dans **Settings** → **Secrets and variables** → **Actions** :
+- secret `ENTSOE_API_KEY` : créer un compte sur [transparency.entsoe.eu](https://transparency.entsoe.eu/), puis écrire à transparency@entsoe.eu (objet « Restful API access », avec l'adresse du compte) ; le jeton apparaît ensuite dans **My Account Settings** → **Web API Security Token** ;
+- secret `EIA_API_KEY` : déjà utilisé par l'agent matières premières (voir ci-dessus) ;
+- variables (onglet **Variables**) `SATELLITES_URL`, `COREE_EXPORTS_20J_URL`, `TAIWAN_COMMANDES_URL` : adresses de CSV « date,pays,indicateur,valeur ».
+
+**Exécution** : `.github/workflows/agent-donnees-alternatives.yml`, lancé par le planificateur chaque jour à 5 h 40 UTC (avant l'agent pays) ; les publications mensuelles sont prises en compte à l'exécution qui suit leur parution. Le workflow ne lance que ses propres tests et ceux du module commun.
+
+```
+python -m agents.donnees_alternatives                          # vraies sources
+python -m agents.donnees_alternatives --test --data /tmp/essai  # données de test, sans réseau
+python -m agents.donnees_alternatives --capturer --data /tmp/essai   # met à jour les données de test
+```
+
 ## Agent initiés (sans IA)
 
 L'agent suit les achats des dirigeants, les activistes et les super-investisseurs, comme signal supplémentaire pour l'agent entreprises, et les transactions des élus du Congrès pour information. Règles détaillées : [`agents/inities/regles.md`](agents/inities/regles.md).
@@ -626,7 +658,7 @@ data/chef.json        sortie du chef d'orchestre (opportunités, verdicts, alloc
 data/alertes.json     alertes du jour (chef d'orchestre)
 data/portefeuille.json  portefeuille démo (agent trader, aucun ordre réel) ; data/trader/ : journal des opérations et état
 data/*.json           autres données
-agents/               agents Python (agents/commun : téléchargement, cache, journal, écriture ; agents/pays : agent pays ; agents/marches : agent marchés ; agents/macro : agent macro ; agents/rattrapage : relance des exécutions manquées ; agents/entreprises : agent entreprises, recommandation et suivi ; agents/analyse_demande : analyse à la demande ; agents/risque : agent risque et contradicteur ; agents/matieres_premieres : agent matières premières ; agents/inities : agent initiés ; agents/chef : chef d'orchestre ; agents/trader : agent trader démo)
+agents/               agents Python (agents/commun : téléchargement, cache, journal, écriture ; agents/pays : agent pays ; agents/marches : agent marchés ; agents/macro : agent macro ; agents/rattrapage : relance des exécutions manquées ; agents/entreprises : agent entreprises, recommandation et suivi ; agents/analyse_demande : analyse à la demande ; agents/risque : agent risque et contradicteur ; agents/matieres_premieres : agent matières premières ; agents/inities : agent initiés ; agents/donnees_alternatives : agent données alternatives ; agents/chef : chef d'orchestre ; agents/trader : agent trader démo)
 .github/workflows/    exécution planifiée des agents (GitHub Actions)
 data/countries-110m.json, countries-50m.json  frontières des pays (voir data/LICENCE-countries-110m.txt)
 outils/generer_donnees_fictives.py  régénère les données fictives

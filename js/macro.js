@@ -361,10 +361,13 @@ function blocMarches(marches) {
 
 /* ------------------------------------------------------------------ écran */
 
-export function ecranMacro(macro) {
+export function ecranMacro(macro, nav = {}) {
   const entete = el('header', {},
     el('div', { class: 'fiche-surtitre' }, 'Agent macro · vue d’ensemble de l’économie mondiale'),
     el('h2', { class: 'fiche-titre' }, 'Vue macro'),
+    // Accès à l'écran « Données alternatives » (pas de bouton supplémentaire dans l'en-tête de l'appli)
+    nav.ouvrirAlternatives ? el('div', { class: 'fiche-actions' },
+      el('button', { class: 'bouton bouton--accent alt-bouton', type: 'button', onclick: nav.ouvrirAlternatives }, 'Données alternatives : l’activité réelle ›')) : null,
   );
   if (!macro) {
     return [entete, el('p', { class: 'sante-ligne' }, 'Données de l’agent macro indisponibles (data/macro.json introuvable). Lancer l’agent depuis l’onglet Actions.')];

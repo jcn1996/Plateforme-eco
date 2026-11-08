@@ -14,12 +14,13 @@
    - Chef d'orchestre : data/chef.json préchargé ; briefing et suivi (data/chef/) lus à la demande.
    - Agent trader (démo) : data/portefeuille.json préchargé (réseau d'abord : valeur en direct) ;
      journal complet des opérations (data/trader/) non préchargé.
-   - Séries de cours des graphiques (data/cours/), matières premières (data/matieres_premieres.json) et
-     initiés (data/inities.json) : non préchargées, lues à la demande.
+   - Séries de cours des graphiques (data/cours/), matières premières (data/matieres_premieres.json),
+     initiés (data/inities.json) et données alternatives (data/donnees_alternatives.json) : non préchargées,
+     lues à la demande.
    Changer VERSION vide les anciens caches chez tous les utilisateurs.
    ========================================================================== */
 
-const VERSION = 'salle-controle-v40';
+const VERSION = 'salle-controle-v41';
 
 const FICHIERS_APPLI = [
   './',
@@ -54,6 +55,7 @@ const FICHIERS_APPLI = [
   'js/pulsations.js',
   'js/dynamique-resultats.js',
   'js/chef.js',
+  'js/donnees-alternatives.js',
   'assets/icone.svg',
   'assets/icone-192.png',
   'assets/icone-512.png',

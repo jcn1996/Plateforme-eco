@@ -57,9 +57,14 @@ LIBELLES = {
     "devise_3m": "Devise sur 3 mois",
     "solde_courant": "Solde courant",
     "flux_etrangers": "Flux étrangers",
+    "activite_reelle": "Activité réelle",
 }
 PRINCIPAUX = ["croissance_pib", "indicateur_avance", "inflation", "taux_reel", "valorisation", "momentum"]
 DETAIL = ["devise_3m", "solde_courant", "flux_etrangers"]
+# Indicateurs facultatifs : comptés dans la note quand ils existent (pondération en config), sans pénaliser
+# la couverture ni la confiance quand ils manquent. « Activité réelle » : score de l'agent données alternatives.
+FACULTATIFS = ["activite_reelle"]
+AGE_MAX_ALTERNATIVES_JOURS = 4
 
 # Indicateurs de la Banque mondiale (API v2)
 BM_SERIES = {"bm_croissance": "NY.GDP.MKTP.KD.ZG", "bm_inflation": "FP.CPI.TOTL.ZG", "bm_solde_courant": "BN.CAB.XOKA.GD.ZS"}
@@ -550,6 +555,8 @@ def noter(cle: str, ind: dict) -> int | None:
         return notation.note_solde_courant(v)
     if cle == "flux_etrangers":
         return flux_etf.noter(ind, CONFIG_FLUX)
+    if cle == "activite_reelle":
+        return notation.note_activite_reelle(v)
     return None
 
 
@@ -649,6 +656,36 @@ def calculer_flux(src: dict, config: dict, historique: dict, aujourdhui: date) -
     return resultats, modifiees, nouveaux, echecs
 
 
+def lire_alternatives(chemin: Path, aujourdhui: date) -> dict:
+    """Scores d'activité réelle par pays (data/donnees_alternatives.json), s'ils sont récents."""
+    objet = lire_json(chemin) or {}
+    d = objet.get("donnees") or {}
+    if (objet.get("meta") or {}).get("fictif") is not False or not d.get("date"):
+        return {}
+    if (aujourdhui - date.fromisoformat(d["date"])).days > AGE_MAX_ALTERNATIVES_JOURS:
+        LOG.warning("Données alternatives du %s : trop anciennes, sous-note « Activité réelle » non utilisée.", d["date"])
+        return {}
+    index = {i["cle"]: i for i in d.get("indicateurs") or []}
+    return {p["code"]: {**p, "_date": d["date"], "_indicateurs": [index[k] for k in p.get("indicateurs", []) if k in index]}
+            for p in d.get("pays") or [] if p.get("score") is not None}
+
+
+def indicateur_activite(alt: dict | None) -> dict | None:
+    """Sous-note « Activité réelle » : score /100 de l'agent données alternatives (au moins 2 indicateurs)."""
+    if not alt:
+        return None
+    utilises = [i for i in alt["_indicateurs"] if i.get("note") is not None and not i.get("perimee")]
+    noms = ", ".join(sorted({i["nom"].lower() for i in utilises}))
+    return {"libelle": LIBELLES["activite_reelle"], "valeur": round(alt["score"], 1), "unite": "/100", "date": alt["_date"],
+            "source": f"agent données alternatives ({noms})", "source_courte": "les données alternatives", "niveau_source": "alternative",
+            "frequence": "quotidienne", "verification": "concordant" if alt.get("indicateurs_utilises", 0) >= 3 else "source_unique",
+            "ecart_max": None, "lecture": alt.get("lecture"), "indicateurs_utilises": alt.get("indicateurs_utilises"),
+            "confiance_alternative": (alt.get("confiance") or {}).get("niveau"),
+            "divergence": (alt.get("divergence") or {}).get("texte"),
+            "affichage": f"{round(alt['score'])}/100 · {alt.get('lecture')}",
+            "complement": f"{alt.get('indicateurs_utilises')} indicateurs alternatifs ({noms})"}
+
+
 def preparer(cle: str, nouveau: dict, ancien: dict | None, aujourdhui: date, config: dict) -> dict:
     """Secours, note, contrôle « à vérifier », confiance et tendance d'un indicateur."""
     ind = secours(cle, nouveau, ancien, aujourdhui)
@@ -661,7 +698,7 @@ def preparer(cle: str, nouveau: dict, ancien: dict | None, aujourdhui: date, con
 
 
 def executer(fournisseur, config: dict, ancien: dict | None, aujourdhui: date, series: dict | None = None,
-             flux: dict | None = None, series_indices: dict | None = None) -> tuple[list, dict, list]:
+             flux: dict | None = None, series_indices: dict | None = None, alternatives: dict | None = None) -> tuple[list, dict, list]:
     """Renvoie (pays, états des sources, échecs et rejets). Si `series` est fourni, il reçoit les clôtures
     quotidiennes sur un an des ETF pays (graphique de secours de l'appli). `flux` : {"historique": {...}}
     (relevés passés des ETF) ; il reçoit aussi les dates modifiées et les signaux du jour. `series_indices` reçoit
@@ -695,12 +732,16 @@ def executer(fournisseur, config: dict, ancien: dict | None, aujourdhui: date, s
         tous = {cle: preparer(cle, par_pays[code][cle], anciens_ind.get(cle), aujourdhui, config) for cle in PRINCIPAUX + DETAIL}
         indicateurs = {k: tous[k] for k in PRINCIPAUX}
         detail = {k: tous[k] for k in DETAIL}
+        activite = indicateur_activite((alternatives or {}).get(code))
+        if activite:
+            indicateurs["activite_reelle"] = preparer("activite_reelle", activite, anciens_ind.get("activite_reelle"), aujourdhui, config)
+        cles = PRINCIPAUX + [k for k in FACULTATIFS if k in indicateurs]
 
-        globale = notation.note_globale(indicateurs, ponderations)
+        globale = notation.note_globale(indicateurs, ponderations, FACULTATIFS)
         conf = notation.confiance(indicateurs, ponderations, globale["couverture"])
         note = globale["note"]
-        verdict = textes.verdict(cfg["nom"], note, indicateurs, PRINCIPAUX, globale["ramenee"], globale["brute"])
-        contre = textes.contre_scenario(note, indicateurs, PRINCIPAUX, conf)
+        verdict = textes.verdict(cfg["nom"], note, indicateurs, cles, globale["ramenee"], globale["brute"])
+        contre = textes.contre_scenario(note, indicateurs, cles, conf)
         origine_textes = "règles"
         redige = textes.rediger_avec_gemini(cfg["nom"], note, indicateurs, conf, config["gemini"]["modele"]) if note is not None else None
         if redige:
@@ -907,6 +948,7 @@ def main(argv=None) -> int:
     parser.add_argument("--recap", default=str(RACINE / "data" / "recap"))
     parser.add_argument("--cours", help="clôtures des ETF pays pour les graphiques (défaut : cours/etf-pays.json à côté de --sortie)")
     parser.add_argument("--indices", default=str(FICHIER_INDICES), help="indices nationaux de référence (config/indices_pays.json)")
+    parser.add_argument("--alternatives", help="scores d'activité réelle (défaut : donnees_alternatives.json à côté de --sortie)")
     parser.add_argument("--date", help="date du jour (AAAA-MM-JJ), utile pour les tests")
     args = parser.parse_args(argv)
     # Les chemins dérivés suivent --sortie et --historique : un essai dans un dossier temporaire n'écrit rien dans data/
@@ -929,7 +971,8 @@ def main(argv=None) -> int:
             return main_flux(args, fournisseur, config, ancien_reel, aujourdhui, flux)
     LOG.info("Agent pays %s — %s — %d pays", VERSION_AGENT, "données de test" if args.test else "sources réelles", len(config["pays"]))
     series, series_indices = {}, {}
-    donnees, etats, echecs = executer(fournisseur, config, ancien, aujourdhui, series, flux, series_indices)
+    alternatives = lire_alternatives(Path(args.alternatives) if args.alternatives else sortie.parent / "donnees_alternatives.json", aujourdhui)
+    donnees, etats, echecs = executer(fournisseur, config, ancien, aujourdhui, series, flux, series_indices, alternatives)
     dossier_cours = Path(args.cours).parent if args.cours else Path(args.sortie).parent / "cours"
     enregistrer_series(Path(args.cours) if args.cours else dossier_cours / "etf-pays.json", series)
     enregistrer_series(dossier_cours / "indices-pays.json", series_indices,
