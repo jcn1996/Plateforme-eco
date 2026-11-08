@@ -53,7 +53,7 @@ def indicateurs_config(cfg: dict) -> list[dict]:
                       "source_nom": "Indeed Hiring Lab (dépôt public GitHub, corrigé des variations saisonnières)",
                       "mention": "offres publiées sur Indeed seulement ; reflète la demande de travail, pas l'emploi"})
     sat = cfg["satellites"]
-    for p in sat["pays"]:
+    for p in (sat["pays"] if sat.get("actif") else []):  # désactivées par défaut : ni interrogées, ni affichées
         for k, s in sat["indicateurs"].items():
             liste.append({"cle": f"{k}_{p.lower()}", "nom": s["nom"], "pays": p, "categorie": "satellites", "source": "csv_url",
                           "params": {"variable": sat["variable"], "pays": p, "indicateur": k}, "frequence": "mensuelle", "unite": s["unite"],
@@ -72,11 +72,12 @@ def collecter(f, inds: list[dict], aujourdhui: date) -> tuple[dict, dict, dict]:
                 etats[ind["cle"]] = "non configurée"
                 continue
             series[ind["cle"]], details[ind["cle"]] = list(r[0]), r[1]
-            etats[ind["cle"]] = "ok" if r[0] else "vide"
+            etats[ind["cle"]] = ("secours" if str(r[1]).startswith("secours") else "ok") if r[0] else "vide"
         except Exception as e:  # une source en panne : on continue
             etats[ind["cle"]] = f"erreur : {str(e)[:160]}"
             LOG.error("Source %s indisponible : %s", ind["cle"], str(e)[:200])
-    LOG.info("Sources : %d ok, %d non configurées, %d en échec", sum(v == "ok" for v in etats.values()),
+    LOG.info("Sources : %d ok (dont %d de secours), %d non configurées, %d en échec", sum(v in ("ok", "secours") for v in etats.values()),
+             sum(v == "secours" for v in etats.values()),
              sum(v == "non configurée" for v in etats.values()), sum(v.startswith("erreur") or v == "vide" for v in etats.values()))
     return series, etats, details
 
@@ -112,13 +113,16 @@ def analyser_indicateurs(inds: list[dict], series: dict, etats: dict, cfg: dict,
         if etats.get(ind["cle"]) == "non configurée":
             continue
         pts = series.get(ind["cle"]) or []
-        a = A.analyser_serie(pts, ind["frequence"], aujourdhui, ind.get("sens", 1), ind.get("fraicheur_jours") or cfg["fraicheur_jours"][ind["frequence"]]) if pts else None
+        a = A.analyser_serie(pts, ind["frequence"], aujourdhui, ind.get("sens", 1), ind.get("fraicheur_jours") or cfg["fraicheur_jours"][ind["frequence"]],
+                                 bool(ind.get("brute"))) if pts else None
         x = {k: ind.get(k) for k in ("cle", "nom", "pays", "categorie", "frequence", "unite", "poids", "source_nom", "mention")}
         x["categorie_nom"] = cfg["categories"].get(ind["categorie"], ind["categorie"])
         x["mention_proxy"] = ind["cle"] in APPROCHES
         if a:
             x.update(a)
-            x["lecture"] = A.lecture_indicateur(ind["nom"], a) + (" Donnée ancienne : exclue du score." if a["perimee"] else "")
+            x["lecture"] = A.lecture_indicateur(ind["nom"], a) + (
+                f" Dernière donnée disponible : {A.mois_fr(a['date']) if ind['frequence'] == 'mensuelle' else A.date_fr(a['date'])} "
+                f"({a['age_jours']} jours) ; trop ancienne, exclue du score." if a["perimee"] else "")
             x["serie"] = A.serie_graphique(pts, ind["frequence"], aujourdhui, cfg["historique_points"])
         else:
             x.update({"note": None, "valeur": None, "date": None, "serie": [],
@@ -219,7 +223,7 @@ def societes_suivies(chemin_surveillance: Path, data: Path) -> list[dict]:
 
 def tableau_mondial(indicateurs: list[dict]) -> list[str]:
     """Indicateurs du tableau de bord mondial (écran « Données alternatives »), dans l'ordre d'affichage."""
-    ordre = ["camions_de", "exportations_kr", "exportations_kr_20j", "commandes_export_tw", "ciment_cn", "electricite_cn", "fret_conteneurs",
+    ordre = ["camions_de", "exportations_kr", "exportations_kr_20j", "exportations_tw", "commandes_export_tw", "ciment_cn", "electricite_cn", "fret_conteneurs",
              "fret_vrac", "camions_us", "tsa_us", "mises_en_chantier_us", "ciment_us"]
     presents = {i["cle"] for i in indicateurs if i.get("valeur") is not None}
     return [k for k in ordre if k in presents]
@@ -240,7 +244,10 @@ def recap_markdown(jour: date, d: dict, nouveaux: list[dict], etats: dict) -> st
     par_cle = {i["cle"]: i for i in d["indicateurs"]}
     l += [f"- {par_cle[k]['lecture']} (donnée du {A.date_fr(par_cle[k]['date'])})" for k in d["tableau_mondial"]]
     l += ["", "## Signaux détectés aujourd'hui", ""] + ([f"- [{s['importance']}] {s['titre']}" for s in nouveaux] or ["- aucun"])
-    erreurs = [k for k, v in etats.items() if v not in ("ok", "non configurée")]
+    erreurs = [k for k, v in etats.items() if v not in ("ok", "secours", "non configurée")]
+    secours = [k for k, v in etats.items() if v == "secours"]
+    if secours:
+        l += ["", "## Sources de secours utilisées", ""] + [f"- {k}" for k in secours]
     l += ["", "## Sources en échec", ""] + ([f"- {k} : {etats[k]}" for k in erreurs] or ["- aucune"])
     ignores = sorted(k for k, v in etats.items() if v == "non configurée")
     if ignores:
@@ -248,22 +255,28 @@ def recap_markdown(jour: date, d: dict, nouveaux: list[dict], etats: dict) -> st
     return "\n".join(l) + "\n"
 
 
-def sources_sante(inds: list[dict], etats: dict, etats_attention: dict) -> list[dict]:
+UNE_SERIE = ("fred", "dbnomics", "nbs", "douanes_taiwan")  # une ligne par indicateur dans l'écran Santé
+
+
+def sources_sante(inds: list[dict], etats: dict, etats_attention: dict, details: dict | None = None) -> list[dict]:
     """Une ligne par source (et non par indicateur) : les indicateurs d'une même source sont regroupés."""
     groupes: dict[str, list[str]] = {}
     noms = {}
     for ind in inds:
         g = ind["source"] if ind["source"] not in ("csv_url",) else f"csv_url:{ind['params']['variable']}"
-        if ind["source"] in ("fred", "dbnomics"):
+        if ind["source"] in UNE_SERIE:
             g = f"{ind['source']}:{ind['cle']}"
         groupes.setdefault(g, []).append(ind["cle"])
-        noms[g] = ind["source_nom"].split(" (")[0] + (f" — {ind['nom']}" if ind["source"] in ("fred", "dbnomics") else "")
+        noms[g] = ind["source_nom"].split(" (")[0] + (f" — {ind['nom']}" if ind["source"] in UNE_SERIE else "")
     res = []
     for g, cles in groupes.items():
         e = [etats.get(k, "échec") for k in cles]
         if all(x == "non configurée" for x in e):
             variable = {"eia": "EIA_API_KEY", "entsoe": "ENTSOE_API_KEY"}.get(g, g.split(":")[-1])
             res.append({"nom": noms[g], "etat": "non configurée", "detail": f"{variable} absente : source ignorée"})
+            continue
+        if e == ["secours"]:
+            res.append({"nom": noms[g], "etat": "secours", "detail": str((details or {}).get(cles[0], "source de secours")).removeprefix("secours : ")[:200]})
             continue
         ok = sum(x == "ok" for x in e)
         if ok == len(e):
@@ -325,7 +338,7 @@ def main(argv=None) -> int:
 
     inds = indicateurs_config(cfg)
     series, etats, details = collecter(f, inds, aujourdhui)
-    if not any(v == "ok" for v in etats.values()):
+    if not any(v in ("ok", "secours") for v in etats.values()):
         LOG.error("Aucune source disponible : fichiers inchangés.")
         return 1
     dossier_hist = data / "historique" / "donnees_alternatives"
@@ -390,7 +403,7 @@ def main(argv=None) -> int:
     maintenant = (datetime.combine(aujourdhui, datetime.min.time(), timezone.utc).replace(hour=5, minute=40) if args.date
                   else datetime.now(timezone.utc))
     bloc = sante.bloc_sante("donnees-alternatives", "Agent données alternatives", 12, "agent-donnees-alternatives.yml",
-                            sources_sante(inds, etats, etats_att), maintenant, (j.get("meta") or {}).get("sante"),
+                            sources_sante(inds, etats, etats_att, details), maintenant, (j.get("meta") or {}).get("sante"),
                             indicateurs=indicateurs_sante(indicateurs))
     sante.enregistrer_sante(chemin_journal, bloc, forcer=True)
 

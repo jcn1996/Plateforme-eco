@@ -45,6 +45,7 @@ VERSION_AGENT = "1.2"
 CONFIG_FLUX: dict = json.loads((DOSSIER_AGENT / "config.json").read_text(encoding="utf-8"))["flux_etf"]
 # Indice boursier national de référence de chaque pays (momentum 12 mois, graphique de la fiche pays)
 FICHIER_INDICES = RACINE / "config" / "indices_pays.json"
+FICHIER_INDICES_TEST = Path(__file__).resolve().parent / "tests" / "indices_pays.json"
 MENTION_ETF = "indice indisponible, ETF affiché"
 
 LIBELLES = {
@@ -947,12 +948,15 @@ def main(argv=None) -> int:
     parser.add_argument("--journal", default=str(RACINE / "data" / "journal" / "agent-pays.json"))
     parser.add_argument("--recap", default=str(RACINE / "data" / "recap"))
     parser.add_argument("--cours", help="clôtures des ETF pays pour les graphiques (défaut : cours/etf-pays.json à côté de --sortie)")
-    parser.add_argument("--indices", default=str(FICHIER_INDICES), help="indices nationaux de référence (config/indices_pays.json)")
+    parser.add_argument("--indices", help="indices nationaux de référence (défaut : config/indices_pays.json ; "
+                                          "avec --test : copie de test agents/pays/tests/indices_pays.json)")
     parser.add_argument("--alternatives", help="scores d'activité réelle (défaut : donnees_alternatives.json à côté de --sortie)")
     parser.add_argument("--date", help="date du jour (AAAA-MM-JJ), utile pour les tests")
     args = parser.parse_args(argv)
     # Les chemins dérivés suivent --sortie et --historique : un essai dans un dossier temporaire n'écrit rien dans data/
     args.historique_flux = args.historique_flux or str(Path(args.historique).parent / "flux_etf")
+    # Mode test : jamais le vrai config/ (il change avec la production) ; copie de test isolée
+    args.indices = args.indices or str(FICHIER_INDICES_TEST if args.test else FICHIER_INDICES)
     args.signaux = args.signaux or str(Path(args.sortie).parent / "signaux" / "pays.json")
 
     config = json.loads((DOSSIER_AGENT / "config.json").read_text(encoding="utf-8"))

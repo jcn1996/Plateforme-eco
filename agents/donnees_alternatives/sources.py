@@ -9,7 +9,11 @@ configurée (clé ou adresse absente : la source est ignorée, ni comptée ni si
   autoroutes allemandes (Lkw-Maut-Fahrleistungsindex), fichier xlsx du rapport statistique hebdomadaire ;
   série corrigée des variations saisonnières et des jours ouvrés (KSB, expérimentale).
 - fred : FRED (Réserve fédérale de Saint-Louis) — API si FRED_API_KEY existe, sinon fichier CSV public.
-- dbnomics : DBnomics (statistiques officielles, ex. Bureau national des statistiques de Chine).
+- nbs : Bureau national des statistiques de Chine, API publique de data.stats.gov.cn (base mensuelle
+  « hgyd ») ; souvent inaccessible depuis l'étranger : DBnomics en secours (« secours » en config).
+- dbnomics : DBnomics (statistiques officielles : NBS, OMC…).
+- douanes_taiwan : Administration des douanes de Taïwan, fichier CSV ouvert « 海關進出口貿易統計 »
+  (exportations mensuelles, converties en milliards de dollars taïwanais, depuis 2014).
 - usgs_ciment : USGS, « Mineral Industry Surveys — Cement » (PDF mensuels : expéditions de ciment).
 - drewry : Drewry World Container Index (page publique hebdomadaire, US$ par conteneur de 40 pieds).
 - yahoo : Yahoo Finance via yfinance (ex. ETF BDRY, approximation de l'indice Baltic Dry).
@@ -50,6 +54,8 @@ DESTATIS_XLSX = ("https://www.destatis.de/DE/Themen/Branchen-Unternehmen/Industr
 FRED_API = "https://api.stlouisfed.org/fred/series/observations"
 FRED_CSV = "https://fred.stlouisfed.org/graph/fredgraph.csv"
 DBNOMICS = "https://api.db.nomics.world/v22/series/{fournisseur}/{jeu}/{serie}"
+NBS = "https://data.stats.gov.cn/easyquery.htm"
+DOUANES_TAIWAN = "https://opendata.customs.gov.tw/data/6053/csv.csv"
 USGS_PAGE = "https://www.usgs.gov/centers/national-minerals-information-center/cement-statistics-and-information"
 DREWRY = "https://www.drewry.co.uk/supply-chain-advisors/supply-chain-expertise/world-container-index-assessed-by-drewry"
 INDEED = "https://raw.githubusercontent.com/hiring-lab/job_postings_tracker/master/{pays}/aggregate_job_postings_{pays}.csv"
@@ -112,6 +118,42 @@ def lire_dbnomics(objet: dict) -> Serie:
         raise ErreurSource("DBnomics : série introuvable")
     s = docs[0]
     return _propre((f"{p}-01" if len(str(p)) == 7 else p, v) for p, v in zip(s.get("period", []), s.get("value", [])) if v != "NA")
+
+
+def lire_nbs(objet: dict, code: str) -> Serie:
+    """Réponse de data.stats.gov.cn (m=QueryData) : nœuds « zb.<code>_sj.<AAAAMM> » → [(AAAA-MM-01, valeur)]."""
+    rd = (objet or {}).get("returndata") or {}
+    if (objet or {}).get("returncode") not in (200, None) or not rd.get("datanodes"):
+        raise ErreurSource("NBS : réponse sans données")
+    points = []
+    for n in rd["datanodes"]:
+        wds = {w.get("wdcode"): w.get("valuecode") for w in n.get("wds") or []}
+        d = n.get("data") or {}
+        if wds.get("zb") == code and d.get("hasdata") and len(str(wds.get("sj", ""))) == 6:
+            sj = wds["sj"]
+            points.append((f"{sj[:4]}-{sj[4:]}-01", d.get("data")))
+    if not points:
+        raise ErreurSource(f"NBS : série {code} absente de la réponse")
+    return _propre(points)
+
+
+def lire_douanes_taiwan(texte: str) -> Serie:
+    """CSV des douanes de Taïwan : « 年度 » (année de la République de Chine, + 1911), « 月份 », « 出口總值 »
+    (exportations totales, réexportations comprises, publiées en milliers de dollars taïwanais) → milliards de NT$."""
+    lignes = list(csv.reader(io.StringIO(texte.lstrip("\ufeff"))))
+    if not lignes:
+        raise ErreurSource("Douanes de Taïwan : fichier vide")
+    entete = [c.strip() for c in lignes[0]]
+    try:
+        ia, im = entete.index("年度"), entete.index("月份")
+        iv = next(i for i, c in enumerate(entete) if c.startswith("出口總值"))
+    except (ValueError, StopIteration):
+        raise ErreurSource("Douanes de Taïwan : colonnes inattendues")
+    points = []
+    for l in lignes[1:]:
+        if len(l) > max(ia, im, iv) and l[ia].strip().isdigit() and l[im].strip().isdigit():
+            points.append((f"{int(l[ia]) + 1911}-{int(l[im]):02d}-01", l[iv]))
+    return [(d, round(v / 1e6, 3)) for d, v in _propre(points)]  # milliers → milliards de dollars taïwanais
 
 
 def lire_usgs(texte: str) -> dict | None:
@@ -202,7 +244,27 @@ class FournisseurReel:
         self.wiki.session.headers["User-Agent"] = AGENT_HTTP
 
     def serie(self, ind: dict, aujourdhui: date) -> tuple[Serie, str] | None:
-        return getattr(self, f"_{ind['source']}")(ind.get("params") or {}, aujourdhui)
+        """Source principale ; en cas d'échec, source de secours éventuelle (détail préfixé par « secours : »)."""
+        try:
+            return getattr(self, f"_{ind['source']}")(ind.get("params") or {}, aujourdhui)
+        except Exception as e:
+            sec = ind.get("secours")
+            if not sec:
+                raise
+            LOG.warning("%s : source principale indisponible (%s), secours %s", ind["cle"], str(e)[:120], sec["source"])
+            r = getattr(self, f"_{sec['source']}")(sec.get("params") or {}, aujourdhui)
+            return (r[0], f"secours : {sec.get('nom', sec['source'])} (source principale indisponible : {str(e)[:100]})") if r else None
+
+    def _nbs(self, p, aujourdhui):
+        import time
+        dfwds = json.dumps([{"wdcode": "zb", "valuecode": p["indicateur"]}, {"wdcode": "sj", "valuecode": f"LAST{p.get('mois', 72)}"}])
+        objet = self.t.json(NBS, params={"m": "QueryData", "dbcode": "hgyd", "rowcode": "zb", "colcode": "sj", "wds": "[]",
+                                         "dfwds": dfwds, "k1": str(int(time.time() * 1000) // 3_600_000)})
+        return lire_nbs(objet, p["serie"]), "API data.stats.gov.cn (base mensuelle)"
+
+    def _douanes_taiwan(self, p, aujourdhui):
+        # Le serveur n'annonce pas de jeu de caractères : décodage UTF-8 explicite
+        return lire_douanes_taiwan(self.t.octets(DOUANES_TAIWAN).decode("utf-8-sig")), "fichier CSV ouvert des douanes (exportations totales)"
 
     def _destatis_maut(self, p, aujourdhui):
         return lire_destatis(self.t.octets(DESTATIS_XLSX)), "rapport statistique hebdomadaire (xlsx)"

@@ -19,8 +19,20 @@ ignorée, ni comptée ni signalée comme en panne (écran « Santé des agents �
 | `ENTSOE_API_KEY` (secret) | ENTSO-E, consommation d'électricité en Europe | compte gratuit sur transparency.entsoe.eu, puis demande d'accès à l'API (« Restful API access ») par courriel à transparency@entsoe.eu ; le jeton apparaît ensuite dans « My Account Settings » |
 | `EIA_API_KEY` (secret, déjà utilisé) | EIA, demande d'électricité américaine | eia.gov/opendata |
 | `FRED_API_KEY` (secret, facultatif) | FRED (sinon fichier CSV public) | fred.stlouisfed.org |
-| `SATELLITES_URL` (variable) | CSV « date,pays,indicateur,valeur » (no2, lumieres) | voir outils/satellites_gee.js |
-| `COREE_EXPORTS_20J_URL`, `TAIWAN_COMMANDES_URL` (variables) | CSV au même format | toute source publique que vous maintenez |
+| `SATELLITES_URL` (variable) | CSV « date,pays,indicateur,valeur » (no2, lumieres) — **désactivé par défaut** (`"actif": false` dans config.json) | voir outils/satellites_gee.js |
+| `COREE_EXPORTS_20J_URL`, `TAIWAN_COMMANDES_URL` (variables, option) | CSV au même format | toute source publique que vous maintenez |
+
+Corée et Taïwan : faute de source gratuite pour les exportations des 20 premiers jours et les commandes à
+l'export, l'agent suit les **exportations mensuelles** (Corée : FRED XTEXVA01KRM667S, secours OMC via
+DBnomics ; Taïwan : fichier CSV ouvert des douanes, secours OMC via DBnomics), avec la mention « mensuel,
+pas de donnée anticipée gratuite ». La série taïwanaise n'est pas corrigée des variations saisonnières :
+sa note ne repose que sur la variation sur 12 mois.
+
+Chine : API publique du Bureau national des statistiques (data.stats.gov.cn) en priorité ; si elle est
+inaccessible (fréquent hors de Chine), DBnomics en secours, état « secours » dans l'écran Santé et date de
+la dernière donnée affichée en clair (« Dernière donnée disponible : décembre 2025 (342 jours) »).
+
+Source de secours : déclarée par « secours » dans config.json ; utilisée seulement si la source principale échoue.
 
 ## Calculs (analyse.py)
 

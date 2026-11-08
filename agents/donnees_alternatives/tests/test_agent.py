@@ -1,5 +1,5 @@
 """Tests de l'agent données alternatives, sans réseau : python -m unittest discover -s agents/donnees_alternatives -t .
-Les données de test (agents/donnees_alternatives/tests/donnees) sont des captures réelles du 07/11/2026
+Les données de test (agents/donnees_alternatives/tests/donnees) sont des captures réelles des 07 et 08/11/2026
 (Destatis, FRED, DBnomics, USGS, Drewry, Yahoo, Indeed, TSA, Wikipédia). Les sources à clé (EIA, ENTSO-E),
 Google Trends (refusé lors de la capture) et les fichiers CSV facultatifs sont simulés dans des dossiers
 temporaires. Les tests n'utilisent jamais les vrais config/ et data/."""
@@ -185,6 +185,33 @@ class TestLectureSources(unittest.TestCase):
         self.assertEqual(S.lire_csv_url(texte, "IN", "no2"), [("2026-08-01", 49.0), ("2026-09-01", 51.2)])
         self.assertEqual(S.lire_eia({"response": {"data": [{"period": "2026-11-01", "value": "1000"}]}}), [("2026-11-01", 1000.0)])
 
+    def test_nbs(self):
+        objet = {"returncode": 200, "returndata": {"datanodes": [
+            {"code": "zb.A02090Y01_sj.202609", "data": {"data": 15012.3, "hasdata": True}, "wds": [{"wdcode": "zb", "valuecode": "A02090Y01"}, {"wdcode": "sj", "valuecode": "202609"}]},
+            {"code": "zb.A02090Y01_sj.202602", "data": {"data": 0, "hasdata": False}, "wds": [{"wdcode": "zb", "valuecode": "A02090Y01"}, {"wdcode": "sj", "valuecode": "202602"}]},
+            {"code": "zb.A02090Y03_sj.202609", "data": {"data": -4.1, "hasdata": True}, "wds": [{"wdcode": "zb", "valuecode": "A02090Y03"}, {"wdcode": "sj", "valuecode": "202609"}]}]}}
+        self.assertEqual(S.lire_nbs(objet, "A02090Y01"), [("2026-09-01", 15012.3)])
+        with self.assertRaises(S.ErreurSource):
+            S.lire_nbs({"returncode": 501, "returndata": "erreur"}, "A02090Y01")
+
+    def test_douanes_taiwan(self):
+        texte = ('\ufeff"年度","月份","出口總值(新臺幣千元)","出口(新臺幣千元)"\n'
+                 '"115","8","2655171348","2405929261"\n"114","12","1","1"\n')
+        self.assertEqual(S.lire_douanes_taiwan(texte), [("2025-12-01", 0.0), ("2026-08-01", 2655.171)])
+        with self.assertRaises(S.ErreurSource):
+            S.lire_douanes_taiwan('"a","b"\n1,2\n')
+
+    def test_source_de_secours(self):
+        f = S.FournisseurReel.__new__(S.FournisseurReel)
+        f._nbs = lambda p, j: (_ for _ in ()).throw(S.ErreurSource("HTTP 403"))
+        f._dbnomics = lambda p, j: ([("2025-12-01", 1.0)], "API DBnomics")
+        ind = {"cle": "ciment_cn", "source": "nbs", "params": {}, "secours": {"source": "dbnomics", "nom": "DBnomics"}}
+        points, detail = f.serie(ind, JOUR)
+        self.assertEqual(points, [("2025-12-01", 1.0)])
+        self.assertTrue(detail.startswith("secours : DBnomics"))
+        with self.assertRaises(S.ErreurSource):
+            f.serie({**ind, "secours": None}, JOUR)
+
     def test_captures_reelles_lisibles(self):
         d = json.loads((DONNEES / "camions_de.json").read_text(encoding="utf-8"))
         self.assertGreater(len(d["points"]), 6000)
@@ -227,7 +254,21 @@ class TestAgent(unittest.TestCase):
             self.assertIn(pays[code]["confiance"]["niveau"], ("faible", "moyen"))
         inds = {i["cle"]: i for i in d["donnees"]["indicateurs"]}
         self.assertNotIn("electricite_fr", inds)  # ENTSO-E sans clé : ignorée
-        self.assertIn("Copernicus Sentinel-5P (TROPOMI), moyenne mensuelle par pays", d["donnees"]["sources_ignorees"])
+        # Satellites désactivés par défaut : ni interrogés, ni affichés, ni comptés dans la santé
+        self.assertFalse([k for k in inds if k.startswith(("no2_", "lumieres_"))])
+        self.assertFalse([s for s in d["donnees"]["sources_ignorees"] if "Sentinel" in s or "Black Marble" in s])
+        # Chine : API du NBS inaccessible lors de la capture → DBnomics en secours, date de la dernière donnée explicite
+        cn = inds["ciment_cn"]
+        self.assertEqual(cn["etat_source"], "secours")
+        self.assertTrue(cn["perimee"])
+        self.assertIn("Dernière donnée disponible : décembre 2025", cn["lecture"])
+        # Taïwan et Corée : exportations mensuelles, avec la mention « pas de donnée anticipée gratuite »
+        for cle in ("exportations_tw", "exportations_kr"):
+            self.assertIn("mensuel, pas de donnée anticipée gratuite", inds[cle]["mention"])
+            self.assertIsNotNone(inds[cle]["note"])
+        self.assertEqual(inds["exportations_tw"]["date"], "2026-08-01")
+        self.assertIsNone(inds["exportations_tw"]["percentile_tendance"])  # série brute : variation sur 12 mois seulement
+        self.assertNotIn("exportations_kr_20j", inds)  # option CSV sans adresse : ignorée
         de = inds["camions_de"]
         for champ in ("valeur", "date", "variation_1m", "variation_12m", "ecart_tendance", "ecart_saisonnier", "percentile_12m", "note"):
             self.assertIsNotNone(de[champ], champ)
@@ -246,6 +287,8 @@ class TestAgent(unittest.TestCase):
         self.assertFalse(s["degrade"])
         etats = {x["nom"]: x["etat"] for x in s["sources"]}
         self.assertEqual(etats["ENTSO-E, charge réalisée"], "non configurée")
+        self.assertEqual(etats["Bureau national des statistiques de Chine — Production de ciment"], "secours")
+        self.assertNotIn("NASA Black Marble", etats)
         index = lire_json(self.data / "journal" / "index.json")
         self.assertIn("agent-donnees-alternatives.json", [e["fichier"] for e in index["donnees"]])
 
@@ -300,7 +343,8 @@ class TestAgent(unittest.TestCase):
         cles = [i["cle"] for i in inds]
         self.assertEqual(len(cles), len(set(cles)))
         self.assertIn("offres_emploi_us", cles)
-        self.assertIn("no2_in", cles)
+        self.assertNotIn("no2_in", cles)  # satellites désactivés par défaut
+        self.assertIn("no2_in", [i["cle"] for i in indicateurs_config({**CFG, "satellites": {**CFG["satellites"], "actif": True}})])
         for i in inds:
             self.assertIn(i["frequence"], CFG["fraicheur_jours"])
             self.assertIn(i["categorie"], CFG["categories"])
