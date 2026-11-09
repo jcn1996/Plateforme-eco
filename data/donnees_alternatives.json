@@ -1,18 +1,18 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-09T05:52:39Z",
+    "genere_le": "2026-11-09T14:20:38Z",
     "source": "agent-donnees-alternatives",
     "fictif": false,
     "version_agent": "1.0",
-    "mise_a_jour_precedente": "2026-11-08T08:28:36Z",
+    "mise_a_jour_precedente": "2026-11-09T05:52:39Z",
     "etat_des_sources": {
       "camions_de": "ok",
       "camions_us": "ok",
       "fret_vrac": "ok",
       "fret_conteneurs": "ok",
       "ciment_cn": "secours",
-      "ciment_us": "erreur : https://www.usgs.gov/centers/national-minerals-information-center/cement-statistics-and-information : ReadTimeout: HTTPSConnectionPool(host='www.usgs.gov', port",
+      "ciment_us": "ok",
       "mises_en_chantier_us": "ok",
       "exportations_kr": "ok",
       "exportations_tw": "ok",
@@ -272,19 +272,21 @@
         "code": "US",
         "nom": "États-Unis",
         "suivi": true,
-        "score": 39,
-        "lecture": "ralentissement",
+        "score": 41,
+        "lecture": "stable",
         "marque": false,
         "lecture_non_retenue": null,
-        "indicateurs_utilises": 5,
+        "indicateurs_utilises": 6,
         "confiance": {
-          "niveau": "élevé",
-          "score": 0.8,
+          "niveau": "moyen",
+          "score": 0.7,
           "raisons": [
-            "indicateurs peu concordants"
+            "indicateurs peu concordants",
+            "historique court pour : Expéditions de ciment"
           ]
         },
         "pour": [
+          "ciment_us",
           "electricite_us",
           "offres_emploi_us"
         ],
@@ -293,7 +295,7 @@
           "mises_en_chantier_us",
           "tsa_us"
         ],
-        "texte": "États-Unis : activité réelle « ralentissement » (score 39/100 sur 5 indicateurs) — offres d'emploi en ligne +2,9 % sur 12 mois ; demande d'électricité +3,0 % sur 12 mois ; passagers contrôlés dans les aéroports −2,0 % sur 12 mois.",
+        "texte": "États-Unis : activité réelle « stable » (score 41/100 sur 6 indicateurs) — offres d'emploi en ligne +2,9 % sur 12 mois ; demande d'électricité +3,0 % sur 12 mois ; expéditions de ciment +1,4 % sur 12 mois.",
         "indicateurs": [
           "camions_us",
           "ciment_us",
@@ -307,14 +309,14 @@
           "texte": "croissance du pib 2,3 % (53/100) ; indicateur avancé (ocde) 101,0 (64/100)"
         },
         "ce_qui_pourrait_me_donner_tort": [
-          "Demande d'électricité va dans l'autre sens (+3,0 % sur 12 mois).",
-          "Offres d'emploi en ligne va dans l'autre sens (+2,9 % sur 12 mois).",
-          "La consommation d'électricité varie aussi avec les températures, pas seulement avec l'activité."
+          "Mises en chantier de logements va dans l'autre sens (−7,4 % sur 12 mois).",
+          "La consommation d'électricité varie aussi avec les températures, pas seulement avec l'activité.",
+          "Les données mensuelles sont publiées avec retard et souvent révisées."
         ],
         "divergence": null,
         "precedent": {
-          "score": 41,
-          "lecture": "stable"
+          "score": 39,
+          "lecture": "ralentissement"
         }
       }
     ],
@@ -1806,12 +1808,80 @@
         "mention": "données estimées, publiées avec environ trois mois de décalage",
         "categorie_nom": "Construction",
         "mention_proxy": false,
-        "note": null,
-        "valeur": null,
-        "date": null,
-        "serie": [],
-        "lecture": "Expéditions de ciment : source indisponible (erreur : https://www.usgs.gov/centers/national-minerals-information-center/cement-statistics-and-information : ReadTimeout: HTTPSConnectionPool(host='www.usgs.gov', port).",
-        "etat_source": "erreur : https://www.usgs.gov/centers/national-minerals-information-center/cement-statistics-and-information : ReadTimeout: HTTPSConnectionPool(host='www.usgs.gov', port"
+        "valeur": 10.1,
+        "date": "2026-07-01",
+        "variation_1m": 0.0,
+        "variation_12m": 1.4,
+        "ecart_tendance": null,
+        "ecart_saisonnier": null,
+        "percentile_12m": null,
+        "percentile_tendance": null,
+        "note": 55.8,
+        "methode_note": "échelle fixe (historique court)",
+        "historique_mois": 14,
+        "age_jours": 131,
+        "perimee": false,
+        "lecture": "Expéditions de ciment : +1,4 % sur 12 mois, 0,0 % sur 1 mois.",
+        "serie": [
+          [
+            "2025-01-01",
+            5.768
+          ],
+          [
+            "2025-02-01",
+            6.326
+          ],
+          [
+            "2025-03-01",
+            8.088
+          ],
+          [
+            "2025-04-01",
+            9.088
+          ],
+          [
+            "2025-05-01",
+            8.913
+          ],
+          [
+            "2025-06-01",
+            9.199
+          ],
+          [
+            "2025-07-01",
+            9.961
+          ],
+          [
+            "2026-01-01",
+            5.97
+          ],
+          [
+            "2026-02-01",
+            6.8
+          ],
+          [
+            "2026-03-01",
+            8.5
+          ],
+          [
+            "2026-04-01",
+            9.27
+          ],
+          [
+            "2026-05-01",
+            8.94
+          ],
+          [
+            "2026-06-01",
+            10.1
+          ],
+          [
+            "2026-07-01",
+            10.1
+          ]
+        ],
+        "etat_source": "ok",
+        "detail_source": "14 rapports mensuels (PDF)"
       },
       {
         "cle": "mises_en_chantier_us",
@@ -3309,10 +3379,10 @@
         "mention": "très sensible aux températures",
         "categorie_nom": "Énergie",
         "mention_proxy": false,
-        "valeur": 10192474.0,
+        "valeur": 10088278.0,
         "date": "2026-11-08",
-        "variation_1m": -10.15,
-        "variation_12m": 2.98,
+        "variation_1m": -10.18,
+        "variation_12m": 2.95,
         "ecart_tendance": 5.64,
         "ecart_saisonnier": -0.23,
         "percentile_12m": 63.9,
@@ -3738,11 +3808,11 @@
           ],
           [
             "2026-11-01",
-            10668591.714
+            10671363.714
           ],
           [
             "2026-11-08",
-            10648211.857
+            10633264.286
           ]
         ],
         "etat_source": "ok",
@@ -3760,20 +3830,20 @@
         "mention": "reflète surtout la consommation de services (voyages)",
         "categorie_nom": "Mobilité",
         "mention_proxy": false,
-        "valeur": 2610670.0,
-        "date": "2026-11-05",
-        "variation_1m": 1.97,
-        "variation_12m": -2.02,
+        "valeur": 2749897.0,
+        "date": "2026-11-08",
+        "variation_1m": -0.47,
+        "variation_12m": -1.57,
         "ecart_tendance": -0.8,
         "ecart_saisonnier": -0.32,
-        "percentile_12m": 8.8,
+        "percentile_12m": 11.8,
         "percentile_tendance": 38.2,
-        "note": 20.6,
+        "note": 22.4,
         "methode_note": "percentiles",
         "historique_mois": 46,
-        "age_jours": 4,
+        "age_jours": 1,
         "perimee": false,
-        "lecture": "Passagers contrôlés dans les aéroports : −2,0 % sur 12 mois, +2,0 % sur 1 mois, écart à la tendance −0,8 %, percentile 9 de l'historique.",
+        "lecture": "Passagers contrôlés dans les aéroports : −1,6 % sur 12 mois, −0,5 % sur 1 mois, écart à la tendance −0,8 %, percentile 12 de l'historique.",
         "serie": [
           [
             "2024-11-10",
@@ -4192,8 +4262,8 @@
             2255246.143
           ],
           [
-            "2026-11-05",
-            2282130.25
+            "2026-11-08",
+            2354850.571
           ]
         ],
         "etat_source": "ok",
@@ -8233,7 +8303,8 @@
       "fret_vrac",
       "camions_us",
       "tsa_us",
-      "mises_en_chantier_us"
+      "mises_en_chantier_us",
+      "ciment_us"
     ],
     "attention": [
       {
@@ -8243,25 +8314,11 @@
         "liste": "pepites",
         "wikipedia": {
           "article": "Taiwan Semiconductor Manufacturing Company",
-          "vues_30j": 1368,
-          "variation_pct": 19.3
+          "vues_30j": 1382,
+          "variation_pct": 20.2
         },
         "tendance": "stable",
-        "variation_moyenne_pct": 19.3,
-        "signal": false
-      },
-      {
-        "ticker": "FHI",
-        "nom": "Federated Hermes, Inc.",
-        "pays": "US",
-        "liste": "pepites",
-        "wikipedia": {
-          "article": "Federated Hermes",
-          "vues_30j": 2269,
-          "variation_pct": 4.7
-        },
-        "tendance": "stable",
-        "variation_moyenne_pct": 4.7,
+        "variation_moyenne_pct": 20.2,
         "signal": false
       },
       {
@@ -8271,25 +8328,25 @@
         "liste": "pepites",
         "wikipedia": {
           "article": "SK Hynix",
-          "vues_30j": 25965,
-          "variation_pct": 2.7
+          "vues_30j": 25780,
+          "variation_pct": 2.2
         },
         "tendance": "stable",
-        "variation_moyenne_pct": 2.7,
+        "variation_moyenne_pct": 2.2,
         "signal": false
       },
       {
-        "ticker": "NVMI",
-        "nom": "Nova Ltd.",
+        "ticker": "FHI",
+        "nom": "Federated Hermes, Inc.",
         "pays": "US",
-        "liste": "surveillance",
+        "liste": "pepites",
         "wikipedia": {
-          "article": "Nova",
-          "vues_30j": 8252,
-          "variation_pct": 0.5
+          "article": "Federated Hermes",
+          "vues_30j": 2222,
+          "variation_pct": 1.3
         },
         "tendance": "stable",
-        "variation_moyenne_pct": 0.5,
+        "variation_moyenne_pct": 1.3,
         "signal": false
       },
       {
@@ -8299,11 +8356,25 @@
         "liste": "pepites",
         "wikipedia": {
           "article": "Newmont",
-          "vues_30j": 3487,
-          "variation_pct": 0.5
+          "vues_30j": 3478,
+          "variation_pct": 0.6
         },
         "tendance": "stable",
-        "variation_moyenne_pct": 0.5,
+        "variation_moyenne_pct": 0.6,
+        "signal": false
+      },
+      {
+        "ticker": "NVMI",
+        "nom": "Nova Ltd.",
+        "pays": "US",
+        "liste": "surveillance",
+        "wikipedia": {
+          "article": "Nova",
+          "vues_30j": 8192,
+          "variation_pct": -0.6
+        },
+        "tendance": "stable",
+        "variation_moyenne_pct": -0.6,
         "signal": false
       },
       {
@@ -8313,66 +8384,11 @@
         "liste": "pepites",
         "wikipedia": {
           "article": "Kandukondain Kandukondain",
-          "vues_30j": 18693,
-          "variation_pct": -2.3
+          "vues_30j": 18765,
+          "variation_pct": -1.6
         },
         "tendance": "stable",
-        "variation_moyenne_pct": -2.3,
-        "signal": false
-      },
-      {
-        "ticker": "8725.T",
-        "nom": "MS&AD Insurance Group Holdings, Inc.",
-        "pays": "JP",
-        "liste": "pepites",
-        "wikipedia": {
-          "article": "MS&AD Insurance Group",
-          "vues_30j": 740,
-          "variation_pct": -4.4
-        },
-        "tendance": "stable",
-        "variation_moyenne_pct": -4.4,
-        "signal": false
-      },
-      {
-        "ticker": "PGR",
-        "nom": "The Progressive Corporation",
-        "pays": "US",
-        "liste": "pepites",
-        "wikipedia": {
-          "article": "The Progressive",
-          "vues_30j": 645,
-          "variation_pct": -6.1
-        },
-        "tendance": "stable",
-        "variation_moyenne_pct": -6.1,
-        "signal": false
-      },
-      {
-        "ticker": "NXT.L",
-        "nom": "NEXT plc",
-        "pays": "GB",
-        "liste": "pepites",
-        "trends": {
-          "variation_pct": -7.4,
-          "niveau_recent": 61.7
-        },
-        "tendance": "stable",
-        "variation_moyenne_pct": -7.4,
-        "signal": false
-      },
-      {
-        "ticker": "K.TO",
-        "nom": "Kinross Gold Corporation",
-        "pays": "CA",
-        "liste": "pepites",
-        "wikipedia": {
-          "article": "Kinross Gold",
-          "vues_30j": 989,
-          "variation_pct": -7.5
-        },
-        "tendance": "stable",
-        "variation_moyenne_pct": -7.5,
+        "variation_moyenne_pct": -1.6,
         "signal": false
       },
       {
@@ -8382,11 +8398,66 @@
         "liste": "pepites",
         "wikipedia": {
           "article": "Nongfu Spring",
-          "vues_30j": 1970,
-          "variation_pct": -7.8
+          "vues_30j": 2000,
+          "variation_pct": -5.3
+        },
+        "tendance": "stable",
+        "variation_moyenne_pct": -5.3,
+        "signal": false
+      },
+      {
+        "ticker": "8725.T",
+        "nom": "MS&AD Insurance Group Holdings, Inc.",
+        "pays": "JP",
+        "liste": "pepites",
+        "wikipedia": {
+          "article": "MS&AD Insurance Group",
+          "vues_30j": 730,
+          "variation_pct": -6.6
+        },
+        "tendance": "stable",
+        "variation_moyenne_pct": -6.6,
+        "signal": false
+      },
+      {
+        "ticker": "PGR",
+        "nom": "The Progressive Corporation",
+        "pays": "US",
+        "liste": "pepites",
+        "wikipedia": {
+          "article": "The Progressive",
+          "vues_30j": 640,
+          "variation_pct": -7.5
+        },
+        "tendance": "stable",
+        "variation_moyenne_pct": -7.5,
+        "signal": false
+      },
+      {
+        "ticker": "NXT.L",
+        "nom": "NEXT plc",
+        "pays": "GB",
+        "liste": "pepites",
+        "trends": {
+          "variation_pct": -7.8,
+          "niveau_recent": 61.7
         },
         "tendance": "stable",
         "variation_moyenne_pct": -7.8,
+        "signal": false
+      },
+      {
+        "ticker": "K.TO",
+        "nom": "Kinross Gold Corporation",
+        "pays": "CA",
+        "liste": "pepites",
+        "wikipedia": {
+          "article": "Kinross Gold",
+          "vues_30j": 984,
+          "variation_pct": -8.0
+        },
+        "tendance": "stable",
+        "variation_moyenne_pct": -8.0,
         "signal": false
       },
       {
@@ -8396,11 +8467,11 @@
         "liste": "pepites",
         "wikipedia": {
           "article": "Apple",
-          "vues_30j": 73334,
-          "variation_pct": -13.4
+          "vues_30j": 72488,
+          "variation_pct": -14.2
         },
         "tendance": "stable",
-        "variation_moyenne_pct": -13.4,
+        "variation_moyenne_pct": -14.2,
         "signal": false
       },
       {
@@ -8410,67 +8481,11 @@
         "liste": "pepites",
         "wikipedia": {
           "article": "Astellas Pharma",
-          "vues_30j": 1989,
-          "variation_pct": -13.9
+          "vues_30j": 1930,
+          "variation_pct": -17.4
         },
         "tendance": "stable",
-        "variation_moyenne_pct": -13.9,
-        "signal": false
-      },
-      {
-        "ticker": "MLI",
-        "nom": "Mueller Industries, Inc.",
-        "pays": "US",
-        "liste": "pepites",
-        "wikipedia": {
-          "article": "Mueller Industries",
-          "vues_30j": 402,
-          "variation_pct": -20.2
-        },
-        "tendance": "stable",
-        "variation_moyenne_pct": -20.2,
-        "signal": false
-      },
-      {
-        "ticker": "688235.SS",
-        "nom": "BeOne Medicines AG",
-        "pays": "CN",
-        "liste": "pepites",
-        "wikipedia": {
-          "article": "BeOne Medicines",
-          "vues_30j": 2423,
-          "variation_pct": -21.9
-        },
-        "tendance": "stable",
-        "variation_moyenne_pct": -21.9,
-        "signal": false
-      },
-      {
-        "ticker": "RR.L",
-        "nom": "Rolls-Royce Holdings plc",
-        "pays": "GB",
-        "liste": "pepites",
-        "wikipedia": {
-          "article": "Rolls-Royce Holdings",
-          "vues_30j": 15074,
-          "variation_pct": -22.1
-        },
-        "tendance": "stable",
-        "variation_moyenne_pct": -22.1,
-        "signal": false
-      },
-      {
-        "ticker": "LPG",
-        "nom": "Dorian LPG Ltd.",
-        "pays": "US",
-        "liste": "pepites",
-        "wikipedia": {
-          "article": "Doric Greek",
-          "vues_30j": 4096,
-          "variation_pct": -23.5
-        },
-        "tendance": "stable",
-        "variation_moyenne_pct": -23.5,
+        "variation_moyenne_pct": -17.4,
         "signal": false
       },
       {
@@ -8480,29 +8495,71 @@
         "liste": "pepites",
         "wikipedia": {
           "article": "Japan Tobacco",
-          "vues_30j": 6433,
-          "variation_pct": 1.7
+          "vues_30j": 6673,
+          "variation_pct": 5.5
         },
         "trends": {
-          "variation_pct": -49.9,
-          "niveau_recent": 11.3
+          "variation_pct": -43.5,
+          "niveau_recent": 11.7
         },
         "tendance": "stable",
-        "variation_moyenne_pct": -24.1,
+        "variation_moyenne_pct": -19.0,
         "signal": false
       },
       {
-        "ticker": "ABX.TO",
-        "nom": "Barrick Mining Corporation",
-        "pays": "CA",
+        "ticker": "MLI",
+        "nom": "Mueller Industries, Inc.",
+        "pays": "US",
         "liste": "pepites",
         "wikipedia": {
-          "article": "Barrick Mining",
-          "vues_30j": 2220,
-          "variation_pct": -25.6
+          "article": "Mueller Industries",
+          "vues_30j": 394,
+          "variation_pct": -22.2
         },
         "tendance": "stable",
-        "variation_moyenne_pct": -25.6,
+        "variation_moyenne_pct": -22.2,
+        "signal": false
+      },
+      {
+        "ticker": "RR.L",
+        "nom": "Rolls-Royce Holdings plc",
+        "pays": "GB",
+        "liste": "pepites",
+        "wikipedia": {
+          "article": "Rolls-Royce Holdings",
+          "vues_30j": 14944,
+          "variation_pct": -22.8
+        },
+        "tendance": "stable",
+        "variation_moyenne_pct": -22.8,
+        "signal": false
+      },
+      {
+        "ticker": "LPG",
+        "nom": "Dorian LPG Ltd.",
+        "pays": "US",
+        "liste": "pepites",
+        "wikipedia": {
+          "article": "Doric Greek",
+          "vues_30j": 4062,
+          "variation_pct": -23.6
+        },
+        "tendance": "stable",
+        "variation_moyenne_pct": -23.6,
+        "signal": false
+      },
+      {
+        "ticker": "688235.SS",
+        "nom": "BeOne Medicines AG",
+        "pays": "CN",
+        "liste": "pepites",
+        "wikipedia": {
+          "article": "BeOne Medicines",
+          "vues_30j": 2356,
+          "variation_pct": -24.9
+        },
+        "tendance": "stable",
+        "variation_moyenne_pct": -24.9,
         "signal": false
       },
       {
@@ -8512,15 +8569,29 @@
         "liste": "pepites",
         "wikipedia": {
           "article": "Tencent Holdings",
-          "vues_30j": 304,
-          "variation_pct": -0.5
+          "vues_30j": 301,
+          "variation_pct": -1.1
         },
         "trends": {
-          "variation_pct": -51.4,
-          "niveau_recent": 10.9
+          "variation_pct": -49.3,
+          "niveau_recent": 11.6
         },
         "tendance": "stable",
-        "variation_moyenne_pct": -25.9,
+        "variation_moyenne_pct": -25.2,
+        "signal": false
+      },
+      {
+        "ticker": "ABX.TO",
+        "nom": "Barrick Mining Corporation",
+        "pays": "CA",
+        "liste": "pepites",
+        "wikipedia": {
+          "article": "Barrick Mining",
+          "vues_30j": 2171,
+          "variation_pct": -27.3
+        },
+        "tendance": "stable",
+        "variation_moyenne_pct": -27.3,
         "signal": false
       },
       {
@@ -8530,11 +8601,11 @@
         "liste": "pepites",
         "wikipedia": {
           "article": "Tapestry",
-          "vues_30j": 7582,
-          "variation_pct": -27.7
+          "vues_30j": 7511,
+          "variation_pct": -28.4
         },
         "tendance": "stable",
-        "variation_moyenne_pct": -27.7,
+        "variation_moyenne_pct": -28.4,
         "signal": false
       },
       {
@@ -8544,15 +8615,15 @@
         "liste": "pepites",
         "wikipedia": {
           "article": "Emcor",
-          "vues_30j": 1306,
-          "variation_pct": -22.6
+          "vues_30j": 1266,
+          "variation_pct": -25.4
         },
         "trends": {
-          "variation_pct": -44.5,
-          "niveau_recent": 19.3
+          "variation_pct": -46.2,
+          "niveau_recent": 18.5
         },
         "tendance": "en baisse",
-        "variation_moyenne_pct": -33.5,
+        "variation_moyenne_pct": -35.8,
         "signal": false
       },
       {
@@ -8562,15 +8633,15 @@
         "liste": "pepites",
         "wikipedia": {
           "article": "Midea Group",
-          "vues_30j": 12399,
+          "vues_30j": 12337,
           "variation_pct": -8.1
         },
         "trends": {
-          "variation_pct": -83.5,
-          "niveau_recent": 3.1
+          "variation_pct": -74.6,
+          "niveau_recent": 6.5
         },
         "tendance": "en baisse",
-        "variation_moyenne_pct": -45.8,
+        "variation_moyenne_pct": -41.3,
         "signal": false
       },
       {
@@ -8580,15 +8651,15 @@
         "liste": "pepites",
         "wikipedia": {
           "article": "Comfort Systems USA",
-          "vues_30j": 1277,
-          "variation_pct": -19.5
+          "vues_30j": 1267,
+          "variation_pct": -20.5
         },
         "trends": {
-          "variation_pct": -77.3,
-          "niveau_recent": 5.1
+          "variation_pct": -80.6,
+          "niveau_recent": 3.5
         },
         "tendance": "en baisse",
-        "variation_moyenne_pct": -48.4,
+        "variation_moyenne_pct": -50.5,
         "signal": false
       },
       {
@@ -8598,15 +8669,15 @@
         "liste": "pepites",
         "wikipedia": {
           "article": "Samsung Biologics",
-          "vues_30j": 1801,
-          "variation_pct": -27.8
+          "vues_30j": 1764,
+          "variation_pct": -29.6
         },
         "trends": {
-          "variation_pct": -95.0,
-          "niveau_recent": 1.1
+          "variation_pct": -94.5,
+          "niveau_recent": 1.2
         },
         "tendance": "en baisse",
-        "variation_moyenne_pct": -61.4,
+        "variation_moyenne_pct": -62.0,
         "signal": false
       }
     ],
