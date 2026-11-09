@@ -20,7 +20,7 @@
    Changer VERSION vide les anciens caches chez tous les utilisateurs.
    ========================================================================== */
 
-const VERSION = 'salle-controle-v45';
+const VERSION = 'salle-controle-v46';
 
 const FICHIERS_APPLI = [
   './',
@@ -54,6 +54,7 @@ const FICHIERS_APPLI = [
   'js/flux-investissement.js',
   'js/pulsations.js',
   'js/dynamique-resultats.js',
+  'js/analyse-financiere.js',
   'js/chef.js',
   'js/donnees-alternatives.js',
   'js/menu.js',

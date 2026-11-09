@@ -12,6 +12,7 @@ import { el, nombre, AGENTS, tendanceNote, variation } from './outils.js';
 import { pastilleReco, fichierAnalyse } from './analyses.js';
 import { graphiqueAvance } from './graphiques.js';
 import { blocDynamique } from './dynamique-resultats.js';
+import { blocAnalyseFinanciere } from './analyse-financiere.js';
 import { blocInities } from './inities.js';
 import { enteteFiche, listeIndicateurs, titreSection, carteAgent, piedFraicheur } from './panneau-pays.js';
 
@@ -99,6 +100,7 @@ export function ficheEntreprise(d, e, nav = {}) {
       titreSection('Indicateurs clés', e.financier ? `critères adaptés (${e.financier === 'banque' ? 'banque' : e.financier === 'assurance' ? 'assurance' : 'société financière'})` : 'note sur 100 par indicateur'),
       listeIndicateurs(e.indicateurs),
     ),
+    blocAnalyseFinanciere(e.analyse_financiere),
 
     // Graphique TradingView (chargé quand il apparaît à l'écran, une fois le détail de la fiche lu)
     e.fiche && !e.detailCharge ? null : el('section', {},

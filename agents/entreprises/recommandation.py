@@ -105,6 +105,16 @@ def valeur_estimee(m: dict, s: dict, cfg: dict) -> dict | None:
     a0 = (s.get("annuel") or [{}])[0]
     actions = s.get("actions")
     rn_ttm = s.get("resultat_net_ttm") or a0.get("resultat_net")
+    fcf = a0.get("fcf")
+    # Sommet de cycle possible (bénéfice actuel très au-dessus de sa moyenne sur 5 ans) : bénéfice et flux de trésorerie
+    # disponible moyens, pour ne pas capitaliser des bénéfices exceptionnels
+    normalisation = None
+    if m.get("sommet_cycle") and m.get("benefice_moyen") and m["benefice_moyen"] > 0:
+        rn_ttm = m["benefice_moyen"]
+        if m.get("fcf_moyen") is not None:
+            fcf = min(fcf, m["fcf_moyen"]) if fcf is not None else m["fcf_moyen"]
+        normalisation = (f"bénéfices normalisés : moyenne sur {m.get('benefice_moyen_annees')} ans, le bénéfice actuel valant "
+                         f"{nb(m['benefices_normalises'], 1)} fois cette moyenne (sommet de cycle possible)")
     fx_c, fx_p = s.get("fx_comptes"), s.get("fx_cours")
     if s.get("devise_comptes") == s.get("devise_cours"):
         k = 1.0
@@ -113,7 +123,7 @@ def valeur_estimee(m: dict, s: dict, cfg: dict) -> dict | None:
     else:
         return None
     methodes = [x for x in (valeur_multiples(m, rn_ttm, a0.get("ebitda"), actions, s.get("financier")),
-                            valeur_dcf(m, a0.get("fcf"), actions, s.get("financier"), s.get("region"), cfg["dcf"])) if x]
+                            valeur_dcf(m, fcf, actions, s.get("financier"), s.get("region"), cfg["dcf"])) if x]
     if not methodes:
         return None
     for x in methodes:
@@ -122,7 +132,7 @@ def valeur_estimee(m: dict, s: dict, cfg: dict) -> dict | None:
     centrale = _moyenne(x["centrale"] for x in methodes)
     prix = s.get("prix")
     res = {"bas": round(_moyenne(x["bas"] for x in methodes), 4), "centrale": round(centrale, 4),
-           "haut": round(_moyenne(x["haut"] for x in methodes), 4), "methodes": methodes,
+           "haut": round(_moyenne(x["haut"] for x in methodes), 4), "methodes": methodes, "normalisation": normalisation,
            "ecart_pct": round((centrale / prix - 1) * 100, 1) if prix else None, "fiable": True, "reserve": None}
     # Méthodes très divergentes ou valeur sans rapport avec le cours : fourchette affichée, signal neutralisé
     if len(methodes) == 2:
@@ -180,8 +190,11 @@ def signaux(note: int, m: dict, valeur: dict | None, financier, cfg: dict, dynam
     sens = 0 if mo is None else 1 if mo >= s["momentum_positif"] else -1 if mo <= s["momentum_negatif"] else 0
     res.append({"cle": "momentum", "sens": sens, "texte": "non disponible" if mo is None else f"{nb(mo, 1, signe=True)} %"})
     f = (m.get("fscore") or {}).get("score")
+    alt = m.get("altman") or {}
     if m.get("alertes"):
         sens, texte = -1, "signal d'alerte : " + m["alertes"][0]["titre"].lower()
+    elif not financier and alt.get("zone") == "détresse" and alt.get("confirme"):
+        sens, texte = -1, f"Z-score d'Altman en zone de détresse ({nb(alt['z'], 2)}), confirmé : {', '.join(alt.get('signes') or [])}"
     elif financier:
         roe = m.get("roe")
         sens = 1 if roe is not None and roe >= s["roe_financier_min"] else 0
@@ -241,8 +254,11 @@ def _condition(sig: dict, but: str, note: int, m: dict, valeur: dict | None, pri
         if but == "annuler":
             return f"Apparition d'un signal d'alerte comptable ou F-score sous {s['fscore_positif']}/9 au prochain rapport annuel."
         if but == "retourner":
-            return ("Disparition du signal d'alerte comptable au prochain rapport annuel." if m.get("alertes")
-                    else f"F-score remonté au-dessus de {s['fscore_negatif']}/9 au prochain rapport annuel.")
+            if m.get("alertes"):
+                return "Disparition du signal d'alerte comptable au prochain rapport annuel."
+            if (m.get("altman") or {}).get("zone") == "détresse" and (m.get("altman") or {}).get("confirme"):
+                return "Z-score d'Altman remonté au-dessus de 1,81 (sortie de la zone de détresse) au prochain rapport annuel."
+            return f"F-score remonté au-dessus de {s['fscore_negatif']}/9 au prochain rapport annuel."
         return f"F-score d'au moins {s['fscore_positif']}/9 sans signal d'alerte comptable au prochain rapport annuel."
     if c == "dynamique":
         if but == "annuler":
@@ -366,6 +382,8 @@ def recommander(s: dict, m: dict, note: int | None, confiance: str, risques: lis
         justif += " " + " ; ".join(exclusions) + "."
     if exception:
         justif += f" {exception}."
+    if valeur and valeur.get("normalisation"):
+        justif += f" Valorisation sur {valeur['normalisation']}."
     if prix_repli and nd == "Acheter sur repli" and bloque_guidance:
         justif += (f" Repli sous {prix_texte(prix_repli, devise)} (aujourd'hui {prix_texte(prix, devise)}) : la valorisation deviendrait favorable,"
                    f" mais « Acheter » reste exclu tant que la guidance {gn['evolution']} a moins de 90 jours.")

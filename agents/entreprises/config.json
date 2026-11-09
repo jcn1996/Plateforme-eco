@@ -690,33 +690,56 @@
     "moyen_orient_afrique": "Moyen-Orient et Afrique"
   },
   "ponderations": {
-    "_commentaire": "Note globale = moyenne pondérée des notes disponibles (sociétés non financières).",
-    "croissance_ca": 0.12,
-    "croissance_benefice": 0.1,
-    "marge_op": 0.1,
-    "conversion_cash": 0.08,
-    "dette_ebitda": 0.1,
-    "couverture_interets": 0.05,
-    "roic": 0.12,
-    "per_secteur": 0.08,
-    "ev_ebitda_secteur": 0.07,
-    "momentum_12m": 0.08,
-    "fscore": 0.1
+    "_commentaire": "Note globale = moyenne pondérée des notes disponibles (sociétés non financières). Indicateurs de base puis indicateurs de l'analyse approfondie (agents/entreprises/analyse_financiere.md). La couverture (et donc la confiance) se mesure sur les indicateurs de base seulement (analyse_financiere.couverture_sur) : un indicateur approfondi absent ne fait pas baisser la confiance. Somme : 1.",
+    "croissance_ca": 0.07,
+    "croissance_benefice": 0.06,
+    "marge_op": 0.06,
+    "conversion_cash": 0.05,
+    "dette_ebitda": 0.05,
+    "couverture_interets": 0.03,
+    "roic": 0.06,
+    "per_secteur": 0.06,
+    "ev_ebitda_secteur": 0.04,
+    "momentum_12m": 0.06,
+    "fscore": 0.06,
+    "fcf_yield": 0.05,
+    "benefices_normalises": 0.03,
+    "roic_wacc": 0.05,
+    "regularite": 0.04,
+    "rendement_actionnaire": 0.03,
+    "altman_z": 0.04,
+    "mscore": 0.02,
+    "goodwill_actif": 0.02,
+    "current_ratio": 0.02,
+    "marge_brute": 0.03,
+    "cycle_cash": 0.02,
+    "capex_amortissements": 0.01,
+    "intensite_rd": 0.01,
+    "detention_dirigeants": 0.02,
+    "evolution_actions": 0.01
   },
   "ponderations_financieres": {
-    "_commentaire": "Banques et assurances : critères adaptés.",
-    "croissance_ca": 0.15,
-    "croissance_benefice": 0.12,
-    "roe": 0.25,
-    "cout_revenu": 0.12,
-    "croissance_bilan": 0.1,
-    "per_secteur": 0.12,
-    "momentum_12m": 0.14
+    "_commentaire": "Banques et assurances : critères adaptés ; de l'analyse approfondie, seuls les bénéfices normalisés, la régularité, le rendement pour l'actionnaire et l'alignement sont gardés. Somme : 1.",
+    "croissance_ca": 0.12,
+    "croissance_benefice": 0.1,
+    "roe": 0.2,
+    "cout_revenu": 0.1,
+    "croissance_bilan": 0.08,
+    "per_secteur": 0.1,
+    "momentum_12m": 0.1,
+    "benefices_normalises": 0.04,
+    "regularite": 0.04,
+    "rendement_actionnaire": 0.05,
+    "detention_dirigeants": 0.03,
+    "evolution_actions": 0.04
   },
   "ecart_officiel_max_pct": 5.0,
   "pepites": {
-    "_commentaire": "Deux listes. « pepites » : capitalisation entre cap_min et cap_max (Md$), peu suivies (analystes ≤ analystes_max quand Yahoo le fournit). « qualite_prix_raisonnable » : grandes sociétés (au-dessus de cap_max) qui remplissent les mêmes critères. plafond_par_secteur et plafond_par_pays : au plus N sociétés d'un même secteur GICS et d'un même pays par liste ; nombre_min : objectif de pépites par révision (avertissement publié en deçà). Holdings, sociétés d'investissement, fonds fermés, BDC et SPAC exclus (et jamais « Acheter » sur une valorisation PER). Holding = industrie exclue, ou « Asset Management » avec un mot de holdings_mots dans le nom ; fonds fermé ou BDC = un mot de fonds_mots dans le nom et une industrie de fonds_industries (ou secteur Finance, industrie inconnue) ; SPAC = industrie « Shell Companies » ou un mot de spac_mots dans le nom.",
+    "_commentaire": "Deux listes. « pepites » : capitalisation entre cap_min et cap_max (Md$), peu suivies (analystes ≤ analystes_max quand Yahoo le fournit). « qualite_prix_raisonnable » : grandes sociétés (au-dessus de cap_max) qui remplissent les mêmes critères. plafond_par_secteur et plafond_par_pays : au plus N sociétés d'un même secteur GICS et d'un même pays par liste ; nombre_min : objectif de pépites par révision (avertissement publié en deçà). Holdings, sociétés d'investissement, fonds fermés, BDC et SPAC exclus (et jamais « Acheter » sur une valorisation PER). Holding = industrie exclue, ou « Asset Management » avec un mot de holdings_mots dans le nom ; fonds fermé ou BDC = un mot de fonds_mots dans le nom et une industrie de fonds_industries (ou secteur Finance, industrie inconnue) ; SPAC = industrie « Shell Companies » ou un mot de spac_mots dans le nom. Exclusions de l'analyse approfondie (si calculables) : Z-score d'Altman en zone de détresse (exclure_zscore_detresse), M-score de Beneish suspect (exclure_mscore_suspect ; c'est aussi un signal d'alerte comptable), sommet de cycle possible (exclure_sommet_cycle).",
     "croissance_ca_min": 10.0,
+    "exclure_zscore_detresse": true,
+    "exclure_mscore_suspect": true,
+    "exclure_sommet_cycle": true,
     "fscore_min": 7,
     "dette_ebitda_max": 2.0,
     "valorisation_max_pct": 10.0,
@@ -1005,6 +1028,187 @@
       "attente_429_minute_max_secondes": 30,
       "fuseau_quota": "America/Los_Angeles",
       "delai_reponse_secondes": 90
+    }
+  },
+  "analyse_financiere": {
+    "_commentaire": "Analyse financière approfondie (agents/entreprises/financier.py, règles dans analyse_financiere.md) : indicateurs, barèmes (valeur → note /100, interpolation linéaire bornée), familles des sous-notes, coût du capital. Pondérations dans « ponderations ».",
+    "couverture_sur": ["croissance_ca", "croissance_benefice", "marge_op", "conversion_cash", "dette_ebitda", "couverture_interets", "roic", "per_secteur", "ev_ebitda_secteur", "momentum_12m", "fscore", "roe", "cout_revenu", "croissance_bilan"],
+    "normalisation": {
+      "_commentaire": "Bénéfice actuel (4 derniers trimestres, à défaut dernier exercice) / moyenne des résultats nets des `annees` derniers exercices (au moins annees_min). « Sommet de cycle possible » si ce rapport dépasse seuil_sommet ET si l'écart ne s'explique pas par la croissance du chiffre d'affaires (rapport des bénéfices ÷ rapport des CA au-dessus de seuil_marge : marge nette nettement au-dessus de sa moyenne) ET si la marge nette est au plus haut des exercices étudiés (sinon l'écart vient d'un creux passé), avec au moins annees_min_alerte exercices ; la valorisation utilise alors le bénéfice et le flux de trésorerie disponible moyens. La note se lit sur ce rapport corrigé de la croissance du CA (barème « benefices_normalises »).",
+      "annees": 5,
+      "annees_min": 3,
+      "annees_min_alerte": 4,
+      "seuil_sommet": 1.5,
+      "seuil_marge": 1.25
+    },
+    "wacc": {
+      "_commentaire": "Coût du capital estimé : fonds propres = taux_sans_risque + prime de la région + bêta (Yahoo, borné ; beta_defaut s'il manque) × prime_marche ; dette = intérêts / dette totale, borné entre le taux sans risque (avec prime) et + marge_dette_max points (à défaut + marge_dette_defaut) ; après impôt (taux effectif, à défaut impot_defaut) ; pondération capitalisation / dette totale. Primes de région identiques à celles du DCF.",
+      "taux_sans_risque": 4.0,
+      "prime_marche": 5.0,
+      "beta_defaut": 1.0,
+      "beta_min": 0.5,
+      "beta_max": 2.0,
+      "marge_dette_defaut": 2.0,
+      "marge_dette_max": 8.0,
+      "impot_defaut": 0.25,
+      "primes_region": {
+        "amerique_nord": 0.0,
+        "europe": 0.5,
+        "asie_pacifique": 1.5,
+        "amerique_latine": 3.0,
+        "moyen_orient_afrique": 3.0,
+        "autre": 2.0
+      }
+    },
+    "regularite": {
+      "_commentaire": "Au moins annees_min exercices. Note = moyenne de la part des années de croissance du CA et de l'écart-type de la marge opérationnelle (points). Marge brute : +5 si son écart-type ≤ marge_brute_stable_pts, −5 s'il ≥ marge_brute_instable_pts.",
+      "annees_min": 4,
+      "bareme_croissance": [
+        [0, 15],
+        [50, 45],
+        [75, 70],
+        [100, 90]
+      ],
+      "bareme_ecart_type": [
+        [0, 95],
+        [2, 80],
+        [5, 55],
+        [10, 25],
+        [20, 10]
+      ],
+      "marge_brute_stable_pts": 2.0,
+      "marge_brute_instable_pts": 8.0
+    },
+    "altman": {
+      "_commentaire": "Z-score d'Altman (modèle d'origine) : zone sûre au-dessus de zone_sure, grise entre les deux, détresse sous zone_detresse. Non calculé pour les financières. Limites : il pénalise les sociétés à filiale de financement (Toyota) et celles qui ont beaucoup racheté leurs actions (bénéfices non distribués faibles). Pépites : zone de détresse = exclusion. Recommandation : signal de qualité défavorable seulement si un autre signe de fragilité le confirme (couverture des intérêts sous couverture_interets_max, flux de trésorerie disponible négatif ou current ratio sous current_ratio_min).",
+      "zone_sure": 2.99,
+      "zone_detresse": 1.81,
+      "confirmation": {"couverture_interets_max": 3.0, "current_ratio_min": 1.0}
+    },
+    "beneish": {
+      "_commentaire": "M-score de Beneish (8 variables) : au-dessus de seuil, manipulation des résultats possible (signal d'alerte comptable). Non calculé pour les financières.",
+      "seuil": -1.78
+    },
+    "secteurs_rd": ["Information Technology", "Health Care"],
+    "familles": {
+      "valeur_cycle": ["fcf_yield", "benefices_normalises", "roic_wacc", "regularite", "rendement_actionnaire"],
+      "solidite": ["altman_z", "mscore", "goodwill_actif", "current_ratio", "dette_ebitda", "couverture_interets"],
+      "qualite": ["marge_brute", "cycle_cash", "capex_amortissements", "intensite_rd", "fscore", "conversion_cash"],
+      "alignement": ["detention_dirigeants", "evolution_actions"]
+    },
+    "baremes": {
+      "fcf_yield": [
+        [-5, 10],
+        [0, 30],
+        [3, 50],
+        [6, 70],
+        [10, 85],
+        [15, 92]
+      ],
+      "benefices_normalises": [
+        [0.5, 55],
+        [0.8, 65],
+        [1.0, 65],
+        [1.3, 55],
+        [1.5, 40],
+        [2.0, 20],
+        [3.0, 10]
+      ],
+      "benefice_actuel_negatif": 30,
+      "roic_wacc": [
+        [-10, 10],
+        [-3, 30],
+        [0, 45],
+        [3, 60],
+        [8, 78],
+        [15, 92]
+      ],
+      "rendement_actionnaire": [
+        [-5, 15],
+        [0, 40],
+        [2, 55],
+        [4, 70],
+        [7, 82],
+        [12, 88]
+      ],
+      "altman_z": [
+        [0, 5],
+        [1.0, 15],
+        [1.81, 30],
+        [2.4, 50],
+        [2.99, 70],
+        [4.0, 85],
+        [6.0, 92]
+      ],
+      "mscore": [
+        [-3.5, 85],
+        [-2.22, 70],
+        [-1.78, 40],
+        [-1.0, 15]
+      ],
+      "goodwill_actif": [
+        [0, 75],
+        [15, 70],
+        [30, 55],
+        [45, 35],
+        [60, 15]
+      ],
+      "current_ratio": [
+        [0.5, 15],
+        [0.8, 35],
+        [1.0, 50],
+        [1.5, 70],
+        [2.0, 80],
+        [3.0, 80],
+        [5.0, 70]
+      ],
+      "marge_brute": [
+        [5, 20],
+        [20, 40],
+        [35, 60],
+        [50, 75],
+        [70, 90]
+      ],
+      "cycle_cash": [
+        [-30, 85],
+        [0, 80],
+        [30, 72],
+        [60, 62],
+        [90, 50],
+        [150, 30],
+        [250, 15]
+      ],
+      "capex_amortissements": [
+        [0.3, 35],
+        [0.7, 55],
+        [1.0, 65],
+        [1.5, 70],
+        [2.5, 60],
+        [4.0, 45]
+      ],
+      "intensite_rd": [
+        [0, 30],
+        [3, 50],
+        [8, 65],
+        [15, 78],
+        [25, 82]
+      ],
+      "detention_dirigeants": [
+        [0, 40],
+        [1, 50],
+        [5, 65],
+        [15, 80],
+        [40, 85],
+        [70, 70]
+      ],
+      "evolution_actions": [
+        [-15, 90],
+        [-5, 78],
+        [0, 65],
+        [3, 50],
+        [10, 30],
+        [25, 10]
+      ]
     }
   }
 }
