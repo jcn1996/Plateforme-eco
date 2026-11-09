@@ -1,0 +1,144 @@
+# Agent entreprises — récapitulatif du 09/11/2026
+
+- Sociétés analysées : 2948
+- Comptes vérifiés avec une source officielle : 1731
+- Écarts entre source officielle et Yahoo : 193
+- Sociétés remplissant tous les critères : 77 ; retenues : 10 pépites (300 M$ à 20 Md$, peu suivies) et 15 en « qualité à prix raisonnable » ; au plus 3 par secteur
+
+## Pépites candidates
+
+- [pépite] Pan African Resources PLC (PAF.L, GB) : 83/100, ajustement de contexte +1.9 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 47,4 %, f-score de piotroski : 9/9.
+- [pépite] Consun Pharmaceutical Group Limited (1681.HK, CN) : 81/100, ajustement de contexte +1.6 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 33,7 %, dette nette / ebitda : trésorerie nette.
+- [pépite] Enova International, Inc. (ENVA, US) : 82/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : croissance du bénéfice : +47,2 %, roe : 23,1 %.
+- [pépite] TBC Bank Group PLC (TBCG.L, GB) : 79/100, ajustement de contexte +1.9 — Dossier solide sur les comptes ; points forts : roe : 22,6 %, coût / revenu : 39,7 %.
+- [pépite] Mueller Industries, Inc. (MLI, US) : 78/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : dette nette / ebitda : trésorerie nette, couverture des intérêts : pas de charge d'intérêts.
+- [pépite] Federated Hermes, Inc. (FHI, US) : 78/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : roe : 33,7 %, croissance du bénéfice : +57,1 %.
+- [pépite] Adeia Inc. (ADEA, US) : 76/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 45,0 %, croissance du bénéfice : +71,9 %.
+- [pépite] ExlService Holdings, Inc. (EXLS, US) : 75/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : couverture des intérêts : 17,8×, dette nette / ebitda : 0,2×.
+- [pépite] BeOne Medicines AG (688235.SS, CN) : 73/100, ajustement de contexte +1.6 — Dossier solide sur les comptes ; points forts : croissance du ca : +40,2 %, dette nette / ebitda : trésorerie nette ; point faible : roic : 5,7 %.
+- [pépite] Simcere Pharmaceutical Group Limited (2096.HK, CN) : 72/100, ajustement de contexte +1.6 — Dossier solide sur les comptes ; points forts : dette nette / ebitda : trésorerie nette, croissance du bénéfice : +86,2 % ; point faible : momentum 12 mois : −7,5 %.
+- [QPR] Apple Inc. (AAPL.BA, AR) : 85/100, ajustement de contexte -0.1 — Dossier solide sur les comptes ; points forts : f-score de piotroski : 9/9, marge opérationnelle : 33,0 %.
+- [QPR] Emaar Properties PJSC (EMAAR.AE, AE) : 82/100, ajustement de contexte +1.0 — Dossier solide sur les comptes ; points forts : croissance du ca : +39,6 %, marge opérationnelle : 45,5 % ; point faible : momentum 12 mois : −0,6 %.
+- [QPR] Nongfu Spring Co., Ltd. (9633.HK, CN) : 79/100, ajustement de contexte +1.6 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 38,6 %, couverture des intérêts : pas de charge d'intérêts ; point faible : momentum 12 mois : −12,6 %.
+- [QPR] HCL Technologies Limited (HCLTECH.NS, IN) : 78/100, ajustement de contexte +1.9 — Dossier solide sur les comptes ; points forts : dette nette / ebitda : trésorerie nette, couverture des intérêts : 47,0× ; point faible : croissance du bénéfice : −4,3 %.
+- [QPR] Adobe Inc. (ADBE, US) : 79/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 36,6 %, couverture des intérêts : 33,1× ; point faible : momentum 12 mois : −27,4 %.
+- [QPR] MS&AD Insurance Group Holdings, Inc. (8725.T, JP) : 77/100, ajustement de contexte +0.9 — Dossier solide sur les comptes ; points forts : per vs secteur : −40,4 %, momentum 12 mois : +65,6 %.
+- [QPR] Prudential plc (PRU.L, GB) : 76/100, ajustement de contexte +1.9 — Dossier solide sur les comptes ; points forts : croissance du ca : +69,0 %, croissance du bénéfice : +74,1 % ; point faible : momentum 12 mois : −10,5 %.
+- [QPR] Arch Capital Group Ltd. (ACGL, US) : 77/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : per vs secteur : −39,9 %, croissance du ca : +17,7 %.
+- [QPR] NEXT plc (NXT.L, GB) : 73/100, ajustement de contexte +1.9 — Dossier solide sur les comptes ; points forts : roic : 38,9 %, f-score de piotroski : 8/9 ; point faible : ve/ebitda vs secteur : +26,5 %.
+- [QPR] Paychex, Inc. (PAYX, US) : 74/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 39,8 %, conversion du bénéfice en cash : 131,9 %.
+- [QPR] Midea Group Co., Ltd. (000333.SZ, CN) : 70/100, ajustement de contexte +1.6 — Dossier solide sur les comptes ; points forts : couverture des intérêts : 20,9×, dette nette / ebitda : trésorerie nette.
+- [QPR] Booking Holdings Inc. (BKNG, US) : 70/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 34,5 %, roic : 55,8 % ; point faible : momentum 12 mois : −16,5 %.
+- [QPR] Japan Tobacco Inc. (2914.T, JP) : 69/100, ajustement de contexte +0.9 — Dossier solide sur les comptes ; points forts : croissance du bénéfice : +184,6 %, marge opérationnelle : 24,6 % ; point faible : momentum 12 mois : −0,6 %.
+- [QPR] Tencent Holdings Limited (0700.HK, CN) : 68/100, ajustement de contexte +1.6 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 33,1 %, dette nette / ebitda : trésorerie nette ; point faible : momentum 12 mois : −33,2 %.
+- [QPR] General Dynamics Corporation (GD, US) : 68/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : f-score de piotroski : 8/9, couverture des intérêts : 13,3×.
+
+## Signaux du jour
+
+- [moyenne] Booking Holdings Inc. entre dans la liste « Qualité à prix raisonnable »
+- [moyenne] Adobe Inc. entre dans la liste « Qualité à prix raisonnable »
+- [moyenne] General Dynamics Corporation entre dans la liste « Qualité à prix raisonnable »
+- [moyenne] Constellation Energy Corporation : guidance relevée (09/11/2026)
+- [faible] Constellation Energy Corporation : BPA publié +30,1 % par rapport à l'estimation
+- [faible] Public Storage : estimations de BPA −10,6 % sur 30 jours
+- [moyenne] Ferguson Enterprises Inc. : guidance relevée (09/11/2026)
+- [faible] Vistra Corp. : BPA publié +33,0 % par rapport à l'estimation
+- [moyenne] Arch Capital Group Ltd. entre dans la liste « Qualité à prix raisonnable »
+- [moyenne] Paychex, Inc. entre dans la liste « Qualité à prix raisonnable »
+- [faible] NRG Energy, Inc. : BPA publié +54,5 % par rapport à l'estimation
+- [faible] Charter Communications, Inc. : estimations de BPA −12,3 % sur 30 jours
+- [faible] Roivant Sciences Ltd. : BPA publié +58,9 % par rapport à l'estimation
+- [moyenne] Somnigroup International Inc. : guidance relevée (09/11/2026)
+- [faible] Arrow Electronics, Inc. : estimations de BPA +11,3 % sur 30 jours
+- [faible] CNH Industrial N.V. : BPA publié +63,1 % par rapport à l'estimation
+- [faible] American Homes 4 Rent : estimations de BPA −16,3 % sur 30 jours
+- [faible] ORIX Corporation : BPA publié +115,1 % par rapport à l'estimation
+- [faible] Ajinomoto Co., Inc. : BPA publié +38,1 % par rapport à l'estimation
+- [faible] BeOne Medicines AG : estimations de BPA +21,5 % sur 30 jours
+- [faible] BeOne Medicines AG : estimations de BPA +18,3 % sur 30 jours
+- [faible] Wuliangye Yibin Co.,Ltd. : estimations de BPA −11,4 % sur 30 jours
+- [moyenne] HCL Technologies Limited entre dans la liste « Qualité à prix raisonnable »
+- [faible] Axis Bank Limited : estimations de BPA −50,2 % sur 30 jours
+- [faible] Doosan Enerbility Co., Ltd. : estimations de BPA −11,0 % sur 30 jours
+- [faible] Saudi Basic Industries Corporation : estimations de BPA +39,4 % sur 30 jours
+- [faible] Divi's Laboratories Limited : estimations de BPA +12,3 % sur 30 jours
+- [faible] Bank Albilad : estimations de BPA −10,6 % sur 30 jours
+- [faible] Sigma Lithium Corporation : estimations de BPA +10,9 % sur 30 jours
+- [faible] Brother Industries, Ltd. : BPA publié +26,1 % par rapport à l'estimation
+- [faible] Nissan Chemical Corporation : BPA publié −27,5 % par rapport à l'estimation
+- [faible] Aster DM Quality Care Limited : estimations de BPA −10,9 % sur 30 jours
+- [faible] Krishna Institute of Medical Sciences Limited : estimations de BPA −11,3 % sur 30 jours
+- [moyenne] Qualys, Inc. : guidance relevée (09/11/2026)
+- [moyenne] ExlService Holdings, Inc. entre dans la liste « Pépites »
+- [moyenne] Hims & Hers Health, Inc. : guidance relevée (09/11/2026)
+- [moyenne] Greif, Inc. : guidance relevée (06/11/2026)
+- [moyenne] Viasat, Inc. : guidance relevée (05/11/2026)
+- [moyenne] Teradata Corporation : guidance relevée (05/11/2026)
+- [moyenne] Vericel Corporation : guidance relevée (05/11/2026)
+- [moyenne] Koppers Holdings Inc. : guidance abaissée (06/11/2026)
+- [moyenne] Molson Coors Beverage Company : guidance abaissée (05/11/2026)
+- [moyenne] Casella Waste Systems, Inc. : guidance abaissée (09/11/2026)
+- [moyenne] TransMedics Group, Inc. : guidance relevée (05/11/2026)
+- [moyenne] Dauch Corporation : guidance relevée (06/11/2026)
+- [moyenne] Uniti Group Inc. : guidance relevée (09/11/2026)
+- [moyenne] Telephone and Data Systems, Inc. : guidance abaissée (06/11/2026)
+- [moyenne] Vontier Corporation : guidance relevée (05/11/2026)
+- [moyenne] AAON, Inc. : guidance relevée (09/11/2026)
+- [moyenne] TG Therapeutics, Inc. : guidance relevée (09/11/2026)
+- [moyenne] Teleflex Incorporated : guidance abaissée (05/11/2026)
+- [moyenne] RadNet, Inc. : guidance relevée (09/11/2026)
+- [moyenne] Atmus Filtration Technologies Inc. : guidance relevée (06/11/2026)
+- [moyenne] Delek US Holdings, Inc. : guidance relevée (06/11/2026)
+- [moyenne] Interface, Inc. : guidance abaissée (06/11/2026)
+- [moyenne] Under Armour, Inc. : guidance relevée (06/11/2026)
+- [faible] Taiwan Semiconductor Manufacturing Company Limited sort des pépites candidates
+- [faible] Tapestry, Inc. sort des pépites candidates
+- [faible] Kandenko Co.,Ltd. sort des pépites candidates
+- [faible] EMCOR Group, Inc. sort des pépites candidates
+- [faible] Harbin Electric Company Limited sort des pépites candidates
+- [faible] Samsung Biologics Co.,Ltd. sort des pépites candidates
+- [faible] Barrick Mining Corporation sort des pépites candidates
+- [faible] Wasion Holdings Limited sort des pépites candidates
+- [faible] Newmont Corporation sort des pépites candidates
+- [faible] Industrias Peñoles, S.A.B. de C.V. sort des pépites candidates
+- [faible] Comfort Systems USA, Inc. sort des pépites candidates
+- [faible] Dorian LPG Ltd. sort des pépites candidates
+- [faible] SK hynix Inc. sort des pépites candidates
+- [faible] Kinross Gold Corporation sort des pépites candidates
+- [faible] Rolls-Royce Holdings plc sort des pépites candidates
+- [faible] The Progressive Corporation sort des pépites candidates
+- [faible] Astellas Pharma Inc. sort des pépites candidates
+
+## Sources
+
+- US : iShares IVV + iShares IJH ; petites et moyennes valeurs : iShares IJR (655) (1568)
+- CA : iShares EWC (40)
+- MX : iShares EWW (15)
+- BR : iShares EWZ ; petites et moyennes valeurs : iShares EWZS (6) (10)
+- AR : filtre d'actions Yahoo (plus grosses capitalisations) (6)
+- CL : iShares ECH (8)
+- CO : Global X COLO (5)
+- GB : iShares EWU ; petites et moyennes valeurs : iShares EWUS (100) (150)
+- FR : iShares EWQ ; petites et moyennes valeurs : iShares IEUS (50) (90)
+- DE : iShares EWG ; petites et moyennes valeurs : iShares IEUS (50) (90)
+- CH : iShares EWL ; petites et moyennes valeurs : iShares IEUS (40) (70)
+- IT : iShares EWI ; petites et moyennes valeurs : iShares IEUS (40) (60)
+- ES : iShares EWP ; petites et moyennes valeurs : iShares IEUS (30) (50)
+- NL : iShares EWN ; petites et moyennes valeurs : iShares IEUS (25) (45)
+- SE : iShares EWD ; petites et moyennes valeurs : iShares IEUS (50) (70)
+- PL : iShares EPOL ; petites et moyennes valeurs : iShares IEUS (15) (25)
+- JP : iShares EWJ ; petites et moyennes valeurs : iShares SCJ (150) (230)
+- CN : iShares MCHI ; petites et moyennes valeurs : iShares ECNS (80) (140)
+- IN : iShares INDA ; petites et moyennes valeurs : iShares SMIN (100) (150)
+- KR : iShares EWY (35)
+- TW : iShares EWT (35)
+- AU : iShares EWA (35)
+- ID : iShares EIDO (12)
+- SG : iShares EWS (10)
+- TH : iShares THD (12)
+- VN : liste manuelle (vérifiée le 03/11/2026) (6)
+- SA : iShares KSA (20)
+- AE : iShares UAE (8)
+- TR : iShares TUR (10)
+- ZA : iShares EZA (15)
+- EG : liste manuelle (vérifiée le 03/11/2026) (5)
