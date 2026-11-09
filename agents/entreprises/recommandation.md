@@ -34,6 +34,10 @@ trésorerie disponible (FCF) du dernier exercice est positif :
 
 Les hypothèses retenues sont affichées sur la fiche. Banques et assurances : multiples (PER) seulement.
 
+**Sommet de cycle possible** (`analyse_financiere.md`) : la méthode des multiples utilise le bénéfice moyen sur
+5 ans au lieu du bénéfice actuel, et le DCF le plus bas du flux de trésorerie disponible actuel et moyen ; la
+justification l'indique.
+
 **Synthèse.** Valeur centrale, bas et haut = moyennes des méthodes disponibles. Écart au cours
 = valeur centrale ÷ cours − 1. L'estimation est déclarée **non exploitable** pour le signal de
 valorisation (mais reste affichée) quand les deux méthodes divergent de plus d'un facteur
@@ -46,7 +50,7 @@ valorisation (mais reste affichée) quand les deux méthodes divergent de plus d
 | Note globale | ≥ 65/100 | < 50/100 | `note_positive`, `note_negative` |
 | Valorisation | valeur estimée ≥ cours + 15 % | ≤ cours − 15 % | `valorisation_positive`, `valorisation_negative` |
 | Momentum 12 mois | ≥ +5 % | ≤ −10 % | `momentum_positif`, `momentum_negatif` |
-| Qualité comptable | F-score ≥ 6 sans alerte (financières : ROE ≥ 10 % sans alerte) | signal d'alerte comptable, ou F-score ≤ 3 | `fscore_positif`, `fscore_negatif`, `roe_financier_min` |
+| Qualité comptable | F-score ≥ 6 sans alerte (financières : ROE ≥ 10 % sans alerte) | signal d'alerte comptable (dont M-score de Beneish suspect), Z-score d'Altman en zone de détresse confirmé par un autre signe de fragilité, ou F-score ≤ 3 | `fscore_positif`, `fscore_negatif`, `roe_financier_min` |
 | Dynamique des résultats | note du bloc ≥ 65/100 | < 40/100 | section `dynamique` (voir `dynamique.md`) |
 
 Un signal non calculable est neutre.

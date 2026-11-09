@@ -33,6 +33,7 @@ from ..commun.telechargement import Telechargeur
 from . import analyse as A
 from . import comptes as C
 from . import dynamique as D
+from . import financier as F
 from . import recommandation as R
 from . import univers as U
 
@@ -77,7 +78,8 @@ class Fournisseur:
             ids["publications"] = pubs[:3]
             if annuels:
                 dix_k = next((p for p in pubs if p["formulaire"] in ("10-K", "20-F", "40-F")), None)
-                return {**annuels[0], "url": dix_k["url"] if dix_k else None, "publie": dix_k["date"] if dix_k else None}, "SEC (XBRL companyfacts)", ids
+                return {**annuels[0], "url": dix_k["url"] if dix_k else None, "publie": dix_k["date"] if dix_k else None,
+                        "historique": annuels[:6]}, "SEC (XBRL companyfacts)", ids  # historique : moyennes et régularité sur 5 ans
         if pays in C.Esef.PAYS:
             lei = ids.get("lei") or self.esef.lei(s["nom"], pays)
             ids["lei"] = lei
@@ -235,6 +237,7 @@ def collecter_societe(f, s: dict, ancien: dict | None, seuil_ecart: float) -> di
         "officiel": officiel, "source_officielle": source_off, "verification": verification, "ids": ids,
         "surveillance": bool(s.get("surveillance")), "source_composition": s.get("source_composition"),
         "analystes": info.get("numberOfAnalystOpinions"),
+        "detention_dirigeants": info.get("heldPercentInsiders"), "beta": info.get("beta"),
         "maj_comptes": date.today().isoformat(), "tentative": date.today().isoformat(),
     }
 
@@ -377,6 +380,10 @@ def publier(base: dict, config: dict, change: dict, data: Path, aujourdhui: date
             continue
         e, m, ind, crit = r
         p = precedentes.get(s["ticker"])
+        # Fiche précédente calculée sans l'analyse approfondie, ou sur d'autres indicateurs approfondis (comptes relus) :
+        # la note a changé de méthode ou de périmètre, pas de tendance affichée
+        if p and not meme_perimetre(p, e):
+            p = None
         if p and p.get("note") is not None and p["note"] != e["note"]:
             e["precedent"] = {"note": p["note"]}
         elif p and p.get("precedent"):
@@ -451,10 +458,11 @@ def publier(base: dict, config: dict, change: dict, data: Path, aujourdhui: date
             signaux.append({"date": aujourdhui.isoformat(), "type": "nouvelle_pepite", "cle": e["ticker"], "importance": "moyenne",
                             "titre": f"{e['nom']} entre dans la liste « {'Pépites' if e['pepite'] else 'Qualité à prix raisonnable'} »",
                             "explication": e["verdict"], "source": e["sources"]["comptes"]})
-        if p and e["alertes"] and not p.get("alertes"):
+        meme_methode = bool(p and meme_perimetre(p, e))  # sinon : changement de méthode ou de périmètre, pas d'événement nouveau
+        if p and e["alertes"] and not p.get("alertes") and (meme_methode or any(a["cle"] != "mscore" for a in e["alertes"])):
             signaux.append({"date": aujourdhui.isoformat(), "type": "alerte_comptable", "cle": e["ticker"], "importance": "moyenne",
                             "titre": f"{e['nom']} : {e['alertes'][0]['titre'].lower()}", "explication": e["alertes"][0]["texte"], "source": e["sources"]["comptes"]})
-        if p and p.get("note") is not None and abs(e["note"] - p["note"]) >= 10:
+        if meme_methode and p.get("note") is not None and abs(e["note"] - p["note"]) >= 10:
             signaux.append({"date": aujourdhui.isoformat(), "type": "variation_de_note", "cle": e["ticker"], "importance": "faible",
                             "titre": f"{e['nom']} : note de {p['note']} à {e['note']}", "explication": e["verdict"], "source": e["sources"]["comptes"]})
         signaux += D.signaux(e, p, config["dynamique"], aujourdhui, e["sources"]["comptes"])
@@ -512,6 +520,12 @@ def publier(base: dict, config: dict, change: dict, data: Path, aujourdhui: date
             "divergences": sum(1 for e in entreprises if (e["sources"]["verification"] or {}).get("statut") == "divergent")}
 
 
+def meme_perimetre(p: dict, e: dict) -> bool:
+    """Vrai si la fiche précédente a été notée avec les mêmes indicateurs de l'analyse approfondie."""
+    af_p, af_e = p.get("analyse_financiere"), e.get("analyse_financiere")
+    return bool(af_p and af_e) and set(af_p.get("indicateurs") or {}) == set(af_e.get("indicateurs") or {})
+
+
 def lire_inities(data: Path, cfg: dict | None, aujourdhui: date) -> dict | None:
     """Vue par ticker de l'agent initiés (data/inities.json, « societes »), ou None si le fichier manque ou date
     de plus de fraicheur_jours jours (les deux signaux de l'agent initiés sont alors absents de la recommandation)."""
@@ -528,10 +542,11 @@ def lire_inities(data: Path, cfg: dict | None, aujourdhui: date) -> dict | None:
     return d["societes"]
 
 
-def note_avec_dynamique(n: dict, ponderations: dict, note_dyn: int | None, poids_dyn: float) -> dict:
+def note_avec_dynamique(n: dict, ponderations: dict, note_dyn: int | None, poids_dyn: float,
+                        cles_couverture: list[str] | None = None) -> dict:
     """Note globale ; le bloc « Dynamique des résultats » y pèse `poids_dyn` (part des pondérations disponibles).
-    La couverture reste celle des indicateurs comptables et de marché."""
-    g = A.note_globale(n, ponderations)
+    La couverture reste celle des indicateurs comptables et de marché (de base si cles_couverture est donné)."""
+    g = A.note_globale(n, ponderations, cles_couverture)
     if g["note"] is None or note_dyn is None:
         return {**g, "note_sans_dynamique": g["note"]}
     poids = {k: v for k, v in ponderations.items() if not k.startswith("_")}
@@ -552,10 +567,12 @@ def analyser_societe(s: dict, med: dict, config: dict, pays_json: dict, zones: d
     m = s["mesures"]
     m.update(A.comparer(m, s.get("secteur_gics"), s["region"], med))
     n = A.notes(m, s["financier"])
+    cfg_af = config["analyse_financiere"]
+    n_av = F.notes(m, s["financier"], cfg_af)  # analyse approfondie
     cfg_d = config["dynamique"]
     bloc_dyn = D.bloc(dyn, s["pays"], cfg_d, aujourdhui)
-    g = note_avec_dynamique(n, config["ponderations_financieres"] if s["financier"] else config["ponderations"],
-                            bloc_dyn["note"], cfg_d["poids_note_globale"])
+    g = note_avec_dynamique({**n, **n_av}, config["ponderations_financieres"] if s["financier"] else config["ponderations"],
+                            bloc_dyn["note"], cfg_d["poids_note_globale"], cfg_af["couverture_sur"])
     if g["note"] is None:
         return None
     ind = A.indicateurs_affiches(m, n)
@@ -591,6 +608,8 @@ def analyser_societe(s: dict, med: dict, config: dict, pays_json: dict, zones: d
         "liquidite_musd": round(s["liquidite_musd"], 1) if s.get("liquidite_musd") is not None else None,
         "note": g["note"], "niveau": A.niveau(g["note"]), "note_brute": g["brute"], "couverture": g["couverture"],
         "note_sans_dynamique": g["note_sans_dynamique"], "dynamique": bloc_dyn,
+        "analyse_financiere": {"sous_notes": F.sous_notes({**n, **n_av}, cfg_af), "indicateurs": F.indicateurs(m, n_av),
+                               "details": F.details(m), "sommet_cycle": bool(m.get("sommet_cycle"))},
         "verdict": verdict, "confiance": conf, "indicateurs": ind,
         "fscore": m.get("fscore"), "alertes": m.get("alertes", []),
         "momentum": {"m3": m.get("momentum_3m"), "m6": m.get("momentum_6m"), "m12": m.get("momentum_12m")},
@@ -633,8 +652,9 @@ def mesurer(r: dict, change: dict, cfg_u: dict) -> dict:
     s = {**r, "region": region, "capitalisation_usd": cap, "liquidite_musd": liquidite, "prix": prix, "fx_cours": fx_c,
          "date_cours": r["cours"][-1][0], "fx_comptes": change.get(r["devise_comptes"]),
          "resultat_net_ttm": (r.get("trimestre") or {}).get("resultat_net_ttm")}
-    s["mesures"] = A.mesures(s)
+    # Type financier d'abord : l'analyse approfondie écarte les indicateurs non pertinents pour une banque ou un assureur
     s["financier"] = A.type_financier(s.get("secteur_gics"), {"industry": r.get("industrie")}, r["annuel"][0])
+    s["mesures"] = A.mesures(s)
     return s
 
 

@@ -482,7 +482,13 @@ Quand la source officielle et Yahoo s'écartent de plus de 5 %, la source offici
 - momentum sur 6 et 12 mois ;
 - F-score de Piotroski ;
 - signaux d'alerte comptables ;
-- critères adaptés aux banques et assurances.
+- critères adaptés aux banques et assurances ;
+- **analyse approfondie** ([`agents/entreprises/analyse_financiere.md`](agents/entreprises/analyse_financiere.md)), sur 5 exercices (Yahoo, complétés par la SEC aux États-Unis) :
+  - valeur et cycle : rendement du flux de trésorerie disponible, bénéfices normalisés (bénéfice actuel / moyenne sur 5 ans ; « sommet de cycle possible » : la valorisation retient alors le bénéfice moyen), ROIC − coût du capital (estimé et documenté), régularité de la croissance et des marges, rendement pour l'actionnaire (dividendes + rachats − émissions) ;
+  - solidité et fiabilité : Z-score d'Altman, M-score de Beneish (signal d'alerte comptable), goodwill / actif total, current ratio ;
+  - qualité : marge brute et sa stabilité, cycle de conversion du cash, capex / amortissements, intensité en R&D (technologies et santé) ;
+  - alignement : capital détenu par les dirigeants, évolution du nombre d'actions sur 3 ans ;
+  - quatre sous-notes sur la fiche ; pondérations dans `config.json` ; pépites : Z-score en zone de détresse, M-score suspect ou sommet de cycle = exclusion.
 
 Chaque société reçoit une note sur 100 (pondérations dans `config.json`), un verdict, un niveau de confiance et une rubrique « Ce qui pourrait me donner tort ».
 

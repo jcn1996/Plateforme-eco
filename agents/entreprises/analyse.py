@@ -17,6 +17,7 @@ import statistics
 from datetime import date, timedelta
 
 from ..pays.textes import nb, ton_conforme  # noqa: F401
+from . import financier as F
 
 LIBELLES = {
     "croissance_ca": "Croissance du CA",
@@ -148,8 +149,9 @@ def alertes(a0: dict, a1: dict | None) -> list[dict]:
     return res
 
 
-def mesures(s: dict) -> dict:
-    """Mesures brutes d'une société (avant comparaison sectorielle et notation)."""
+def mesures(s: dict, cfg_af: dict | None = None) -> dict:
+    """Mesures brutes d'une société (avant comparaison sectorielle et notation), y compris l'analyse approfondie
+    (financier.py ; cfg_af : section « analyse_financiere » de la configuration, lue dans config.json par défaut)."""
     an = s.get("annuel") or []
     a0 = an[0] if an else {}
     a1 = an[1] if len(an) > 1 else None
@@ -195,6 +197,10 @@ def mesures(s: dict) -> dict:
     m["per"] = cap_c / rn_ttm if cap_c and rn_ttm and rn_ttm > 0 else None
     m["per_negatif"] = bool(cap_c and rn_ttm is not None and rn_ttm <= 0)
     m["ev_ebitda"] = (cap_c + (dn or 0)) / eb if cap_c and eb and eb > 0 else None
+    # Analyse approfondie : valeur et cycle, solidité et fiabilité, qualité, alignement
+    if a0:
+        m.update(F.mesures_avancees(s, m, cap_c, cfg_af))
+        m["alertes"] = m["alertes"] + F.alertes(m)  # M-score suspect : signal d'alerte comptable
     return m
 
 
@@ -277,14 +283,16 @@ def notes(m: dict, financier: str | None) -> dict:
     return n
 
 
-def note_globale(n: dict, ponderations: dict) -> dict:
+def note_globale(n: dict, ponderations: dict, cles_couverture: list[str] | None = None) -> dict:
+    """Moyenne pondérée des notes disponibles. Couverture : part des pondérations disponibles, mesurée sur
+    cles_couverture seulement si donné (indicateurs de base : un indicateur approfondi absent ne la réduit pas)."""
     poids = {k: v for k, v in ponderations.items() if not k.startswith("_")}
-    total = sum(poids.values())
     dispo = {k: w for k, w in poids.items() if k in n}
     if not dispo:
         return {"note": None, "couverture": 0.0, "ramenee": False}
     brute = sum(n[k] * w for k, w in dispo.items()) / sum(dispo.values())
-    couverture = sum(dispo.values()) / total
+    base = {k: w for k, w in poids.items() if cles_couverture is None or k in cles_couverture}
+    couverture = sum(w for k, w in base.items() if k in n) / sum(base.values()) if base else 0.0
     note = round(brute)
     # Deux signaux concordants au minimum pour un verdict tranché
     forts = sum(1 for k in dispo if n[k] >= 65)
@@ -403,9 +411,18 @@ def contre_scenario(m: dict, ind: dict) -> list[str]:
         res.append("Le cours recule sur 12 mois : le marché anticipe peut-être une détérioration non encore visible dans les comptes.")
     if m.get("alertes"):
         res.append("Signal d'alerte comptable relevé : la qualité du résultat est à vérifier dans le rapport annuel.")
+    if m.get("sommet_cycle"):
+        res.append(f"Bénéfice actuel égal à {nb(m['benefices_normalises'], 1)} fois sa moyenne sur {m.get('benefice_moyen_annees')} ans : "
+                   "sommet de cycle possible, la valorisation retient le bénéfice moyen.")
+    zone = (m.get("altman") or {}).get("zone")
+    if zone in ("grise", "détresse"):
+        res.append(f"Z-score d'Altman en zone {zone} ({nb(m['altman']['z'], 2)}) : solidité financière à surveiller "
+                   "(ce score pénalise aussi les sociétés qui ont beaucoup racheté leurs actions).")
+    if (m.get("goodwill_actif") or 0) > 40:
+        res.append(f"Goodwill égal à {nb(m['goodwill_actif'], 0)} % de l'actif : une dépréciation d'acquisitions passées pèserait sur les fonds propres.")
     if not res:
         res.append("Les indicateurs reposent sur les derniers comptes annuels : un changement de tendance au prochain trimestre n'est pas encore pris en compte.")
-    return res[:4]
+    return res[:5]
 
 
 def etude(nom: str, m: dict, ind: dict, montants: dict, devise: str) -> list[dict]:
@@ -422,7 +439,22 @@ def etude(nom: str, m: dict, ind: dict, montants: dict, devise: str) -> list[dic
                                                      f"momentum 12 mois : {part('momentum_12m')}."},
         {"titre": "Qualité des comptes", "texte": "F-score de Piotroski : " + part("fscore") + ". "
                                                   + ("Signaux d'alerte : " + " ; ".join(a["titre"].lower() for a in m.get("alertes", [])) + "." if m.get("alertes") else "Aucun signal d'alerte comptable relevé.")},
+        {"titre": "Cycle, solidité et alignement", "texte": etude_approfondie(m)},
     ]
+
+
+def etude_approfondie(m: dict) -> str:
+    def aff(cle):
+        return F.affichage(cle, m)[0]
+    t = [f"Rendement du flux de trésorerie disponible : {aff('fcf_yield')} ; bénéfice actuel / moyenne : {aff('benefices_normalises')}"
+         + (" (sommet de cycle possible)" if m.get("sommet_cycle") else "") + f" ; ROIC − coût du capital : {aff('roic_wacc')}."]
+    t.append(f"Z-score d'Altman : {aff('altman_z')}" + (f" (zone {m['altman']['zone']})" if m.get("altman") else "")
+             + f" ; M-score de Beneish : {aff('mscore')} ; goodwill / actif : {aff('goodwill_actif')} ; current ratio : {aff('current_ratio')}.")
+    t.append(f"Marge brute : {aff('marge_brute')} ; cycle de conversion du cash : {aff('cycle_cash')} ; capex / amortissements : {aff('capex_amortissements')}"
+             + (f" ; intensité en R&D : {aff('intensite_rd')}" if m.get("intensite_rd") is not None else "") + ".")
+    t.append(f"Rendement pour l'actionnaire : {aff('rendement_actionnaire')} ; capital détenu par les dirigeants : {aff('detention_dirigeants')} ; "
+             f"nombre d'actions sur 3 ans : {aff('evolution_actions')}.")
+    return " ".join(t)
 
 
 def montant_texte(v: float | None, devise: str) -> str:
@@ -465,6 +497,13 @@ def criteres_pepite(m: dict, n: dict, financier: str | None, cfg: dict) -> dict:
         "valorisation": val is not None and val <= cfg["valorisation_max_pct"],
         "aucune_alerte": not m.get("alertes"),
     }
+    # Analyse approfondie (critère écarté s'il n'est pas calculable : financières, données manquantes)
+    if cfg.get("exclure_zscore_detresse") and not financier:
+        c["zscore_hors_detresse"] = (m.get("altman") or {}).get("zone") != "détresse"
+    if cfg.get("exclure_mscore_suspect") and not financier:
+        c["mscore_non_suspect"] = not (m.get("beneish") or {}).get("suspect")
+    if cfg.get("exclure_sommet_cycle"):
+        c["pas_de_sommet_de_cycle"] = not m.get("sommet_cycle")
     return {"ok": all(c.values()), "criteres": c}
 
 
@@ -476,6 +515,9 @@ def revue_critique(s: dict, m: dict, ind: dict, pays: dict | None, devise_3m: fl
     piege = "peu probable au vu des comptes"
     if (m.get("per_secteur") or 0) < -20 and ((m.get("momentum_12m") or 0) < 0 or (m.get("croissance_benefice") or 0) < 0):
         piege = "possible : décote marquée associée à un cours ou à un bénéfice en recul"
+    if m.get("sommet_cycle"):
+        piege = (f"possible : bénéfice égal à {nb(m['benefices_normalises'], 1)} fois sa moyenne sur {m.get('benefice_moyen_annees')} ans "
+                 "(sommet de cycle possible) ; un PER bas peut refléter des bénéfices exceptionnellement élevés")
     devise = s.get("devise_comptes") or "?"
     change = "comptes en dollars : pas de risque de change direct pour un investisseur en dollars" if devise == "USD" else \
         f"comptes en {devise} : la performance en dollars dépend aussi du change" + (f" (devise du pays {nb(devise_3m, 1, signe=True)} % sur 3 mois contre le dollar)" if devise_3m is not None else "")

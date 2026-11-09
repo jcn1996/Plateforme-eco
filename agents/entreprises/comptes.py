@@ -51,6 +51,20 @@ LIGNES = {
     "stocks": ["Inventory"],
     "capital_investi": ["Invested Capital"],
     "depots": ["Total Deposits", "Deposits"],
+    # Analyse approfondie (financier.py)
+    "benefices_non_distribues": ["Retained Earnings"],
+    "passifs_totaux": ["Total Liabilities Net Minority Interest"],
+    "goodwill": ["Goodwill"],
+    "goodwill_incorporels": ["Goodwill And Other Intangible Assets"],
+    "amortissements": ["Depreciation And Amortization", "Reconciled Depreciation", "Depreciation Amortization Depletion"],
+    "rd": ["Research And Development"],
+    "dividendes": ["Cash Dividends Paid", "Common Stock Dividend Paid"],
+    "rachats": ["Repurchase Of Capital Stock", "Common Stock Payments"],
+    "emissions": ["Issuance Of Capital Stock", "Common Stock Issuance"],
+    "cout_ventes": ["Cost Of Revenue", "Reconciled Cost Of Revenue"],
+    "fournisseurs": ["Accounts Payable", "Payables"],
+    "sga": ["Selling General And Administration"],
+    "immobilisations": ["Net PPE"],
 }
 DEVISES_CENTIEMES = {"GBp": ("GBP", 100), "GBX": ("GBP", 100), "ZAc": ("ZAR", 100), "ILA": ("ILS", 100)}
 
@@ -117,14 +131,14 @@ class Yahoo:
         if h.empty:
             raise ErreurSource(f"Yahoo : aucun cours pour {ticker}")
         cours = [(i.strftime("%Y-%m-%d"), float(c), float(v or 0)) for i, c, v in zip(h.index, h["Close"], h["Volume"]) if c == c]
-        annuel = _exercices(t.income_stmt, t.balance_sheet, t.cashflow)[:4]
+        annuel = _exercices(t.income_stmt, t.balance_sheet, t.cashflow)[:5]  # 5 exercices : moyennes et régularité sur 5 ans
         trimestres = _exercices(t.quarterly_income_stmt, t.quarterly_cashflow)[:8]
         info = {}
         try:  # .info peut être refusé (401) selon le réseau : on s'en passe
             brut = t.info or {}
             info = {k: brut.get(k) for k in ("longName", "shortName", "sector", "industry", "financialCurrency", "currency",
                                                "marketCap", "sharesOutstanding", "trailingPE", "enterpriseToEbitda", "country",
-                                               "numberOfAnalystOpinions")}
+                                               "numberOfAnalystOpinions", "heldPercentInsiders", "beta")}
         except Exception as e:
             LOG.debug("info Yahoo indisponible pour %s : %s", ticker, str(e)[:80])
         devise_comptes = info.get("financialCurrency")
@@ -234,6 +248,7 @@ class Sec:
         "resultat_net": ["NetIncomeLoss", "NetIncomeLossAvailableToCommonStockholdersBasic"],
         "cfo": ["NetCashProvidedByUsedInOperatingActivities"],
         "ebit": ["OperatingIncomeLoss"],
+        "marge_brute": ["GrossProfit"],
     }
 
     def __init__(self, telechargeur, requetes_par_seconde: float = 8):
@@ -333,7 +348,7 @@ class Sec:
                         e[f"_{cle}"] = c
                 break
         res = []
-        for fin, e in sorted(par_fin.items(), reverse=True)[:4]:
+        for fin, e in sorted(par_fin.items(), reverse=True)[:6]:  # 6 exercices : moyennes et régularité sur 5 ans
             res.append({k: v for k, v in e.items() if not k.startswith("_")})
         return res
 
