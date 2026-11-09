@@ -4,35 +4,32 @@
 
 Paramètres : [`config.json`](config.json). Code : `agent.py` (orchestration), `strategie.py` (cibles, ordres, risque), `portefeuille.py` (exécution simulée, valorisation), `performance.py` (statistiques, attribution), `sources.py` (cours).
 
-## 1. Stratégie
+## 1. Stratégie : diversifiée mais concentrée
 
-- **Départ** : 100 000 € en liquidités (`capital_initial`), profil « équilibré » de l'allocation modèle du chef d'orchestre (`profil` : `prudent`, `equilibre` ou `dynamique`). Le remplacement du profil s'applique à la décision suivante, sans remise à zéro.
-- **Cœur (≈ 70 %, `poches.coeur`)** : lignes « cœur » de l'allocation modèle du chef d'orchestre, au prorata de leurs poids, chacune par son support coté :
-  - pays : l'ETF pays déjà suivi (symbole de la ligne : EWJ, EWY, INDA…) ; un pays sans ETF (Égypte) est redistribué dans sa classe ;
-  - or : GLD ; pétrole Brent : BNO ; WTI : USO ; gaz américain : UNG ; autres matières : ETF dédiés (`supports`) ;
-  - obligations américaines : SHY (courtes), IEF et TLT à parts égales (longues) ; zone euro : IBGS.AS (1-3 ans) et EXX6.DE (Bund allemand 10,5 ans et plus) ;
-  - liquidités : restent en euros sur le compte, non rémunérées (hypothèse prudente).
-  - Une ligne « Alléger » ou « Éviter », ou sans support coté, est redistribuée dans sa classe, sinon placée en liquidités ; une ligne de moins de 1 % est redistribuée de même.
-  - Le cœur suit l'allocation du chef d'orchestre, qui intègre déjà les objections du contradicteur dans la conviction : la règle « objection sérieuse » ne s'applique qu'aux satellites.
-- **Satellites (≈ 30 %, `poches.satellite`)** : convictions « forte » et « moyenne » du chef d'orchestre à verdict « Renforcer » ou « Renforcer fortement » :
-  - entreprises ; pays, matières et or seulement en conviction forte et hors du cœur (opportunités tactiques) ;
-  - exclus : objection sérieuse du contradicteur ; signaux favorables (famille notée 60/100 ou plus) d'un seul agent (**aucune décision fondée sur une seule source**) ; famille venant d'un agent dont la donnée est périmée, manquante ou dégradée selon le chef d'orchestre ; ligne vendue sur stop, verdict ou objection depuis moins de 20 jours ;
-  - 10 lignes au plus, classées par conviction puis score ;
-  - taille ∝ conviction (forte 2, moyenne 1) ÷ volatilité annualisée sur 3 mois (plancher 15 % ; à défaut, valeur par défaut de sa classe), **8 % maximum par ligne**, 1 % minimum ;
-  - plafonds par pays (40 %), secteur (12 %) et thème (20 %) repris de l'allocation du chef d'orchestre, en comptant le cœur ;
-  - un satellite détenu dont le verdict devient « Neutre » ou la conviction « faible » est conservé tel quel (sans renforcement) ; une ligne qui n'est plus analysée est vendue après 10 jours ;
-  - le budget satellite non utilisé est reversé au cœur.
-- **Valorisation en euros** : chaque cours est converti au cours de change du jour (paires `EURXXX=X` ; Londres, Johannesburg et Tel-Aviv cotent en sous-unités : pence, cents, agorot).
+- **Départ** : 100 000 € en liquidités (`capital_initial`). Le portefeuille ne copie plus l'allocation modèle du chef d'orchestre : il en reprend les verdicts et les convictions pour choisir peu de lignes.
+- **Concentration** : **15 lignes au plus** (`max_lignes`, liquidités exceptées), **4 % minimum par ligne** (`ligne_min`) ; une ligne qui tomberait sous 4 % après les plafonds est écartée (les lignes déjà détenues en dernier).
+- **Cœur : 8 à 12 positions** (`coeur`) choisies parmi les opportunités « Renforcer » ou « Renforcer fortement » de conviction **moyenne ou forte** : ETF pays, ETF sectoriels régionaux (États-Unis, Europe), or (GLD), matières premières (BNO, USO… avec le contango signalé).
+  - **Jamais d'ETF monde** (secteurs « Monde », URTH, ACWI…) **ni d'ETF pays « Neutre »**.
+  - Classement par conviction puis score (+3 points pour une ligne déjà détenue et toujours éligible : moins de rotation, moins de frais).
+  - **Diversification** : au moins 4 classes ou zones (Asie, Europe, Amérique du Nord, Amérique latine, Moyen-Orient et Afrique, Océanie, Émergents, or, matières premières, obligations), 3 lignes de cœur au plus par zone et 35 % au plus du portefeuille par zone pour le cœur, 2 lignes au plus par secteur (ETF sectoriels et sociétés confondus).
+  - **Faible corrélation, vérifiée sur 1 an** de cours quotidiens : une ligne dont la corrélation avec une ligne déjà retenue dépasse 0,80 (sur au moins 120 séances communes) est écartée. La décision publie la corrélation moyenne et la plus forte paire.
+  - Poids ∝ conviction (forte 1,5, moyenne 1), 15 % au plus par ligne ; l'excédent des plafonds reste en liquidités.
+- **Obligations : poids fixé par le verdict** du chef d'orchestre (`obligations.poids_par_verdict`) : « Renforcer fortement » 15 %, « Renforcer » 10 %, « Neutre » 5 % (poids neutre), « Alléger » et « Éviter » 0 ; une conviction faible plafonne au poids neutre ; 20 % au total au plus ; un seul support par ligne (SHY, IEF, IBGS.AS, EXX6.DE). Elles comptent parmi les lignes du cœur.
+- **Satellites : convictions fortes seulement** (entreprises), signaux favorables (famille notée 60/100 ou plus) d'au moins 2 agents indépendants (**aucune décision fondée sur une seule source**), 4 au plus dans la limite des 15 lignes et de 5 lignes par zone (cœur compris) ; taille ∝ conviction ÷ volatilité sur 3 mois, **4 à 8 %** par ligne. Le budget non utilisé revient au cœur.
+- **Jamais d'achat** d'une opportunité classée « À surveiller » par le chef d'orchestre ni **sous objection du contradicteur** (sérieuse ou non ; seule la revue « Pas d'objection spécifique » n'en est pas une).
+- Les liquidités restent en euros, non rémunérées. **Valorisation en euros** au change du jour (Londres, Johannesburg et Tel-Aviv cotent en sous-unités : pence, cents, agorot).
 
 ## 2. Gestion du risque
 
-- **Liquidités minimales selon le palier de l'agent risque** (`liquidites_min_par_palier`) : 5 % en « Calme », 10 % en « Vigilance », 20 % en « Tension », 35 % en « Crise ». À la décision, les cibles sont réduites en proportion ; à chaque exécution, si les liquidités (ordres d'achat en attente déduits) passent sous le plancher de plus d'un point, toutes les lignes sont allégées en proportion (vente imposée).
-- **Stops des satellites** : −15 % sous le prix de revient (en devise de cotation) ; **suiveur** dès que le plus haut atteint +20 % : stop à 15 % sous le plus haut, jamais abaissé. Un stop n'est déclenché qu'après **2 relevés** de cours distincts sous le stop (protection contre un cours aberrant, pas de décision sur une seule lecture).
-- **Prise de bénéfices partielle** : vente d'un tiers de la ligne à +30 %, une seule fois.
-- **Sorties** : dès que le chef d'orchestre passe une ligne détenue à « Alléger » ou « Éviter », ou qu'une objection sérieuse du contradicteur apparaît sur un satellite. Vérifié à chaque exécution, seulement si le chef d'orchestre est à jour et sain.
-- **Rééquilibrage** : une ligne du cœur n'est rééquilibrée que si son écart à la cible dépasse **3 points**, ou si l'écart de sa classe dépasse 3 points (les lignes de la classe à plus de 0,75 point de leur cible sont alors rééquilibrées). Entrées et sorties de lignes ne sont pas soumises au seuil ; aucun ordre de moins de 500 €.
-- **Rotation mensuelle maximale** : 30 % de la valeur du portefeuille en ventes discrétionnaires (rééquilibrage, sortie de l'allocation) sur 30 jours glissants ; au-delà, la vente est reportée et notée. Les sorties imposées (stop, prise de bénéfices, verdict, objection, plancher de liquidités) ne sont jamais bloquées.
-- **Aucune décision sur données périmées ou dégradées** : la décision quotidienne exige une sortie du chef d'orchestre de moins de 26 h, l'analyse complète du jour (`data/historique/chef/AAAA-MM-JJ.json`), le profil d'allocation présent, un agent risque de moins de 30 h, et aucun des deux agents « dégradé » dans l'écran Santé. Sinon, l'agent attend, note les raisons (journal, `statut` de `data/portefeuille.json`, écran Santé « dégradé ») et réessaie à l'exécution horaire suivante. Les stops et la valorisation, qui ne dépendent que des cours, continuent.
+- **Une seule série de décisions par jour**, calculée une fois puis exécutée : une seconde demande de décision le même jour est ignorée (sauf `--forcer`, usage manuel). Pas d'achat puis de vente du même titre le même jour.
+- **Détention minimale de 5 jours** (`detention_min_jours`) avant toute vente ou réduction, **sauf stop-loss** ; pas de rachat d'un titre vendu depuis moins de 5 jours (20 jours après un stop, un verdict « Alléger » / « Éviter » ou une objection).
+- **Liquidités minimales selon le palier de l'agent risque** (`liquidites_min_par_palier`) : 5 % en « Calme », 10 % en « Vigilance », 20 % en « Tension », 35 % en « Crise ». À la décision, les cibles en tiennent compte ; à chaque exécution, si les liquidités (achats en attente déduits) passent sous le plancher de plus d'un point, les lignes détenues depuis 5 jours au moins sont allégées en proportion.
+- **Stops des satellites** : −15 % sous le prix de revient ; **suiveur** dès +20 % (15 % sous le plus haut, jamais abaissé) ; déclenché après **2 relevés** distincts sous le stop.
+- **Prise de bénéfices partielle** : un tiers de la ligne à +30 %, une fois.
+- **Sorties imposées** (après la détention minimale) : verdict « Alléger » ou « Éviter » sur une ligne détenue, objection sérieuse sur un satellite. Vérifiées à chaque exécution si le chef d'orchestre est à jour et sain.
+- **Rééquilibrage** : une ligne cible déjà détenue n'est rééquilibrée que si son écart dépasse **3 points**, ou si elle est sous 4 % ; aucun ordre de moins de 500 €. Réductions plafonnées à 30 % de la valeur sur 30 jours glissants.
+- **Lignes hors règles : réduction progressive** (`transition`). Une ligne détenue qui ne respecte plus les règles (règle enfreinte, ou non retenue par la concentration) est soldée après la détention minimale, **5 sorties au plus par décision**, les règles enfreintes d'abord puis les plus petites lignes. Aucune nouvelle ligne n'est ouverte tant que le portefeuille dépasse 15 lignes. Chaque cas figure dans les **arbitrages expliqués** de la décision : vente, conservée (et jusqu'à quand), sortie ou entrée reportée, renforcement, réduction.
+- **Aucune décision sur données périmées ou dégradées** : chef d'orchestre de moins de 26 h avec l'analyse complète du jour, agent risque de moins de 30 h, aucun des deux « dégradé ». Sinon, l'agent attend, note les raisons et réessaie à l'exécution horaire suivante ; stops et valorisation continuent.
 
 ## 3. Exécution simulée
 
@@ -60,14 +57,14 @@ Paramètres : [`config.json`](config.json). Code : `agent.py` (orchestration), `
 ## 6. Règles de conduite
 
 - Ton froid et factuel ; chaque décision et chaque ordre disent aussi « Ce qui pourrait me donner tort ».
-- Aucune décision fondée sur une seule source : verdicts du chef d'orchestre (plusieurs agents), au moins 2 agents favorables pour un satellite, stop confirmé par 2 relevés.
+- Aucune décision fondée sur une seule source : convictions moyennes ou fortes du chef d'orchestre (plusieurs groupes de signaux concordants) pour le cœur, au moins 2 agents favorables pour un satellite, stop confirmé par 2 relevés.
 - Aucune donnée inventée : un cours manquant garde le dernier cours connu (signalé) ; une source indisponible fait attendre l'agent.
 
 ## Commandes
 
 ```
 python -m agents.trader                                  # exécution horaire (décision du jour si due)
-python -m agents.trader --mode decision                  # décision forcée (données à jour exigées)
+python -m agents.trader --mode decision                  # décision du jour (ignorée si déjà prise ; --forcer pour la refaire)
 python -m agents.trader --test --data /tmp/essai         # cours simulés, sans réseau (copie de data/ à fournir)
 python -m agents.trader.tests.simulation                 # simulation de 3 mois sur données de test
 python -m unittest discover -s agents/trader -t .        # tests

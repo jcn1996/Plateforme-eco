@@ -202,6 +202,7 @@ def _acheter(etat: dict, o: dict, b: dict, taux: dict, config: dict) -> dict | N
     p["prix_revient_eur"] = p["cout_total_eur"] / p["quantite"]
     p["dernier_cours_local"], p["dernier_cours_le"] = b["prix"], b["le"]
     p["dernier_cours_eur"] = en_euros(b["prix"], o["devise"], taux)
+    p["dernier_achat_le"] = b["le"]
     if p["poche"] == "satellite":
         initial = p["prix_revient_local"] * (1 - sp["stop_pct"] / 100)
         if p["stop_type"] != "suiveur" or (p["stop_local"] or 0) < initial:
@@ -234,10 +235,12 @@ def _vendre(etat: dict, o: dict, b: dict, taux: dict, config: dict) -> dict | No
     p["frais_eur"] += fr_
     if o.get("motif") == "prise de bénéfices":
         p["prise_benefices_faite"] = True
-    if o.get("motif") in ("stop", "sortie sur verdict", "sortie sur objection"):
-        # pas de rachat immédiat d'une ligne sortie sur une règle de risque (évite les allers-retours)
-        fin = (lire_iso(b["le"]) + timedelta(days=config["stops"]["delai_rachat_jours"])).date().isoformat()
-        etat.setdefault("interdits", {})[o["symbole"]] = {"jusqua": fin, "motif": o["motif"]}
+    # pas de rachat d'un titre vendu : 20 jours après une sortie sur règle de risque, 5 jours sinon (pas d'aller-retour)
+    jours = config["stops"]["delai_rachat_jours"] if o.get("motif") in ("stop", "sortie sur verdict", "sortie sur objection") else config["detention_min_jours"]
+    fin = (lire_iso(b["le"]) + timedelta(days=jours)).date().isoformat()
+    ancien = (etat.get("interdits") or {}).get(o["symbole"])
+    if not ancien or ancien["jusqua"] < fin:
+        etat.setdefault("interdits", {})[o["symbole"]] = {"jusqua": fin, "motif": o.get("motif")}
     stop = p.get("stop_local")
     duree = (lire_iso(b["le"]) - lire_iso(p["ouverte_le"])).days if p.get("ouverte_le") else None
     op = _operation(etat, o, b, taux, quantite=q, prix_local=round(prix_local, 6), prix_eur=round(prix_eur, 6), montant_eur=round(produit, 2),

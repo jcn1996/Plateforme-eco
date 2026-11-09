@@ -24,9 +24,9 @@ def main(argv=None) -> int:
     logging.disable(logging.INFO)
     d = Path(tempfile.mkdtemp(prefix="simulation-trader-"))
     try:
-        f = FournisseurSimule(debut="2026-06-01", chocs={"CCC.T": [("2026-09-15", 0.8)], "AAA": [("2026-09-20", 1.35)]})
+        f = FournisseurSimule(debut="2025-06-01", chocs={"III": [("2026-09-15", 0.8)], "BBB": [("2026-09-20", 1.35)]})
         ev = {"2026-10-05": {"palier": "Tension"}, "2026-10-20": {"palier": "Vigilance"},
-              "2026-10-12": {"modifs": {("entreprises", "entreprise-BBB"): {"verdict": "Alléger"}}}}
+              "2026-10-12": {"modifs": {("secteurs", "secteur-etats_unis-sante"): {"verdict": "Alléger"}, ("pays", "pays-JP"): {"verdict": "Neutre"}}}}
         simuler(executer, f, charger_config(), d / "data", "2026-09-01", args.jours, heures=(15, 21), evenements=ev)
         pf = json.loads((d / "data" / "portefeuille.json").read_text(encoding="utf-8"))["donnees"]
         ops = json.loads((d / "data" / "trader" / "operations.json").read_text(encoding="utf-8"))["donnees"]
