@@ -150,13 +150,14 @@ Une hausse passée au-delà du 90e percentile de sa classe, ou d'au moins 40 % s
 
 « Renforcer fortement » et « Éviter » exigent au moins une conviction moyenne ; sinon le verdict est ramené d'un cran (« Renforcer », « Alléger ») et la raison est affichée.
 
-**Anti-girouette (hystérésis)** : un verdict ne change que si le score franchit le seuil d'au moins 3 points, ou reste au-delà du seuil 2 jours de suite. Sinon le changement est « en attente » et affiché comme tel. Chaque changement est expliqué (ancien et nouveau verdict, scores, règle appliquée) et daté.
+**Anti-girouette (hystérésis)** : un verdict ne change que si le score franchit le seuil d'au moins 5 points, ou reste au-delà du seuil 3 jours de suite (`verdicts.marge` et `verdicts.jours_confirmation`). Rejeu des exécutions du 07 au 09/11/2026 : le 09/11, 1 verdict sectoriel change au lieu de 7 avec l'ancien réglage (3 points, 2 jours). Sinon le changement est « en attente » et affiché comme tel. Chaque changement est expliqué (ancien et nouveau verdict, scores, règle appliquée) et daté.
 
 ### Conviction (faible / moyenne / forte)
 
 Les familles sont regroupées en groupes indépendants (fondamentaux et dynamique des résultats = un groupe ; risque et géopolitique = un groupe ; valorisation, tendance, flux, cycle, initiés = un groupe chacun). Un groupe est concordant quand l'une de ses familles est ≥ 60 (verdict positif) ou ≤ 40 (verdict négatif).
 
 - **forte** : au moins 3 groupes concordants, qualité des données ≥ 0,6 (confiance moyenne ou élevée), toutes les entrées utilisées fraîches et d'agents sains (coefficient ≥ 0,95), et aucune objection sérieuse du contradicteur ;
+- **signal solide exigé** : une conviction forte exige en plus au moins une famille parmi la valorisation, la dynamique des résultats (révisions, guidance) et les flux d'investissement, nettement dans le sens du verdict et jugée sur sa **note absolue** (≥ 65 pour un verdict positif, ≤ 35 pour un négatif), avant le mélange avec le percentile de la classe : un bon rang parmi des opportunités médiocres ne suffit pas. Le cycle et le momentum ne suffisent jamais seuls ; sinon la conviction est plafonnée à « moyenne », et la raison est affichée. Exemple : « Technologies de l'information — Émergents » (09/11/2026), dont la valorisation n'est qu'à 56 en absolu (percentile 86 dans la zone) et la dynamique des résultats à 64 ;
 - **moyenne** : au moins 2 groupes concordants et qualité ≥ 0,6 ;
 - **faible** : sinon ;
 - verdict « Neutre » : au plus moyenne (3 groupes neutres ou plus) ;

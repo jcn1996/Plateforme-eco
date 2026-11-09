@@ -211,30 +211,54 @@ class TestMoteur(unittest.TestCase):
         self.assertGreater(b["score"], 50)
 
     def test_hysteresis(self):
+        cv = self.config["verdicts"]
+        self.assertEqual((cv["marge"], cv["jours_confirmation"]), (5, 3))
         etat = {"x": {"verdict": "Neutre", "depuis": "2026-11-01", "score": 55, "candidat": None}}
-        o = {"id": "x", "score": 59.0}
-        M.appliquer_hysteresis(o, "Renforcer", etat, "2026-11-05", self.config)
-        self.assertEqual(o["verdict"], "Neutre")
-        self.assertIn("en_attente", o)
-        o = {"id": "x", "score": 59.5}
-        M.appliquer_hysteresis(o, "Renforcer", etat, "2026-11-05", self.config)  # même jour : toujours en attente
-        self.assertEqual(o["verdict"], "Neutre")
-        o = {"id": "x", "score": 59.2}
-        M.appliquer_hysteresis(o, "Renforcer", etat, "2026-11-06", self.config)  # 2e jour : confirmé
-        self.assertEqual(o["verdict"], "Renforcer")
-        self.assertIn("2 jours", o["changement"]["explication"])
-        # franchissement avec marge : changement immédiat
-        o = {"id": "x", "score": 30.0}
-        M.appliquer_hysteresis(o, "Éviter", etat, "2026-11-07", self.config)
+        for jour, attendu in (("2026-11-05", "Neutre"), ("2026-11-05", "Neutre"), ("2026-11-06", "Neutre"), ("2026-11-07", "Renforcer")):
+            o = {"id": "x", "score": 61.0}  # au-delà du seuil de 58, mais de moins de 5 points
+            M.appliquer_hysteresis(o, "Renforcer", etat, jour, self.config)
+            self.assertEqual(o["verdict"], attendu, jour)  # changement le 3e jour seulement
+        self.assertIn("3 jours", o["changement"]["explication"])
+        # franchissement avec une marge d'au moins 5 points : changement immédiat
+        o = {"id": "x", "score": 27.0}
+        M.appliquer_hysteresis(o, "Éviter", etat, "2026-11-08", self.config)
         self.assertIn(o["verdict"], ("Alléger", "Éviter"))
         self.assertIn("marge", o["changement"]["explication"])
+        # marge de 4 points seulement : pas de changement immédiat
+        etat = {"x": {"verdict": "Neutre", "depuis": "2026-11-01", "score": 55, "candidat": None}}
+        o = {"id": "x", "score": 62.0}
+        M.appliquer_hysteresis(o, "Renforcer", etat, "2026-11-05", self.config)
+        self.assertEqual(o["verdict"], "Neutre")
         # retour sous le seuil : le candidat est oublié
         etat = {"x": {"verdict": "Neutre", "depuis": "2026-11-01", "score": 55, "candidat": None}}
         M.appliquer_hysteresis({"id": "x", "score": 59.0}, "Renforcer", etat, "2026-11-05", self.config)
-        M.appliquer_hysteresis({"id": "x", "score": 55.0}, "Neutre", etat, "2026-11-06", self.config)
+        M.appliquer_hysteresis({"id": "x", "score": 59.0}, "Renforcer", etat, "2026-11-06", self.config)
+        M.appliquer_hysteresis({"id": "x", "score": 55.0}, "Neutre", etat, "2026-11-07", self.config)
         o = {"id": "x", "score": 59.0}
-        M.appliquer_hysteresis(o, "Renforcer", etat, "2026-11-07", self.config)
+        M.appliquer_hysteresis(o, "Renforcer", etat, "2026-11-08", self.config)
         self.assertEqual(o["verdict"], "Neutre")
+
+    def test_conviction_exige_un_signal_solide(self):
+        # Cas de « Technologies de l'information — Émergents » (09/11) : valorisation bien classée dans sa zone
+        # (percentile 86) mais à peine favorable en absolu (56) ; résultats à 64 ; cycle et momentum favorables
+        o = self.opp({"fondamentaux": 80.8, "valorisation": 71.2, "resultats": 63.5, "tendance": 80, "cycle": 72, "risque": 50}, "secteurs")
+        o["familles"]["valorisation"]["note_absolue"] = 55.9
+        M.scorer(o, self.config, "Vigilance")
+        c = M.conviction(o, "Renforcer", [], 1.0, self.config)
+        self.assertEqual(c["niveau"], "moyenne")
+        self.assertTrue(any("signal solide" in r for r in c["raisons"]))
+        # dynamique des résultats nettement favorable : conviction forte possible
+        o["familles"]["resultats"]["note"] = 70
+        self.assertEqual(M.conviction(o, "Renforcer", [], 1.0, self.config)["niveau"], "forte")
+        # cycle et momentum seuls (avec des fondamentaux) : jamais forte
+        o2 = self.opp({"fondamentaux": 75, "tendance": 85, "cycle": 80, "valorisation": 50}, "secteurs")
+        M.scorer(o2, self.config, "Vigilance")
+        self.assertEqual(M.conviction(o2, "Renforcer", [], 1.0, self.config)["niveau"], "moyenne")
+        # contrôle de cohérence avant publication : même règle
+        l = {"verdict": "Renforcer", "conviction": "forte", "familles": {"fondamentaux": {"note": 80}, "tendance": {"note": 80}, "cycle": {"note": 72},
+                                                                       "valorisation": {"note": 71, "note_absolue": 56}}}
+        self.assertIsNotNone(M.controle_coherence(l, self.config))
+        self.assertEqual(l["conviction"], "moyenne")
 
     def test_conviction(self):
         o = self.opp({"fondamentaux": 70, "valorisation": 72, "tendance": 68, "risque": 65, "cycle": 50})
