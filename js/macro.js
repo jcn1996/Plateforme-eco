@@ -161,6 +161,10 @@ function listeZones(zones) {
       z.phase_precedente ? `depuis ${dateFr(z.depuis)} · avant : ${z.phase_precedente}` : 'phase inchangée sur la période étudiée',
       ` · confiance ${z.confiance}`,
       z.ancienne ? ' · valeur ancienne (source indisponible)' : ''),
+    z.changement_en_cours ? el('div', { class: 'macro-zone-info macro-confirmation' },
+      `Changement de phase en cours de confirmation : « ${z.changement_en_cours.vers} » observée depuis le ${dateFr(z.changement_en_cours.depuis)} `
+      + `(${z.changement_en_cours.jours} jour${z.changement_en_cours.jours > 1 ? 's' : ''} sur ${z.changement_en_cours.jours_requis} requis`
+      + `${z.changement_en_cours.signaux_concordants === false ? ', deux signaux concordants pas encore réunis' : ''}).`) : null,
   )));
 }
 

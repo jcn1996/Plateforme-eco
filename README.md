@@ -156,7 +156,7 @@ L'agent macro se trouve dans `agents/macro/`, en Python 3.12. Il complète l'age
 - marchés du cycle ;
 - deux phrases de lecture macro par pays suivi.
 
-Les règles sont détaillées dans [`agents/macro/regles.md`](agents/macro/regles.md) : correspondance des phases, deux signaux concordants pour changer de phase, confiance, « Ce qui pourrait me donner tort ».
+Les règles sont détaillées dans [`agents/macro/regles.md`](agents/macro/regles.md) : correspondance des phases, deux signaux concordants pour changer de phase, confirmation sur 3 semaines avant de publier une nouvelle phase (« changement de phase en cours de confirmation » entre-temps), confiance, « Ce qui pourrait me donner tort ».
 
 **Calendrier des banques centrales** : `agents/macro/calendrier_banques_centrales.json` contient les dates officielles relevées sur le site de chaque banque. Quand une banque n'a plus de date future, l'écran « Santé des agents » affiche une alerte, avec un avertissement 60 jours avant. Il faut alors ajouter les nouvelles dates à la main.
 
@@ -394,8 +394,8 @@ Le chef d'orchestre réunit les sorties de tous les agents. Méthode complète :
 - familles de signaux normalisées (percentiles dans la classe, mélangés à la note absolue de l'agent) : fondamentaux, valorisation, tendance, flux, adéquation au cycle (tableau des phases), risque, géopolitique, initiés, dynamique des résultats ;
 - pondérations selon le palier de risque (en « Tension » ou « Crise », le risque et la qualité pèsent plus, le momentum moins ; l'inverse en « Calme ») ;
 - score /100 (ramené vers 50 quand les données manquent ou sont peu fiables) et verdict : « Renforcer fortement », « Renforcer », « Neutre », « Alléger », « Éviter » ;
-- conviction faible, moyenne ou forte (forte : 3 groupes de signaux indépendants concordants, données fiables et fraîches, aucune objection sérieuse ; chaque objection retenue du contradicteur l'abaisse d'un cran) ;
-- anti-girouette : un verdict ne change que si le score franchit le seuil de 3 points ou y reste 2 jours de suite ; chaque changement est expliqué ;
+- conviction faible, moyenne ou forte (forte : 3 groupes de signaux indépendants concordants, dont au moins un signal solide — valorisation, dynamique des résultats ou flux nettement favorables en note absolue ; le cycle et le momentum ne suffisent jamais seuls —, données fiables et fraîches, aucune objection sérieuse ; chaque objection retenue du contradicteur l'abaisse d'un cran) ;
+- anti-girouette : un verdict ne change que si le score franchit le seuil de 5 points ou y reste 3 jours de suite ; chaque changement est expliqué ;
 - concentrations thématiques (IA, semi-conducteurs, or, pétrole) signalées ;
 - garde-fous : holdings, sociétés d'investissement, fonds fermés, BDC et SPAC exclus (aussi des pépites, et jamais « Acheter » dans l'agent entreprises) ; le risque est un frein, pas un moteur (pas de « Renforcer » sans signal positif de fondamentaux, valorisation, tendance ou flux) ; une hausse passée extrême ne porte jamais seule une conviction forte (vérification de valorisation et de positionnement, objection systématique) ; contrôle de cohérence avant publication (3 familles positives listées pour une conviction forte) ; objections du contradicteur rattachées à la bonne entité.
 

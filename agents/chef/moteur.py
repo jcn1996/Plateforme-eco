@@ -177,11 +177,34 @@ def conviction(o: dict, verdict: str, objections: list[dict], fraicheur_min: flo
             raisons.append(f"confiance des données insuffisante (qualité {fr(o.get('qualite'), 2)})")
         if not fraiche:
             raisons.append("au moins une donnée utilisée est périmée ou provient d'un agent dégradé")
+    solides = familles_solides(o["familles"], d, config)
+    if niveau == 2 and not solides:
+        niveau = 1
+        raisons.append("conviction plafonnée à « moyenne » : aucun signal solide nettement favorable (valorisation, dynamique "
+                       "des résultats ou flux, jugés sur leur note absolue) ; le cycle et le momentum ne suffisent pas")
+    elif niveau == 2:
+        raisons.append("signal solide : " + ", ".join(config["familles"][f]["libelle"].lower() for f in solides))
     for x in serieuses:
         if niveau > 0:
             niveau -= 1
         raisons.append(f"objection du contradicteur retenue (« {x['ajustement']} ») : conviction abaissée d'un cran")
-    return {"niveau": NIVEAUX_CONVICTION[niveau], "groupes": groupes, "raisons": raisons}
+    return {"niveau": NIVEAUX_CONVICTION[niveau], "groupes": groupes, "solides": solides, "raisons": raisons}
+
+
+def familles_solides(familles: dict, direction: int, config: dict) -> list[str]:
+    """Familles « solides » (valorisation, dynamique des résultats, flux) nettement dans le sens du verdict, jugées sur
+    leur note absolue : un bon rang parmi des opportunités médiocres ne suffit pas."""
+    cc = config["conviction"]
+    s = cc["seuil_solide"]
+    res = []
+    for f in cc["familles_solides"]:
+        x = familles.get(f)
+        if not x:
+            continue
+        n = x.get("note_absolue", x["note"])
+        if (direction > 0 and n >= s) or (direction < 0 and n <= 100 - s):
+            res.append(f)
+    return res
 
 
 def controle_coherence(l: dict, config: dict) -> str | None:
@@ -198,10 +221,12 @@ def controle_coherence(l: dict, config: dict) -> str | None:
               and not (f == "tendance" and l.get("momentum_extreme"))]
     else:
         ok = [f for f, x in fams.items() if x["note"] <= cc["seuil_concordance_bas"]]
-    if len(ok) >= 3:
+    solides = familles_solides(fams, d, config)
+    if len(ok) >= 3 and solides:
         return None
     l["conviction"] = "moyenne"
-    raison = f"contrôle de cohérence : {len(ok)} famille(s) de signaux dans le sens du verdict au lieu de 3 ; conviction ramenée à « moyenne »"
+    raison = (f"contrôle de cohérence : {len(ok)} famille(s) de signaux dans le sens du verdict au lieu de 3 ; conviction ramenée à « moyenne »"
+              if len(ok) < 3 else "contrôle de cohérence : aucun signal solide (valorisation, résultats, flux) ; conviction ramenée à « moyenne »")
     l.setdefault("conviction_raisons", []).append(raison)
     return raison
 

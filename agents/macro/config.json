@@ -9,6 +9,11 @@
     "emergents": {"nom": "Émergents", "cli": ["BRA", "IND", "IDN", "MEX", "ZAF", "TUR"], "cli_libelle": "moyenne Brésil, Inde, Indonésie, Mexique, Afrique du Sud, Turquie", "inflation": {"ocde": ["BRA", "IND", "IDN", "MEX", "ZAF", "TUR"], "agregat": "mediane"}, "fmi": "OEMDC"}
   },
   "cli_suivis": ["G20", "G7", "USA", "CHN", "IND", "BRA", "JPN", "DEU", "FRA", "ITA", "ESP", "IDN", "MEX", "ZAF", "TUR", "GBR", "CAN", "AUS", "KOR"],
+  "confirmation_phase": {
+    "_commentaire": "Anti-girouette de la phase du cycle : une nouvelle phase (calculée chaque jour) n'est publiée qu'après avoir été observée sans interruption pendant `semaines` semaines, avec au moins `signaux_min` signaux concordants sur chaque axe qui change ; entre-temps, la phase publiée reste la précédente et l'appli affiche « changement de phase en cours de confirmation ». Au premier passage, l'historique data/historique/macro/ est rejoué pour retrouver la phase confirmée.",
+    "semaines": 3,
+    "signaux_min": 2
+  },
   "seuils": {
     "_commentaire": "Changement sur 3 mois en deçà duquel une direction est jugée « stable » (pas de vote).",
     "cli_pts": 0.05,

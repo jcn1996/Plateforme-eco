@@ -117,7 +117,18 @@ def _fred_source(nom: str, modes: dict) -> str:
 
 # ------------------------------------------------------------------ analyse
 
-def cycle(res: dict, config: dict, aujourdhui: date, precedent: dict | None) -> dict:
+def historique_phases(dossier: Path) -> dict[str, list[tuple[str, str]]]:
+    """{zone: [(AAAA-MM-JJ, phase brute)]} lus dans data/historique/macro/ (phase brute si enregistrée, sinon phase publiée)."""
+    res: dict[str, list[tuple[str, str]]] = {}
+    for chemin in sorted(Path(dossier).glob("????-??-??.json")):
+        for cle, v in (((lire_json(chemin) or {}).get("donnees") or {}).get("phases") or {}).items():
+            p = v.get("phase_brute") or v.get("phase")
+            if p:
+                res.setdefault(cle, []).append((chemin.stem, p))
+    return res
+
+
+def cycle(res: dict, config: dict, aujourdhui: date, precedent: dict | None, historique: dict | None = None) -> dict:
     an = aujourdhui.year
     anciennes = {z["cle"]: z for z in ((precedent or {}).get("cycle") or {}).get("zones", [])}
     cli, inf = res.get("ocde_cli") or {}, res.get("ocde_inflation") or {}
@@ -145,6 +156,8 @@ def cycle(res: dict, config: dict, aujourdhui: date, precedent: dict | None) -> 
                 LOG.warning("Cycle %s : données insuffisantes, phase précédente conservée", cle)
                 zones.append({**anciennes[cle], "ancienne": True})
             continue
+        # Anti-girouette : confirmation sur plusieurs semaines avant de publier un changement de phase
+        z = A.confirmer_phase(z, anciennes.get(cle), (historique or {}).get(cle, []), aujourdhui, config["confirmation_phase"])
         nom_cli = f"OCDE, {zc['cli_libelle']}"
         z.update({
             "cle": cle, "nom": zc["nom"],
@@ -159,7 +172,8 @@ def cycle(res: dict, config: dict, aujourdhui: date, precedent: dict | None) -> 
     return {"zones": zones, "date_donnees": max((z["date_donnees"] for z in zones), default=None),
             "methode": "Croissance : indicateur avancé de l'OCDE ; inflation : IPC mensuel. Chaque axe est tranché par 3 signaux "
                        "(variation sur 3 mois, la même un mois plus tôt, prévision du FMI) ; 2 signaux concordants au minimum "
-                       "pour changer de direction. Position du point : variations sur 3 mois (indicateur avancé en abscisse, "
+                       "pour changer de direction ; une nouvelle phase n'est publiée qu'après 3 semaines d'observation continue "
+                       "(« changement de phase en cours de confirmation » entre-temps). Position du point : variations sur 3 mois (indicateur avancé en abscisse, "
                        "inflation en ordonnée) ; la flèche part de la position du mois précédent."}
 
 
@@ -436,7 +450,7 @@ def main(argv=None) -> int:
     ancien = lire_json(data / "macro.json")
     precedent = (ancien or {}).get("donnees") if ancien and (ancien.get("meta") or {}).get("fictif") is False else None
 
-    cyc = cycle(res, config, aujourdhui, precedent)
+    cyc = cycle(res, config, aujourdhui, precedent, historique_phases(data / "historique" / "macro"))
     rec = recession(res, modes, config, aujourdhui, precedent)
     bcs = banques(res, config, calendrier, aujourdhui, precedent)
     mch = marches(res, config, precedent)
@@ -488,7 +502,8 @@ def main(argv=None) -> int:
     ecrire_json(data / "macro.json", objet)
     ecrire_json(data / "historique" / "macro" / f"{aujourdhui.isoformat()}.json", {
         "meta": {"genere_le": objet["meta"]["genere_le"], "source": "agent-macro", "version_agent": VERSION_AGENT},
-        "donnees": {"phases": {z["cle"]: {"phase": z["phase"], "position": z.get("position"), "confiance": z.get("confiance")} for z in cyc["zones"]},
+        "donnees": {"phases": {z["cle"]: {"phase": z["phase"], "phase_brute": z.get("phase_brute"), "position": z.get("position"),
+                                          "confiance": z.get("confiance"), "changement_en_cours": bool(z.get("changement_en_cours"))} for z in cyc["zones"]},
                     "recession": {s["cle"]: {"niveau": s.get("niveau"), "valeur": s.get("valeur")} for s in rec["signaux"]},
                     "taux": {b["cle"]: b["taux"] for b in bcs},
                     "taux_reels_us": {k: (v or {}).get("valeur") for k, v in donnees["taux_reels"]["etats_unis"].items() if isinstance(v, dict)},

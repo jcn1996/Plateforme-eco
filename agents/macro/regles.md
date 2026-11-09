@@ -25,6 +25,7 @@ Mêmes règles que l'agent pays (voir `agents/pays/regles.md`).
 
   Sans majorité, la direction précédente est conservée : aucun changement de phase n'est annoncé.
 - La phase est reconstituée mois par mois sur les 18 derniers mois communs aux deux séries, ce qui donne la phase précédente et la date du changement.
+- **Confirmation sur 3 semaines (anti-girouette)** : la phase calculée chaque jour (« phase brute ») n'est publiée qu'après avoir été observée sans interruption pendant 3 semaines (`confirmation_phase.semaines` dans `config.json`), avec au moins deux signaux concordants sur chaque axe qui change. Entre-temps, la phase publiée reste la précédente, et l'appli affiche « changement de phase en cours de confirmation » avec la phase observée, sa date de première observation et le nombre de jours écoulés. Un retour à la phase publiée remet le décompte à zéro. Au premier passage, l'historique `data/historique/macro/` est rejoué pour retrouver la phase confirmée. Le signal « changement de phase » n'est émis qu'à la confirmation. Motif : début novembre 2026, la phase du monde a alterné presque chaque jour entre « Expansion sans inflation » et « Ralentissement inflationniste », la variation de l'inflation mondiale passant d'un jour à l'autre de −0,27 à +0,26 point.
 - Zones :
   - Monde : G20, faute d'agrégat « zone OCDE » dans le jeu de l'indicateur avancé.
   - États-Unis.

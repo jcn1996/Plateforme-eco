@@ -95,11 +95,11 @@
   "qualite_retrecit_vers_neutre": true,
 
   "verdicts": {
-    "_commentaire": "Seuils du score /100 (bornes basses). Hystérésis : un verdict ne change que si le score dépasse le seuil d'au moins `marge`, ou reste au-delà `jours_confirmation` jours de suite.",
+    "_commentaire": "Seuils du score /100 (bornes basses). Hystérésis (anti-girouette) : un verdict ne change que si le score dépasse le seuil d'au moins `marge` points, ou reste au-delà `jours_confirmation` jours de suite.",
     "ordre": ["Éviter", "Alléger", "Neutre", "Renforcer", "Renforcer fortement"],
     "seuils": {"Alléger": 33, "Neutre": 43, "Renforcer": 58, "Renforcer fortement": 70},
-    "marge": 3,
-    "jours_confirmation": 2,
+    "marge": 5,
+    "jours_confirmation": 3,
     "fort_exige_conviction": "moyenne"
   },
 
@@ -110,7 +110,10 @@
     "groupes_forte": 3,
     "groupes_moyenne": 2,
     "fraicheur_min_forte": 0.95,
-    "objections_serieuses": ["abaisser", "signal fragile"]
+    "objections_serieuses": ["abaisser", "signal fragile"],
+    "familles_solides": ["valorisation", "resultats", "flux"],
+    "seuil_solide": 65,
+    "_commentaire_solides": "Conviction forte : au moins une famille « solide » (valorisation, dynamique des résultats, flux d'investissement) nettement dans le sens du verdict, jugée sur sa note absolue (avant le mélange avec le percentile de la classe) : ≥ seuil_solide pour un verdict positif, ≤ 100 − seuil_solide pour un négatif. Le cycle et le momentum ne suffisent jamais seuls : sinon, conviction plafonnée à « moyenne »."
   },
 
   "risque_frein": {
