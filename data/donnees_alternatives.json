@@ -1,23 +1,24 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-08T08:28:36Z",
+    "genere_le": "2026-11-09T05:52:39Z",
     "source": "agent-donnees-alternatives",
     "fictif": false,
     "version_agent": "1.0",
-    "mise_a_jour_precedente": null,
+    "mise_a_jour_precedente": "2026-11-08T08:28:36Z",
     "etat_des_sources": {
       "camions_de": "ok",
       "camions_us": "ok",
       "fret_vrac": "ok",
       "fret_conteneurs": "ok",
-      "ciment_cn": "ok",
-      "ciment_us": "ok",
+      "ciment_cn": "secours",
+      "ciment_us": "erreur : https://www.usgs.gov/centers/national-minerals-information-center/cement-statistics-and-information : ReadTimeout: HTTPSConnectionPool(host='www.usgs.gov', port",
       "mises_en_chantier_us": "ok",
       "exportations_kr": "ok",
+      "exportations_tw": "ok",
       "exportations_kr_20j": "non configurée",
       "commandes_export_tw": "non configurée",
-      "electricite_cn": "ok",
+      "electricite_cn": "secours",
       "electricite_us": "ok",
       "electricite_de": "non configurée",
       "electricite_fr": "non configurée",
@@ -37,42 +38,12 @@
       "offres_emploi_it": "ok",
       "offres_emploi_es": "ok",
       "offres_emploi_nl": "ok",
-      "no2_in": "non configurée",
-      "lumieres_in": "non configurée",
-      "no2_id": "non configurée",
-      "lumieres_id": "non configurée",
-      "no2_br": "non configurée",
-      "lumieres_br": "non configurée",
-      "no2_mx": "non configurée",
-      "lumieres_mx": "non configurée",
-      "no2_tr": "non configurée",
-      "lumieres_tr": "non configurée",
-      "no2_vn": "non configurée",
-      "lumieres_vn": "non configurée",
-      "no2_za": "non configurée",
-      "lumieres_za": "non configurée",
-      "no2_th": "non configurée",
-      "lumieres_th": "non configurée",
-      "no2_eg": "non configurée",
-      "lumieres_eg": "non configurée",
-      "no2_co": "non configurée",
-      "lumieres_co": "non configurée",
-      "no2_cl": "non configurée",
-      "lumieres_cl": "non configurée",
-      "no2_ar": "non configurée",
-      "lumieres_ar": "non configurée",
-      "no2_sa": "non configurée",
-      "lumieres_sa": "non configurée",
-      "no2_ae": "non configurée",
-      "lumieres_ae": "non configurée",
-      "no2_cn": "non configurée",
-      "lumieres_cn": "non configurée",
       "attention_wikipedia": "ok",
       "attention_trends": "ok"
     }
   },
   "donnees": {
-    "date": "2026-11-08",
+    "date": "2026-11-09",
     "categories": {
       "transport": "Transport et industrie",
       "construction": "Construction",
@@ -172,7 +143,11 @@
           "Offres d'emploi en ligne va dans l'autre sens (−10,9 % sur 12 mois).",
           "La lecture repose sur deux indicateurs seulement : une seule révision peut la modifier."
         ],
-        "divergence": null
+        "divergence": null,
+        "precedent": {
+          "score": 51,
+          "lecture": "stable"
+        }
       },
       {
         "code": "ES",
@@ -277,24 +252,39 @@
         }
       },
       {
+        "code": "TW",
+        "nom": "Taïwan",
+        "suivi": true,
+        "score": null,
+        "lecture": null,
+        "indicateurs_utilises": 1,
+        "raison": "1 indicateur à jour : au moins 2 sont nécessaires pour conclure",
+        "texte": "Taïwan : 1 indicateur à jour : au moins 2 sont nécessaires pour conclure.",
+        "indicateurs": [
+          "exportations_tw"
+        ],
+        "officiel": {
+          "note": 100,
+          "texte": "croissance du pib 10,7 % (100/100)"
+        }
+      },
+      {
         "code": "US",
         "nom": "États-Unis",
         "suivi": true,
-        "score": 41,
-        "lecture": "stable",
+        "score": 39,
+        "lecture": "ralentissement",
         "marque": false,
         "lecture_non_retenue": null,
-        "indicateurs_utilises": 6,
+        "indicateurs_utilises": 5,
         "confiance": {
-          "niveau": "moyen",
-          "score": 0.7,
+          "niveau": "élevé",
+          "score": 0.8,
           "raisons": [
-            "indicateurs peu concordants",
-            "historique court pour : Expéditions de ciment"
+            "indicateurs peu concordants"
           ]
         },
         "pour": [
-          "ciment_us",
           "electricite_us",
           "offres_emploi_us"
         ],
@@ -303,7 +293,7 @@
           "mises_en_chantier_us",
           "tsa_us"
         ],
-        "texte": "États-Unis : activité réelle « stable » (score 41/100 sur 6 indicateurs) — offres d'emploi en ligne +2,9 % sur 12 mois ; demande d'électricité +3,3 % sur 12 mois ; expéditions de ciment +1,4 % sur 12 mois.",
+        "texte": "États-Unis : activité réelle « ralentissement » (score 39/100 sur 5 indicateurs) — offres d'emploi en ligne +2,9 % sur 12 mois ; demande d'électricité +3,0 % sur 12 mois ; passagers contrôlés dans les aéroports −2,0 % sur 12 mois.",
         "indicateurs": [
           "camions_us",
           "ciment_us",
@@ -317,11 +307,15 @@
           "texte": "croissance du pib 2,3 % (53/100) ; indicateur avancé (ocde) 101,0 (64/100)"
         },
         "ce_qui_pourrait_me_donner_tort": [
-          "Mises en chantier de logements va dans l'autre sens (−7,4 % sur 12 mois).",
-          "La consommation d'électricité varie aussi avec les températures, pas seulement avec l'activité.",
-          "Les données mensuelles sont publiées avec retard et souvent révisées."
+          "Demande d'électricité va dans l'autre sens (+3,0 % sur 12 mois).",
+          "Offres d'emploi en ligne va dans l'autre sens (+2,9 % sur 12 mois).",
+          "La consommation d'électricité varie aussi avec les températures, pas seulement avec l'activité."
         ],
-        "divergence": null
+        "divergence": null,
+        "precedent": {
+          "score": 41,
+          "lecture": "stable"
+        }
       }
     ],
     "indicateurs": [
@@ -348,13 +342,13 @@
         "note": 62.7,
         "methode_note": "percentiles",
         "historique_mois": 226,
-        "age_jours": 8,
+        "age_jours": 9,
         "perimee": false,
         "lecture": "Kilomètres parcourus par les poids lourds sur autoroute : +2,1 % sur 12 mois, 0,0 % sur 1 mois, écart à la tendance +1,2 %, percentile 60 de l'historique.",
         "serie": [
           [
             "2024-11-10",
-            95.1
+            94.85
           ],
           [
             "2024-11-17",
@@ -795,7 +789,7 @@
         "note": 18.4,
         "methode_note": "percentiles",
         "historique_mois": 142,
-        "age_jours": 99,
+        "age_jours": 100,
         "perimee": false,
         "lecture": "Tonnage du transport routier : −1,6 % sur 12 mois, −0,3 % sur 1 mois, écart à la tendance −0,6 %, percentile 18 de l'historique.",
         "serie": [
@@ -1266,14 +1260,10 @@
         "note": 66.0,
         "methode_note": "percentiles",
         "historique_mois": 72,
-        "age_jours": 2,
+        "age_jours": 3,
         "perimee": false,
         "lecture": "Fret vrac sec (Baltic Dry, approximation) : +54,4 % sur 12 mois, −15,5 % sur 1 mois, écart à la tendance +22,4 %, percentile 63 de l'historique.",
         "serie": [
-          [
-            "2024-11-08",
-            8.15
-          ],
           [
             "2024-11-15",
             8.44
@@ -1717,7 +1707,7 @@
         "note": 100.0,
         "methode_note": "échelle fixe (historique court)",
         "historique_mois": 1,
-        "age_jours": 3,
+        "age_jours": 4,
         "perimee": false,
         "lecture": "Fret conteneurs (Drewry WCI) : +124,0 % sur 12 mois.",
         "serie": [
@@ -1741,7 +1731,7 @@
         "frequence": "mensuelle",
         "unite": "10 000 t",
         "poids": 1,
-        "source_nom": "Bureau national des statistiques de Chine via DBnomics (production du mois)",
+        "source_nom": "Bureau national des statistiques de Chine (data.stats.gov.cn, secours : DBnomics ; production du mois)",
         "mention": "janvier et février sont publiés ensemble (pas de valeur mensuelle séparée)",
         "categorie_nom": "Construction",
         "mention_proxy": false,
@@ -1756,9 +1746,9 @@
         "note": 10.0,
         "methode_note": "échelle fixe (historique court)",
         "historique_mois": 10,
-        "age_jours": 342,
+        "age_jours": 343,
         "perimee": true,
-        "lecture": "Production de ciment : −6,6 % sur 1 mois. Donnée ancienne : exclue du score.",
+        "lecture": "Production de ciment : −6,6 % sur 1 mois. Dernière donnée disponible : décembre 2025 (343 jours) ; trop ancienne, exclue du score.",
         "serie": [
           [
             "2025-03-01",
@@ -1801,8 +1791,8 @@
             14416.359
           ]
         ],
-        "etat_source": "ok",
-        "detail_source": "API DBnomics"
+        "etat_source": "secours",
+        "detail_source": "secours : DBnomics (copie de la base du Bureau national des statistiques) (source principale indisponible : https://data.stats.gov.cn/easyquery.htm : HTTP 403)"
       },
       {
         "cle": "ciment_us",
@@ -1816,80 +1806,12 @@
         "mention": "données estimées, publiées avec environ trois mois de décalage",
         "categorie_nom": "Construction",
         "mention_proxy": false,
-        "valeur": 10.1,
-        "date": "2026-07-01",
-        "variation_1m": 0.0,
-        "variation_12m": 1.4,
-        "ecart_tendance": null,
-        "ecart_saisonnier": null,
-        "percentile_12m": null,
-        "percentile_tendance": null,
-        "note": 55.8,
-        "methode_note": "échelle fixe (historique court)",
-        "historique_mois": 14,
-        "age_jours": 130,
-        "perimee": false,
-        "lecture": "Expéditions de ciment : +1,4 % sur 12 mois, 0,0 % sur 1 mois.",
-        "serie": [
-          [
-            "2025-01-01",
-            5.768
-          ],
-          [
-            "2025-02-01",
-            6.326
-          ],
-          [
-            "2025-03-01",
-            8.088
-          ],
-          [
-            "2025-04-01",
-            9.088
-          ],
-          [
-            "2025-05-01",
-            8.913
-          ],
-          [
-            "2025-06-01",
-            9.199
-          ],
-          [
-            "2025-07-01",
-            9.961
-          ],
-          [
-            "2026-01-01",
-            5.97
-          ],
-          [
-            "2026-02-01",
-            6.8
-          ],
-          [
-            "2026-03-01",
-            8.5
-          ],
-          [
-            "2026-04-01",
-            9.27
-          ],
-          [
-            "2026-05-01",
-            8.94
-          ],
-          [
-            "2026-06-01",
-            10.1
-          ],
-          [
-            "2026-07-01",
-            10.1
-          ]
-        ],
-        "etat_source": "ok",
-        "detail_source": "14 rapports mensuels (PDF)"
+        "note": null,
+        "valeur": null,
+        "date": null,
+        "serie": [],
+        "lecture": "Expéditions de ciment : source indisponible (erreur : https://www.usgs.gov/centers/national-minerals-information-center/cement-statistics-and-information : ReadTimeout: HTTPSConnectionPool(host='www.usgs.gov', port).",
+        "etat_source": "erreur : https://www.usgs.gov/centers/national-minerals-information-center/cement-statistics-and-information : ReadTimeout: HTTPSConnectionPool(host='www.usgs.gov', port"
       },
       {
         "cle": "mises_en_chantier_us",
@@ -1914,7 +1836,7 @@
         "note": 17.7,
         "methode_note": "percentiles",
         "historique_mois": 143,
-        "age_jours": 68,
+        "age_jours": 69,
         "perimee": false,
         "lecture": "Mises en chantier de logements : −7,4 % sur 12 mois, −5,2 % sur 1 mois, écart à la tendance −3,9 %, percentile 18 de l'historique.",
         "serie": [
@@ -2371,7 +2293,7 @@
         "unite": "$",
         "poids": 1.5,
         "source_nom": "Douanes coréennes via OCDE et FRED (XTEXVA01KRM667S, corrigé des variations saisonnières)",
-        "mention": null,
+        "mention": "mensuel, pas de donnée anticipée gratuite (les exportations des 20 premiers jours ne sont pas diffusées gratuitement)",
         "categorie_nom": "Commerce mondial",
         "mention_proxy": false,
         "valeur": 100418800000.0,
@@ -2385,7 +2307,7 @@
         "note": 99.2,
         "methode_note": "percentiles",
         "historique_mois": 142,
-        "age_jours": 99,
+        "age_jours": 100,
         "perimee": false,
         "lecture": "Exportations (mensuelles) : +67,8 % sur 12 mois, +2,2 % sur 1 mois, écart à la tendance +25,6 %, percentile 99 de l'historique.",
         "serie": [
@@ -2834,6 +2756,477 @@
         "detail_source": "API"
       },
       {
+        "cle": "exportations_tw",
+        "nom": "Exportations (mensuelles)",
+        "pays": "TW",
+        "categorie": "commerce",
+        "frequence": "mensuelle",
+        "unite": "milliards de NT$",
+        "poids": 1.5,
+        "source_nom": "Administration des douanes de Taïwan (fichier CSV ouvert, exportations totales)",
+        "mention": "mensuel, pas de donnée anticipée gratuite (les commandes à l'export ne sont pas diffusées gratuitement) ; en dollars taïwanais, non corrigé des variations saisonnières : seule la variation sur 12 mois est significative",
+        "categorie_nom": "Commerce mondial",
+        "mention_proxy": false,
+        "valeur": 2655.171,
+        "date": "2026-08-01",
+        "variation_1m": 10.2,
+        "variation_12m": 52.59,
+        "ecart_tendance": 15.61,
+        "ecart_saisonnier": 18.33,
+        "percentile_12m": 97.8,
+        "percentile_tendance": null,
+        "note": 97.8,
+        "methode_note": "percentiles",
+        "historique_mois": 152,
+        "age_jours": 100,
+        "perimee": false,
+        "lecture": "Exportations (mensuelles) : +52,6 % sur 12 mois, +10,2 % sur 1 mois, écart à la tendance +15,6 %, percentile 98 de l'historique.",
+        "serie": [
+          [
+            "2017-07-01",
+            819.558
+          ],
+          [
+            "2017-08-01",
+            836.016
+          ],
+          [
+            "2017-09-01",
+            864.964
+          ],
+          [
+            "2017-10-01",
+            827.972
+          ],
+          [
+            "2017-11-01",
+            863.18
+          ],
+          [
+            "2017-12-01",
+            881.044
+          ],
+          [
+            "2018-01-01",
+            808.897
+          ],
+          [
+            "2018-02-01",
+            647.843
+          ],
+          [
+            "2018-03-01",
+            871.498
+          ],
+          [
+            "2018-04-01",
+            775.28
+          ],
+          [
+            "2018-05-01",
+            860.859
+          ],
+          [
+            "2018-06-01",
+            840.814
+          ],
+          [
+            "2018-07-01",
+            860.424
+          ],
+          [
+            "2018-08-01",
+            860.893
+          ],
+          [
+            "2018-09-01",
+            906.762
+          ],
+          [
+            "2018-10-01",
+            906.308
+          ],
+          [
+            "2018-11-01",
+            854.329
+          ],
+          [
+            "2018-12-01",
+            875.183
+          ],
+          [
+            "2019-01-01",
+            835.722
+          ],
+          [
+            "2019-02-01",
+            625.792
+          ],
+          [
+            "2019-03-01",
+            877.422
+          ],
+          [
+            "2019-04-01",
+            788.033
+          ],
+          [
+            "2019-05-01",
+            852.951
+          ],
+          [
+            "2019-06-01",
+            887.814
+          ],
+          [
+            "2019-07-01",
+            872.903
+          ],
+          [
+            "2019-08-01",
+            902.169
+          ],
+          [
+            "2019-09-01",
+            877.092
+          ],
+          [
+            "2019-10-01",
+            894.738
+          ],
+          [
+            "2019-11-01",
+            870.369
+          ],
+          [
+            "2019-12-01",
+            896.94
+          ],
+          [
+            "2020-01-01",
+            751.69
+          ],
+          [
+            "2020-02-01",
+            760.749
+          ],
+          [
+            "2020-03-01",
+            850.84
+          ],
+          [
+            "2020-04-01",
+            761.338
+          ],
+          [
+            "2020-05-01",
+            808.08
+          ],
+          [
+            "2020-06-01",
+            809.338
+          ],
+          [
+            "2020-07-01",
+            833.091
+          ],
+          [
+            "2020-08-01",
+            919.518
+          ],
+          [
+            "2020-09-01",
+            903.919
+          ],
+          [
+            "2020-10-01",
+            935.88
+          ],
+          [
+            "2020-11-01",
+            921.391
+          ],
+          [
+            "2020-12-01",
+            942.903
+          ],
+          [
+            "2021-01-01",
+            974.871
+          ],
+          [
+            "2021-02-01",
+            788.187
+          ],
+          [
+            "2021-03-01",
+            1013.086
+          ],
+          [
+            "2021-04-01",
+            994.717
+          ],
+          [
+            "2021-05-01",
+            1047.756
+          ],
+          [
+            "2021-06-01",
+            1016.286
+          ],
+          [
+            "2021-07-01",
+            1058.491
+          ],
+          [
+            "2021-08-01",
+            1102.422
+          ],
+          [
+            "2021-09-01",
+            1100.099
+          ],
+          [
+            "2021-10-01",
+            1118.502
+          ],
+          [
+            "2021-11-01",
+            1157.316
+          ],
+          [
+            "2021-12-01",
+            1129.845
+          ],
+          [
+            "2022-01-01",
+            1105.517
+          ],
+          [
+            "2022-02-01",
+            1041.599
+          ],
+          [
+            "2022-03-01",
+            1228.745
+          ],
+          [
+            "2022-04-01",
+            1194.505
+          ],
+          [
+            "2022-05-01",
+            1242.832
+          ],
+          [
+            "2022-06-01",
+            1246.495
+          ],
+          [
+            "2022-07-01",
+            1289.042
+          ],
+          [
+            "2022-08-01",
+            1206.969
+          ],
+          [
+            "2022-09-01",
+            1151.058
+          ],
+          [
+            "2022-10-01",
+            1265.676
+          ],
+          [
+            "2022-11-01",
+            1150.538
+          ],
+          [
+            "2022-12-01",
+            1095.267
+          ],
+          [
+            "2023-01-01",
+            963.9
+          ],
+          [
+            "2023-02-01",
+            937.09
+          ],
+          [
+            "2023-03-01",
+            1075.336
+          ],
+          [
+            "2023-04-01",
+            1093.816
+          ],
+          [
+            "2023-05-01",
+            1108.92
+          ],
+          [
+            "2023-06-01",
+            993.102
+          ],
+          [
+            "2023-07-01",
+            1199.681
+          ],
+          [
+            "2023-08-01",
+            1181.937
+          ],
+          [
+            "2023-09-01",
+            1237.515
+          ],
+          [
+            "2023-10-01",
+            1227.285
+          ],
+          [
+            "2023-11-01",
+            1207.995
+          ],
+          [
+            "2023-12-01",
+            1255.53
+          ],
+          [
+            "2024-01-01",
+            1154.028
+          ],
+          [
+            "2024-02-01",
+            985.601
+          ],
+          [
+            "2024-03-01",
+            1319.319
+          ],
+          [
+            "2024-04-01",
+            1201.936
+          ],
+          [
+            "2024-05-01",
+            1209.873
+          ],
+          [
+            "2024-06-01",
+            1288.938
+          ],
+          [
+            "2024-07-01",
+            1297.449
+          ],
+          [
+            "2024-08-01",
+            1421.71
+          ],
+          [
+            "2024-09-01",
+            1298.002
+          ],
+          [
+            "2024-10-01",
+            1320.601
+          ],
+          [
+            "2024-11-01",
+            1321.086
+          ],
+          [
+            "2024-12-01",
+            1414.727
+          ],
+          [
+            "2025-01-01",
+            1272.979
+          ],
+          [
+            "2025-02-01",
+            1353.171
+          ],
+          [
+            "2025-03-01",
+            1627.967
+          ],
+          [
+            "2025-04-01",
+            1600.01
+          ],
+          [
+            "2025-05-01",
+            1601.325
+          ],
+          [
+            "2025-06-01",
+            1592.33
+          ],
+          [
+            "2025-07-01",
+            1654.391
+          ],
+          [
+            "2025-08-01",
+            1740.06
+          ],
+          [
+            "2025-09-01",
+            1648.305
+          ],
+          [
+            "2025-10-01",
+            1855.228
+          ],
+          [
+            "2025-11-01",
+            1982.716
+          ],
+          [
+            "2025-12-01",
+            1958.226
+          ],
+          [
+            "2026-01-01",
+            2073.372
+          ],
+          [
+            "2026-02-01",
+            1571.858
+          ],
+          [
+            "2026-03-01",
+            2536.954
+          ],
+          [
+            "2026-04-01",
+            2153.671
+          ],
+          [
+            "2026-05-01",
+            2475.946
+          ],
+          [
+            "2026-06-01",
+            2356.625
+          ],
+          [
+            "2026-07-01",
+            2409.368
+          ],
+          [
+            "2026-08-01",
+            2655.171
+          ]
+        ],
+        "etat_source": "ok",
+        "detail_source": "fichier CSV ouvert des douanes (exportations totales)"
+      },
+      {
         "cle": "electricite_cn",
         "nom": "Production d'électricité",
         "pays": "CN",
@@ -2841,7 +3234,7 @@
         "frequence": "mensuelle",
         "unite": "100 millions de kWh",
         "poids": 1.2,
-        "source_nom": "Bureau national des statistiques de Chine via DBnomics (production du mois)",
+        "source_nom": "Bureau national des statistiques de Chine (data.stats.gov.cn, secours : DBnomics ; production du mois)",
         "mention": "janvier et février sont publiés ensemble (pas de valeur mensuelle séparée)",
         "categorie_nom": "Énergie",
         "mention_proxy": false,
@@ -2856,9 +3249,9 @@
         "note": 96.8,
         "methode_note": "échelle fixe (historique court)",
         "historique_mois": 10,
-        "age_jours": 342,
+        "age_jours": 343,
         "perimee": true,
-        "lecture": "Production d'électricité : +10,2 % sur 1 mois. Donnée ancienne : exclue du score.",
+        "lecture": "Production d'électricité : +10,2 % sur 1 mois. Dernière donnée disponible : décembre 2025 (343 jours) ; trop ancienne, exclue du score.",
         "serie": [
           [
             "2025-03-01",
@@ -2901,8 +3294,8 @@
             8586.2
           ]
         ],
-        "etat_source": "ok",
-        "detail_source": "API DBnomics"
+        "etat_source": "secours",
+        "detail_source": "secours : DBnomics (copie de la base du Bureau national des statistiques) (source principale indisponible : https://data.stats.gov.cn/easyquery.htm : HTTP 403)"
       },
       {
         "cle": "electricite_us",
@@ -2916,24 +3309,24 @@
         "mention": "très sensible aux températures",
         "categorie_nom": "Énergie",
         "mention_proxy": false,
-        "valeur": 10337726.0,
-        "date": "2026-11-07",
-        "variation_1m": -10.47,
-        "variation_12m": 3.3,
+        "valeur": 10192474.0,
+        "date": "2026-11-08",
+        "variation_1m": -10.15,
+        "variation_12m": 2.98,
         "ecart_tendance": 5.64,
         "ecart_saisonnier": -0.23,
-        "percentile_12m": 66.7,
+        "percentile_12m": 63.9,
         "percentile_tendance": 75.0,
-        "note": 70.0,
+        "note": 68.3,
         "methode_note": "percentiles",
         "historique_mois": 48,
         "age_jours": 1,
         "perimee": false,
-        "lecture": "Demande d'électricité : +3,3 % sur 12 mois, −10,5 % sur 1 mois, écart à la tendance +5,6 %, percentile 67 de l'historique.",
+        "lecture": "Demande d'électricité : +3,0 % sur 12 mois, −10,2 % sur 1 mois, écart à la tendance +5,6 %, percentile 64 de l'historique.",
         "serie": [
           [
             "2024-11-10",
-            10035741.0
+            9809133.0
           ],
           [
             "2024-11-17",
@@ -3345,11 +3738,11 @@
           ],
           [
             "2026-11-01",
-            10664842.714
+            10668591.714
           ],
           [
-            "2026-11-07",
-            10745243.5
+            "2026-11-08",
+            10648211.857
           ]
         ],
         "etat_source": "ok",
@@ -3378,13 +3771,13 @@
         "note": 20.6,
         "methode_note": "percentiles",
         "historique_mois": 46,
-        "age_jours": 3,
+        "age_jours": 4,
         "perimee": false,
         "lecture": "Passagers contrôlés dans les aéroports : −2,0 % sur 12 mois, +2,0 % sur 1 mois, écart à la tendance −0,8 %, percentile 9 de l'historique.",
         "serie": [
           [
             "2024-11-10",
-            2478595.0
+            2386575.0
           ],
           [
             "2024-11-17",
@@ -3829,13 +4222,13 @@
         "note": 71.0,
         "methode_note": "percentiles",
         "historique_mois": 81,
-        "age_jours": 9,
+        "age_jours": 10,
         "perimee": false,
         "lecture": "Offres d'emploi en ligne : +2,9 % sur 12 mois, +0,4 % sur 1 mois, écart à la tendance +0,3 %, percentile 71 de l'historique.",
         "serie": [
           [
             "2024-11-10",
-            109.193
+            109.21
           ],
           [
             "2024-11-17",
@@ -4276,13 +4669,13 @@
         "note": 61.7,
         "methode_note": "percentiles",
         "historique_mois": 81,
-        "age_jours": 9,
+        "age_jours": 10,
         "perimee": false,
         "lecture": "Offres d'emploi en ligne : −8,6 % sur 12 mois, +0,2 % sur 1 mois, écart à la tendance −4,5 %, percentile 65 de l'historique.",
         "serie": [
           [
             "2024-11-10",
-            86.09
+            86.0
           ],
           [
             "2024-11-17",
@@ -4723,13 +5116,13 @@
         "note": 32.7,
         "methode_note": "percentiles",
         "historique_mois": 81,
-        "age_jours": 9,
+        "age_jours": 10,
         "perimee": false,
         "lecture": "Offres d'emploi en ligne : −10,9 % sur 12 mois, −1,0 % sur 1 mois, écart à la tendance −4,8 %, percentile 33 de l'historique.",
         "serie": [
           [
             "2024-11-10",
-            129.163
+            129.1
           ],
           [
             "2024-11-17",
@@ -5170,13 +5563,13 @@
         "note": 36.2,
         "methode_note": "percentiles",
         "historique_mois": 81,
-        "age_jours": 9,
+        "age_jours": 10,
         "perimee": false,
         "lecture": "Offres d'emploi en ligne : −16,4 % sur 12 mois, −3,2 % sur 1 mois, écart à la tendance −7,1 %, percentile 36 de l'historique.",
         "serie": [
           [
             "2024-11-10",
-            130.047
+            129.975
           ],
           [
             "2024-11-17",
@@ -5617,13 +6010,13 @@
         "note": 56.8,
         "methode_note": "percentiles",
         "historique_mois": 81,
-        "age_jours": 9,
+        "age_jours": 10,
         "perimee": false,
         "lecture": "Offres d'emploi en ligne : +3,8 % sur 12 mois, +4,7 % sur 1 mois, écart à la tendance −0,9 %, percentile 64 de l'historique.",
         "serie": [
           [
             "2024-11-10",
-            98.567
+            98.47
           ],
           [
             "2024-11-17",
@@ -6064,13 +6457,13 @@
         "note": 56.5,
         "methode_note": "percentiles",
         "historique_mois": 81,
-        "age_jours": 9,
+        "age_jours": 10,
         "perimee": false,
         "lecture": "Offres d'emploi en ligne : +1,9 % sur 12 mois, −0,6 % sur 1 mois, écart à la tendance −0,5 %, percentile 56 de l'historique.",
         "serie": [
           [
             "2024-11-10",
-            158.02
+            157.96
           ],
           [
             "2024-11-17",
@@ -6511,13 +6904,13 @@
         "note": 15.6,
         "methode_note": "percentiles",
         "historique_mois": 81,
-        "age_jours": 9,
+        "age_jours": 10,
         "perimee": false,
         "lecture": "Offres d'emploi en ligne : −13,8 % sur 12 mois, −3,6 % sur 1 mois, écart à la tendance −8,2 %, percentile 17 de l'historique.",
         "serie": [
           [
             "2024-11-10",
-            161.05
+            160.86
           ],
           [
             "2024-11-17",
@@ -6958,13 +7351,13 @@
         "note": 15.3,
         "methode_note": "percentiles",
         "historique_mois": 81,
-        "age_jours": 9,
+        "age_jours": 10,
         "perimee": false,
         "lecture": "Offres d'emploi en ligne : −3,7 % sur 12 mois, −0,4 % sur 1 mois, écart à la tendance −4,6 %, percentile 25 de l'historique.",
         "serie": [
           [
             "2024-11-10",
-            139.447
+            139.27
           ],
           [
             "2024-11-17",
@@ -7405,13 +7798,13 @@
         "note": 28.7,
         "methode_note": "percentiles",
         "historique_mois": 81,
-        "age_jours": 9,
+        "age_jours": 10,
         "perimee": false,
         "lecture": "Offres d'emploi en ligne : −9,7 % sur 12 mois, −0,4 % sur 1 mois, écart à la tendance −4,6 %, percentile 33 de l'historique.",
         "serie": [
           [
             "2024-11-10",
-            134.393
+            134.28
           ],
           [
             "2024-11-17",
@@ -7833,14 +8226,14 @@
     "tableau_mondial": [
       "camions_de",
       "exportations_kr",
+      "exportations_tw",
       "ciment_cn",
       "electricite_cn",
       "fret_conteneurs",
       "fret_vrac",
       "camions_us",
       "tsa_us",
-      "mises_en_chantier_us",
-      "ciment_us"
+      "mises_en_chantier_us"
     ],
     "attention": [
       {
@@ -7855,6 +8248,20 @@
         },
         "tendance": "stable",
         "variation_moyenne_pct": 19.3,
+        "signal": false
+      },
+      {
+        "ticker": "FHI",
+        "nom": "Federated Hermes, Inc.",
+        "pays": "US",
+        "liste": "pepites",
+        "wikipedia": {
+          "article": "Federated Hermes",
+          "vues_30j": 2269,
+          "variation_pct": 4.7
+        },
+        "tendance": "stable",
+        "variation_moyenne_pct": 4.7,
         "signal": false
       },
       {
@@ -7900,21 +8307,31 @@
         "signal": false
       },
       {
-        "ticker": "NFLX",
-        "nom": "Netflix, Inc.",
-        "pays": "US",
+        "ticker": "1942.T",
+        "nom": "Kandenko Co.,Ltd.",
+        "pays": "JP",
         "liste": "pepites",
         "wikipedia": {
-          "article": "Netflix",
-          "vues_30j": 180860,
-          "variation_pct": 3.9
-        },
-        "trends": {
-          "variation_pct": -11.0,
-          "niveau_recent": 63.2
+          "article": "Kandukondain Kandukondain",
+          "vues_30j": 18693,
+          "variation_pct": -2.3
         },
         "tendance": "stable",
-        "variation_moyenne_pct": -3.5,
+        "variation_moyenne_pct": -2.3,
+        "signal": false
+      },
+      {
+        "ticker": "8725.T",
+        "nom": "MS&AD Insurance Group Holdings, Inc.",
+        "pays": "JP",
+        "liste": "pepites",
+        "wikipedia": {
+          "article": "MS&AD Insurance Group",
+          "vues_30j": 740,
+          "variation_pct": -4.4
+        },
+        "tendance": "stable",
+        "variation_moyenne_pct": -4.4,
         "signal": false
       },
       {
@@ -7929,6 +8346,19 @@
         },
         "tendance": "stable",
         "variation_moyenne_pct": -6.1,
+        "signal": false
+      },
+      {
+        "ticker": "NXT.L",
+        "nom": "NEXT plc",
+        "pays": "GB",
+        "liste": "pepites",
+        "trends": {
+          "variation_pct": -7.4,
+          "niveau_recent": 61.7
+        },
+        "tendance": "stable",
+        "variation_moyenne_pct": -7.4,
         "signal": false
       },
       {
@@ -7960,33 +8390,6 @@
         "signal": false
       },
       {
-        "ticker": "NXT.L",
-        "nom": "NEXT plc",
-        "pays": "GB",
-        "liste": "pepites",
-        "trends": {
-          "variation_pct": -8.7,
-          "niveau_recent": 60.8
-        },
-        "tendance": "stable",
-        "variation_moyenne_pct": -8.7,
-        "signal": false
-      },
-      {
-        "ticker": "ACGL",
-        "nom": "Arch Capital Group Ltd.",
-        "pays": "US",
-        "liste": "pepites",
-        "wikipedia": {
-          "article": "Arch Capital Group",
-          "vues_30j": 1216,
-          "variation_pct": -12.4
-        },
-        "tendance": "stable",
-        "variation_moyenne_pct": -12.4,
-        "signal": false
-      },
-      {
         "ticker": "AAPL.BA",
         "nom": "Apple Inc.",
         "pays": "AR",
@@ -8012,61 +8415,6 @@
         },
         "tendance": "stable",
         "variation_moyenne_pct": -13.9,
-        "signal": false
-      },
-      {
-        "ticker": "DXCM",
-        "nom": "DexCom, Inc.",
-        "pays": "US",
-        "liste": "pepites",
-        "trends": {
-          "variation_pct": -14.1,
-          "niveau_recent": 47.3
-        },
-        "tendance": "stable",
-        "variation_moyenne_pct": -14.1,
-        "signal": false
-      },
-      {
-        "ticker": "ORI",
-        "nom": "Old Republic International Corporation",
-        "pays": "US",
-        "liste": "pepites",
-        "wikipedia": {
-          "article": "Old Republic International",
-          "vues_30j": 377,
-          "variation_pct": -15.0
-        },
-        "tendance": "stable",
-        "variation_moyenne_pct": -15.0,
-        "signal": false
-      },
-      {
-        "ticker": "2628.HK",
-        "nom": "China Life Insurance Company Limited",
-        "pays": "CN",
-        "liste": "pepites",
-        "wikipedia": {
-          "article": "China Life Insurance Company",
-          "vues_30j": 722,
-          "variation_pct": -17.3
-        },
-        "tendance": "stable",
-        "variation_moyenne_pct": -17.3,
-        "signal": false
-      },
-      {
-        "ticker": "FIX",
-        "nom": "Comfort Systems USA, Inc.",
-        "pays": "US",
-        "liste": "pepites",
-        "wikipedia": {
-          "article": "Comfort Systems USA",
-          "vues_30j": 1277,
-          "variation_pct": -19.5
-        },
-        "tendance": "stable",
-        "variation_moyenne_pct": -19.5,
         "signal": false
       },
       {
@@ -8112,44 +8460,35 @@
         "signal": false
       },
       {
-        "ticker": "EME",
-        "nom": "EMCOR Group, Inc.",
+        "ticker": "LPG",
+        "nom": "Dorian LPG Ltd.",
         "pays": "US",
         "liste": "pepites",
         "wikipedia": {
-          "article": "Emcor",
-          "vues_30j": 1306,
-          "variation_pct": -22.6
+          "article": "Doric Greek",
+          "vues_30j": 4096,
+          "variation_pct": -23.5
         },
         "tendance": "stable",
-        "variation_moyenne_pct": -22.6,
+        "variation_moyenne_pct": -23.5,
         "signal": false
       },
       {
-        "ticker": "MTN.JO",
-        "nom": "MTN Group Limited",
-        "pays": "ZA",
+        "ticker": "2914.T",
+        "nom": "Japan Tobacco Inc.",
+        "pays": "JP",
         "liste": "pepites",
         "wikipedia": {
-          "article": "MTN Group",
-          "vues_30j": 4711,
-          "variation_pct": -24.6
+          "article": "Japan Tobacco",
+          "vues_30j": 6433,
+          "variation_pct": 1.7
         },
-        "tendance": "stable",
-        "variation_moyenne_pct": -24.6,
-        "signal": false
-      },
-      {
-        "ticker": "EQT",
-        "nom": "EQT Corporation",
-        "pays": "US",
-        "liste": "pepites",
         "trends": {
-          "variation_pct": -25.2,
-          "niveau_recent": 29.1
+          "variation_pct": -49.9,
+          "niveau_recent": 11.3
         },
         "tendance": "stable",
-        "variation_moyenne_pct": -25.2,
+        "variation_moyenne_pct": -24.1,
         "signal": false
       },
       {
@@ -8167,24 +8506,6 @@
         "signal": false
       },
       {
-        "ticker": "2914.T",
-        "nom": "Japan Tobacco Inc.",
-        "pays": "JP",
-        "liste": "pepites",
-        "wikipedia": {
-          "article": "Japan Tobacco",
-          "vues_30j": 6433,
-          "variation_pct": 1.7
-        },
-        "trends": {
-          "variation_pct": -53.9,
-          "niveau_recent": 11.1
-        },
-        "tendance": "stable",
-        "variation_moyenne_pct": -26.1,
-        "signal": false
-      },
-      {
         "ticker": "0700.HK",
         "nom": "Tencent Holdings Limited",
         "pays": "CN",
@@ -8195,11 +8516,11 @@
           "variation_pct": -0.5
         },
         "trends": {
-          "variation_pct": -53.4,
-          "niveau_recent": 11.9
+          "variation_pct": -51.4,
+          "niveau_recent": 10.9
         },
         "tendance": "stable",
-        "variation_moyenne_pct": -26.9,
+        "variation_moyenne_pct": -25.9,
         "signal": false
       },
       {
@@ -8217,6 +8538,24 @@
         "signal": false
       },
       {
+        "ticker": "EME",
+        "nom": "EMCOR Group, Inc.",
+        "pays": "US",
+        "liste": "pepites",
+        "wikipedia": {
+          "article": "Emcor",
+          "vues_30j": 1306,
+          "variation_pct": -22.6
+        },
+        "trends": {
+          "variation_pct": -44.5,
+          "niveau_recent": 19.3
+        },
+        "tendance": "en baisse",
+        "variation_moyenne_pct": -33.5,
+        "signal": false
+      },
+      {
         "ticker": "000333.SZ",
         "nom": "Midea Group Co., Ltd.",
         "pays": "CN",
@@ -8227,11 +8566,29 @@
           "variation_pct": -8.1
         },
         "trends": {
-          "variation_pct": -81.1,
-          "niveau_recent": 4.7
+          "variation_pct": -83.5,
+          "niveau_recent": 3.1
         },
         "tendance": "en baisse",
-        "variation_moyenne_pct": -44.6,
+        "variation_moyenne_pct": -45.8,
+        "signal": false
+      },
+      {
+        "ticker": "FIX",
+        "nom": "Comfort Systems USA, Inc.",
+        "pays": "US",
+        "liste": "pepites",
+        "wikipedia": {
+          "article": "Comfort Systems USA",
+          "vues_30j": 1277,
+          "variation_pct": -19.5
+        },
+        "trends": {
+          "variation_pct": -77.3,
+          "niveau_recent": 5.1
+        },
+        "tendance": "en baisse",
+        "variation_moyenne_pct": -48.4,
         "signal": false
       },
       {
@@ -8245,16 +8602,15 @@
           "variation_pct": -27.8
         },
         "trends": {
-          "variation_pct": -94.6,
-          "niveau_recent": 1.2
+          "variation_pct": -95.0,
+          "niveau_recent": 1.1
         },
         "tendance": "en baisse",
-        "variation_moyenne_pct": -61.2,
+        "variation_moyenne_pct": -61.4,
         "signal": false
       }
     ],
     "sources_ignorees": [
-      "Copernicus Sentinel-5P (TROPOMI), moyenne mensuelle par pays",
       "ENTSO-E, charge réalisée (Espagne, clé ENTSOE_API_KEY)",
       "ENTSO-E, charge réalisée (France, clé ENTSOE_API_KEY)",
       "ENTSO-E, charge réalisée (Italie, clé ENTSOE_API_KEY)",
@@ -8263,9 +8619,8 @@
       "ENTSO-E, charge réalisée (Suisse, clé ENTSOE_API_KEY)",
       "ENTSO-E, charge réalisée (Suède, clé ENTSOE_API_KEY)",
       "ENTSO-E, charge réalisée (zone Allemagne-Luxembourg, clé ENTSOE_API_KEY)",
-      "Ministère de l'Économie de Taïwan (fichier CSV fourni par la variable TAIWAN_COMMANDES_URL)",
-      "NASA Black Marble (VNP46A3), radiance mensuelle moyenne par pays",
-      "Service des douanes coréen (fichier CSV fourni par la variable COREE_EXPORTS_20J_URL)"
+      "Ministère de l'Économie de Taïwan (option : fichier CSV fourni par la variable TAIWAN_COMMANDES_URL)",
+      "Service des douanes coréen (option : fichier CSV fourni par la variable COREE_EXPORTS_20J_URL)"
     ],
     "avertissement": "Indicateurs indirects, souvent révisés ou approchés : à lire ensemble, jamais un seul à la fois. Analyse factuelle, sans conseil d'investissement.",
     "methode": "Note d'un indicateur /100 : 60 % percentile de sa variation sur 12 mois et 40 % percentile de son écart à la tendance (moyenne 3 mois contre 12 mois), dans son propre historique (échelle fixe si l'historique est court). Score pays : moyenne pondérée des indicateurs à jour, au moins 2 ; « accélération » à partir de 60 et « ralentissement » jusqu'à 40, avec au moins 2 indicateurs dans le même sens, sinon « stable ». Attention du public (Wikipédia, Google Trends) : information seulement, hors score."
