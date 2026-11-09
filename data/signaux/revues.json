@@ -1,13 +1,53 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-09T02:00:56Z",
+    "genere_le": "2026-11-09T07:31:42Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "macro|changement_de_phase|monde|2026-11-09",
+      "revu_le": "2026-11-09T07:31:32Z",
+      "signal": {
+        "agent": "macro",
+        "type": "changement_de_phase",
+        "cle": "monde",
+        "date": "2026-11-09",
+        "importance": "forte",
+        "titre": "Monde : passage de « Expansion sans inflation » à « Ralentissement inflationniste »"
+      },
+      "objection": "L'instabilité du changement de phase montre trois changements successifs sur six mois [F1], tandis que l'indicateur avancé baisse de 0,06 pt sur trois mois [F2].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Monde : phases sur 6 mois : Surchauffe → Ralentissement inflationniste → Expansion sans inflation (3 changements)",
+          "source": "agent macro (data/macro.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "Monde : indicateur avancé à 100,1, −0,06 pt sur 3 mois",
+          "source": "agent macro (data/macro.json)"
+        },
+        {
+          "id": "F3",
+          "texte": "Monde : inflation, 2 vote(s) concordant(s) sur 3",
+          "source": "agent macro (data/macro.json)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
     {
       "id": "geopolitique|evenement_grave|evt-abbd3ed9b1c0|2026-11-09",
       "revu_le": "2026-11-09T01:59:58Z",
@@ -1701,46 +1741,6 @@
       "methode": "règles",
       "confiance": "moyen",
       "version_regles": 3
-    },
-    {
-      "id": "macro|changement_de_phase|monde|2026-11-07",
-      "revu_le": "2026-11-07T23:01:40Z",
-      "signal": {
-        "agent": "macro",
-        "type": "changement_de_phase",
-        "cle": "monde",
-        "date": "2026-11-07",
-        "importance": "forte",
-        "titre": "Monde : passage de « Ralentissement inflationniste » à « Expansion sans inflation »"
-      },
-      "objection": "L'indicateur avancé recule de 0,08 pt sur 3 mois à 100,2, illustrant l'instabilité de ce changement de phase marqué par deux changements récents [F1, F2].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Monde : phases sur 6 mois : Surchauffe → Ralentissement inflationniste → Expansion sans inflation (2 changements)",
-          "source": "agent macro (data/macro.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "Monde : indicateur avancé à 100,2, −0,08 pt sur 3 mois",
-          "source": "agent macro (data/macro.json)"
-        },
-        {
-          "id": "F3",
-          "texte": "Monde : inflation, 2 vote(s) concordant(s) sur 3",
-          "source": "agent macro (data/macro.json)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1",
-        "F2"
-      ],
-      "modele": "gemini-3.5-flash-lite"
     },
     {
       "id": "inities|achats_groupes|MTDR|2026-11-07",
