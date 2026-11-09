@@ -1,13 +1,32 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-08T23:02:45Z",
+    "genere_le": "2026-11-09T02:00:56Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "geopolitique|evenement_grave|evt-abbd3ed9b1c0|2026-11-09",
+      "revu_le": "2026-11-09T01:59:58Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "evenement_grave",
+        "cle": "evt-abbd3ed9b1c0",
+        "date": "2026-11-09",
+        "importance": "haute",
+        "titre": "Événement de gravité 4 : L'armée américaine tire sur un navire dans le Golfe d'Oman"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
     {
       "id": "geopolitique|evenement_grave|theme-evt-e1cd36388142|2026-11-08",
       "revu_le": "2026-11-08T23:01:44Z",
@@ -3412,140 +3431,6 @@
         }
       ],
       "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "règles",
-      "confiance": "faible",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|nouvelle_pepite|PGR|2026-11-02",
-      "revu_le": "2026-11-08T01:51:47Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "nouvelle_pepite",
-        "cle": "PGR",
-        "date": "2026-11-02",
-        "importance": "moyenne",
-        "titre": "The Progressive Corporation entre dans les pépites candidates"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|nouvelle_pepite|TPR|2026-11-02",
-      "revu_le": "2026-11-08T01:51:47Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "nouvelle_pepite",
-        "cle": "TPR",
-        "date": "2026-11-02",
-        "importance": "moyenne",
-        "titre": "Tapestry, Inc. entre dans les pépites candidates"
-      },
-      "objection": "Objections spécifiques : cours à −17,9 % sur 3 mois [F1] ; bénéfice en hausse de 734 % sur un exercice, difficilement reproductible [F2].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Tapestry, Inc. : cours −17,9 % sur 3 mois, +0,2 % sur 6 mois, +36,1 % sur 12 mois",
-          "source": "agent entreprises (fiche)"
-        },
-        {
-          "id": "F2",
-          "texte": "Tapestry, Inc. : croissance du bénéfice +733,9 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|nouvelle_pepite|MLI|2026-11-02",
-      "revu_le": "2026-11-08T01:51:47Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "nouvelle_pepite",
-        "cle": "MLI",
-        "date": "2026-11-02",
-        "importance": "moyenne",
-        "titre": "Mueller Industries, Inc. entre dans les pépites candidates"
-      },
-      "objection": "Objections spécifiques : cours à −24,4 % sur 6 mois [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Mueller Industries, Inc. : cours −22,9 % sur 3 mois, −24,4 % sur 6 mois, +0,6 % sur 12 mois",
-          "source": "agent entreprises (fiche)"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "règles",
-      "confiance": "faible",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|nouvelle_pepite|000660.KS|2026-11-02",
-      "revu_le": "2026-11-08T01:51:47Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "nouvelle_pepite",
-        "cle": "000660.KS",
-        "date": "2026-11-02",
-        "importance": "moyenne",
-        "titre": "SK hynix Inc. entre dans les pépites candidates"
-      },
-      "objection": "Objections spécifiques : cours à −32,8 % sur 6 mois [F1] ; bénéfice en hausse de 117 % sur un exercice, difficilement reproductible [F2] ; bénéfice converti en cash à 57,8 % seulement [F3].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "SK hynix Inc. : cours −20,4 % sur 3 mois, −32,8 % sur 6 mois, +91,5 % sur 12 mois",
-          "source": "agent entreprises (fiche)"
-        },
-        {
-          "id": "F2",
-          "texte": "SK hynix Inc. : croissance du bénéfice +116,9 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F3",
-          "texte": "SK hynix Inc. : conversion du bénéfice en cash de 57,8 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|nouvelle_pepite|EMAAR.AE|2026-11-02",
-      "revu_le": "2026-11-08T01:51:47Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "nouvelle_pepite",
-        "cle": "EMAAR.AE",
-        "date": "2026-11-02",
-        "importance": "moyenne",
-        "titre": "Emaar Properties PJSC entre dans les pépites candidates"
-      },
-      "objection": "Objections spécifiques : piège de valeur possible : décote marquée associée à un cours ou à un bénéfice en recul [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Emaar Properties PJSC : piège de valeur possible : décote marquée associée à un cours ou à un bénéfice en recul (revue critique)",
-          "source": "agent entreprises (data/pepites.json)"
-        }
-      ],
-      "ajustement": "maintenir",
       "specifique": true,
       "methode": "règles",
       "confiance": "faible",
