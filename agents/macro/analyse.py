@@ -140,6 +140,80 @@ def phase_zone(cli: Serie, inflation: Serie, fmi_croissance: tuple[float, float]
     }
 
 
+# ------------------------------------------------------------------ confirmation de la phase (anti-girouette)
+
+AXES = {v: k for k, v in PHASES.items()}  # phase → (croissance, inflation)
+
+
+def _etape(confirmee: str | None, candidat: dict | None, brute: str, jour_iso: str, concordance_ok: bool, jours_requis: int):
+    """Une observation de la phase brute. Renvoie (phase confirmée, candidat, changement aujourd'hui)."""
+    if confirmee is None:
+        return brute, None, False
+    if brute == confirmee:
+        return confirmee, None, False
+    if not candidat or candidat.get("vers") != brute:
+        candidat = {"vers": brute, "depuis": jour_iso}  # nouvelle phase observée : le décompte repart de zéro
+    jours = (jour(jour_iso) - jour(candidat["depuis"])).days
+    if jours >= jours_requis and concordance_ok:
+        return brute, None, True
+    return confirmee, candidat, False
+
+
+def rejouer(historique: list[tuple[str, str]], jours_requis: int) -> tuple[str | None, dict | None]:
+    """Phase confirmée et candidat après les observations passées [(AAAA-MM-JJ, phase brute)] (premier passage)."""
+    confirmee, candidat = None, None
+    for d, brute in sorted(historique):
+        confirmee, candidat, _ = _etape(confirmee, candidat, brute, d, True, jours_requis)
+    return confirmee, candidat
+
+
+def axes_concordants(z: dict, de: str, vers: str, signaux_min: int) -> bool:
+    """Chaque axe qui change entre les deux phases a-t-il au moins `signaux_min` signaux concordants ?"""
+    a, b = AXES.get(de), AXES.get(vers)
+    if not a or not b:
+        return True
+    ok = True
+    if a[0] != b[0]:
+        ok &= (z.get("croissance") or {}).get("concordants", 0) >= signaux_min
+    if a[1] != b[1]:
+        ok &= (z.get("inflation") or {}).get("concordants", 0) >= signaux_min
+    return ok
+
+
+def confirmer_phase(z: dict, ancienne: dict | None, historique: list[tuple[str, str]], aujourdhui: date, cfg: dict) -> dict:
+    """Applique la confirmation à la phase brute du jour (z["phase"]). La phase publiée ne change qu'après
+    `semaines` semaines d'observation continue de la nouvelle phase, avec deux signaux concordants par axe."""
+    requis = 7 * cfg["semaines"]
+    brute = z["phase"]
+    if ancienne and ancienne.get("confirmation_v"):
+        confirmee = ancienne.get("phase")
+        candidat = ancienne.get("changement_en_cours")
+        candidat = {"vers": candidat["vers"], "depuis": candidat["depuis"]} if candidat else None
+    else:
+        confirmee, candidat = rejouer([(d, p) for d, p in historique if d < aujourdhui.isoformat()], requis)
+    concordance = axes_concordants(z, confirmee, brute, cfg["signaux_min"]) if confirmee else True
+    nouvelle, candidat, change = _etape(confirmee, candidat, brute, aujourdhui.isoformat(), concordance, requis)
+    z = {**z, "phase_brute": brute, "confirmation_v": 1, "changement_en_cours": None}
+    if change:
+        z.update({"phase": nouvelle, "phase_precedente": confirmee, "depuis": aujourdhui.isoformat(), "confirme_le": aujourdhui.isoformat()})
+    elif nouvelle != brute:
+        jours = (aujourdhui - jour(candidat["depuis"])).days
+        z.update({"phase": nouvelle,
+                  "phase_precedente": (ancienne or {}).get("phase_precedente") if (ancienne or {}).get("phase") == nouvelle else None,
+                  "depuis": (ancienne or {}).get("depuis") if (ancienne or {}).get("phase") == nouvelle else None,
+                  "changement_en_cours": {
+                      "vers": brute, "depuis": candidat["depuis"], "jours": jours, "jours_requis": requis, "signaux_concordants": concordance,
+                      "texte": (f"Changement de phase en cours de confirmation : « {brute} » observée depuis le {date_fr(candidat['depuis'])} "
+                                f"({jours} jour{'s' if jours > 1 else ''} sur {requis} requis"
+                                + ("" if concordance else ", deux signaux concordants pas encore réunis")
+                                + f") ; la phase publiée reste « {nouvelle} »."),
+                  }})
+    elif (ancienne or {}).get("phase") == nouvelle and (ancienne or {}).get("confirmation_v"):
+        # phase inchangée : on garde la date et la phase précédente publiées
+        z.update({"phase_precedente": ancienne.get("phase_precedente"), "depuis": ancienne.get("depuis")})
+    return z
+
+
 def confiance_zone(z: dict, aujourdhui: date) -> str:
     ancien = (aujourdhui - date.fromisoformat(z["date_donnees"] + "-28")).days > 125
     c = (z["croissance"]["concordants"], z["inflation"]["concordants"])
@@ -173,13 +247,15 @@ def contre_scenario_zone(z: dict, nom_cli: str) -> list[str]:
 def texte_zone(nom: str, z: dict, nom_cli: str, fmi_g, fmi_i, an: int) -> str:
     g, i = z["croissance"], z["inflation"]
     t = f"{nom} : phase « {z['phase']} »"
-    if z["phase_precedente"]:
+    if z.get("phase_precedente") and z.get("depuis"):
         t += f" depuis {date_fr(z['depuis'])} (précédente : « {z['phase_precedente']} »)"
     t += (f". Indicateur avancé de l'OCDE ({nom_cli}) à {nb(g['cli'], 1)}, {pts(g['cli_3m'])} sur 3 mois ; "
           f"inflation à {nb(i['valeur'], 1)} %, {pts(i['variation_3m'], 1)} sur 3 mois ({date_fr(z['date_donnees'])}).")
     if fmi_g and fmi_i:
         t += (f" Le FMI prévoit {nb(fmi_g[1], 1)} % de croissance en {an} contre {nb(fmi_g[0], 1)} % en {an - 1}, "
               f"et {nb(fmi_i[1], 1)} % d'inflation contre {nb(fmi_i[0], 1)} %.")
+    if z.get("changement_en_cours"):
+        t += " " + z["changement_en_cours"]["texte"]
     return t
 
 

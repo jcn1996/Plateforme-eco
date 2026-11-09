@@ -4,7 +4,7 @@ import json
 import shutil
 import tempfile
 import unittest
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 from agents.commun.sortie import lire_json
@@ -179,11 +179,82 @@ class TestAgent(unittest.TestCase):
         main(["--test", "--data", str(self.dossier), "--date", "2026-11-02"])
         chemin = self.dossier / "macro.json"
         d = lire_json(chemin)
-        d["donnees"]["cycle"]["zones"][0]["phase"] = "Surchauffe"  # état précédent différent
+        z0 = d["donnees"]["cycle"]["zones"][0]
+        brute = z0["phase_brute"]
+        # État précédent différent, nouvelle phase observée depuis 22 jours : le changement est confirmé aujourd'hui
+        z0.update({"phase": "Surchauffe", "changement_en_cours": {"vers": brute, "depuis": "2026-10-11"}})
         chemin.write_text(json.dumps(d, ensure_ascii=False), encoding="utf-8")
         main(["--test", "--data", str(self.dossier), "--date", "2026-11-02"])
         types = [s["type"] for s in lire_json(self.dossier / "signaux" / "macro.json")["donnees"]]
         self.assertIn("changement_de_phase", types)
+        self.assertEqual(lire_json(chemin)["donnees"]["cycle"]["zones"][0]["phase"], brute)
+
+    def test_pas_de_changement_de_phase_avant_confirmation(self):
+        main(["--test", "--data", str(self.dossier), "--date", "2026-11-02"])
+        chemin = self.dossier / "macro.json"
+        d = lire_json(chemin)
+        d["donnees"]["cycle"]["zones"][0].update({"phase": "Surchauffe", "changement_en_cours": None})
+        chemin.write_text(json.dumps(d, ensure_ascii=False), encoding="utf-8")
+        (self.dossier / "signaux" / "macro.json").unlink()
+        main(["--test", "--data", str(self.dossier), "--date", "2026-11-02"])
+        z = lire_json(chemin)["donnees"]["cycle"]["zones"][0]
+        self.assertEqual(z["phase"], "Surchauffe")
+        self.assertIn("en cours de confirmation", z["changement_en_cours"]["texte"])
+        types = [s["type"] for s in lire_json(self.dossier / "signaux" / "macro.json")["donnees"]]
+        self.assertNotIn("changement_de_phase", types)
+
+
+
+class TestConfirmationPhase(unittest.TestCase):
+    """Anti-girouette de la phase : une nouvelle phase n'est publiée qu'après 3 semaines d'observation continue."""
+
+    CFG = {"semaines": 3, "signaux_min": 2}
+    E, R = "Expansion sans inflation", "Ralentissement inflationniste"
+
+    def zone(self, phase, conc_inf=2):
+        return {"phase": phase, "phase_precedente": None, "depuis": None, "croissance": {"concordants": 3}, "inflation": {"concordants": conc_inf}}
+
+    def test_alternance_du_debut_novembre_neutralisee(self):
+        # Historique réel du monde (02/11 → 08/11), puis la phase brute du 09/11
+        obs = [("2026-11-02", self.E), ("2026-11-03", self.R), ("2026-11-04", self.R), ("2026-11-05", self.E),
+               ("2026-11-06", self.R), ("2026-11-07", self.E), ("2026-11-08", self.E)]
+        z = A.confirmer_phase(self.zone(self.R), None, obs, date(2026, 11, 9), self.CFG)
+        self.assertEqual(z["phase"], self.E)
+        self.assertEqual(z["phase_brute"], self.R)
+        self.assertEqual(z["changement_en_cours"]["vers"], self.R)
+        self.assertIn("en cours de confirmation", z["changement_en_cours"]["texte"])
+
+    def test_changement_confirme_apres_trois_semaines(self):
+        ancienne = None
+        publiees = []
+        d0 = date(2026, 11, 9)
+        for k in range(25):
+            jour_k = d0 + timedelta(days=k)
+            z = A.confirmer_phase(self.zone(self.R), ancienne, [("2026-11-01", self.E)], jour_k, self.CFG)
+            publiees.append(z["phase"])
+            ancienne = z
+        self.assertEqual(publiees[20], self.E)  # 20 jours d'observation : pas encore
+        self.assertEqual(publiees[21], self.R)  # 21 jours : confirmé
+        self.assertEqual(ancienne["phase_precedente"], self.E)
+        self.assertIsNone(ancienne["changement_en_cours"])
+
+    def test_interruption_remet_le_decompte_a_zero(self):
+        ancienne = A.confirmer_phase(self.zone(self.R), None, [("2026-11-01", self.E)], date(2026, 11, 2), self.CFG)
+        for k in range(3, 15):
+            ancienne = A.confirmer_phase(self.zone(self.R), ancienne, [], date(2026, 11, k), self.CFG)
+        ancienne = A.confirmer_phase(self.zone(self.E), ancienne, [], date(2026, 11, 15), self.CFG)  # retour : décompte annulé
+        self.assertIsNone(ancienne["changement_en_cours"])
+        z = A.confirmer_phase(self.zone(self.R), ancienne, [], date(2026, 11, 16), self.CFG)
+        self.assertEqual(z["changement_en_cours"]["depuis"], "2026-11-16")
+
+    def test_deux_signaux_concordants_exiges(self):
+        ancienne = A.confirmer_phase(self.zone(self.R, conc_inf=1), None, [("2026-10-01", self.E)], date(2026, 11, 1), self.CFG)
+        for k in range(2, 31):
+            ancienne = A.confirmer_phase(self.zone(self.R, conc_inf=1), ancienne, [], date(2026, 11, k), self.CFG)
+        self.assertEqual(ancienne["phase"], self.E)  # l'axe inflation n'a qu'un signal : pas de changement
+        self.assertFalse(ancienne["changement_en_cours"]["signaux_concordants"])
+        z = A.confirmer_phase(self.zone(self.R, conc_inf=2), ancienne, [], date(2026, 12, 1), self.CFG)
+        self.assertEqual(z["phase"], self.R)
 
 
 if __name__ == "__main__":
