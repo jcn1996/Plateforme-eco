@@ -108,16 +108,15 @@ def decider(f, etat: dict, chef: dict, palier: str, valo: dict, operations: list
     etat["profil_libelle"] = libelle
     entrees_ko = {e["cle"] for e in chef.get("entrees") or [] if e.get("etat") in ("périmée", "manquante") or e.get("degrade")}
     lignes = S.lignes_chef(chef)
-    cs = config["satellites"]
-    # volatilités des candidats satellites (et devises de cotation des nouvelles sociétés)
-    cand = [l for l in lignes.values() if l["type"] in cs["types"] and l.get("verdict") in cs["verdicts"] and l.get("conviction") in cs["convictions"]]
-    symboles = sorted({s["symbole"] for l in cand for s in S.supports_de(l, config)})
-    vols, erreurs = {}, []
+    cs, cc = config["satellites"], config["coeur"]
+    # historique d'un an des candidats (corrélation, volatilité) et devises de cotation des nouvelles sociétés
+    types = set(cc["types"]) | set(cs["types"]) | {"obligations"}
+    cand = [l for l in lignes.values() if l["type"] in types and (l.get("verdict") in cs["verdicts"] or l["type"] == "obligations")]
+    symboles = sorted({s["symbole"] for l in cand for s in S.supports_de(l, config)} | set(etat["positions"]))
+    series, erreurs = {}, []
     try:
-        series = f.series(symboles, 190) if symboles else {}
-        vols = {s: S.volatilite(p, cs["volatilite_jours"]) for s, p in series.items()}
-        vols = {s: v for s, v in vols.items() if v is not None}
-    except Exception as e:  # noqa: BLE001 — volatilité par défaut de la classe
+        series = f.series(symboles, cc["historique_jours"]) if symboles else {}
+    except Exception as e:  # noqa: BLE001 — corrélation non vérifiable, volatilité par défaut
         erreurs.append(f"séries de cours : {type(e).__name__}: {str(e)[:120]}")
     inconnues = [s for l in cand if l["type"] == "entreprises" for s in [l.get("symbole")] if s and s not in etat.setdefault("devises", {})]
     if inconnues:
@@ -125,8 +124,8 @@ def decider(f, etat: dict, chef: dict, palier: str, valo: dict, operations: list
             etat["devises"].update(f.devises(inconnues))
         except Exception as e:  # noqa: BLE001
             erreurs.append(f"devises : {type(e).__name__}: {str(e)[:120]}")
-    c = S.cibles(chef, palier, etat, valo, vols, entrees_ko, config, maintenant)
-    ordres, notes = S.generer_ordres(c, etat, valo, operations, palier, config, maintenant)
+    c = S.cibles(chef, palier, etat, valo, series, entrees_ko, config, maintenant)
+    ordres, notes, arbitrages = S.generer_ordres(c, etat, valo, operations, palier, config, maintenant)
     etat["ordres"].extend(ordres)
     poches = {"coeur": 0.0, "satellite": 0.0}
     classes = {}
@@ -135,28 +134,38 @@ def decider(f, etat: dict, chef: dict, palier: str, valo: dict, operations: list
         classes[e["classe"]] = classes.get(e["classe"], 0) + e["cible"]
     poches["liquidites"] = c["liquidites"]
     classes["liquidites"] = c["liquidites"]
+    n_coeur = sum(1 for e in c["lignes"].values() if e["poche"] == "coeur")
     sats = sorted([e for e in c["lignes"].values() if e["poche"] == "satellite"], key=lambda e: -e["cible"])
     achats = [o for o in ordres if o["sens"] == "achat"]
     ventes = [o for o in ordres if o["sens"] == "vente"]
-    resume = (f"Décision du {date_fr(jour)} : palier « {palier} », liquidités minimales {fr(c['liquidites_min'], 0)} %. Cibles : cœur {fr(poches['coeur'], 1)} %, "
-              f"satellites {fr(poches['satellite'], 1)} % ({len(sats)} ligne(s)), liquidités {fr(c['liquidites'], 1)} %. "
+    div = c["diversification"]
+    attente = [a for a in arbitrages if a["action"] in ("conservée pour l'instant", "sortie reportée", "entrée reportée", "réduction reportée")]
+    resume = (f"Décision du {date_fr(jour)} : palier « {palier} », liquidités minimales {fr(c['liquidites_min'], 0)} %. Cibles : {len(c['lignes'])} lignes "
+              f"({n_coeur} de cœur, {len(sats)} satellite(s)) sur {div['nombre_zones']} classes ou zones ; cœur {fr(poches['coeur'], 1)} %, "
+              f"satellites {fr(poches['satellite'], 1)} %, liquidités {fr(c['liquidites'], 1)} %. "
               f"{len(achats)} achat(s) et {len(ventes)} vente(s) à exécuter au premier cours disponible"
+              + (f" ; {len(attente)} arbitrage(s) reporté(s) (détention minimale, sorties étalées, 15 lignes au plus)" if attente else "")
               + (f" ; {len(annules)} ordre(s) non exécuté(s) de la veille remplacé(s)." if annules else "."))
     donner_tort = [f"Le palier de risque peut monter : en « Tension », la part minimale de liquidités passerait à "
                    f"{fr(config['liquidites_min_par_palier'].get('Tension'), 0)} % et des ventes seraient imposées."]
+    if div.get("correlation_max"):
+        cm = div["correlation_max"]
+        donner_tort.append(f"Corrélations mesurées sur 1 an (moyenne {fr(div['correlation_moyenne'], 2)}, maximum {fr(cm['valeur'], 2)} entre "
+                           f"{cm['entre'][0]} et {cm['entre'][1]}) : en crise, les corrélations montent et la diversification protège moins.")
     if sats:
         l0 = sats[0].get("ligne") or {}
         if l0.get("donner_tort"):
             donner_tort.append(f"{l0.get('nom')} (premier satellite) : {l0['donner_tort'][0]}")
-    donner_tort.append("Le cœur suit l'allocation modèle du chef d'orchestre : si ses verdicts se révèlent mal calibrés (écran « Fiabilité du chef "
-                       "d'orchestre »), l'écart au MSCI World le montrera.")
+    donner_tort.append("Concentré sur 15 lignes au plus : une erreur de verdict du chef d'orchestre pèse davantage qu'avec un portefeuille dispersé.")
     decision = {"date": jour, "le": iso(maintenant), "palier": palier, "profil": config["profil"], "liquidites_min": c["liquidites_min"],
                 "cibles": {"poches": {k: round(v, 2) for k, v in poches.items()}, "classes": {k: round(v, 2) for k, v in classes.items()},
-                           "lignes": [{"symbole": k, "nom": e["support"].get("nom"), "poche": e["poche"], "classe": e["classe"], "cible": round(e["cible"], 2),
-                                       "ligne_id": (e.get("ligne") or {}).get("id"), "tenue": bool(e.get("tenue"))}
+                           "lignes": [{"symbole": k, "nom": e["support"].get("nom"), "poche": e["poche"], "classe": e["classe"], "zone": e["zone"],
+                                       "cible": round(e["cible"], 2), "ligne_id": (e.get("ligne") or {}).get("id"),
+                                       "verdict": (e.get("ligne") or {}).get("verdict"), "conviction": (e.get("ligne") or {}).get("conviction")}
                                       for k, e in sorted(c["lignes"].items(), key=lambda kv: -kv[1]["cible"])]},
+                "diversification": div, "arbitrages": arbitrages,
                 "ordres": [o["id"] for o in ordres], "achats": len(achats), "ventes": len(ventes), "annules": len(annules),
-                "resume": resume, "notes": notes, "avertissements": c["avertissements"], "satellites_ecartes": c["satellites_ecartes"][:20],
+                "resume": resume, "notes": notes, "avertissements": c["avertissements"], "satellites_ecartes": c["ecartees"][:30],
                 "donner_tort": donner_tort, "erreurs": erreurs, "chef_date": chef.get("date"), "chef_maj": chef.get("maj")}
     etat["derniere_decision"] = decision
     etat["derniere_decision_jour"] = jour
@@ -239,15 +248,20 @@ def sortie(etat: dict, valo: dict, stats: dict, operations: list, chef: dict | N
         "ordres_en_attente": ordres, "operations": list(reversed(operations[-30:])),
         "derniere_decision": etat.get("derniere_decision"), "historique": hist,
         "cours_manquants": valo.get("manquants", []),
-        "regles": [f"Cœur ≈ {config['poches']['coeur']} % : allocation modèle « {etat.get('profil_libelle', config['profil'])} » du chef d'orchestre, rééquilibrée au-delà de "
-                   f"{config['reequilibrage']['seuil_points']} points d'écart.",
-                   f"Satellites ≈ {config['poches']['satellite']} % : convictions fortes et moyennes, {config['satellites']['max_ligne']} % maximum par ligne, "
-                   "taille selon la conviction et la volatilité.",
+        "regles": [f"{config['max_lignes']} lignes au plus (liquidités exceptées), {config['ligne_min']} % minimum par ligne ; détention minimale de "
+                   f"{config['detention_min_jours']} jours (sauf stop) ; une seule série de décisions par jour.",
+                   f"Cœur : {config['coeur']['min_lignes']} à {config['coeur']['max_lignes']} opportunités « Renforcer » de conviction moyenne ou forte (pays, "
+                   f"secteurs régionaux, or, matières premières), au moins {config['coeur']['zones_min']} classes ou zones, corrélation vérifiée sur 1 an ; "
+                   "pas d'ETF monde ni d'ETF pays « Neutre ».",
+                   "Obligations : poids fixé par le verdict du chef d'orchestre (« Neutre » = poids neutre de "
+                   f"{config['obligations']['poids_par_verdict']['Neutre']} %).",
+                   f"Satellites : convictions fortes seulement, {config['ligne_min']} à {config['satellites']['max_ligne']} % par ligne, taille selon la volatilité.",
+                   "Jamais d'achat d'une opportunité « À surveiller » ou sous objection du contradicteur.",
                    "Liquidités minimales selon le palier de risque : " + ", ".join(f"{k} {v} %" for k, v in config["liquidites_min_par_palier"].items()) + ".",
                    f"Stop −{config['stops']['stop_pct']} % sur les satellites (suiveur dès +{config['stops']['suiveur_declenchement_pct']} %), "
                    f"prise de bénéfices partielle à +{config['stops']['prise_benefices_pct']} %.",
                    f"Exécution au premier cours après la décision ; frais {fr(config['execution']['frais_pct'], 1)} % et écart achat/vente estimé ; change du jour.",
-                   "Aucune décision sur données périmées ou dégradées ; aucune décision fondée sur une seule source."],
+                   "Lignes hors règles soldées progressivement (sorties étalées), chaque arbitrage expliqué."],
         "methode": "agents/trader/regles.md", "mention": config["mention"],
     }
 
@@ -272,7 +286,7 @@ def sources_sante(chef_e: dict, risque_e: dict, marches_e: dict, err_cours: str 
 
 # ------------------------------------------------------------------ exécution
 
-def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "horaire") -> dict:
+def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "horaire", forcer: bool = False) -> dict:
     f.maintenant = maintenant
     jour = maintenant.date().isoformat()
     d_trader = data / "trader"
@@ -322,15 +336,16 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "hor
 
     # 4. décision
     h, m = (int(x) for x in config["decision_heure_utc"].split(":"))
-    du = mode == "decision" or (mode == "horaire" and etat.get("derniere_decision_jour") != jour and maintenant.weekday() < 5
+    deja_decide = etat.get("derniere_decision_jour") == jour
+    if mode == "decision" and deja_decide and not forcer:
+        LOG.info("Décision du jour déjà prise (%s) : une seule série de décisions par jour, rien n'est recalculé.", (etat.get("derniere_decision") or {}).get("le"))
+    du = (mode == "decision" and (not deja_decide or forcer)) or (mode == "horaire" and not deja_decide and maintenant.weekday() < 5
                                 and (maintenant.hour, maintenant.minute) >= (h, m))
     decision, bloquants = None, []
     if du:
         bloquants = list(chef_e["raisons"]) + list(risque_e["raisons"])
         if chef and not (data / "historique" / "chef" / f"{jour}.json").exists():
             bloquants.append("analyse complète du jour du chef d'orchestre pas encore disponible")
-        if chef and not (((chef.get("allocation") or {}).get("profils") or {}).get(config["profil"])):
-            bloquants.append(f"allocation modèle « {config['profil']} » absente de la sortie du chef d'orchestre")
         if err_cours and etat["positions"]:
             bloquants.append("cours indisponibles : portefeuille non valorisé")
         if not palier and not risque_e["raisons"]:
@@ -391,6 +406,7 @@ def main(argv=None) -> int:
     ap.add_argument("--data", default=str(RACINE / "data"), help="dossier des données (data/)")
     ap.add_argument("--mode", choices=["decision", "horaire"], default="horaire")
     ap.add_argument("--maintenant", help="heure simulée (ISO, UTC)")
+    ap.add_argument("--forcer", action="store_true", help="refaire la décision du jour même si elle a déjà été prise (à éviter : une seule par jour)")
     args = ap.parse_args(argv)
     config = charger_config()
     maintenant = sante.lire_iso(args.maintenant) if args.maintenant else datetime.now(timezone.utc)
@@ -401,5 +417,5 @@ def main(argv=None) -> int:
         from .sources import FournisseurReel
         f = FournisseurReel()
     LOG.info("Agent trader %s (démo, aucun ordre réel) — %s, mode %s", VERSION_AGENT, "cours simulés" if args.test else "cours réels", args.mode)
-    r = executer(f, config, Path(args.data), maintenant, args.mode)
+    r = executer(f, config, Path(args.data), maintenant, args.mode, forcer=args.forcer)
     return 0 if r["ok"] else 1

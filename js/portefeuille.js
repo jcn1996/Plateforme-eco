@@ -250,11 +250,29 @@ function carteDecision(dec) {
     el('div', { class: 'decision-entete' }, el('span', {}, 'Dernière décision · agent trader'), el('span', { class: 'mono' }, heureParis(dec.le))),
     el('p', {}, dec.resume),
     dec.notes?.length || dec.avertissements?.length ? el('ul', { class: 'chef-texte' }, [...(dec.notes ?? []), ...(dec.avertissements ?? [])].map((x) => el('li', {}, x))) : null,
-    dec.satellites_ecartes?.length ? el('details', { class: 'pf-justif' }, el('summary', {}, `Convictions écartées (${dec.satellites_ecartes.length})`),
+    diversification(dec),
+    dec.cibles?.lignes?.length ? el('details', { class: 'pf-justif' }, el('summary', {}, `Cibles (${dec.cibles.lignes.length} lignes)`),
+      el('ul', { class: 'chef-texte' }, dec.cibles.lignes.map((x) => el('li', {},
+        `${x.nom} — ${x.poche === 'satellite' ? 'satellite' : 'cœur'}, ${x.zone ?? x.classe} : ${nombre(x.cible, 1)} %`
+        + (x.verdict ? ` (« ${x.verdict} », conviction ${x.conviction})` : ''))))) : null,
+    dec.arbitrages?.length ? el('details', { class: 'pf-justif', open: true }, el('summary', {}, `Arbitrages expliqués (${dec.arbitrages.length})`),
+      el('ul', { class: 'chef-texte' }, dec.arbitrages.map((a) => el('li', {}, el('strong', {}, `${a.nom} — ${a.action}`), ` : ${a.raison}`)))) : null,
+    dec.satellites_ecartes?.length ? el('details', { class: 'pf-justif' }, el('summary', {}, `Opportunités écartées (${dec.satellites_ecartes.length})`),
       el('ul', { class: 'chef-texte' }, dec.satellites_ecartes.map((x) => el('li', {}, `${x.nom} : ${x.raison}`)))) : null,
     dec.donner_tort?.length ? el('div', {}, el('div', { class: 'fiche-surtitre' }, 'Ce qui pourrait me donner tort'),
       el('ul', { class: 'chef-texte' }, dec.donner_tort.map((x) => el('li', {}, x)))) : null,
   );
+}
+
+function diversification(dec) {
+  const dv = dec.diversification;
+  if (!dv) return null;
+  const cm = dv.correlation_max;
+  return el('p', { class: 'chef-petit' },
+    `Diversification : ${dv.nombre_zones} classes ou zones (${(dv.zones ?? []).join(', ')})`
+    + (dv.correlation_moyenne == null ? ' ; corrélations non mesurables (historique insuffisant).'
+      : ` ; corrélation moyenne sur 1 an ${nombre(dv.correlation_moyenne, 2)}, maximum ${nombre(cm.valeur, 2)} (${cm.entre.join(' / ')}) ;`
+        + ` ${dv.paires_mesurees} paires mesurées sur ${dv.paires_possibles}.`));
 }
 
 /* ---------------- Graphique linéaire (SVG, sans bibliothèque) ---------------- */

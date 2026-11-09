@@ -1,19 +1,21 @@
 """
 Stratégie de l'agent trader (démo) : cibles du portefeuille, ordres et règles de risque. Règles : regles.md.
 
-1. Cœur (≈ 70 %) : allocation modèle du chef d'orchestre (profil de config.json), lignes « cœur » seulement, chaque
-   ligne passant par son support coté (ETF pays, GLD, BNO/USO, SHY/IEF/TLT, ETF d'obligations européennes) ; les
-   liquidités restent en euros.
-2. Satellites (≈ 30 %) : convictions « forte » et « moyenne » à verdict positif (entreprises ; pays, matières et or
-   seulement en conviction forte et hors du cœur), sans objection sérieuse du contradicteur, avec des signaux
-   favorables d'au moins 2 agents indépendants ; taille ∝ conviction / volatilité, 8 % maximum par ligne ; plafonds
-   par pays, secteur et thème repris du chef d'orchestre. Budget non utilisé : reversé au cœur.
-3. Part minimale de liquidités selon le palier de l'agent risque.
-4. Ordres : entrées et sorties de lignes, rééquilibrage seulement au-delà du seuil ; rotation mensuelle plafonnée
-   (sorties imposées exceptées).
-5. Risque (à chaque exécution) : stop des satellites (−15 %, suiveur une fois +20 % atteint, confirmé par 2 relevés),
-   prise de bénéfices partielle à +30 %, sortie sur « Alléger » / « Éviter » ou objection sérieuse, plancher de
-   liquidités.
+1. Portefeuille diversifié mais concentré : 15 lignes au plus (liquidités exceptées), 4 % minimum par ligne.
+2. Cœur : 8 à 12 positions choisies parmi les opportunités « Renforcer » / « Renforcer fortement » de conviction
+   moyenne ou forte du chef d'orchestre (ETF pays, ETF sectoriels régionaux, or, matières premières), jamais d'ETF
+   monde ni d'ETF pays « Neutre » ; au moins 4 classes ou zones différentes ; corrélation entre lignes vérifiée sur
+   1 an d'historique (une ligne trop corrélée à une ligne déjà retenue est écartée). Obligations : poids fixé par le
+   verdict du chef d'orchestre (« Neutre » = poids neutre).
+3. Satellites : convictions fortes seulement (entreprises), signaux d'au moins 2 agents, taille ∝ conviction /
+   volatilité, 4 à 8 % par ligne.
+4. Jamais d'achat d'une opportunité « À surveiller » ou sous objection du contradicteur.
+5. Une seule série de décisions par jour ; détention minimale de 5 jours (sauf stop) ; pas de rachat d'un titre
+   vendu depuis moins de 5 jours.
+6. Les lignes qui ne respectent plus les règles sont soldées progressivement (sorties étalées), chaque arbitrage
+   étant expliqué.
+7. Risque (à chaque exécution) : stop des satellites, prise de bénéfices partielle, sortie sur « Alléger » /
+   « Éviter », plancher de liquidités selon le palier de l'agent risque.
 """
 from __future__ import annotations
 
@@ -89,230 +91,289 @@ def volatilite(points: list, jours: int) -> float | None:
     return math.sqrt(var) * math.sqrt(252) * 100
 
 
+# ------------------------------------------------------------------ corrélation
+
+def rendements(points: list) -> dict[str, float]:
+    c = [(d, v) for d, v in (points or []) if v]
+    return {d2: math.log(v2 / v1) for (d1, v1), (d2, v2) in zip(c, c[1:]) if v1 > 0 and v2 > 0}
+
+
+def correlation(r1: dict, r2: dict, minimum: int = 120) -> float | None:
+    """Corrélation des rendements quotidiens sur les dates communes (None si moins de `minimum` dates)."""
+    dates = sorted(set(r1) & set(r2))
+    if len(dates) < minimum:
+        return None
+    x, y = [r1[d] for d in dates], [r2[d] for d in dates]
+    mx, my = sum(x) / len(x), sum(y) / len(y)
+    sxy = sum((a - mx) * (b - my) for a, b in zip(x, y))
+    sx = math.sqrt(sum((a - mx) ** 2 for a in x))
+    sy = math.sqrt(sum((b - my) ** 2 for b in y))
+    return sxy / (sx * sy) if sx and sy else None
+
+
+# ------------------------------------------------------------------ éligibilité
+
+def objection(ligne: dict | None) -> str | None:
+    """Objection du contradicteur sur la ligne (sérieuse ou non) : aucun achat dans ce cas. La revue sans objection
+    (« Pas d'objection spécifique. », ajustement « maintenir ») n'en est pas une."""
+    o = (ligne or {}).get("objection") or {}
+    texte = (o.get("objection") or "").strip()
+    if not texte or texte.lower().startswith("pas d'objection"):
+        return None
+    return texte
+
+
+def zone_de(l: dict, config: dict) -> str:
+    """Classe ou zone de diversification : zone géographique pour les actions, classe d'actifs sinon."""
+    t = l.get("type")
+    if t in ("pays", "entreprises"):
+        return config["regions"].get(l.get("pays") or l.get("cle"), "Autres pays")
+    if t == "secteurs":
+        return config["zones_secteurs"].get(l.get("zone_secteur") or l.get("zone"), "Monde")
+    return {"or": "Or", "matieres": "Matières premières", "obligations": "Obligations"}.get(t, t or "?")
+
+
+def secteur_de(l: dict) -> str | None:
+    return l.get("secteur") if l.get("type") in ("secteurs", "entreprises") else None
+
+
+def exclusion(l: dict, convictions: tuple, surveiller: set, entrees_ko: set, etat: dict, config: dict, maintenant: datetime,
+              deux_agents: bool = False) -> str | None:
+    """Raison pour laquelle une ligne ne peut pas être achetée (None si elle le peut)."""
+    v, conv = l.get("verdict"), l.get("conviction")
+    if v not in ("Renforcer", "Renforcer fortement"):
+        return f"verdict « {v} »" + (" : pas d'ETF pays « Neutre »" if l.get("type") == "pays" and v == "Neutre" else "")
+    if conv not in convictions:
+        return f"conviction {conv} (exigée : {' ou '.join(convictions)})"
+    if objection(l):
+        return f"objection du contradicteur : {objection(l)}"
+    if l["id"] in surveiller:
+        return "classée « À surveiller » par le chef d'orchestre"
+    if l.get("type") == "secteurs" and (l.get("zone_secteur") or l.get("zone")) == "monde":
+        return "ETF sectoriel mondial : pas d'ETF monde"
+    sups = supports_de(l, config)
+    if not sups:
+        return "aucun support coté"
+    if any(s["symbole"] in config["etf_monde"] for s in sups):
+        return "ETF monde exclu"
+    cs = config["satellites"]
+    if deux_agents and len(agents_favorables(l, cs["note_famille_positive"])) < cs["sources_independantes_min"]:
+        return f"signaux favorables de moins de {cs['sources_independantes_min']} agents indépendants (une seule source)"
+    if {f.get("agent") for f in (l.get("familles") or {}).values()} & entrees_ko:
+        return "données d'un agent utilisé périmées ou dégradées"
+    interdit = (etat.get("interdits") or {}).get(sups[0]["symbole"])
+    if interdit and interdit["jusqua"] > maintenant.date().isoformat() and sups[0]["symbole"] not in etat["positions"]:
+        return f"vendue récemment ({interdit['motif']}) : pas de rachat avant le {interdit['jusqua']}"
+    return None
+
+
 # ------------------------------------------------------------------ cibles
 
-def cibles(chef: dict, palier: str, etat: dict, valo: dict, vols: dict, entrees_ko: set, config: dict, maintenant: datetime) -> dict:
-    """Poids cibles (en % du portefeuille) par support, et sorties imposées.
-    Renvoie {lignes: {symbole: {...}}, liquidites, sorties: {symbole: (motif, texte, imposée)}, satellites_ecartes, avertissements}."""
+def cibles(chef: dict, palier: str, etat: dict, valo: dict, series: dict, entrees_ko: set, config: dict, maintenant: datetime) -> dict:
+    """Poids cibles (en % du portefeuille) par support, une seule fois par jour.
+    Renvoie {lignes: {symbole: {...}}, liquidites, liquidites_min, exclusions: {symbole détenu: raison},
+    ecartees: [{id, nom, raison}], diversification, avertissements}."""
+    cc, cs, co = config["coeur"], config["satellites"], config["obligations"]
     lignes = lignes_chef(chef)
-    avert, ecartes = [], []
-    prof = ((chef.get("allocation") or {}).get("profils") or {}).get(config["profil"])
-    if not prof:
-        raise ValueError(f"profil « {config['profil']} » absent de l'allocation modèle du chef d'orchestre")
-    contraintes = (chef.get("allocation") or {}).get("contraintes") or {}
-    lim = {k: contraintes.get(k, v) for k, v in config["limites"].items() if not k.startswith("_")}
-    res: dict[str, dict] = {}
-    sorties: dict[str, tuple] = {}
+    surveiller = {x["id"] for x in ((chef.get("panorama") or {}).get("a_surveiller") or [])}
+    avert, ecartees = [], []
+    rend = {s: rendements(p) for s, p in (series or {}).items()}
+    retenues: list[tuple[dict, dict, str]] = []  # (ligne, support, poche)
 
-    # 1. Cœur
-    coeur_brut, cash, non_places = {}, 0.0, {}
-    total_prof = 0.0
-    for x in prof.get("lignes") or []:
-        if x.get("poche") != "cœur" or not x.get("poids"):
+    def trop_correlee(sym):
+        pire = None
+        for l2, s2, _ in retenues:
+            c = correlation(rend.get(sym, {}), rend.get(s2["symbole"], {}), cc["correlation_jours_min"])
+            if c is not None and c > cc["correlation_max"] and (pire is None or c > pire[0]):
+                pire = (c, l2["nom"])
+        return pire
+
+    def compte(cle_fn, valeur):
+        return sum(1 for l2, _, _ in retenues if cle_fn(l2) == valeur)
+
+    # 1. Obligations : poids fixé par le verdict
+    poids_oblig = {}
+    for l in sorted([l for l in lignes.values() if l["type"] == "obligations"], key=lambda l: -(l.get("score") or 0)):
+        w = co["poids_par_verdict"].get(l.get("verdict"), 0)
+        if l.get("conviction") == "faible":
+            w = min(w, co["poids_par_verdict"]["Neutre"])
+        if w <= 0:
             continue
-        total_prof += x["poids"]
-        l = lignes.get(x["id"])
-        classe = x.get("classe") or CLASSE_DE.get((l or {}).get("type"), "?")
-        if classe == "liquidites" or l is None:
-            cash += x["poids"]
-            if l is None:
-                avert.append(f"{x.get('nom', x['id'])} : ligne de l'allocation absente des analyses ; part laissée en liquidités.")
+        raison = None
+        if objection(l):
+            raison = f"objection du contradicteur : {objection(l)}"
+        elif l["id"] in surveiller:
+            raison = "classée « À surveiller » par le chef d'orchestre"
+        elif not supports_de(l, config):
+            raison = "aucun support coté"
+        elif sum(poids_oblig.values()) + w > co["max_total"]:
+            raison = f"obligations plafonnées à {co['max_total']} % au total"
+        if raison:
+            ecartees.append({"id": l["id"], "nom": l["nom"], "raison": raison})
             continue
-        if l.get("verdict") in SORTIE:
-            non_places[classe] = non_places.get(classe, 0) + x["poids"]
+        sup = supports_de(l, config)[0]
+        poids_oblig[sup["symbole"]] = w
+        retenues.append((l, sup, "coeur"))
+
+    # 2. Cœur : opportunités « Renforcer » de conviction moyenne ou forte, diversifiées et peu corrélées
+    cands = []
+    for l in lignes.values():
+        if l["type"] not in cc["types"]:
             continue
-        sups = supports_de(l, config)
-        if not sups:
-            non_places[classe] = non_places.get(classe, 0) + x["poids"]
-            avert.append(f"{l['nom']} : aucun support coté ; part redistribuée dans sa classe ({LIBELLES_CLASSES.get(classe, classe)}).")
+        r = exclusion(l, tuple(cc["convictions"]), surveiller, entrees_ko, etat, config, maintenant)
+        if r:
+            if l.get("verdict") in ("Renforcer", "Renforcer fortement") or l["id"] in surveiller:
+                ecartees.append({"id": l["id"], "nom": l["nom"], "raison": r})
             continue
-        for s in sups:
-            e = coeur_brut.setdefault(s["symbole"], {"poids": 0.0, "support": s, "ligne": l, "classe": classe})
-            e["poids"] += x["poids"] * s.get("part", 1)
-    for classe, v in non_places.items():
-        membres = [k for k, e in coeur_brut.items() if e["classe"] == classe]
-        s = sum(coeur_brut[k]["poids"] for k in membres)
-        if s > 0:
-            for k in membres:
-                coeur_brut[k]["poids"] += v * coeur_brut[k]["poids"] / s
+        cands.append(l)
+    detenues = {p.get("ligne_id") for p in etat["positions"].values()}
+    bonus = cc["bonus_ligne_detenue"]  # préférence aux lignes déjà détenues et toujours éligibles : moins de rotation, moins de frais
+    cands.sort(key=lambda l: (-RANG_CONVICTION.get(l.get("conviction"), 0), -((l.get("score") or 0) + (bonus if l["id"] in detenues else 0))))
+    for l in cands:
+        sup = supports_de(l, config)[0]
+        if len(retenues) >= cc["max_lignes"]:
+            ecartees.append({"id": l["id"], "nom": l["nom"], "raison": f"cœur complet ({cc['max_lignes']} lignes au plus)"})
+            continue
+        z = zone_de(l, config)
+        if compte(lambda x: zone_de(x, config), z) >= cc["max_par_zone"]:
+            ecartees.append({"id": l["id"], "nom": l["nom"], "raison": f"déjà {cc['max_par_zone']} lignes en « {z} » (diversification)"})
+            continue
+        sec = secteur_de(l)
+        if sec and compte(secteur_de, sec) >= cc["max_par_secteur"]:
+            ecartees.append({"id": l["id"], "nom": l["nom"], "raison": f"déjà {cc['max_par_secteur']} lignes du secteur « {l.get('secteur_nom') or sec} »"})
+            continue
+        pire = trop_correlee(sup["symbole"])
+        if pire:
+            ecartees.append({"id": l["id"], "nom": l["nom"], "raison": f"corrélation de {fr(pire[0], 2)} avec {pire[1]} sur 1 an (maximum {fr(cc['correlation_max'], 2)})"})
+            continue
+        retenues.append((l, sup, "coeur"))
+    n_coeur = len(retenues)
+    if n_coeur < cc["min_lignes"]:
+        avert.append(f"Seulement {n_coeur} ligne(s) de cœur respectent les règles (minimum visé : {cc['min_lignes']}) : la part non placée reste en liquidités.")
+
+    # 3. Satellites : convictions fortes
+    sats = []
+    places = min(cs["max_lignes"], config["max_lignes"] - n_coeur)
+    for l in sorted(lignes.values(), key=lambda l: -((l.get("score") or 0) + (bonus if l["id"] in detenues else 0))):
+        if l["type"] not in cs["types"]:
+            continue
+        r = exclusion(l, tuple(cs["convictions"]), surveiller, entrees_ko, etat, config, maintenant, deux_agents=True)
+        if r:
+            if l.get("conviction") == "forte" and l.get("verdict") in ("Renforcer", "Renforcer fortement"):
+                ecartees.append({"id": l["id"], "nom": l["nom"], "raison": r})
+            continue
+        sup = supports_de(l, config)[0]
+        z = zone_de(l, config)
+        if len(sats) < places and compte(lambda x: zone_de(x, config), z) >= cs["max_par_zone_total"]:
+            ecartees.append({"id": l["id"], "nom": l["nom"], "raison": f"déjà {cs['max_par_zone_total']} lignes en « {z} » (cœur et satellites ; diversification)"})
+            continue
+        if len(sats) >= places:
+            ecartees.append({"id": l["id"], "nom": l["nom"], "raison": f"{config['max_lignes']} lignes au plus au total"})
+            continue
+        sec = secteur_de(l)
+        if sec and compte(secteur_de, sec) >= cc["max_par_secteur"]:
+            ecartees.append({"id": l["id"], "nom": l["nom"], "raison": f"déjà {cc['max_par_secteur']} lignes du secteur « {l.get('secteur_nom') or sec} »"})
+            continue
+        pire = trop_correlee(sup["symbole"])
+        if pire:
+            ecartees.append({"id": l["id"], "nom": l["nom"], "raison": f"corrélation de {fr(pire[0], 2)} avec {pire[1]} sur 1 an"})
+            continue
+        retenues.append((l, sup, "satellite"))
+        sats.append((l, sup))
+
+    # 4. Poids
+    mini_liq = palier_min(palier, config)
+    lmin = config["ligne_min"]
+    vols = {s: volatilite(p, cs["volatilite_jours"]) for s, p in (series or {}).items()}
+    poids_sat = {}
+    if sats:
+        brut = {sup["symbole"]: cs["convictions"][l["conviction"]] / max(vols.get(sup["symbole"]) or cs["volatilite_defaut"], cs["volatilite_plancher"])
+                for l, sup in sats}
+        budget = min(cs["budget"], cs["max_ligne"] * len(sats))
+        poids_sat = {k: min(cs["max_ligne"], max(lmin, budget * v / sum(brut.values()))) for k, v in brut.items()}
+    res = {}
+    for l, sup, poche in retenues:
+        if poche == "satellite":
+            w = poids_sat[sup["symbole"]]
+        elif sup["symbole"] in poids_oblig:
+            w = poids_oblig[sup["symbole"]]
         else:
-            cash += v
-            avert.append(f"{LIBELLES_CLASSES.get(classe, classe)} : aucune ligne avec support coté ; part placée en liquidités.")
-    facteur = config["poches"]["coeur"] / total_prof if total_prof else 0
-    for k, e in coeur_brut.items():
-        res[k] = {"cible": e["poids"] * facteur, "poche": "coeur", "classe": e["classe"], "support": e["support"], "ligne": e["ligne"]}
-    cash *= facteur
-    # lignes trop petites (sous le minimum) : redistribuées dans leur classe, sinon en liquidités
-    mini_ligne = config["reequilibrage"]["ligne_min"]
-    for k in sorted(res, key=lambda k: res[k]["cible"]):
-        e = res[k]
-        if e["cible"] >= mini_ligne:
-            continue
-        autres = [x for x in res if x != k and res[x]["classe"] == e["classe"] and res[x]["cible"] >= mini_ligne]
-        s = sum(res[x]["cible"] for x in autres)
-        if s:
-            for x in autres:
-                res[x]["cible"] += e["cible"] * res[x]["cible"] / s
-        else:
-            cash += e["cible"]
-        avert.append(f"{e['support']['nom']} : cible de {fr(e['cible'], 2)} % sous le minimum de {fr(mini_ligne, 1)} % par ligne ; part redistribuée.")
+            w = None
+        res[sup["symbole"]] = {"cible": w, "poche": poche, "classe": CLASSE_DE[l["type"]], "support": sup, "ligne": l, "zone": zone_de(l, config),
+                               "volatilite": vols.get(sup["symbole"])}
+    libres = [k for k, e in res.items() if e["cible"] is None]
+    budget = 100 - mini_liq - sum(e["cible"] for e in res.values() if e["cible"] is not None)
+    while libres:
+        fac = {k: cc["convictions"].get(res[k]["ligne"].get("conviction"), 1.0) for k in libres}
+        tot = sum(fac.values())
+        poids = {k: min(cc["max_ligne"], budget * f / tot) for k, f in fac.items()}
+        # plafond par zone pour le cœur (excédent laissé en liquidités)
+        for z in {res[k]["zone"] for k in libres}:
+            membres = [k for k in libres if res[k]["zone"] == z]
+            deja = sum(e["cible"] for k, e in res.items() if e["zone"] == z and k not in libres and e["poche"] == "coeur")
+            s = sum(poids[k] for k in membres)
+            if s + deja > cc["max_zone_pct"]:
+                f = max(0.0, cc["max_zone_pct"] - deja) / s
+                for k in membres:
+                    poids[k] *= f
+        trop_petites = [k for k in libres if poids[k] < lmin]
+        if not trop_petites:
+            for k in libres:
+                res[k]["cible"] = poids[k]
+            break
+        k = min(trop_petites, key=lambda k: (k in etat["positions"], RANG_CONVICTION.get(res[k]["ligne"].get("conviction"), 0),
+                                             res[k]["ligne"].get("score") or 0))
+        ecartees.append({"id": res[k]["ligne"]["id"], "nom": res[k]["ligne"]["nom"], "raison": f"poids inférieur à {fr(lmin, 0)} % après les plafonds"})
         del res[k]
+        libres.remove(k)
+    total = sum(e["cible"] for e in res.values())
+    if total > 100 - mini_liq:  # satellites et obligations au plancher : réduction proportionnelle
+        k = (100 - mini_liq) / total
+        for e in res.values():
+            e["cible"] *= k
+    cash = 100 - sum(e["cible"] for e in res.values())
 
-    # 2. Satellites : positions existantes
-    cs = config["satellites"]
-    budget = config["poches"]["satellite"]
-    tenues = {}
+    # 5. Diversification
+    zones = sorted({e["zone"] for e in res.values()})
+    corrs = []
+    syms = sorted(res)
+    for i, a in enumerate(syms):
+        for b in syms[i + 1:]:
+            c = correlation(rend.get(a, {}), rend.get(b, {}), cc["correlation_jours_min"])
+            if c is not None:
+                corrs.append((c, a, b))
+    if len(zones) < cc["zones_min"]:
+        avert.append(f"Diversification : {len(zones)} classe(s) ou zone(s) seulement ({', '.join(zones)}), pour {cc['zones_min']} visées ; "
+                     "aucune autre opportunité ne respecte les règles.")
+    diversification = {"zones": zones, "nombre_zones": len(zones),
+                       "correlation_moyenne": round(sum(c for c, _, _ in corrs) / len(corrs), 2) if corrs else None,
+                       "correlation_max": ({"valeur": round(max(corrs)[0], 2), "entre": [max(corrs)[1], max(corrs)[2]]} if corrs else None),
+                       "paires_mesurees": len(corrs), "paires_possibles": len(syms) * (len(syms) - 1) // 2}
+
+    # 6. Lignes détenues hors cibles : raison
+    exclusions = {}
     for s, p in etat["positions"].items():
-        if p.get("poche") != "satellite":
+        if s in res:
             continue
         l = lignes.get(p.get("ligne_id"))
         if l is None:
-            absent = p.setdefault("absent_depuis", maintenant.date().isoformat())
-            jours = (maintenant.date() - datetime.fromisoformat(absent).date()).days
-            if jours >= cs.get("absence_max_jours", 10):
-                sorties[s] = ("sortie de l'analyse", f"{p['nom']} n'est plus analysée par le chef d'orchestre depuis {jours} jours : sortie.", False)
-            else:
-                tenues[s] = p.get("poids", 0)
+            exclusions[s] = (True, "ligne plus analysée par le chef d'orchestre")
             continue
-        p.pop("absent_depuis", None)
-        if l.get("verdict") in SORTIE:
-            sorties[s] = ("sortie sur verdict", f"Le chef d'orchestre est passé à « {l['verdict']} » sur {l['nom']} (score {ent(l.get('score'))}/100).", True)
-        elif objection_serieuse(l):
-            sorties[s] = ("sortie sur objection", f"Objection sérieuse du contradicteur sur {l['nom']} : {objection_serieuse(l)}", True)
-    # candidats
-    cand = []
-    for l in lignes.values():
-        if l["type"] not in cs["types"] or l.get("verdict") not in cs["verdicts"]:
+        if l["type"] == "obligations":
+            w = co["poids_par_verdict"].get(l.get("verdict"), 0)
+            exclusions[s] = (True, f"obligations : verdict « {l.get('verdict')} », conviction {l.get('conviction')} → poids "
+                                   + (f"neutre de {fr(w, 0)} % porté par un seul support" if w else "nul"))
             continue
-        conv = l.get("conviction")
-        if conv not in cs["convictions"]:
-            continue
-        if l["type"] != "entreprises" and RANG_CONVICTION.get(conv, 0) < RANG_CONVICTION[cs["conviction_tactique_min"]]:
-            continue
-        sups = supports_de(l, config)
-        if len(sups) != 1 or sups[0]["symbole"] in res:
-            continue
-        sym = sups[0]["symbole"]
-        if sym in sorties:
-            continue
-        raison = None
-        interdit = (etat.get("interdits") or {}).get(sym)
-        if interdit and interdit["jusqua"] >= maintenant.date().isoformat() and sym not in etat["positions"]:
-            raison = f"sortie récente ({interdit['motif']}) : pas de rachat avant le {interdit['jusqua']}"
-        elif objection_serieuse(l):
-            raison = "objection sérieuse du contradicteur"
-        elif len(agents_favorables(l, cs["note_famille_positive"])) < cs["sources_independantes_min"]:
-            raison = f"signaux favorables de moins de {cs['sources_independantes_min']} agents indépendants (une seule source)"
-        elif {f.get("agent") for f in (l.get("familles") or {}).values()} & entrees_ko:
-            raison = "données d'un agent utilisé périmées ou dégradées"
-        if raison:
-            if conv == "forte" or sym in etat["positions"]:
-                ecartes.append({"id": l["id"], "nom": l["nom"], "raison": raison})
-            if sym in etat["positions"] and sym not in sorties:
-                tenues[sym] = etat["positions"][sym].get("poids", 0)
-            continue
-        cand.append((l, sups[0]))
-    for s, p in etat["positions"].items():  # satellite tenu, verdict neutre ou conviction abaissée : conservé tel quel
-        if p.get("poche") == "satellite" and s not in sorties and s not in tenues and not any(c[1]["symbole"] == s for c in cand):
-            tenues[s] = p.get("poids", 0)
-    cand.sort(key=lambda c: (-(RANG_CONVICTION.get(c[0].get("conviction"), 0)), -(c[0].get("score") or 0)))
-    places = max(0, cs["max_lignes"] - len(tenues))
-    for l, sup in cand[places:]:
-        if l.get("conviction") == "forte":
-            ecartes.append({"id": l["id"], "nom": l["nom"], "raison": f"nombre maximal de satellites atteint ({cs['max_lignes']})"})
-    cand = cand[:places]
-
-    # tailles : conviction / volatilité
-    budget_libre = max(0.0, budget - sum(tenues.values()))
-    brut = {}
-    for l, sup in cand:
-        v = vols.get(sup["symbole"])
-        if v is None:
-            v = cs["volatilite_par_type_defaut"].get(l["type"], cs["volatilite_defaut"])
-        brut[sup["symbole"]] = cs["convictions"][l["conviction"]] / max(v, cs["volatilite_plancher"])
-    poids = _plafonner({k: budget_libre * v / sum(brut.values()) for k, v in brut.items()} if brut else {}, cs["max_ligne"])
-    # plafonds par pays, secteur et thème (expositions du cœur et des satellites conservés comprises)
-    expo = {}
-
-    def groupes(l, classe):
-        g = [f"theme:{t}" for t in (l.get("themes") or [])]
-        if l.get("pays") and l["type"] in ("pays", "entreprises"):
-            g.append(f"pays:{l['pays']}")
-        if l.get("secteur"):
-            g.append(f"secteur:{l['secteur']}")
-        return g
-
-    def cap(g):
-        return lim["max_theme"] if g.startswith("theme:") else lim["max_pays"] if g.startswith("pays:") else lim["max_secteur"]
-    for k, e in res.items():
-        for g in groupes(e["ligne"], e["classe"]):
-            expo[g] = expo.get(g, 0) + e["cible"]
-    for s in tenues:
-        p = etat["positions"][s]
-        l = lignes.get(p.get("ligne_id")) or {"type": p.get("type"), "pays": p.get("pays"), "secteur": p.get("secteur"), "themes": p.get("themes")}
-        for g in groupes(l, p.get("classe")):
-            expo[g] = expo.get(g, 0) + tenues[s]
-    infos_vol = {}
-    for l, sup in cand:
-        k = sup["symbole"]
-        w = poids.get(k, 0)
-        gs = groupes(l, CLASSE_DE[l["type"]])
-        libre = min([cap(g) - expo.get(g, 0) for g in gs] or [w])
-        if libre < w:
-            limite = min(gs, key=lambda g: cap(g) - expo.get(g, 0))
-            avert.append(f"{l['nom']} : taille ramenée de {fr(w, 1)} à {fr(max(0, libre), 1)} % (plafond {limite.split(':')[0]} « {limite.split(':')[1]} » de {cap(limite)} %).")
-            w = max(0.0, libre)
-        if w < cs["ligne_min"]:
-            if poids.get(k):
-                ecartes.append({"id": l["id"], "nom": l["nom"], "raison": "taille inférieure au minimum après les plafonds"})
-            continue
-        for g in gs:
-            expo[g] = expo.get(g, 0) + w
-        v = vols.get(k)
-        infos_vol[k] = v
-        res[k] = {"cible": w, "poche": "satellite", "classe": CLASSE_DE[l["type"]], "support": sup, "ligne": l, "volatilite": v}
-    for s, w in tenues.items():
-        p = etat["positions"][s]
-        res[s] = {"cible": w, "poche": "satellite", "classe": p.get("classe"), "support": {"symbole": s, "nom": p["nom"], "devise": p["devise"]},
-                  "ligne": lignes.get(p.get("ligne_id")), "tenue": True}
-    sat_total = sum(e["cible"] for e in res.values() if e["poche"] == "satellite")
-    reste = budget - sat_total
-    if reste > 0.05:
-        coeur_risque = {k: e for k, e in res.items() if e["poche"] == "coeur"}
-        s = sum(e["cible"] for e in coeur_risque.values())
-        if s > 0:
-            for e in coeur_risque.values():
-                e["cible"] += reste * e["cible"] / s
-            avert.append(f"Satellites : {fr(sat_total, 1)} % placés sur {fr(budget, 0)} % ; le solde ({fr(reste, 1)} pt) est reversé au cœur.")
+        sat = p.get("poche") == "satellite" and l["type"] == "entreprises"
+        conv = cs["convictions"] if sat else cc["convictions"]
+        r = exclusion(l, tuple(conv), surveiller, entrees_ko, {**etat, "interdits": {}}, config, maintenant, deux_agents=sat)
+        if r:
+            exclusions[s] = (True, r)
         else:
-            cash += reste
-
-    # 3. Plancher de liquidités
-    mini = palier_min(palier, config)
-    if cash < mini:
-        k = (100 - mini) / (100 - cash) if cash < 100 else 0
-        for e in res.values():
-            e["cible"] *= k
-        cash = mini
-    return {"lignes": res, "liquidites": cash, "liquidites_min": mini, "sorties": sorties, "satellites_ecartes": ecartes,
-            "avertissements": avert, "limites": lim}
-
-
-def _plafonner(poids: dict, maximum: float, iterations: int = 20) -> dict:
-    """Plafonne chaque ligne et redistribue l'excédent aux lignes non plafonnées (sans dépasser le total)."""
-    poids = dict(poids)
-    for _ in range(iterations):
-        exces = sum(max(0, v - maximum) for v in poids.values())
-        if exces < 1e-9:
-            break
-        libres = {k: v for k, v in poids.items() if v < maximum - 1e-9}
-        poids = {k: min(v, maximum) for k, v in poids.items()}
-        s = sum(libres.values())
-        if not s:
-            break
-        for k, v in libres.items():
-            poids[k] += exces * v / s
-    return {k: min(v, maximum) for k, v in poids.items()}
+            e = next((x for x in ecartees if x["id"] == l["id"]), None)
+            exclusions[s] = (False, f"non retenue : {e['raison']}" if e else "non retenue : concentration sur les meilleures opportunités")
+    return {"lignes": res, "liquidites": cash, "liquidites_min": mini_liq, "exclusions": exclusions, "ecartees": ecartees,
+            "diversification": diversification, "avertissements": avert}
 
 
 # ------------------------------------------------------------------ textes
@@ -335,88 +396,133 @@ def raison_ligne(ligne: dict | None, config: dict) -> dict:
 
 # ------------------------------------------------------------------ ordres de la décision
 
+def jours_detenus(p: dict, maintenant: datetime) -> int:
+    t = lire_iso(p.get("dernier_achat_le") or p.get("ouverte_le"))
+    return (maintenant.date() - t.date()).days if t else 999
+
+
+def date_liberation(p: dict, config: dict) -> str:
+    t = lire_iso(p.get("dernier_achat_le") or p.get("ouverte_le"))
+    return (t + timedelta(days=config["detention_min_jours"])).date().isoformat() if t else "?"
+
+
 def rotation_utilisee(operations: list[dict], maintenant: datetime, jours: int) -> float:
     debut = maintenant - timedelta(days=jours)
-    return sum(o.get("montant_eur", 0) for o in operations if o["sens"] == "vente" and not o.get("imposee")
+    return sum(o.get("montant_eur", 0) for o in operations if o["sens"] == "vente" and o.get("motif") == "rééquilibrage"
                and (lire_iso(o["date"]) or maintenant) >= debut)
 
 
-def generer_ordres(c: dict, etat: dict, valo: dict, operations: list[dict], palier: str, config: dict, maintenant: datetime) -> tuple[list[dict], list[str]]:
-    """Ordres de la décision du jour (ventes puis achats). Renvoie (ordres, notes)."""
+def generer_ordres(c: dict, etat: dict, valo: dict, operations: list[dict], palier: str, config: dict, maintenant: datetime) -> tuple[list[dict], list[str], list[dict]]:
+    """Ordres de la décision du jour (ventes puis achats). Renvoie (ordres, notes, arbitrages expliqués)."""
     cr = config["reequilibrage"]
     val = valo["valeur"]
-    notes = []
+    dmin = config["detention_min_jours"]
+    notes, arbitrages = [], []
     cur = {s: p.get("poids", 0) for s, p in etat["positions"].items()}
-    cib = {s: e["cible"] for s, e in c["lignes"].items()}
-    # dérive par classe
-    classes_cur, classes_cib = {}, {}
-    for s, p in etat["positions"].items():
-        classes_cur[p.get("classe")] = classes_cur.get(p.get("classe"), 0) + cur[s]
-    for s, e in c["lignes"].items():
-        classes_cib[e["classe"]] = classes_cib.get(e["classe"], 0) + e["cible"]
-    derive = {k for k in set(classes_cur) | set(classes_cib) if abs(classes_cur.get(k, 0) - classes_cib.get(k, 0)) > cr["seuil_points"]}
     en_attente = {o["symbole"] for o in etat.get("ordres", []) if o.get("statut") == "en attente" and o["sens"] == "vente"}
     ventes, achats = [], []
-    for s in sorted(set(cur) | set(cib)):
-        if s in en_attente:
+
+    def arbitrage(s, nom, action, raison):
+        arbitrages.append({"symbole": s, "nom": nom, "action": action, "raison": raison})
+
+    # 1. Lignes hors cibles : soldées progressivement (règles enfreintes d'abord, puis les plus petites)
+    hors = [(s, p) for s, p in etat["positions"].items() if s not in c["lignes"] and s not in en_attente]
+    hors.sort(key=lambda sp: (not c["exclusions"].get(sp[0], (False, ""))[0], cur.get(sp[0], 0)))
+    sorties = 0
+    for s, p in hors:
+        dure, raison = c["exclusions"].get(s, (False, "non retenue"))
+        if jours_detenus(p, maintenant) < dmin:
+            arbitrage(s, p["nom"], "conservée pour l'instant",
+                      f"{raison}. Détention minimale de {dmin} jours : sortie possible à partir du {date_liberation(p, config)}.")
             continue
-        t, w = cib.get(s, 0.0), cur.get(s, 0.0)
-        e = c["lignes"].get(s)
+        if sorties >= config["transition"]["sorties_max_par_jour"]:
+            arbitrage(s, p["nom"], "sortie reportée",
+                      f"{raison}. Sorties étalées : {config['transition']['sorties_max_par_jour']} au plus par jour ; sortie lors d'une prochaine décision.")
+            continue
+        texte = f"Mise en conformité : {p['nom']} ({fr(cur.get(s, 0), 1)} % du portefeuille) est soldée. Motif : {raison}."
+        ventes.append(_ordre_vente(etat, p, p["quantite"], "mise en conformité", texte, False, None, 0, cur.get(s, 0), palier, config, maintenant))
+        arbitrage(s, p["nom"], "vente totale", raison + ("" if dure else " (règle de concentration : 15 lignes au plus, 4 % minimum)"))
+        sorties += 1
+
+    # 2. Lignes cibles déjà détenues : rééquilibrage au-delà du seuil
+    for s, e in c["lignes"].items():
         p = etat["positions"].get(s)
-        if s in c["sorties"]:
-            motif, texte, imposee = c["sorties"][s]
-            ventes.append(_ordre_vente(etat, p, p["quantite"], motif, texte, imposee, (e or {}).get("ligne"), t, w, palier, config, maintenant))
+        if p is None or s in en_attente:
             continue
-        if e and e.get("tenue"):
-            continue
-        if p is None:
-            if t >= (cr["ligne_min"] if e["poche"] == "coeur" else config["satellites"]["ligne_min"]) and t * val / 100 >= cr["ordre_min_eur"]:
-                achats.append(_ordre_achat(etat, e, t * val / 100, t, 0.0, palier, config, maintenant, "entrée"))
-            continue
-        if t <= 0:
-            texte = f"{p['nom']} ne figure plus dans les cibles (allocation modèle du chef d'orchestre ou satellites retenus)."
-            ventes.append(_ordre_vente(etat, p, p["quantite"], "sortie de l'allocation", texte, False, (e or {}).get("ligne"), t, w, palier, config, maintenant))
-            continue
+        t, w = e["cible"], cur.get(s, 0)
         diff = t - w
-        if abs(diff) < cr["seuil_points"] and not (p.get("classe") in derive and abs(diff) >= cr["seuil_ligne_classe"]):
+        sous_minimum = w < config["ligne_min"] <= t
+        if abs(diff) < cr["seuil_points"] and not sous_minimum:
             continue
         montant = abs(diff) * val / 100
         if montant < cr["ordre_min_eur"]:
             continue
-        if diff > 0:
+        interdit = (etat.get("interdits") or {}).get(s)
+        if diff > 0 and interdit and interdit["jusqua"] > maintenant.date().isoformat():
+            arbitrage(s, p["nom"], "renforcement reporté", f"poids {fr(w, 1)} % pour une cible de {fr(t, 1)} % ; vente partielle récente "
+                      f"({interdit['motif']}) : pas de rachat avant le {interdit['jusqua']}.")
+        elif diff > 0:
             achats.append(_ordre_achat(etat, e, montant, t, w, palier, config, maintenant, "renforcement"))
+            arbitrage(s, p["nom"], "renforcement", f"poids {fr(w, 1)} % pour une cible de {fr(t, 1)} %"
+                      + (f" (minimum {fr(config['ligne_min'], 0)} % par ligne)" if sous_minimum else ""))
+        elif jours_detenus(p, maintenant) < dmin:
+            arbitrage(s, p["nom"], "réduction reportée", f"poids {fr(w, 1)} % pour une cible de {fr(t, 1)} % ; détention minimale de {dmin} jours "
+                      f"(réduction possible à partir du {date_liberation(p, config)}).")
         else:
             q = math.floor(montant / (p.get("dernier_cours_eur") or p["prix_revient_eur"]))
             if q > 0:
                 texte = f"Rééquilibrage : poids {fr(w, 1)} % pour une cible de {fr(t, 1)} % (écart {fr(diff, 1, True)} pt)."
                 ventes.append(_ordre_vente(etat, p, min(q, p["quantite"]), "rééquilibrage", texte, False, e.get("ligne"), t, w, palier, config, maintenant))
-    # rotation mensuelle : ventes discrétionnaires plafonnées
+                arbitrage(s, p["nom"], "réduction", f"poids {fr(w, 1)} % pour une cible de {fr(t, 1)} %")
+
+    # 3. Rotation mensuelle : rééquilibrages plafonnés (les mises en conformité sont étalées par jour)
     rc = config["rotation"]
     budget = rc["max_mensuelle_pct"] / 100 * val - rotation_utilisee(operations, maintenant, rc["jours"])
     gardees = []
-    for o in sorted(ventes, key=lambda o: (not o["imposee"], -o["_montant"])):
-        if not o["imposee"]:
+    for o in ventes:
+        if o["motif"] == "rééquilibrage":
             if o["_montant"] > budget:
-                notes.append(f"Vente de {o['nom']} reportée : rotation mensuelle maximale ({rc['max_mensuelle_pct']} % sur {rc['jours']} jours) atteinte.")
+                notes.append(f"Réduction de {o['nom']} reportée : rotation mensuelle maximale ({rc['max_mensuelle_pct']} % sur {rc['jours']} jours) atteinte.")
                 continue
             budget -= o["_montant"]
         gardees.append(o)
     ventes = gardees
-    # financement des achats : liquidités + ventes, au-dessus du plancher
+
+    # 4. Entrées : jamais au-delà de 15 lignes (les lignes hors règles encore détenues comptent)
+    nb_apres = len(etat["positions"]) - sum(1 for o in ventes if o["motif"] == "mise en conformité")
+    places = config["max_lignes"] - nb_apres
     mini = c["liquidites_min"]
     dispo = valo["liquidites"] + sum(o["_montant"] for o in ventes) * 0.995 - mini / 100 * val \
         - sum(o["montant_eur"] for o in etat.get("ordres", []) if o.get("statut") == "en attente" and o["sens"] == "achat")
-    besoin = sum(o["montant_eur"] for o in achats)
-    if besoin > dispo:
-        k = max(0.0, dispo) / besoin if besoin else 0
-        if k < 0.999:
-            notes.append(f"Achats réduits à {fr(k * 100, 0)} % : liquidités disponibles au-dessus du plancher de {fr(mini, 0)} % insuffisantes.")
+    besoin = sum(o["montant_eur"] for o in achats)  # renforcements de lignes déjà détenues, financés en premier
+    if besoin > max(0.0, dispo):
+        k = max(0.0, dispo) / besoin
+        notes.append(f"Renforcements réduits à {fr(k * 100, 0)} % : liquidités disponibles au-dessus du plancher de {fr(mini, 0)} % insuffisantes.")
         for o in achats:
             o["montant_eur"] = round(o["montant_eur"] * k, 2)
-        achats = [o for o in achats if o["montant_eur"] >= config["reequilibrage"]["ordre_min_eur"]]
+        achats = [o for o in achats if o["montant_eur"] >= cr["ordre_min_eur"]]
+    dispo -= sum(o["montant_eur"] for o in achats)
+    for s, e in sorted(c["lignes"].items(), key=lambda kv: -kv[1]["cible"]):
+        if s in etat["positions"]:
+            continue
+        nom = e["support"].get("nom") or e["ligne"].get("nom")
+        montant = e["cible"] * val / 100
+        if places <= 0:
+            arbitrage(s, nom, "entrée reportée", f"cible {fr(e['cible'], 1)} % ; {config['max_lignes']} lignes au plus : entrée quand les lignes hors règles auront été soldées.")
+            continue
+        if montant > dispo:
+            if dispo >= config["ligne_min"] / 100 * val:
+                montant = dispo
+            else:
+                arbitrage(s, nom, "entrée reportée", f"cible {fr(e['cible'], 1)} % ; liquidités disponibles au-dessus du plancher de {fr(mini, 0)} % insuffisantes.")
+                continue
+        achats.append(_ordre_achat(etat, e, montant, e["cible"], 0.0, palier, config, maintenant, "entrée"))
+        arbitrage(s, nom, "entrée", f"{e['poche'].replace('coeur', 'cœur')} : cible {fr(e['cible'], 1)} % ({e['zone']})")
+        dispo -= montant
+        places -= 1
     for o in ventes:
         o.pop("_montant", None)
-    return ventes + achats, notes
+    return ventes + achats, notes, arbitrages
 
 
 def _ordre_achat(etat, e, montant, cible, actuel, palier, config, maintenant, nature) -> dict:
@@ -433,9 +539,14 @@ def _ordre_achat(etat, e, montant, cible, actuel, palier, config, maintenant, na
                  + f" Stop initial à −{sp['stop_pct']} %.")
         extra = [f"Une baisse de {sp['stop_pct']} % déclencherait le stop : la perte serait alors réalisée."]
     else:
-        texte = (f"{'Entrée' if nature == 'entrée' else 'Renforcement'} cœur : {sup['nom']} pour la ligne « {l.get('nom')} » de l'allocation modèle "
-                 f"« {config.get('profil_libelle', config['profil'])} » du chef d'orchestre. Cible {fr(cible, 1)} % (poids actuel {fr(actuel, 1)} %). "
-                 f"Verdict « {l.get('verdict')} », conviction {l.get('conviction')}, score {ent(l.get('score'))}/100.")
+        if l.get("type") == "obligations":
+            pourquoi = (f"poids fixé par le verdict du chef d'orchestre (« {l.get('verdict')} », conviction {l.get('conviction')}) : "
+                        f"{fr(cible, 1)} %, pour la diversification et la faible corrélation aux actions.")
+        else:
+            pourquoi = (f"opportunité « {l.get('verdict')} » de conviction {l.get('conviction')}, score {ent(l.get('score'))}/100, "
+                        f"zone « {e.get('zone')} » ; signaux favorables de {len(r['agents'])} agents ({', '.join(r['agents'])}).")
+        texte = (f"{'Entrée' if nature == 'entrée' else 'Renforcement'} cœur : {sup['nom']} ({l.get('nom')}). Cible {fr(cible, 1)} % "
+                 f"(poids actuel {fr(actuel, 1)} %) : {pourquoi}")
         extra = []
     if sup.get("contango"):
         texte += " Support adossé à des contrats à terme : coût de renouvellement (contango) à prévoir."
@@ -460,6 +571,7 @@ def _ordre_vente(etat, p, quantite, motif, texte, imposee, ligne, cible, actuel,
         "stop": ["Le cours peut rebondir juste après le stop : la baisse peut n'être qu'un repli passager."],
         "prise de bénéfices": ["La tendance peut se prolonger : la partie vendue ne profitera pas d'une hausse supplémentaire."],
         "plancher de liquidités": ["Si le stress du marché retombe vite, les liquidités supplémentaires coûteront du rendement."],
+        "mise en conformité": ["La ligne peut progresser après sa vente : la règle de concentration privilégie la lisibilité et les meilleures convictions."],
     }.get(motif, ["La ligne pourrait revenir dans l'allocation : vente et rachat coûteraient des frais."])
     montant = quantite * (p.get("dernier_cours_eur") or p["prix_revient_eur"])
     o = P.nouvel_ordre(etat, maintenant, config, sens="vente", symbole=p["symbole"], nom=p["nom"], ligne_id=p.get("ligne_id"), poche=p.get("poche"),
@@ -478,12 +590,14 @@ def controler_risques(etat: dict, lignes: dict | None, palier: str | None, valo:
     sp = config["stops"]
     ordres = []
     deja = {o["symbole"] for o in etat.get("ordres", []) if o.get("statut") == "en attente" and o["sens"] == "vente"}
+    dmin = config["detention_min_jours"]
     for s, p in list(etat["positions"].items()):
         if s in deja:
             continue
         cours = p.get("dernier_cours_local")
         ligne = (lignes or {}).get(p.get("ligne_id")) if lignes is not None else None
-        if lignes is not None and ligne is not None:
+        libre = jours_detenus(p, maintenant) >= dmin  # détention minimale : seul le stop peut l'écourter
+        if lignes is not None and ligne is not None and libre:
             if ligne.get("verdict") in SORTIE:
                 ordres.append(_ordre_vente(etat, p, p["quantite"], "sortie sur verdict",
                                            f"Le chef d'orchestre est passé à « {ligne['verdict']} » sur {ligne['nom']} (score {ent(ligne.get('score'))}/100).",
@@ -514,7 +628,7 @@ def controler_risques(etat: dict, lignes: dict | None, palier: str | None, valo:
                 continue
         else:
             p["confirmations_stop"], p["dernier_releve_stop"] = 0, None
-        if not p.get("prise_benefices_faite") and cours >= revient * (1 + sp["prise_benefices_pct"] / 100):
+        if libre and not p.get("prise_benefices_faite") and cours >= revient * (1 + sp["prise_benefices_pct"] / 100):
             q = math.floor(p["quantite"] * sp["prise_benefices_part"])
             if q > 0:
                 texte = (f"Prise de bénéfices partielle sur {p['nom']} : +{fr((cours / revient - 1) * 100, 1)} % depuis le prix de revient "
@@ -529,8 +643,8 @@ def controler_risques(etat: dict, lignes: dict | None, palier: str | None, valo:
         if cash_pct < mini - config["tolerance_plancher_points"]:
             manque = (mini - cash_pct) / 100 * valo["valeur"]
             vendus = {o["symbole"] for o in ordres} | deja
-            pos = [p for s, p in etat["positions"].items() if s not in vendus and p.get("valeur_eur")]
-            total = sum(p["valeur_eur"] for p in pos)
+            pos = [p for s, p in etat["positions"].items() if s not in vendus and p.get("valeur_eur") and jours_detenus(p, maintenant) >= dmin]
+            total = sum(p["valeur_eur"] for p in pos) or 1
             for p in pos:
                 part = manque * p["valeur_eur"] / total
                 q = min(p["quantite"], math.ceil(part / (p.get("dernier_cours_eur") or p["prix_revient_eur"])))

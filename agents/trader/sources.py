@@ -150,16 +150,19 @@ def _graine(texte: str) -> int:
 class FournisseurSimule:
     """Cours synthétiques. Séances du lundi au vendredi, barres horaires de 14 h 30 à 20 h 30 UTC (clôture 21 h).
     chocs = {symbole: [(date ISO, facteur), …]} : le cours est multiplié par le facteur à partir de cette date (incluse).
-    tendances = {symbole: rendement quotidien moyen imposé}. echecs = symboles sans cours."""
+    tendances = {symbole: rendement quotidien moyen imposé}. echecs = symboles sans cours.
+    jumeaux = {symbole: symbole de référence} : mêmes chocs aléatoires quotidiens que la référence (corrélation ≈ 1)."""
     simule = True
 
     def __init__(self, debut: str = "2026-06-01", chocs: dict | None = None, tendances: dict | None = None, echecs: set | None = None,
-                 graine: str = "trader"):
+                 graine: str = "trader", jumeaux: dict | None = None):
         self.debut = date.fromisoformat(debut)
         self.chocs = chocs or {}
         self.tendances = tendances or {}
         self.echecs = set(echecs or ())
         self.graine = graine
+        self.jumeaux = jumeaux or {}
+        self._dernier = {}
         self.maintenant: datetime | None = None
         self._cache = {}
         self.appels = []
@@ -177,18 +180,23 @@ class FournisseurSimule:
         cle = (s, d)
         if cle in self._cache:
             return self._cache[cle]
-        rng = random.Random(_graine(f"{self.graine}:{s}"))
-        base = 20 + rng.random() * 180
-        vol = 0.12 + rng.random() * 0.33
+        ref = self.jumeaux.get(s, s)
+        dernier = self._dernier.get(s)
+        if dernier is None:
+            rng = random.Random(_graine(f"{self.graine}:{s}"))
+            base = 20 + rng.random() * 180
+            vol = 0.12 + random.Random(_graine(f"{self.graine}:{ref}")).random() * 0.33 if s in self.jumeaux else 0.12 + rng.random() * 0.33
+            dernier = (self.debut - timedelta(days=1), base, vol)
+        jour, prix, vol = dernier
         mu = self.tendances.get(s, 0.0003)
-        prix = base
-        jour = self.debut
-        while jour <= d:
-            if jour.weekday() < 5:
-                r = random.Random(_graine(f"{self.graine}:{s}:{jour.isoformat()}")).gauss(0, 1)
-                prix *= math.exp(mu + vol / math.sqrt(252) * r)
-                self._cache[(s, jour)] = prix
+        while jour < d:
             jour += timedelta(days=1)
+            if jour.weekday() < 5:
+                r = random.Random(_graine(f"{self.graine}:{ref}:{jour.isoformat()}")).gauss(0, 1)
+                prix *= math.exp(mu + vol / math.sqrt(252) * r)
+            self._cache[(s, jour)] = prix
+        if jour > self._dernier.get(s, (date.min,))[0]:
+            self._dernier[s] = (jour, prix, vol)
         return self._cache.get(cle, prix)
 
     def _facteur(self, s: str, d: date) -> float:
@@ -200,8 +208,11 @@ class FournisseurSimule:
 
     def _barres(self, s: str, d: date) -> list[tuple[datetime, float]]:
         """Barres horaires (heure, cours) d'une séance : interpolation de la clôture précédente à la clôture du jour."""
-        jours = self._jours(d)
-        prec = jours[-2] if len(jours) >= 2 else None
+        prec = d - timedelta(days=1)
+        while prec.weekday() >= 5:
+            prec -= timedelta(days=1)
+        if prec < self.debut:
+            prec = None
         f1 = self._facteur(s, d)
         # le choc éventuel du jour se lit dès l'ouverture (écart à l'ouverture)
         c0 = (self._cloture(s, prec) * f1) if prec else self._cloture(s, d) * f1
@@ -253,9 +264,11 @@ class FournisseurSimule:
             if s in self.echecs:
                 continue
             pts = []
-            for d in self._jours(fin.date() - timedelta(days=1)):
-                if d >= fin.date() - timedelta(days=jours):
+            d = max(self.debut, fin.date() - timedelta(days=jours))
+            while d < fin.date():
+                if d.weekday() < 5:
                     pts.append((d.isoformat(), self._cloture(s, d) * self._facteur(s, d)))
+                d += timedelta(days=1)
             if pts:
                 res[s] = pts
         return res

@@ -7,20 +7,32 @@ import json
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
-PAYS = [("US", "États-Unis", "SPY", 58, "Renforcer", "moyenne"), ("JP", "Japon", "EWJ", 62, "Renforcer", "forte"),
-        ("KR", "Corée du Sud", "EWY", 63, "Renforcer", "forte"), ("DE", "Allemagne", "EWG", 52, "Neutre", "moyenne"),
-        ("IN", "Inde", "INDA", 57, "Renforcer", "moyenne"), ("BR", "Brésil", "EWZ", 41, "Alléger", "moyenne"),
-        ("EG", "Égypte", None, 55, "Renforcer", "faible")]
+PAYS = [  # code, nom, ETF, score, verdict, conviction, zone, objection
+    ("US", "États-Unis", "SPY", 58, "Renforcer", "moyenne", "etats_unis", False), ("JP", "Japon", "EWJ", 62, "Renforcer", "forte", "japon", False),
+    ("KR", "Corée du Sud", "EWY", 63, "Renforcer", "forte", "monde", False), ("DE", "Allemagne", "EWG", 52, "Neutre", "moyenne", "zone_euro", False),
+    ("IN", "Inde", "INDA", 57, "Renforcer", "moyenne", "emergents", False), ("BR", "Brésil", "EWZ", 41, "Alléger", "moyenne", "emergents", False),
+    ("EG", "Égypte", None, 55, "Renforcer", "faible", "emergents", False), ("SE", "Suède", "EWD", 59, "Renforcer", "moyenne", "monde", False),
+    ("MX", "Mexique", "EWW", 56, "Renforcer", "moyenne", "emergents", False), ("TW", "Taïwan", "EWT", 62, "Renforcer", "moyenne", "monde", True),
+    ("GB", "Royaume-Uni", "EWU", 53, "Neutre", "moyenne", "monde", False)]
+SECTEURS = [  # id, nom, ETF, zone, secteur, score, verdict, conviction, objection
+    ("secteur-etats_unis-sante", "Santé — États-Unis", "XLV", "etats_unis", "Health Care", 64, "Renforcer", "forte", False),
+    ("secteur-etats_unis-finance", "Finance — États-Unis", "XLF", "etats_unis", "Financials", 63, "Renforcer", "forte", False),
+    ("secteur-europe-finance", "Finance — Europe", "EXV1.DE", "europe", "Financials", 60, "Renforcer", "moyenne", False),
+    ("secteur-monde-technologie", "Technologie — Monde", "IXN", "monde", "Information Technology", 67, "Renforcer", "forte", False),
+    ("secteur-etats_unis-energie", "Énergie — États-Unis", "XLE", "etats_unis", "Energy", 73, "Renforcer fortement", "moyenne", True)]
+A_SURVEILLER = ["secteur-etats_unis-energie", "entreprise-KKK", "pays-TW"]
 ENTREPRISES = [
     # ticker, nom, pays, secteur, score, verdict, conviction, objection sérieuse, agents favorables
     ("AAA", "Alpha Assurances", "US", "Financials", 72, "Renforcer fortement", "forte", False, ("entreprises", "pays", "inities")),
     ("BBB", "Beta Industrie", "US", "Industrials", 68, "Renforcer", "forte", False, ("entreprises", "pays")),
     ("CCC.T", "Gamma Japon", "JP", "Consumer Discretionary", 66, "Renforcer", "moyenne", False, ("entreprises", "macro")),
-    ("DDD.L", "Delta Londres", "GB", "Energy", 65, "Renforcer", "moyenne", False, ("entreprises", "pays")),
-    ("EEE", "Epsilon Momentum", "US", "Information Technology", 70, "Renforcer fortement", "moyenne", True, ("entreprises", "pays")),
+    ("DDD.L", "Delta Londres", "GB", "Energy", 65, "Renforcer", "forte", False, ("entreprises", "pays")),
+    ("EEE", "Epsilon Momentum", "US", "Information Technology", 70, "Renforcer fortement", "forte", True, ("entreprises", "pays")),
     ("FFF", "Phi Source Unique", "US", "Health Care", 69, "Renforcer", "forte", False, ("entreprises",)),
     ("GGG", "Gamma Faible", "US", "Materials", 64, "Renforcer", "faible", False, ("entreprises", "pays")),
     ("HHH", "Eta Neutre", "US", "Utilities", 50, "Neutre", "moyenne", False, ("entreprises", "pays")),
+    ("III", "Iota Consommation", "US", "Consumer Staples", 67, "Renforcer", "forte", False, ("entreprises", "pays")),
+    ("KKK", "Kappa Surveillée", "US", "Communication", 71, "Renforcer", "forte", False, ("entreprises", "pays")),
 ]
 
 
@@ -46,12 +58,14 @@ def ligne(id_, type_, nom, score, verdict, conviction, symbole=None, objection=F
 
 
 def chef(jour: str, modifs: dict | None = None) -> dict:
-    pays = [ligne(f"pays-{c}", "pays", n, s, v, cv, sym, cle=c, pays=c) for c, n, sym, s, v, cv in PAYS]
+    pays = [ligne(f"pays-{c}", "pays", n, s, v, cv, sym, obj, cle=c, pays=c, zone=z) for c, n, sym, s, v, cv, z, obj in PAYS]
+    secteurs = [ligne(i, "secteurs", n, s, v, cv, sym, obj, agents=("entreprises", "pays", "macro"), zone=z, zone_secteur=z, secteur=sec, secteur_nom=sec)
+                for i, n, sym, z, sec, s, v, cv, obj in SECTEURS]
     ent = [ligne(f"entreprise-{t}", "entreprises", n, s, v, cv, t, obj, ag, cle=t, pays=p, secteur=sec, secteur_nom=sec,
                  devise={"US": "USD", "JP": "JPY", "GB": "GBP"}[p]) for t, n, p, sec, s, v, cv, obj, ag in ENTREPRISES]
-    matieres = [ligne("matiere-brent", "matieres", "Pétrole Brent", 61, "Renforcer", "faible", "BZ=F", themes=["petrole"]),
+    matieres = [ligne("matiere-brent", "matieres", "Pétrole Brent", 61, "Renforcer", "moyenne", "BZ=F", True, themes=["petrole"]),
                 ligne("matiere-cacao", "matieres", "Cacao", 50, "Neutre", "faible", "CC=F")]
-    or_ = ligne("or", "or", "Or", 55, "Neutre", "moyenne", "GC=F", themes=["or"])
+    or_ = ligne("or", "or", "Or", 58, "Renforcer", "moyenne", "GC=F", themes=["or"])
     obligs = [ligne("oblig-us-courtes", "obligations", "Obligations US courtes", 50, "Neutre", "moyenne", "SHY"),
               ligne("oblig-us-longues", "obligations", "Obligations US longues", 53, "Neutre", "faible", "TLT"),
               ligne("oblig-euro-courtes", "obligations", "Obligations euro courtes", 48, "Neutre", "moyenne", "IBGS.AS"),
@@ -63,6 +77,7 @@ def chef(jour: str, modifs: dict | None = None) -> dict:
         ("oblig-euro-courtes", "obligations", 6), ("or", "or", 5), ("matiere-brent", "matieres", 3), ("matiere-cacao", "matieres", 1),
         ("liquidites-eur", "liquidites", 7), ("entreprise-AAA", "actions", 2.5), ("entreprise-BBB", "actions", 2.5)]
     d = {"date": jour, "mode": "complet", "maj": f"{jour}T07:15:00Z", "regime": {"palier": "Vigilance"},
+         "panorama": {"a_surveiller": [{"id": i} for i in A_SURVEILLER]}, "secteurs": secteurs,
          "pays": pays, "matieres": matieres, "or": or_, "obligations": obligs, "liquidites": liqs, "entreprises": ent,
          "entrees": [{"cle": a, "etat": "à jour", "degrade": False} for a in ("pays", "macro", "risque", "entreprises", "inities", "geopolitique")],
          "allocation": {"palier": "Vigilance", "contraintes": {"max_pays": 40, "max_secteur": 12, "max_theme": 20},
@@ -71,6 +86,9 @@ def chef(jour: str, modifs: dict | None = None) -> dict:
                             for i, c, p in alloc_lignes]}}}}
     for (type_, id_), champs in (modifs or {}).items():
         cible = [d[type_]] if type_ == "or" else d[type_]
+        if type_ == "panorama":
+            d["panorama"].update(champs)
+            continue
         for l in cible:
             if l["id"] == id_:
                 l.update(champs)
