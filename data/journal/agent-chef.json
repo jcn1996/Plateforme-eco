@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genere_le": "2026-11-09T22:01:44Z",
+    "genere_le": "2026-11-10T02:26:27Z",
     "source": "agent-chef",
     "version_agent": "1.0",
     "description": "Entrées, recalcul, changements de verdict, alertes et briefing, à chaque exécution",
@@ -9,7 +9,7 @@
       "libelle": "Chef d'orchestre",
       "ordre": 10,
       "workflow": "agent-chef.yml",
-      "derniere_execution": "2026-11-09T22:01:44Z",
+      "derniere_execution": "2026-11-10T02:26:27Z",
       "prochaine_prevue": "2026-11-10T07:15:00Z",
       "intervalle_min": 565,
       "planning": {
@@ -19,74 +19,86 @@
         ],
         "fuseau": "UTC"
       },
-      "sources_total": 11,
-      "sources_ok": 11,
+      "sources_total": 13,
+      "sources_ok": 13,
       "sources": [
+        {
+          "nom": "Yahoo Finance (cours des ETF sectoriels)",
+          "etat": "ok",
+          "detail": "33/33 ETF sectoriels",
+          "derniere_donnee_valide": "2026-11-10T02:26:27Z"
+        },
+        {
+          "nom": "Émetteurs et Yahoo Finance (flux des ETF sectoriels : SSGA, iShares)",
+          "etat": "ok",
+          "detail": "ssga : 11, ishares : 11, yahoo_parts : 15",
+          "derniere_donnee_valide": "2026-11-10T02:26:27Z"
+        },
         {
           "nom": "Agent pays (data/pays.json)",
           "etat": "ok",
-          "detail": "à jour (6 h)",
+          "detail": "à jour (10 h)",
           "derniere_donnee_valide": "2026-11-09T16:05:36Z"
         },
         {
           "nom": "Agent macro (data/macro.json)",
           "etat": "ok",
-          "detail": "à jour (5 h)",
+          "detail": "à jour (10 h)",
           "derniere_donnee_valide": "2026-11-09T16:50:52Z"
         },
         {
           "nom": "Agent marchés (data/marches.json)",
           "etat": "ok",
           "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-09T21:46:15Z"
+          "derniere_donnee_valide": "2026-11-10T02:16:20Z"
         },
         {
           "nom": "Agent risque (data/risque.json)",
           "etat": "ok",
-          "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-09T21:31:35Z"
+          "detail": "à jour (1 h)",
+          "derniere_donnee_valide": "2026-11-10T01:29:40Z"
         },
         {
           "nom": "Agent géopolitique (data/geopolitique.json)",
           "etat": "ok",
-          "detail": "à jour (1 h)",
-          "derniere_donnee_valide": "2026-11-09T21:16:50Z"
+          "detail": "à jour (0 h)",
+          "derniere_donnee_valide": "2026-11-10T02:16:31Z"
         },
         {
           "nom": "Agent matières premières (data/matieres_premieres.json)",
           "etat": "ok",
-          "detail": "à jour (53 h)",
-          "derniere_donnee_valide": "2026-11-07T16:57:00Z"
+          "detail": "à jour (4 h)",
+          "derniere_donnee_valide": "2026-11-09T22:32:14Z"
         },
         {
           "nom": "Agent entreprises (data/entreprises.json)",
           "etat": "ok",
-          "detail": "à jour (26 h)",
-          "derniere_donnee_valide": "2026-11-08T19:35:05Z"
+          "detail": "à jour (3 h)",
+          "derniere_donnee_valide": "2026-11-09T23:29:13Z"
         },
         {
           "nom": "Agent entreprises (pépites) (data/pepites.json)",
           "etat": "ok",
-          "detail": "à jour (26 h)",
-          "derniere_donnee_valide": "2026-11-08T19:35:05Z"
+          "detail": "à jour (3 h)",
+          "derniere_donnee_valide": "2026-11-09T23:29:13Z"
         },
         {
           "nom": "Agent initiés (data/inities.json)",
           "etat": "ok",
-          "detail": "à jour (5 h)",
+          "detail": "à jour (10 h)",
           "derniere_donnee_valide": "2026-11-09T16:54:42Z"
         },
         {
           "nom": "Analyses à la demande (data/analyses/index.json)",
           "etat": "ok",
-          "detail": "à jour (152 h)",
+          "detail": "à jour (157 h)",
           "derniere_donnee_valide": "2026-11-03T13:35:53Z"
         },
         {
           "nom": "Contradicteur (agent risque) (data/signaux/revues.json)",
           "etat": "ok",
-          "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-09T21:31:47Z"
+          "detail": "à jour (1 h)",
+          "derniere_donnee_valide": "2026-11-10T01:30:12Z"
         }
       ],
       "degrade": false,
@@ -1766,9 +1778,76 @@
         "analyses": "à jour",
         "revues": "à jour"
       }
+    },
+    {
+      "genere_le": "2026-11-10T02:26:27Z",
+      "mode": "leger",
+      "recalcul": true,
+      "declencheurs": [
+        "choc de marché : Pétrole WTI −5,0 %",
+        "événement géopolitique : Événement de gravité 4 : Poursuite des négociations de cessez-le-feu et de la situation à Gaza"
+      ],
+      "palier": "Vigilance",
+      "opportunites": 172,
+      "changements": [],
+      "alertes": 4,
+      "alertes_ecartees": [
+        "entreprises · ORIX Corporation : BPA publié +115,1 % par rapport à l'estimation : holding, fonds, BDC ou SPAC",
+        "entreprises · Pinnacle West Capital Corporation : guidance relevée (03/11/2026) : fonds, véhicule de crédit, holding ou SPAC"
+      ],
+      "exclues": [
+        "Azimut Holding S.p.A.",
+        "Bajaj Finserv Ltd.",
+        "China International Capital Corporation Limited",
+        "Equitable Holdings, Inc.",
+        "Georgia Capital PLC",
+        "Hilltop Holdings Inc.",
+        "Investor AB (publ)",
+        "ORIX Corporation",
+        "Partners Group Holding AG",
+        "Patria Investments Limited",
+        "SEI Investments Company",
+        "Victory Capital Holdings, Inc.",
+        "Virtus Investment Partners, Inc.",
+        "Vontobel Holding AG",
+        "Voya Financial, Inc.",
+        "Vylor Inc.",
+        "Wendel",
+        "Yuanta Financial Holding Co., Ltd."
+      ],
+      "coherence_retrogradees": [],
+      "raison_briefing_regles": null,
+      "briefing": null,
+      "gemini": {
+        "appels": 0,
+        "reussites": 0,
+        "quota_atteint": false,
+        "rejets": [],
+        "erreurs": []
+      },
+      "suivi": {
+        "ajoutes": null,
+        "mesures": null,
+        "en_attente": null,
+        "total": 215,
+        "erreur": null
+      },
+      "entrees": {
+        "pays": "à jour",
+        "macro": "à jour",
+        "marches": "à jour",
+        "risque": "à jour",
+        "geopolitique": "à jour",
+        "matieres_premieres": "à jour",
+        "entreprises": "à jour",
+        "pepites": "à jour",
+        "inities": "à jour",
+        "analyses": "à jour",
+        "revues": "à jour"
+      }
     }
   ],
-  "derniere_execution": "2026-11-09T22:01:44Z",
+  "derniere_execution": "2026-11-10T02:26:27Z",
   "prochaine_prevue": "2026-11-10T07:15:00Z",
   "intervalle_min": 565,
   "planning": {
