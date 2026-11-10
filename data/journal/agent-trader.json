@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genere_le": "2026-11-10T07:46:30Z",
+    "genere_le": "2026-11-10T08:16:30Z",
     "source": "agent-trader",
     "version_agent": "1.0",
     "description": "Ordres exécutés, ordres imposés, décisions et attentes de l'agent trader (démo), à chaque exécution",
@@ -9,9 +9,9 @@
       "libelle": "Agent trader (démo)",
       "ordre": 11,
       "workflow": "agent-trader.yml",
-      "derniere_execution": "2026-11-10T07:46:30Z",
-      "prochaine_prevue": "2026-11-10T08:05:00Z",
-      "intervalle_min": 32,
+      "derniere_execution": "2026-11-10T08:16:30Z",
+      "prochaine_prevue": "2026-11-10T09:05:00Z",
+      "intervalle_min": 60,
       "planning": {
         "crons": [
           "33 7 * * 1-5",
@@ -31,20 +31,20 @@
         {
           "nom": "Agent risque (palier) (data/risque.json)",
           "etat": "ok",
-          "detail": "0 h",
+          "detail": "1 h",
           "derniere_donnee_valide": "2026-11-10T07:31:45Z"
         },
         {
           "nom": "Agent marchés (indice de référence, EUR/USD ; facultatif)",
           "etat": "ok",
           "detail": "à jour",
-          "derniere_donnee_valide": "2026-11-10T07:31:39Z"
+          "derniere_donnee_valide": "2026-11-10T08:01:50Z"
         },
         {
           "nom": "Yahoo Finance via yfinance (cours, change, exécution)",
           "etat": "ok",
           "detail": "27 position(s) valorisée(s)",
-          "derniere_donnee_valide": "2026-11-10T07:46:30Z"
+          "derniere_donnee_valide": "2026-11-10T08:16:30Z"
         }
       ],
       "degrade": true,
@@ -387,11 +387,27 @@
       ],
       "ordres_en_attente": 1,
       "cours_manquants": []
+    },
+    {
+      "genere_le": "2026-11-10T08:16:30Z",
+      "mode": "horaire",
+      "valeur": 100224.0,
+      "liquidites_pct": 13.32,
+      "palier": "Vigilance",
+      "executees": [],
+      "annulees": [],
+      "ordres_imposes": [],
+      "decision": null,
+      "attente": [
+        "chef d'orchestre : agent dégradé (Gemini (rédaction du briefing) : échec)"
+      ],
+      "ordres_en_attente": 1,
+      "cours_manquants": []
     }
   ],
-  "derniere_execution": "2026-11-10T07:46:30Z",
-  "prochaine_prevue": "2026-11-10T08:05:00Z",
-  "intervalle_min": 32,
+  "derniere_execution": "2026-11-10T08:16:30Z",
+  "prochaine_prevue": "2026-11-10T09:05:00Z",
+  "intervalle_min": 60,
   "planning": {
     "crons": [
       "33 7 * * 1-5",
