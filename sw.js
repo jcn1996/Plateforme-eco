@@ -17,10 +17,13 @@
    - Séries de cours des graphiques (data/cours/), matières premières (data/matieres_premieres.json),
      initiés (data/inities.json) et données alternatives (data/donnees_alternatives.json) : non préchargées,
      lues à la demande.
+   - Mes portefeuilles : les positions sont dans IndexedDB, jamais dans ce cache. Le fichier chiffré
+     de synchronisation (requête « no-store » ou avec jeton) et la recherche ISIN → ticker
+     (Yahoo Finance) ne passent pas par le cache. SheetJS (lecture Excel) est chargé à la demande.
    Changer VERSION vide les anciens caches chez tous les utilisateurs.
    ========================================================================== */
 
-const VERSION = 'salle-controle-v48';
+const VERSION = 'salle-controle-v49';
 
 const FICHIERS_APPLI = [
   './',
@@ -58,6 +61,12 @@ const FICHIERS_APPLI = [
   'js/chef.js',
   'js/donnees-alternatives.js',
   'js/menu.js',
+  'js/mes-portefeuilles.js',
+  'js/portefeuilles-donnees.js',
+  'js/portefeuilles-chiffrement.js',
+  'js/portefeuilles-import.js',
+  'js/portefeuilles-analyse.js',
+  'js/portefeuilles-exemple.js',
   'assets/icone.svg',
   'assets/icone-192.png',
   'assets/icone-512.png',
@@ -99,6 +108,11 @@ self.addEventListener('fetch', (evenement) => {
 
   // TradingView : scripts et données jamais mis en cache (réseau direct, sans passer par le service worker)
   if (/(^|\.)tradingview(-widget)?\.com$/.test(url.hostname)) return;
+
+  // Mes portefeuilles : jamais de cache pour la synchronisation chiffrée (requête « no-store » ou
+  // authentifiée) ni pour la recherche ISIN → ticker (Yahoo Finance)
+  if (requete.cache === 'no-store' || requete.headers.has('Authorization')) return;
+  if (/(^|\.)finance\.yahoo\.com$/.test(url.hostname)) return;
 
   if (url.origin !== location.origin) {
     evenement.respondWith(cacheEtMiseAJour(evenement, requete));

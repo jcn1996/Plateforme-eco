@@ -57,7 +57,7 @@ Prototype d'une application personnelle de suivi économique mondial, pensée d'
   - la lecture de l'agent ;
   - les sources et les dates exactes de chaque valeur.
 - **Tendances** : une flèche ↑ ↓ → indique l'évolution depuis la mise à jour précédente, sur chaque indicateur et chaque note (pays, secteur, entreprise). Le vert signale une note qui s'améliore, le rouge une note qui se dégrade.
-- **En-tête et Menu** : sur téléphone et tablette, l'en-tête ne garde que le titre, la pastille du palier de risque, la recherche, le portefeuille démo (avec sa performance) et le bouton **Menu**. Le Menu ouvre un panneau qui regroupe tous les écrans, classés : *Synthèse* (Où investir, Briefing), *Analyses* (Vue macro, Pays · Classement, Pépites, Matières premières, Géopolitique, Risque, Initiés, Données alternatives), *Outils* (Analyser une entreprise, Mes analyses, Comparateur, Mes alertes), *Suivi* (Portefeuille démo, Fiabilité, Santé des agents) et *Affichage* (Légende des couleurs, Mode léger). Une pastille rouge sur « Menu » signale un problème dans la santé des agents. Sur grand écran (à partir de 1 280 px), des raccourcis supplémentaires s'ajoutent à l'en-tête (icônes, libellé au survol), mais tout reste accessible par le Menu. Les bandeaux et onglets qui défilent horizontalement se font glisser au doigt.
+- **En-tête et Menu** : sur téléphone et tablette, l'en-tête ne garde que le titre, la pastille du palier de risque, la recherche, le portefeuille démo (avec sa performance) et le bouton **Menu**. Le Menu ouvre un panneau qui regroupe tous les écrans, classés : *Synthèse* (Où investir, Briefing), *Analyses* (Vue macro, Pays · Classement, Pépites, Matières premières, Géopolitique, Risque, Initiés, Données alternatives), *Outils* (Analyser une entreprise, Mes analyses, Comparateur, Mes alertes), *Suivi* (Mes portefeuilles, Portefeuille démo, Fiabilité, Santé des agents) et *Affichage* (Légende des couleurs, Mode léger). Une pastille rouge sur « Menu » signale un problème dans la santé des agents. Sur grand écran (à partir de 1 280 px), des raccourcis supplémentaires s'ajoutent à l'en-tête (icônes, libellé au survol), mais tout reste accessible par le Menu. Les bandeaux et onglets qui défilent horizontalement se font glisser au doigt.
 - **Recherche** (loupe dans l'en-tête) : pays, secteurs et entreprises, par nom ou ticker, sans tenir compte des accents. Toucher un résultat ouvre la fiche et centre le globe.
 - **Fraîcheur des données** : sous chaque fiche, « Mis à jour le … · Source : … », lu dans le bloc `meta` des JSON.
 - **Filtres du globe** (puces en bas de l'écran) : la note globale, les 6 indicateurs des pays, les flux d'investissement et les risques.
@@ -444,6 +444,25 @@ python -m agents.trader --test --data /tmp/essai         # cours simulés, sans 
 python -m agents.trader.tests.simulation                 # simulation de 3 mois sur données de test
 ```
 
+## Mes portefeuilles (portefeuilles réels, sur l'appareil uniquement)
+
+**Confidentialité absolue : aucune donnée de portefeuille ne quitte l'appareil.** Les positions sont stockées dans IndexedDB (base `salle-controle-portefeuilles`), jamais envoyées sur Internet, jamais écrites dans ce dépôt (le `.gitignore` refuse en plus les sauvegardes, exports de courtier et fichiers de synchronisation). Le service worker ne met en cache ni la synchronisation ni la recherche de tickers. L'écran le rappelle en tête.
+
+- **Accès** : Menu › Suivi › **Mes portefeuilles** (`#/mes-portefeuilles`), avec une **vue globale** et une **vue par portefeuille** (PEA, compte-titres, assurance vie, PER…).
+- **Saisie** : plusieurs portefeuilles nommés ; ajout, modification et suppression manuels des lignes ; **import d'un fichier CSV ou Excel** exporté du courtier (séparateur et format des nombres détectés, lignes d'introduction et de total ignorées ; colonnes nom, ISIN, ticker, quantité, prix de revient, cours, valeur, devise reconnues en français et en anglais, export BoursoBank compris), avec un **écran de correspondance des colonnes** si la détection échoue. Excel est lu par SheetJS, chargé à la demande.
+- **ISIN → ticker** : d'abord **sur l'appareil, sans requête** (rapprochement du nom et du pays de l'ISIN avec les quelque 3 000 sociétés publiques de l'agent entreprises), puis Yahoo Finance (seul l'ISIN est transmis ; Yahoo n'autorise pas les appels depuis une page web, la plupart des navigateurs bloquent donc la réponse — OpenFIGI aussi, d'où le rapprochement local). Les titres non reconnus (OPCVM, unités de compte) sont classés **« fonds »**, avec une catégorie saisie à la main : classe d'actifs, zone ou pays, secteur, thèmes, indice de référence facultatif. Les requêtes par titre (Yahoo, fiches publiques des sociétés détenues) se coupent dans les réglages.
+- **Analyses** (données publiques des agents, calculées sur l'appareil, `js/portefeuilles-analyse.js`) :
+  - **expositions** par pays, secteur, devise, classe d'actifs et thème (IA, semi-conducteurs, or, énergie) ; un fonds est réparti selon sa zone (approximation affichée) ; **alertes de concentration** (10 % par titre, 50 % par pays, 30 % par secteur, 60 % par devise hors euro, 20 % par thème comme le chef d'orchestre) ;
+  - **corrélation** sur 1 an (rendements hebdomadaires) de chaque ligne avec le reste du portefeuille et avec le Nasdaq 100, **part du risque** de chaque ligne (contribution à la variance), **diversification effective** (nombre effectif de paris de risque, ratio de diversification), volatilité ; cours issus des fiches publiques des sociétés, des séries des agents (indices, ETF pays, or, URTH) ou de la synchronisation ; pour un fonds sans historique, l'indice de sa zone sert d'approximation (signalée) ;
+  - **crible** de chaque ligne : note de l'agent entreprises (ou de l'agent pays pour un ETF pays), recommandation « si détenu », signaux d'alerte, verdict et objections du contradicteur, « Ce qui pourrait donner tort » ;
+  - **cohérence avec le chef d'orchestre** : positions sur des opportunités « Alléger » ou « Éviter », opportunités « Renforcer » absentes du portefeuille ;
+  - **pistes de décorrélation** : opportunités « Renforcer » du chef d'orchestre dont la corrélation sur 1 an avec le portefeuille est faible ;
+  - **performance** : valeur (dernier cours public converti en euros, sinon valeur du courtier), plus-values latentes, performance depuis l'import comparée au MSCI World en euros (URTH ÷ EUR/USD), courbe base 100 (un point par jour d'ouverture ou de synchronisation).
+- **Sauvegarde** : export et import d'un fichier **chiffré par mot de passe** (AES-256-GCM, clé PBKDF2-SHA-256 à 600 000 itérations, WebCrypto) pour changer d'appareil.
+- **Synchronisation automatique (facultative)** : un second dépôt GitHub **privé** récupère chaque jour les positions (Interactive Brokers via Flex Web Service, eToro via son API officielle en lecture seule ; BoursoBank : import CSV manuel), les **chiffre** avec un mot de passe connu de l'utilisateur seul et publie uniquement le fichier chiffré ; l'appli le télécharge avec un jeton GitHub en lecture seule et le déchiffre sur l'appareil (mot de passe saisi une fois ; seule une clé dérivée non extractible est conservée). Code, workflow et **mode d'emploi pas à pas** : [`outils/synchro-portefeuilles/`](outils/synchro-portefeuilles/README.md).
+- **Mentions** : « Analyse indicative, sans prise en compte de votre situation personnelle. » ; ne constitue pas un conseil en investissement.
+- **Exemple fictif** : le bouton « Charger l'exemple fictif » ajoute trois portefeuilles inventés (`js/portefeuilles-exemple.js`), utilisés aussi par les tests.
+
 ## Agent entreprises (environ 3 000 sociétés ; Gemini seulement pour lire la guidance)
 
 L'agent entreprises se trouve dans `agents/entreprises/`. Les règles de conduite sont les mêmes que pour l'agent pays.
@@ -615,6 +634,8 @@ Règle : un test ne lit ni ne modifie jamais les vrais `config/` et `data/` (ils
 
 ```
 python -m unittest discover -s agents -t .   # tous les tests
+python -m unittest discover -s outils/synchro-portefeuilles -t outils/synchro-portefeuilles   # synchronisation (relevés fictifs)
+node --test js/tests/*.test.mjs              # logique de l'appli (planning, Mes portefeuilles avec un exemple fictif)
 ```
 
 ## Maintien
@@ -646,6 +667,12 @@ js/analyses.js        analyse à la demande (bouton, « Mes analyses »), écran
 js/panneau-pays.js    fiches pays et secteur
 js/panneau-entreprise.js  fiche entreprise
 js/portefeuille.js    écran « Portefeuille démo » (agent trader : valeur, performance contre le MSCI World, risque, répartitions, positions, opérations)
+js/mes-portefeuilles.js      écran « Mes portefeuilles » (portefeuilles réels, sur l'appareil)
+js/portefeuilles-donnees.js  stockage IndexedDB, rapprochement ISIN → ticker, données publiques, synchronisation
+js/portefeuilles-import.js   lecture CSV / Excel, détection des colonnes, nombres, ISIN
+js/portefeuilles-analyse.js  expositions, corrélations, crible, cohérence, décorrélation, performance (fonctions pures)
+js/portefeuilles-chiffrement.js  AES-256-GCM + PBKDF2 (sauvegarde et synchronisation)
+js/portefeuilles-exemple.js  portefeuilles d'exemple FICTIFS
 js/classement.js      écran classement
 js/comparateur.js     comparateur (sélection, barre flottante, écran)
 js/recherche.js       recherche de pays, secteurs et entreprises
@@ -670,6 +697,7 @@ agents/               agents Python (agents/commun : téléchargement, cache, jo
 .github/workflows/    exécution planifiée des agents (GitHub Actions)
 data/countries-110m.json, countries-50m.json  frontières des pays (voir data/LICENCE-countries-110m.txt)
 outils/generer_donnees_fictives.py  régénère les données fictives
+outils/synchro-portefeuilles/       synchronisation chiffrée des portefeuilles réels (à copier dans un dépôt PRIVÉ)
 ```
 
 ## Format des données (pour les futurs agents)
