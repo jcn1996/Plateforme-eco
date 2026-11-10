@@ -1,18 +1,18 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-10T05:49:56Z",
+    "genere_le": "2026-11-10T13:47:03Z",
     "source": "agent-donnees-alternatives",
     "fictif": false,
     "version_agent": "1.0",
-    "mise_a_jour_precedente": "2026-11-09T14:20:38Z",
+    "mise_a_jour_precedente": "2026-11-10T05:49:56Z",
     "etat_des_sources": {
       "camions_de": "ok",
       "camions_us": "ok",
       "fret_vrac": "ok",
       "fret_conteneurs": "ok",
       "ciment_cn": "secours",
-      "ciment_us": "erreur : https://www.usgs.gov/centers/national-minerals-information-center/cement-statistics-and-information : HTTP 504",
+      "ciment_us": "ok",
       "mises_en_chantier_us": "ok",
       "exportations_kr": "ok",
       "exportations_tw": "ok",
@@ -272,19 +272,21 @@
         "code": "US",
         "nom": "États-Unis",
         "suivi": true,
-        "score": 38,
-        "lecture": "ralentissement",
+        "score": 41,
+        "lecture": "stable",
         "marque": false,
         "lecture_non_retenue": null,
-        "indicateurs_utilises": 5,
+        "indicateurs_utilises": 6,
         "confiance": {
-          "niveau": "élevé",
-          "score": 0.8,
+          "niveau": "moyen",
+          "score": 0.7,
           "raisons": [
-            "indicateurs peu concordants"
+            "indicateurs peu concordants",
+            "historique court pour : Expéditions de ciment"
           ]
         },
         "pour": [
+          "ciment_us",
           "electricite_us",
           "offres_emploi_us"
         ],
@@ -293,7 +295,7 @@
           "mises_en_chantier_us",
           "tsa_us"
         ],
-        "texte": "États-Unis : activité réelle « ralentissement » (score 38/100 sur 5 indicateurs) — offres d'emploi en ligne +2,9 % sur 12 mois ; demande d'électricité +2,4 % sur 12 mois ; passagers contrôlés dans les aéroports −1,6 % sur 12 mois.",
+        "texte": "États-Unis : activité réelle « stable » (score 41/100 sur 6 indicateurs) — offres d'emploi en ligne +2,9 % sur 12 mois ; demande d'électricité +2,4 % sur 12 mois ; expéditions de ciment +1,4 % sur 12 mois.",
         "indicateurs": [
           "camions_us",
           "ciment_us",
@@ -307,14 +309,14 @@
           "texte": "croissance du pib 2,3 % (53/100) ; indicateur avancé (ocde) 101,0 (64/100)"
         },
         "ce_qui_pourrait_me_donner_tort": [
-          "Demande d'électricité va dans l'autre sens (+2,4 % sur 12 mois).",
-          "Offres d'emploi en ligne va dans l'autre sens (+2,9 % sur 12 mois).",
-          "La consommation d'électricité varie aussi avec les températures, pas seulement avec l'activité."
+          "Mises en chantier de logements va dans l'autre sens (−7,4 % sur 12 mois).",
+          "La consommation d'électricité varie aussi avec les températures, pas seulement avec l'activité.",
+          "Les données mensuelles sont publiées avec retard et souvent révisées."
         ],
         "divergence": null,
         "precedent": {
-          "score": 41,
-          "lecture": "stable"
+          "score": 38,
+          "lecture": "ralentissement"
         }
       }
     ],
@@ -1810,12 +1812,80 @@
         "mention": "données estimées, publiées avec environ trois mois de décalage",
         "categorie_nom": "Construction",
         "mention_proxy": false,
-        "note": null,
-        "valeur": null,
-        "date": null,
-        "serie": [],
-        "lecture": "Expéditions de ciment : source indisponible (erreur : https://www.usgs.gov/centers/national-minerals-information-center/cement-statistics-and-information : HTTP 504).",
-        "etat_source": "erreur : https://www.usgs.gov/centers/national-minerals-information-center/cement-statistics-and-information : HTTP 504"
+        "valeur": 10.1,
+        "date": "2026-07-01",
+        "variation_1m": 0.0,
+        "variation_12m": 1.4,
+        "ecart_tendance": null,
+        "ecart_saisonnier": null,
+        "percentile_12m": null,
+        "percentile_tendance": null,
+        "note": 55.8,
+        "methode_note": "échelle fixe (historique court)",
+        "historique_mois": 14,
+        "age_jours": 132,
+        "perimee": false,
+        "lecture": "Expéditions de ciment : +1,4 % sur 12 mois, 0,0 % sur 1 mois.",
+        "serie": [
+          [
+            "2025-01-01",
+            5.768
+          ],
+          [
+            "2025-02-01",
+            6.326
+          ],
+          [
+            "2025-03-01",
+            8.088
+          ],
+          [
+            "2025-04-01",
+            9.088
+          ],
+          [
+            "2025-05-01",
+            8.913
+          ],
+          [
+            "2025-06-01",
+            9.199
+          ],
+          [
+            "2025-07-01",
+            9.961
+          ],
+          [
+            "2026-01-01",
+            5.97
+          ],
+          [
+            "2026-02-01",
+            6.8
+          ],
+          [
+            "2026-03-01",
+            8.5
+          ],
+          [
+            "2026-04-01",
+            9.27
+          ],
+          [
+            "2026-05-01",
+            8.94
+          ],
+          [
+            "2026-06-01",
+            10.1
+          ],
+          [
+            "2026-07-01",
+            10.1
+          ]
+        ],
+        "etat_source": "ok",
+        "detail_source": "14 rapports mensuels (PDF)"
       },
       {
         "cle": "mises_en_chantier_us",
@@ -3313,10 +3383,10 @@
         "mention": "très sensible aux températures",
         "categorie_nom": "Énergie",
         "mention_proxy": false,
-        "valeur": 10773445.0,
+        "valeur": 10668354.0,
         "date": "2026-11-09",
-        "variation_1m": -10.04,
-        "variation_12m": 2.4,
+        "variation_1m": -10.06,
+        "variation_12m": 2.37,
         "ecart_tendance": 5.64,
         "ecart_saisonnier": -0.23,
         "percentile_12m": 55.6,
@@ -3326,7 +3396,7 @@
         "historique_mois": 48,
         "age_jours": 1,
         "perimee": false,
-        "lecture": "Demande d'électricité : +2,4 % sur 12 mois, −10,0 % sur 1 mois, écart à la tendance +5,6 %, percentile 56 de l'historique.",
+        "lecture": "Demande d'électricité : +2,4 % sur 12 mois, −10,1 % sur 1 mois, écart à la tendance +5,6 %, percentile 56 de l'historique.",
         "serie": [
           [
             "2024-11-10",
@@ -3742,15 +3812,15 @@
           ],
           [
             "2026-11-01",
-            10671319.429
+            10671370.143
           ],
           [
             "2026-11-08",
-            10633594.143
+            10637675.429
           ],
           [
             "2026-11-09",
-            10773445.0
+            10668354.0
           ]
         ],
         "etat_source": "ok",
@@ -3768,20 +3838,20 @@
         "mention": "reflète surtout la consommation de services (voyages)",
         "categorie_nom": "Mobilité",
         "mention_proxy": false,
-        "valeur": 2749897.0,
-        "date": "2026-11-08",
-        "variation_1m": -0.47,
-        "variation_12m": -1.57,
+        "valeur": 2535058.0,
+        "date": "2026-11-09",
+        "variation_1m": -1.31,
+        "variation_12m": -1.44,
         "ecart_tendance": -0.8,
         "ecart_saisonnier": -0.32,
-        "percentile_12m": 11.8,
+        "percentile_12m": 14.7,
         "percentile_tendance": 38.2,
-        "note": 22.4,
+        "note": 24.1,
         "methode_note": "percentiles",
         "historique_mois": 46,
-        "age_jours": 2,
+        "age_jours": 1,
         "perimee": false,
-        "lecture": "Passagers contrôlés dans les aéroports : −1,6 % sur 12 mois, −0,5 % sur 1 mois, écart à la tendance −0,8 %, percentile 12 de l'historique.",
+        "lecture": "Passagers contrôlés dans les aéroports : −1,4 % sur 12 mois, −1,3 % sur 1 mois, écart à la tendance −0,8 %, percentile 15 de l'historique.",
         "serie": [
           [
             "2024-11-10",
@@ -4202,6 +4272,10 @@
           [
             "2026-11-08",
             2354850.571
+          ],
+          [
+            "2026-11-09",
+            2535058.0
           ]
         ],
         "etat_source": "ok",
@@ -8241,9 +8315,23 @@
       "fret_vrac",
       "camions_us",
       "tsa_us",
-      "mises_en_chantier_us"
+      "mises_en_chantier_us",
+      "ciment_us"
     ],
     "attention": [
+      {
+        "ticker": "MC.PA",
+        "nom": "LVMH Moët Hennessy - Louis Vuitton, Société Européenne",
+        "pays": "FR",
+        "liste": "surveillance",
+        "trends": {
+          "variation_pct": 130.0,
+          "niveau_recent": 4.1
+        },
+        "tendance": "en hausse",
+        "variation_moyenne_pct": 130.0,
+        "signal": true
+      },
       {
         "ticker": "ADBE",
         "nom": "Adobe Inc.",
@@ -8311,11 +8399,11 @@
           "variation_pct": 1.1
         },
         "trends": {
-          "variation_pct": -6.1,
-          "niveau_recent": 80.4
+          "variation_pct": -5.4,
+          "niveau_recent": 79
         },
         "tendance": "stable",
-        "variation_moyenne_pct": -2.5,
+        "variation_moyenne_pct": -2.2,
         "signal": false
       },
       {
@@ -8371,11 +8459,11 @@
           "variation_pct": 14.8
         },
         "trends": {
-          "variation_pct": -42.4,
-          "niveau_recent": 8.9
+          "variation_pct": -40.2,
+          "niveau_recent": 12.9
         },
         "tendance": "stable",
-        "variation_moyenne_pct": -13.8,
+        "variation_moyenne_pct": -12.7,
         "signal": false
       },
       {
@@ -8417,8 +8505,8 @@
           "variation_pct": -15.4
         },
         "trends": {
-          "variation_pct": -28.7,
-          "niveau_recent": 29.8
+          "variation_pct": -28.9,
+          "niveau_recent": 29.0
         },
         "tendance": "stable",
         "variation_moyenne_pct": -22.1,
@@ -8435,11 +8523,11 @@
           "variation_pct": -4.6
         },
         "trends": {
-          "variation_pct": -55.2,
-          "niveau_recent": 10.2
+          "variation_pct": -47.9,
+          "niveau_recent": 12.6
         },
         "tendance": "stable",
-        "variation_moyenne_pct": -29.9,
+        "variation_moyenne_pct": -26.2,
         "signal": false
       },
       {
@@ -8453,11 +8541,11 @@
           "variation_pct": -8.0
         },
         "trends": {
-          "variation_pct": -74.1,
-          "niveau_recent": 5.2
+          "variation_pct": -79.7,
+          "niveau_recent": 4.8
         },
         "tendance": "en baisse",
-        "variation_moyenne_pct": -41.0,
+        "variation_moyenne_pct": -43.9,
         "signal": false
       },
       {
@@ -8471,11 +8559,11 @@
           "variation_pct": -16.9
         },
         "trends": {
-          "variation_pct": -70.8,
-          "niveau_recent": 6.5
+          "variation_pct": -73.3,
+          "niveau_recent": 5.9
         },
         "tendance": "en baisse",
-        "variation_moyenne_pct": -43.8,
+        "variation_moyenne_pct": -45.1,
         "signal": false
       },
       {
@@ -8484,11 +8572,11 @@
         "pays": "CA",
         "liste": "surveillance",
         "trends": {
-          "variation_pct": -52.2,
-          "niveau_recent": 4.9
+          "variation_pct": -51.3,
+          "niveau_recent": 4.0
         },
         "tendance": "en baisse",
-        "variation_moyenne_pct": -52.2,
+        "variation_moyenne_pct": -51.3,
         "signal": false
       }
     ],
