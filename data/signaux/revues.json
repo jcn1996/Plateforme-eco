@@ -1,13 +1,207 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-10T04:21:14Z",
+    "genere_le": "2026-11-10T07:32:02Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "inities|achats_groupes|OBIO|2026-11-10",
+      "revu_le": "2026-11-10T07:31:45Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "OBIO",
+        "date": "2026-11-10",
+        "importance": "moyenne",
+        "titre": "Orchestra BioMed Holdings, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 70/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|AN|2026-11-10",
+      "revu_le": "2026-11-10T07:31:45Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "AN",
+        "date": "2026-11-10",
+        "importance": "forte",
+        "titre": "AutoNation, Inc. : 4 dirigeants achètent sur le marché en 30 jours (score 85/100)"
+      },
+      "objection": "Malgré ces achats, la conversion du bénéfice en cash s'établit à −30,4 % [F3] et la dette nette sur EBITDA atteint 6,4× [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "AutoNation, Inc. : dette nette / EBITDA de 6,4×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "AutoNation, Inc. : couverture des intérêts de 2,9×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F3",
+          "texte": "AutoNation, Inc. : conversion du bénéfice en cash de −30,4 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F4",
+          "texte": "AutoNation, Inc. : alerte « Bénéfice peu converti en cash » : flux d'exploitation égal à 17 % du résultat net",
+          "source": "agent entreprises (fiche)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F3"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "inities|achats_groupes|FLOC|2026-11-10",
+      "revu_le": "2026-11-10T07:31:45Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "FLOC",
+        "date": "2026-11-10",
+        "importance": "forte",
+        "titre": "Flowco Holdings Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 82/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|LKQ|2026-11-10",
+      "revu_le": "2026-11-10T07:31:45Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "LKQ",
+        "date": "2026-11-10",
+        "importance": "forte",
+        "titre": "LKQ Corporation : 3 dirigeants achètent sur le marché en 30 jours (score 87/100)"
+      },
+      "objection": "Cette dynamique interne intervient alors que le momentum sur 12 mois est de −29,8 % [F2] pour une dette nette sur EBITDA de 3,3× [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "LKQ Corporation : dette nette / EBITDA de 3,3×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "LKQ Corporation : momentum 12 mois −29,8 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "inities|achats_groupes|SYNX|2026-11-10",
+      "revu_le": "2026-11-10T07:31:45Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "SYNX",
+        "date": "2026-11-10",
+        "importance": "forte",
+        "titre": "Silynxcom Ltd. : 3 dirigeants achètent sur le marché en 30 jours (score 95/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|STRZ|2026-11-10",
+      "revu_le": "2026-11-10T07:31:45Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "STRZ",
+        "date": "2026-11-10",
+        "importance": "forte",
+        "titre": "STARZ ENTERTAINMENT CORP /CN/ : 3 dirigeants achètent sur le marché en 30 jours (score 83/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|N/A|2026-11-10",
+      "revu_le": "2026-11-10T07:31:45Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "N/A",
+        "date": "2026-11-10",
+        "importance": "moyenne",
+        "titre": "Partners Group Growth, LLC : 4 dirigeants achètent sur le marché en 30 jours (score 56/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|TRTX|2026-11-10",
+      "revu_le": "2026-11-10T07:31:45Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "TRTX",
+        "date": "2026-11-10",
+        "importance": "forte",
+        "titre": "TPG RE Finance Trust, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 85/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
     {
       "id": "geopolitique|hausse_score|CA|2026-11-10",
       "revu_le": "2026-11-10T01:29:40Z",
