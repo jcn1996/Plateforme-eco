@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genere_le": "2026-11-10T15:01:48Z",
+    "genere_le": "2026-11-10T15:33:55Z",
     "source": "agent-chef",
     "version_agent": "1.0",
     "description": "Entrées, recalcul, changements de verdict, alertes et briefing, à chaque exécution",
@@ -9,7 +9,7 @@
       "libelle": "Chef d'orchestre",
       "ordre": 10,
       "workflow": "agent-chef.yml",
-      "derniere_execution": "2026-11-10T15:01:48Z",
+      "derniere_execution": "2026-11-10T15:33:55Z",
       "prochaine_prevue": "2026-11-10T15:50:00Z",
       "intervalle_min": 60,
       "planning": {
@@ -20,50 +20,50 @@
         ],
         "fuseau": "UTC"
       },
-      "sources_total": 13,
-      "sources_ok": 12,
+      "sources_total": 15,
+      "sources_ok": 15,
       "sources": [
         {
           "nom": "Yahoo Finance (cours des ETF sectoriels)",
-          "etat": "partielle",
-          "detail": "32/33 ETF sectoriels",
-          "derniere_donnee_valide": "2026-11-10T15:01:48Z"
+          "etat": "ok",
+          "detail": "33/33 ETF sectoriels",
+          "derniere_donnee_valide": "2026-11-10T15:33:55Z"
         },
         {
           "nom": "Émetteurs et Yahoo Finance (flux des ETF sectoriels : SSGA, iShares)",
           "etat": "ok",
-          "detail": "ssga : 11, ishares : 11, yahoo_parts : 15",
-          "derniere_donnee_valide": "2026-11-10T15:01:48Z"
+          "detail": "ssga : 11, ishares : 11, yahoo_parts : 8",
+          "derniere_donnee_valide": "2026-11-10T15:33:55Z"
         },
         {
           "nom": "Agent pays (data/pays.json)",
           "etat": "ok",
-          "detail": "à jour (23 h)",
+          "detail": "à jour (24 h)",
           "derniere_donnee_valide": "2026-11-09T16:05:36Z"
         },
         {
           "nom": "Agent macro (data/macro.json)",
           "etat": "ok",
-          "detail": "à jour (8 h)",
-          "derniere_donnee_valide": "2026-11-10T06:47:14Z"
+          "detail": "à jour (0 h)",
+          "derniere_donnee_valide": "2026-11-10T15:13:26Z"
         },
         {
           "nom": "Agent marchés (data/marches.json)",
           "etat": "ok",
           "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-10T14:46:10Z"
+          "derniere_donnee_valide": "2026-11-10T15:31:09Z"
         },
         {
           "nom": "Agent risque (data/risque.json)",
           "etat": "ok",
           "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-10T14:31:30Z"
+          "derniere_donnee_valide": "2026-11-10T15:31:33Z"
         },
         {
           "nom": "Agent géopolitique (data/geopolitique.json)",
           "etat": "ok",
           "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-10T14:45:47Z"
+          "derniere_donnee_valide": "2026-11-10T15:16:35Z"
         },
         {
           "nom": "Agent matières premières (data/matieres_premieres.json)",
@@ -74,44 +74,54 @@
         {
           "nom": "Agent entreprises (data/entreprises.json)",
           "etat": "ok",
-          "detail": "à jour (10 h)",
+          "detail": "à jour (11 h)",
           "derniere_donnee_valide": "2026-11-10T04:45:04Z"
         },
         {
           "nom": "Agent entreprises (pépites) (data/pepites.json)",
           "etat": "ok",
-          "detail": "à jour (10 h)",
+          "detail": "à jour (11 h)",
           "derniere_donnee_valide": "2026-11-10T04:45:05Z"
         },
         {
           "nom": "Agent initiés (data/inities.json)",
           "etat": "ok",
-          "detail": "à jour (8 h)",
-          "derniere_donnee_valide": "2026-11-10T06:57:38Z"
+          "detail": "à jour (0 h)",
+          "derniere_donnee_valide": "2026-11-10T15:13:18Z"
         },
         {
           "nom": "Analyses à la demande (data/analyses/index.json)",
           "etat": "ok",
-          "detail": "à jour (169 h)",
+          "detail": "à jour (170 h)",
           "derniere_donnee_valide": "2026-11-03T13:35:53Z"
         },
         {
           "nom": "Contradicteur (agent risque) (data/signaux/revues.json)",
           "etat": "ok",
           "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-10T14:31:48Z"
+          "derniere_donnee_valide": "2026-11-10T15:31:49Z"
         },
         {
           "nom": "Gemini (rédaction du briefing)",
-          "etat": "information",
-          "detail": "rédaction par règles : Gemini indisponible sur toute la chaîne de modèles : gemini-flash-latest : HTTP 503 : { \"error\": { \"code\": 503, \"message\": \"This model is currently experiencing high demand. | gemini-3.5-flash-lite : HTTP 503 : { \"error\": { \"code\": 503, \"message\": \"This model is currently experiencing high deman",
+          "etat": "ok",
+          "detail": "briefing rédigé par gemini-3.5-flash-lite ; 4/16 appels aujourd'hui (budget propre au chef d'orchestre)",
+          "derniere_donnee_valide": "2026-11-10T15:33:55Z"
+        },
+        {
+          "nom": "Google Drive (dépôt du briefing, facultatif)",
+          "etat": "non configurée",
+          "detail": "secrets GOOGLE_SERVICE_ACCOUNT_JSON et DRIVE_FOLDER_ID absents : dépôt ignoré",
           "derniere_donnee_valide": null
+        },
+        {
+          "nom": "Yahoo Finance (suivi de performance des verdicts)",
+          "etat": "ok",
+          "detail": "0 mesure(s) ; 0 verdict(s) arrivé(s) à échéance",
+          "derniere_donnee_valide": "2026-11-10T15:33:55Z"
         }
       ],
-      "degrade": true,
-      "raisons": [
-        "Yahoo Finance (cours des ETF sectoriels) : partielle"
-      ],
+      "degrade": false,
+      "raisons": [],
       "palier": "Vigilance"
     }
   },
@@ -2374,9 +2384,88 @@
         "analyses": "à jour",
         "revues": "à jour"
       }
+    },
+    {
+      "genere_le": "2026-11-10T15:33:55Z",
+      "mode": "complet",
+      "recalcul": true,
+      "declencheurs": [],
+      "palier": "Vigilance",
+      "opportunites": 171,
+      "changements": [],
+      "alertes": 4,
+      "alertes_ecartees": [
+        "entreprises · ORIX Corporation : BPA publié +115,1 % par rapport à l'estimation : holding, fonds, BDC ou SPAC",
+        "entreprises · Pinnacle West Capital Corporation : guidance relevée (03/11/2026) : fonds, véhicule de crédit, holding ou SPAC",
+        "inities · Orchestra BioMed Holdings, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 7 : société hors de l'univers analysé ou sans note",
+        "inities · Flowco Holdings Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 82/100) : société hors de l'univers analysé ou sans note",
+        "inities · Silynxcom Ltd. : 3 dirigeants achètent sur le marché en 30 jours (score 95/100) : société hors de l'univers analysé ou sans note",
+        "inities · STARZ ENTERTAINMENT CORP /CN/ : 3 dirigeants achètent sur le marché en 30 jours (score 83/ : société hors de l'univers analysé ou sans note",
+        "inities · Partners Group Growth, LLC : 4 dirigeants achètent sur le marché en 30 jours (score 56/100 : société hors de l'univers analysé ou sans note",
+        "inities · TPG RE Finance Trust, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 85/100 : fonds, véhicule de crédit, holding ou SPAC",
+        "inities · Lazar David E. déclare 16,7 % de HIGHWAY HOLDINGS LTD (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
+        "inities · REDWOOD CAPITAL MANAGEMENT, LLC déclare 0,0 % de Mercer International Inc. (13D, intention : société hors de l'univers analysé ou sans note",
+        "inities · Credenza, Inc. déclare 5,4 % de GameSquare Holdings, Inc. (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
+        "inities · ARCH Venture Fund X, L.P. déclare 12,9 % de ASPEN NEUROSCIENCE, INC. (13D, intention d'inf : fonds, véhicule de crédit, holding ou SPAC",
+        "inities · Lau Michael Kwok Yan déclare 98,9 % de Energys Group Ltd (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
+        "inities · Xie Feng déclare 31,5 % de Gamehaus Holdings Inc. (13D, intention d'influencer) : société hors de l'univers analysé ou sans note"
+      ],
+      "exclues": [
+        "Azimut Holding S.p.A.",
+        "Bajaj Finserv Ltd.",
+        "China International Capital Corporation Limited",
+        "Equitable Holdings, Inc.",
+        "Georgia Capital PLC",
+        "Hilltop Holdings Inc.",
+        "Investor AB (publ)",
+        "ORIX Corporation",
+        "Partners Group Holding AG",
+        "Patria Investments Limited",
+        "SEI Investments Company",
+        "Victory Capital Holdings, Inc.",
+        "Virtus Investment Partners, Inc.",
+        "Vontobel Holding AG",
+        "Voya Financial, Inc.",
+        "Vylor Inc.",
+        "Wendel",
+        "Yuanta Financial Holding Co., Ltd."
+      ],
+      "coherence_retrogradees": [],
+      "raison_briefing_regles": null,
+      "briefing": "gemini",
+      "reprise_redaction": null,
+      "gemini": {
+        "appels": 4,
+        "reussites": 1,
+        "quota_atteint": false,
+        "rejets": [],
+        "erreurs": [
+          "gemini-flash-latest : HTTP 503 : { \"error\": { \"code\": 503, \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\", \"statu (après"
+        ]
+      },
+      "suivi": {
+        "ajoutes": 0,
+        "mesures": 0,
+        "en_attente": 0,
+        "total": 229,
+        "erreur": null
+      },
+      "entrees": {
+        "pays": "à jour",
+        "macro": "à jour",
+        "marches": "à jour",
+        "risque": "à jour",
+        "geopolitique": "à jour",
+        "matieres_premieres": "à jour",
+        "entreprises": "à jour",
+        "pepites": "à jour",
+        "inities": "à jour",
+        "analyses": "à jour",
+        "revues": "à jour"
+      }
     }
   ],
-  "derniere_execution": "2026-11-10T15:01:48Z",
+  "derniere_execution": "2026-11-10T15:33:55Z",
   "prochaine_prevue": "2026-11-10T15:50:00Z",
   "intervalle_min": 60,
   "planning": {
