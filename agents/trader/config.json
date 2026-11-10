@@ -444,8 +444,13 @@
     ".TA": "ILA"
   },
   "fraicheur": {
-    "_commentaire": "Âge maximal (heures) des données utilisées. Au-delà, ou si l'agent est dégradé, l'agent trader ne décide pas : il attend et le note.",
+    "_commentaire": "Âge maximal (heures) des données utilisées et contrôle de leur complétude. Au-delà, ou si les données sont incomplètes, l'agent trader ne décide pas : il attend et le note. La santé des agents (écran Santé) n'est pas prise en compte : seul compte l'état des données.",
     "chef_h": 26,
+    "chef_complet": {
+      "listes": ["pays", "obligations", "entreprises"],
+      "sans_score_max": 0.2,
+      "entrees": ["pays", "macro", "risque", "entreprises"]
+    },
     "risque_h": 30,
     "cours_jours": 4
   },

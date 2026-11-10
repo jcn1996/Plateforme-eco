@@ -225,6 +225,8 @@ function carteAgent(agent, maintenant) {
   const problemes = (s.sources ?? []).filter((src) => ETATS_PROBLEME.has(src.etat) && !src.secondaire);
   // Clés facultatives absentes : affichées pour information, sans compter comme un échec
   const nonConfigurees = (s.sources ?? []).filter((src) => src.etat === 'non configurée');
+  // Services accessoires (ex. rédaction par Gemini) : leur échec est une information, sans effet sur le statut
+  const informations = (s.sources ?? []).filter((src) => src.etat === 'information');
   // Listes manuelles vérifiées (composition impossible à récupérer automatiquement) : information
   const manuelles = (s.sources ?? []).filter((src) => src.manuelle && src.etat === 'ok');
   const alertes = echeances(agent, maintenant).filter((e) => e.etat !== 'ok');
@@ -287,6 +289,10 @@ function carteAgent(agent, maintenant) {
       ? el('p', { class: 'sante-source-info' }, 'Listes manuelles (information) : ',
         manuelles.map((src) => `${(src.nom.match(/^Composition (\w+)/) ?? [])[1] ?? src.nom} (vérifiée le ${src.manuelle.slice(8, 10)}/${src.manuelle.slice(5, 7)}/${src.manuelle.slice(0, 4)})`).join(', '),
         '. Revérification nécessaire après 6 mois (config/compositions_manuelles.json).')
+      : null,
+    informations.length
+      ? el('p', { class: 'sante-source-info' }, 'Information (sans effet sur le statut) : ',
+        informations.map((src) => `${src.nom}${src.detail ? ` : ${src.detail}` : ''}`).join(' ; '), '.')
       : null,
     nonConfigurees.length
       ? el('p', { class: 'sante-source-info' }, 'Non configurées (facultatives, non comptées) : ',

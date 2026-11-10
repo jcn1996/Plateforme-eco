@@ -198,6 +198,8 @@ def vigilance(lignes: list[dict], conc: list[dict], entrees: dict, ctx: U.Contex
 def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "complet", cle_gemini: str | None = None,
              poster=None, horloge=None, dormir=None, deposer=True) -> dict:
     jour = maintenant.date().isoformat()
+    if mode == "redaction":
+        return executer_redaction(config, data, maintenant, cle_gemini, poster, horloge, dormir)
     entrees = E.charger(data, config, maintenant)
     disponibles = [x for x in entrees.values() if x.disponible]
     chemin_etat = data / "chef" / "etat.json"
@@ -327,7 +329,10 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
             rapport_gemini["quota"] = quotas.resume()
         raison_regles = raison_sans_gemini(cle_gemini, redige, rapport_gemini, locals().get("avant"))
         if raison_regles:
-            LOG.warning("Briefing par règles : %s", raison_regles)
+            LOG.info("Briefing par règles (information, sans effet sur la santé) : %s", raison_regles)
+        programmer_reprise(etat, jour, maintenant, cle_gemini, redige, rapport_gemini, locals().get("avant"), regles, sc, raison_regles, config)
+        if etat.get("redaction_en_attente"):
+            raison_regles += f" ; nouvelle tentative de rédaction vers {etat['redaction_en_attente']['apres'][11:16]} UTC"
         b = {**regles, **(redige or {})}
         surveillance = [{"ticker": e["ticker"], "nom": e.get("nom")} for e in ctx.entreprises if e.get("surveillance")]
         resultats = []
@@ -353,6 +358,9 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
         # Suivi de performance
         suivi_r = S.executer(data, lignes, jour, config["suivi"], series_fn=f.series)
     else:
+        reprise = reprendre_redaction(etat, data, config, maintenant, cle_gemini, poster, horloge, dormir)
+        if reprise:
+            LOG.info("Reprise de la rédaction du briefing : %s", reprise["texte"])
         briefing = (lire_json(data / "chef" / f"briefing-{jour}.json") or {}).get("donnees")
     if suivi_r is None:
         suivi_meta = (lire_json(data / "chef" / "suivi.json") or {}).get("meta") or {}
@@ -413,6 +421,7 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
               "coherence_retrogradees": [l["nom"] for l in lignes if l.get("coherence_retrogradee")],
               "raison_briefing_regles": (briefing or {}).get("raison_regles") if mode == "complet" else None,
               "briefing": (briefing or {}).get("mode") if mode == "complet" else None,
+              "reprise_redaction": (locals().get("reprise") or {}).get("texte"),
               "gemini": {k: rapport_gemini.get(k) for k in ("appels", "reussites", "quota_atteint")} | {"rejets": rapport_gemini["rejets"][:10], "erreurs": [e[:200] for e in rapport_gemini["erreurs"]][:5]},
               "suivi": {k: suivi_r.get(k) for k in ("ajoutes", "mesures", "en_attente", "total", "erreur")},
               "entrees": {x.cle: x.etat + (" (dégradé)" if x.degrade else "") for x in entrees.values()}}
@@ -422,8 +431,8 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
                    "description": "Entrées, recalcul, changements de verdict, alertes et briefing, à chaque exécution"}
     ecrire_json(chemin_journal, jrn)
     bloc = sante.bloc_sante("chef", "Chef d'orchestre", 10, WORKFLOW,
-                            sources_sante(entrees, rapport_gemini if mode == "complet" else None, (briefing or {}).get("drive") if mode == "complet" else None,
-                                          suivi_r if mode == "complet" else None, sources_secteurs),
+                            sources_sante(entrees, source_redaction(cle_gemini, briefing, etat.get("redaction_en_attente"), rapport_gemini if mode == "complet" else None),
+                                          (briefing or {}).get("drive") if mode == "complet" else None, suivi_r if mode == "complet" else None, sources_secteurs),
                             maintenant, (jrn.get("meta") or {}).get("sante"), raisons_supplementaires=raisons_sante)
     bloc["palier"] = ctx.palier
     sante.enregistrer_sante(chemin_journal, bloc, forcer=True)
@@ -436,6 +445,127 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
     LOG.info("Statut santé : %s%s", "DÉGRADÉ" if bloc["degrade"] else "OK", (" — " + " | ".join(bloc["raisons"])) if bloc["raisons"] else "")
     return {"ok": True, "donnees": donnees, "lignes": lignes, "alertes": al, "briefing": briefing, "sante": bloc, "etat": etat,
             "recalcul": recalcul, "changements": chg, "suivi": suivi_r, "gemini": rapport_gemini}
+
+
+# ------------------------------------------------------------------ rédaction par Gemini : information et reprise
+
+def source_redaction(cle: str | None, briefing: dict | None, attente: dict | None, rapport: dict | None) -> dict | None:
+    """Source « Gemini (rédaction du briefing) » de l'écran Santé. Gemini ne sert qu'à la rédaction : un échec est une
+    information (« rédaction par règles »), jamais une dégradation du chef d'orchestre, dont les données (scores,
+    verdicts, allocation) ne dépendent pas."""
+    nom = "Gemini (rédaction du briefing)"
+    if not cle:
+        return {"nom": nom, "etat": "non configurée", "detail": "secret GEMINI_API_KEY absent : briefing rédigé par règles"}
+    if not briefing:
+        return None
+    if briefing.get("mode") == "gemini":
+        q = (rapport or {}).get("quota") or {}
+        detail = f"briefing rédigé par {briefing.get('modele') or 'Gemini'}"
+        if briefing.get("reprise"):
+            detail += f" (nouvelle tentative réussie à {briefing['reprise']['le'][11:16]} UTC)"
+        if q:
+            detail += f" ; {q.get('appels', 0)}/{q.get('quota_jour', '?')} appels aujourd'hui (budget propre au chef d'orchestre)"
+        return {"nom": nom, "etat": "ok", "detail": detail}
+    detail = f"rédaction par règles : {briefing.get('raison_regles') or 'Gemini indisponible'}"
+    if attente and "nouvelle tentative" not in detail:
+        detail += f" ; nouvelle tentative vers {attente['apres'][11:16]} UTC"
+    return {"nom": nom, "etat": "information", "detail": detail[:400]}
+
+
+def programmer_reprise(etat: dict, jour: str, maintenant: datetime, cle: str | None, redige: dict | None, rapport: dict,
+                       avant: int | None, regles: dict, sc: dict, raison: str | None, config: dict) -> None:
+    """Après un échec de Gemini (erreur ou réponse rejetée), nouvelle tentative de rédaction `delai_minutes` plus tard.
+    Pas de reprise sans clé, après une rédaction réussie ou quand le budget du jour est épuisé."""
+    rc = config["gemini"]["reprise"]
+    if not cle or redige or avant == 0:
+        etat.pop("redaction_en_attente", None)
+        return
+    etat["redaction_en_attente"] = {"jour": jour, "apres": iso(maintenant + timedelta(minutes=rc["delai_minutes"])), "tentatives": 0,
+                                    "raison_initiale": raison, "regles": {k: regles[k] for k in ("essentiel", "vigilance", "faits")}, "scenarios": sc}
+
+
+def reprendre_redaction(etat: dict, data: Path, config: dict, maintenant: datetime, cle: str | None, poster=None, horloge=None, dormir=None) -> dict | None:
+    """Nouvelle tentative de rédaction du briefing du jour par Gemini, si elle est due. Seuls l'essentiel et la
+    vigilance changent : faits, panorama, verdicts et allocation restent ceux de l'analyse complète.
+    Renvoie {etat, texte} (None si aucune reprise n'est en attente)."""
+    att = etat.get("redaction_en_attente")
+    if not att:
+        return None
+    jour = maintenant.date().isoformat()
+    rc = config["gemini"]["reprise"]
+    if att["jour"] != jour:
+        etat.pop("redaction_en_attente", None)
+        return {"etat": "abandonnée", "texte": f"reprise du briefing du {date_fr(att['jour'])} abandonnée : journée écoulée"}
+    if maintenant < sante.lire_iso(att["apres"]):
+        return {"etat": "en attente", "texte": f"nouvelle tentative prévue vers {att['apres'][11:16]} UTC"}
+    if not cle:
+        return {"etat": "en attente", "texte": "clé GEMINI_API_KEY absente pour cette exécution"}
+    chemin = data / "chef" / f"briefing-{jour}.json"
+    objet = lire_json(chemin)
+    if not objet or not objet.get("donnees"):
+        etat.pop("redaction_en_attente", None)
+        return {"etat": "abandonnée", "texte": "briefing du jour introuvable"}
+    from ..geopolitique import ia
+    import time
+    rapport = {"cle": True, "appels": 0, "reussites": 0, "rejets": [], "erreurs": [], "quota_atteint": False}
+    quotas = ia.Quotas(etat, config["gemini"], horloge=horloge, dormir=dormir or time.sleep)
+    avant = sum(q.disponibles() for q in quotas.modeles)
+    redige = Y.briefing_gemini(att["regles"], att["scenarios"], quotas, config["gemini"], cle, poster, rapport) if avant else None
+    att["tentatives"] += 1
+    b = objet["donnees"]
+    if redige:
+        b.update({"mode": "gemini", "modele": redige.get("modele"), "essentiel": redige["essentiel"], "vigilance": redige["vigilance"],
+                  "rubriques_regles": redige.get("rubriques_regles", []), "affirmations_supprimees": redige.get("supprimees", []),
+                  "raison_regles": raison_sans_gemini(cle, redige, rapport, avant),
+                  "reprise": {"le": iso(maintenant), "tentative": att["tentatives"], "raison_initiale": att.get("raison_initiale")}})
+        etat.pop("redaction_en_attente", None)
+        resultat = {"etat": "réussie", "texte": f"briefing rédigé par Gemini ({redige.get('modele')}) à la tentative {att['tentatives']}"}
+        chef = lire_json(data / "chef.json")
+        if chef and isinstance(chef.get("donnees"), dict):
+            chef["donnees"].setdefault("synthese", {})["essentiel"] = [x["texte"] for x in redige["essentiel"]]
+            ecrire_json(data / "chef.json", chef, compact=True)  # meta inchangé : les données (scores, verdicts) n'ont pas changé
+    else:
+        raison = raison_sans_gemini(cle, None, rapport, avant)
+        if att["tentatives"] < rc["tentatives_max"] and avant:
+            att["apres"] = iso(maintenant + timedelta(minutes=rc["delai_minutes"]))
+            suite = f"nouvelle tentative vers {att['apres'][11:16]} UTC"
+        else:
+            etat.pop("redaction_en_attente", None)
+            suite = "plus de nouvelle tentative aujourd'hui"
+        b["raison_regles"] = f"{raison} (tentative {att['tentatives'] + 1} sur {rc['tentatives_max'] + 1}) ; {suite}"
+        resultat = {"etat": "échec", "texte": f"rédaction par règles maintenue : {raison} ; {suite}"}
+    d_chef = data / "chef"
+    (d_chef / f"briefing-{jour}.md").write_text(Y.briefing_markdown(b), encoding="utf-8")
+    ecrire_json(chemin, objet)
+    return resultat
+
+
+def executer_redaction(config: dict, data: Path, maintenant: datetime, cle: str | None, poster=None, horloge=None, dormir=None) -> dict:
+    """Mode « redaction » (30 minutes après l'analyse complète) : seulement la nouvelle tentative de rédaction du briefing.
+    Les données (scores, verdicts, allocation) ne sont ni recalculées ni modifiées."""
+    chemin_etat = data / "chef" / "etat.json"
+    etat = lire_json(chemin_etat) or {}
+    reprise = reprendre_redaction(etat, data, config, maintenant, cle, poster, horloge, dormir) or {"etat": "rien à faire",
+                                                                                                     "texte": "aucune rédaction en attente"}
+    LOG.info("Rédaction du briefing : %s", reprise["texte"])
+    chemin_journal = data / "journal" / "agent-chef.json"
+    jrn = lire_json(chemin_journal) or {"meta": {}, "donnees": []}
+    jrn["donnees"] = (jrn.get("donnees", []) + [{"genere_le": iso(maintenant), "mode": "redaction", "reprise_redaction": reprise["texte"]}])[-200:]
+    ecrire_json(chemin_journal, jrn)
+    precedent = (jrn.get("meta") or {}).get("sante") or {}
+    briefing = (lire_json(data / "chef" / f"briefing-{maintenant.date().isoformat()}.json") or {}).get("donnees")
+    src = source_redaction(cle, briefing, etat.get("redaction_en_attente"), None)
+    sources = [x for x in precedent.get("sources", []) if not x["nom"].startswith("Gemini")] + ([src] if src else [])
+    bloc = sante.bloc_sante("chef", "Chef d'orchestre", 10, WORKFLOW, sources, maintenant, precedent,
+                            raisons_supplementaires=[r for r in precedent.get("raisons", []) if not r.startswith("Gemini")
+                                                     and not any(r.startswith(x["nom"]) for x in sources)])
+    for k in ("palier",):
+        if k in precedent:
+            bloc[k] = precedent[k]
+    sante.enregistrer_sante(chemin_journal, bloc, forcer=True)
+    etat["maj"] = iso(maintenant)
+    ecrire_json(chemin_etat, etat, compact=True)
+    return {"ok": True, "reprise": reprise, "sante": bloc, "etat": etat}
 
 
 def raison_sans_gemini(cle: str | None, redige: dict | None, rapport: dict, avant: int | None) -> str | None:
@@ -490,17 +620,12 @@ def sources_sante(entrees: dict, gemini: dict | None, depot: dict | None, suivi_
         if x.degrade and etat == "ok":
             detail += " ; agent dégradé : pèse moins"
         res.append({"nom": f"{x.libelle} (data/{x.cfg['fichier']})", "etat": etat, "detail": detail, "derniere_donnee_valide": x.genere_le})
-    if gemini is not None:
-        nom = "Gemini (rédaction du briefing)"
-        if not gemini["cle"]:
-            res.append({"nom": nom, "etat": "non configurée", "detail": "secret GEMINI_API_KEY absent : briefing par règles"})
-        elif gemini["erreurs"] and not gemini["reussites"] and not all("429" in e for e in gemini["erreurs"]):
-            res.append({"nom": nom, "etat": "échec", "detail": "; ".join(gemini["erreurs"])[-300:]})
-        else:
-            q = gemini.get("quota") or {}
-            res.append({"nom": nom, "etat": "ok", "detail": f"{gemini['appels']} appel(s) ; {q.get('appels', 0)}/{q.get('quota_jour', '?')} aujourd'hui (budget propre au chef d'orchestre)"})
+    if gemini is not None:  # source déjà mise en forme par source_redaction
+        res.append(gemini)
     if depot is not None:
-        res.append({"nom": "Google Drive (dépôt du briefing, facultatif)", "etat": depot["etat"], "detail": depot["detail"]})
+        # dépôt facultatif du briefing : n'alimente aucune donnée, son échec est une information
+        res.append({"nom": "Google Drive (dépôt du briefing, facultatif)", "etat": "information" if depot["etat"] == "échec" else depot["etat"],
+                    "detail": ("dépôt non effectué : " if depot["etat"] == "échec" else "") + (depot.get("detail") or "")})
     if suivi_r is not None:
         res.append({"nom": "Yahoo Finance (suivi de performance des verdicts)", "etat": "échec" if suivi_r.get("erreur") else "ok",
                     "detail": suivi_r.get("erreur") or f"{suivi_r.get('mesures', 0)} mesure(s) ; {suivi_r.get('en_attente', 0)} verdict(s) arrivé(s) à échéance"})
@@ -511,7 +636,8 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="Chef d'orchestre : où investir maintenant, et avec quelle conviction ?")
     ap.add_argument("--test", action="store_true", help="réponses Yahoo enregistrées (agents/chef/tests/donnees), sans réseau ni Gemini")
     ap.add_argument("--data", default=str(RACINE / "data"), help="dossier des données (data/)")
-    ap.add_argument("--mode", choices=["complet", "leger"], default="complet")
+    ap.add_argument("--mode", choices=["complet", "leger", "redaction"], default="complet",
+                    help="complet, leger, ou redaction (nouvelle tentative de rédaction du briefing par Gemini, si elle est due)")
     ap.add_argument("--maintenant", help="heure simulée (ISO, UTC)")
     ap.add_argument("--sans-ia", action="store_true", help="n'appelle pas Gemini")
     args = ap.parse_args(argv)

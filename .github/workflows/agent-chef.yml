@@ -1,6 +1,8 @@
 # Chef d'orchestre : réunit les sorties de tous les agents (« Où investir maintenant, et avec quelle conviction ? »).
 # - chaque jour à 7 h 15 UTC : analyse complète, après les agents du matin (briefing, allocation, suivi de performance ;
 #   le samedi, revue hebdomadaire data/recap/chef-hebdo-AAAA-MM-JJ.md) ;
+# - à 7 h 45 UTC : nouvelle tentative de rédaction du briefing par Gemini si la première a échoué (rien d'autre ne
+#   change ; Gemini ne sert qu'à la rédaction : son échec est une information, pas une dégradation) ;
 # - toutes les heures (minute 50) de 8 h à 21 h UTC en semaine : mise à jour légère (alertes ; verdicts touchés par
 #   un changement de palier de risque, un choc de marché ou un événement géopolitique de gravité ≥ 4) ;
 # - lancé par le planificateur (réveil externe) ; ces plannings GitHub restent en secours ;
@@ -10,13 +12,14 @@ name: Chef d'orchestre
 on:
   schedule:
     - cron: "15 7 * * *"               # analyse complète quotidienne
+    - cron: "45 7 * * *"               # nouvelle tentative de rédaction du briefing par Gemini (si la première a échoué)
     - cron: "50 8-21 * * 1-5"          # mise à jour légère pendant les marchés
   workflow_dispatch:
     inputs:
       mode:
-        description: "complet, ou leger (alertes et verdicts touchés par un événement)"
+        description: "complet, leger (alertes et verdicts touchés par un événement), ou redaction (nouvelle tentative de rédaction du briefing par Gemini)"
         type: choice
-        options: [complet, leger]
+        options: [complet, leger, redaction]
         default: complet
       essai:
         description: "Essai : code de la branche choisie, sur une copie des données, sans commit (pour vérifier une correction)"
@@ -70,7 +73,11 @@ jobs:
         run: |
           MODE="${{ inputs.mode }}"
           if [ "${{ github.event_name }}" = "schedule" ]; then
-            if [ "${{ github.event.schedule }}" = "15 7 * * *" ]; then MODE=complet; else MODE=leger; fi
+            case "${{ github.event.schedule }}" in
+              "15 7 * * *") MODE=complet ;;
+              "45 7 * * *") MODE=redaction ;;
+              *) MODE=leger ;;
+            esac
           fi
           if [ "${{ inputs.essai }}" = "true" ]; then
             git fetch --depth 1 origin main && mkdir -p "$RUNNER_TEMP/essai" && git archive origin/main data | tar -x -C "$RUNNER_TEMP/essai"

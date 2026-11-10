@@ -19,7 +19,9 @@ Santé des agents : bloc « sante » écrit dans data/journal/<agent>.json et lu
 
 États d'une source : « ok », « secours » (la source principale a échoué, une autre a répondu),
 « partielle », « échec », « périmée » (elle répond, mais sa donnée est trop ancienne),
-« non configurée » (clé absente : ni comptée, ni signalée).
+« non configurée » (clé absente : ni comptée, ni signalée), « information » (service accessoire qui n'alimente
+aucune donnée, par exemple la rédaction par Gemini : son échec est affiché pour information, sans être compté
+ni dégrader l'agent).
 
 derniere_execution, prochaine_prevue, intervalle_min et planning sont aussi recopiés au
 premier niveau du journal.
@@ -51,6 +53,7 @@ RACINE = Path(__file__).resolve().parents[2]
 DOSSIER_JOURNAL = RACINE / "data" / "journal"
 DOSSIER_WORKFLOWS = RACINE / ".github" / "workflows"
 ETATS_PROBLEME = {"secours", "partielle", "échec", "périmée"}
+ETATS_NON_COMPTES = {"non configurée", "information"}  # ni comptés dans les sources, ni cause de dégradation
 CHAMPS_HORAIRES = ("derniere_execution", "prochaine_prevue", "intervalle_min")
 # Recopiés au premier niveau du journal (lus par l'appli et par le workflow « Rattrapage »)
 CHAMPS_PREMIER_NIVEAU = (*CHAMPS_HORAIRES, "planning")
@@ -167,7 +170,7 @@ def bloc_sante(agent: str, libelle: str, ordre: int, workflow: str, sources: lis
         if s["etat"] == "échec" and not s["derniere_donnee_valide"]:
             s["derniere_donnee_valide"] = anciennes.get(s["nom"], {}).get("derniere_donnee_valide")
         liste.append(s)
-    comptees = [s for s in liste if s["etat"] != "non configurée"]
+    comptees = [s for s in liste if s["etat"] not in ETATS_NON_COMPTES]
     crons = crons_du_workflow(workflow) if crons is None else crons
     prochaine = prochaine_execution(crons, maintenant) if crons else None
     # Intervalle prévu : de l'exécution planifiée à laquelle se rattache celle-ci (même lancée

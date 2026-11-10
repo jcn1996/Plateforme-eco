@@ -312,6 +312,96 @@ class TestBriefingGemini(BaseChef):
         self.assertTrue(r["gemini"]["erreurs"])
 
 
+def poster_ok(url, params=None, timeout=None, json=None):
+    rep = {"essentiel": [{"texte": f"{x} reste à suivre [F1].", "faits": ["F1"]} for x in ("Le risque", "Le cycle", "Le panorama", "Le marché", "Le contexte")],
+           "vigilance": [{"texte": "Point de vigilance [F1].", "faits": ["F1"]}]}
+    return Reponse(200, {"candidates": [{"content": {"parts": [{"text": __import__("json").dumps(rep, ensure_ascii=False)}]}}]})
+
+
+def poster_503(*a, **k):
+    return Reponse(503, {"error": {"message": "The model is overloaded."}})
+
+
+class TestRedactionGemini(BaseChef):
+    """Gemini ne sert qu'à la rédaction : son échec est une information (« rédaction par règles »), jamais une
+    dégradation du chef d'orchestre ; nouvelle tentative 30 minutes plus tard."""
+
+    def source_gemini(self):
+        s = lire(self.data / "journal" / "agent-chef.json")["meta"]["sante"]
+        return s, next(x for x in s["sources"] if x["nom"].startswith("Gemini"))
+
+    def test_503_information_sans_degradation(self):
+        r = self.lancer(cle="cle-test", poster=poster_503)
+        self.assertEqual(r["briefing"]["mode"], "règles")
+        self.assertFalse(r["sante"]["degrade"], r["sante"]["raisons"])
+        s, g = self.source_gemini()
+        self.assertEqual(g["etat"], "information")
+        self.assertIn("rédaction par règles", g["detail"])
+        self.assertIn("22:30", g["detail"])
+        self.assertFalse(any(r_.startswith("Gemini") for r_ in s["raisons"]))
+        self.assertEqual(s["sources_total"], sum(1 for x in s["sources"] if x["etat"] not in ("non configurée", "information")))
+        self.assertEqual(r["etat"]["redaction_en_attente"]["apres"], "2026-11-07T22:30:00Z")
+        self.assertIn("nouvelle tentative de rédaction vers 22:30 UTC", r["briefing"]["raison_regles"])
+
+    def test_reprise_reussie_30_minutes_plus_tard(self):
+        self.lancer(cle="cle-test", poster=poster_503)
+        chef_avant = lire(self.data / "chef.json")
+        appels = []
+
+        def poster(*a, **k):
+            appels.append(1)
+            return poster_ok(*a, **k)
+        r = self.lancer("redaction", MAINTENANT + timedelta(minutes=10), cle="cle-test", poster=poster)
+        self.assertEqual(r["reprise"]["etat"], "en attente")
+        self.assertFalse(appels, "pas d'appel avant l'heure prévue")
+        r = self.lancer("redaction", MAINTENANT + timedelta(minutes=31), cle="cle-test", poster=poster)
+        self.assertEqual(r["reprise"]["etat"], "réussie")
+        b = lire(self.data / "chef" / "briefing-2026-11-07.json")["donnees"]
+        self.assertEqual(b["mode"], "gemini")
+        self.assertEqual(b["reprise"]["tentative"], 1)
+        self.assertIsNone(b["raison_regles"])
+        self.assertIn("Gemini", (self.data / "chef" / "briefing-2026-11-07.md").read_text(encoding="utf-8"))
+        chef = lire(self.data / "chef.json")
+        self.assertEqual(chef["donnees"]["synthese"]["essentiel"][0], b["essentiel"][0]["texte"])
+        self.assertEqual(chef["meta"]["genere_le"], chef_avant["meta"]["genere_le"], "données inchangées : date des données conservée")
+        self.assertEqual(chef["donnees"]["pays"], chef_avant["donnees"]["pays"])
+        self.assertNotIn("redaction_en_attente", r["etat"])
+        s, g = self.source_gemini()
+        self.assertEqual(g["etat"], "ok")
+        self.assertFalse(s["degrade"])
+        self.assertEqual(s["derniere_execution"], "2026-11-07T22:31:00Z")
+        r = self.lancer("redaction", MAINTENANT + timedelta(minutes=45), cle="cle-test", poster=poster)
+        self.assertEqual(r["reprise"]["etat"], "rien à faire")
+
+    def test_reprises_en_echec_puis_abandon(self):
+        self.lancer(cle="cle-test", poster=poster_503)
+        r = self.lancer("redaction", MAINTENANT + timedelta(minutes=31), cle="cle-test", poster=poster_503)
+        self.assertEqual(r["reprise"]["etat"], "échec")
+        self.assertEqual(r["etat"]["redaction_en_attente"]["apres"], "2026-11-07T23:01:00Z")
+        self.assertFalse(r["sante"]["degrade"])
+        r = self.lancer("redaction", MAINTENANT + timedelta(minutes=62), cle="cle-test", poster=poster_503)
+        self.assertEqual(r["reprise"]["etat"], "échec")
+        self.assertNotIn("redaction_en_attente", r["etat"])
+        b = lire(self.data / "chef" / "briefing-2026-11-07.json")["donnees"]
+        self.assertEqual(b["mode"], "règles")
+        self.assertIn("plus de nouvelle tentative", b["raison_regles"])
+        s, g = self.source_gemini()
+        self.assertEqual(g["etat"], "information")
+        self.assertFalse(s["degrade"])
+
+    def test_mise_a_jour_legere_reprend_la_redaction(self):
+        self.lancer(cle="cle-test", poster=poster_503)
+        r = self.lancer("leger", MAINTENANT + timedelta(minutes=50), cle="cle-test", poster=poster_ok)
+        self.assertEqual(r["briefing"]["mode"], "gemini")
+        self.assertFalse(r["sante"]["degrade"])
+
+    def test_pas_de_reprise_sans_cle(self):
+        r = self.lancer()
+        self.assertNotIn("redaction_en_attente", r["etat"])
+        _, g = self.source_gemini()
+        self.assertEqual(g["etat"], "non configurée")
+
+
 class TestAlertes(unittest.TestCase):
     def setUp(self):
         self.config = charger_config()

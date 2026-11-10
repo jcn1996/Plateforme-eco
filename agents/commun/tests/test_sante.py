@@ -108,3 +108,17 @@ class TestBloc(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestEtatInformation(unittest.TestCase):
+    """Service accessoire (ex. rédaction par Gemini) : son échec est une information, ni comptée ni dégradante."""
+
+    def test_information_ni_comptee_ni_degradante(self):
+        from datetime import datetime, timezone
+        from agents.commun import sante as SA
+        sources = [{"nom": "Données", "etat": "ok"}, {"nom": "Gemini (rédaction du briefing)", "etat": "information",
+                                                     "detail": "rédaction par règles : 503"}]
+        b = SA.bloc_sante("x", "X", 1, "x.yml", sources, datetime(2026, 11, 10, 7, 30, tzinfo=timezone.utc), crons=["15 7 * * *"])
+        self.assertFalse(b["degrade"])
+        self.assertEqual((b["sources_ok"], b["sources_total"]), (1, 1))
+        self.assertEqual(b["sources"][1]["etat"], "information")
