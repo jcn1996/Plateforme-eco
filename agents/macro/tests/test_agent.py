@@ -257,5 +257,24 @@ class TestConfirmationPhase(unittest.TestCase):
         self.assertEqual(z["phase"], self.R)
 
 
+
+class TestConfirmationHistoriqueReel(unittest.TestCase):
+    """Non-régression : phases brutes réelles du monde du 02 au 10/11/2026 (alternance due à la série d'inflation)."""
+
+    def test_monde_reste_en_expansion_sans_inflation(self):
+        E, R = "Expansion sans inflation", "Ralentissement inflationniste"
+        brutes = [("2026-11-02", E), ("2026-11-03", R), ("2026-11-04", R), ("2026-11-05", E), ("2026-11-06", R),
+                  ("2026-11-07", E), ("2026-11-08", E), ("2026-11-09", R)]
+        z = {"phase": R, "croissance": {"concordants": 3}, "inflation": {"concordants": 2}}
+        res = A.confirmer_phase(z, None, brutes, date(2026, 11, 10), {"semaines": 3, "signaux_min": 2})
+        self.assertEqual(res["phase"], E)  # publiée : inchangée
+        self.assertEqual(res["changement_en_cours"]["vers"], R)
+        self.assertEqual(res["changement_en_cours"]["depuis"], "2026-11-09")
+        publiees, conf, cand = [], None, None
+        for d, p in brutes:
+            conf, cand, _ = A._etape(conf, cand, p, d, True, 21)
+            publiees.append(conf)
+        self.assertEqual(set(publiees), {E})  # 0 changement publié au lieu de 6 alternances
+
 if __name__ == "__main__":
     unittest.main()

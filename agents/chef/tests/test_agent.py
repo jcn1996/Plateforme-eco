@@ -708,3 +708,36 @@ class TestTraderSecteurs(unittest.TestCase):
         self.assertIn("secteur-monde-technologie", T.lignes_chef(chef))
         self.assertEqual(T.CLASSE_DE["secteurs"], "actions")
         self.assertEqual(T.supports_de(chef["secteurs"][0], {"supports": {}})[0]["symbole"], "IXN")
+
+
+class TestAntiGirouetteHistoriqueReel(unittest.TestCase):
+    """Non-régression : scores réels des 7 secteurs dont le verdict a changé le 09/11/2026 à 8 h 33 (avant l'anti-girouette
+    renforcé). Avec 5 points de marge ou 3 jours de suite, seul « Énergie — Monde » (seuil franchi de plus de 5 points) change."""
+
+    SEQUENCES = {  # (jour, score) de chaque exécution, du premier verdict (08/11) à l'exécution du 09/11
+        "secteur-monde-energie": [("2026-11-08", 56.9), ("2026-11-08", 57.4), ("2026-11-09", 64.2)],
+        "secteur-etats_unis-materiaux": [("2026-11-08", 59.0), ("2026-11-08", 55.0), ("2026-11-09", 55.6)],
+        "secteur-etats_unis-sante": [("2026-11-08", 56.6), ("2026-11-08", 59.3), ("2026-11-09", 60.8)],
+        "secteur-europe-finance": [("2026-11-08", 57.9), ("2026-11-08", 58.7), ("2026-11-09", 58.7)],
+        "secteur-europe-communication": [("2026-11-08", 41.0), ("2026-11-08", 45.3), ("2026-11-09", 45.3)],
+        "secteur-emergents-conso-discretionnaire": [("2026-11-08", 42.4), ("2026-11-08", 44.4), ("2026-11-09", 44.4)],
+        "secteur-emergents-finance": [("2026-11-08", 58.5), ("2026-11-08", 57.5), ("2026-11-09", 57.5)],
+    }
+
+    def rejouer(self, config):
+        etat, changes = {}, []
+        for i, seq in self.SEQUENCES.items():
+            for jour, score in seq:
+                o = {"id": i, "score": score}
+                deja = i in etat
+                M.appliquer_hysteresis(o, M.verdict_de(score, config), etat, jour, config)
+                if deja and o.get("changement"):
+                    changes.append(i)
+        return changes
+
+    def test_un_seul_changement_avec_les_regles_actuelles(self):
+        config = charger_config()
+        self.assertEqual(self.rejouer(config), ["secteur-monde-energie"])
+        ancien = copy.deepcopy(config)
+        ancien["verdicts"].update({"marge": 3, "jours_confirmation": 2})
+        self.assertGreaterEqual(len(self.rejouer(ancien)), 5)  # l'ancien réglage changeait la plupart de ces verdicts
