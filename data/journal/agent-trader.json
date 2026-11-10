@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genere_le": "2026-11-10T08:16:30Z",
+    "genere_le": "2026-11-10T09:16:29Z",
     "source": "agent-trader",
     "version_agent": "1.0",
     "description": "Ordres exécutés, ordres imposés, décisions et attentes de l'agent trader (démo), à chaque exécution",
@@ -9,8 +9,8 @@
       "libelle": "Agent trader (démo)",
       "ordre": 11,
       "workflow": "agent-trader.yml",
-      "derniere_execution": "2026-11-10T08:16:30Z",
-      "prochaine_prevue": "2026-11-10T09:05:00Z",
+      "derniere_execution": "2026-11-10T09:16:29Z",
+      "prochaine_prevue": "2026-11-10T10:05:00Z",
       "intervalle_min": 60,
       "planning": {
         "crons": [
@@ -20,38 +20,35 @@
         "fuseau": "UTC"
       },
       "sources_total": 4,
-      "sources_ok": 3,
+      "sources_ok": 4,
       "sources": [
         {
           "nom": "Chef d'orchestre (data/chef.json)",
-          "etat": "périmée",
-          "detail": "chef d'orchestre : agent dégradé (Gemini (rédaction du briefing) : échec)",
-          "derniere_donnee_valide": "2026-11-10T07:31:38Z"
+          "etat": "ok",
+          "detail": "0 h",
+          "derniere_donnee_valide": "2026-11-10T09:01:36Z"
         },
         {
           "nom": "Agent risque (palier) (data/risque.json)",
           "etat": "ok",
           "detail": "1 h",
-          "derniere_donnee_valide": "2026-11-10T07:31:45Z"
+          "derniere_donnee_valide": "2026-11-10T08:31:31Z"
         },
         {
           "nom": "Agent marchés (indice de référence, EUR/USD ; facultatif)",
           "etat": "ok",
           "detail": "à jour",
-          "derniere_donnee_valide": "2026-11-10T08:01:50Z"
+          "derniere_donnee_valide": "2026-11-10T09:01:43Z"
         },
         {
           "nom": "Yahoo Finance via yfinance (cours, change, exécution)",
           "etat": "ok",
-          "detail": "27 position(s) valorisée(s)",
-          "derniere_donnee_valide": "2026-11-10T08:16:30Z"
+          "detail": "28 position(s) valorisée(s)",
+          "derniere_donnee_valide": "2026-11-10T09:16:29Z"
         }
       ],
-      "degrade": true,
-      "raisons": [
-        "Chef d'orchestre (data/chef.json) : périmée",
-        "décision en attente : chef d'orchestre : agent dégradé (Gemini (rédaction du briefing) : échec)"
-      ]
+      "degrade": false,
+      "raisons": []
     }
   },
   "donnees": [
@@ -403,10 +400,26 @@
       ],
       "ordres_en_attente": 1,
       "cours_manquants": []
+    },
+    {
+      "genere_le": "2026-11-10T09:16:29Z",
+      "mode": "horaire",
+      "valeur": 100257.89,
+      "liquidites_pct": 11.28,
+      "palier": "Vigilance",
+      "executees": [
+        "achat 16 EXV4.DE (entrée cœur)"
+      ],
+      "annulees": [],
+      "ordres_imposes": [],
+      "decision": "Décision du 10/11/2026 : palier « Vigilance », liquidités minimales 10 %. Cibles : 11 lignes (8 de cœur, 3 satellite(s)) sur 4 classes ou zones ; cœur 67,7 %, satellites 22,3 %, liquidités 10,0 %. 0 achat(s) et 0 vente(s) à exécuter au premier cours disponible ; 28 arbitrage(s) reporté(s) (détention minimale, sorties étalées, 15 lignes au plus).",
+      "attente": null,
+      "ordres_en_attente": 0,
+      "cours_manquants": []
     }
   ],
-  "derniere_execution": "2026-11-10T08:16:30Z",
-  "prochaine_prevue": "2026-11-10T09:05:00Z",
+  "derniere_execution": "2026-11-10T09:16:29Z",
+  "prochaine_prevue": "2026-11-10T10:05:00Z",
   "intervalle_min": 60,
   "planning": {
     "crons": [
