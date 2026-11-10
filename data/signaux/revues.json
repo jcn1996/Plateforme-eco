@@ -1,13 +1,205 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-10T13:31:38Z",
+    "genere_le": "2026-11-10T14:31:48Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "geopolitique|evenement_grave|evt-774117620112|2026-11-10",
+      "revu_le": "2026-11-10T14:31:30Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "evenement_grave",
+        "cle": "evt-774117620112",
+        "date": "2026-11-10",
+        "importance": "haute",
+        "titre": "Événement de gravité 4 : Frappes aériennes attribuées à l'Arabie saoudite au Yémen"
+      },
+      "objection": "Malgré les frappes, l'ETF KSA affiche une hausse de +0,1 % depuis la veille du signal [F1]. L'Arabie saoudite dispose de réserves de 15,6 mois et d'une dette de 35 % du PIB [F2], tandis que le VIX a progressé de +1,0 pt depuis le 09/11/2026 [F3].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "ETF KSA (Arabie saoudite) : +0,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, KSA"
+        },
+        {
+          "id": "F2",
+          "texte": "Arabie saoudite : réserves de 15,6 mois, dette de 35 % du PIB",
+          "source": "FMI, Banque mondiale"
+        },
+        {
+          "id": "F3",
+          "texte": "VIX : +1,0 pts depuis la veille du signal (09/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX",
+          "contexte": true
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "SA": {
+          "objection": "Objections spécifiques : le marché ne confirme pas pour Arabie saoudite (ETF KSA à +0,1 % depuis la veille du signal) [F1] ; Arabie saoudite dispose d'amortisseurs (réserves de 15,6 mois d'importations, dette publique de 35 % du PIB) [F2].",
+          "ajustement": "abaisser"
+        }
+      },
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2",
+        "F3"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "geopolitique|evenement_grave|evt-e43e3bba3e01|2026-11-10",
+      "revu_le": "2026-11-10T14:31:30Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "evenement_grave",
+        "cle": "evt-e43e3bba3e01",
+        "date": "2026-11-10",
+        "importance": "haute",
+        "titre": "Événement de gravité 4 : Frappes saoudiennes au Yémen : plus de vingt morts signalés"
+      },
+      "objection": "En dépit des pertes signalées, l'ETF KSA progresse de +0,1 % depuis la veille du signal [F1]. Le pays maintient des réserves de 15,6 mois et une dette de 35 % du PIB [F2], dans un contexte où le VIX monte de +1,0 pt depuis le 09/11/2026 [F3].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "ETF KSA (Arabie saoudite) : +0,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, KSA"
+        },
+        {
+          "id": "F2",
+          "texte": "Arabie saoudite : réserves de 15,6 mois, dette de 35 % du PIB",
+          "source": "FMI, Banque mondiale"
+        },
+        {
+          "id": "F3",
+          "texte": "VIX : +1,0 pts depuis la veille du signal (09/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX",
+          "contexte": true
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "SA": {
+          "objection": "Objections spécifiques : le marché ne confirme pas pour Arabie saoudite (ETF KSA à +0,1 % depuis la veille du signal) [F1] ; Arabie saoudite dispose d'amortisseurs (réserves de 15,6 mois d'importations, dette publique de 35 % du PIB) [F2].",
+          "ajustement": "abaisser"
+        }
+      },
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2",
+        "F3"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "geopolitique|evenement_grave|evt-a59cb1cbc061|2026-11-10",
+      "revu_le": "2026-11-10T14:31:30Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "evenement_grave",
+        "cle": "evt-a59cb1cbc061",
+        "date": "2026-11-10",
+        "importance": "haute",
+        "titre": "Événement de gravité 4 : L'Arabie saoudite İntercepte des missiles alors qu'un bâtiment d'Aramco à Riyad est endommagé, et autres actualités du Moyen-Orient"
+      },
+      "objection": "Face aux dommages sur le bâtiment à Riyad, l'ETF KSA enregistre tout de même +0,1 % depuis la veille du signal [F1]. Les fondamentaux montrent des réserves de 15,6 mois et une dette à 35 % du PIB [F2], alors que le VIX augmente de +1,0 pt depuis le 09/11/2026 [F3].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "ETF KSA (Arabie saoudite) : +0,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, KSA"
+        },
+        {
+          "id": "F2",
+          "texte": "Arabie saoudite : réserves de 15,6 mois, dette de 35 % du PIB",
+          "source": "FMI, Banque mondiale"
+        },
+        {
+          "id": "F3",
+          "texte": "VIX : +1,0 pts depuis la veille du signal (09/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX",
+          "contexte": true
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "SA": {
+          "objection": "Objections spécifiques : le marché ne confirme pas pour Arabie saoudite (ETF KSA à +0,1 % depuis la veille du signal) [F1] ; Arabie saoudite dispose d'amortisseurs (réserves de 15,6 mois d'importations, dette publique de 35 % du PIB) [F2].",
+          "ajustement": "abaisser"
+        }
+      },
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2",
+        "F3"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "geopolitique|evenement_grave|evt-a3e69fde45a7|2026-11-10",
+      "revu_le": "2026-11-10T14:31:30Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "evenement_grave",
+        "cle": "evt-a3e69fde45a7",
+        "date": "2026-11-10",
+        "importance": "haute",
+        "titre": "Événement de gravité 4 : L'Arabie saoudite intercepté des missiles houthis ciblant Riyad et la province orientale"
+      },
+      "objection": "Malgré l'interception des missiles, l'ETF KSA progresse de +0,1 % depuis la veille du signal [F1]. L'Arabie saoudite présente des réserves de 15,6 mois et une dette de 35 % du PIB [F2], et le VIX s'accroît de +1,0 pt depuis le 09/11/2026 [F3].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "ETF KSA (Arabie saoudite) : +0,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, KSA"
+        },
+        {
+          "id": "F2",
+          "texte": "Arabie saoudite : réserves de 15,6 mois, dette de 35 % du PIB",
+          "source": "FMI, Banque mondiale"
+        },
+        {
+          "id": "F3",
+          "texte": "VIX : +1,0 pts depuis la veille du signal (09/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX",
+          "contexte": true
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "SA": {
+          "objection": "Objections spécifiques : le marché ne confirme pas pour Arabie saoudite (ETF KSA à +0,1 % depuis la veille du signal) [F1] ; Arabie saoudite dispose d'amortisseurs (réserves de 15,6 mois d'importations, dette publique de 35 % du PIB) [F2].",
+          "ajustement": "abaisser"
+        }
+      },
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2",
+        "F3"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
     {
       "id": "geopolitique|hausse_score|EG|2026-11-10",
       "revu_le": "2026-11-10T10:31:26Z",
