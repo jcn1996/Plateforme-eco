@@ -313,6 +313,11 @@
   },
 
   "gemini": {
+    "reprise": {
+      "_commentaire": "Après un échec de Gemini (erreur ou réponse rejetée) lors de l'analyse complète, le briefing est publié rédigé par règles, puis une nouvelle tentative de rédaction a lieu delai_minutes plus tard (mode « redaction » à 7 h 45 UTC, sinon mise à jour légère suivante), au plus tentatives_max fois. Gemini ne sert qu'à la rédaction : son échec est une information, sans effet sur la santé du chef d'orchestre.",
+      "delai_minutes": 30,
+      "tentatives_max": 2
+    },
     "_commentaire": "Budget propre au chef d'orchestre (compté à part des autres agents) pour la rédaction du briefing. Même chaîne de modèles de secours que l'agent géopolitique (le premier qui répond est utilisé ; quota du jour atteint ou panne : modèle suivant). Chaque affirmation doit citer un fait fourni, sinon elle est supprimée ; sans Gemini, version par règles, et la raison est journalisée (clé absente, budget épuisé, erreur, réponse rejetée).",
     "modeles": [
       {"nom": "gemini-flash-latest", "libelle": "Flash le plus récent (alias)", "rpm": 10, "rpd": 6},

@@ -182,10 +182,29 @@ class TestAttente(BaseTrader):
         self.assertTrue(r["sante"]["degrade"])
         self.assertEqual(lire(self.data / "portefeuille.json")["donnees"]["statut"]["etat"], "en attente")
 
-    def test_chef_degrade(self):
+    def test_chef_degrade_mais_donnees_completes(self):
+        """Un chef d'orchestre « dégradé » pour une raison étrangère à ses données (ex. Gemini en 503) ne bloque pas."""
         r = self.lancer(LUNDI_MATIN, "decision", chef_degrade=True)
+        self.assertIsNotNone(r["decision"])
+        self.assertIsNone(r["attente"])
+
+    def test_donnees_du_chef_incompletes(self):
+        cas = {
+            "entrée manquante": ({("entrees", None): {"retirer": "entreprises"}}, "entrée « entreprises » manquante"),
+            "scores absents": ({("pays", f"pays-{c}"): {"score": None} for c in ("US", "JP", "KR", "DE", "IN")}, "sans score ni verdict"),
+            "liste vide": ({("vider", "obligations"): {}}, "aucune ligne « obligations »"),
+        }
+        for nom, (modifs, attendu) in cas.items():
+            with self.subTest(nom):
+                shutil.rmtree(self.data, ignore_errors=True)
+                r = self.lancer(LUNDI_MATIN, "decision", modifs=modifs)
+                self.assertIsNone(r["decision"])
+                self.assertTrue(any(attendu in x for x in r["attente"]["raisons"]), r["attente"]["raisons"])
+
+    def test_palier_de_risque_absent(self):
+        r = self.lancer(LUNDI_MATIN, "decision", palier=None)
         self.assertIsNone(r["decision"])
-        self.assertTrue(any("dégradé" in x for x in r["attente"]["raisons"]))
+        self.assertTrue(any("palier" in x for x in r["attente"]["raisons"]))
 
     def test_analyse_du_jour_absente_puis_rattrapage_horaire(self):
         r = self.lancer(LUNDI_MATIN, "decision", analyse_du_jour=False)

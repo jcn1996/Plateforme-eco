@@ -85,10 +85,16 @@ def chef(jour: str, modifs: dict | None = None) -> dict:
                             {"id": i, "nom": i, "classe": c, "poche": "satellite" if i.startswith("entreprise") else "cœur", "poids": p}
                             for i, c, p in alloc_lignes]}}}}
     for (type_, id_), champs in (modifs or {}).items():
-        cible = [d[type_]] if type_ == "or" else d[type_]
         if type_ == "panorama":
             d["panorama"].update(champs)
             continue
+        if type_ == "entrees":
+            d["entrees"] = [e for e in d["entrees"] if e["cle"] != champs["retirer"]]
+            continue
+        if type_ == "vider":
+            d[id_] = []
+            continue
+        cible = [d[type_]] if type_ == "or" else d[type_]
         for l in cible:
             if l["id"] == id_:
                 l.update(champs)

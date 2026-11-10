@@ -52,8 +52,10 @@ def iso(t: datetime) -> str:
 
 # ------------------------------------------------------------------ entrées
 
-def verifier_entree(nom: str, objet: dict | None, journal_agent: dict | None, age_max_h: float, maintenant: datetime) -> dict:
-    """État d'une entrée : à jour et saine, sinon raisons (absente, périmée, agent dégradé)."""
+def verifier_entree(nom: str, objet: dict | None, age_max_h: float, maintenant: datetime) -> dict:
+    """État des DONNÉES d'une entrée : présentes, datées et récentes. La santé de l'agent (écran Santé) n'est pas
+    prise en compte : un agent « dégradé » pour une raison étrangère à ses données (rédaction par Gemini, dépôt sur
+    Google Drive…) ne bloque pas l'agent trader."""
     raisons = []
     meta = (objet or {}).get("meta") or {}
     genere = sante.lire_iso(meta.get("genere_le"))
@@ -64,10 +66,28 @@ def verifier_entree(nom: str, objet: dict | None, journal_agent: dict | None, ag
         raisons.append(f"{nom} : date de génération inconnue")
     elif age > age_max_h:
         raisons.append(f"{nom} : données de {fr(age, 0)} h (au-delà de {age_max_h} h)")
-    s = ((journal_agent or {}).get("meta") or {}).get("sante") or {}
-    if s.get("degrade"):
-        raisons.append(f"{nom} : agent dégradé ({'; '.join((s.get('raisons') or [])[:2]) or 'sans détail'})")
     return {"ok": not raisons, "raisons": raisons, "age_h": age, "genere_le": meta.get("genere_le")}
+
+
+def donnees_chef_incompletes(chef: dict, config: dict) -> list[str]:
+    """Données du chef d'orchestre nécessaires à la décision : listes présentes, scores et verdicts renseignés,
+    entrées indispensables disponibles. Renvoie les manques (liste vide : données complètes)."""
+    cc = config["fraicheur"]["chef_complet"]
+    manques = []
+    for t in cc["listes"]:
+        lignes = chef.get(t) or []
+        if not lignes:
+            manques.append(f"chef d'orchestre : aucune ligne « {t} »")
+            continue
+        sans = sum(1 for l in lignes if l.get("score") is None or not l.get("verdict"))
+        if sans / len(lignes) > cc["sans_score_max"]:
+            manques.append(f"chef d'orchestre : {sans} ligne(s) « {t} » sur {len(lignes)} sans score ni verdict")
+    entrees = {e.get("cle"): e for e in chef.get("entrees") or []}
+    for cle in cc["entrees"]:
+        e = entrees.get(cle)
+        if e is None or e.get("etat") == "manquante":
+            manques.append(f"chef d'orchestre : entrée « {cle} » manquante (verdicts calculés sans elle)")
+    return manques
 
 
 def valeur_indice(marches: dict | None, cours: dict, taux: dict, config: dict, maintenant: datetime) -> tuple[float | None, str]:
@@ -296,9 +316,16 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "hor
     operations = ops_obj.get("donnees") or []
     fr_ = config["fraicheur"]
     chef_obj, risque_obj, marches_obj = lire_json(data / "chef.json"), lire_json(data / "risque.json"), lire_json(data / "marches.json")
-    chef_e = verifier_entree("chef d'orchestre", chef_obj, lire_json(data / "journal" / "agent-chef.json"), fr_["chef_h"], maintenant)
-    risque_e = verifier_entree("agent risque", risque_obj, lire_json(data / "journal" / "agent-risque.json"), fr_["risque_h"], maintenant)
-    marches_e = verifier_entree("agent marchés", marches_obj, lire_json(data / "journal" / "agent-marches.json"), 26, maintenant)
+    chef_e = verifier_entree("chef d'orchestre", chef_obj, fr_["chef_h"], maintenant)
+    if chef_e["ok"]:
+        manques = donnees_chef_incompletes((chef_obj or {}).get("donnees") or {}, config)
+        chef_e["raisons"] += manques
+        chef_e["ok"] = not manques
+    risque_e = verifier_entree("agent risque", risque_obj, fr_["risque_h"], maintenant)
+    if risque_e["ok"] and not ((((risque_obj or {}).get("donnees") or {}).get("mondial") or {}).get("palier")):
+        risque_e["raisons"].append("agent risque : palier de risque absent")
+        risque_e["ok"] = False
+    marches_e = verifier_entree("agent marchés", marches_obj, 26, maintenant)
     chef = (chef_obj or {}).get("donnees") if chef_e["ok"] else None
     palier = (((risque_obj or {}).get("donnees") or {}).get("mondial") or {}).get("palier") if risque_e["ok"] else None
     lignes = S.lignes_chef(chef) if chef else None
@@ -348,8 +375,6 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "hor
             bloquants.append("analyse complète du jour du chef d'orchestre pas encore disponible")
         if err_cours and etat["positions"]:
             bloquants.append("cours indisponibles : portefeuille non valorisé")
-        if not palier and not risque_e["raisons"]:
-            bloquants.append("palier de l'agent risque inconnu")
         if bloquants:
             ancien = etat.get("attente") or {}
             etat["attente"] = {"le": iso(maintenant), "depuis": ancien.get("depuis") or iso(maintenant), "raisons": bloquants}
