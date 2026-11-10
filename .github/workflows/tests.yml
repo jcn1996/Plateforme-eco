@@ -1,4 +1,5 @@
-# Tests : lance l'ensemble des tests du dépôt (tous les agents, données de test, sans réseau)
+# Tests : lance l'ensemble des tests du dépôt (tous les agents, la synchronisation des
+# portefeuilles et la logique JavaScript de l'appli ; données de test, sans réseau)
 # sur chaque pull request, pour repérer avant la fusion un test cassé ou mal isolé.
 # Ce workflow ne bloque jamais les agents en production : chaque agent ne lance que ses
 # propres tests (et ceux du module commun). Il n'a pas de planning : le planificateur l'ignore.
@@ -37,6 +38,21 @@ jobs:
 
       - name: Lancer tous les tests
         run: python -m unittest discover -s agents -t .
+
+      # Mes portefeuilles : script de synchronisation du dépôt privé (relevés fictifs, sans réseau)
+      - name: Tests de la synchronisation des portefeuilles
+        run: |
+          pip install cryptography==46.0.3
+          python -m unittest discover -s outils/synchro-portefeuilles -t outils/synchro-portefeuilles
+
+      - name: Installer Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # Logique de l'appli testée sans navigateur (planning, Mes portefeuilles avec un exemple fictif)
+      - name: Tests JavaScript
+        run: node --test js/tests/*.test.mjs
 
       - name: Vérifier que les tests n'ont pas modifié config/ ni data/
         run: |

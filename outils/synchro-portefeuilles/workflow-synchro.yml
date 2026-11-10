@@ -1,0 +1,62 @@
+# ============================================================================
+# Synchronisation quotidienne CHIFFRÉE des portefeuilles réels.
+# À copier dans le dépôt PRIVÉ, sous .github/workflows/synchro.yml (jamais dans
+# le dépôt public de l'appli). Mode d'emploi : README.md de ce dossier.
+#
+# - récupère les positions (Interactive Brokers, eToro) ;
+# - les chiffre (AES-256-GCM, clé dérivée du secret PORTEFEUILLE_MOT_DE_PASSE) ;
+# - publie UNIQUEMENT le fichier chiffré sur la branche « synchro » (un seul
+#   commit, réécrit chaque jour : aucun historique ne s'accumule).
+# Rien n'est écrit en clair, ni sur disque ni dans les journaux.
+# ============================================================================
+name: Synchro portefeuilles
+
+on:
+  schedule:
+    - cron: "17 5 * * *"   # chaque jour à 5 h 17 UTC (après la clôture américaine)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: synchro-portefeuilles
+  cancel-in-progress: false
+
+jobs:
+  synchro:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: Installer Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Installer les dépendances
+        run: pip install -r requirements.txt
+
+      - name: Récupérer et chiffrer les positions
+        env:
+          PORTEFEUILLE_MOT_DE_PASSE: ${{ secrets.PORTEFEUILLE_MOT_DE_PASSE }}
+          IBKR_FLEX_TOKEN: ${{ secrets.IBKR_FLEX_TOKEN }}
+          IBKR_FLEX_QUERY_ID: ${{ secrets.IBKR_FLEX_QUERY_ID }}
+          ETORO_API_KEY: ${{ secrets.ETORO_API_KEY }}
+          ETORO_USER_KEY: ${{ secrets.ETORO_USER_KEY }}
+        run: python synchro_portefeuilles.py --sortie "$RUNNER_TEMP/portefeuilles.chiffre.json"
+
+      - name: Publier le fichier chiffré (branche « synchro », sans historique)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir "$RUNNER_TEMP/publication" && cd "$RUNNER_TEMP/publication"
+          cp ../portefeuilles.chiffre.json .
+          git init -q -b synchro
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add portefeuilles.chiffre.json
+          git commit -q -m "Synchro chiffrée du $(date -u +%d/%m/%Y)"
+          git push -q --force "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" synchro

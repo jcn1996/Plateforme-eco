@@ -19,6 +19,7 @@ import { initialiserRecherche } from './recherche.js';
 import { fichePays, ficheSecteur } from './panneau-pays.js';
 import { ficheEntreprise, chargerFiche } from './panneau-entreprise.js';
 import { ecranPortefeuille, performanceEnTete } from './portefeuille.js';
+import { ecranMesPortefeuilles } from './mes-portefeuilles.js';
 import { ecranClassement } from './classement.js';
 import { chargerSante, ecranSante, problemeDetecte } from './sante.js';
 import { chargerMacro, ecranMacro } from './macro.js';
@@ -489,6 +490,7 @@ function filAriane(route) {
       return [racine, niveauPays(e.pays), niveauSecteur(s), { libelle: e.nom, route }];
     }
     case 'portefeuille': return [racine, { libelle: 'Portefeuille démo', route }];
+    case 'mes-portefeuilles': return [racine, { libelle: 'Mes portefeuilles', route }];
     case 'classement': return [racine, { libelle: 'Classement', route }];
     case 'comparaison': return [racine, { libelle: 'Comparaison', route }];
     case 'mes-alertes': return [racine, { libelle: 'Mes alertes', route }];
@@ -547,7 +549,7 @@ function majAriane(route) {
 /** Vérifie qu'une route désigne bien un élément existant. */
 function routeValide(route) {
   switch (route.type) {
-    case 'globe': case 'portefeuille': case 'classement': case 'comparaison': case 'mes-alertes': case 'sante': case 'macro': case 'geopolitique': case 'risque': case 'pepites':
+    case 'globe': case 'portefeuille': case 'mes-portefeuilles': case 'classement': case 'comparaison': case 'mes-alertes': case 'sante': case 'macro': case 'geopolitique': case 'risque': case 'pepites':
     case 'analyses': case 'fiabilite': case 'matieres': case 'inities': case 'investir': case 'fiabilite-chef': case 'alternatives': return true;
     case 'analyse': return Boolean(route.id);
     case 'pays': return d.paysParCode.has(route.id);
@@ -633,6 +635,7 @@ function afficher(route) {
   // Écrans plein écran (portefeuille, classement, comparaison, mes alertes)
   const ECRANS = {
     portefeuille: { section: '#ecran-portefeuille', contenu: '#portefeuille-contenu', titre: 'Portefeuille démo', rendu: () => ecranPortefeuille(d, navigateurPanneau) },
+    'mes-portefeuilles': { section: '#ecran-mes-portefeuilles', contenu: '#mes-portefeuilles-contenu', titre: 'Mes portefeuilles', rendu: () => ecranMesPortefeuilles(d, navigateurPanneau) },
     classement: { section: '#ecran-classement', contenu: '#classement-contenu', titre: 'Classement', rendu: () => ecranClassement(d, navigateurPanneau) },
     comparaison: { section: '#ecran-comparaison', contenu: '#comparaison-contenu', titre: 'Comparaison', rendu: () => ecranComparaison(d, navigateurPanneau) },
     'mes-alertes': { section: '#ecran-mes-alertes', contenu: '#mes-alertes-contenu', titre: 'Mes alertes', rendu: () => ecranMesAlertes(d, { surChangement: majAlertes, ouvrir: naviguer }) },
@@ -725,7 +728,7 @@ function afficher(route) {
 
 /** Le globe ne se dessine que s'il est visible (économie de batterie). */
 function majActiviteGlobe() {
-  const masque = ['portefeuille', 'classement', 'comparaison', 'mes-alertes', 'sante', 'macro', 'geopolitique', 'risque', 'pepites', 'analyses', 'fiabilite', 'matieres', 'inities', 'investir', 'fiabilite-chef', 'alternatives'].includes(routeActuelle.type)
+  const masque = ['portefeuille', 'mes-portefeuilles', 'classement', 'comparaison', 'mes-alertes', 'sante', 'macro', 'geopolitique', 'risque', 'pepites', 'analyses', 'fiabilite', 'matieres', 'inities', 'investir', 'fiabilite-chef', 'alternatives'].includes(routeActuelle.type)
     || (dom.panneau.classList.contains('est-ouvert') && etatPanneau === 'plein' && !estLarge());
   globe?.definirActif(!masque);
 }

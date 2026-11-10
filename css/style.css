@@ -1863,3 +1863,61 @@ body.menu-ouvert { overflow: hidden; }
 }
 .chef-filtre { margin: 4px 0 8px; }
 .macro-confirmation { color: var(--orange); }
+
+/* ===================== Mes portefeuilles (réels, sur l'appareil) ===================== */
+.mpf > * + * { margin-top: 14px; }
+.mpf-pile > * + * { margin-top: 12px; }
+.mpf-confidentialite { padding: 9px 11px; border: 1px solid rgba(46, 229, 157, 0.45); border-radius: 10px; background: rgba(46, 229, 157, 0.07); font-size: 12.5px; color: var(--texte-2); }
+.mpf-confidentialite p { margin: 2px 0; }
+.mpf-confidentialite strong { color: #c9fbe8; font-weight: 500; }
+.mpf-message { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0; padding: 8px 10px; border-radius: 10px; font-size: 12.5px; }
+.mpf-message--ok { border: 1px solid rgba(46, 229, 157, 0.45); background: rgba(46, 229, 157, 0.08); color: #c9fbe8; }
+.mpf-message--erreur { border: 1px solid rgba(255, 77, 106, 0.5); background: rgba(255, 77, 106, 0.08); color: #ffd0d8; }
+.mpf-nouveau { border-style: dashed; }
+.mpf-boutons { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.mpf-boutons .bouton { min-height: 38px; padding: 0 12px; }
+.mpf-action { border-color: var(--ligne-forte); }
+.mpf-action-tete { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.mpf-action-tete .section-titre { margin: 0; }
+.mpf-formulaire > * + * { margin-top: 10px; }
+.mpf-formulaire .champs, .mpf-bloc .champs, .mpf-action .champs { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.mpf-aide { font-size: 10.5px; color: var(--texte-3); }
+.mpf-categorie { padding: 8px 10px; border: 1px solid var(--ligne); border-radius: 10px; }
+.mpf-categorie summary { cursor: pointer; font-size: 12.5px; color: var(--texte-2); margin-bottom: 6px; }
+.mpf-cases { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 8px; }
+.mpf-case { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--texte-2); }
+.mpf-case input { width: 16px; height: 16px; accent-color: var(--cyan); }
+.mpf-sous { font-size: 11px; color: var(--texte-3); line-height: 1.35; }
+.mpf-source { font-style: italic; }
+.mpf-positions td:first-child { min-width: 150px; }
+.mpf-actions-ligne { white-space: nowrap; }
+.mpf-actions-ligne .bouton { width: 30px; min-height: 30px; padding: 0; }
+.mpf-pastille { display: inline-block; margin: 3px 0 1px; padding: 1px 7px; border-radius: 999px; font-size: 10.5px; }
+.mpf-pastille--ambre { border: 1px solid rgba(255, 181, 71, 0.5); color: var(--orange); }
+.mpf-alertes, .mpf-liste, .mpf-crible, .mpf-signaux { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 6px; font-size: 12.5px; }
+.mpf-alerte { padding: 6px 9px; border-radius: 8px; border-left: 3px solid var(--orange); background: rgba(255, 181, 71, 0.07); color: var(--texte-2); }
+.mpf-alerte--forte { border-left-color: var(--rouge); background: rgba(255, 77, 106, 0.08); }
+.mpf-crible > li { padding: 8px 10px; border: 1px solid var(--ligne); border-radius: 10px; }
+.mpf-crible > li.a-alerte { border-color: rgba(255, 181, 71, 0.45); }
+.mpf-crible-tete { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.mpf-note { font-family: var(--police-mono); font-size: 13px; color: #eafcff; white-space: nowrap; }
+.mpf-signaux { margin: 6px 0; gap: 3px; color: var(--orange); font-size: 12px; }
+.mpf-crible details summary { cursor: pointer; font-size: 11.5px; color: var(--texte-3); }
+.mpf-corr--forte { color: var(--orange); }
+.mpf-corr--faible { color: var(--vert); }
+.mpf-courbe { margin: 4px 0 0; }
+.mpf-courbe svg { width: 100%; height: auto; display: block; }
+.mpf-courbe-ref { stroke: var(--ligne); stroke-dasharray: 3 3; }
+.mpf-courbe-axe { font-size: 9px; fill: var(--texte-3); font-family: var(--police-mono); }
+.mpf-courbe-pf, .mpf-courbe-msci { fill: none; stroke-width: 1.8; stroke-linejoin: round; }
+.mpf-courbe-pf { stroke: var(--serie-portefeuille); }
+.mpf-courbe-msci { stroke: var(--serie-indice); }
+.mpf-pastille-pf { background: var(--serie-portefeuille); }
+.mpf-pastille-msci { background: var(--serie-indice); }
+.mpf-reglages > summary { cursor: pointer; margin: 0; }
+.mpf-bloc { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--ligne); }
+.mpf-bloc h4 { margin: 0 0 6px; font-size: 13px; font-weight: 600; color: var(--texte-1, #eafcff); }
+.mpf-bloc > .bouton { margin-top: 8px; }
+.mpf-espace { margin-top: 14px; }
+.mpf-apercu { font-size: 11.5px; }
+.mpf-apercu td { white-space: nowrap; padding: 5px 6px; }
