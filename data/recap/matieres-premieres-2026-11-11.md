@@ -4,30 +4,30 @@ Horizon : 3 à 12 mois.
 
 ## Synthèse par famille
 
-- **Métaux précieux** : « Neutre » — Métaux précieux : note moyenne 48/100 sur 4 matières premières ; la plus favorable : Palladium (52), la moins favorable : Or (45).
-- **Métaux industriels** : « Neutre » — Métaux industriels : note moyenne 43/100 sur 3 matières premières ; la plus favorable : Aluminium (48), la moins favorable : Uranium (35).
-- **Énergie** : « Surpondérer » — Énergie : note moyenne 64/100 sur 4 matières premières ; la plus favorable : Gaz européen (TTF) (68), la moins favorable : Pétrole WTI (61).
+- **Métaux précieux** : « Neutre » — Métaux précieux : note moyenne 47/100 sur 4 matières premières ; la plus favorable : Palladium (51), la moins favorable : Or (44).
+- **Métaux industriels** : « Neutre » — Métaux industriels : note moyenne 44/100 sur 3 matières premières ; la plus favorable : Aluminium (50), la moins favorable : Uranium (35).
+- **Énergie** : « Surpondérer » — Énergie : note moyenne 64/100 sur 4 matières premières ; la plus favorable : Gaz européen (TTF) (67), la moins favorable : Pétrole WTI (60).
 - **Agricoles** : « Neutre » — Agricoles : note moyenne 51/100 sur 7 matières premières ; la plus favorable : Coton (53), la moins favorable : Soja (48).
 
 ## Verdicts
 
-- Or : « Neutre », note 45/100, confiance moyen
-- Argent : « Neutre », note 47/100, confiance moyen
-- Platine : « Neutre », note 48/100, confiance moyen
-- Palladium : « Neutre », note 52/100, confiance moyen
-- Cuivre : « Neutre », note 47/100, confiance moyen
-- Aluminium : « Neutre », note 48/100, confiance moyen
+- Or : « Neutre », note 44/100, confiance moyen
+- Argent : « Neutre », note 46/100, confiance moyen
+- Platine : « Neutre », note 47/100, confiance moyen
+- Palladium : « Neutre », note 51/100, confiance moyen
+- Cuivre : « Neutre », note 46/100, confiance moyen
+- Aluminium : « Neutre », note 50/100, confiance moyen
 - Uranium : « Neutre (biais négatif) », note 35/100, confiance faible
-- Pétrole WTI : « Surpondérer », note 61/100, confiance moyen
+- Pétrole WTI : « Surpondérer », note 60/100, confiance moyen
 - Pétrole Brent : « Surpondérer », note 66/100, confiance élevé
-- Gaz naturel américain : « Surpondérer », note 63/100, confiance élevé
-- Gaz européen (TTF) : « Neutre (biais positif) » (précédent : « Neutre »), note 68/100, confiance faible
-- Blé : « Neutre », note 50/100, confiance moyen
+- Gaz naturel américain : « Surpondérer », note 62/100, confiance moyen
+- Gaz européen (TTF) : « Neutre (biais positif) », note 67/100, confiance faible
+- Blé : « Neutre », note 49/100, confiance moyen
 - Maïs : « Neutre », note 52/100, confiance moyen
 - Soja : « Neutre », note 48/100, confiance moyen
-- Café : « Neutre », note 52/100, confiance moyen
-- Sucre : « Neutre », note 51/100, confiance moyen
-- Cacao : « Neutre », note 49/100, confiance moyen
+- Café : « Neutre », note 51/100, confiance moyen
+- Sucre : « Neutre », note 52/100, confiance moyen
+- Cacao : « Neutre », note 50/100, confiance moyen
 - Coton : « Neutre », note 53/100, confiance moyen
 
 ## Publications prises en compte
@@ -39,7 +39,7 @@ Horizon : 3 à 12 mois.
 
 ## Signaux détectés aujourd'hui
 
-- [forte] Gaz européen (TTF) : passage de « Neutre » à « Neutre (biais positif) »
+- aucun
 
 ## Sources en échec
 
