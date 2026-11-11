@@ -3,7 +3,7 @@
 - Sociétés analysées : 2946
 - Comptes vérifiés avec une source officielle : 1731
 - Écarts entre source officielle et Yahoo : 192
-- Sociétés remplissant tous les critères : 77 ; retenues : 9 pépites (300 M$ à 20 Md$, peu suivies) et 15 en « qualité à prix raisonnable » ; au plus 3 par secteur
+- Sociétés remplissant tous les critères : 74 ; retenues : 9 pépites (300 M$ à 20 Md$, peu suivies) et 16 en « qualité à prix raisonnable » ; au plus 3 par secteur
 
 ## Pépites candidates
 
@@ -15,47 +15,97 @@
 - [pépite] Federated Hermes, Inc. (FHI, US) : 78/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : roe : 33,7 %, croissance du bénéfice : +57,1 %.
 - [pépite] Adeia Inc. (ADEA, US) : 76/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 45,0 %, croissance du bénéfice : +71,9 %.
 - [pépite] ExlService Holdings, Inc. (EXLS, US) : 75/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : couverture des intérêts : 17,8×, dette nette / ebitda : 0,2×.
-- [pépite] Simcere Pharmaceutical Group Limited (2096.HK, CN) : 71/100, ajustement de contexte +1.6 — Dossier solide sur les comptes ; points forts : dette nette / ebitda : trésorerie nette, croissance du bénéfice : +86,2 % ; point faible : momentum 12 mois : −12,5 %.
+- [pépite] Simcere Pharmaceutical Group Limited (2096.HK, CN) : 71/100, ajustement de contexte +1.6 — Dossier solide sur les comptes ; points forts : dette nette / ebitda : trésorerie nette, croissance du bénéfice : +86,2 % ; point faible : momentum 12 mois : −12,2 %.
 - [QPR] Apple Inc. (AAPL.BA, AR) : 85/100, ajustement de contexte -0.1 — Dossier solide sur les comptes ; points forts : f-score de piotroski : 9/9, marge opérationnelle : 33,0 %.
 - [QPR] Emaar Properties PJSC (EMAAR.AE, AE) : 82/100, ajustement de contexte +1.0 — Dossier solide sur les comptes ; points forts : croissance du ca : +39,6 %, marge opérationnelle : 45,5 %.
-- [QPR] Nongfu Spring Co., Ltd. (9633.HK, CN) : 79/100, ajustement de contexte +1.6 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 38,6 %, couverture des intérêts : pas de charge d'intérêts ; point faible : momentum 12 mois : −13,2 %.
+- [QPR] Nongfu Spring Co., Ltd. (9633.HK, CN) : 79/100, ajustement de contexte +1.6 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 38,6 %, couverture des intérêts : pas de charge d'intérêts ; point faible : momentum 12 mois : −13,6 %.
 - [QPR] HCL Technologies Limited (HCLTECH.NS, IN) : 78/100, ajustement de contexte +1.9 — Dossier solide sur les comptes ; points forts : dette nette / ebitda : trésorerie nette, couverture des intérêts : 47,0× ; point faible : croissance du bénéfice : −4,3 %.
-- [QPR] Adobe Inc. (ADBE, US) : 79/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 36,6 %, couverture des intérêts : 33,1× ; point faible : momentum 12 mois : −28,0 %.
-- [QPR] MS&AD Insurance Group Holdings, Inc. (8725.T, JP) : 77/100, ajustement de contexte +0.9 — Dossier solide sur les comptes ; points forts : per vs secteur : −41,5 %, momentum 12 mois : +68,0 %.
-- [QPR] Prudential plc (PRU.L, GB) : 76/100, ajustement de contexte +1.9 — Dossier solide sur les comptes ; points forts : croissance du ca : +69,0 %, croissance du bénéfice : +74,1 % ; point faible : momentum 12 mois : −10,5 %.
-- [QPR] Arch Capital Group Ltd. (ACGL, US) : 77/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : per vs secteur : −39,4 %, croissance du ca : +17,7 %.
-- [QPR] NEXT plc (NXT.L, GB) : 73/100, ajustement de contexte +1.9 — Dossier solide sur les comptes ; points forts : roic : 38,9 %, f-score de piotroski : 8/9 ; point faible : ve/ebitda vs secteur : +26,5 %.
+- [QPR] Adobe Inc. (ADBE, US) : 79/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 36,6 %, couverture des intérêts : 33,1× ; point faible : momentum 12 mois : −28,7 %.
+- [QPR] MS&AD Insurance Group Holdings, Inc. (8725.T, JP) : 77/100, ajustement de contexte +0.9 — Dossier solide sur les comptes ; points forts : per vs secteur : −41,9 %, momentum 12 mois : +67,8 %.
+- [QPR] Prudential plc (PRU.L, GB) : 76/100, ajustement de contexte +1.9 — Dossier solide sur les comptes ; points forts : croissance du ca : +69,0 %, croissance du bénéfice : +74,1 % ; point faible : momentum 12 mois : −11,8 %.
+- [QPR] Arch Capital Group Ltd. (ACGL, US) : 77/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : per vs secteur : −39,3 %, croissance du ca : +17,7 %.
+- [QPR] Vodacom Group Limited (VOD.JO, ZA) : 74/100, ajustement de contexte +2.2 — Dossier solide sur les comptes ; points forts : conversion du bénéfice en cash : 158,7 %, marge opérationnelle : 23,8 %.
+- [QPR] NEXT plc (NXT.L, GB) : 73/100, ajustement de contexte +1.9 — Dossier solide sur les comptes ; points forts : roic : 38,9 %, f-score de piotroski : 8/9 ; point faible : ve/ebitda vs secteur : +30,6 %.
 - [QPR] Paychex, Inc. (PAYX, US) : 74/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 39,8 %, conversion du bénéfice en cash : 131,9 %.
-- [QPR] Midea Group Co., Ltd. (000333.SZ, CN) : 71/100, ajustement de contexte +1.6 — Dossier solide sur les comptes ; points forts : couverture des intérêts : 20,9×, dette nette / ebitda : trésorerie nette.
-- [QPR] Booking Holdings Inc. (BKNG, US) : 70/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 34,5 %, roic : 55,8 % ; point faible : momentum 12 mois : −19,0 %.
-- [QPR] Tencent Holdings Limited (0700.HK, CN) : 68/100, ajustement de contexte +1.6 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 33,1 %, dette nette / ebitda : trésorerie nette ; point faible : momentum 12 mois : −35,9 %.
+- [QPR] Midea Group Co., Ltd. (000333.SZ, CN) : 70/100, ajustement de contexte +1.6 — Dossier solide sur les comptes ; points forts : couverture des intérêts : 20,9×, dette nette / ebitda : trésorerie nette.
+- [QPR] Booking Holdings Inc. (BKNG, US) : 70/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 34,5 %, roic : 55,8 % ; point faible : momentum 12 mois : −20,0 %.
+- [QPR] Tencent Holdings Limited (0700.HK, CN) : 68/100, ajustement de contexte +1.6 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 33,1 %, dette nette / ebitda : trésorerie nette ; point faible : momentum 12 mois : −36,3 %.
 - [QPR] Japan Tobacco Inc. (2914.T, JP) : 68/100, ajustement de contexte +0.9 — Dossier solide sur les comptes ; points forts : croissance du bénéfice : +184,6 %, marge opérationnelle : 24,6 %.
 - [QPR] General Dynamics Corporation (GD, US) : 68/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : f-score de piotroski : 8/9, couverture des intérêts : 13,3×.
 
 ## Signaux du jour
 
-- [moyenne] Privia Health Group, Inc. : guidance relevée (05/11/2026)
-- [moyenne] Sarepta Therapeutics, Inc. : guidance relevée (05/11/2026)
-- [moyenne] Gibraltar Industries, Inc. : guidance relevée (05/11/2026)
-- [moyenne] Karman Holdings Inc. : guidance relevée (05/11/2026)
-- [moyenne] LTC Properties, Inc. : guidance abaissée (05/11/2026)
-- [moyenne] Prestige Consumer Healthcare Inc. : guidance abaissée (05/11/2026)
-- [moyenne] Papa John's International, Inc. : guidance abaissée (05/11/2026)
-- [moyenne] Ingredion Incorporated : guidance abaissée (05/11/2026)
-- [moyenne] The Middleby Corporation : guidance relevée (05/11/2026)
-- [moyenne] Kontoor Brands, Inc. : guidance relevée (05/11/2026)
-- [moyenne] Grocery Outlet Holding Corp. : guidance relevée (10/11/2026)
-- [moyenne] ScanSource, Inc. : guidance relevée (05/11/2026)
-- [moyenne] Kratos Defense & Security Solutions, Inc. : guidance relevée (05/11/2026)
-- [moyenne] Haemonetics Corporation : guidance relevée (05/11/2026)
-- [moyenne] Planet Fitness, Inc. : guidance relevée (05/11/2026)
-- [moyenne] Insight Enterprises, Inc. : guidance relevée (05/11/2026)
-- [moyenne] LifeStance Health Group, Inc. : guidance relevée (05/11/2026)
-- [moyenne] Steven Madden, Ltd. : guidance relevée (05/11/2026)
-- [moyenne] Loar Holdings Inc. : guidance relevée (05/11/2026)
-- [moyenne] Northern Oil and Gas, Inc. : guidance abaissée (05/11/2026)
-- [moyenne] Northwest Natural Holding Company : guidance relevée (05/11/2026)
-- [moyenne] Sabre Corporation : guidance relevée (05/11/2026)
+- [faible] Moderna, Inc. : estimations de BPA +10,7 % sur 30 jours
+- [faible] Expand Energy Corporation : estimations de BPA −12,3 % sur 30 jours
+- [faible] Canadian Natural Resources Limited : estimations de BPA +10,0 % sur 30 jours
+- [moyenne] Vodacom Group Limited entre dans la liste « Qualité à prix raisonnable »
+- [faible] Silicon Laboratories Inc. : BPA publié +23,8 % par rapport à l'estimation
+- [faible] Hims & Hers Health, Inc. : estimations de BPA −50,2 % sur 30 jours
+- [faible] Hims & Hers Health, Inc. : BPA publié −348,6 % par rapport à l'estimation
+- [faible] Valaris Limited : estimations de BPA −14,7 % sur 30 jours
+- [faible] Hilton Grand Vacations Inc. : estimations de BPA +10,1 % sur 30 jours
+- [faible] Mercury Systems, Inc. : BPA publié +74,7 % par rapport à l'estimation
+- [moyenne] Core Natural Resources, Inc. : guidance relevée (05/11/2026)
+- [faible] National Health Investors, Inc. : BPA publié +659,6 % par rapport à l'estimation
+- [faible] Vishay Intertechnology, Inc. : estimations de BPA +14,2 % sur 30 jours
+- [faible] Tidewater Inc. : estimations de BPA −19,2 % sur 30 jours
+- [faible] Tidewater Inc. : BPA publié −37,4 % par rapport à l'estimation
+- [moyenne] Alarm.com Holdings, Inc. : guidance relevée (05/11/2026)
+- [moyenne] Advance Auto Parts, Inc. : guidance relevée (05/11/2026)
+- [moyenne] Callaway Golf Company : guidance relevée (05/11/2026)
+- [faible] Sarepta Therapeutics, Inc. : estimations de BPA −24,3 % sur 30 jours
+- [faible] Coty Inc. : estimations de BPA +10,0 % sur 30 jours
+- [moyenne] Certara, Inc. : guidance relevée (05/11/2026)
+- [moyenne] Six Flags Entertainment Corporation : guidance abaissée (05/11/2026)
+- [faible] STAAR Surgical Company : estimations de BPA +13,0 % sur 30 jours
+- [faible] Sanmina Corporation : estimations de BPA +19,9 % sur 30 jours
+- [faible] Fortune Brands Innovations, Inc. : estimations de BPA −10,8 % sur 30 jours
+- [moyenne] Doximity, Inc. : guidance relevée (05/11/2026)
+- [moyenne] Concentra Group Holdings Parent, Inc. : guidance relevée (05/11/2026)
+- [moyenne] VSE Corporation : guidance relevée (04/11/2026)
+- [moyenne] Marriott Vacations Worldwide Corporation : guidance relevée (04/11/2026)
+- [moyenne] ACM Research, Inc. : guidance relevée (05/11/2026)
+- [faible] Resideo Technologies, Inc. : BPA publié +28,9 % par rapport à l'estimation
+- [moyenne] AvePoint, Inc. : guidance relevée (05/11/2026)
+- [moyenne] First Advantage Corporation : guidance relevée (05/11/2026)
+- [faible] Sonos, Inc. : BPA publié −20,0 % par rapport à l'estimation
+- [faible] Azenta, Inc. : estimations de BPA −11,6 % sur 30 jours
+- [faible] Azenta, Inc. : BPA publié +150,7 % par rapport à l'estimation
+- [moyenne] ANI Pharmaceuticals, Inc. : guidance relevée (05/11/2026)
+- [moyenne] BJ's Restaurants, Inc. : guidance relevée (05/11/2026)
+- [faible] Centerspace : estimations de BPA +16,1 % sur 30 jours
+- [faible] Uniti Group Inc. : estimations de BPA −16,3 % sur 30 jours
+- [moyenne] Corsair Gaming, Inc. : guidance relevée (05/11/2026)
+- [faible] STAG Industrial, Inc. : estimations de BPA +13,5 % sur 30 jours
+- [moyenne] Genpact Limited : guidance relevée (05/11/2026)
+- [moyenne] Frontdoor, Inc. : guidance relevée (05/11/2026)
+- [faible] The Trade Desk, Inc. : BPA publié +30,0 % par rapport à l'estimation
+- [faible] Clearway Energy, Inc. : BPA publié −73,9 % par rapport à l'estimation
+- [moyenne] The GEO Group, Inc. : guidance relevée (05/11/2026)
+- [faible] Liquidia Corporation : BPA publié +25,3 % par rapport à l'estimation
+- [moyenne] Versigent PLC : guidance relevée (04/11/2026)
+- [faible] Sunstone Hotel Investors, Inc. : estimations de BPA +61,6 % sur 30 jours
+- [faible] Kemper Corporation : BPA publié +30,2 % par rapport à l'estimation
+- [moyenne] Enovis Corporation : guidance relevée (05/11/2026)
+- [faible] Adient plc : estimations de BPA −10,1 % sur 30 jours
+- [faible] Ichor Holdings, Ltd. : estimations de BPA +11,0 % sur 30 jours
+- [moyenne] Bentley Systems, Incorporated : guidance relevée (05/11/2026)
+- [faible] AAON, Inc. : estimations de BPA +14,1 % sur 30 jours
+- [faible] AAON, Inc. : BPA publié +43,5 % par rapport à l'estimation
+- [moyenne] Shift4 Payments, Inc. : guidance abaissée (05/11/2026)
+- [faible] Arcutis Biotherapeutics, Inc. : estimations de BPA −21,7 % sur 30 jours
+- [faible] MARA Holdings, Inc. : BPA publié −447,3 % par rapport à l'estimation
+- [moyenne] Veracyte, Inc. : guidance abaissée (04/11/2026)
+- [moyenne] A10 Networks, Inc. : guidance relevée (05/11/2026)
+- [faible] Schrödinger, Inc. : estimations de BPA +13,7 % sur 30 jours
+- [faible] Innoviva, Inc. : estimations de BPA −33,2 % sur 30 jours
+- [faible] Amphastar Pharmaceuticals, Inc. : estimations de BPA +28,1 % sur 30 jours
+- [moyenne] Astec Industries, Inc. : guidance abaissée (05/11/2026)
+- [faible] Astec Industries, Inc. : estimations de BPA −11,5 % sur 30 jours
+- [faible] Sabre Corporation : estimations de BPA −11,6 % sur 30 jours
+- [faible] freenet AG : BPA publié −20,9 % par rapport à l'estimation
+- [faible] K+S Aktiengesellschaft : BPA publié −144,7 % par rapport à l'estimation
+- [faible] Sunrise Communications AG : BPA publié +112,3 % par rapport à l'estimation
 
 ## Sources
 
