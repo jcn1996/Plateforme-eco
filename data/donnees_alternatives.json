@@ -1,18 +1,18 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-10T13:47:03Z",
+    "genere_le": "2026-11-11T05:49:18Z",
     "source": "agent-donnees-alternatives",
     "fictif": false,
     "version_agent": "1.0",
-    "mise_a_jour_precedente": "2026-11-10T05:49:56Z",
+    "mise_a_jour_precedente": "2026-11-10T13:47:03Z",
     "etat_des_sources": {
       "camions_de": "ok",
       "camions_us": "ok",
       "fret_vrac": "ok",
       "fret_conteneurs": "ok",
       "ciment_cn": "secours",
-      "ciment_us": "ok",
+      "ciment_us": "erreur : https://www.usgs.gov/centers/national-minerals-information-center/cement-statistics-and-information : HTTP 504",
       "mises_en_chantier_us": "ok",
       "exportations_kr": "ok",
       "exportations_tw": "ok",
@@ -43,7 +43,7 @@
     }
   },
   "donnees": {
-    "date": "2026-11-10",
+    "date": "2026-11-11",
     "categories": {
       "transport": "Transport et industrie",
       "construction": "Construction",
@@ -272,21 +272,19 @@
         "code": "US",
         "nom": "États-Unis",
         "suivi": true,
-        "score": 41,
-        "lecture": "stable",
+        "score": 38,
+        "lecture": "ralentissement",
         "marque": false,
         "lecture_non_retenue": null,
-        "indicateurs_utilises": 6,
+        "indicateurs_utilises": 5,
         "confiance": {
-          "niveau": "moyen",
-          "score": 0.7,
+          "niveau": "élevé",
+          "score": 0.8,
           "raisons": [
-            "indicateurs peu concordants",
-            "historique court pour : Expéditions de ciment"
+            "indicateurs peu concordants"
           ]
         },
         "pour": [
-          "ciment_us",
           "electricite_us",
           "offres_emploi_us"
         ],
@@ -295,7 +293,7 @@
           "mises_en_chantier_us",
           "tsa_us"
         ],
-        "texte": "États-Unis : activité réelle « stable » (score 41/100 sur 6 indicateurs) — offres d'emploi en ligne +2,9 % sur 12 mois ; demande d'électricité +2,4 % sur 12 mois ; expéditions de ciment +1,4 % sur 12 mois.",
+        "texte": "États-Unis : activité réelle « ralentissement » (score 38/100 sur 5 indicateurs) — offres d'emploi en ligne +2,9 % sur 12 mois ; demande d'électricité +2,4 % sur 12 mois ; passagers contrôlés dans les aéroports −1,4 % sur 12 mois.",
         "indicateurs": [
           "camions_us",
           "ciment_us",
@@ -309,14 +307,14 @@
           "texte": "croissance du pib 2,3 % (53/100) ; indicateur avancé (ocde) 101,0 (64/100)"
         },
         "ce_qui_pourrait_me_donner_tort": [
-          "Mises en chantier de logements va dans l'autre sens (−7,4 % sur 12 mois).",
-          "La consommation d'électricité varie aussi avec les températures, pas seulement avec l'activité.",
-          "Les données mensuelles sont publiées avec retard et souvent révisées."
+          "Demande d'électricité va dans l'autre sens (+2,4 % sur 12 mois).",
+          "Offres d'emploi en ligne va dans l'autre sens (+2,9 % sur 12 mois).",
+          "La consommation d'électricité varie aussi avec les températures, pas seulement avec l'activité."
         ],
         "divergence": null,
         "precedent": {
-          "score": 38,
-          "lecture": "ralentissement"
+          "score": 41,
+          "lecture": "stable"
         }
       }
     ],
@@ -344,14 +342,10 @@
         "note": 62.7,
         "methode_note": "percentiles",
         "historique_mois": 226,
-        "age_jours": 10,
+        "age_jours": 11,
         "perimee": false,
         "lecture": "Kilomètres parcourus par les poids lourds sur autoroute : +2,1 % sur 12 mois, 0,0 % sur 1 mois, écart à la tendance +1,2 %, percentile 60 de l'historique.",
         "serie": [
-          [
-            "2024-11-10",
-            94.4
-          ],
           [
             "2024-11-17",
             95.2
@@ -791,7 +785,7 @@
         "note": 18.4,
         "methode_note": "percentiles",
         "historique_mois": 142,
-        "age_jours": 101,
+        "age_jours": 102,
         "perimee": false,
         "lecture": "Tonnage du transport routier : −1,6 % sur 12 mois, −0,3 % sur 1 mois, écart à la tendance −0,6 %, percentile 18 de l'historique.",
         "serie": [
@@ -1251,10 +1245,10 @@
         "mention": "approximation : l'indice Baltic Dry n'est pas diffusé gratuitement ; l'ETF BDRY porte des contrats à terme sur le fret vrac",
         "categorie_nom": "Transport et industrie",
         "mention_proxy": true,
-        "valeur": 13.344,
-        "date": "2026-11-09",
-        "variation_1m": -15.13,
-        "variation_12m": 54.46,
+        "valeur": 13.57,
+        "date": "2026-11-10",
+        "variation_1m": -14.34,
+        "variation_12m": 54.53,
         "ecart_tendance": 22.45,
         "ecart_saisonnier": 47.06,
         "percentile_12m": 63.3,
@@ -1264,7 +1258,7 @@
         "historique_mois": 72,
         "age_jours": 1,
         "perimee": false,
-        "lecture": "Fret vrac sec (Baltic Dry, approximation) : +54,5 % sur 12 mois, −15,1 % sur 1 mois, écart à la tendance +22,4 %, percentile 63 de l'historique.",
+        "lecture": "Fret vrac sec (Baltic Dry, approximation) : +54,5 % sur 12 mois, −14,3 % sur 1 mois, écart à la tendance +22,4 %, percentile 63 de l'historique.",
         "serie": [
           [
             "2024-11-15",
@@ -1683,8 +1677,8 @@
             12.726
           ],
           [
-            "2026-11-09",
-            13.344
+            "2026-11-10",
+            13.457
           ]
         ],
         "etat_source": "ok",
@@ -1713,7 +1707,7 @@
         "note": 100.0,
         "methode_note": "échelle fixe (historique court)",
         "historique_mois": 1,
-        "age_jours": 5,
+        "age_jours": 6,
         "perimee": false,
         "lecture": "Fret conteneurs (Drewry WCI) : +124,0 % sur 12 mois.",
         "serie": [
@@ -1752,9 +1746,9 @@
         "note": 10.0,
         "methode_note": "échelle fixe (historique court)",
         "historique_mois": 10,
-        "age_jours": 344,
+        "age_jours": 345,
         "perimee": true,
-        "lecture": "Production de ciment : −6,6 % sur 1 mois. Dernière donnée disponible : décembre 2025 (344 jours) ; trop ancienne, exclue du score.",
+        "lecture": "Production de ciment : −6,6 % sur 1 mois. Dernière donnée disponible : décembre 2025 (345 jours) ; trop ancienne, exclue du score.",
         "serie": [
           [
             "2025-03-01",
@@ -1812,80 +1806,12 @@
         "mention": "données estimées, publiées avec environ trois mois de décalage",
         "categorie_nom": "Construction",
         "mention_proxy": false,
-        "valeur": 10.1,
-        "date": "2026-07-01",
-        "variation_1m": 0.0,
-        "variation_12m": 1.4,
-        "ecart_tendance": null,
-        "ecart_saisonnier": null,
-        "percentile_12m": null,
-        "percentile_tendance": null,
-        "note": 55.8,
-        "methode_note": "échelle fixe (historique court)",
-        "historique_mois": 14,
-        "age_jours": 132,
-        "perimee": false,
-        "lecture": "Expéditions de ciment : +1,4 % sur 12 mois, 0,0 % sur 1 mois.",
-        "serie": [
-          [
-            "2025-01-01",
-            5.768
-          ],
-          [
-            "2025-02-01",
-            6.326
-          ],
-          [
-            "2025-03-01",
-            8.088
-          ],
-          [
-            "2025-04-01",
-            9.088
-          ],
-          [
-            "2025-05-01",
-            8.913
-          ],
-          [
-            "2025-06-01",
-            9.199
-          ],
-          [
-            "2025-07-01",
-            9.961
-          ],
-          [
-            "2026-01-01",
-            5.97
-          ],
-          [
-            "2026-02-01",
-            6.8
-          ],
-          [
-            "2026-03-01",
-            8.5
-          ],
-          [
-            "2026-04-01",
-            9.27
-          ],
-          [
-            "2026-05-01",
-            8.94
-          ],
-          [
-            "2026-06-01",
-            10.1
-          ],
-          [
-            "2026-07-01",
-            10.1
-          ]
-        ],
-        "etat_source": "ok",
-        "detail_source": "14 rapports mensuels (PDF)"
+        "note": null,
+        "valeur": null,
+        "date": null,
+        "serie": [],
+        "lecture": "Expéditions de ciment : source indisponible (erreur : https://www.usgs.gov/centers/national-minerals-information-center/cement-statistics-and-information : HTTP 504).",
+        "etat_source": "erreur : https://www.usgs.gov/centers/national-minerals-information-center/cement-statistics-and-information : HTTP 504"
       },
       {
         "cle": "mises_en_chantier_us",
@@ -1910,7 +1836,7 @@
         "note": 17.7,
         "methode_note": "percentiles",
         "historique_mois": 143,
-        "age_jours": 70,
+        "age_jours": 71,
         "perimee": false,
         "lecture": "Mises en chantier de logements : −7,4 % sur 12 mois, −5,2 % sur 1 mois, écart à la tendance −3,9 %, percentile 18 de l'historique.",
         "serie": [
@@ -2381,7 +2307,7 @@
         "note": 99.2,
         "methode_note": "percentiles",
         "historique_mois": 142,
-        "age_jours": 101,
+        "age_jours": 102,
         "perimee": false,
         "lecture": "Exportations (mensuelles) : +67,8 % sur 12 mois, +2,2 % sur 1 mois, écart à la tendance +25,6 %, percentile 99 de l'historique.",
         "serie": [
@@ -2852,7 +2778,7 @@
         "note": 97.8,
         "methode_note": "percentiles",
         "historique_mois": 152,
-        "age_jours": 101,
+        "age_jours": 102,
         "perimee": false,
         "lecture": "Exportations (mensuelles) : +52,6 % sur 12 mois, +10,2 % sur 1 mois, écart à la tendance +15,6 %, percentile 98 de l'historique.",
         "serie": [
@@ -3323,9 +3249,9 @@
         "note": 96.8,
         "methode_note": "échelle fixe (historique court)",
         "historique_mois": 10,
-        "age_jours": 344,
+        "age_jours": 345,
         "perimee": true,
-        "lecture": "Production d'électricité : +10,2 % sur 1 mois. Dernière donnée disponible : décembre 2025 (344 jours) ; trop ancienne, exclue du score.",
+        "lecture": "Production d'électricité : +10,2 % sur 1 mois. Dernière donnée disponible : décembre 2025 (345 jours) ; trop ancienne, exclue du score.",
         "serie": [
           [
             "2025-03-01",
@@ -3383,10 +3309,10 @@
         "mention": "très sensible aux températures",
         "categorie_nom": "Énergie",
         "mention_proxy": false,
-        "valeur": 10668354.0,
+        "valeur": 10668388.0,
         "date": "2026-11-09",
-        "variation_1m": -10.06,
-        "variation_12m": 2.37,
+        "variation_1m": -10.05,
+        "variation_12m": 2.38,
         "ecart_tendance": 5.64,
         "ecart_saisonnier": -0.23,
         "percentile_12m": 55.6,
@@ -3394,14 +3320,10 @@
         "note": 63.4,
         "methode_note": "percentiles",
         "historique_mois": 48,
-        "age_jours": 1,
+        "age_jours": 2,
         "perimee": false,
         "lecture": "Demande d'électricité : +2,4 % sur 12 mois, −10,1 % sur 1 mois, écart à la tendance +5,6 %, percentile 56 de l'historique.",
         "serie": [
-          [
-            "2024-11-10",
-            9764055.0
-          ],
           [
             "2024-11-17",
             10283473.571
@@ -3740,15 +3662,15 @@
           ],
           [
             "2026-06-28",
-            13034718.857
+            13046465.714
           ],
           [
             "2026-07-05",
-            14545842.0
+            14558683.714
           ],
           [
             "2026-07-12",
-            14193182.571
+            14203519.286
           ],
           [
             "2026-07-19",
@@ -3760,7 +3682,7 @@
           ],
           [
             "2026-08-02",
-            14333459.571
+            14334268.571
           ],
           [
             "2026-08-09",
@@ -3796,7 +3718,7 @@
           ],
           [
             "2026-10-04",
-            11775489.0
+            11775484.0
           ],
           [
             "2026-10-11",
@@ -3812,15 +3734,15 @@
           ],
           [
             "2026-11-01",
-            10671370.143
+            10671370.571
           ],
           [
             "2026-11-08",
-            10637675.429
+            10640183.0
           ],
           [
             "2026-11-09",
-            10668354.0
+            10668388.0
           ]
         ],
         "etat_source": "ok",
@@ -3849,14 +3771,10 @@
         "note": 24.1,
         "methode_note": "percentiles",
         "historique_mois": 46,
-        "age_jours": 1,
+        "age_jours": 2,
         "perimee": false,
         "lecture": "Passagers contrôlés dans les aéroports : −1,4 % sur 12 mois, −1,3 % sur 1 mois, écart à la tendance −0,8 %, percentile 15 de l'historique.",
         "serie": [
-          [
-            "2024-11-10",
-            2660472.0
-          ],
           [
             "2024-11-17",
             2383314.0
@@ -4304,14 +4222,10 @@
         "note": 71.0,
         "methode_note": "percentiles",
         "historique_mois": 81,
-        "age_jours": 11,
+        "age_jours": 12,
         "perimee": false,
         "lecture": "Offres d'emploi en ligne : +2,9 % sur 12 mois, +0,4 % sur 1 mois, écart à la tendance +0,3 %, percentile 71 de l'historique.",
         "serie": [
-          [
-            "2024-11-10",
-            109.24
-          ],
           [
             "2024-11-17",
             109.526
@@ -4751,14 +4665,10 @@
         "note": 61.7,
         "methode_note": "percentiles",
         "historique_mois": 81,
-        "age_jours": 11,
+        "age_jours": 12,
         "perimee": false,
         "lecture": "Offres d'emploi en ligne : −8,6 % sur 12 mois, +0,2 % sur 1 mois, écart à la tendance −4,5 %, percentile 65 de l'historique.",
         "serie": [
-          [
-            "2024-11-10",
-            85.85
-          ],
           [
             "2024-11-17",
             85.139
@@ -5198,14 +5108,10 @@
         "note": 32.7,
         "methode_note": "percentiles",
         "historique_mois": 81,
-        "age_jours": 11,
+        "age_jours": 12,
         "perimee": false,
         "lecture": "Offres d'emploi en ligne : −10,9 % sur 12 mois, −1,0 % sur 1 mois, écart à la tendance −4,8 %, percentile 33 de l'historique.",
         "serie": [
-          [
-            "2024-11-10",
-            129.02
-          ],
           [
             "2024-11-17",
             128.853
@@ -5645,14 +5551,10 @@
         "note": 36.2,
         "methode_note": "percentiles",
         "historique_mois": 81,
-        "age_jours": 11,
+        "age_jours": 12,
         "perimee": false,
         "lecture": "Offres d'emploi en ligne : −16,4 % sur 12 mois, −3,2 % sur 1 mois, écart à la tendance −7,1 %, percentile 36 de l'historique.",
         "serie": [
-          [
-            "2024-11-10",
-            129.84
-          ],
           [
             "2024-11-17",
             129.209
@@ -6092,14 +5994,10 @@
         "note": 56.8,
         "methode_note": "percentiles",
         "historique_mois": 81,
-        "age_jours": 11,
+        "age_jours": 12,
         "perimee": false,
         "lecture": "Offres d'emploi en ligne : +3,8 % sur 12 mois, +4,7 % sur 1 mois, écart à la tendance −0,9 %, percentile 64 de l'historique.",
         "serie": [
-          [
-            "2024-11-10",
-            98.36
-          ],
           [
             "2024-11-17",
             97.706
@@ -6539,14 +6437,10 @@
         "note": 56.5,
         "methode_note": "percentiles",
         "historique_mois": 81,
-        "age_jours": 11,
+        "age_jours": 12,
         "perimee": false,
         "lecture": "Offres d'emploi en ligne : +1,9 % sur 12 mois, −0,6 % sur 1 mois, écart à la tendance −0,5 %, percentile 56 de l'historique.",
         "serie": [
-          [
-            "2024-11-10",
-            157.87
-          ],
           [
             "2024-11-17",
             157.524
@@ -6986,14 +6880,10 @@
         "note": 15.6,
         "methode_note": "percentiles",
         "historique_mois": 81,
-        "age_jours": 11,
+        "age_jours": 12,
         "perimee": false,
         "lecture": "Offres d'emploi en ligne : −13,8 % sur 12 mois, −3,6 % sur 1 mois, écart à la tendance −8,2 %, percentile 17 de l'historique.",
         "serie": [
-          [
-            "2024-11-10",
-            160.71
-          ],
           [
             "2024-11-17",
             161.21
@@ -7433,14 +7323,10 @@
         "note": 15.3,
         "methode_note": "percentiles",
         "historique_mois": 81,
-        "age_jours": 11,
+        "age_jours": 12,
         "perimee": false,
         "lecture": "Offres d'emploi en ligne : −3,7 % sur 12 mois, −0,4 % sur 1 mois, écart à la tendance −4,6 %, percentile 25 de l'historique.",
         "serie": [
-          [
-            "2024-11-10",
-            139.1
-          ],
           [
             "2024-11-17",
             138.711
@@ -7880,14 +7766,10 @@
         "note": 28.7,
         "methode_note": "percentiles",
         "historique_mois": 81,
-        "age_jours": 11,
+        "age_jours": 12,
         "perimee": false,
         "lecture": "Offres d'emploi en ligne : −9,7 % sur 12 mois, −0,4 % sur 1 mois, écart à la tendance −4,6 %, percentile 33 de l'historique.",
         "serie": [
-          [
-            "2024-11-10",
-            134.14
-          ],
           [
             "2024-11-17",
             133.259
@@ -8315,49 +8197,20 @@
       "fret_vrac",
       "camions_us",
       "tsa_us",
-      "mises_en_chantier_us",
-      "ciment_us"
+      "mises_en_chantier_us"
     ],
     "attention": [
       {
-        "ticker": "MC.PA",
-        "nom": "LVMH Moët Hennessy - Louis Vuitton, Société Européenne",
-        "pays": "FR",
-        "liste": "surveillance",
+        "ticker": "PAF.L",
+        "nom": "Pan African Resources PLC",
+        "pays": "GB",
+        "liste": "pepites",
         "trends": {
-          "variation_pct": 130.0,
-          "niveau_recent": 4.1
-        },
-        "tendance": "en hausse",
-        "variation_moyenne_pct": 130.0,
-        "signal": true
-      },
-      {
-        "ticker": "ADBE",
-        "nom": "Adobe Inc.",
-        "pays": "US",
-        "liste": "pepites",
-        "wikipedia": {
-          "article": "Adobe",
-          "vues_30j": 11140,
-          "variation_pct": 2.5
+          "variation_pct": 28.5,
+          "niveau_recent": 13.7
         },
         "tendance": "stable",
-        "variation_moyenne_pct": 2.5,
-        "signal": false
-      },
-      {
-        "ticker": "FHI",
-        "nom": "Federated Hermes, Inc.",
-        "pays": "US",
-        "liste": "pepites",
-        "wikipedia": {
-          "article": "Federated Hermes",
-          "vues_30j": 2218,
-          "variation_pct": 2.1
-        },
-        "tendance": "stable",
-        "variation_moyenne_pct": 2.1,
+        "variation_moyenne_pct": 28.5,
         "signal": false
       },
       {
@@ -8367,85 +8220,11 @@
         "liste": "pepites",
         "wikipedia": {
           "article": "MS&AD Insurance Group",
-          "vues_30j": 760,
-          "variation_pct": -0.5
+          "vues_30j": 796,
+          "variation_pct": 6.3
         },
         "tendance": "stable",
-        "variation_moyenne_pct": -0.5,
-        "signal": false
-      },
-      {
-        "ticker": "9633.HK",
-        "nom": "Nongfu Spring Co., Ltd.",
-        "pays": "CN",
-        "liste": "pepites",
-        "wikipedia": {
-          "article": "Nongfu Spring",
-          "vues_30j": 2061,
-          "variation_pct": -1.4
-        },
-        "tendance": "stable",
-        "variation_moyenne_pct": -1.4,
-        "signal": false
-      },
-      {
-        "ticker": "NVMI",
-        "nom": "Nova Ltd.",
-        "pays": "US",
-        "liste": "surveillance",
-        "wikipedia": {
-          "article": "Nova",
-          "vues_30j": 8299,
-          "variation_pct": 1.1
-        },
-        "trends": {
-          "variation_pct": -5.4,
-          "niveau_recent": 79
-        },
-        "tendance": "stable",
-        "variation_moyenne_pct": -2.2,
-        "signal": false
-      },
-      {
-        "ticker": "HCLTECH.NS",
-        "nom": "HCL Technologies Limited",
-        "pays": "IN",
-        "liste": "pepites",
-        "wikipedia": {
-          "article": "HCL Technologies",
-          "vues_30j": 1457,
-          "variation_pct": -6.0
-        },
-        "tendance": "stable",
-        "variation_moyenne_pct": -6.0,
-        "signal": false
-      },
-      {
-        "ticker": "ACGL",
-        "nom": "Arch Capital Group Ltd.",
-        "pays": "US",
-        "liste": "pepites",
-        "wikipedia": {
-          "article": "Arch Capital Group",
-          "vues_30j": 1202,
-          "variation_pct": -11.2
-        },
-        "tendance": "stable",
-        "variation_moyenne_pct": -11.2,
-        "signal": false
-      },
-      {
-        "ticker": "PAYX",
-        "nom": "Paychex, Inc.",
-        "pays": "US",
-        "liste": "pepites",
-        "wikipedia": {
-          "article": "Paychex",
-          "vues_30j": 2853,
-          "variation_pct": -12.1
-        },
-        "tendance": "stable",
-        "variation_moyenne_pct": -12.1,
+        "variation_moyenne_pct": 6.3,
         "signal": false
       },
       {
@@ -8455,79 +8234,89 @@
         "liste": "pepites",
         "wikipedia": {
           "article": "Japan Tobacco",
-          "vues_30j": 7165,
-          "variation_pct": 14.8
+          "vues_30j": 7355,
+          "variation_pct": 18.4
         },
         "trends": {
-          "variation_pct": -40.2,
-          "niveau_recent": 12.9
+          "variation_pct": -6.2,
+          "niveau_recent": 16.7
         },
         "tendance": "stable",
-        "variation_moyenne_pct": -12.7,
+        "variation_moyenne_pct": 6.1,
         "signal": false
       },
       {
-        "ticker": "AAPL.BA",
-        "nom": "Apple Inc.",
-        "pays": "AR",
-        "liste": "pepites",
-        "wikipedia": {
-          "article": "Apple",
-          "vues_30j": 72429,
-          "variation_pct": -14.4
-        },
-        "tendance": "stable",
-        "variation_moyenne_pct": -14.4,
-        "signal": false
-      },
-      {
-        "ticker": "MLI",
-        "nom": "Mueller Industries, Inc.",
+        "ticker": "FHI",
+        "nom": "Federated Hermes, Inc.",
         "pays": "US",
         "liste": "pepites",
         "wikipedia": {
-          "article": "Mueller Industries",
-          "vues_30j": 392,
-          "variation_pct": -21.7
+          "article": "Federated Hermes",
+          "vues_30j": 2247,
+          "variation_pct": 4.1
         },
         "tendance": "stable",
-        "variation_moyenne_pct": -21.7,
+        "variation_moyenne_pct": 4.1,
         "signal": false
       },
       {
-        "ticker": "GD",
-        "nom": "General Dynamics Corporation",
+        "ticker": "ADBE",
+        "nom": "Adobe Inc.",
         "pays": "US",
         "liste": "pepites",
         "wikipedia": {
-          "article": "General Dynamics",
-          "vues_30j": 22524,
-          "variation_pct": -15.4
-        },
-        "trends": {
-          "variation_pct": -28.9,
-          "niveau_recent": 29.0
+          "article": "Adobe",
+          "vues_30j": 11062,
+          "variation_pct": 1.1
         },
         "tendance": "stable",
-        "variation_moyenne_pct": -22.1,
+        "variation_moyenne_pct": 1.1,
         "signal": false
       },
       {
-        "ticker": "0700.HK",
-        "nom": "Tencent Holdings Limited",
+        "ticker": "9633.HK",
+        "nom": "Nongfu Spring Co., Ltd.",
         "pays": "CN",
         "liste": "pepites",
         "wikipedia": {
-          "article": "Tencent Holdings",
-          "vues_30j": 291,
-          "variation_pct": -4.6
-        },
-        "trends": {
-          "variation_pct": -47.9,
-          "niveau_recent": 12.6
+          "article": "Nongfu Spring",
+          "vues_30j": 2092,
+          "variation_pct": 0.7
         },
         "tendance": "stable",
-        "variation_moyenne_pct": -26.2,
+        "variation_moyenne_pct": 0.7,
+        "signal": false
+      },
+      {
+        "ticker": "NVMI",
+        "nom": "Nova Ltd.",
+        "pays": "US",
+        "liste": "surveillance",
+        "wikipedia": {
+          "article": "Nova",
+          "vues_30j": 8353,
+          "variation_pct": 2.1
+        },
+        "trends": {
+          "variation_pct": -5.5,
+          "niveau_recent": 82.2
+        },
+        "tendance": "stable",
+        "variation_moyenne_pct": -1.7,
+        "signal": false
+      },
+      {
+        "ticker": "HCLTECH.NS",
+        "nom": "HCL Technologies Limited",
+        "pays": "IN",
+        "liste": "pepites",
+        "wikipedia": {
+          "article": "HCL Technologies",
+          "vues_30j": 1442,
+          "variation_pct": -4.6
+        },
+        "tendance": "stable",
+        "variation_moyenne_pct": -4.6,
         "signal": false
       },
       {
@@ -8537,15 +8326,108 @@
         "liste": "pepites",
         "wikipedia": {
           "article": "Midea Group",
-          "vues_30j": 12252,
-          "variation_pct": -8.0
+          "vues_30j": 12266,
+          "variation_pct": -7.6
         },
+        "tendance": "stable",
+        "variation_moyenne_pct": -7.6,
         "trends": {
           "variation_pct": -79.7,
-          "niveau_recent": 4.8
+          "niveau_recent": 4.8,
+          "ancienne": true
         },
-        "tendance": "en baisse",
-        "variation_moyenne_pct": -43.9,
+        "signal": false
+      },
+      {
+        "ticker": "ACGL",
+        "nom": "Arch Capital Group Ltd.",
+        "pays": "US",
+        "liste": "pepites",
+        "wikipedia": {
+          "article": "Arch Capital Group",
+          "vues_30j": 1215,
+          "variation_pct": -8.9
+        },
+        "tendance": "stable",
+        "variation_moyenne_pct": -8.9,
+        "signal": false
+      },
+      {
+        "ticker": "PAYX",
+        "nom": "Paychex, Inc.",
+        "pays": "US",
+        "liste": "pepites",
+        "wikipedia": {
+          "article": "Paychex",
+          "vues_30j": 2911,
+          "variation_pct": -9.3
+        },
+        "tendance": "stable",
+        "variation_moyenne_pct": -9.3,
+        "signal": false
+      },
+      {
+        "ticker": "AAPL.BA",
+        "nom": "Apple Inc.",
+        "pays": "AR",
+        "liste": "pepites",
+        "wikipedia": {
+          "article": "Apple",
+          "vues_30j": 72697,
+          "variation_pct": -14.0
+        },
+        "tendance": "stable",
+        "variation_moyenne_pct": -14.0,
+        "signal": false
+      },
+      {
+        "ticker": "MLI",
+        "nom": "Mueller Industries, Inc.",
+        "pays": "US",
+        "liste": "pepites",
+        "wikipedia": {
+          "article": "Mueller Industries",
+          "vues_30j": 405,
+          "variation_pct": -18.2
+        },
+        "tendance": "stable",
+        "variation_moyenne_pct": -18.2,
+        "signal": false
+      },
+      {
+        "ticker": "GD",
+        "nom": "General Dynamics Corporation",
+        "pays": "US",
+        "liste": "pepites",
+        "wikipedia": {
+          "article": "General Dynamics",
+          "vues_30j": 22573,
+          "variation_pct": -14.8
+        },
+        "trends": {
+          "variation_pct": -28.3,
+          "niveau_recent": 29.4
+        },
+        "tendance": "stable",
+        "variation_moyenne_pct": -21.6,
+        "signal": false
+      },
+      {
+        "ticker": "0700.HK",
+        "nom": "Tencent Holdings Limited",
+        "pays": "CN",
+        "liste": "pepites",
+        "wikipedia": {
+          "article": "Tencent Holdings",
+          "vues_30j": 285,
+          "variation_pct": -6.9
+        },
+        "trends": {
+          "variation_pct": -50.3,
+          "niveau_recent": 12.6
+        },
+        "tendance": "stable",
+        "variation_moyenne_pct": -28.6,
         "signal": false
       },
       {
@@ -8555,15 +8437,15 @@
         "liste": "pepites",
         "wikipedia": {
           "article": "Booking Holdings",
-          "vues_30j": 7657,
-          "variation_pct": -16.9
+          "vues_30j": 7607,
+          "variation_pct": -17.5
         },
         "trends": {
-          "variation_pct": -73.3,
-          "niveau_recent": 5.9
+          "variation_pct": -71.4,
+          "niveau_recent": 6.3
         },
         "tendance": "en baisse",
-        "variation_moyenne_pct": -45.1,
+        "variation_moyenne_pct": -44.5,
         "signal": false
       },
       {
@@ -8572,11 +8454,11 @@
         "pays": "CA",
         "liste": "surveillance",
         "trends": {
-          "variation_pct": -51.3,
-          "niveau_recent": 4.0
+          "variation_pct": -52.0,
+          "niveau_recent": 4.8
         },
         "tendance": "en baisse",
-        "variation_moyenne_pct": -51.3,
+        "variation_moyenne_pct": -52.0,
         "signal": false
       }
     ],
