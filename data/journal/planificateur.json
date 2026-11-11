@@ -1,15 +1,15 @@
 {
   "meta": {
-    "genere_le": "2026-11-11T03:15:45Z",
+    "genere_le": "2026-11-11T03:31:02Z",
     "source": "planificateur",
     "description": "Appels du réveil externe (cron-job.org) et lancements d'agents décidés par le planificateur",
-    "dernier_appel": "2026-11-11T03:15:45Z",
+    "dernier_appel": "2026-11-11T03:31:02Z",
     "sante": {
       "agent": "planificateur",
       "libelle": "Planificateur (réveil externe)",
       "ordre": 0,
       "workflow": "planificateur.yml",
-      "derniere_execution": "2026-11-11T03:15:45Z",
+      "derniere_execution": "2026-11-11T03:31:02Z",
       "appel_externe": true,
       "panne_minutes": 45,
       "prochaine_prevue": null,
@@ -25,22 +25,10 @@
       ],
       "degrade": false,
       "raisons": [],
-      "dernier_lancement": "2026-11-11T03:15:45Z"
+      "dernier_lancement": "2026-11-11T03:31:02Z"
     }
   },
   "donnees": [
-    {
-      "cle": "agent-geopolitique.yml|3 0-5,7-23 * * *",
-      "workflow": "agent-geopolitique.yml",
-      "parametres": {
-        "mode": "horaire"
-      },
-      "creneau": "2026-11-08T23:03:00Z",
-      "le": "2026-11-08T23:15:46Z",
-      "raison": "créneau dû, pas encore fait",
-      "statut": "lancé",
-      "detail": "https://github.com/jcn1996/Plateforme-eco/actions/runs/42534319480"
-    },
     {
       "cle": "agent-marches.yml|7 * * * 0,6",
       "workflow": "agent-marches.yml",
@@ -3330,7 +3318,19 @@
       "raison": "créneau dû, pas encore fait",
       "statut": "lancé",
       "detail": "https://github.com/jcn1996/Plateforme-eco/actions/runs/42951575789"
+    },
+    {
+      "cle": "agent-pays.yml|7 2 * * 2-6",
+      "workflow": "agent-pays.yml",
+      "parametres": {
+        "mode": "flux"
+      },
+      "creneau": "2026-11-11T02:07:00Z",
+      "le": "2026-11-11T03:31:02Z",
+      "raison": "lancé il y a plus d'une heure sans résultat : nouvelle tentative",
+      "statut": "lancé",
+      "detail": "https://github.com/jcn1996/Plateforme-eco/actions/runs/42953273603"
     }
   ],
-  "derniere_execution": "2026-11-11T03:15:45Z"
+  "derniere_execution": "2026-11-11T03:31:02Z"
 }
