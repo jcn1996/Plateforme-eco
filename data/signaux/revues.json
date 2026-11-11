@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-10T23:03:20Z",
+    "genere_le": "2026-11-11T02:18:29Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
@@ -9,15 +9,15 @@
   },
   "donnees": [
     {
-      "id": "matieres_premieres|changement_verdict|gaz_europe|2026-11-10",
-      "revu_le": "2026-11-10T23:01:37Z",
+      "id": "matieres_premieres|changement_verdict|gaz_europe|2026-11-11",
+      "revu_le": "2026-11-11T02:16:40Z",
       "signal": {
         "agent": "matieres_premieres",
         "type": "changement_verdict",
         "cle": "gaz_europe",
-        "date": "2026-11-10",
+        "date": "2026-11-11",
         "importance": "forte",
-        "titre": "Gaz européen (TTF) : passage de « Neutre (biais positif) » à « Neutre »"
+        "titre": "Gaz européen (TTF) : passage de « Neutre » à « Neutre (biais positif) »"
       },
       "objection": "Pas d'objection spécifique.",
       "faits": [],
@@ -26,6 +26,217 @@
       "methode": "règles",
       "confiance": "moyen",
       "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|CA|2026-11-11",
+      "revu_le": "2026-11-11T02:16:40Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "CA",
+        "date": "2026-11-11",
+        "importance": "moyenne",
+        "titre": "Canada : score de risque géopolitique 57/100, +16 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|FR|2026-11-11",
+      "revu_le": "2026-11-11T02:16:40Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "FR",
+        "date": "2026-11-11",
+        "importance": "moyenne",
+        "titre": "France : score de risque géopolitique 48/100, +26 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|CH|2026-11-11",
+      "revu_le": "2026-11-11T02:16:40Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "CH",
+        "date": "2026-11-11",
+        "importance": "moyenne",
+        "titre": "Suisse : score de risque géopolitique 28/100, +23 pts sur 7 jours"
+      },
+      "objection": "Malgré la hausse du score de risque, la Suisse dispose de réserves de 13,1 mois et d'une dette limitée à 38 % du PIB [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Suisse : réserves de 13,1 mois, dette de 38 % du PIB",
+          "source": "FMI, Banque mondiale"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "CH": {
+          "objection": "Objections spécifiques : Suisse dispose d'amortisseurs (réserves de 13,1 mois d'importations, dette publique de 38 % du PIB) [F1].",
+          "ajustement": "maintenir"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "geopolitique|hausse_score|SA|2026-11-11",
+      "revu_le": "2026-11-11T02:16:40Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "SA",
+        "date": "2026-11-11",
+        "importance": "moyenne",
+        "titre": "Arabie saoudite : score de risque géopolitique 63/100, +58 pts sur 7 jours"
+      },
+      "objection": "En dépit de l'augmentation du score géopolitique, l'Arabie saoudite affiche des réserves de 15,6 mois et une dette de 35 % du PIB [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Arabie saoudite : réserves de 15,6 mois, dette de 35 % du PIB",
+          "source": "FMI, Banque mondiale"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "SA": {
+          "objection": "Objections spécifiques : Arabie saoudite dispose d'amortisseurs (réserves de 15,6 mois d'importations, dette publique de 35 % du PIB) [F1].",
+          "ajustement": "maintenir"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "geopolitique|hausse_score|CN|2026-11-11",
+      "revu_le": "2026-11-11T02:16:40Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "CN",
+        "date": "2026-11-11",
+        "importance": "moyenne",
+        "titre": "Chine : score de risque géopolitique 57/100, +38 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|JP|2026-11-11",
+      "revu_le": "2026-11-11T02:16:40Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "JP",
+        "date": "2026-11-11",
+        "importance": "moyenne",
+        "titre": "Japon : score de risque géopolitique 13/100, +10 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|ES|2026-11-11",
+      "revu_le": "2026-11-11T02:16:40Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "ES",
+        "date": "2026-11-11",
+        "importance": "moyenne",
+        "titre": "Espagne : score de risque géopolitique 19/100, +11 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "entreprises|guidance_relevee|MRCY|2026-11-10",
+      "revu_le": "2026-11-11T02:16:40Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_relevee",
+        "cle": "MRCY",
+        "date": "2026-11-10",
+        "importance": "moyenne",
+        "titre": "Mercury Systems, Inc. : guidance relevée (10/11/2026)"
+      },
+      "objection": "La révision de la guidance s'accompagne d'une dette nette sur EBITDA de 3,7× et d'une couverture des intérêts limitée à 0,3× [F2, F3]. De plus, le VE/EBITDA dépasse de 376,5 % celui du secteur [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Mercury Systems, Inc. : VE/EBITDA vs secteur +376,5 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "Mercury Systems, Inc. : dette nette / EBITDA de 3,7×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F3",
+          "texte": "Mercury Systems, Inc. : couverture des intérêts de 0,3×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F4",
+          "texte": "Mercury Systems, Inc. : cours −23,4 % sur 3 mois, −9,5 % sur 6 mois, +12,0 % sur 12 mois",
+          "source": "agent entreprises (fiche)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2",
+        "F3"
+      ],
+      "modele": "gemini-3.5-flash-lite"
     },
     {
       "id": "geopolitique|evenement_grave|evt-471d58831fea|2026-11-10",
@@ -452,25 +663,6 @@
       "version_regles": 3
     },
     {
-      "id": "geopolitique|hausse_score|CA|2026-11-10",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "CA",
-        "date": "2026-11-10",
-        "importance": "moyenne",
-        "titre": "Canada : score de risque géopolitique 57/100, +33 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
       "id": "geopolitique|hausse_score|MX|2026-11-10",
       "revu_le": "2026-11-10T01:29:40Z",
       "signal": {
@@ -509,95 +701,6 @@
       "version_regles": 3
     },
     {
-      "id": "geopolitique|hausse_score|FR|2026-11-10",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "FR",
-        "date": "2026-11-10",
-        "importance": "moyenne",
-        "titre": "France : score de risque géopolitique 38/100, +30 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|CH|2026-11-10",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "CH",
-        "date": "2026-11-10",
-        "importance": "moyenne",
-        "titre": "Suisse : score de risque géopolitique 24/100, +21 pts sur 7 jours"
-      },
-      "objection": "Malgré la hausse du score, la Suisse dispose de réserves de 13,1 mois et d'une dette de 38 % du PIB [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Suisse : réserves de 13,1 mois, dette de 38 % du PIB",
-          "source": "FMI, Banque mondiale"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "CH": {
-          "objection": "Objections spécifiques : Suisse dispose d'amortisseurs (réserves de 13,1 mois d'importations, dette publique de 38 % du PIB) [F1].",
-          "ajustement": "maintenir"
-        }
-      },
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "geopolitique|hausse_score|SA|2026-11-10",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "SA",
-        "date": "2026-11-10",
-        "importance": "moyenne",
-        "titre": "Arabie saoudite : score de risque géopolitique 66/100, +62 pts sur 7 jours"
-      },
-      "objection": "En dépit de la forte augmentation du score, l'Arabie saoudite affiche des réserves de 15,6 mois et une dette de 35 % du PIB [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Arabie saoudite : réserves de 15,6 mois, dette de 35 % du PIB",
-          "source": "FMI, Banque mondiale"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "SA": {
-          "objection": "Objections spécifiques : Arabie saoudite dispose d'amortisseurs (réserves de 15,6 mois d'importations, dette publique de 35 % du PIB) [F1].",
-          "ajustement": "maintenir"
-        }
-      },
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
       "id": "geopolitique|hausse_score|IN|2026-11-10",
       "revu_le": "2026-11-10T01:29:40Z",
       "signal": {
@@ -607,25 +710,6 @@
         "date": "2026-11-10",
         "importance": "moyenne",
         "titre": "Inde : score de risque géopolitique 53/100, +43 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|CN|2026-11-10",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "CN",
-        "date": "2026-11-10",
-        "importance": "moyenne",
-        "titre": "Chine : score de risque géopolitique 49/100, +46 pts sur 7 jours"
       },
       "objection": "Pas d'objection spécifique.",
       "faits": [],
@@ -671,25 +755,6 @@
       "modele": "gemini-3.5-flash-lite"
     },
     {
-      "id": "geopolitique|hausse_score|JP|2026-11-10",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "JP",
-        "date": "2026-11-10",
-        "importance": "moyenne",
-        "titre": "Japon : score de risque géopolitique 14/100, +13 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
       "id": "geopolitique|hausse_score|PL|2026-11-10",
       "revu_le": "2026-11-10T01:29:40Z",
       "signal": {
@@ -699,63 +764,6 @@
         "date": "2026-11-10",
         "importance": "moyenne",
         "titre": "Pologne : score de risque géopolitique 38/100, +15 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|TW|2026-11-10",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "TW",
-        "date": "2026-11-10",
-        "importance": "moyenne",
-        "titre": "Taïwan : score de risque géopolitique 16/100, +16 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|TH|2026-11-10",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "TH",
-        "date": "2026-11-10",
-        "importance": "moyenne",
-        "titre": "Thaïlande : score de risque géopolitique 13/100, +13 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|TR|2026-11-10",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "TR",
-        "date": "2026-11-10",
-        "importance": "moyenne",
-        "titre": "Turquie : score de risque géopolitique 21/100, +20 pts sur 7 jours"
       },
       "objection": "Pas d'objection spécifique.",
       "faits": [],
@@ -3837,101 +3845,6 @@
         "date": "2026-11-05",
         "importance": "moyenne",
         "titre": "NEXT plc entre dans la liste « Qualité à prix raisonnable »"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|evenement_grave|evt-b9ac585d42a7|2026-11-04",
-      "revu_le": "2026-11-07T23:01:40Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "evenement_grave",
-        "cle": "evt-b9ac585d42a7",
-        "date": "2026-11-04",
-        "importance": "haute",
-        "titre": "Événement de gravité 4 : Baisse des cours pétroliers face à une perspective de cessez-le-feu"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|evenement_grave|theme-evt-eb4a649fce51|2026-11-04",
-      "revu_le": "2026-11-07T23:01:40Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "evenement_grave",
-        "cle": "theme-evt-eb4a649fce51",
-        "date": "2026-11-04",
-        "importance": "haute",
-        "titre": "Événement de gravité 4 : Les États-Unis mènent des frappes limitées sur l'île iranienne de Qeshm"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|evenement_grave|theme-evt-6b62f0830533|2026-11-04",
-      "revu_le": "2026-11-07T23:01:40Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "evenement_grave",
-        "cle": "theme-evt-6b62f0830533",
-        "date": "2026-11-04",
-        "importance": "haute",
-        "titre": "Événement de gravité 4 : Guerre en Ukraine: une frappe russe fait au moins 29 morts dans le sud-est du pays"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|evenement_grave|theme-evt-3ba56f3fae09|2026-11-04",
-      "revu_le": "2026-11-07T23:01:40Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "evenement_grave",
-        "cle": "theme-evt-3ba56f3fae09",
-        "date": "2026-11-04",
-        "importance": "haute",
-        "titre": "Événement de gravité 4 : Frappes militaires américaines en Iran et tensions dans le Golfe"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|evenement_grave|theme-evt-0c81dddb3429|2026-11-04",
-      "revu_le": "2026-11-07T23:01:40Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "evenement_grave",
-        "cle": "theme-evt-0c81dddb3429",
-        "date": "2026-11-04",
-        "importance": "haute",
-        "titre": "Événement de gravité 4 : Guerre en Ukraine: une frappe russe fait au moins 29 morts dans le sud-est du pays"
       },
       "objection": "Pas d'objection spécifique.",
       "faits": [],
