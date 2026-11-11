@@ -1,18 +1,18 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-11T05:49:18Z",
+    "genere_le": "2026-11-11T12:58:33Z",
     "source": "agent-donnees-alternatives",
     "fictif": false,
     "version_agent": "1.0",
-    "mise_a_jour_precedente": "2026-11-10T13:47:03Z",
+    "mise_a_jour_precedente": "2026-11-11T05:49:18Z",
     "etat_des_sources": {
       "camions_de": "ok",
       "camions_us": "ok",
       "fret_vrac": "ok",
       "fret_conteneurs": "ok",
       "ciment_cn": "secours",
-      "ciment_us": "erreur : https://www.usgs.gov/centers/national-minerals-information-center/cement-statistics-and-information : HTTP 504",
+      "ciment_us": "ok",
       "mises_en_chantier_us": "ok",
       "exportations_kr": "ok",
       "exportations_tw": "ok",
@@ -272,28 +272,29 @@
         "code": "US",
         "nom": "États-Unis",
         "suivi": true,
-        "score": 38,
+        "score": 37,
         "lecture": "ralentissement",
         "marque": false,
         "lecture_non_retenue": null,
-        "indicateurs_utilises": 5,
+        "indicateurs_utilises": 6,
         "confiance": {
           "niveau": "élevé",
-          "score": 0.8,
+          "score": 0.9,
           "raisons": [
-            "indicateurs peu concordants"
+            "historique court pour : Expéditions de ciment"
           ]
         },
         "pour": [
-          "electricite_us",
+          "ciment_us",
           "offres_emploi_us"
         ],
         "contre": [
           "camions_us",
           "mises_en_chantier_us",
+          "electricite_us",
           "tsa_us"
         ],
-        "texte": "États-Unis : activité réelle « ralentissement » (score 38/100 sur 5 indicateurs) — offres d'emploi en ligne +2,9 % sur 12 mois ; demande d'électricité +2,4 % sur 12 mois ; passagers contrôlés dans les aéroports −1,4 % sur 12 mois.",
+        "texte": "États-Unis : activité réelle « ralentissement » (score 37/100 sur 6 indicateurs) — offres d'emploi en ligne +2,9 % sur 12 mois ; expéditions de ciment +1,4 % sur 12 mois ; demande d'électricité +1,6 % sur 12 mois.",
         "indicateurs": [
           "camions_us",
           "ciment_us",
@@ -307,14 +308,14 @@
           "texte": "croissance du pib 2,3 % (53/100) ; indicateur avancé (ocde) 101,0 (64/100)"
         },
         "ce_qui_pourrait_me_donner_tort": [
-          "Demande d'électricité va dans l'autre sens (+2,4 % sur 12 mois).",
+          "Expéditions de ciment va dans l'autre sens (+1,4 % sur 12 mois).",
           "Offres d'emploi en ligne va dans l'autre sens (+2,9 % sur 12 mois).",
           "La consommation d'électricité varie aussi avec les températures, pas seulement avec l'activité."
         ],
         "divergence": null,
         "precedent": {
-          "score": 41,
-          "lecture": "stable"
+          "score": 38,
+          "lecture": "ralentissement"
         }
       }
     ],
@@ -1806,12 +1807,80 @@
         "mention": "données estimées, publiées avec environ trois mois de décalage",
         "categorie_nom": "Construction",
         "mention_proxy": false,
-        "note": null,
-        "valeur": null,
-        "date": null,
-        "serie": [],
-        "lecture": "Expéditions de ciment : source indisponible (erreur : https://www.usgs.gov/centers/national-minerals-information-center/cement-statistics-and-information : HTTP 504).",
-        "etat_source": "erreur : https://www.usgs.gov/centers/national-minerals-information-center/cement-statistics-and-information : HTTP 504"
+        "valeur": 10.1,
+        "date": "2026-07-01",
+        "variation_1m": 0.0,
+        "variation_12m": 1.4,
+        "ecart_tendance": null,
+        "ecart_saisonnier": null,
+        "percentile_12m": null,
+        "percentile_tendance": null,
+        "note": 55.8,
+        "methode_note": "échelle fixe (historique court)",
+        "historique_mois": 14,
+        "age_jours": 133,
+        "perimee": false,
+        "lecture": "Expéditions de ciment : +1,4 % sur 12 mois, 0,0 % sur 1 mois.",
+        "serie": [
+          [
+            "2025-01-01",
+            5.768
+          ],
+          [
+            "2025-02-01",
+            6.326
+          ],
+          [
+            "2025-03-01",
+            8.088
+          ],
+          [
+            "2025-04-01",
+            9.088
+          ],
+          [
+            "2025-05-01",
+            8.913
+          ],
+          [
+            "2025-06-01",
+            9.199
+          ],
+          [
+            "2025-07-01",
+            9.961
+          ],
+          [
+            "2026-01-01",
+            5.97
+          ],
+          [
+            "2026-02-01",
+            6.8
+          ],
+          [
+            "2026-03-01",
+            8.5
+          ],
+          [
+            "2026-04-01",
+            9.27
+          ],
+          [
+            "2026-05-01",
+            8.94
+          ],
+          [
+            "2026-06-01",
+            10.1
+          ],
+          [
+            "2026-07-01",
+            10.1
+          ]
+        ],
+        "etat_source": "ok",
+        "detail_source": "14 rapports mensuels (PDF)"
       },
       {
         "cle": "mises_en_chantier_us",
@@ -3309,20 +3378,20 @@
         "mention": "très sensible aux températures",
         "categorie_nom": "Énergie",
         "mention_proxy": false,
-        "valeur": 10668388.0,
-        "date": "2026-11-09",
-        "variation_1m": -10.05,
-        "variation_12m": 2.38,
-        "ecart_tendance": 5.64,
-        "ecart_saisonnier": -0.23,
-        "percentile_12m": 55.6,
-        "percentile_tendance": 75.0,
-        "note": 63.4,
+        "valeur": 10711513.0,
+        "date": "2026-11-10",
+        "variation_1m": -10.13,
+        "variation_12m": 1.59,
+        "ecart_tendance": -4.22,
+        "ecart_saisonnier": -3.93,
+        "percentile_12m": 40.5,
+        "percentile_tendance": 29.7,
+        "note": 36.2,
         "methode_note": "percentiles",
-        "historique_mois": 48,
-        "age_jours": 2,
+        "historique_mois": 49,
+        "age_jours": 1,
         "perimee": false,
-        "lecture": "Demande d'électricité : +2,4 % sur 12 mois, −10,1 % sur 1 mois, écart à la tendance +5,6 %, percentile 56 de l'historique.",
+        "lecture": "Demande d'électricité : +1,6 % sur 12 mois, −10,1 % sur 1 mois, écart à la tendance −4,2 %, percentile 40 de l'historique.",
         "serie": [
           [
             "2024-11-17",
@@ -3642,7 +3711,7 @@
           ],
           [
             "2026-05-24",
-            11567807.857
+            11567814.429
           ],
           [
             "2026-05-31",
@@ -3654,11 +3723,11 @@
           ],
           [
             "2026-06-14",
-            13534792.429
+            13534792.571
           ],
           [
             "2026-06-21",
-            12622944.429
+            12626909.143
           ],
           [
             "2026-06-28",
@@ -3734,15 +3803,15 @@
           ],
           [
             "2026-11-01",
-            10671370.571
+            10671455.143
           ],
           [
             "2026-11-08",
-            10640183.0
+            10640184.0
           ],
           [
-            "2026-11-09",
-            10668388.0
+            "2026-11-10",
+            10689907.0
           ]
         ],
         "etat_source": "ok",
@@ -8197,20 +8266,39 @@
       "fret_vrac",
       "camions_us",
       "tsa_us",
-      "mises_en_chantier_us"
+      "mises_en_chantier_us",
+      "ciment_us"
     ],
     "attention": [
+      {
+        "ticker": "2914.T",
+        "nom": "Japan Tobacco Inc.",
+        "pays": "JP",
+        "liste": "pepites",
+        "wikipedia": {
+          "article": "Japan Tobacco",
+          "vues_30j": 7355,
+          "variation_pct": 18.4
+        },
+        "trends": {
+          "variation_pct": -1.2,
+          "niveau_recent": 15
+        },
+        "tendance": "stable",
+        "variation_moyenne_pct": 8.6,
+        "signal": false
+      },
       {
         "ticker": "PAF.L",
         "nom": "Pan African Resources PLC",
         "pays": "GB",
         "liste": "pepites",
         "trends": {
-          "variation_pct": 28.5,
-          "niveau_recent": 13.7
+          "variation_pct": 8.5,
+          "niveau_recent": 15.2
         },
         "tendance": "stable",
-        "variation_moyenne_pct": 28.5,
+        "variation_moyenne_pct": 8.5,
         "signal": false
       },
       {
@@ -8225,24 +8313,6 @@
         },
         "tendance": "stable",
         "variation_moyenne_pct": 6.3,
-        "signal": false
-      },
-      {
-        "ticker": "2914.T",
-        "nom": "Japan Tobacco Inc.",
-        "pays": "JP",
-        "liste": "pepites",
-        "wikipedia": {
-          "article": "Japan Tobacco",
-          "vues_30j": 7355,
-          "variation_pct": 18.4
-        },
-        "trends": {
-          "variation_pct": -6.2,
-          "niveau_recent": 16.7
-        },
-        "tendance": "stable",
-        "variation_moyenne_pct": 6.1,
         "signal": false
       },
       {
@@ -8299,7 +8369,7 @@
         },
         "trends": {
           "variation_pct": -5.5,
-          "niveau_recent": 82.2
+          "niveau_recent": 79.6
         },
         "tendance": "stable",
         "variation_moyenne_pct": -1.7,
@@ -8405,11 +8475,11 @@
           "variation_pct": -14.8
         },
         "trends": {
-          "variation_pct": -28.3,
+          "variation_pct": -28.8,
           "niveau_recent": 29.4
         },
         "tendance": "stable",
-        "variation_moyenne_pct": -21.6,
+        "variation_moyenne_pct": -21.8,
         "signal": false
       },
       {
@@ -8423,11 +8493,11 @@
           "variation_pct": -6.9
         },
         "trends": {
-          "variation_pct": -50.3,
-          "niveau_recent": 12.6
+          "variation_pct": -53.6,
+          "niveau_recent": 9.7
         },
-        "tendance": "stable",
-        "variation_moyenne_pct": -28.6,
+        "tendance": "en baisse",
+        "variation_moyenne_pct": -30.2,
         "signal": false
       },
       {
@@ -8441,11 +8511,11 @@
           "variation_pct": -17.5
         },
         "trends": {
-          "variation_pct": -71.4,
-          "niveau_recent": 6.3
+          "variation_pct": -72.7,
+          "niveau_recent": 6.0
         },
         "tendance": "en baisse",
-        "variation_moyenne_pct": -44.5,
+        "variation_moyenne_pct": -45.1,
         "signal": false
       },
       {
@@ -8454,11 +8524,11 @@
         "pays": "CA",
         "liste": "surveillance",
         "trends": {
-          "variation_pct": -52.0,
-          "niveau_recent": 4.8
+          "variation_pct": -53.3,
+          "niveau_recent": 5.0
         },
         "tendance": "en baisse",
-        "variation_moyenne_pct": -52.0,
+        "variation_moyenne_pct": -53.3,
         "signal": false
       }
     ],
