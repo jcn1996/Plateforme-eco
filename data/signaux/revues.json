@@ -1,13 +1,32 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-12T10:31:38Z",
+    "genere_le": "2026-11-12T11:31:35Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "geopolitique|evenement_grave|theme-evt-40425d221381|2026-11-12",
+      "revu_le": "2026-11-12T11:31:17Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "evenement_grave",
+        "cle": "theme-evt-40425d221381",
+        "date": "2026-11-12",
+        "importance": "haute",
+        "titre": "Événement de gravité 4 : Tensions et déclarations politiques américaines concernant l'Iran"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
     {
       "id": "entreprises|guidance_abaissee|LEA|2026-11-12",
       "revu_le": "2026-11-12T07:31:27Z",
@@ -2520,6 +2539,41 @@
         "CH": {
           "objection": "Objections spécifiques : Suisse dispose d'amortisseurs (réserves de 13,1 mois d'importations, dette publique de 38 % du PIB) [F1].",
           "ajustement": "maintenir"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "geopolitique|hausse_score|GB|2026-11-10",
+      "revu_le": "2026-11-12T11:31:17Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "GB",
+        "date": "2026-11-10",
+        "importance": "moyenne",
+        "titre": "Royaume-Uni : score de risque géopolitique 22/100, +14 pts sur 7 jours"
+      },
+      "objection": "La baisse de l'ETF EWU de −1,0 % depuis la veille nuance la portée de la hausse du score géopolitique [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "ETF EWU (Royaume-Uni) : −1,0 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWU"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "GB": {
+          "objection": "Objections spécifiques : le marché ne confirme pas pour Royaume-Uni (ETF EWU à −1,0 % depuis la veille du signal) [F1].",
+          "ajustement": "abaisser"
         }
       },
       "confiance": "faible",
