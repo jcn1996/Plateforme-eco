@@ -1,13 +1,213 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-12T03:24:44Z",
+    "genere_le": "2026-11-12T07:31:57Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "entreprises|guidance_abaissee|LEA|2026-11-12",
+      "revu_le": "2026-11-12T07:31:27Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_abaissee",
+        "cle": "LEA",
+        "date": "2026-11-12",
+        "importance": "moyenne",
+        "titre": "Lear Corporation : guidance abaissée (30/10/2026)"
+      },
+      "objection": "Malgré la guidance abaissée, le cours affiche une hausse de +2,9 % sur 12 mois [F1], suggérant une résilience boursière à nuancer face aux baisses de −8,9 % sur 3 mois et de −19,3 % sur 6 mois [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Lear Corporation : cours −8,9 % sur 3 mois, −19,3 % sur 6 mois, +2,9 % sur 12 mois",
+          "source": "agent entreprises (fiche)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|guidance_relevee|CPRI|2026-11-12",
+      "revu_le": "2026-11-12T07:31:27Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_relevee",
+        "cle": "CPRI",
+        "date": "2026-11-12",
+        "importance": "moyenne",
+        "titre": "Capri Holdings Limited : guidance relevée (30/10/2026)"
+      },
+      "objection": "Malgré la révision à la hausse, la dette nette sur EBITDA atteint 6,5× [F2] et la conversion du bénéfice en cash se limite à 10,2 % [F4], tandis que le VE/EBITDA surpasse le secteur de +44,7 % [F1] malgré une croissance du bénéfice de +111,6 % [F3].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Capri Holdings Limited : VE/EBITDA vs secteur +44,7 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "Capri Holdings Limited : dette nette / EBITDA de 6,5×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F3",
+          "texte": "Capri Holdings Limited : croissance du bénéfice +111,6 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F4",
+          "texte": "Capri Holdings Limited : conversion du bénéfice en cash de 10,2 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2",
+        "F3",
+        "F4"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|guidance_relevee|WKC|2026-11-12",
+      "revu_le": "2026-11-12T07:31:27Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_relevee",
+        "cle": "WKC",
+        "date": "2026-11-12",
+        "importance": "moyenne",
+        "titre": "World Kinect Corporation : guidance relevée (29/10/2026)"
+      },
+      "objection": "La révision de la guidance intervient malgré une croissance du bénéfice de −1011,6 % [F3] et une croissance du CA de −12,5 % [F4], combinées à une dette nette sur EBITDA négative [F1] et une couverture des intérêts limitée à 2,0× [F2].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "World Kinect Corporation : dette nette / EBITDA de EBITDA négatif",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "World Kinect Corporation : couverture des intérêts de 2,0×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F3",
+          "texte": "World Kinect Corporation : croissance du bénéfice −1011,6 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F4",
+          "texte": "World Kinect Corporation : croissance du CA −12,5 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2",
+        "F3",
+        "F4"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|guidance_abaissee|FCN|2026-11-12",
+      "revu_le": "2026-11-12T07:31:27Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_abaissee",
+        "cle": "FCN",
+        "date": "2026-11-12",
+        "importance": "moyenne",
+        "titre": "FTI Consulting, Inc. : guidance abaissée (30/10/2026)"
+      },
+      "objection": "L'abaissement de la guidance pèse sur les perspectives alors que la conversion du bénéfice en cash ne s'élève qu'à 34,6 % [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "FTI Consulting, Inc. : conversion du bénéfice en cash de 34,6 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|guidance_relevee|GTES|2026-11-12",
+      "revu_le": "2026-11-12T07:31:27Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_relevee",
+        "cle": "GTES",
+        "date": "2026-11-12",
+        "importance": "moyenne",
+        "titre": "Gates Industrial Corporation Ltd. : guidance relevée (30/10/2026)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "entreprises|guidance_abaissee|DV|2026-11-12",
+      "revu_le": "2026-11-12T07:31:27Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_abaissee",
+        "cle": "DV",
+        "date": "2026-11-12",
+        "importance": "moyenne",
+        "titre": "DoubleVerify Holdings, Inc. : guidance retirée (30/10/2026)"
+      },
+      "objection": "La valorisation actuelle présente un PER de 32,8, soit 119,4 % au-dessus de la médiane du secteur établie à 15,0 [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "DoubleVerify Holdings, Inc. : PER vs secteur +119,4 % (PER 32,8 ; médiane du secteur 15,0)",
+          "source": "agent entreprises (data/entreprises.json)"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
     {
       "id": "geopolitique|hausse_score|AR|2026-11-12",
       "revu_le": "2026-11-12T03:23:37Z",
