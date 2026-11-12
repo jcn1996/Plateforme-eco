@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-12T19:31:41Z",
+    "genere_le": "2026-11-12T20:31:37Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
@@ -1497,48 +1497,6 @@
       "methode": "règles",
       "confiance": "moyen",
       "version_regles": 3
-    },
-    {
-      "id": "geopolitique|evenement_grave|theme-evt-1f571f0fd26d|2026-11-11",
-      "revu_le": "2026-11-11T17:34:59Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "evenement_grave",
-        "cle": "theme-evt-1f571f0fd26d",
-        "date": "2026-11-11",
-        "importance": "haute",
-        "titre": "Événement de gravité 4 : Conflit militaire et négociations diplomatiques entre les États-Unis et l'Iran"
-      },
-      "objection": "La baisse de 1,8 pt du VIX [F2] contredit l'impact systémique immédiat du conflit. La hausse de 1,5 % du SPY [F1] relativise la gravité de la crise pour la zone.",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "ETF SPY (États-Unis) : +1,5 % depuis la veille du signal",
-          "source": "Yahoo Finance via yfinance, SPY"
-        },
-        {
-          "id": "F2",
-          "texte": "VIX : −1,8 pts depuis la veille du signal (10/11/2026)",
-          "source": "Yahoo Finance via yfinance, ^VIX",
-          "contexte": true
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "US": {
-          "objection": "Objections spécifiques : le marché ne confirme pas pour États-Unis (ETF SPY à +1,5 % depuis la veille du signal) [F1].",
-          "ajustement": "abaisser"
-        }
-      },
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1",
-        "F2"
-      ],
-      "modele": "gemini-3.5-flash-lite"
     },
     {
       "id": "geopolitique|evenement_grave|evt-c959673e6e2e|2026-11-11",
