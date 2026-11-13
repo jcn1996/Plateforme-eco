@@ -402,6 +402,56 @@ class TestRedactionGemini(BaseChef):
         self.assertEqual(g["etat"], "non configurée")
 
 
+class TestPannes(BaseChef):
+    """Agent sans exécution réussie depuis plus de 24 h (hors pause prévue) : en tête des alertes et du briefing."""
+
+    def journal(self, agent, derniere, crons, libelle=None):
+        d = self.data / "journal"
+        d.mkdir(parents=True, exist_ok=True)
+        s = {"agent": agent, "libelle": libelle or f"Agent {agent}", "workflow": f"agent-{agent}.yml", "derniere_execution": derniere,
+             "planning": {"crons": crons, "fuseau": "UTC"}, "degrade": False, "sources": []}
+        ecrire(d / f"agent-{agent}.json", {"meta": {"sante": s}, "derniere_execution": derniere, "planning": s["planning"], "donnees": []})
+        index = lire(d / "index.json") if (d / "index.json").exists() else {"donnees": []}
+        index["donnees"] = [e for e in index["donnees"] if e["agent"] != agent] + [{"agent": agent, "libelle": s["libelle"], "ordre": 1,
+                                                                                     "fichier": f"agent-{agent}.json"}]
+        ecrire(d / "index.json", index)
+
+    def test_panne_en_tete_des_alertes_et_du_briefing(self):
+        self.journal("pays", "2026-11-04T16:05:00Z", ["11 6 * * *", "7 2 * * 2-6"], "Agent pays")
+        self.journal("macro", "2026-11-07T06:45:00Z", ["41 6 * * *"], "Agent macro")  # à jour
+        r = self.lancer()
+        al = lire(self.data / "alertes.json")["donnees"]
+        self.assertTrue(al[0]["panne"])
+        self.assertEqual(al[0]["rang"], 1)
+        self.assertIn("Agent pays en panne", al[0]["titre"])
+        self.assertEqual(al[0]["route"], {"type": "sante"})
+        self.assertEqual(sum(1 for a in al if a.get("panne")), 1, "l'agent macro, à jour, n'est pas en panne")
+        b = r["briefing"]
+        self.assertTrue(b["essentiel"][0]["texte"].startswith("⚠ Agent pays en panne"))
+        self.assertEqual(b["pannes"][0]["agent"], "pays")
+        self.assertTrue(b["vigilance"][0].get("panne"))
+        md = (self.data / "chef" / "briefing-2026-11-07.md").read_text(encoding="utf-8")
+        self.assertLess(md.index("Agents en panne"), md.index("L'essentiel"))
+        chef = lire(self.data / "chef.json")["donnees"]
+        self.assertEqual(chef["pannes"][0]["agent"], "pays")
+        self.assertIn("Agent pays en panne", chef["vigilance"][0])
+        self.assertIn("en panne", chef["synthese"]["essentiel"][0])
+        # mise à jour légère : l'alerte reste en tête
+        self.lancer("leger", MAINTENANT + timedelta(hours=1))
+        self.assertTrue(lire(self.data / "alertes.json")["donnees"][0]["panne"])
+
+    def test_pause_prevue_pas_une_panne(self):
+        from agents.chef.pannes import agents_en_panne
+        # agent de semaine : dernière réussite vendredi 21 h 05, lundi 8 h → aucune exécution prévue manquée depuis 24 h
+        self.journal("trader", "2026-11-06T21:05:00Z", ["33 7 * * 1-5", "5 8-21 * * 1-5"])
+        lundi = datetime(2026, 11, 9, 8, 0, tzinfo=timezone.utc)
+        self.assertFalse(agents_en_panne(self.data / "journal", lundi))
+        mardi = datetime(2026, 11, 10, 9, 0, tzinfo=timezone.utc)
+        p = agents_en_panne(self.data / "journal", mardi)
+        self.assertEqual([x["agent"] for x in p], ["trader"])
+        self.assertGreater(p[0]["retard_h"], 24)
+
+
 class TestAlertes(unittest.TestCase):
     def setUp(self):
         self.config = charger_config()

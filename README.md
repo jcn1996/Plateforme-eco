@@ -108,7 +108,9 @@ L'agent pays se trouve dans `agents/`, en Python 3.12.
 
 **Pannes de source** : si une source ne répond pas, l'agent ne s'arrête pas. Il garde la dernière valeur connue avec sa date et la signale comme « ancienne ». Si plus d'un tiers des sources d'un pays échouent, l'appli affiche une alerte « Qualité des données » sur la fiche du pays et en tête du bandeau des alertes.
 
-**Textes** : par défaut, ils sont rédigés par des règles. Si le secret GitHub `GEMINI_API_KEY` est créé (Settings → Secrets and variables → Actions), l'API gratuite Gemini les rédige, sous les mêmes contraintes. Un texte non conforme est remplacé par la version par règles.
+**Textes** : par défaut, ils sont rédigés par des règles. Si le secret GitHub `GEMINI_API_KEY` est créé (Settings → Secrets and variables → Actions), l'API gratuite Gemini les rédige, sous les mêmes contraintes. Un texte non conforme est remplacé par la version par règles. Chaîne de modèles dans `agents/pays/config.json` (`gemini.modeles`) : un modèle retiré (404) est écarté ; après un échec sur toute la chaîne, plus d'appel pendant l'exécution.
+
+**Robustesse** : une source, Gemini ou un texte non conforme n'empêchent jamais la publication de `data/pays.json`. Un texte qui contient un mot interdit par les règles de conduite est corrigé (mot neutre) et journalisé, au lieu d'arrêter l'agent ; les sorties secondaires (graphiques, historique des flux, signaux, historique quotidien, récapitulatif) sont écrites à part et une erreur y est journalisée sans interrompre la publication. (Du 10 au 13/11, l'explication d'un signal de flux contenait le mot « historique » : l'agent s'arrêtait avant de publier.)
 
 **BLS (facultatif)** : l'inflation américaine vient aussi de l'API publique du BLS (version 1, sans clé, limitée à 25 requêtes par jour et par adresse IP). Avec le secret GitHub `BLS_API_KEY` (clé gratuite sur data.bls.gov), l'agent utilise la version 2, plus généreuse.
 
@@ -403,6 +405,7 @@ Le chef d'orchestre réunit les sorties de tous les agents. Méthode complète :
 
 **Synthèse et alertes** :
 - briefing quotidien `data/chef/briefing-AAAA-MM-JJ.md` et `.json` : l'essentiel en 5 lignes, « Où investir » (top 5 avec conviction), ce qui a changé depuis hier, points de vigilance, scénarios central et alternatif avec leurs déclencheurs, agenda des 7 prochains jours (banques centrales, résultats des sociétés de la liste de surveillance, EIA, WASDE, grandes statistiques ; dates tirées d'une règle de calendrier marquées « indicatives »). Rédigé par règles ; avec `GEMINI_API_KEY`, Gemini reformule l'essentiel et la vigilance sous contrôle (budget propre ; toute phrase sans fait cité ou avec un chiffre absent des faits est supprimée). Gemini ne sert qu'à la rédaction : son échec est signalé en information (« rédaction par règles ») sans dégrader le chef d'orchestre, et une nouvelle tentative a lieu 30 minutes plus tard (7 h 45 UTC, mode `redaction`) ;
+- **agents en panne** : un agent sans exécution réussie depuis plus de 24 h au-delà de l'exécution prévue qui suit sa dernière réussite (les pauses prévues ne comptent pas) est placé en tête des alertes, du briefing (« Agents en panne ») et de la vigilance (`pannes.seuil_heures`) ;
 - `data/alertes.json` (remplace le fichier fictif) : les 3 ou 4 signaux les plus importants de moins de 48 h, filtrés par les objections du contradicteur ; « Aucune alerte notable » sinon ;
 - dépôt facultatif du briefing sur Google Drive : secrets `GOOGLE_SERVICE_ACCOUNT_JSON` (clé JSON d'un compte de service) et `DRIVE_FOLDER_ID` (dossier partagé avec l'adresse du compte de service, en éditeur). Sans eux, le dépôt est ignoré.
 

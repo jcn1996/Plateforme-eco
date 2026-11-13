@@ -34,6 +34,7 @@ from . import allocation as A
 from . import drive
 from . import entrees as E
 from . import moteur as M
+from . import pannes as PN
 from . import suivi as S
 from . import synthese as Y
 from . import secteurs as SE
@@ -294,6 +295,11 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
     for t in lignes_par:
         lignes_par[t].sort(key=lambda l: -(l.get("score") or 0))
     vig = vigilance(lignes, conc, entrees, ctx, jour)
+    # Agents en panne (aucune réussite depuis plus de 24 h au-delà de l'exécution prévue) : en tête de tout
+    en_panne = PN.agents_en_panne(data / "journal", maintenant, config["pannes"]["seuil_heures"])
+    for p in en_panne:
+        LOG.warning("Agent en panne : %s", p["texte"])
+    vig = [p["texte"] for p in en_panne] + vig
     phase_monde = ctx.phase("monde")
     mondial = ctx.risque.get("mondial") or {}
 
@@ -308,7 +314,9 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
         if not ok:
             ecartees.append(f"{agent} · {s.get('titre', '')[:90]} : {raison}")
         return ok, raison
-    al = Y.alertes(signaux, revues, chg, maintenant, config, tickers_appli, admissible)
+    al = PN.alertes_de_panne(en_panne, maintenant) + Y.alertes(signaux, revues, chg, maintenant, config, tickers_appli, admissible)
+    for i, a in enumerate(al, 1):
+        a["rang"] = i
     ecrire_json(data / "alertes.json", enveloppe(al, "agent-chef", fictif=False, version_agent=VERSION_AGENT,
                                                  aucune="Aucune alerte notable" if not al else None,
                                                  description="Les 3 ou 4 signaux les plus importants des agents (moins de 48 h), filtrés par les objections du contradicteur"))
@@ -344,7 +352,9 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
         donnees_b = [f"{x.libelle} : {x.etat}" + (f" ({fr(x.age_h, 0)} h)" if x.age_h is not None else "") + (" — dégradé" if x.degrade else "") for x in entrees.values()]
         briefing = {"date": jour, "genere_le": iso(maintenant), "mode": b["mode"], "modele": b.get("modele"), "palier": ctx.palier, "phase_monde": phase_monde,
                     "raison_regles": raison_regles, "modeles_essayes": [m["nom"] for m in config["gemini"]["modeles"]],
-                    "essentiel": b["essentiel"], "vigilance": b["vigilance"], "rubriques_regles": b.get("rubriques_regles", []),
+                    "pannes": en_panne,
+                    "essentiel": [{"texte": f"⚠ {p['texte']}", "panne": True} for p in en_panne] + b["essentiel"],
+                    "vigilance": [{"texte": p["texte"], "panne": True} for p in en_panne] + b["vigilance"], "rubriques_regles": b.get("rubriques_regles", []),
                     "affirmations_supprimees": b.get("supprimees", []),
                     "ou_investir": pano["top"], "panorama": pano,
                     "changements": chg, "scenarios": sc, "agenda": Y.agenda(maintenant.date(), ctx.macro, config, resultats),
@@ -382,6 +392,7 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
         "secteurs": lignes_par["secteurs"], "zones_secteurs": {z: c["libelle"] for z, c in config["secteurs"]["zones"].items()},
         "panorama": pano, "exclues": [{"ticker": k, "nom": v} for k, v in sorted(ctx.exclues.items())],
         "alertes_ecartees": ecartees[:30],
+        "pannes": en_panne,
         "concentrations": conc, "changements": chg if recalcul else prec_donnees.get("changements", []), "vigilance": vig, "allocation": alloc,
         "entrees": [x.resume() for x in entrees.values()],
         "fiabilite": {"total": suivi_r.get("total"), "fiabilite": suivi_r.get("fiabilite")},
@@ -514,7 +525,8 @@ def reprendre_redaction(etat: dict, data: Path, config: dict, maintenant: dateti
     att["tentatives"] += 1
     b = objet["donnees"]
     if redige:
-        b.update({"mode": "gemini", "modele": redige.get("modele"), "essentiel": redige["essentiel"], "vigilance": redige["vigilance"],
+        pannes_b = [x for x in b.get("essentiel") or [] if x.get("panne")], [x for x in b.get("vigilance") or [] if x.get("panne")]
+        b.update({"mode": "gemini", "modele": redige.get("modele"), "essentiel": pannes_b[0] + redige["essentiel"], "vigilance": pannes_b[1] + redige["vigilance"],
                   "rubriques_regles": redige.get("rubriques_regles", []), "affirmations_supprimees": redige.get("supprimees", []),
                   "raison_regles": raison_sans_gemini(cle, redige, rapport, avant),
                   "reprise": {"le": iso(maintenant), "tentative": att["tentatives"], "raison_initiale": att.get("raison_initiale")}})
@@ -522,7 +534,7 @@ def reprendre_redaction(etat: dict, data: Path, config: dict, maintenant: dateti
         resultat = {"etat": "réussie", "texte": f"briefing rédigé par Gemini ({redige.get('modele')}) à la tentative {att['tentatives']}"}
         chef = lire_json(data / "chef.json")
         if chef and isinstance(chef.get("donnees"), dict):
-            chef["donnees"].setdefault("synthese", {})["essentiel"] = [x["texte"] for x in redige["essentiel"]]
+            chef["donnees"].setdefault("synthese", {})["essentiel"] = [x["texte"] for x in b["essentiel"]]
             ecrire_json(data / "chef.json", chef, compact=True)  # meta inchangé : les données (scores, verdicts) n'ont pas changé
     else:
         raison = raison_sans_gemini(cle, None, rapport, avant)

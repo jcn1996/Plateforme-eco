@@ -134,6 +134,8 @@ class TestDecision(BaseTrader):
         self.assertEqual(len(r["etat"]["ordres"]), n)
         self.assertFalse([o for o in r["etat"]["ordres"] if o["sens"] == "vente" and o["symbole"] in achats],
                          "pas d'achat puis de vente du même titre le même jour")
+        j = lire(self.data / "journal" / "agent-trader.json")["donnees"][-1]
+        self.assertIn("déjà prise à 07:33 UTC", j["decision"], "une demande ignorée est journalisée explicitement")
         r = self.lancer(LUNDI_MATIN.replace(hour=18, minute=5), "decision", forcer=True)
         self.assertIsNotNone(r["decision"], "--forcer permet de refaire la décision (usage manuel)")
 
@@ -303,6 +305,15 @@ class TestTransition(BaseTrader):
         positions = lire(self.data / "trader" / "etat.json")["positions"]
         self.assertFalse({"EWJ", "INDA", "GLD", "EWD"} & set(positions))
         self.assertLessEqual(len(positions), 15)
+
+    def test_resume_de_la_transition(self):
+        self.investir()
+        modifs = {("pays", "pays-JP"): {"verdict": "Neutre"}, ("pays", "pays-IN"): {"objection": OBJECTION}}
+        self.lancer(LUNDI_MATIN + timedelta(days=1), "decision", modifs=modifs)
+        t = lire(self.data / "portefeuille.json")["donnees"]["transition"]
+        self.assertEqual(t["lignes_hors_regles"], 2)
+        self.assertEqual(t["premieres_sorties"], "2026-11-16", "après la détention minimale (14/11), première décision ouvrée")
+        self.assertIn("Transition vers 15 lignes", t["texte"])
 
     def test_quinze_lignes_au_plus_pendant_la_transition(self):
         """Un portefeuille trop dispersé n'ouvre aucune nouvelle ligne tant qu'il dépasse 15 lignes."""

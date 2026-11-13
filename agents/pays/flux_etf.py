@@ -228,7 +228,7 @@ def encombrement(serie: list[dict], quotidiens: list[dict], semaine: dict, cfg: 
         base = f"au-delà de la moyenne des semaines précédentes plus {cfg['ecarts_types']} écarts-types ({nb(seuil, 1)} %)"
     else:
         seuil = cfg["seuil_absolu_pct"]
-        base = f"au-delà du seuil fixe de {nb(seuil, 1)} % (historique encore court pour une comparaison)"
+        base = f"au-delà du seuil fixe de {nb(seuil, 1)} % (relevés encore trop peu nombreux pour une comparaison)"
     if pct <= seuil:
         return None
     return {"signale": True, "pct_semaine": round(pct, 2), "seuil_pct": round(seuil, 2),
@@ -357,7 +357,7 @@ def signaux(code: str, nom: str, etf: str, serie: list[dict], config_flux: dict,
             comparaison = f"au-delà de {nb(seuil, 1)} % (moyenne des jours précédents plus {cfg['jour_ecarts_types']} écarts-types)"
         else:
             seuil = cfg["jour_absolu_pct"]
-            comparaison = f"au-delà du seuil fixe de {nb(seuil, 1)} % (historique encore court)"
+            comparaison = f"au-delà du seuil fixe de {nb(seuil, 1)} % (relevés encore peu nombreux)"
         if abs(q["pct"]) > seuil:
             entree = q["pct"] > 0
             res.append({"date": q["date"], "type": "entrees_inhabituelles" if entree else "sorties_inhabituelles", "cle": code,

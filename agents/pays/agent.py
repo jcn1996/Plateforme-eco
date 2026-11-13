@@ -744,13 +744,16 @@ def executer(fournisseur, config: dict, ancien: dict | None, aujourdhui: date, s
         verdict = textes.verdict(cfg["nom"], note, indicateurs, cles, globale["ramenee"], globale["brute"])
         contre = textes.contre_scenario(note, indicateurs, cles, conf)
         origine_textes = "règles"
-        redige = textes.rediger_avec_gemini(cfg["nom"], note, indicateurs, conf, config["gemini"]["modele"]) if note is not None else None
+        redige = (textes.rediger_avec_gemini(cfg["nom"], note, indicateurs, conf, config["gemini"].get("modeles") or config["gemini"].get("modele"))
+                  if note is not None else None)
         if redige:
             verdict, contre, origine_textes = redige["verdict"], redige["contre_scenario"], "gemini"
             textes_gemini += 1
-        for t in [verdict, *contre]:
-            if not textes.ton_conforme(t):
-                raise ValueError(f"Texte non conforme aux règles de conduite ({code}) : {t}")
+        # Texte non conforme aux règles de conduite : corrigé (mot neutre) et signalé, jamais une cause d'arrêt
+        if not textes.ton_conforme(verdict):
+            LOG.warning("Texte non conforme corrigé (%s) : %s", code, verdict)
+            verdict = textes.neutraliser(verdict)
+        contre = [t if textes.ton_conforme(t) else textes.neutraliser(t) for t in contre]
 
         p = {
             "code": code, "iso_num": cfg["iso_num"], "nom": cfg["nom"], "lat": cfg["lat"], "lon": cfg["lon"],
@@ -914,12 +917,19 @@ def executer_flux(fournisseur, config: dict, ancien: dict, aujourdhui: date, flu
         if p["code"] in resultats:
             p.setdefault("detail", {})
             p["detail"]["flux_etrangers"] = preparer("flux_etrangers", resultats[p["code"]], p["detail"].get("flux_etrangers"), aujourdhui, config)
-            p["lecture"] = textes.lecture(p.get("indicateurs", {}), p["detail"])
-            for t in p["lecture"].values():
-                if not textes.ton_conforme(t):
-                    raise ValueError(f"Texte non conforme aux règles de conduite ({p['code']}) : {t}")
+            p["lecture"] = {k: (t if textes.ton_conforme(t) else textes.neutraliser(t))
+                            for k, t in textes.lecture(p.get("indicateurs", {}), p["detail"]).items()}
         sortie.append(p)
     return sortie, etats, echecs
+
+
+def secondaires(action, libelle: str):
+    """Exécute une écriture secondaire ; une erreur est journalisée sans interrompre l'agent."""
+    try:
+        return action()
+    except Exception as e:  # noqa: BLE001 — jamais une cause d'arrêt de la publication principale
+        LOG.error("Sortie secondaire « %s » non écrite : %s: %s", libelle, type(e).__name__, str(e)[:200])
+        return None
 
 
 def ecrire_flux(args, flux: dict, aujourdhui: date, genere_le: str) -> None:
@@ -928,9 +938,10 @@ def ecrire_flux(args, flux: dict, aujourdhui: date, genere_le: str) -> None:
                                         genere_le, VERSION_AGENT)
     if ecrits:
         LOG.info("Historique des flux ETF : %d fichier(s) écrit(s) dans %s", len(ecrits), args.historique_flux)
-    for s in flux.get("signaux") or []:
+    for s in flux.get("signaux") or []:  # texte non conforme : corrigé et signalé, jamais une cause d'arrêt
         if not textes.ton_conforme(s["titre"] + " " + s["explication"]):
-            raise ValueError(f"Signal non conforme aux règles de conduite : {s['titre']}")
+            LOG.warning("Signal non conforme corrigé : %s", s["titre"])
+            s["titre"], s["explication"] = textes.neutraliser(s["titre"]), textes.neutraliser(s["explication"])
     if flux_etf.ecrire_signaux(Path(args.signaux), flux.get("signaux") or [], aujourdhui, VERSION_AGENT):
         LOG.info("Signaux : %s (%d nouveau(x) candidat(s) du jour)", args.signaux, len(flux.get("signaux") or []))
 
@@ -978,10 +989,12 @@ def main(argv=None) -> int:
     alternatives = lire_alternatives(Path(args.alternatives) if args.alternatives else sortie.parent / "donnees_alternatives.json", aujourdhui)
     donnees, etats, echecs = executer(fournisseur, config, ancien, aujourdhui, series, flux, series_indices, alternatives)
     dossier_cours = Path(args.cours).parent if args.cours else Path(args.sortie).parent / "cours"
-    enregistrer_series(Path(args.cours) if args.cours else dossier_cours / "etf-pays.json", series)
-    enregistrer_series(dossier_cours / "indices-pays.json", series_indices,
-                       "Clôtures quotidiennes sur un an des indices nationaux (graphique simple de la fiche pays)")
-    ecrire_flux(args, flux, aujourdhui, maintenant_iso())
+    # Sorties secondaires (graphiques, historique des flux, signaux) : un échec est journalisé mais n'empêche jamais
+    # la publication de data/pays.json
+    secondaires(lambda: enregistrer_series(Path(args.cours) if args.cours else dossier_cours / "etf-pays.json", series), "séries des ETF pays")
+    secondaires(lambda: enregistrer_series(dossier_cours / "indices-pays.json", series_indices,
+                                           "Clôtures quotidiennes sur un an des indices nationaux (graphique simple de la fiche pays)"), "séries des indices")
+    secondaires(lambda: ecrire_flux(args, flux, aujourdhui, maintenant_iso()), "historique des flux et signaux")
 
     # Pas d'écriture si rien n'a changé (donc pas de commit)
     if ancien_reel and ancien_reel.get("donnees") == donnees:
@@ -1005,10 +1018,10 @@ def main(argv=None) -> int:
         flux_etf_mis_a_jour_le=maintenant_iso(),
     )
     ecrire_json(sortie, objet)
-    chemin = historiser(Path(args.historique), donnees, aujourdhui, objet["meta"])
+    chemin = secondaires(lambda: historiser(Path(args.historique), donnees, aujourdhui, objet["meta"]), "historique quotidien")
     journaliser(Path(args.journal), objet["meta"]["genere_le"], etats, echecs, donnees)
     enregistrer_sante(Path(args.journal), etats, echecs, donnees)
-    chemin_recap = recap.ecrire(Path(args.recap), aujourdhui, objet, ancien_reel, etats)
+    chemin_recap = secondaires(lambda: recap.ecrire(Path(args.recap), aujourdhui, objet, ancien_reel, etats), "récapitulatif")
     notes = sorted(((p["note"] or 0, p["nom"]) for p in donnees), reverse=True)
     LOG.info("Écrit : %s, %s et %s", sortie, chemin, chemin_recap)
     LOG.info("Notes : %s", ", ".join(f"{n} {s}" for s, n in notes))
@@ -1024,7 +1037,7 @@ def main_flux(args, fournisseur, config: dict, ancien: dict, aujourdhui: date, f
     LOG.info("Agent pays %s — mode flux — %s", VERSION_AGENT, "données de test" if args.test else "sources réelles")
     donnees, etats_flux, echecs_flux = executer_flux(fournisseur, config, ancien, aujourdhui, flux)
     genere_le = maintenant_iso()
-    ecrire_flux(args, flux, aujourdhui, genere_le)
+    secondaires(lambda: ecrire_flux(args, flux, aujourdhui, genere_le), "historique des flux et signaux")
     meta = ancien.get("meta", {})
     etats = {**{k: v for k, v in (meta.get("etat_des_sources") or {}).items() if not k.startswith("flux_")}, **etats_flux}
     journal_existant = lire_json(Path(args.journal)) or {}

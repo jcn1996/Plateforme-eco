@@ -104,10 +104,12 @@ export function ecranPortefeuille(d, nav) {
 
 function statut(pf) {
   const s = pf.statut;
-  if (!s || s.etat === 'actif') return null;
+  const t = pf.transition?.lignes_hors_regles ? pf.transition : null;
+  if ((!s || s.etat === 'actif') && !t) return null;
   return el('div', { class: 'chef-avertissement' },
-    el('p', {}, s.etat === 'en attente' ? `⏸ ${s.texte}` : `⏳ ${s.texte}`),
-    s.depuis ? el('p', {}, `Depuis ${heureParis(s.depuis)}.`) : null);
+    s && s.etat !== 'actif' ? el('p', {}, s.etat === 'en attente' ? `⏸ ${s.texte}` : `⏳ ${s.texte}`) : null,
+    s?.depuis && s.etat !== 'actif' ? el('p', {}, `Depuis ${heureParis(s.depuis)}.`) : null,
+    t ? el('p', {}, `↻ ${t.texte}`) : null);
 }
 
 function kpi(libelle, valeur, comparaison, signe) {
