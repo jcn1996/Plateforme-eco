@@ -15,7 +15,7 @@ Indicateurs avancés de l'activité réelle. Aucune conclusion n'est tirée d'un
 - Corée du Sud : pas de score (1 indicateur à jour : au moins 2 sont nécessaires pour conclure)
 - Pays-Bas : pas de score (1 indicateur à jour : au moins 2 sont nécessaires pour conclure)
 - Taïwan : pas de score (1 indicateur à jour : au moins 2 sont nécessaires pour conclure)
-- **États-Unis** : « ralentissement », score 33/100, confiance élevé
+- **États-Unis** : « ralentissement », score 36/100, confiance moyen
 
 ## Indicateurs mondiaux
 
@@ -27,8 +27,9 @@ Indicateurs avancés de l'activité réelle. Aucune conclusion n'est tirée d'un
 - Fret conteneurs (Drewry WCI) : +119,7 % sur 12 mois. (donnée du 12/11/2026)
 - Fret vrac sec (Baltic Dry, approximation) : +55,4 % sur 12 mois, −11,8 % sur 1 mois, écart à la tendance +22,4 %, percentile 63 de l'historique. (donnée du 12/11/2026)
 - Tonnage du transport routier : −1,6 % sur 12 mois, −0,3 % sur 1 mois, écart à la tendance −0,6 %, percentile 18 de l'historique. (donnée du 01/08/2026)
-- Passagers contrôlés dans les aéroports : −1,2 % sur 12 mois, −3,1 % sur 1 mois, écart à la tendance −2,5 %, percentile 20 de l'historique. (donnée du 11/11/2026)
+- Passagers contrôlés dans les aéroports : −1,0 % sur 12 mois, −3,7 % sur 1 mois, écart à la tendance −2,4 %, percentile 20 de l'historique. (donnée du 12/11/2026)
 - Mises en chantier de logements : −7,4 % sur 12 mois, −5,2 % sur 1 mois, écart à la tendance −3,9 %, percentile 18 de l'historique. (donnée du 01/09/2026)
+- Expéditions de ciment : +1,4 % sur 12 mois, 0,0 % sur 1 mois. (donnée du 01/07/2026)
 
 ## Signaux détectés aujourd'hui
 
@@ -41,6 +42,6 @@ Indicateurs avancés de l'activité réelle. Aucune conclusion n'est tirée d'un
 
 ## Sources en échec
 
-- ciment_us : erreur : https://www.usgs.gov/centers/national-minerals-information-center/cement-statistics-and-information : ReadTimeout: HTTPSConnectionPool(host='www.usgs.gov', port
+- aucune
 
 Sources ignorées (clé ou adresse absente) : commandes_export_tw, electricite_ch, electricite_de, electricite_es, electricite_fr, electricite_it, electricite_nl, electricite_pl, electricite_se, exportations_kr_20j.
