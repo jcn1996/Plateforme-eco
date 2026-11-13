@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genere_le": "2026-11-12T22:31:59Z",
+    "genere_le": "2026-11-13T02:38:56Z",
     "source": "agent-matieres-premieres",
     "version_agent": "1.0",
     "description": "État des sources et signaux, à chaque exécution",
@@ -9,7 +9,7 @@
       "libelle": "Agent matières premières",
       "ordre": 8,
       "workflow": "agent-matieres-premieres.yml",
-      "derniere_execution": "2026-11-12T22:31:59Z",
+      "derniere_execution": "2026-11-13T02:38:56Z",
       "prochaine_prevue": "2026-11-13T22:15:00Z",
       "intervalle_min": 1440,
       "planning": {
@@ -19,75 +19,71 @@
         "fuseau": "UTC"
       },
       "sources_total": 10,
-      "sources_ok": 9,
+      "sources_ok": 10,
       "sources": [
         {
           "nom": "Yahoo Finance via yfinance (contrat le plus proche, 10 ans)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-12T22:31:59Z"
+          "derniere_donnee_valide": "2026-11-13T02:38:56Z"
         },
         {
           "nom": "Yahoo Finance via yfinance (contrats des échéances suivantes)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-12T22:31:59Z"
+          "derniere_donnee_valide": "2026-11-13T02:38:56Z"
         },
         {
           "nom": "Yahoo Finance via yfinance (parts en circulation et VL des ETF)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-12T22:31:59Z"
+          "derniere_donnee_valide": "2026-11-13T02:38:56Z"
         },
         {
           "nom": "CFTC, Commitments of Traders (API publique Socrata)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-12T22:31:59Z"
+          "derniere_donnee_valide": "2026-11-13T02:38:56Z"
         },
         {
           "nom": "EIA, stocks hebdomadaires (API v2, clé EIA_API_KEY)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-12T22:31:59Z"
+          "derniere_donnee_valide": "2026-11-13T02:38:56Z"
         },
         {
           "nom": "USDA, base PSD (fichiers CSV publics)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-12T22:31:59Z"
+          "derniere_donnee_valide": "2026-11-13T02:38:56Z"
         },
         {
           "nom": "USDA, rapport WASDE (fichier texte mensuel)",
-          "etat": "échec",
-          "detail": "USDA WASDE : rapport introuvable (https://www.usda.gov/oce/commodity/wasde/wasde0926.txt : HTTP 403)",
-          "derniere_donnee_valide": "2026-11-12T02:59:10Z"
+          "etat": "ok",
+          "detail": null,
+          "derniere_donnee_valide": "2026-11-13T02:38:56Z"
         },
         {
           "nom": "FRED, taux réel américain à 10 ans (DFII10)",
           "etat": "ok",
           "detail": "API",
-          "derniere_donnee_valide": "2026-11-12T22:31:59Z"
+          "derniere_donnee_valide": "2026-11-13T02:38:56Z"
         },
         {
           "nom": "FRED, indice dollar large (DTWEXBGS)",
           "etat": "ok",
           "detail": "API",
-          "derniere_donnee_valide": "2026-11-12T22:31:59Z"
+          "derniere_donnee_valide": "2026-11-13T02:38:56Z"
         },
         {
           "nom": "FRED, prix à la consommation américains (CPIAUCSL)",
           "etat": "ok",
           "detail": "API",
-          "derniere_donnee_valide": "2026-11-12T22:31:59Z"
+          "derniere_donnee_valide": "2026-11-13T02:38:56Z"
         }
       ],
-      "degrade": true,
-      "raisons": [
-        "Stocks · Blé : 1 source valide au lieu de 2 (perdue : WASDE)",
-        "Stocks · Maïs : 1 source valide au lieu de 2 (perdue : WASDE)",
-        "Stocks · Soja : 1 source valide au lieu de 2 (perdue : WASDE)"
-      ],
+      "degrade": false,
+      "raisons": [],
       "references": {
         "Cours · Or": [
           "Yahoo"
@@ -444,9 +440,25 @@
       "signaux": [
         "Pétrole Brent : stocks de distillats américains +4 071,0 Mb sur la semaine (−8,4 % par rapport à la moyenne sur 5 ans)"
       ]
+    },
+    {
+      "genere_le": "2026-11-13T02:38:56Z",
+      "etat_des_sources": {
+        "yahoo_cours": "ok",
+        "yahoo_courbes": "ok",
+        "yahoo_etf": "ok",
+        "cftc": "ok",
+        "eia": "ok",
+        "usda_psd": "ok",
+        "usda_wasde": "ok",
+        "fred_DFII10": "ok",
+        "fred_DTWEXBGS": "ok",
+        "fred_CPIAUCSL": "ok"
+      },
+      "signaux": []
     }
   ],
-  "derniere_execution": "2026-11-12T22:31:59Z",
+  "derniere_execution": "2026-11-13T02:38:56Z",
   "prochaine_prevue": "2026-11-13T22:15:00Z",
   "intervalle_min": 1440,
   "planning": {
