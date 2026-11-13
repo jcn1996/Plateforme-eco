@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-12T23:04:22Z",
+    "genere_le": "2026-11-13T02:56:51Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
@@ -9,15 +9,15 @@
   },
   "donnees": [
     {
-      "id": "matieres_premieres|choc_stocks|brent-distillats|2026-11-12",
-      "revu_le": "2026-11-12T23:01:32Z",
+      "id": "geopolitique|hausse_score|MX|2026-11-13",
+      "revu_le": "2026-11-13T02:55:39Z",
       "signal": {
-        "agent": "matieres_premieres",
-        "type": "choc_stocks",
-        "cle": "brent-distillats",
-        "date": "2026-11-12",
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "MX",
+        "date": "2026-11-13",
         "importance": "moyenne",
-        "titre": "Pétrole Brent : stocks de distillats américains +4 071,0 Mb sur la semaine (−8,4 % par rapport à la moyenne sur 5 ans)"
+        "titre": "Mexique : score de risque géopolitique 48/100, +26 pts sur 7 jours"
       },
       "objection": "Pas d'objection spécifique.",
       "faits": [],
@@ -28,31 +28,88 @@
       "version_regles": 3
     },
     {
-      "id": "geopolitique|hausse_score|GB|2026-11-12",
-      "revu_le": "2026-11-12T18:31:27Z",
+      "id": "geopolitique|hausse_score|AR|2026-11-13",
+      "revu_le": "2026-11-13T02:55:39Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "AR",
+        "date": "2026-11-13",
+        "importance": "moyenne",
+        "titre": "Argentine : score de risque géopolitique 23/100, +23 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|GB|2026-11-13",
+      "revu_le": "2026-11-13T02:55:39Z",
       "signal": {
         "agent": "geopolitique",
         "type": "hausse_score",
         "cle": "GB",
-        "date": "2026-11-12",
+        "date": "2026-11-13",
         "importance": "moyenne",
-        "titre": "Royaume-Uni : score de risque géopolitique 41/100, +14 pts sur 7 jours"
+        "titre": "Royaume-Uni : score de risque géopolitique 47/100, +20 pts sur 7 jours"
       },
-      "objection": "Malgré la hausse du score géopolitique, l'ETF EWU affiche une stagnation à +0,0 % depuis la veille du signal [F1]. Cette absence de réaction des marchés traduit une vulnérabilité limitée face à cet événement.",
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|FR|2026-11-13",
+      "revu_le": "2026-11-13T02:55:39Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "FR",
+        "date": "2026-11-13",
+        "importance": "moyenne",
+        "titre": "France : score de risque géopolitique 38/100, +10 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|SA|2026-11-13",
+      "revu_le": "2026-11-13T02:55:39Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "SA",
+        "date": "2026-11-13",
+        "importance": "moyenne",
+        "titre": "Arabie saoudite : score de risque géopolitique 63/100, +41 pts sur 7 jours"
+      },
+      "objection": "Malgré la hausse du score géopolitique, l'Arabie saoudite dispose de réserves de 15,6 mois et d'une dette limitée à 35 % du PIB [F1].",
       "faits": [
         {
           "id": "F1",
-          "texte": "ETF EWU (Royaume-Uni) : +0,0 % depuis la veille du signal",
-          "source": "Yahoo Finance via yfinance, EWU"
+          "texte": "Arabie saoudite : réserves de 15,6 mois, dette de 35 % du PIB",
+          "source": "FMI, Banque mondiale"
         }
       ],
-      "ajustement": "abaisser",
+      "ajustement": "maintenir",
       "specifique": true,
       "methode": "gemini",
       "par_entite": {
-        "GB": {
-          "objection": "Objections spécifiques : le marché ne confirme pas pour Royaume-Uni (ETF EWU à +0,0 % depuis la veille du signal) [F1].",
-          "ajustement": "abaisser"
+        "SA": {
+          "objection": "Objections spécifiques : Arabie saoudite dispose d'amortisseurs (réserves de 15,6 mois d'importations, dette publique de 35 % du PIB) [F1].",
+          "ajustement": "maintenir"
         }
       },
       "confiance": "faible",
@@ -63,15 +120,371 @@
       "modele": "gemini-3.5-flash-lite"
     },
     {
-      "id": "geopolitique|hausse_score|MX|2026-11-12",
-      "revu_le": "2026-11-12T13:31:22Z",
+      "id": "geopolitique|hausse_score|CN|2026-11-13",
+      "revu_le": "2026-11-13T02:55:39Z",
       "signal": {
         "agent": "geopolitique",
         "type": "hausse_score",
-        "cle": "MX",
+        "cle": "CN",
+        "date": "2026-11-13",
+        "importance": "moyenne",
+        "titre": "Chine : score de risque géopolitique 56/100, +21 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|JP|2026-11-13",
+      "revu_le": "2026-11-13T02:55:39Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "JP",
+        "date": "2026-11-13",
+        "importance": "moyenne",
+        "titre": "Japon : score de risque géopolitique 16/100, +10 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|ES|2026-11-13",
+      "revu_le": "2026-11-13T02:55:39Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "ES",
+        "date": "2026-11-13",
+        "importance": "moyenne",
+        "titre": "Espagne : score de risque géopolitique 37/100, +33 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|SG|2026-11-13",
+      "revu_le": "2026-11-13T02:55:39Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "SG",
+        "date": "2026-11-13",
+        "importance": "moyenne",
+        "titre": "Singapour : score de risque géopolitique 15/100, +11 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|EG|2026-11-13",
+      "revu_le": "2026-11-13T02:55:39Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "EG",
+        "date": "2026-11-13",
+        "importance": "moyenne",
+        "titre": "Égypte : score de risque géopolitique 17/100, +10 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|CO|2026-11-13",
+      "revu_le": "2026-11-13T02:55:39Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "CO",
+        "date": "2026-11-13",
+        "importance": "moyenne",
+        "titre": "Colombie : score de risque géopolitique 24/100, +10 pts sur 7 jours"
+      },
+      "objection": "Malgré la progression du risque, la Colombie présente des vulnérabilités avec une dette atteignant 60 % du PIB et des réserves de 7,3 mois [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Colombie : réserves de 7,3 mois, dette de 60 % du PIB",
+          "source": "FMI, Banque mondiale"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "CO": {
+          "objection": "Objections spécifiques : Colombie dispose d'amortisseurs (réserves de 7,3 mois d'importations, dette publique de 60 % du PIB) [F1].",
+          "ajustement": "maintenir"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|guidance_relevee|CSCO|2026-11-12",
+      "revu_le": "2026-11-13T02:55:39Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_relevee",
+        "cle": "CSCO",
         "date": "2026-11-12",
         "importance": "moyenne",
-        "titre": "Mexique : score de risque géopolitique 38/100, +18 pts sur 7 jours"
+        "titre": "Cisco Systems, Inc. : guidance relevée (12/11/2026)"
+      },
+      "objection": "Malgré la révision de la guidance, Cisco Systems, Inc. affiche une alerte de hausse anormale des stocks avec des stocks en hausse de 80,0 % pour un CA en hausse de 11,8 % [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Cisco Systems, Inc. : alerte « Hausse anormale des stocks » : stocks en hausse de 80,0 % pour un CA en hausse de 11,8 %",
+          "source": "agent entreprises (fiche)"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|guidance_relevee|SPXC|2026-11-12",
+      "revu_le": "2026-11-13T02:55:39Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_relevee",
+        "cle": "SPXC",
+        "date": "2026-11-12",
+        "importance": "moyenne",
+        "titre": "SPX Technologies, Inc. : guidance relevée (29/10/2026)"
+      },
+      "objection": "En dépit de la guidance relevée, SPX Technologies, Inc. subit un momentum 12 mois de −31,3 % ainsi qu'une dilution forte avec un nombre d'actions en hausse de 7,5 % sur un an [F1, F2].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "SPX Technologies, Inc. : momentum 12 mois −31,3 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "SPX Technologies, Inc. : alerte « Dilution forte » : nombre d'actions en hausse de 7,5 % sur un an",
+          "source": "agent entreprises (fiche)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|guidance_abaissee|YETI|2026-11-12",
+      "revu_le": "2026-11-13T02:55:39Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_abaissee",
+        "cle": "YETI",
+        "date": "2026-11-12",
+        "importance": "moyenne",
+        "titre": "YETI Holdings, Inc. : guidance abaissée (12/11/2026)"
+      },
+      "objection": "Malgré la guidance, le cours enregistre une baisse de -15,8 % sur 3 mois [F1]. De plus, les créances progressent anormalement de 17,7 % alors que le chiffre d'affaires ne monte que de 2,1 % [F2].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "YETI Holdings, Inc. : cours −15,8 % sur 3 mois, −5,9 % sur 6 mois, −0,8 % sur 12 mois",
+          "source": "agent entreprises (fiche)"
+        },
+        {
+          "id": "F2",
+          "texte": "YETI Holdings, Inc. : alerte « Hausse anormale des créances » : créances en hausse de 17,7 % pour un CA en hausse de 2,1 %",
+          "source": "agent entreprises (fiche)"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|guidance_abaissee|FLO|2026-11-12",
+      "revu_le": "2026-11-13T02:55:39Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_abaissee",
+        "cle": "FLO",
+        "date": "2026-11-12",
+        "importance": "moyenne",
+        "titre": "Flowers Foods, Inc. : guidance abaissée (12/11/2026)"
+      },
+      "objection": "L'entreprise supporte une dette nette sur EBITDA de 5,8× [F1] et subit une contraction de son bénéfice de -66,2 % [F3]. Son momentum sur 12 mois s'établit à -43,0 % [F2].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Flowers Foods, Inc. : dette nette / EBITDA de 5,8×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "Flowers Foods, Inc. : momentum 12 mois −43,0 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F3",
+          "texte": "Flowers Foods, Inc. : croissance du bénéfice −66,2 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2",
+        "F3"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|guidance_relevee|WWW|2026-11-12",
+      "revu_le": "2026-11-13T02:55:39Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_relevee",
+        "cle": "WWW",
+        "date": "2026-11-12",
+        "importance": "moyenne",
+        "titre": "Wolverine World Wide, Inc. : guidance relevée (12/11/2026)"
+      },
+      "objection": "Malgré la révision positive et une croissance du bénéfice de +119,7 % [F2], la structure financière reste tendue avec une dette nette sur EBITDA de 3,1× [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Wolverine World Wide, Inc. : dette nette / EBITDA de 3,1×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "Wolverine World Wide, Inc. : croissance du bénéfice +119,7 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|guidance_abaissee|EYE|2026-11-12",
+      "revu_le": "2026-11-13T02:55:39Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_abaissee",
+        "cle": "EYE",
+        "date": "2026-11-12",
+        "importance": "moyenne",
+        "titre": "National Vision Holdings, Inc. : guidance abaissée (12/11/2026)"
+      },
+      "objection": "La valorisation présente un PER supérieur de +65,3 % à la médiane du secteur, avec un ratio de 29,2 contre 17,7 pour le secteur [F1]. La dette nette sur EBITDA atteint 4,1× [F2] pour un momentum à 12 mois de -24,9 % [F4].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "National Vision Holdings, Inc. : PER vs secteur +65,3 % (PER 29,2 ; médiane du secteur 17,7)",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "National Vision Holdings, Inc. : dette nette / EBITDA de 4,1×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F3",
+          "texte": "National Vision Holdings, Inc. : couverture des intérêts de 3,5×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F4",
+          "texte": "National Vision Holdings, Inc. : momentum 12 mois −24,9 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F5",
+          "texte": "National Vision Holdings, Inc. : croissance du bénéfice +203,9 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2",
+        "F4"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "matieres_premieres|choc_stocks|brent-distillats|2026-11-12",
+      "revu_le": "2026-11-12T23:01:32Z",
+      "signal": {
+        "agent": "matieres_premieres",
+        "type": "choc_stocks",
+        "cle": "brent-distillats",
+        "date": "2026-11-12",
+        "importance": "moyenne",
+        "titre": "Pétrole Brent : stocks de distillats américains +4 071,0 Mb sur la semaine (−8,4 % par rapport à la moyenne sur 5 ans)"
       },
       "objection": "Pas d'objection spécifique.",
       "faits": [],
@@ -301,136 +714,6 @@
       "modele": "gemini-3.5-flash-lite"
     },
     {
-      "id": "geopolitique|hausse_score|AR|2026-11-12",
-      "revu_le": "2026-11-12T03:23:37Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "AR",
-        "date": "2026-11-12",
-        "importance": "moyenne",
-        "titre": "Argentine : score de risque géopolitique 25/100, +24 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|FR|2026-11-12",
-      "revu_le": "2026-11-12T03:23:37Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "FR",
-        "date": "2026-11-12",
-        "importance": "moyenne",
-        "titre": "France : score de risque géopolitique 44/100, +15 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|SA|2026-11-12",
-      "revu_le": "2026-11-12T03:23:37Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "SA",
-        "date": "2026-11-12",
-        "importance": "moyenne",
-        "titre": "Arabie saoudite : score de risque géopolitique 66/100, +44 pts sur 7 jours"
-      },
-      "objection": "Malgré ce score, les réserves s'établissent à 15,6 mois et la dette à 35 % du PIB [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Arabie saoudite : réserves de 15,6 mois, dette de 35 % du PIB",
-          "source": "FMI, Banque mondiale"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "SA": {
-          "objection": "Objections spécifiques : Arabie saoudite dispose d'amortisseurs (réserves de 15,6 mois d'importations, dette publique de 35 % du PIB) [F1].",
-          "ajustement": "maintenir"
-        }
-      },
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "geopolitique|hausse_score|CN|2026-11-12",
-      "revu_le": "2026-11-12T03:23:37Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "CN",
-        "date": "2026-11-12",
-        "importance": "moyenne",
-        "titre": "Chine : score de risque géopolitique 58/100, +20 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|JP|2026-11-12",
-      "revu_le": "2026-11-12T03:23:37Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "JP",
-        "date": "2026-11-12",
-        "importance": "moyenne",
-        "titre": "Japon : score de risque géopolitique 16/100, +11 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|ES|2026-11-12",
-      "revu_le": "2026-11-12T03:23:37Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "ES",
-        "date": "2026-11-12",
-        "importance": "moyenne",
-        "titre": "Espagne : score de risque géopolitique 40/100, +36 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
       "id": "geopolitique|hausse_score|NL|2026-11-12",
       "revu_le": "2026-11-12T03:23:37Z",
       "signal": {
@@ -459,63 +742,6 @@
         "date": "2026-11-12",
         "importance": "moyenne",
         "titre": "Pologne : score de risque géopolitique 31/100, +17 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|SG|2026-11-12",
-      "revu_le": "2026-11-12T03:23:37Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "SG",
-        "date": "2026-11-12",
-        "importance": "moyenne",
-        "titre": "Singapour : score de risque géopolitique 16/100, +12 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|CL|2026-11-12",
-      "revu_le": "2026-11-12T03:23:37Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "CL",
-        "date": "2026-11-12",
-        "importance": "moyenne",
-        "titre": "Chili : score de risque géopolitique 24/100, +14 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|EG|2026-11-12",
-      "revu_le": "2026-11-12T03:23:37Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "EG",
-        "date": "2026-11-12",
-        "importance": "moyenne",
-        "titre": "Égypte : score de risque géopolitique 22/100, +16 pts sur 7 jours"
       },
       "objection": "Pas d'objection spécifique.",
       "faits": [],
@@ -2526,41 +2752,6 @@
       "version_regles": 3
     },
     {
-      "id": "geopolitique|hausse_score|CH|2026-11-11",
-      "revu_le": "2026-11-11T02:16:40Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "CH",
-        "date": "2026-11-11",
-        "importance": "moyenne",
-        "titre": "Suisse : score de risque géopolitique 28/100, +23 pts sur 7 jours"
-      },
-      "objection": "Malgré la hausse du score de risque, la Suisse dispose de réserves de 13,1 mois et d'une dette limitée à 38 % du PIB [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Suisse : réserves de 13,1 mois, dette de 38 % du PIB",
-          "source": "FMI, Banque mondiale"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "CH": {
-          "objection": "Objections spécifiques : Suisse dispose d'amortisseurs (réserves de 13,1 mois d'importations, dette publique de 38 % du PIB) [F1].",
-          "ajustement": "maintenir"
-        }
-      },
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
       "id": "geopolitique|hausse_score|TH|2026-11-10",
       "revu_le": "2026-11-12T03:23:37Z",
       "signal": {
@@ -2585,37 +2776,6 @@
       "par_entite": {
         "TH": {
           "objection": "Objections spécifiques : le marché ne confirme pas pour Thaïlande (ETF THD à +0,5 % depuis la veille du signal) [F1].",
-          "ajustement": "abaisser"
-        }
-      },
-      "confiance": "faible",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|TR|2026-11-10",
-      "revu_le": "2026-11-12T03:23:37Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "TR",
-        "date": "2026-11-10",
-        "importance": "moyenne",
-        "titre": "Turquie : score de risque géopolitique 21/100, +20 pts sur 7 jours"
-      },
-      "objection": "Objections spécifiques : le marché ne confirme pas pour Turquie (ETF TUR à −1,1 % depuis la veille du signal) [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "ETF TUR (Turquie) : −1,1 % depuis la veille du signal",
-          "source": "Yahoo Finance via yfinance, TUR"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "règles",
-      "par_entite": {
-        "TR": {
-          "objection": "Objections spécifiques : le marché ne confirme pas pour Turquie (ETF TUR à −1,1 % depuis la veille du signal) [F1].",
           "ajustement": "abaisser"
         }
       },
@@ -5959,60 +6119,6 @@
       "methode": "règles",
       "confiance": "moyen",
       "version_regles": 3
-    },
-    {
-      "id": "geopolitique|evenement_grave|theme-evt-d3cbffbc9212|2026-11-06",
-      "revu_le": "2026-11-07T23:01:40Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "evenement_grave",
-        "cle": "theme-evt-d3cbffbc9212",
-        "date": "2026-11-06",
-        "importance": "haute",
-        "titre": "Événement de gravité 4 : Frappes russes et attaques énergétiques en Ukraine"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|mesure_officielle|evt-cce5babecfca|2026-11-06",
-      "revu_le": "2026-11-07T23:01:40Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "mesure_officielle",
-        "cle": "evt-cce5babecfca",
-        "date": "2026-11-06",
-        "importance": "moyenne",
-        "titre": "Sanctions (source officielle) : Le Trésor américain met à jour les sanctions contre l'Iran et modifie les licences vénézuéliennes"
-      },
-      "objection": "Malgré la mise à jour des sanctions contre l'Iran et les licences vénézuéliennes, l'ETF SPY aux États-Unis n'évolue que de +0,3 % depuis la veille du signal [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "ETF SPY (États-Unis) : +0,3 % depuis la veille du signal",
-          "source": "Yahoo Finance via yfinance, SPY"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "US": {
-          "objection": "Objections spécifiques : le marché ne confirme pas pour États-Unis (ETF SPY à +0,3 % depuis la veille du signal) [F1].",
-          "ajustement": "abaisser"
-        }
-      },
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
     }
   ]
 }
