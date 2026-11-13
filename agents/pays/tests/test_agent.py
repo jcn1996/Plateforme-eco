@@ -286,3 +286,85 @@ class TestCroisement(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestRobustesse(unittest.TestCase):
+    """Une source, Gemini ou un texte non conforme n'empêchent jamais la publication de data/pays.json."""
+
+    def setUp(self):
+        self.dossier = Path(tempfile.mkdtemp())
+        self.sortie = self.dossier / "pays.json"
+
+    def tearDown(self):
+        shutil.rmtree(self.dossier)
+        textes.GEMINI.update({"exclus": set(), "coupe": False, "derniere_erreur": None, "reussites": 0})
+
+    def lancer(self):
+        return main(["--test", "--donnees-test", str(DONNEES), "--sortie", str(self.sortie),
+                     "--historique", str(self.dossier / "historique" / "pays"),
+                     "--journal", str(self.dossier / "journal.json"), "--recap", str(self.dossier / "recap"), "--date", JOUR])
+
+    def test_neutraliser(self):
+        for t in ("au-delà du seuil fixe (historique encore court)", "Une envolée EXCEPTIONNELLE et spectaculaire"):
+            n = textes.neutraliser(t)
+            self.assertTrue(textes.ton_conforme(n), n)
+        self.assertEqual(textes.neutraliser("Croissance de 2,1 %."), "Croissance de 2,1 %.")
+
+    def test_textes_des_signaux_conformes(self):
+        """Cause des échecs du 10 au 13/11 : « (historique encore court) » dans l'explication d'un signal de flux."""
+        import inspect
+        from agents.pays import flux_etf
+        self.assertNotIn("historique encore court", inspect.getsource(flux_etf))
+
+    def test_sortie_secondaire_en_echec_publication_maintenue(self):
+        from unittest import mock
+        from agents.pays import flux_etf
+        with mock.patch.object(flux_etf, "ecrire_signaux", side_effect=ValueError("panne simulée")), \
+                mock.patch("agents.pays.recap.ecrire", side_effect=OSError("disque plein simulé")):
+            self.assertEqual(self.lancer(), 0)
+        self.assertFalse(lire_json(self.sortie)["meta"]["fictif"])
+        self.assertTrue(lire_json(self.dossier / "journal.json")["derniere_execution"])
+
+    def test_texte_non_conforme_corrige_sans_arret(self):
+        from unittest import mock
+        avec_mot = lambda *a, **k: "Situation historique pour ce pays."  # noqa: E731
+        with mock.patch.object(textes, "verdict", side_effect=avec_mot):
+            self.assertEqual(self.lancer(), 0)
+        for p in lire_json(self.sortie)["donnees"]:
+            self.assertTrue(textes.ton_conforme(p["verdict"]), p["verdict"])
+
+    def test_gemini_chaine_de_secours_et_coupure(self):
+        import os
+        from unittest import mock
+        appels = []
+
+        class Rep:
+            def __init__(self, code, corps=None):
+                self.status_code, self._c = code, corps
+
+            def raise_for_status(self):
+                if self.status_code >= 400:
+                    raise RuntimeError(f"HTTP {self.status_code}")
+
+            def json(self):
+                return self._c
+
+        def post_ok(url, **k):
+            appels.append(url)
+            if "retire" in url:
+                return Rep(404)
+            texte = json.dumps({"verdict": "Situation équilibrée selon deux indicateurs concordants.", "contre_scenario": ["Inflation à surveiller."]})
+            return Rep(200, {"candidates": [{"content": {"parts": [{"text": texte}]}}]})
+        ind = {"x": {"libelle": "X", "valeur": 1, "note": 60, "date": "2026-10"}}
+        with mock.patch.dict(os.environ, {"GEMINI_API_KEY": "cle-test"}), mock.patch("requests.post", side_effect=post_ok):
+            r = textes.rediger_avec_gemini("Testland", 60, ind, {"niveau": "moyen"}, ["modele-retire", "modele-ok"])
+            self.assertIsNotNone(r)
+            textes.rediger_avec_gemini("Testland", 60, ind, {"niveau": "moyen"}, ["modele-retire", "modele-ok"])
+        self.assertEqual(sum("retire" in u for u in appels), 1, "un modèle retiré (404) est écarté pour la suite")
+        appels.clear()
+        with mock.patch.dict(os.environ, {"GEMINI_API_KEY": "cle-test"}), \
+                mock.patch("requests.post", side_effect=lambda url, **k: appels.append(url) or Rep(503)):
+            textes.GEMINI["exclus"] = set()
+            for _ in range(5):
+                self.assertIsNone(textes.rediger_avec_gemini("Testland", 60, ind, {"niveau": "moyen"}, ["a", "b"]))
+        self.assertEqual(len(appels), 2, "après un échec sur toute la chaîne, plus d'appel")

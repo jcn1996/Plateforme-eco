@@ -371,6 +371,7 @@ def briefing_markdown(b: dict) -> str:
     l = [f"# Briefing du chef d'orchestre — {date_fr(b['date'])}", "",
          f"Rédaction : {'Gemini (affirmations vérifiées contre les données sources)' if b['mode'] == 'gemini' else 'règles (' + (b.get('raison_regles') or 'n. d.') + ')'} · "
          f"palier de risque « {b['palier']} » · cycle mondial « {b.get('phase_monde') or 'n. d.'} »", "",
+         *([f"## ⚠ Agents en panne", ""] + [f"- {p['texte']}" for p in b.get("pannes") or []] + [""] if b.get("pannes") else []),
          "## L'essentiel", ""]
     l += [f"- {x['texte']}" for x in b["essentiel"]]
     pano = b["panorama"]

@@ -39,6 +39,27 @@ def ton_conforme(texte: str) -> bool:
     return not any(re.search(rf"\b{re.escape(m)}\b", t) for m in MOTS_INTERDITS)
 
 
+# Remplacements neutres des mots interdits (texte produit par règles ou repris tel quel) : un texte non conforme est
+# corrigé et signalé, jamais une cause d'arrêt de l'agent.
+NEUTRES = {
+    "exceptionnel": "inhabituel", "exceptionnelle": "inhabituelle", "exceptionnels": "inhabituels", "exceptionnelles": "inhabituelles",
+    "incontournable": "notable", "incontournables": "notables", "explosion": "forte hausse", "explose": "augmente fortement",
+    "exploser": "augmenter fortement", "euphorie": "optimisme", "euphorique": "optimiste", "envolee": "forte hausse",
+    "flambee": "forte hausse", "fulgurant": "rapide", "fulgurante": "rapide", "pepite": "société", "garanti": "attendu",
+    "garantie": "attendue", "a ne pas manquer": "à suivre", "historique": "de long terme", "spectaculaire": "marqué",
+    "formidable": "notable", "incroyable": "inhabituel",
+}
+_ACCENTS = {"a": "[aàâä]", "e": "[eéèêë]", "i": "[iîï]", "o": "[oôö]", "u": "[uùûü]", "c": "[cç]"}
+
+
+def neutraliser(texte: str) -> str:
+    """Remplace les mots interdits par un équivalent neutre (accents et majuscules ignorés)."""
+    for mot in sorted(MOTS_INTERDITS, key=len, reverse=True):
+        motif = "".join(_ACCENTS.get(ch, re.escape(ch)) for ch in mot)
+        texte = re.sub(rf"(?<!\w){motif}(?!\w)", NEUTRES.get(mot, ""), texte, flags=re.IGNORECASE)
+    return re.sub(r"\s{2,}", " ", texte).strip()
+
+
 def nb(x: float, decimales: int = 1, signe: bool = False) -> str:
     """Nombre au format français : 2,3 ; +4,1 ; −0,8."""
     texte = f"{abs(x):.{decimales}f}".replace(".", ",")
@@ -189,12 +210,22 @@ def contre_scenario(note: int, indicateurs: dict, cles: list[str], confiance: di
 # Option : rédaction par Gemini (si la clé GEMINI_API_KEY est fournie)
 # ---------------------------------------------------------------------------
 
-def rediger_avec_gemini(nom: str, note: int, indicateurs: dict, confiance: dict, modele: str) -> dict | None:
+# État de Gemini pendant une exécution : modèles introuvables (404) écartés ; après un échec sur toute la chaîne,
+# plus aucun appel (les textes par règles sont conservés pour les pays suivants).
+GEMINI = {"exclus": set(), "coupe": False, "derniere_erreur": None, "reussites": 0}
+
+
+def rediger_avec_gemini(nom: str, note: int, indicateurs: dict, confiance: dict, modele) -> dict | None:
     """Demande à Gemini un verdict et un contre-scénario à partir des chiffres.
-    Renvoie None (on garde les textes par règles) si la clé manque, en cas
-    d'erreur, ou si le texte ne respecte pas les règles de conduite."""
+    `modele` : un nom ou une chaîne de modèles de secours (le premier qui répond est utilisé).
+    Renvoie None (on garde les textes par règles) si la clé manque, en cas d'erreur sur toute la chaîne,
+    ou si le texte ne respecte pas les règles de conduite. Ne lève jamais d'exception."""
     cle = os.environ.get("GEMINI_API_KEY")
-    if not cle:
+    if not cle or GEMINI["coupe"]:
+        return None
+    modeles = [m for m in ([modele] if isinstance(modele, str) else list(modele or [])) if m not in GEMINI["exclus"]]
+    if not modeles:
+        GEMINI["coupe"] = True
         return None
     import requests
     chiffres = {k: {"libelle": v["libelle"], "valeur": v.get("valeur"), "note": v.get("note"), "date": v.get("date")}
@@ -205,14 +236,26 @@ def rediger_avec_gemini(nom: str, note: int, indicateurs: dict, confiance: dict,
         "Réponds uniquement en JSON : {\"verdict\": \"une seule phrase\", \"contre_scenario\": [\"2 ou 3 éléments\"]}.\n"
         f"Pays : {nom}. Note globale : {note}/100. Confiance : {confiance['niveau']}. Indicateurs : {json.dumps(chiffres, ensure_ascii=False)}"
     )
+    texte = None
+    for m in modeles:
+        try:
+            r = requests.post(
+                f"https://generativelanguage.googleapis.com/v1beta/models/{m}:generateContent",
+                params={"key": cle}, timeout=30,
+                json={"contents": [{"parts": [{"text": consigne}]}], "generationConfig": {"responseMimeType": "application/json", "temperature": 0.2}},
+            )
+            if r.status_code == 404:
+                GEMINI["exclus"].add(m)  # modèle retiré : écarté pour le reste de l'exécution
+            r.raise_for_status()
+            texte = r.json()["candidates"][0]["content"]["parts"][0]["text"]
+            break
+        except Exception as e:  # noqa: BLE001 — modèle suivant de la chaîne
+            GEMINI["derniere_erreur"] = f"{m} : {str(e)[:120]}"
+    if texte is None:
+        GEMINI["coupe"] = True
+        LOG.warning("Gemini indisponible sur toute la chaîne (%s) : textes par règles pour %s et les pays suivants", GEMINI["derniere_erreur"], nom)
+        return None
     try:
-        r = requests.post(
-            f"https://generativelanguage.googleapis.com/v1beta/models/{modele}:generateContent",
-            params={"key": cle}, timeout=30,
-            json={"contents": [{"parts": [{"text": consigne}]}], "generationConfig": {"responseMimeType": "application/json", "temperature": 0.2}},
-        )
-        r.raise_for_status()
-        texte = r.json()["candidates"][0]["content"]["parts"][0]["text"]
         resultat = json.loads(texte)
         v, c = resultat.get("verdict"), resultat.get("contre_scenario")
         valide = (isinstance(v, str) and 20 < len(v) < 260 and isinstance(c, list) and 1 <= len(c) <= 3
@@ -220,6 +263,7 @@ def rediger_avec_gemini(nom: str, note: int, indicateurs: dict, confiance: dict,
         if not valide:
             LOG.warning("Texte Gemini non conforme pour %s : textes par règles conservés", nom)
             return None
+        GEMINI["reussites"] += 1
         return {"verdict": v.strip(), "contre_scenario": [x.strip() for x in c]}
     except Exception as e:
         LOG.warning("Gemini indisponible pour %s (%s) : textes par règles conservés", nom, str(e)[:120])

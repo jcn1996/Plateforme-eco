@@ -14,7 +14,7 @@ from datetime import date
 from pathlib import Path
 
 from .notation import minuscule
-from .textes import nb, ton_conforme
+from .textes import nb, neutraliser, ton_conforme
 
 MOUVEMENT_MIN = 3  # écart de note (points) à partir duquel un mouvement est cité
 
@@ -125,8 +125,8 @@ def contenu(jour: date, objet: dict, ancien: dict | None, etats: dict) -> str:
 
 def ecrire(dossier: Path, jour: date, objet: dict, ancien: dict | None, etats: dict) -> Path:
     texte = contenu(jour, objet, ancien, etats)
-    if not ton_conforme(texte):
-        raise ValueError("Récapitulatif non conforme aux règles de conduite (mot interdit)")
+    if not ton_conforme(texte):  # corrigé, jamais une cause d'arrêt
+        texte = "\n".join(neutraliser(l) if not ton_conforme(l) else l for l in texte.split("\n"))
     dossier.mkdir(parents=True, exist_ok=True)
     chemin = dossier / f"pays-{jour.isoformat()}.md"
     chemin.write_text(texte, encoding="utf-8")

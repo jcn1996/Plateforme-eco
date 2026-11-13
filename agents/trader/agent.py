@@ -240,6 +240,35 @@ def position_publique(p: dict, noms_pays: dict) -> dict:
             "ouverte_le": p.get("ouverte_le"), "contango": p.get("contango", False)}
 
 
+def transition(etat: dict, config: dict, maintenant: datetime) -> dict | None:
+    """Lignes détenues hors des cibles de la dernière décision (règles de concentration) : combien, quand les premières
+    sorties sont possibles (détention minimale), et fin estimée au rythme de N sorties par décision (jours ouvrés)."""
+    from datetime import timedelta
+    cibles = {l["symbole"] for l in (((etat.get("derniere_decision") or {}).get("cibles") or {}).get("lignes") or [])}
+    if not cibles:
+        return None
+    hors = [p for s, p in etat["positions"].items() if s not in cibles]
+    n, rythme = len(hors), config["transition"]["sorties_max_par_jour"]
+    if not n:
+        return {"lignes_hors_regles": 0, "texte": f"Portefeuille conforme : {len(etat['positions'])} lignes, toutes dans les cibles."}
+
+    def ouvre(d):
+        while d.weekday() >= 5:
+            d += timedelta(days=1)
+        return d
+    liberations = sorted(S.date_liberation(p, config) for p in hors)
+    debut = ouvre(max(maintenant.date() + timedelta(days=1), datetime.fromisoformat(liberations[0]).date()))
+    fin = debut
+    for _ in range(-(-n // rythme) - 1):
+        fin = ouvre(fin + timedelta(days=1))
+    fin = max(fin, ouvre(datetime.fromisoformat(liberations[-1]).date()))
+    return {"lignes_hors_regles": n, "lignes": len(etat["positions"]), "max_lignes": config["max_lignes"], "rythme": rythme,
+            "premieres_sorties": debut.isoformat(), "fin_estimee": fin.isoformat(),
+            "texte": (f"Transition vers {config['max_lignes']} lignes au plus : {n} ligne(s) hors règles sur {len(etat['positions'])} à solder, "
+                      f"{rythme} au plus par décision, après la détention minimale de {config['detention_min_jours']} jours. Premières sorties à la "
+                      f"décision du {date_fr(debut.isoformat())}, fin estimée le {date_fr(fin.isoformat())}.")}
+
+
 def sortie(etat: dict, valo: dict, stats: dict, operations: list, chef: dict | None, palier: str | None, config: dict, maintenant: datetime,
            attente: dict | None, indice_source: str) -> dict:
     noms_pays = {"EZ": "Zone euro", "DE": "Allemagne", "US": "États-Unis"}
@@ -267,6 +296,7 @@ def sortie(etat: dict, valo: dict, stats: dict, operations: list, chef: dict | N
         "positions": sorted([position_publique(p, noms_pays) for p in etat["positions"].values()], key=lambda x: -x["valeur"]),
         "ordres_en_attente": ordres, "operations": list(reversed(operations[-30:])),
         "derniere_decision": etat.get("derniere_decision"), "historique": hist,
+        "transition": transition(etat, config, maintenant),
         "cours_manquants": valo.get("manquants", []),
         "regles": [f"{config['max_lignes']} lignes au plus (liquidités exceptées), {config['ligne_min']} % minimum par ligne ; détention minimale de "
                    f"{config['detention_min_jours']} jours (sauf stop) ; une seule série de décisions par jour.",
@@ -364,7 +394,10 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "hor
     # 4. décision
     h, m = (int(x) for x in config["decision_heure_utc"].split(":"))
     deja_decide = etat.get("derniere_decision_jour") == jour
+    note_decision = None
     if mode == "decision" and deja_decide and not forcer:
+        note_decision = (f"décision du jour déjà prise à {((etat.get('derniere_decision') or {}).get('le') or '')[11:16]} UTC : "
+                         "nouvelle demande ignorée (exécution en retard du planning GitHub ou relance)")
         LOG.info("Décision du jour déjà prise (%s) : une seule série de décisions par jour, rien n'est recalculé.", (etat.get("derniere_decision") or {}).get("le"))
     du = (mode == "decision" and (not deja_decide or forcer)) or (mode == "horaire" and not deja_decide and maintenant.weekday() < 5
                                 and (maintenant.hour, maintenant.minute) >= (h, m))
@@ -407,7 +440,7 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "hor
               "palier": palier, "executees": [f"{o['sens']} {o['quantite']} {o['symbole']} ({o['motif']})" for o in executees],
               "annulees": [f"{o['sens']} {o['symbole']} : {o.get('note', o.get('statut'))}" for o in annulees],
               "ordres_imposes": [f"{o['sens']} {o['symbole']} ({o['motif']})" for o in nouveaux],
-              "decision": (decision or {}).get("resume"), "attente": bloquants if du and bloquants else None,
+              "decision": (decision or {}).get("resume") or note_decision, "attente": bloquants if du and bloquants else None,
               "ordres_en_attente": len(etat.get("ordres", [])), "cours_manquants": valo["manquants"][:10]}
     jrn["donnees"] = (jrn.get("donnees", []) + [entree])[-300:]
     jrn["meta"] = {**jrn.get("meta", {}), "genere_le": iso(maintenant), "source": "agent-trader", "version_agent": VERSION_AGENT,
