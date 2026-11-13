@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genere_le": "2026-11-12T22:53:43Z",
+    "genere_le": "2026-11-13T07:31:35Z",
     "source": "agent-chef",
     "version_agent": "1.0",
     "description": "Entrées, recalcul, changements de verdict, alertes et briefing, à chaque exécution",
@@ -9,9 +9,9 @@
       "libelle": "Chef d'orchestre",
       "ordre": 10,
       "workflow": "agent-chef.yml",
-      "derniere_execution": "2026-11-12T22:53:43Z",
-      "prochaine_prevue": "2026-11-13T07:15:00Z",
-      "intervalle_min": 565,
+      "derniere_execution": "2026-11-13T07:31:35Z",
+      "prochaine_prevue": "2026-11-13T07:45:00Z",
+      "intervalle_min": 30,
       "planning": {
         "crons": [
           "15 7 * * *",
@@ -20,80 +20,104 @@
         ],
         "fuseau": "UTC"
       },
-      "sources_total": 11,
-      "sources_ok": 10,
+      "sources_total": 14,
+      "sources_ok": 13,
       "sources": [
+        {
+          "nom": "Yahoo Finance (cours des ETF sectoriels)",
+          "etat": "ok",
+          "detail": "33/33 ETF sectoriels",
+          "derniere_donnee_valide": "2026-11-13T07:31:35Z"
+        },
+        {
+          "nom": "Émetteurs et Yahoo Finance (flux des ETF sectoriels : SSGA, iShares)",
+          "etat": "ok",
+          "detail": "ssga : 11, ishares : 11, yahoo_parts : 8",
+          "derniere_donnee_valide": "2026-11-13T07:31:35Z"
+        },
         {
           "nom": "Agent pays (data/pays.json)",
           "etat": "périmée",
-          "detail": "donnée de 79 h (au-delà de 30 h) : pèse moins",
+          "detail": "donnée de 87 h (au-delà de 30 h) : pèse moins",
           "derniere_donnee_valide": "2026-11-09T16:05:36Z"
         },
         {
           "nom": "Agent macro (data/macro.json)",
           "etat": "ok",
-          "detail": "à jour (7 h)",
-          "derniere_donnee_valide": "2026-11-12T15:35:40Z"
+          "detail": "à jour (1 h)",
+          "derniere_donnee_valide": "2026-11-13T06:46:48Z"
         },
         {
           "nom": "Agent marchés (data/marches.json)",
           "etat": "ok",
-          "detail": "à jour (1 h)",
-          "derniere_donnee_valide": "2026-11-12T22:12:10Z"
+          "detail": "à jour (0 h)",
+          "derniere_donnee_valide": "2026-11-13T07:16:32Z"
         },
         {
           "nom": "Agent risque (data/risque.json)",
           "etat": "ok",
-          "detail": "à jour (1 h)",
-          "derniere_donnee_valide": "2026-11-12T22:14:36Z"
+          "detail": "à jour (5 h)",
+          "derniere_donnee_valide": "2026-11-13T02:55:39Z"
         },
         {
           "nom": "Agent géopolitique (data/geopolitique.json)",
           "etat": "ok",
-          "detail": "à jour (1 h)",
-          "derniere_donnee_valide": "2026-11-12T22:16:44Z"
+          "detail": "à jour (0 h)",
+          "derniere_donnee_valide": "2026-11-13T07:16:50Z"
         },
         {
           "nom": "Agent matières premières (data/matieres_premieres.json)",
           "etat": "ok",
-          "detail": "à jour (0 h) ; agent dégradé : pèse moins",
-          "derniere_donnee_valide": "2026-11-12T22:31:59Z"
+          "detail": "à jour (5 h)",
+          "derniere_donnee_valide": "2026-11-13T02:38:56Z"
         },
         {
           "nom": "Agent entreprises (data/entreprises.json)",
           "etat": "ok",
-          "detail": "à jour (19 h)",
-          "derniere_donnee_valide": "2026-11-12T03:42:33Z"
+          "detail": "à jour (4 h)",
+          "derniere_donnee_valide": "2026-11-13T03:16:21Z"
         },
         {
           "nom": "Agent entreprises (pépites) (data/pepites.json)",
           "etat": "ok",
-          "detail": "à jour (19 h)",
-          "derniere_donnee_valide": "2026-11-12T03:42:33Z"
+          "detail": "à jour (4 h)",
+          "derniere_donnee_valide": "2026-11-13T03:16:21Z"
         },
         {
           "nom": "Agent initiés (data/inities.json)",
           "etat": "ok",
-          "detail": "à jour (7 h)",
-          "derniere_donnee_valide": "2026-11-12T15:36:24Z"
+          "detail": "à jour (1 h)",
+          "derniere_donnee_valide": "2026-11-13T06:55:37Z"
         },
         {
           "nom": "Analyses à la demande (data/analyses/index.json)",
           "etat": "ok",
-          "detail": "à jour (225 h)",
+          "detail": "à jour (234 h)",
           "derniere_donnee_valide": "2026-11-03T13:35:53Z"
         },
         {
           "nom": "Contradicteur (agent risque) (data/signaux/revues.json)",
           "etat": "ok",
-          "detail": "à jour (1 h)",
-          "derniere_donnee_valide": "2026-11-12T22:14:46Z"
+          "detail": "à jour (5 h)",
+          "derniere_donnee_valide": "2026-11-13T02:56:51Z"
         },
         {
           "nom": "Gemini (rédaction du briefing)",
           "etat": "information",
-          "detail": "rédaction par règles : Gemini indisponible sur toute la chaîne de modèles : gemini-flash-latest : HTTP 503 : { \"error\": { \"code\": 503, \"message\": \"This model is currently experiencing high demand. | gemini-3.5-flash-lite : HTTP 503 : { \"error\": { \"code\": 503, \"message\": \"This model is currently experiencing high deman (tentative 3 sur 3) ; plus de nouvelle tentative aujourd'hui",
+          "detail": "rédaction par règles : réponse de Gemini rejetée : réponse JSON illisible ; nouvelle tentative de rédaction vers 08:01 UTC",
           "derniere_donnee_valide": null
+        },
+        {
+          "nom": "Google Drive (dépôt du briefing, facultatif)",
+          "etat": "non configurée",
+          "detail": "secrets GOOGLE_SERVICE_ACCOUNT_JSON et DRIVE_FOLDER_ID absents : dépôt ignoré",
+          "derniere_donnee_valide": null
+        },
+        {
+          "nom": "Yahoo Finance (suivi de performance des verdicts)",
+          "etat": "ok",
+          "detail": "0 mesure(s) ; 0 verdict(s) arrivé(s) à échéance",
+          "derniere_donnee_valide": "2026-11-13T07:31:35Z"
         }
       ],
       "degrade": true,
@@ -5433,11 +5457,101 @@
         "analyses": "à jour",
         "revues": "à jour"
       }
+    },
+    {
+      "genere_le": "2026-11-13T07:31:35Z",
+      "mode": "complet",
+      "recalcul": true,
+      "declencheurs": [],
+      "palier": "Vigilance",
+      "opportunites": 165,
+      "changements": [
+        "Argentine : « Alléger » → « Neutre »",
+        "Suède : « Renforcer » → « Neutre »",
+        "CF Industries Holdings, Inc. : « Renforcer fortement » → « Renforcer »",
+        "Dorian LPG Ltd. : « Renforcer fortement » → « Renforcer »"
+      ],
+      "alertes": 4,
+      "alertes_ecartees": [
+        "entreprises · Sumitomo Mitsui Trust Group, Inc. : BPA publié +39,9 % par rapport à l'estimation : fonds, véhicule de crédit, holding ou SPAC",
+        "entreprises · Hanwha Aerospace Co., Ltd. : BPA publié −124,5 % par rapport à l'estimation : fonds, véhicule de crédit, holding ou SPAC",
+        "entreprises · Virtus Investment Partners, Inc. : estimations de BPA −10,8 % sur 30 jours : holding, fonds, BDC ou SPAC",
+        "entreprises · Centerspace : estimations de BPA +16,1 % sur 30 jours : fonds, véhicule de crédit, holding ou SPAC",
+        "inities · Larimar Therapeutics, Inc. : 6 dirigeants achètent sur le marché en 30 jours (score 95/100 : société hors de l'univers analysé ou sans note",
+        "inities · AMDOCS LTD : 3 dirigeants achètent sur le marché en 30 jours (score 79/100) : société hors de l'univers analysé ou sans note",
+        "inities · Phio Pharmaceuticals Corp. : 3 dirigeants achètent sur le marché en 30 jours (score 89/100 : société hors de l'univers analysé ou sans note",
+        "inities · Ferroglobe PLC : 5 dirigeants achètent sur le marché en 30 jours (score 89/100) : société hors de l'univers analysé ou sans note",
+        "inities · STANDARD BANK OF SOUTH AFRICA LTD déclare 5,0 % de EXXARO RESOURCES LTD (13D, intention d' : société hors de l'univers analysé ou sans note",
+        "inities · Owl Creek Asset Management, L.P. déclare 15,7 % de Pyxus International, Inc. (13D, intenti : société hors de l'univers analysé ou sans note",
+        "inities · Scorpio Services Holding Ltd déclare 13,9 % de Cadeler plc (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
+        "inities · Fairmount Funds Management LLC déclare 20,0 % de Mentari Therapeutics, Inc. (13D, intentio : fonds, véhicule de crédit, holding ou SPAC",
+        "inities · Tego Cyber, Inc. déclare 8,9 % de INTRUSION INC (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
+        "inities · Hurst Jonathan déclare 5,2 % de Agility Robotics, Inc. (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
+        "inities · Drilling Tools International Corp : 3 dirigeants achètent sur le marché en 30 jours (score : société hors de l'univers analysé ou sans note",
+        "inities · TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD : 3 dirigeants achètent sur le marché en 30 jour : société hors de l'univers analysé ou sans note",
+        "inities · Liberty Global Ltd. : 3 dirigeants achètent sur le marché en 30 jours (score 82/100) : société hors de l'univers analysé ou sans note",
+        "inities · SelectQuote, Inc. : 5 dirigeants achètent sur le marché en 30 jours (score 95/100) : société hors de l'univers analysé ou sans note",
+        "inities · Scipher Medicine Corp déclare 10,4 % de Chemomab Therapeutics Ltd. (13D, intention d'influ : société hors de l'univers analysé ou sans note",
+        "inities · Hyperscale Data, Inc. déclare 21,7 % de Powell Max Ltd (13D, intention d'influencer) : société hors de l'univers analysé ou sans note"
+      ],
+      "exclues": [
+        "Azimut Holding S.p.A.",
+        "Bajaj Finserv Ltd.",
+        "China International Capital Corporation Limited",
+        "Equitable Holdings, Inc.",
+        "Georgia Capital PLC",
+        "Hilltop Holdings Inc.",
+        "Investor AB (publ)",
+        "ORIX Corporation",
+        "Partners Group Holding AG",
+        "Patria Investments Limited",
+        "SEI Investments Company",
+        "Victory Capital Holdings, Inc.",
+        "Virtus Investment Partners, Inc.",
+        "Vontobel Holding AG",
+        "Voya Financial, Inc.",
+        "Vylor Inc.",
+        "Wendel",
+        "Yuanta Financial Holding Co., Ltd."
+      ],
+      "coherence_retrogradees": [],
+      "raison_briefing_regles": "réponse de Gemini rejetée : réponse JSON illisible ; nouvelle tentative de rédaction vers 08:01 UTC",
+      "briefing": "règles",
+      "reprise_redaction": null,
+      "gemini": {
+        "appels": 1,
+        "reussites": 0,
+        "quota_atteint": false,
+        "rejets": [
+          "réponse JSON illisible"
+        ],
+        "erreurs": []
+      },
+      "suivi": {
+        "ajoutes": 6,
+        "mesures": 0,
+        "en_attente": 0,
+        "total": 240,
+        "erreur": null
+      },
+      "entrees": {
+        "pays": "périmée",
+        "macro": "à jour",
+        "marches": "à jour",
+        "risque": "à jour",
+        "geopolitique": "à jour",
+        "matieres_premieres": "à jour",
+        "entreprises": "à jour",
+        "pepites": "à jour",
+        "inities": "à jour",
+        "analyses": "à jour",
+        "revues": "à jour"
+      }
     }
   ],
-  "derniere_execution": "2026-11-12T22:53:43Z",
-  "prochaine_prevue": "2026-11-13T07:15:00Z",
-  "intervalle_min": 565,
+  "derniere_execution": "2026-11-13T07:31:35Z",
+  "prochaine_prevue": "2026-11-13T07:45:00Z",
+  "intervalle_min": 30,
   "planning": {
     "crons": [
       "15 7 * * *",
