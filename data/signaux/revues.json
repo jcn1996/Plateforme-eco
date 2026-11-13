@@ -1,13 +1,146 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-13T02:56:51Z",
+    "genere_le": "2026-11-13T07:31:47Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "inities|achats_groupes|LRMR|2026-11-13",
+      "revu_le": "2026-11-13T07:31:36Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "LRMR",
+        "date": "2026-11-13",
+        "importance": "forte",
+        "titre": "Larimar Therapeutics, Inc. : 6 dirigeants achètent sur le marché en 30 jours (score 95/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|MP|2026-11-13",
+      "revu_le": "2026-11-13T07:31:36Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "MP",
+        "date": "2026-11-13",
+        "importance": "forte",
+        "titre": "MP Materials Corp. : 3 dirigeants achètent sur le marché en 30 jours (score 91/100)"
+      },
+      "objection": "Malgré ces achats, le VE/EBITDA dépasse le secteur de +15191,9 % [F1] et la couverture des intérêts s'établit à −4,6× [F2]. De plus, la croissance du bénéfice recule de −31,3 % [F4] tandis que les stocks progressent de 59,0 % pour un CA en hausse de 10,1 % [F6].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "MP Materials Corp. : VE/EBITDA vs secteur +15191,9 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "MP Materials Corp. : couverture des intérêts de −4,6×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F3",
+          "texte": "MP Materials Corp. : momentum 12 mois −37,3 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F4",
+          "texte": "MP Materials Corp. : croissance du bénéfice −31,3 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F5",
+          "texte": "MP Materials Corp. : alerte « Dilution forte » : nombre d'actions en hausse de 8,7 % sur un an",
+          "source": "agent entreprises (fiche)"
+        },
+        {
+          "id": "F6",
+          "texte": "MP Materials Corp. : alerte « Hausse anormale des stocks » : stocks en hausse de 59,0 % pour un CA en hausse de 10,1 %",
+          "source": "agent entreprises (fiche)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2",
+        "F4",
+        "F6"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "inities|achats_groupes|DOX|2026-11-13",
+      "revu_le": "2026-11-13T07:31:36Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "DOX",
+        "date": "2026-11-13",
+        "importance": "moyenne",
+        "titre": "AMDOCS LTD : 3 dirigeants achètent sur le marché en 30 jours (score 79/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|PHIO|2026-11-13",
+      "revu_le": "2026-11-13T07:31:36Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "PHIO",
+        "date": "2026-11-13",
+        "importance": "forte",
+        "titre": "Phio Pharmaceuticals Corp. : 3 dirigeants achètent sur le marché en 30 jours (score 89/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|GSM|2026-11-13",
+      "revu_le": "2026-11-13T07:31:36Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "GSM",
+        "date": "2026-11-13",
+        "importance": "forte",
+        "titre": "Ferroglobe PLC : 5 dirigeants achètent sur le marché en 30 jours (score 89/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
     {
       "id": "geopolitique|hausse_score|MX|2026-11-13",
       "revu_le": "2026-11-13T02:55:39Z",
