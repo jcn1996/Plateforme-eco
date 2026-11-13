@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genere_le": "2026-11-12T22:41:17Z",
+    "genere_le": "2026-11-13T07:46:32Z",
     "source": "agent-trader",
     "version_agent": "1.0",
     "description": "Ordres exécutés, ordres imposés, décisions et attentes de l'agent trader (démo), à chaque exécution",
@@ -9,9 +9,9 @@
       "libelle": "Agent trader (démo)",
       "ordre": 11,
       "workflow": "agent-trader.yml",
-      "derniere_execution": "2026-11-12T22:41:17Z",
-      "prochaine_prevue": "2026-11-13T07:33:00Z",
-      "intervalle_min": 628,
+      "derniere_execution": "2026-11-13T07:46:32Z",
+      "prochaine_prevue": "2026-11-13T08:05:00Z",
+      "intervalle_min": 32,
       "planning": {
         "crons": [
           "33 7 * * 1-5",
@@ -25,26 +25,26 @@
         {
           "nom": "Chef d'orchestre (data/chef.json)",
           "etat": "ok",
-          "detail": "1 h",
-          "derniere_donnee_valide": "2026-11-12T22:01:37Z"
+          "detail": "0 h",
+          "derniere_donnee_valide": "2026-11-13T07:31:35Z"
         },
         {
           "nom": "Agent risque (palier) (data/risque.json)",
           "etat": "ok",
           "detail": "0 h",
-          "derniere_donnee_valide": "2026-11-12T22:14:36Z"
+          "derniere_donnee_valide": "2026-11-13T07:31:36Z"
         },
         {
           "nom": "Agent marchés (indice de référence, EUR/USD ; facultatif)",
           "etat": "ok",
           "detail": "à jour",
-          "derniere_donnee_valide": "2026-11-12T22:12:10Z"
+          "derniere_donnee_valide": "2026-11-13T07:31:34Z"
         },
         {
           "nom": "Yahoo Finance via yfinance (cours, change, exécution)",
           "etat": "ok",
           "detail": "28 position(s) valorisée(s)",
-          "derniere_donnee_valide": "2026-11-12T22:41:17Z"
+          "derniere_donnee_valide": "2026-11-13T07:46:32Z"
         }
       ],
       "degrade": false,
@@ -1118,11 +1118,25 @@
       "attente": null,
       "ordres_en_attente": 0,
       "cours_manquants": []
+    },
+    {
+      "genere_le": "2026-11-13T07:46:32Z",
+      "mode": "decision",
+      "valeur": 101366.35,
+      "liquidites_pct": 10.04,
+      "palier": "Vigilance",
+      "executees": [],
+      "annulees": [],
+      "ordres_imposes": [],
+      "decision": "Décision du 13/11/2026 : palier « Vigilance », liquidités minimales 10 %. Cibles : 8 lignes (7 de cœur, 1 satellite(s)) sur 5 classes ou zones ; cœur 73,7 %, satellites 8,0 %, liquidités 18,3 %. 0 achat(s) et 0 vente(s) à exécuter au premier cours disponible ; 33 arbitrage(s) reporté(s) (détention minimale, sorties étalées, 15 lignes au plus).",
+      "attente": null,
+      "ordres_en_attente": 0,
+      "cours_manquants": []
     }
   ],
-  "derniere_execution": "2026-11-12T22:41:17Z",
-  "prochaine_prevue": "2026-11-13T07:33:00Z",
-  "intervalle_min": 628,
+  "derniere_execution": "2026-11-13T07:46:32Z",
+  "prochaine_prevue": "2026-11-13T08:05:00Z",
+  "intervalle_min": 32,
   "planning": {
     "crons": [
       "33 7 * * 1-5",
