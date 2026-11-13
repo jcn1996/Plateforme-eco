@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genere_le": "2026-11-13T15:20:55Z",
+    "genere_le": "2026-11-13T16:01:49Z",
     "source": "agent-chef",
     "version_agent": "1.0",
     "description": "Entrées, recalcul, changements de verdict, alertes et briefing, à chaque exécution",
@@ -9,8 +9,8 @@
       "libelle": "Chef d'orchestre",
       "ordre": 10,
       "workflow": "agent-chef.yml",
-      "derniere_execution": "2026-11-13T15:41:39Z",
-      "prochaine_prevue": "2026-11-13T15:50:00Z",
+      "derniere_execution": "2026-11-13T16:01:49Z",
+      "prochaine_prevue": "2026-11-13T16:50:00Z",
       "intervalle_min": 60,
       "planning": {
         "crons": [
@@ -20,49 +20,37 @@
         ],
         "fuseau": "UTC"
       },
-      "sources_total": 15,
-      "sources_ok": 14,
+      "sources_total": 12,
+      "sources_ok": 11,
       "sources": [
-        {
-          "nom": "Yahoo Finance (cours des ETF sectoriels)",
-          "etat": "ok",
-          "detail": "33/33 ETF sectoriels",
-          "derniere_donnee_valide": "2026-11-13T15:20:55Z"
-        },
-        {
-          "nom": "Émetteurs et Yahoo Finance (flux des ETF sectoriels : SSGA, iShares)",
-          "etat": "ok",
-          "detail": "ssga : 11, ishares : 11, yahoo_parts : 8",
-          "derniere_donnee_valide": "2026-11-13T15:20:55Z"
-        },
         {
           "nom": "Agent pays (data/pays.json)",
           "etat": "périmée",
-          "detail": "donnée de 95 h (au-delà de 30 h) : pèse moins",
+          "detail": "donnée de 96 h (au-delà de 30 h) : pèse moins",
           "derniere_donnee_valide": "2026-11-09T16:05:36Z"
         },
         {
           "nom": "Agent macro (data/macro.json)",
           "etat": "ok",
-          "detail": "à jour (0 h)",
+          "detail": "à jour (1 h)",
           "derniere_donnee_valide": "2026-11-13T14:53:54Z"
         },
         {
           "nom": "Agent marchés (data/marches.json)",
           "etat": "ok",
           "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-13T15:17:46Z"
+          "derniere_donnee_valide": "2026-11-13T15:46:32Z"
         },
         {
           "nom": "Agent risque (data/risque.json)",
           "etat": "ok",
           "detail": "à jour (1 h)",
-          "derniere_donnee_valide": "2026-11-13T14:31:35Z"
+          "derniere_donnee_valide": "2026-11-13T15:21:28Z"
         },
         {
           "nom": "Agent géopolitique (data/geopolitique.json)",
           "etat": "ok",
-          "detail": "à jour (0 h)",
+          "detail": "à jour (1 h)",
           "derniere_donnee_valide": "2026-11-13T15:16:57Z"
         },
         {
@@ -74,19 +62,19 @@
         {
           "nom": "Agent entreprises (data/entreprises.json)",
           "etat": "ok",
-          "detail": "à jour (12 h)",
+          "detail": "à jour (13 h)",
           "derniere_donnee_valide": "2026-11-13T03:16:21Z"
         },
         {
           "nom": "Agent entreprises (pépites) (data/pepites.json)",
           "etat": "ok",
-          "detail": "à jour (12 h)",
+          "detail": "à jour (13 h)",
           "derniere_donnee_valide": "2026-11-13T03:16:21Z"
         },
         {
           "nom": "Agent initiés (data/inities.json)",
           "etat": "ok",
-          "detail": "à jour (0 h)",
+          "detail": "à jour (1 h)",
           "derniere_donnee_valide": "2026-11-13T14:55:47Z"
         },
         {
@@ -99,25 +87,13 @@
           "nom": "Contradicteur (agent risque) (data/signaux/revues.json)",
           "etat": "ok",
           "detail": "à jour (1 h)",
-          "derniere_donnee_valide": "2026-11-13T14:31:47Z"
-        },
-        {
-          "nom": "Google Drive (dépôt du briefing, facultatif)",
-          "etat": "non configurée",
-          "detail": "secrets GOOGLE_SERVICE_ACCOUNT_JSON et DRIVE_FOLDER_ID absents : dépôt ignoré",
-          "derniere_donnee_valide": null
-        },
-        {
-          "nom": "Yahoo Finance (suivi de performance des verdicts)",
-          "etat": "ok",
-          "detail": "0 mesure(s) ; 0 verdict(s) arrivé(s) à échéance",
-          "derniere_donnee_valide": "2026-11-13T15:20:55Z"
+          "derniere_donnee_valide": "2026-11-13T15:21:47Z"
         },
         {
           "nom": "Gemini (rédaction du briefing)",
           "etat": "ok",
           "detail": "briefing rédigé par gemini-3.5-flash-lite",
-          "derniere_donnee_valide": "2026-11-13T15:41:39Z"
+          "derniere_donnee_valide": "2026-11-13T16:01:49Z"
         }
       ],
       "degrade": true,
@@ -6104,10 +6080,76 @@
       "genere_le": "2026-11-13T15:41:39Z",
       "mode": "redaction",
       "reprise_redaction": "aucune rédaction en attente"
+    },
+    {
+      "genere_le": "2026-11-13T16:01:49Z",
+      "mode": "leger",
+      "recalcul": false,
+      "declencheurs": [],
+      "palier": "Vigilance",
+      "opportunites": 165,
+      "changements": [],
+      "alertes": 4,
+      "alertes_ecartees": [
+        "entreprises · Sumitomo Mitsui Trust Group, Inc. : BPA publié +39,9 % par rapport à l'estimation : fonds, véhicule de crédit, holding ou SPAC",
+        "entreprises · Hanwha Aerospace Co., Ltd. : BPA publié −124,5 % par rapport à l'estimation : fonds, véhicule de crédit, holding ou SPAC",
+        "entreprises · Virtus Investment Partners, Inc. : estimations de BPA −10,8 % sur 30 jours : holding, fonds, BDC ou SPAC",
+        "entreprises · Centerspace : estimations de BPA +16,1 % sur 30 jours : fonds, véhicule de crédit, holding ou SPAC",
+        "inities · Larimar Therapeutics, Inc. : 6 dirigeants achètent sur le marché en 30 jours (score 95/100 : société hors de l'univers analysé ou sans note",
+        "inities · AMDOCS LTD : 3 dirigeants achètent sur le marché en 30 jours (score 79/100) : société hors de l'univers analysé ou sans note",
+        "inities · Phio Pharmaceuticals Corp. : 3 dirigeants achètent sur le marché en 30 jours (score 89/100 : société hors de l'univers analysé ou sans note",
+        "inities · Ferroglobe PLC : 5 dirigeants achètent sur le marché en 30 jours (score 89/100) : société hors de l'univers analysé ou sans note",
+        "inities · STANDARD BANK OF SOUTH AFRICA LTD déclare 5,0 % de EXXARO RESOURCES LTD (13D, intention d' : société hors de l'univers analysé ou sans note",
+        "inities · Owl Creek Asset Management, L.P. déclare 15,7 % de Pyxus International, Inc. (13D, intenti : société hors de l'univers analysé ou sans note",
+        "inities · Scorpio Services Holding Ltd déclare 13,9 % de Cadeler plc (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
+        "inities · Fairmount Funds Management LLC déclare 20,0 % de Mentari Therapeutics, Inc. (13D, intentio : fonds, véhicule de crédit, holding ou SPAC",
+        "inities · Tego Cyber, Inc. déclare 8,9 % de INTRUSION INC (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
+        "inities · Hurst Jonathan déclare 5,2 % de Agility Robotics, Inc. (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
+        "inities · Drilling Tools International Corp : 3 dirigeants achètent sur le marché en 30 jours (score : société hors de l'univers analysé ou sans note",
+        "inities · TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD : 3 dirigeants achètent sur le marché en 30 jour : société hors de l'univers analysé ou sans note",
+        "inities · Liberty Global Ltd. : 3 dirigeants achètent sur le marché en 30 jours (score 82/100) : société hors de l'univers analysé ou sans note",
+        "inities · SelectQuote, Inc. : 5 dirigeants achètent sur le marché en 30 jours (score 95/100) : société hors de l'univers analysé ou sans note",
+        "inities · Scipher Medicine Corp déclare 10,4 % de Chemomab Therapeutics Ltd. (13D, intention d'influ : société hors de l'univers analysé ou sans note",
+        "inities · Hyperscale Data, Inc. déclare 21,7 % de Powell Max Ltd (13D, intention d'influencer) : société hors de l'univers analysé ou sans note"
+      ],
+      "exclues": [
+        "Virtus Investment Partners, Inc."
+      ],
+      "coherence_retrogradees": [],
+      "raison_briefing_regles": null,
+      "briefing": null,
+      "reprise_redaction": null,
+      "gemini": {
+        "appels": 0,
+        "reussites": 0,
+        "quota_atteint": false,
+        "rejets": [],
+        "erreurs": []
+      },
+      "suivi": {
+        "ajoutes": null,
+        "mesures": null,
+        "en_attente": null,
+        "total": 240,
+        "erreur": null
+      },
+      "entrees": {
+        "pays": "périmée",
+        "macro": "à jour",
+        "marches": "à jour",
+        "risque": "à jour",
+        "geopolitique": "à jour",
+        "matieres_premieres": "à jour",
+        "entreprises": "à jour",
+        "pepites": "à jour",
+        "inities": "à jour",
+        "analyses": "à jour",
+        "revues": "à jour"
+      }
     }
   ],
-  "derniere_execution": "2026-11-13T15:41:39Z",
-  "prochaine_prevue": "2026-11-13T15:50:00Z",
+  "derniere_execution": "2026-11-13T16:01:49Z",
+  "prochaine_prevue": "2026-11-13T16:50:00Z",
   "intervalle_min": 60,
   "planning": {
     "crons": [
