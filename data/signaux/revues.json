@@ -1,13 +1,48 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-13T09:31:40Z",
+    "genere_le": "2026-11-13T10:31:41Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "geopolitique|mesure_officielle|evt-feb49b87e2d1|2026-11-13",
+      "revu_le": "2026-11-13T10:31:31Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "mesure_officielle",
+        "cle": "evt-feb49b87e2d1",
+        "date": "2026-11-13",
+        "importance": "moyenne",
+        "titre": "Sanctions (source officielle) : Publication des licences générales web 55F et 115D du règlement sur les sanctions relatives aux activités étrangères nuisibles de la Russie"
+      },
+      "objection": "Les réserves de 13,1 mois et la dette de 38 % du PIB [F1] ne prémunissent pas la Suisse contre les impacts sectoriels induits par ces licences russes.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Suisse : réserves de 13,1 mois, dette de 38 % du PIB",
+          "source": "FMI, Banque mondiale"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "CH": {
+          "objection": "Objections spécifiques : Suisse dispose d'amortisseurs (réserves de 13,1 mois d'importations, dette publique de 38 % du PIB) [F1].",
+          "ajustement": "maintenir"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
     {
       "id": "geopolitique|hausse_score|ID|2026-11-13",
       "revu_le": "2026-11-13T08:31:27Z",
