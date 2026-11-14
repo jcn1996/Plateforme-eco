@@ -39,6 +39,21 @@ def ton_conforme(texte: str) -> bool:
     return not any(re.search(rf"\b{re.escape(m)}\b", t) for m in MOTS_INTERDITS)
 
 
+MOT_RETIRE = "[mot retiré]"
+
+
+def neutraliser(texte: str) -> str:
+    """Remplace chaque mot interdit par « [mot retiré] » (filet de sécurité : un texte généré non conforme
+    ne doit jamais faire échouer tout l'agent). Les positions sont calculées caractère par caractère."""
+    plat = "".join(_sans_accents(c)[:1] or c for c in texte)  # même longueur que le texte d'origine
+    morceaux, pos = [], 0
+    motif = re.compile(r"\b(" + "|".join(re.escape(m) for m in sorted(MOTS_INTERDITS, key=len, reverse=True)) + r")\b")
+    for m in motif.finditer(plat):
+        morceaux += [texte[pos:m.start()], MOT_RETIRE]
+        pos = m.end()
+    return "".join(morceaux) + texte[pos:]
+
+
 def nb(x: float, decimales: int = 1, signe: bool = False) -> str:
     """Nombre au format français : 2,3 ; +4,1 ; −0,8."""
     texte = f"{abs(x):.{decimales}f}".replace(".", ",")

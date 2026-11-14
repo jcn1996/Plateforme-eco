@@ -14,7 +14,10 @@ from datetime import date
 from pathlib import Path
 
 from .notation import minuscule
-from .textes import nb, ton_conforme
+from ..commun.journal import journal
+from .textes import nb, neutraliser, ton_conforme
+
+LOG = journal("agent-pays")
 
 MOUVEMENT_MIN = 3  # écart de note (points) à partir duquel un mouvement est cité
 
@@ -126,7 +129,9 @@ def contenu(jour: date, objet: dict, ancien: dict | None, etats: dict) -> str:
 def ecrire(dossier: Path, jour: date, objet: dict, ancien: dict | None, etats: dict) -> Path:
     texte = contenu(jour, objet, ancien, etats)
     if not ton_conforme(texte):
-        raise ValueError("Récapitulatif non conforme aux règles de conduite (mot interdit)")
+        # Filet de sécurité : le récapitulatif est écrit, mot interdit retiré, sans faire échouer l'agent
+        LOG.warning("Récapitulatif non conforme aux règles de conduite : mot interdit retiré")
+        texte = neutraliser(texte)
     dossier.mkdir(parents=True, exist_ok=True)
     chemin = dossier / f"pays-{jour.isoformat()}.md"
     chemin.write_text(texte, encoding="utf-8")

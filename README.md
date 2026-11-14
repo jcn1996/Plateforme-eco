@@ -106,7 +106,9 @@ L'agent pays se trouve dans `agents/`, en Python 3.12.
 - signaux pour le futur chef d'orchestre dans `data/signaux/pays.json` : inversion de tendance des flux, entrées ou sorties inhabituelles ;
 - mise à jour une fois par jour, en soirée à New York après la publication des émetteurs (`python -m agents.pays --mode flux`, lancé par le planificateur) ; l'exécution complète du matin les recalcule aussi.
 
-**Pannes de source** : si une source ne répond pas, l'agent ne s'arrête pas. Il garde la dernière valeur connue avec sa date et la signale comme « ancienne ». Si plus d'un tiers des sources d'un pays échouent, l'appli affiche une alerte « Qualité des données » sur la fiche du pays et en tête du bandeau des alertes.
+**Pannes de source** : si une source ne répond pas, l'agent ne s'arrête pas. Il garde la dernière valeur connue avec sa date et la signale comme « ancienne ». Chaque source a un délai maximal (150 s) et l'ensemble des appels un budget de temps (15 min, sous la limite de 20 min du workflow) : une source bloquée est abandonnée et vaut « en erreur » (réglages : bloc `delais` de `agents/pays/config.json`). Un texte généré qui contiendrait un mot interdit des règles de conduite est neutralisé (« [mot retiré] ») et signalé dans le journal d'exécution, sans faire échouer l'agent.
+
+**Journal des tentatives** : chaque exécution, même en échec, inscrit `derniere_tentative` dans `data/journal/agent-pays.json` (date, statut « ok », « partiel » ou « echec », raison, nombre d'échecs consécutifs). `derniere_execution` reste la dernière exécution réussie. En cas d'échec, le workflow commite quand même le journal (et lui seul), et reste marqué en échec dans Actions. Si plus d'un tiers des sources d'un pays échouent, l'appli affiche une alerte « Qualité des données » sur la fiche du pays et en tête du bandeau des alertes.
 
 **Textes** : par défaut, ils sont rédigés par des règles. Si le secret GitHub `GEMINI_API_KEY` est créé (Settings → Secrets and variables → Actions), l'API gratuite Gemini les rédige, sous les mêmes contraintes. Un texte non conforme est remplacé par la version par règles.
 
@@ -623,10 +625,11 @@ Les plannings GitHub restent actifs en secours ; la `concurrency` de chaque work
 
 Menu → **Santé des agents** (sur grand écran, aussi l'icône en forme de pouls de l'en-tête). Une pastille rouge s'affiche sur le bouton « Menu » (et sur l'icône) dès qu'un agent n'est pas « OK ».
 Pour chaque agent (pays, marchés, puis les suivants), l'écran affiche :
-- la date et l'heure de la dernière exécution réussie ;
+- la date et l'heure de la dernière exécution réussie, et celle de la dernière tentative avec son statut (réussie, partielle, en échec) ;
 - le statut :
   - calculé à partir du **planning** que chaque agent déclare dans son journal (champ `planning` : expressions `cron`, fuseau UTC) : l'appli en déduit la première exécution prévue après la dernière exécution réussie ;
   - **en panne** (rouge) si cette exécution prévue manque depuis plus de 2 h pour un agent à 15 min (marchés), ou 26 h pour un agent quotidien (pays, macro) ;
+  - **en panne** (rouge) aussi dès qu'un agent quotidien n'a pas réussi depuis plus de 24 h alors qu'une exécution prévue est passée (même s'il a été relancé entre-temps et a échoué), avec la date et la raison de la dernière tentative. Le chef d'orchestre affiche alors l'alerte « Agent … en panne depuis plus de 24 h » **en tête du bandeau des alertes** (même règle, `agents/commun/sante.py` : `panne_prolongee`) ;
   - **en retard** (orange) si elle manque depuis plus de 45 min (agent à 15 min) ou 2 h (agent quotidien) ;
   - **en pause** (gris) hors des heures prévues, par exemple la nuit pour l'agent marchés (après 22 h 07 UTC en semaine), avec l'heure de la prochaine mise à jour, en heure de Paris (« Prochaine mise à jour : lun. 8 h 07 ») ;
   - **dégradé** si un indicateur a perdu une source qu'il devrait avoir, c'est-à-dire qu'il a moins de sources valides que lors de la dernière exécution saine (par exemple, deux sources puis une seule). Une source retirée de la configuration n'est plus attendue ; une source périmée remplacée par une source à jour ne compte pas ;

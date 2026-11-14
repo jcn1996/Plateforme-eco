@@ -50,6 +50,32 @@ TYPES_CHOC = ("pays", "entreprises", "matieres", "or", "secteurs")
 TYPES = ("pays", "secteurs", "matieres", "obligations", "liquidites", "entreprises")
 
 
+def alertes_pannes(data: Path, maintenant: datetime, heures: float = 24) -> list[dict]:
+    """Une alerte par agent quotidien sans exécution réussie depuis plus de `heures` heures (journaux listés dans
+    data/journal/index.json ; règle commune avec l'écran « Santé des agents » : agents/commun/sante.panne_prolongee)."""
+    index = (lire_json(data / "journal" / "index.json") or {}).get("donnees") or []
+    res = []
+    for e in sorted(index, key=lambda e: e.get("ordre", 99)):
+        if e.get("agent") == "chef" or not e.get("fichier"):
+            continue
+        jrn = lire_json(data / "journal" / e["fichier"]) or {}
+        bloc = (jrn.get("meta") or {}).get("sante") or {}
+        p = sante.panne_prolongee({**bloc, "libelle": bloc.get("libelle") or e.get("libelle"), "agent": bloc.get("agent") or e.get("agent")},
+                                  maintenant, heures)
+        if not p:
+            continue
+        depuis = sante.lire_iso(p["depuis"])
+        texte = (f"Aucune exécution réussie depuis le {depuis.strftime('%d/%m/%Y à %H:%M')} UTC ({p['heures']} h) : ses données ne sont plus "
+                 "mises à jour.")
+        if p.get("raison"):
+            texte += f" Dernière erreur : {p['raison'][:180]}"
+        texte += f" Vérifier l'onglet Actions (workflow {p.get('workflow') or '?'})."
+        res.append({"id": f"panne-{p['agent']}", "rang": 0, "heure": "⛔", "date": maintenant.date().isoformat(), "agent": "sante",
+                    "pays": None, "niveau": "defavorable", "importance": "forte", "panne": True,
+                    "titre": f"{p['libelle']} en panne depuis plus de {int(heures)} h", "texte": texte, "route": {"type": "sante"}})
+    return res
+
+
 def charger_config() -> dict:
     return json.loads((DOSSIER / "config.json").read_text(encoding="utf-8"))
 
@@ -315,6 +341,9 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
             ecartees.append(f"{agent} · {s.get('titre', '')[:90]} : {raison}")
         return ok, raison
     al = Y.alertes(signaux, revues, chg, maintenant, config, tickers_appli, admissible)
+    # Pannes d'agents (aucune exécution réussie depuis plus de 24 h) : toujours en tête des alertes
+    pannes = alertes_pannes(data, maintenant)
+    al = [{**x, "rang": i + 1} for i, x in enumerate(pannes + al)]
     ecrire_json(data / "alertes.json", enveloppe(al, "agent-chef", fictif=False, version_agent=VERSION_AGENT,
                                                  aucune="Aucune alerte notable" if not al else None,
                                                  description="Les 3 ou 4 signaux les plus importants des agents (moins de 48 h), filtrés par les objections du contradicteur"))

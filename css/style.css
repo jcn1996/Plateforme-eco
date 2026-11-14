@@ -981,6 +981,9 @@ body.alertes-ouvertes .barre-comparaison { display: none; }
   display: inline-block; padding: 0 6px; border-radius: 4px;
   background: rgba(255, 77, 106, 0.15); color: var(--rouge); font-weight: 600;
 }
+/* Panne d'agent (aucune exécution réussie depuis plus de 24 h) : en tête des alertes, en rouge */
+.alerte--panne { border-left: 3px solid var(--rouge); background: rgba(255, 77, 106, 0.08); }
+.badge-panne { text-transform: none; }
 
 /* ==========================================================================
    Santé des agents : bouton de l'en-tête et écran

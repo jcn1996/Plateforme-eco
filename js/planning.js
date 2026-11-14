@@ -157,6 +157,34 @@ export function situationPlanning(sante, maintenant = Date.now()) {
   return { etat, manquante: null, retardMin: 0, prochaine, seuils: s, base };
 }
 
+/** Vrai si le planning prévoit des exécutions espacées de 24 h au plus (agent « quotidien » ou plus fréquent). */
+export function estQuotidien(crons, depuis) {
+  let t = suivante(crons, depuis);
+  for (let i = 0; i < 8 && t != null; i += 1) {
+    const s = suivante(crons, t);
+    if (s == null) return false;
+    if (s - t <= JOUR) return true;
+    t = s;
+  }
+  return false;
+}
+
+/**
+ * Panne prolongée (même règle que agents/commun/sante.py, panne_prolongee) : agent quotidien sans exécution
+ * réussie depuis plus de `heures` heures, alors qu'une exécution prévue après la dernière réussite est passée
+ * (un agent en pause de week-end n'est pas en panne). Renvoie { depuis, heures } ou null.
+ */
+export function panneProlongee(sante, maintenant = Date.now(), heures = 24) {
+  if (!sante || sante.a_la_demande || sante.appel_externe) return null;
+  const derniere = Date.parse(sante.derniere_execution ?? '');
+  const crons = sante.planning?.crons;
+  if (Number.isNaN(derniere) || !crons?.length) return null;
+  const manquante = suivante(crons, derniere);
+  if (manquante == null || manquante > maintenant || !estQuotidien(crons, derniere)) return null;
+  const age = (maintenant - derniere) / (60 * MINUTE);
+  return age > heures ? { depuis: derniere, heures: Math.round(age) } : null;
+}
+
 /** « lun. 8 h 07 » en heure de Paris. */
 export function heureParis(t) {
   const d = new Date(t);

@@ -228,7 +228,7 @@ def encombrement(serie: list[dict], quotidiens: list[dict], semaine: dict, cfg: 
         base = f"au-delà de la moyenne des semaines précédentes plus {cfg['ecarts_types']} écarts-types ({nb(seuil, 1)} %)"
     else:
         seuil = cfg["seuil_absolu_pct"]
-        base = f"au-delà du seuil fixe de {nb(seuil, 1)} % (historique encore court pour une comparaison)"
+        base = f"au-delà du seuil fixe de {nb(seuil, 1)} % (trop peu de semaines relevées pour une comparaison)"
     if pct <= seuil:
         return None
     return {"signale": True, "pct_semaine": round(pct, 2), "seuil_pct": round(seuil, 2),
@@ -298,7 +298,7 @@ def indicateur(etf: str | None, emetteur: str | None, choix: dict | None, serie:
         jours = periodes["1s"]["jours_disponibles"] if "1s" in periodes else 0
         # La fiche montre quand même les cumuls partiels, marqués « en cours de constitution »
         return {**commun, "valeur": None, "note": None, "disponible": False, "periode_valeur": None,
-                "raison": f"historique en cours de constitution ({len(serie)} relevé{'s' if len(serie) > 1 else ''}, "
+                "raison": f"relevés en cours de constitution ({len(serie)} relevé{'s' if len(serie) > 1 else ''}, "
                           f"{jours} jour{'s' if jours > 1 else ''} ; une semaine complète est nécessaire)"}
     p = periodes[choisie]
     enc = encombrement(serie, quotidiens, periodes["1s"], config_flux["encombrement"]) if "1s" in periodes else None
@@ -357,7 +357,7 @@ def signaux(code: str, nom: str, etf: str, serie: list[dict], config_flux: dict,
             comparaison = f"au-delà de {nb(seuil, 1)} % (moyenne des jours précédents plus {cfg['jour_ecarts_types']} écarts-types)"
         else:
             seuil = cfg["jour_absolu_pct"]
-            comparaison = f"au-delà du seuil fixe de {nb(seuil, 1)} % (historique encore court)"
+            comparaison = f"au-delà du seuil fixe de {nb(seuil, 1)} % (trop peu de jours relevés pour une comparaison)"
         if abs(q["pct"]) > seuil:
             entree = q["pct"] > 0
             res.append({"date": q["date"], "type": "entrees_inhabituelles" if entree else "sorties_inhabituelles", "cle": code,
