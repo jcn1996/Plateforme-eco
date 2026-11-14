@@ -93,3 +93,18 @@ test('agent mensuel (backtest) : prochaine exécution le mois suivant, seuils é
   assert.equal(situationPlanning({ derniere_execution: '2026-11-03T07:40:00Z', planning: MENSUEL }, t('2026-12-04T09:00:00Z')).etat, 'retard');
   assert.equal(situationPlanning({ derniere_execution: '2026-11-03T07:40:00Z', planning: MENSUEL }, t('2026-12-06T09:00:00Z')).etat, 'panne');
 });
+
+test('panne prolongée : agent quotidien sans exécution réussie depuis plus de 24 h', async () => {
+  const { panneProlongee, estQuotidien } = await import('../planning.js');
+  const PAYS_REEL = { crons: ['11 6 * * *', '7 2 * * 2-6'], fuseau: 'UTC' };
+  const s = { derniere_execution: '2026-11-09T16:05:36Z', planning: PAYS_REEL };
+  assert.equal(estQuotidien(PAYS_REEL.crons, t('2026-11-09T16:05:36Z')), true);
+  assert.equal(panneProlongee(s, t('2026-11-10T10:00:00Z')), null);            // moins de 24 h
+  assert.deepEqual(panneProlongee(s, t('2026-11-14T17:00:00Z')), { depuis: t('2026-11-09T16:05:36Z'), heures: 121 });
+  // Agent des jours ouvrés : pas en panne le week-end (aucune exécution prévue n'est passée)
+  const ouvres = { derniere_execution: '2026-11-13T22:30:00Z', planning: { crons: ['30 22 * * 1-5'] } };
+  assert.equal(panneProlongee(ouvres, t('2026-11-15T23:00:00Z')), null);
+  assert.ok(panneProlongee(ouvres, t('2026-11-17T00:00:00Z')));               // lundi 22 h 30 manqué
+  // Agent mensuel : jamais concerné par la règle des 24 h
+  assert.equal(panneProlongee({ derniere_execution: '2026-10-01T05:00:00Z', planning: { crons: ['0 5 1 * *'] } }, t('2026-11-03T00:00:00Z')), null);
+});

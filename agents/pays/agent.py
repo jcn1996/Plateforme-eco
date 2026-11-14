@@ -26,6 +26,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import threading
+import time
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from statistics import median
@@ -43,6 +45,9 @@ RACINE = Path(__file__).resolve().parents[2]
 DOSSIER_AGENT = Path(__file__).resolve().parent
 VERSION_AGENT = "1.2"
 CONFIG_FLUX: dict = json.loads((DOSSIER_AGENT / "config.json").read_text(encoding="utf-8"))["flux_etf"]
+# Délai maximal par source et budget total des appels (secondes) : une source bloquée ne bloque jamais l'agent
+CONFIG_DELAIS: dict = {"delai_max_source_s": 150, "budget_total_s": 900,
+                       **json.loads((DOSSIER_AGENT / "config.json").read_text(encoding="utf-8")).get("delais", {})}
 # Indice boursier national de référence de chaque pays (momentum 12 mois, graphique de la fiche pays)
 FICHIER_INDICES = RACINE / "config" / "indices_pays.json"
 FICHIER_INDICES_TEST = Path(__file__).resolve().parent / "tests" / "indices_pays.json"
@@ -183,12 +188,50 @@ def attendus_flux(config: dict) -> dict:
     return res
 
 
-def interroger(appels: dict, attendus_par_source: dict) -> tuple[dict, dict]:
-    """Lance chaque appel ; une source en panne vaut None (les autres continuent)."""
+class DelaiDepasse(Exception):
+    pass
+
+
+def appel_borne(appel, delai_s: float):
+    """Exécute `appel` dans un fil séparé et abandonne au-delà de `delai_s` secondes (DelaiDepasse).
+    Le fil abandonné est un « démon » : il ne retient pas la fin du programme."""
+    res: dict = {}
+
+    def cible():
+        try:
+            res["valeur"] = appel()
+        except BaseException as e:  # transmis au fil principal
+            res["erreur"] = e
+
+    fil = threading.Thread(target=cible, daemon=True)
+    fil.start()
+    fil.join(delai_s)
+    if fil.is_alive():
+        raise DelaiDepasse(f"délai maximal dépassé ({delai_s:.0f} s), source abandonnée")
+    if "erreur" in res:
+        raise res["erreur"]
+    return res.get("valeur")
+
+
+def interroger(appels: dict, attendus_par_source: dict, delai_source_s: float | None = None,
+               budget_s: float | None = None) -> tuple[dict, dict]:
+    """Lance chaque appel ; une source en panne, trop lente ou hors budget vaut None (les autres continuent ;
+    les dernières valeurs connues sont conservées ensuite par `secours`).
+    `delai_source_s` : délai maximal d'une source ; `budget_s` : temps total au-delà duquel les sources
+    restantes ne sont plus interrogées (le workflow doit finir avant son propre délai)."""
+    delai_source_s = delai_source_s or CONFIG_DELAIS["delai_max_source_s"]
+    budget_s = budget_s or CONFIG_DELAIS["budget_total_s"]
+    debut = time.monotonic()
     resultats, etats = {}, {}
     for nom, appel in appels.items():
+        reste = budget_s - (time.monotonic() - debut)
+        if reste < 5:
+            resultats[nom] = None
+            etats[nom] = f"erreur : non interrogée, budget de temps de l'exécution épuisé ({budget_s:.0f} s)"
+            LOG.error("Source %s non interrogée : budget de temps épuisé", nom)
+            continue
         try:
-            resultats[nom] = appel()
+            resultats[nom] = appel_borne(appel, min(delai_source_s, reste))
             vide = not resultats[nom]
             etats[nom] = "vide" if vide else "ok"
             attendus = attendus_par_source.get(nom)
@@ -748,9 +791,8 @@ def executer(fournisseur, config: dict, ancien: dict | None, aujourdhui: date, s
         if redige:
             verdict, contre, origine_textes = redige["verdict"], redige["contre_scenario"], "gemini"
             textes_gemini += 1
-        for t in [verdict, *contre]:
-            if not textes.ton_conforme(t):
-                raise ValueError(f"Texte non conforme aux règles de conduite ({code}) : {t}")
+        verdict = conforme(verdict, f"verdict ({code})")
+        contre = [conforme(t, f"contre-scénario ({code})") for t in contre]
 
         p = {
             "code": code, "iso_num": cfg["iso_num"], "nom": cfg["nom"], "lat": cfg["lat"], "lon": cfg["lon"],
@@ -914,12 +956,19 @@ def executer_flux(fournisseur, config: dict, ancien: dict, aujourdhui: date, flu
         if p["code"] in resultats:
             p.setdefault("detail", {})
             p["detail"]["flux_etrangers"] = preparer("flux_etrangers", resultats[p["code"]], p["detail"].get("flux_etrangers"), aujourdhui, config)
-            p["lecture"] = textes.lecture(p.get("indicateurs", {}), p["detail"])
-            for t in p["lecture"].values():
-                if not textes.ton_conforme(t):
-                    raise ValueError(f"Texte non conforme aux règles de conduite ({p['code']}) : {t}")
+            p["lecture"] = {k: conforme(t, f"lecture ({p['code']})") for k, t in
+                            textes.lecture(p.get("indicateurs", {}), p["detail"]).items()}
         sortie.append(p)
     return sortie, etats, echecs
+
+
+def conforme(texte: str, contexte: str) -> str:
+    """Règles de conduite : un texte généré qui contient un mot interdit est neutralisé (mot retiré) et signalé
+    dans les journaux, sans faire échouer l'agent (l'erreur reste visible, les données sont publiées)."""
+    if textes.ton_conforme(texte):
+        return texte
+    LOG.warning("Texte non conforme aux règles de conduite (%s), mot interdit retiré : %s", contexte, texte[:200])
+    return textes.neutraliser(texte)
 
 
 def ecrire_flux(args, flux: dict, aujourdhui: date, genere_le: str) -> None:
@@ -929,13 +978,35 @@ def ecrire_flux(args, flux: dict, aujourdhui: date, genere_le: str) -> None:
     if ecrits:
         LOG.info("Historique des flux ETF : %d fichier(s) écrit(s) dans %s", len(ecrits), args.historique_flux)
     for s in flux.get("signaux") or []:
-        if not textes.ton_conforme(s["titre"] + " " + s["explication"]):
-            raise ValueError(f"Signal non conforme aux règles de conduite : {s['titre']}")
+        s["titre"] = conforme(s["titre"], "titre d'un signal")
+        s["explication"] = conforme(s["explication"], f"signal « {s['titre']} »")
     if flux_etf.ecrire_signaux(Path(args.signaux), flux.get("signaux") or [], aujourdhui, VERSION_AGENT):
         LOG.info("Signaux : %s (%d nouveau(x) candidat(s) du jour)", args.signaux, len(flux.get("signaux") or []))
 
 
 def main(argv=None) -> int:
+    """Lance l'agent. Quoi qu'il arrive, la tentative est inscrite dans le journal (date, statut, raison) :
+    « ok », « partiel » (sources en erreur, dernières valeurs connues conservées) ou « echec »."""
+    args = arguments(argv)
+    args.etats = {}
+    try:
+        code = executer_agent(args)
+    except Exception as e:  # noqa: BLE001 — journalisé puis signalé par le code de sortie
+        LOG.exception("Agent pays en échec")
+        raison = f"{type(e).__name__} : {str(e)[:300]}"
+        sante.noter_tentative(Path(args.journal), "echec", raison, mode=args.mode)
+        return 1
+    erreurs = sorted(k for k, v in (args.etats or {}).items() if str(v).startswith("erreur"))
+    if erreurs:
+        sante.noter_tentative(Path(args.journal), "partiel",
+                              f"{len(erreurs)} source(s) en erreur, dernières valeurs connues conservées : " + ", ".join(erreurs),
+                              mode=args.mode)
+    else:
+        sante.noter_tentative(Path(args.journal), "ok", None, mode=args.mode)
+    return code
+
+
+def arguments(argv=None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Agent pays : met à jour data/pays.json avec des données réelles.")
     parser.add_argument("--mode", choices=["complet", "flux"], default="complet",
                         help="complet : tous les indicateurs ; flux : flux des ETF pays seulement (soirée, heure de New York)")
@@ -958,7 +1029,10 @@ def main(argv=None) -> int:
     # Mode test : jamais le vrai config/ (il change avec la production) ; copie de test isolée
     args.indices = args.indices or str(FICHIER_INDICES_TEST if args.test else FICHIER_INDICES)
     args.signaux = args.signaux or str(Path(args.sortie).parent / "signaux" / "pays.json")
+    return args
 
+
+def executer_agent(args) -> int:
     config = json.loads((DOSSIER_AGENT / "config.json").read_text(encoding="utf-8"))
     config["indices"] = lire_indices(Path(args.indices))
     aujourdhui = date.fromisoformat(args.date) if args.date else datetime.now(timezone.utc).date()
@@ -977,6 +1051,7 @@ def main(argv=None) -> int:
     series, series_indices = {}, {}
     alternatives = lire_alternatives(Path(args.alternatives) if args.alternatives else sortie.parent / "donnees_alternatives.json", aujourdhui)
     donnees, etats, echecs = executer(fournisseur, config, ancien, aujourdhui, series, flux, series_indices, alternatives)
+    args.etats = etats
     dossier_cours = Path(args.cours).parent if args.cours else Path(args.sortie).parent / "cours"
     enregistrer_series(Path(args.cours) if args.cours else dossier_cours / "etf-pays.json", series)
     enregistrer_series(dossier_cours / "indices-pays.json", series_indices,
@@ -1023,6 +1098,7 @@ def main_flux(args, fournisseur, config: dict, ancien: dict, aujourdhui: date, f
     Les états des autres sources (exécution complète du matin) sont conservés dans meta et dans le journal."""
     LOG.info("Agent pays %s — mode flux — %s", VERSION_AGENT, "données de test" if args.test else "sources réelles")
     donnees, etats_flux, echecs_flux = executer_flux(fournisseur, config, ancien, aujourdhui, flux)
+    args.etats = etats_flux
     genere_le = maintenant_iso()
     ecrire_flux(args, flux, aujourdhui, genere_le)
     meta = ancien.get("meta", {})

@@ -133,3 +133,35 @@ class TestEtatInformation(unittest.TestCase):
         self.assertFalse(b["degrade"])
         self.assertEqual((b["sources_ok"], b["sources_total"]), (1, 1))
         self.assertEqual(b["sources"][1]["etat"], "information")
+
+
+class TestPanneProlongee(unittest.TestCase):
+    CRONS = ["11 6 * * *", "7 2 * * 2-6"]   # agent pays
+
+    def bloc(self, derniere, crons=None, tentative=None):
+        b = {"agent": "pays", "libelle": "Agent pays", "workflow": "agent-pays.yml", "derniere_execution": derniere,
+             "planning": {"crons": crons or self.CRONS, "fuseau": "UTC"}}
+        if tentative:
+            b["derniere_tentative"] = tentative
+        return b
+
+    def test_regle_des_24_heures(self):
+        t = lambda s: datetime.fromisoformat(s).replace(tzinfo=timezone.utc)
+        self.assertIsNone(sante.panne_prolongee(self.bloc("2026-11-09T16:05:36Z"), t("2026-11-10T12:00:00")))
+        p = sante.panne_prolongee(self.bloc("2026-11-09T16:05:36Z", tentative={"statut": "echec", "raison": "ValueError : x"}),
+                                  t("2026-11-14T17:00:00"))
+        self.assertEqual((p["agent"], p["heures"], p["raison"]), ("pays", 121, "ValueError : x"))
+        # Jours ouvrés : samedi soir, rien de prévu n'a été manqué
+        self.assertIsNone(sante.panne_prolongee(self.bloc("2026-11-13T22:30:00Z", ["30 22 * * 1-5"]), t("2026-11-15T23:00:00")))
+        # Agent mensuel : non concerné
+        self.assertIsNone(sante.panne_prolongee(self.bloc("2026-10-01T05:00:00Z", ["0 5 1 * *"]), t("2026-11-03T00:00:00")))
+
+    def test_noter_tentative(self):
+        with tempfile.TemporaryDirectory() as d:
+            chemin = Path(d) / "agent-x.json"
+            sante.noter_tentative(chemin, "echec", "erreur A")
+            t = sante.noter_tentative(chemin, "echec", "erreur B")
+            self.assertEqual((t["echecs_consecutifs"], t["raison"]), (2, "erreur B"))
+            j = lire_json(chemin)
+            self.assertEqual(j["meta"]["sante"]["derniere_tentative"], t)
+            self.assertEqual(sante.noter_tentative(chemin, "ok")["statut"], "ok")

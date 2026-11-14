@@ -54,7 +54,7 @@ DOSSIER_JOURNAL = RACINE / "data" / "journal"
 DOSSIER_WORKFLOWS = RACINE / ".github" / "workflows"
 ETATS_PROBLEME = {"secours", "partielle", "échec", "périmée"}
 ETATS_NON_COMPTES = {"non configurée", "information"}  # ni comptés dans les sources, ni cause de dégradation
-CHAMPS_HORAIRES = ("derniere_execution", "prochaine_prevue", "intervalle_min")
+CHAMPS_HORAIRES = ("derniere_execution", "prochaine_prevue", "intervalle_min", "derniere_tentative")
 # Recopiés au premier niveau du journal (lus par l'appli et par le workflow « Rattrapage »)
 CHAMPS_PREMIER_NIVEAU = (*CHAMPS_HORAIRES, "planning")
 
@@ -242,6 +242,8 @@ def enregistrer_sante(chemin: Path, sante: dict, forcer: bool = False, battement
               and derniere and maintenant - derniere < battement)
     if a_jour:
         return False
+    if ancien and ancien.get("derniere_tentative") and "derniere_tentative" not in sante:
+        sante = {**sante, "derniere_tentative": ancien["derniere_tentative"]}
     meta["sante"] = sante
     for champ in CHAMPS_PREMIER_NIVEAU:
         journal[champ] = sante.get(champ)
@@ -252,6 +254,67 @@ def enregistrer_sante(chemin: Path, sante: dict, forcer: bool = False, battement
     ecrire_json(chemin, journal)
     inscrire_dans_index(chemin, sante)
     return True
+
+
+def noter_tentative(chemin: Path, statut: str, raison: str | None = None, quand: datetime | None = None,
+                    mode: str | None = None) -> dict:
+    """Inscrit la dernière tentative d'exécution dans le journal, même en cas d'échec :
+    meta.sante.derniere_tentative = {"date", "statut" (ok, partiel, echec), "raison", "mode"}, recopiée au premier
+    niveau. `derniere_execution` reste la dernière exécution RÉUSSIE (statut « ok » ou « partiel »). Après un
+    échec, les échecs consécutifs sont comptés (« echecs_consecutifs ») pour l'écran « Santé des agents »."""
+    chemin = Path(chemin)
+    journal = lire_json(chemin) or {"meta": {}, "donnees": []}
+    meta = journal.setdefault("meta", {})
+    bloc = meta.setdefault("sante", {})
+    precedente = bloc.get("derniere_tentative") or {}
+    tentative = {"date": iso(quand or datetime.now(timezone.utc)), "statut": statut, "raison": raison}
+    if mode:
+        tentative["mode"] = mode
+    if statut == "echec":
+        tentative["echecs_consecutifs"] = (precedente.get("echecs_consecutifs") or 0) + 1 if precedente.get("statut") == "echec" else 1
+        tentative["premier_echec"] = precedente.get("premier_echec") if precedente.get("statut") == "echec" else tentative["date"]
+    bloc["derniere_tentative"] = tentative
+    journal["derniere_tentative"] = tentative
+    journal.setdefault("donnees", [])
+    ecrire_json(chemin, journal)
+    return tentative
+
+
+def quotidien(crons: list[str], depuis: datetime) -> bool:
+    """Vrai si le planning prévoit des exécutions espacées de 24 h au plus (sur les 8 prochaines)."""
+    t = prochaine_execution(crons, depuis)
+    for _ in range(8):
+        suivante = prochaine_execution(crons, t) if t else None
+        if not suivante:
+            return False
+        if suivante - t <= timedelta(hours=24):
+            return True
+        t = suivante
+    return False
+
+
+def panne_prolongee(sante: dict | None, maintenant: datetime, heures: float = 24) -> dict | None:
+    """Agent quotidien (ou plus fréquent) sans exécution réussie depuis plus de `heures` heures, alors qu'au moins
+    une exécution prévue après la dernière réussite est passée (un agent en pause de week-end n'est pas en panne).
+    Renvoie {"agent", "libelle", "depuis", "heures", "raison"} ou None."""
+    if not sante or sante.get("a_la_demande") or sante.get("appel_externe"):
+        return None
+    derniere = lire_iso(sante.get("derniere_execution"))
+    crons = (sante.get("planning") or {}).get("crons") or []
+    if not derniere or not crons:
+        return None
+    # Agent « quotidien » (ou plus fréquent) : au moins deux exécutions prévues à moins de 24 h d'écart sur une semaine
+    a = prochaine_execution(crons, derniere)
+    if not a or not quotidien(crons, derniere):
+        return None
+    age_h = (maintenant - derniere).total_seconds() / 3600
+    if age_h <= heures or a > maintenant:
+        return None
+    t = sante.get("derniere_tentative") or {}
+    raison = t.get("raison") if t.get("statut") == "echec" else None
+    return {"agent": sante.get("agent"), "libelle": sante.get("libelle") or sante.get("agent"),
+            "depuis": sante.get("derniere_execution"), "heures": round(age_h), "raison": raison,
+            "workflow": sante.get("workflow")}
 
 
 def inscrire_dans_index(chemin: Path, sante: dict) -> None:

@@ -60,6 +60,7 @@ jobs:
           python -m unittest discover -s agents/commun -t .
 
       - name: Lancer l'agent pays
+        id: agent
         env:
           # Facultatif : si ce secret existe, les textes sont rédigés par Gemini ; sinon, par des règles
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -72,16 +73,26 @@ jobs:
           if [ "${{ github.event_name }}" = "schedule" ] && [ "${{ github.event.schedule }}" = "7 2 * * 2-6" ]; then MODE=flux; fi
           python -m agents.pays --mode "${MODE:-complet}"
 
+      # Exécuté même si l'agent a échoué : la tentative (date, statut, raison) est alors inscrite dans
+      # data/journal/agent-pays.json, et seul le journal est commité (pas de données à moitié écrites).
+      # Le job reste marqué en échec (étape précédente) pour que l'erreur soit visible dans Actions.
       - name: Commiter les données si elles ont changé
+        if: ${{ !cancelled() && steps.agent.outcome != 'skipped' }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add --all data/
+          if [ "${{ steps.agent.outcome }}" = "success" ]; then
+            git add --all data/
+            MESSAGE="Agent pays : mise à jour du $(date -u +%d/%m/%Y)"
+          else
+            git add data/journal/
+            MESSAGE="Agent pays : échec du $(date -u +%d/%m/%Y %H:%M) (journal)"
+          fi
           if git diff --cached --quiet; then
             echo "Aucun changement : pas de commit."
             exit 0
           fi
-          git commit -m "Agent pays : mise à jour du $(date -u +%d/%m/%Y)"
+          git commit -m "$MESSAGE"
           # main a pu bouger entre-temps : nouvelle tentative en cas de conflit
           for essai in 1 2 3; do
             git pull --rebase origin main && git push origin HEAD:main && exit 0

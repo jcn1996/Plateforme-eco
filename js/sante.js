@@ -18,7 +18,7 @@
    ========================================================================== */
 
 import { el } from './outils.js';
-import { situationPlanning, heureParis } from './planning.js';
+import { situationPlanning, heureParis, panneProlongee } from './planning.js';
 
 const INDEX = 'data/journal/index.json';
 const ETATS_PROBLEME = new Set(['secours', 'partielle', 'échec', 'périmée']);
@@ -52,6 +52,9 @@ export function fusionnerSante(journal) {
   if (enMeta > (Date.parse(fusion.derniere_execution ?? '') || 0)) fusion.derniere_execution = sante.derniere_execution;
   return fusion;
 }
+
+/** Statut de la dernière tentative d'exécution (journal : derniere_tentative). */
+const LIBELLES_TENTATIVE = { ok: 'réussie', partiel: 'réussie, sources en erreur (dernières valeurs conservées)', echec: 'en échec' };
 
 /** Charge l'index puis chaque journal. Ne lève jamais : un journal illisible donne un agent « en panne ». */
 /* Planificateur (réveil externe) : dernier appel lu en direct sur l'API publique de GitHub
@@ -108,6 +111,8 @@ export function statutAgent(agent, maintenant = Date.now()) {
     if (maintenant - Date.parse(s.derniere_execution) > (s.panne_minutes ?? 45) * 60_000) return 'panne';
     return s.degrade ? 'degrade' : 'ok';
   }
+  // Agent quotidien sans exécution réussie depuis plus de 24 h : en panne (rouge), quel que soit le planning
+  if (panneProlongee(s, maintenant)) return 'panne';
   const { etat } = situationPlanning(s, maintenant);
   if (etat === 'panne' || etat === 'retard') return etat;
   // Règle de l'agent (sources attendues par indicateur) ; à défaut, toute source en difficulté
@@ -230,11 +235,23 @@ function carteAgent(agent, maintenant) {
   // Listes manuelles vérifiées (composition impossible à récupérer automatiquement) : information
   const manuelles = (s.sources ?? []).filter((src) => src.manuelle && src.etat === 'ok');
   const alertes = echeances(agent, maintenant).filter((e) => e.etat !== 'ok');
+  const panne = panneProlongee(s, maintenant);
+  const tentative = s.derniere_tentative;
   return el('article', { class: `carte sante-carte ${classe}` },
     enTete,
+    panne
+      ? el('p', { class: 'sante-alerte' },
+        `Aucune exécution réussie depuis ${duree(age)} (plus de 24 h) : les données de cet agent ne sont plus mises à jour.`
+        + (tentative?.statut === 'echec' ? ` Dernière tentative ${dateLisible(tentative.date)} en échec`
+          + `${tentative.echecs_consecutifs > 1 ? ` (${tentative.echecs_consecutifs} échecs consécutifs)` : ''} : ${tentative.raison ?? 'raison inconnue'}.` : '')
+        + ` Vérifier l’onglet Actions (workflow ${s.workflow ?? ''}).`)
+      : null,
     el('dl', { class: 'sante-details' },
       el('dt', {}, 'Dernière exécution réussie'),
       el('dd', {}, `${dateLisible(s.derniere_execution)} (il y a ${duree(age)})`),
+      tentative ? el('dt', {}, 'Dernière tentative') : null,
+      tentative ? el('dd', {}, `${dateLisible(tentative.date)} · ${LIBELLES_TENTATIVE[tentative.statut] ?? tentative.statut}`
+        + (tentative.raison && tentative.statut !== 'echec' ? ` · ${tentative.raison}` : '')) : null,
       el('dt', {}, 'Sources qui répondent'),
       el('dd', { class: 'mono' }, `${s.sources_ok ?? '?'} / ${s.sources_total ?? '?'}`),
       el('dt', {}, 'Prochaine mise à jour'),
