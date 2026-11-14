@@ -341,12 +341,17 @@ class TestAgent(unittest.TestCase):
         self.assertFalse(valide("matieres_premieres.json", signal, src, cfg_risque, "2026-11-08")[0])
 
     def test_gaz_europeen_neutre_avec_biais(self):
-        """Gaz TTF (données réelles du 07/11) : note au-delà de 60, confiance « faible » → pas de « Surpondérer »."""
+        """Gaz TTF (données réelles du 07/11), confiance « faible » → jamais « Surpondérer » ni « Sous-pondérer ».
+        Indépendant des pondérations (que le backtest peut faire évoluer) : la note au-delà du seuil donne un biais
+        positif, sinon un verdict neutre (la règle elle-même est testée avec une note fixe dans test_verdict_exige_une_confiance_suffisante)."""
         ttf = next(m for m in self.sortie["donnees"]["matieres"] if m["cle"] == "gaz_europe")
         self.assertEqual(ttf["confiance"], "faible")
-        self.assertGreaterEqual(ttf["note"], 60)
-        self.assertEqual(ttf["verdict"], "Neutre (biais positif)")
-        self.assertIn("confiance « faible »", ttf["verdict_non_retenu"])
+        self.assertNotIn(ttf["verdict"], ("Surpondérer", "Sous-pondérer"))
+        if ttf["note"] >= CFG["verdicts"]["surponderer"]:
+            self.assertEqual(ttf["verdict"], "Neutre (biais positif)")
+            self.assertIn("confiance « faible »", ttf["verdict_non_retenu"])
+        else:
+            self.assertTrue(ttf["verdict"].startswith("Neutre"))
 
     def test_source_en_panne(self):
         donnees = self.d / "donnees_panne"
