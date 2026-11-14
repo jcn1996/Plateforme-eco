@@ -125,12 +125,20 @@
     "moteurs": ["fondamentaux", "valorisation", "tendance", "flux", "resultats"]
   },
 
-  "momentum": {
-    "_commentaire": "Hausse passée extrême (famille « Tendance » au-delà du percentile `percentile_extreme` de sa classe, ou hausse d'au moins `hausse_12m_extreme_pct` % sur 12 mois, car le percentile est grossier dans une petite classe) : elle ne compte pas dans la concordance de la conviction, déclenche une vérification de la valorisation (≥ valorisation_min) et du positionnement (flux et positionnement ≥ positionnement_min), et une objection systématique (règle du contradicteur appliquée par le chef d'orchestre).",
-    "percentile_extreme": 90,
-    "hausse_12m_extreme_pct": 40,
-    "valorisation_min": 45,
-    "positionnement_min": 40
+  "suivi_tendance": {
+    "_commentaire": "Suivi de tendance (agents/chef/tendance.py) : tendance positive = performance sur 12 mois hors dernier mois (12-1) positive ET cours au-dessus de sa moyenne mobile 200 jours (fenêtre de mm_jours_calendaires jours calendaires, pour les séries quotidiennes et hebdomadaires) ; force relative = percentile de la performance 12-1 dans la catégorie (pays, matières premières et or, entreprises, secteurs ; au moins actifs_min actifs) ; tendance forte = tendance positive et force relative ≥ premier_tiers. Une tendance forte n'est pénalisée (objection sérieuse, pas de concordance ni de famille motrice) que si elle s'accompagne d'au moins un excès ; sinon c'est un signal positif : la note de tendance est relevée à note_plancher_forte au moins.",
+    "_backtest": "Seuils fixés par le lot « tendance » du backtest (data/backtest/tendance-2026-11.md ; ETF pays, secteurs et matières, 2010-2026, apprentissage jusqu'en juin 2018, vérification ensuite). Période 12-1 : meilleur IC moyen sur l'apprentissage (+0,011 à 1 mois, +0,005 à 3 mois), positif hors échantillon (+0,012 et +0,035) ; les périodes 6 mois et 3-1 ont un IC négatif sur l'apprentissage. Excès retenus parmi les tendances fortes (écart de rendement à 3 mois relatif à la catégorie, excès − autres, apprentissage / vérification) : accélération parabolique au-delà de 2,5 fois la volatilité mensuelle (−0,1 / −2,4 points ; à 1,5 et 2 fois, aucune pénalité : +1,1 / +0,3 et +0,8 / +2,1), valorisation au-delà du 70e percentile (−0,5 / −0,8 ; 80e : −0,4 / −0,9), positionnement CFTC au 90e percentile (−0,8 / −0,5). Flux des ETF extrêmes : sans historique (non testable), seuil conventionnel.",
+    "premier_tiers": 66.7,
+    "actifs_min": 4,
+    "mm_jours_calendaires": 290,
+    "tolerance_jours": 20,
+    "parabole_k": 2.5,
+    "valorisation_percentile": 70,
+    "cftc_percentile": 90,
+    "flux_note_extreme": 90,
+    "note_plancher_forte": 65,
+    "stop_suiveur_pct": 15,
+    "rubrique_par_categorie": 6
   },
 
   "secteurs": {

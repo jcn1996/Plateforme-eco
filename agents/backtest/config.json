@@ -88,6 +88,27 @@
     }
   },
 
+  "tendance": {
+    "_commentaire": "Lot « tendance » (agents/backtest/tendance.py) : suivi de tendance sur les ETF pays, les ETF sectoriels américains (SPDR) et les ETF de matières premières (etf_portage). Sert à fixer les seuils du chef d'orchestre (agents/chef/config.json, bloc suivi_tendance) et de la poche « tendance » du trader (agents/trader/config.json, bloc tendance). Définition du momentum retenue sur l'apprentissage (IC moyen à 1 et 3 mois), sauf `definition_forcee`. Excès testés parmi les tendances fortes (premier tiers de force relative et tendance positive) : accélération parabolique (hausse sur 1 mois > k × écart-type mensuel des 12 mois précédents), valorisation tendue (pays : rendement du dividende sous le (100 − p)e percentile de ses 5 dernières années), positionnement encombré (matières : percentile CFTC sur 3 ans ≥ p). Un seuil n'est retenu que si les actifs en excès font moins bien que les autres sur l'apprentissage (au moins exces_n_min cas, seuil le plus défavorable retenu), et n'est « confirmé » que si l'écart garde son signe hors échantillon.",
+    "definition_forcee": null,
+    "lignes": 6,
+    "exces_n_min": 20,
+    "grilles": {"parabole_k": [1.5, 2.0, 2.5, 3.0], "valorisation_percentile": [70, 80, 90], "cftc_percentile": [80, 90, 95]},
+    "variantes": [
+      {"nom": "sans stop (sortie sur la force relative)"},
+      {"nom": "moyenne 200 jours", "stop_mm200": true, "confirmations": 2},
+      {"nom": "−8 % du plus haut", "stop_pct": 8, "confirmations": 1},
+      {"nom": "−12 % du plus haut", "stop_pct": 12, "confirmations": 1},
+      {"nom": "−15 % du plus haut", "stop_pct": 15, "confirmations": 1},
+      {"nom": "−20 % du plus haut", "stop_pct": 20, "confirmations": 1},
+      {"nom": "moyenne 200 jours ou −12 %", "stop_mm200": true, "stop_pct": 12, "confirmations": 2},
+      {"nom": "−12 %, sortie sous la médiane", "stop_pct": 12, "confirmations": 1, "sortie_rang": 50},
+      {"nom": "−12 %, filtre des excès", "stop_pct": 12, "confirmations": 1, "filtre_exces": true},
+      {"nom": "−15 %, filtre des excès", "stop_pct": 15, "confirmations": 1, "filtre_exces": true},
+      {"nom": "sans stop, filtre des excès", "filtre_exces": true}
+    ]
+  },
+
   "regles": {
     "_commentaire": "Règles du chef d'orchestre et du trader testées sur les pays (familles reconstituables : fondamentaux, valorisation, tendance, cycle) et sur les entreprises (stops). Les familles sans historique (flux, géopolitique, risque pays, initiés, dynamique des résultats) sont retirées et les poids renormalisés, comme le fait le chef d'orchestre quand une famille manque.",
     "concentration_lignes": [4, 6, 8, 12, 15],

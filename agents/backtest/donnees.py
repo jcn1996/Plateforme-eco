@@ -389,7 +389,7 @@ class FournisseurTest:
         for s in self.societes_test():
             r = self.r.normal(0.0003, 0.018, n)
             cours[s["ticker"]] = 30 * np.exp(np.cumsum(r))
-        for s in ("ACWI", "SPY", "XLK", "XLV", "XLI", "XLE", "XLP", "XLU", "XLB", "XLY", "XLF", "USO", "GLD"):
+        for s in ("ACWI", "SPY", "XLK", "XLV", "XLI", "XLE", "XLP", "XLU", "XLB", "XLY", "XLF", "USO", "GLD", "SLV", "UNG", "BNO", "CPER", "WEAT", "CORN"):
             cours[s] = 100 * np.exp(np.cumsum(self.r.normal(0.0003, 0.01, n)))
         for s in ("CL=F", "GC=F", "SI=F", "HG=F", "NG=F", "ZW=F", "ZC=F", "ZS=F", "SB=F", "KC=F"):
             cours[s] = 60 * np.exp(np.cumsum(self.r.normal(0.0001, 0.017, n)))

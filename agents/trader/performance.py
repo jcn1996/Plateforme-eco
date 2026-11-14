@@ -79,7 +79,7 @@ def attribution(etat: dict, capital: float) -> dict:
     def bloc(d, libelles=None):
         return sorted([{"cle": k, "libelle": (libelles or {}).get(k, k), "eur": round(v, 2), "points": round(v / capital * 100, 3)}
                        for k, v in (d or {}).items()], key=lambda x: -abs(x["eur"]))
-    return {"poches": bloc(cumul.get("poches"), {"coeur": "Cœur", "satellite": "Satellites"}),
+    return {"poches": bloc(cumul.get("poches"), {"coeur": "Cœur", "satellite": "Satellites", "tendance": "Poche tendance"}),
             "classes": bloc(cumul.get("classes"), {"actions": "Actions", "obligations": "Obligations", "or": "Or", "matieres": "Matières premières"}),
             "familles": bloc(cumul.get("familles"), LIBELLES_FAMILLES),
             "frais_eur": round(etat.get("frais_total", 0), 2), "ecarts_eur": round(etat.get("ecarts_total", 0), 2),

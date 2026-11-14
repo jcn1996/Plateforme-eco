@@ -17,7 +17,7 @@ from agents.trader import portefeuille as P
 from agents.trader import strategie as S
 from agents.trader.agent import charger_config, executer
 from agents.trader.sources import FournisseurSimule
-from agents.trader.tests.fabrique import preparer, simuler
+from agents.trader.tests.fabrique import preparer, simuler, suivi, tendance
 
 SAMEDI = datetime(2026, 11, 7, 22, 30, tzinfo=timezone.utc)
 LUNDI_MATIN = datetime(2026, 11, 9, 7, 33, tzinfo=timezone.utc)
@@ -260,6 +260,61 @@ class TestRisque(BaseTrader):
         self.assertTrue([o for o in r["imposes"] if o["motif"] == "plancher de liquidités"])
         r = self.lancer(t.replace(hour=15, minute=5), palier="Crise")
         self.assertGreaterEqual(r["donnees"]["liquidites_pct"], 35 - self.config["tolerance_plancher_points"] - 0.5)
+
+
+class TestPocheTendance(BaseTrader):
+    """Poche « tendance » : tendances fortes et saines du chef d'orchestre, on laisse courir les gagnants."""
+    MODIFS = {("tendances_fortes", None): [tendance("pays-GB", "Royaume-Uni", 92), tendance("pays-DE", "Allemagne", 85),
+                                           tendance("entreprise-HHH", "Eta Neutre", 95, saine=False, exces=["valorisation tendue (20/100) : test"]),
+                                           tendance("matiere-cacao", "Cacao", 90)],
+              ("pays", "pays-GB"): suivi(92), ("pays", "pays-DE"): suivi(85)}
+
+    def test_entree_en_poche_tendance(self):
+        r = self.lancer(LUNDI_MATIN, "decision", modifs=self.MODIFS)
+        d = r["decision"]
+        tend = {l["symbole"]: l for l in d["cibles"]["lignes"] if l["poche"] == "tendance"}
+        self.assertEqual(set(tend), {"EWU", "EWG"}, "tendances fortes saines, même au verdict « Neutre »")
+        ct, cs = self.config["tendance"], self.config["satellites"]
+        for l in tend.values():
+            self.assertAlmostEqual(l["cible"], max(self.config["ligne_min"], min(ct["max_ligne"], cs["budget"] * ct["part_satellites"] / 2)), places=4)
+        self.assertLessEqual(len(d["cibles"]["lignes"]), self.config["max_lignes"])
+        ecartees = {x["nom"]: x["raison"] for x in d["satellites_ecartes"]}
+        self.assertIn("en excès", ecartees["Eta Neutre (tendance)"])
+        self.assertIn("aucun support coté", ecartees["Cacao (tendance)"])
+        self.assertLessEqual(d["cibles"]["poches"]["satellite"], cs["budget"] * (1 - ct["part_satellites"]) + 1e-6)
+        ordre = next(o for o in r["etat"]["ordres"] if o["symbole"] == "EWU")
+        self.assertEqual(ordre["poche"], "tendance")
+        self.assertIn("poche « tendance »", ordre["raison"]["texte"])
+
+    def test_stop_suiveur_sans_prise_de_benefices(self):
+        self.f.chocs = {"EWU": [("2026-11-10", 1.8)]}  # +80 % : poids au-dessus de la cible
+        self.investir(modifs=self.MODIFS)
+        r = self.lancer((LUNDI_MATIN + timedelta(days=7)).replace(hour=15, minute=5), modifs=self.MODIFS)
+        p = r["etat"]["positions"]["EWU"]
+        self.assertEqual(p["poche"], "tendance")
+        self.assertFalse([o for o in r["imposes"] if o["symbole"] == "EWU"], "pas de prise de bénéfices tant que la tendance tient")
+        self.assertAlmostEqual(p["stop_local"], p["plus_haut_local"] * (1 - self.config["tendance"]["stop_suiveur_pct"] / 100), places=4)
+        # décision suivante : le gagnant n'est pas réduit malgré un poids au-dessus de sa cible
+        r = self.lancer((LUNDI_MATIN + timedelta(days=8)).replace(hour=7, minute=33), "decision", modifs=self.MODIFS)
+        self.assertFalse([o for o in r["etat"]["ordres"] if o["symbole"] == "EWU" and o["sens"] == "vente"])
+        self.assertTrue(any(a["symbole"] == "EWU" and a["action"] == "conservée" for a in r["decision"]["arbitrages"]))
+        self.f.chocs = {"EWU": [("2026-11-10", 1.8), ("2026-11-19", 0.8)]}  # chocs cumulés : repli de 20 % du plus haut
+        self.f._cache.clear()
+        self.f._dernier.clear()
+        r = self.lancer((LUNDI_MATIN + timedelta(days=10)).replace(hour=15, minute=5), modifs=self.MODIFS)
+        self.assertEqual([o["motif"] for o in r["imposes"] if o["symbole"] == "EWU"], ["stop"])
+
+    def test_sortie_quand_la_force_relative_quitte_le_premier_tiers(self):
+        self.investir(modifs=self.MODIFS)
+        modifs = dict(self.MODIFS)
+        modifs[("pays", "pays-DE")] = suivi(55)
+        modifs[("tendances_fortes", None)] = [x for x in self.MODIFS[("tendances_fortes", None)] if x["id"] != "pays-DE"]
+        r = self.lancer(LUNDI_MATIN + timedelta(days=1, hours=1), modifs=modifs)
+        self.assertFalse([o for o in r["imposes"] if o["symbole"] == "EWG"], "détention minimale de 5 jours")
+        r = self.lancer(LUNDI_MATIN + timedelta(days=7, hours=1), modifs=modifs)
+        sortie = [o for o in r["imposes"] if o["symbole"] == "EWG"]
+        self.assertEqual([o["motif"] for o in sortie], ["sortie de tendance"])
+        self.assertIn("premier tiers", sortie[0]["raison"]["texte"])
 
 
 class TestTransition(BaseTrader):

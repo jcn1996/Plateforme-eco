@@ -11,7 +11,7 @@ Chaque fin de mois depuis 2010, les notes sont **recalculées avec les fonctions
 | Lot | Fonctions réutilisées | Univers |
 |---|---|---|
 | Pays | `agents/pays/notation.py` (barèmes, note globale, règle de prudence) | pays suivis par l'agent pays |
-| Chef d'orchestre | `agents/chef/moteur.py` (score, verdicts, conviction, règle de momentum, conviction exigée pour « Renforcer fortement ») | pays |
+| Chef d'orchestre | `agents/chef/moteur.py` (score, verdicts, conviction, suivi de tendance, conviction exigée pour « Renforcer fortement ») | pays |
 | Entreprises | `agents/entreprises/analyse.py` et `financier.py` (mesures, barèmes, médianes sectorielles, note globale) | sociétés américaines non financières de l'agent entreprises |
 | Matières premières | `agents/matieres_premieres/analyse.py` (tendance, stocks, positionnement, niveau, note par famille) | matières de l'agent (contrat le plus proche) |
 | Secteurs | `agents/macro/analyse.py` (phase du cycle), `agents/chef/config.json` (inflexions sectorielles) | ETF sectoriels SPDR |
@@ -72,13 +72,13 @@ Seuils dans `config.json → verdicts`. Un IC de 0,02 à 0,05 est courant pour u
 
 ## 5. Règles du chef d'orchestre et du trader
 
-Le chef d'orchestre est rejoué sur les pays avec les familles reconstituables : **fondamentaux** (moyenne des notes croissance, indicateur avancé, inflation, taux réel), **valorisation**, **tendance**, **cycle** (phase du pays, tableau `cycle.phases`). Le mélange percentile / note absolue, les multiplicateurs de régime, le score, les seuils des verdicts, l'exigence d'une famille motrice, la conviction (groupes concordants, famille solide), la règle de momentum extrême et le plafonnement de « Renforcer fortement » sont ceux de `agents/chef/moteur.py`. Les familles sans historique (flux, risque, géopolitique, dynamique des résultats) sont retirées et les poids renormalisés.
+Le chef d'orchestre est rejoué sur les pays avec les familles reconstituables : **fondamentaux** (moyenne des notes croissance, indicateur avancé, inflation, taux réel), **valorisation**, **tendance**, **cycle** (phase du pays, tableau `cycle.phases`). Le mélange percentile / note absolue, les multiplicateurs de régime, le score, les seuils des verdicts, l'exigence d'une famille motrice, la conviction (groupes concordants, famille solide), le suivi de tendance (`agents/chef/tendance.py`, reconstitué sur les cours mensuels de l'ETF : 12-1, moyenne 10 mois à la place de la moyenne 200 jours, accélération sur 1 mois) et le plafonnement de « Renforcer fortement » sont ceux de `agents/chef/moteur.py`. Les familles sans historique (flux, risque, géopolitique, dynamique des résultats) sont retirées et les poids renormalisés.
 
 Tests :
 - **pondérations** : score du chef contre chaque famille seule et contre les familles équipondérées ;
 - **seuils des verdicts** : performance relative et réussite par verdict (règles de réussite de `chef.suivi`) ; les verdicts doivent être ordonnés ;
 - **seuils de conviction** : réussite par niveau de conviction et par nombre de groupes concordants (seuils actuels : 3 pour « forte », 2 pour « moyenne ») ;
-- **règle anti-euphorie** : après un momentum extrême (≥ 90e percentile ou ≥ +40 % sur 12 mois), la suite est-elle moins bonne que pour les autres tendances positives ? La valorisation tendue aggrave-t-elle le risque ?
+- **suivi de tendance** : les tendances fortes saines (premier tiers de force relative, tendance positive, sans excès) font-elles mieux ensuite que les autres pays ? Les tendances fortes en excès font-elles moins bien ?
 - **concentration du trader** : cœur pays (verdicts positifs de conviction moyenne ou forte, poids ∝ conviction, 15 % au plus par ligne, excédent en liquidités) avec 4, 6, 8, 12 et 15 lignes et sans limite ; rendement, volatilité, ratio de Sharpe, perte maximale, frais compris ;
 - **stops et prise de bénéfices** : chaque mois, les 10 sociétés les mieux notées sont gardées 12 mois, avec et sans les règles du trader (stop −15 %, suiveur 15 % sous le plus haut dès +20 %, 2 relevés de confirmation, un tiers vendu à +30 %) sur cours quotidiens.
 
@@ -111,3 +111,14 @@ python -m agents.backtest --lot pays           # un lot
 python -m agents.backtest --test --sortie /tmp/bt   # données synthétiques, sans réseau
 python -m unittest discover -s agents/backtest -t . # tests
 ```
+
+## Lot « tendance » (suivi de tendance)
+
+`agents/backtest/tendance.py`, `python -m agents.backtest --lot tendance`. Univers : ETF pays (agent pays), ETF sectoriels américains (SPDR) et ETF de matières premières (`matieres.etf_portage`, rendements investissables sans saut de changement d'échéance). Cours ajustés quotidiens (Yahoo Finance) ; ordres passés à la clôture du jour de bourse qui suit la décision ; frais de la moitié d'un aller-retour par ordre.
+
+1. **Périodes de momentum** : 12-1, 12, 6-1, 6 et 3-1 mois ; IC de Spearman dans chaque catégorie à 1 et 3 mois, écart premier − dernier tiers. Période retenue : meilleur IC moyen sur l'apprentissage.
+2. **Filtre de tendance** : premier tiers de force relative avec ou sans tendance positive (12-1 > 0 et cours > moyenne 200 jours).
+3. **Excès** parmi les tendances fortes, pour chaque seuil d'une grille (`tendance.grilles`) : accélération parabolique (hausse sur 1 mois > k × écart-type mensuel des 12 mois précédents), valorisation tendue (pays : rendement du dividende sous le (100 − p)e percentile de ses 5 dernières années), positionnement encombré (matières : percentile CFTC sur 3 ans ≥ p). Seuil retenu : écart le plus défavorable aux actifs en excès sur l'apprentissage (20 cas au moins) ; « confirmé » s'il garde son signe hors échantillon.
+4. **Poche « tendance »** : simulation quotidienne de 6 lignes au plus, achetées en fin de mois parmi les tendances fortes (parts égales de la poche à l'achat, gagnants jamais allégés), avec plusieurs stops (aucun, moyenne 200 jours, −8 à −20 % du plus haut, combinaisons, filtre des excès) et sortie quand la force relative quitte le premier tiers ou que la tendance casse. Variante retenue : meilleur ratio de Sharpe sur l'apprentissage parmi celles qui ne font pas moins bien hors échantillon que la sortie sur la force relative seule (garde-fou contre une variante réglée sur le hasard de la première moitié). Références : univers équipondéré et indice mondial (ACWI).
+
+Résultats du 14/11/2026 : `data/backtest/tendance-2026-11.md` ; seuils reportés dans `agents/chef/config.json` (`suivi_tendance`) et `agents/trader/config.json` (`tendance`).

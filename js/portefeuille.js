@@ -166,7 +166,7 @@ function carteRepartition(pf) {
     el('div', { class: 'fiche-surtitre' }, 'Cœur, satellites et liquidités'),
     barre(r.poches ?? [], 'pf-poche--'),
     el('p', { class: 'chef-repartition' }, (r.poches ?? []).map((x) => el('span', {}, el('span', { class: `chef-pastille pf-poche--${x.cle}` }), `${x.libelle} ${nombre(x.pct, 1)} %`))),
-    cibles ? el('p', { class: 'chef-petit' }, `Cibles de la dernière décision : cœur ${nombre(cibles.coeur, 1)} %, satellites ${nombre(cibles.satellite, 1)} %, liquidités ${nombre(cibles.liquidites, 1)} %.`) : null,
+    cibles ? el('p', { class: 'chef-petit' }, `Cibles de la dernière décision : cœur ${nombre(cibles.coeur, 1)} %, satellites ${nombre(cibles.satellite, 1)} %${cibles.tendance ? `, poche tendance ${nombre(cibles.tendance, 1)} %` : ''}, liquidités ${nombre(cibles.liquidites, 1)} %.`) : null,
     el('div', { class: 'fiche-surtitre' }, 'Classes d’actifs'),
     barre(r.classes ?? [], 'chef-classe--'),
     el('p', { class: 'chef-repartition' }, (r.classes ?? []).map((x) => el('span', {}, el('span', { class: `chef-pastille chef-classe--${x.cle}` }), `${x.libelle} ${nombre(x.pct, 1)} %`))),
@@ -199,7 +199,7 @@ function tableauPositions(positions, d, nav) {
       return el('tr', {},
         el('td', {},
           lien ? el('button', { class: 'lien', type: 'button', onclick: () => nav.ouvrirEntreprise(p.ticker) }, p.nom) : el('span', {}, p.nom),
-          el('br'), el('span', { class: 'poche' }, `${p.poche === 'satellite' ? 'Satellite' : 'Cœur'} · ${p.symbole}${p.contango ? ' · contango' : ''}`)),
+          el('br'), el('span', { class: 'poche' }, `${p.poche === 'satellite' ? 'Satellite' : p.poche === 'tendance' ? 'Poche tendance' : 'Cœur'} · ${p.symbole}${p.contango ? ' · contango' : ''}`)),
         el('td', { class: 'mono' }, `${nombre(p.prix_revient_local, 2)}`, el('br'), p.cours_local == null ? 'n. d.' : `${nombre(p.cours_local, 2)}`,
           el('br'), el('span', { class: 'poche pf-devise' }, `${p.quantite} × · ${p.devise}`)),
         el('td', { class: `mono ${classeSigne(p.plus_value_eur)}` }, `${p.plus_value_eur >= 0 ? '+' : '−'}${eurosPrecis(Math.abs(p.plus_value_eur))}`, el('br'), pct(p.plus_value_pct, 1)),
@@ -253,7 +253,7 @@ function carteDecision(dec) {
     diversification(dec),
     dec.cibles?.lignes?.length ? el('details', { class: 'pf-justif' }, el('summary', {}, `Cibles (${dec.cibles.lignes.length} lignes)`),
       el('ul', { class: 'chef-texte' }, dec.cibles.lignes.map((x) => el('li', {},
-        `${x.nom} — ${x.poche === 'satellite' ? 'satellite' : 'cœur'}, ${x.zone ?? x.classe} : ${nombre(x.cible, 1)} %`
+        `${x.nom} — ${x.poche === 'satellite' ? 'satellite' : x.poche === 'tendance' ? 'poche tendance' : 'cœur'}, ${x.zone ?? x.classe} : ${nombre(x.cible, 1)} %`
         + (x.verdict ? ` (« ${x.verdict} », conviction ${x.conviction})` : ''))))) : null,
     dec.arbitrages?.length ? el('details', { class: 'pf-justif', open: true }, el('summary', {}, `Arbitrages expliqués (${dec.arbitrages.length})`),
       el('ul', { class: 'chef-texte' }, dec.arbitrages.map((a) => el('li', {}, el('strong', {}, `${a.nom} — ${a.action}`), ` : ${a.raison}`)))) : null,

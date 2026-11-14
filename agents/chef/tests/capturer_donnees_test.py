@@ -16,7 +16,7 @@ from pathlib import Path
 RACINE = Path(__file__).resolve().parents[3]
 SOURCE = RACINE / "data"
 CIBLE = Path(__file__).resolve().parent / "donnees" / "data"
-CHAMPS_FICHE = ("dynamique", "recommandation", "alertes", "contre_scenario", "industrie", "holding", "valorisation")
+CHAMPS_FICHE = ("dynamique", "recommandation", "alertes", "contre_scenario", "industrie", "holding", "valorisation", "cours_hebdo")
 
 
 def lire(chemin):
@@ -31,14 +31,13 @@ def ecrire(chemin, objet):
 def main():
     if CIBLE.exists():
         shutil.rmtree(CIBLE)
-    for nom in ("pays.json", "macro.json", "marches.json", "risque.json", "pepites.json", "analyses/index.json"):
+    for nom in ("pays.json", "macro.json", "marches.json", "risque.json", "pepites.json", "analyses/index.json", "cours/etf-pays.json"):
         ecrire(CIBLE / nom, lire(SOURCE / nom))
     geo = lire(SOURCE / "geopolitique.json")
     geo["donnees"]["evenements"] = geo["donnees"]["evenements"][:20]
     ecrire(CIBLE / "geopolitique.json", geo)
     mp = lire(SOURCE / "matieres_premieres.json")
     for m in mp["donnees"]["matieres"]:
-        m.pop("serie", None)
         if (m.get("sous_notes") or {}).get("positionnement"):
             m["sous_notes"]["positionnement"].pop("historique", None)
     ecrire(CIBLE / "matieres_premieres.json", mp)

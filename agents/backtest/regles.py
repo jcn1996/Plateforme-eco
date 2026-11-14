@@ -17,6 +17,7 @@ import numpy as np
 import pandas as pd
 
 from ..chef import moteur as M
+from ..chef import tendance as TD
 from . import stats as S
 from .secteurs import phases as phases_cycle
 
@@ -58,7 +59,8 @@ def melanger_percentile(abs_: pd.DataFrame, cfg_chef: dict) -> tuple[pd.DataFram
 
 
 def rejouer_chef(lot: dict, cfg_chef: dict, cfg_macro: dict, regimes: pd.Series | None) -> dict:
-    """Score, verdict, conviction et momentum extrême du chef d'orchestre, pour chaque pays et chaque mois."""
+    """Score, verdict, conviction et suivi de tendance du chef d'orchestre, pour chaque pays et chaque mois. Tendance
+    reconstituée sur les cours mensuels de l'ETF : 12-1, moyenne 10 mois (≈ 200 jours), accélération sur 1 mois."""
     cfg = config_backtest(cfg_chef)
     abs_ = familles_pays(lot, cfg_chef, cfg_macro)
     mix, pct = {}, {}
@@ -69,8 +71,14 @@ def rejouer_chef(lot: dict, cfg_chef: dict, cfg_macro: dict, regimes: pd.Series 
             mix[f], pct[f] = melanger_percentile(df, cfg_chef)
     mois, cols = lot["mois"], lot["prix"].columns
     hausse = lot["valeurs"]["momentum"].reindex(index=mois, columns=cols)
+    px = lot["prix"].reindex(columns=cols)
+    p12_1 = (px.shift(1) / px.shift(12) - 1) * 100
+    mm10 = px.rolling(10, min_periods=10).mean()
+    r1 = px.pct_change(fill_method=None)
+    accel = r1 / r1.shift(1).rolling(12, min_periods=9).std().replace(0, np.nan)
+    rs = p12_1.rank(axis=1, pct=True) * 100
     sortie = {k: pd.DataFrame(np.nan if k == "score" else None, index=mois, columns=cols, dtype=float if k == "score" else object)
-              for k in ("score", "verdict", "conviction", "extreme", "groupes")}
+              for k in ("score", "verdict", "conviction", "excessive", "forte", "groupes")}
     paliers = {}
     for t in mois:
         palier = PALIER.get(regimes.get(t)) if regimes is not None else None
@@ -89,8 +97,18 @@ def rejouer_chef(lot: dict, cfg_chef: dict, cfg_macro: dict, regimes: pd.Series 
             if len(fams) < 2:
                 continue
             o = {"type": "pays", "familles": fams}
+            if not pd.isna(p12_1.at[t, c]) and not pd.isna(mm10.at[t, c]):
+                n_rs = int(rs.loc[t].notna().sum())
+                o["suivi_tendance"] = {"categorie": "pays", "perf_12_1": float(p12_1.at[t, c]), "cours": float(px.at[t, c]),
+                                       "mm200": float(mm10.at[t, c]), "au_dessus_mm200": bool(px.at[t, c] > mm10.at[t, c]),
+                                       "perf_1m": float(r1.at[t, c] * 100) if not pd.isna(r1.at[t, c]) else None,
+                                       "acceleration": None if pd.isna(accel.at[t, c]) else float(accel.at[t, c]),
+                                       "vol_mensuelle": None, "plus_haut_12m": float(px[c].loc[:t].iloc[-12:].max()),
+                                       "force_relative": float(rs.at[t, c]) if n_rs >= cfg["suivi_tendance"]["actifs_min"] else None,
+                                       "rang": None, "sur": n_rs}
+                TD.evaluer(o, cfg)
             M.scorer(o, cfg, palier)
-            objection = M.verifier_momentum(o, t.strftime("%Y-%m-%d"), cfg)
+            objection = TD.verifier(o, t.strftime("%Y-%m-%d"), cfg)
             v = M.verdict_de(o["score"], cfg)
             v, _ = M.exiger_moteur(o, v, cfg)
             conv = M.conviction(o, v, [objection] if objection else [], 1.0, cfg)
@@ -98,7 +116,8 @@ def rejouer_chef(lot: dict, cfg_chef: dict, cfg_macro: dict, regimes: pd.Series 
             sortie["score"].at[t, c] = o["score"]
             sortie["verdict"].at[t, c] = v
             sortie["conviction"].at[t, c] = conv["niveau"]
-            sortie["extreme"].at[t, c] = bool(o.get("momentum_extreme"))
+            sortie["excessive"].at[t, c] = bool(o.get("tendance_excessive"))
+            sortie["forte"].at[t, c] = bool(o.get("tendance_forte"))
             sortie["groupes"].at[t, c] = len(conv["groupes"])
     sortie["familles"] = mix
     sortie["familles_absolues"] = abs_
@@ -178,17 +197,16 @@ def tester_verdicts(chef: dict, prix: pd.DataFrame, indice: pd.Series | None, ho
     return res
 
 
-def tester_anti_euphorie(chef: dict, prix: pd.DataFrame, indice: pd.Series | None, horizons: list[int], cfg_chef: dict) -> dict:
-    """Momentum extrême (≥ 90e percentile de la classe ou ≥ +40 % sur 12 mois) : ces pays font-ils moins bien
-    ensuite que les autres pays en tendance positive ? La valorisation tendue aggrave-t-elle le risque ?"""
-    fam = chef["familles"]
-    tendance_pos = fam["tendance"] >= cfg_chef["conviction"]["seuil_concordance_haut"]
-    extreme = chef["extreme"].fillna(False).astype(bool)
-    val = chef["familles_absolues"]["valorisation"]
-    tendue = val < cfg_chef["momentum"]["valorisation_min"]
-    res = {"regle": {"percentile_extreme": cfg_chef["momentum"]["percentile_extreme"],
-                     "hausse_12m_extreme_pct": cfg_chef["momentum"]["hausse_12m_extreme_pct"],
-                     "valorisation_min": cfg_chef["momentum"]["valorisation_min"]}, "horizons": {}}
+def tester_tendance(chef: dict, prix: pd.DataFrame, indice: pd.Series | None, horizons: list[int], cfg_chef: dict) -> dict:
+    """Règle de tendance du chef d'orchestre, rejouée sur les pays : les tendances fortes saines (premier tiers de force
+    relative, tendance positive, sans excès) font-elles mieux ensuite que les autres pays ? Les tendances fortes en
+    excès (valorisation tendue, accélération parabolique) font-elles moins bien que les saines ?"""
+    forte = chef["forte"].fillna(False).astype(bool)
+    excessive = chef["excessive"].fillna(False).astype(bool)
+    connu = chef["score"].notna()
+    ct = cfg_chef["suivi_tendance"]
+    res = {"regle": {"premier_tiers": ct["premier_tiers"], "parabole_k": ct["parabole_k"],
+                     "valorisation_percentile": ct["valorisation_percentile"]}, "horizons": {}}
     for h in horizons:
         rel = _relatif(prix, indice, h)
 
@@ -196,10 +214,8 @@ def tester_anti_euphorie(chef: dict, prix: pd.DataFrame, indice: pd.Series | Non
             x = _valeurs(rel, m & rel.notna())
             return {"n": int(len(x)), "relative_moyenne_pct": S._r(x.mean(), 2) if len(x) else None,
                     "reussite_pct": S._r(100 * (x > 0).mean(), 1) if len(x) else None}
-        res["horizons"][str(h)] = {
-            "extreme": bloc(extreme), "tendance_positive_non_extreme": bloc(tendance_pos & ~extreme),
-            "extreme_valorisation_tendue": bloc(extreme & tendue), "extreme_valorisation_correcte": bloc(extreme & ~tendue & val.notna()),
-        }
+        res["horizons"][str(h)] = {"forte_saine": bloc(forte), "forte_en_exces": bloc(excessive),
+                                   "autres": bloc(connu & ~forte & ~excessive)}
     return res
 
 

@@ -8,7 +8,9 @@ Stratégie de l'agent trader (démo) : cibles du portefeuille, ordres et règles
    1 an d'historique (une ligne trop corrélée à une ligne déjà retenue est écartée). Obligations : poids fixé par le
    verdict du chef d'orchestre (« Neutre » = poids neutre).
 3. Satellites : convictions fortes seulement (entreprises), signaux d'au moins 2 agents, taille ∝ conviction /
-   volatilité, 4 à 8 % par ligne.
+   volatilité, 4 à 8 % par ligne. Poche « tendance » (une part des satellites) : tendances fortes et saines du chef
+   d'orchestre, à parts égales ; on laisse courir les gagnants (stop suiveur, sortie quand la force relative quitte le
+   premier tiers ou que la tendance casse, jamais de prise de bénéfices).
 4. Jamais d'achat d'une opportunité « À surveiller » ou sous objection du contradicteur.
 5. Une seule série de décisions par jour ; détention minimale de 5 jours (sauf stop) ; pas de rachat d'un titre
    vendu depuis moins de 5 jours.
@@ -29,6 +31,7 @@ from . import portefeuille as P
 SORTIE = ("Alléger", "Éviter")
 RANG_CONVICTION = {"forte": 3, "moyenne": 2, "faible": 1}
 CLASSE_DE = {"pays": "actions", "secteurs": "actions", "entreprises": "actions", "obligations": "obligations", "or": "or", "matieres": "matieres", "liquidites": "liquidites"}
+POCHES_MOTIF = {"satellite": "satellite", "tendance": "tendance", "coeur": "cœur"}
 LIBELLES_CLASSES = {"actions": "Actions", "obligations": "Obligations", "or": "Or", "matieres": "Matières premières", "liquidites": "Liquidités"}
 
 
@@ -121,6 +124,22 @@ def objection(ligne: dict | None) -> str | None:
     if not texte or texte.lower().startswith("pas d'objection"):
         return None
     return texte
+
+
+def tendance_tient(ligne: dict | None, config: dict) -> tuple[bool, str | None]:
+    """La tendance d'une ligne tient-elle encore ? (force relative dans le premier tiers, tendance 12-1 positive et cours
+    au-dessus de la moyenne 200 jours). Sans suivi de tendance publié : on ne conclut pas (True)."""
+    st = (ligne or {}).get("suivi_tendance")
+    if not st:
+        return True, None
+    seuil = config["tendance"]["sortie_force_relative"]
+    fr_ = st.get("force_relative")
+    if fr_ is not None and fr_ < seuil:
+        return False, f"force relative sortie du premier tiers ({ent(fr_)}e percentile, seuil {ent(seuil)})"
+    if not st.get("positive"):
+        return False, (f"tendance cassée : 12 mois hors dernier mois {fr(st.get('perf_12_1'), 1, True)} %, cours "
+                       f"{'au-dessus' if st.get('au_dessus_mm200') else 'sous'} la moyenne 200 jours")
+    return True, None
 
 
 def zone_de(l: dict, config: dict) -> str:
@@ -251,9 +270,48 @@ def cibles(chef: dict, palier: str, etat: dict, valo: dict, series: dict, entree
     if n_coeur < cc["min_lignes"]:
         avert.append(f"Seulement {n_coeur} ligne(s) de cœur respectent les règles (minimum visé : {cc['min_lignes']}) : la part non placée reste en liquidités.")
 
-    # 3. Satellites : convictions fortes
+    # 3. Poche « tendance » : tendances fortes et saines du chef d'orchestre (part des satellites, places réservées)
+    ct = config["tendance"]
+    tends = []
+    pris = {sup["symbole"] for _, sup, _ in retenues}
+    detenues_t = {p.get("ligne_id") for p in etat["positions"].values() if p.get("poche") == "tendance"}
+    fortes = {x["id"]: x for x in chef.get("tendances_fortes") or []}
+    ordre_t = sorted(fortes.values(), key=lambda x: (x["id"] not in detenues_t, not x.get("saine"), -(x.get("force_relative") or 0)))
+    for x in ordre_t:
+        l = lignes.get(x["id"])
+        if l is None:
+            continue
+        detenue = x["id"] in detenues_t
+        sups = supports_de(l, config)
+        raison = None
+        if l.get("verdict") in SORTIE:
+            raison = f"verdict « {l.get('verdict')} »"
+        elif not sups:
+            raison = "aucun support coté"
+        elif sups[0]["symbole"] in pris:
+            raison = "support déjà retenu dans une autre poche"
+        elif not detenue and not x.get("saine"):
+            raison = "tendance forte mais en excès : " + " ; ".join(e.split(" : ")[0] for e in x.get("exces") or [])
+        elif not detenue:
+            raison = exclusion(dict(l, verdict="Renforcer", conviction="forte"), ("forte",), surveiller, entrees_ko, etat, config, maintenant)
+        if raison is None and len(tends) >= ct["max_lignes"]:
+            raison = f"poche « tendance » complète ({ct['max_lignes']} lignes au plus)"
+        elif raison is None and len(retenues) >= config["max_lignes"]:
+            raison = f"{config['max_lignes']} lignes au plus au total"
+        if raison is None and not detenue:
+            pire = trop_correlee(sups[0]["symbole"])
+            if pire:
+                raison = f"corrélation de {fr(pire[0], 2)} avec {pire[1]} sur 1 an"
+        if raison:
+            ecartees.append({"id": l["id"], "nom": f"{l['nom']} (tendance)", "raison": raison})
+            continue
+        retenues.append((l, sups[0], "tendance"))
+        tends.append((l, sups[0]))
+        pris.add(sups[0]["symbole"])
+
+    # 4. Satellites : convictions fortes
     sats = []
-    places = min(cs["max_lignes"], config["max_lignes"] - n_coeur)
+    places = min(cs["max_lignes"], config["max_lignes"] - n_coeur - len(tends))
     for l in sorted(lignes.values(), key=lambda l: -((l.get("score") or 0) + (bonus if l["id"] in detenues else 0))):
         if l["type"] not in cs["types"]:
             continue
@@ -281,19 +339,23 @@ def cibles(chef: dict, palier: str, etat: dict, valo: dict, series: dict, entree
         retenues.append((l, sup, "satellite"))
         sats.append((l, sup))
 
-    # 4. Poids
+    # 5. Poids
     mini_liq = palier_min(palier, config)
     lmin = config["ligne_min"]
     vols = {s: volatilite(p, cs["volatilite_jours"]) for s, p in (series or {}).items()}
     poids_sat = {}
+    budget_t = cs["budget"] * ct["part_satellites"]
+    budget_sat = cs["budget"] - budget_t
     if sats:
         brut = {sup["symbole"]: cs["convictions"][l["conviction"]] / max(vols.get(sup["symbole"]) or cs["volatilite_defaut"], cs["volatilite_plancher"])
                 for l, sup in sats}
-        budget = min(cs["budget"], cs["max_ligne"] * len(sats))
+        budget = min(budget_sat, cs["max_ligne"] * len(sats))
         poids_sat = {k: min(cs["max_ligne"], max(lmin, budget * v / sum(brut.values()))) for k, v in brut.items()}
+    for l, sup in tends:  # parts égales ; une ligne gagnante n'est jamais réduite (voir generer_ordres)
+        poids_sat[sup["symbole"]] = min(ct["max_ligne"], max(lmin, budget_t / len(tends)))
     res = {}
     for l, sup, poche in retenues:
-        if poche == "satellite":
+        if poche in ("satellite", "tendance"):
             w = poids_sat[sup["symbole"]]
         elif sup["symbole"] in poids_oblig:
             w = poids_oblig[sup["symbole"]]
@@ -333,7 +395,7 @@ def cibles(chef: dict, palier: str, etat: dict, valo: dict, series: dict, entree
             e["cible"] *= k
     cash = 100 - sum(e["cible"] for e in res.values())
 
-    # 5. Diversification
+    # 6. Diversification
     zones = sorted({e["zone"] for e in res.values()})
     corrs = []
     syms = sorted(res)
@@ -350,7 +412,7 @@ def cibles(chef: dict, palier: str, etat: dict, valo: dict, series: dict, entree
                        "correlation_max": ({"valeur": round(max(corrs)[0], 2), "entre": [max(corrs)[1], max(corrs)[2]]} if corrs else None),
                        "paires_mesurees": len(corrs), "paires_possibles": len(syms) * (len(syms) - 1) // 2}
 
-    # 6. Lignes détenues hors cibles : raison
+    # 7. Lignes détenues hors cibles : raison
     exclusions = {}
     for s, p in etat["positions"].items():
         if s in res:
@@ -363,6 +425,11 @@ def cibles(chef: dict, palier: str, etat: dict, valo: dict, series: dict, entree
             w = co["poids_par_verdict"].get(l.get("verdict"), 0)
             exclusions[s] = (True, f"obligations : verdict « {l.get('verdict')} », conviction {l.get('conviction')} → poids "
                                    + (f"neutre de {fr(w, 0)} % porté par un seul support" if w else "nul"))
+            continue
+        if p.get("poche") == "tendance":
+            tient, pourquoi = tendance_tient(l, config)
+            e = next((x for x in ecartees if x["id"] == l["id"]), None)
+            exclusions[s] = (True, f"poche « tendance » : {pourquoi or (e['raison'] if e else 'plus parmi les tendances fortes du chef d’orchestre')}")
             continue
         sat = p.get("poche") == "satellite" and l["type"] == "entreprises"
         conv = cs["convictions"] if sat else cc["convictions"]
@@ -465,6 +532,9 @@ def generer_ordres(c: dict, etat: dict, valo: dict, operations: list[dict], pali
             achats.append(_ordre_achat(etat, e, montant, t, w, palier, config, maintenant, "renforcement"))
             arbitrage(s, p["nom"], "renforcement", f"poids {fr(w, 1)} % pour une cible de {fr(t, 1)} %"
                       + (f" (minimum {fr(config['ligne_min'], 0)} % par ligne)" if sous_minimum else ""))
+        elif e["poche"] == "tendance":
+            arbitrage(s, p["nom"], "conservée", f"poche « tendance » : poids {fr(w, 1)} % pour une cible de {fr(t, 1)} % ; on laisse courir "
+                      "les gagnants tant que la tendance tient (ni réduction ni prise de bénéfices).")
         elif jours_detenus(p, maintenant) < dmin:
             arbitrage(s, p["nom"], "réduction reportée", f"poids {fr(w, 1)} % pour une cible de {fr(t, 1)} % ; détention minimale de {dmin} jours "
                       f"(réduction possible à partir du {date_liberation(p, config)}).")
@@ -538,6 +608,15 @@ def _ordre_achat(etat, e, montant, cible, actuel, palier, config, maintenant, na
                  + (f"{fr(vol, 0)} % sur 3 mois." if vol is not None else "inconnue (valeur par défaut de sa classe).")
                  + f" Stop initial à −{sp['stop_pct']} %.")
         extra = [f"Une baisse de {sp['stop_pct']} % déclencherait le stop : la perte serait alors réalisée."]
+    elif poche == "tendance":
+        st = l.get("suivi_tendance") or {}
+        ct = config["tendance"]
+        texte = (f"{'Entrée' if nature == 'entrée' else 'Renforcement'} poche « tendance » : {sup.get('nom') or l.get('nom')} ({sup['symbole']}). "
+                 f"Tendance forte et saine selon le chef d'orchestre : {st.get('texte') or 'premier tiers de force relative'}. "
+                 f"Taille {fr(cible, 1)} % (parts égales de la poche). Stop suiveur à −{ct['stop_suiveur_pct']} % du plus haut depuis l'achat ; "
+                 f"sortie si la force relative quitte le premier tiers ou si la tendance casse ; pas de prise de bénéfices tant que la tendance tient.")
+        extra = [f"Les tendances se retournent parfois brutalement : le stop à −{ct['stop_suiveur_pct']} % du plus haut limite la perte, sans l'empêcher.",
+                 "Sur 2010-2026, cette poche a fait moins bien que l'indice mondial (backtest) : elle reste une petite part des satellites."]
     else:
         if l.get("type") == "obligations":
             pourquoi = (f"poids fixé par le verdict du chef d'orchestre (« {l.get('verdict')} », conviction {l.get('conviction')}) : "
@@ -556,9 +635,9 @@ def _ordre_achat(etat, e, montant, cible, actuel, palier, config, maintenant, na
     devise = P.devise_de(sup["symbole"], sup.get("devise") or l.get("devise"), config, etat.get("devises", {}))
     return P.nouvel_ordre(etat, maintenant, config, sens="achat", symbole=sup["symbole"], nom=sup.get("nom") or l.get("nom"), ligne_id=l.get("id"),
                           poche=poche, classe=e["classe"], type=l.get("type"), pays=sup.get("pays") or l.get("pays"), secteur=l.get("secteur_nom") or l.get("secteur"),
-                          themes=l.get("themes") or [], devise=devise, montant_eur=round(montant, 2), motif=f"{nature} {'satellite' if poche == 'satellite' else 'cœur'}",
+                          themes=l.get("themes") or [], devise=devise, montant_eur=round(montant, 2), motif=f"{nature} {POCHES_MOTIF.get(poche, 'cœur')}",
                           imposee=False, contango=bool(sup.get("contango")), familles=familles_resume(l),
-                          raison={**r, "motif": f"{nature} {'satellite' if poche == 'satellite' else 'cœur'}", "texte": texte, "cible_pct": round(cible, 2),
+                          raison={**r, "motif": f"{nature} {POCHES_MOTIF.get(poche, 'cœur')}", "texte": texte, "cible_pct": round(cible, 2),
                                   "poids_actuel_pct": round(actuel, 2), "palier": palier},
                           donner_tort=texte_donner_tort(l, extra))
 
@@ -570,6 +649,7 @@ def _ordre_vente(etat, p, quantite, motif, texte, imposee, ligne, cible, actuel,
         "sortie sur objection": ["L'objection peut se révéler infondée : les autres signaux restaient favorables."],
         "stop": ["Le cours peut rebondir juste après le stop : la baisse peut n'être qu'un repli passager."],
         "prise de bénéfices": ["La tendance peut se prolonger : la partie vendue ne profitera pas d'une hausse supplémentaire."],
+        "sortie de tendance": ["Le rang peut remonter vite : une sortie suivie d'un retour en tête coûterait des frais."],
         "plancher de liquidités": ["Si le stress du marché retombe vite, les liquidités supplémentaires coûteront du rendement."],
         "mise en conformité": ["La ligne peut progresser après sa vente : la règle de concentration privilégie la lisibilité et les meilleures convictions."],
     }.get(motif, ["La ligne pourrait revenir dans l'allocation : vente et rachat coûteraient des frais."])
@@ -583,6 +663,36 @@ def _ordre_vente(etat, p, quantite, motif, texte, imposee, ligne, cible, actuel,
 
 
 # ------------------------------------------------------------------ contrôles de risque (à chaque exécution)
+
+def _risques_tendance(etat: dict, p: dict, ligne: dict | None, chef_a_jour: bool, libre: bool, cours: float | None, palier, config: dict,
+                      maintenant: datetime) -> dict | None:
+    """Poche « tendance » : stop suiveur sous le plus haut depuis l'achat (quotidien), sortie quand la tendance ne tient
+    plus (force relative hors du premier tiers, tendance cassée). Jamais de prise de bénéfices."""
+    ct = config["tendance"]
+    if cours:
+        haut = max(p.get("plus_haut_local") or cours, cours)
+        p["plus_haut_local"] = haut
+        stop = haut * (1 - ct["stop_suiveur_pct"] / 100)
+        if stop > (p.get("stop_local") or 0):
+            p["stop_local"], p["stop_type"] = stop, "suiveur"
+        if cours <= p["stop_local"]:
+            if p.get("dernier_releve_stop") != p.get("dernier_cours_le"):
+                p["confirmations_stop"] = p.get("confirmations_stop", 0) + 1
+                p["dernier_releve_stop"] = p.get("dernier_cours_le")
+            if p["confirmations_stop"] >= ct["confirmations"]:
+                perf = (cours / p["prix_revient_local"] - 1) * 100
+                texte = (f"Stop suiveur de la poche « tendance » atteint sur {p['nom']} : cours {fr(cours, 2)} {p['devise']} sous le stop "
+                         f"{fr(p['stop_local'], 2)} (−{ct['stop_suiveur_pct']} % du plus haut {fr(haut, 2)} ; {fr(perf, 1, True)} % depuis le prix de revient).")
+                return _ordre_vente(etat, p, p["quantite"], "stop", texte, True, ligne, 0, p.get("poids", 0), palier, config, maintenant)
+        else:
+            p["confirmations_stop"], p["dernier_releve_stop"] = 0, None
+    if chef_a_jour and ligne is not None and libre:
+        tient, pourquoi = tendance_tient(ligne, config)
+        if not tient:
+            texte = f"Sortie de la poche « tendance » : {ligne['nom']}, {pourquoi}. Les gagnants ne sont gardés que tant que la tendance tient."
+            return _ordre_vente(etat, p, p["quantite"], "sortie de tendance", texte, True, ligne, 0, p.get("poids", 0), palier, config, maintenant)
+    return None
+
 
 def controler_risques(etat: dict, lignes: dict | None, palier: str | None, valo: dict, config: dict, maintenant: datetime) -> list[dict]:
     """Stops, prise de bénéfices, sorties sur verdict ou objection (si le chef d'orchestre est à jour), plancher de
@@ -608,6 +718,11 @@ def controler_risques(etat: dict, lignes: dict | None, palier: str | None, valo:
                                            f"Objection sérieuse du contradicteur sur {ligne['nom']} : {objection_serieuse(ligne)}",
                                            True, ligne, 0, p.get("poids", 0), palier, config, maintenant))
                 continue
+        if p.get("poche") == "tendance":
+            o = _risques_tendance(etat, p, ligne, lignes is not None, libre, cours, palier, config, maintenant)
+            if o:
+                ordres.append(o)
+            continue
         if p.get("poche") != "satellite" or not cours:
             continue
         revient = p["prix_revient_local"]

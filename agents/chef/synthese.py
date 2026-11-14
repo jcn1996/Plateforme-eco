@@ -135,8 +135,8 @@ def _argument(l: dict, sens: str = "pour") -> str | None:
 
 
 def a_surveiller(l: dict) -> bool:
-    """Ligne bien notée mais avec une réserve à lever : objection sérieuse ou hausse passée extrême."""
-    return bool((l.get("objection") or {}).get("serieuse") or l.get("momentum_extreme"))
+    """Ligne bien notée mais avec une réserve à lever : objection sérieuse ou tendance forte en excès."""
+    return bool((l.get("objection") or {}).get("serieuse") or l.get("tendance_excessive"))
 
 
 def resume_ligne(l: dict) -> dict:
@@ -186,14 +186,14 @@ def panorama(lignes: list[dict], config: dict) -> dict:
     """Tour d'horizon par catégorie, top 5 diversifié et liste « À surveiller »."""
     cp = config["panorama"]
     seuil = config["verdicts"]["seuils"]["Renforcer"]
-    # Listes par catégorie : par score, les lignes « à surveiller » (objection sérieuse, hausse passée extrême) après les autres
+    # Listes par catégorie : par score, les lignes « à surveiller » (objection sérieuse, tendance en excès) après les autres
     par = {t: sorted((l for l in lignes if l["type"] == t and l.get("score") is not None), key=lambda l: (a_surveiller(l), -l["score"])) for t in CATEGORIES}
     ent, bilan = selection_entreprises(lignes, cp)
     # Top 5 : verdicts positifs ; d'abord une ligne par catégorie, puis les suivantes (au plus 2 par catégorie)
     # Top 5 : verdict positif, score au-dessus du seuil (pas seulement maintenu par l'hystérésis), aucune objection
-    # sérieuse à lever ni hausse passée extrême (celles-là vont dans « À surveiller »)
+    # sérieuse à lever ni tendance en excès (celles-là vont dans « À surveiller »)
     positifs = sorted((l for l in lignes if DIRECTION.get(l["verdict"]) == 1 and l.get("score") is not None and l["score"] >= seuil
-                       and not (l.get("objection") or {}).get("serieuse") and not l.get("momentum_extreme")
+                       and not (l.get("objection") or {}).get("serieuse") and not l.get("tendance_excessive")
                        and (l["type"] != "entreprises" or l in ent)), key=_cle_tri)
     top5, compte = [], {}
     for limite in (1, 2, 3):  # une ligne par catégorie d'abord, puis deux, puis trois en dernier recours
@@ -219,8 +219,9 @@ def panorama(lignes: list[dict], config: dict) -> dict:
                 raison += f", changement en attente vers « {l['en_attente']['vers']} »"
         elif DIRECTION.get(l["verdict"]) == 1 and (l.get("objection") or {}).get("serieuse"):
             raison = f"bien noté ({ent_(l['score'])}/100) mais objection à lever : {l['objection']['objection'][:220]}"
-        elif DIRECTION.get(l["verdict"]) == 1 and l.get("momentum_extreme"):
-            raison = f"bien noté ({ent_(l['score'])}/100) mais hausse passée extrême : valorisation et positionnement à vérifier"
+        elif DIRECTION.get(l["verdict"]) == 1 and l.get("tendance_excessive"):
+            raison = (f"bien noté ({ent_(l['score'])}/100), tendance forte mais en excès : "
+                      + " ; ".join(x.split(" : ")[0] for x in (l.get("suivi_tendance") or {}).get("exces") or []))
         elif l.get("plafond") and DIRECTION.get(l.get("verdict_brut")) == 1:
             raison = f"score de {ent_(l['score'])}/100, mais {l['plafond']}"
         if raison and sum(1 for x in surveiller if x["type"] == l["type"]) < cp["a_surveiller_par_type"]:
