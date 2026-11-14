@@ -22,10 +22,10 @@
 - [QPR] MS&AD Insurance Group Holdings, Inc. (8725.T, JP) : 78/100, ajustement de contexte +0.9 — Dossier solide sur les comptes ; points forts : per vs secteur : −40,1 %, momentum 12 mois : +66,8 %.
 - [QPR] HCL Technologies Limited (HCLTECH.NS, IN) : 76/100, ajustement de contexte +1.9 — Dossier solide sur les comptes ; points forts : dette nette / ebitda : trésorerie nette, couverture des intérêts : 47,0× ; point faible : momentum 12 mois : −9,8 %.
 - [QPR] Adobe Inc. (ADBE, US) : 77/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 36,6 %, couverture des intérêts : 33,1× ; point faible : momentum 12 mois : −27,1 %.
-- [QPR] Prudential plc (PRU.L, GB) : 75/100, ajustement de contexte +1.9 — Dossier solide sur les comptes ; points forts : croissance du ca : +69,0 %, croissance du bénéfice : +74,1 % ; point faible : momentum 12 mois : −12,5 %.
+- [QPR] Prudential plc (PRU.L, GB) : 75/100, ajustement de contexte +1.9 — Dossier solide sur les comptes ; points forts : croissance du ca : +69,0 %, croissance du bénéfice : +74,1 % ; point faible : momentum 12 mois : −11,6 %.
 - [QPR] Vodacom Group Limited (VOD.JO, ZA) : 74/100, ajustement de contexte +2.2 — Dossier solide sur les comptes ; points forts : conversion du bénéfice en cash : 158,7 %, marge opérationnelle : 23,8 %.
 - [QPR] Grupo Financiero Banorte, S.A.B. de C.V. (GFNORTEO.MX, MX) : 73/100, ajustement de contexte +2.4 — Dossier solide sur les comptes ; points forts : roe : 23,6 %, croissance du ca : +13,5 %.
-- [QPR] NEXT plc (NXT.L, GB) : 72/100, ajustement de contexte +1.9 — Dossier solide sur les comptes ; points forts : roic : 38,9 %, f-score de piotroski : 8/9 ; point faible : ve/ebitda vs secteur : +32,3 %.
+- [QPR] NEXT plc (NXT.L, GB) : 73/100, ajustement de contexte +1.9 — Dossier solide sur les comptes ; points forts : roic : 38,9 %, f-score de piotroski : 8/9 ; point faible : ve/ebitda vs secteur : +31,8 %.
 - [QPR] Paychex, Inc. (PAYX, US) : 73/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 39,8 %, conversion du bénéfice en cash : 131,9 %.
 - [QPR] Tencent Holdings Limited (0700.HK, CN) : 70/100, ajustement de contexte +1.6 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 33,1 %, dette nette / ebitda : trésorerie nette ; point faible : momentum 12 mois : −40,4 %.
 - [QPR] Midea Group Co., Ltd. (000333.SZ, CN) : 70/100, ajustement de contexte +1.6 — Dossier solide sur les comptes ; points forts : couverture des intérêts : 20,9×, dette nette / ebitda : trésorerie nette.
@@ -36,33 +36,13 @@
 
 ## Signaux du jour
 
-- [faible] Visa Inc. : comptes de l'exercice clos le 2026-09-30
-- [faible] Starbucks Corporation : comptes de l'exercice clos le 2026-09-30
-- [faible] Emerson Electric Co. : comptes de l'exercice clos le 2026-09-30
-- [faible] Johnson Controls International plc : comptes de l'exercice clos le 2026-09-30
-- [faible] TransDigm Group Incorporated : comptes de l'exercice clos le 2026-09-30
-- [faible] TE Connectivity plc : comptes de l'exercice clos le 2026-09-30
-- [faible] Rockwell Automation, Inc. : comptes de l'exercice clos le 2026-09-30
-- [moyenne] Expand Energy Corporation entre dans la liste « Qualité à prix raisonnable »
-- [faible] Skyworks Solutions, Inc. : comptes de l'exercice clos le 2026-09-30
-- [faible] Fair Isaac Corporation : comptes de l'exercice clos le 2026-09-30
-- [faible] Franklin Templeton Inc. : note de 50 à 65
-- [faible] Franklin Templeton Inc. : comptes de l'exercice clos le 2026-09-30
-- [faible] MACOM Technology Solutions Holdings, Inc. : note de 57 à 67
-- [faible] MACOM Technology Solutions Holdings, Inc. : comptes de l'exercice clos le 2026-09-30
-- [moyenne] Grupo Financiero Banorte, S.A.B. de C.V. entre dans la liste « Qualité à prix raisonnable »
-- [moyenne] Siemens Aktiengesellschaft : hausse anormale des créances
-- [faible] Siemens Aktiengesellschaft : comptes de l'exercice clos le 2026-09-30
-- [faible] ANZ Group Holdings Limited : comptes de l'exercice clos le 2026-09-30
-- [faible] Siemens Energy AG : comptes de l'exercice clos le 2026-09-30
-- [faible] Amber Enterprises India Limited : estimations de BPA −12,1 % sur 30 jours
-- [faible] EZCORP, Inc. : comptes de l'exercice clos le 2026-09-30
-- [faible] Azenta, Inc. : estimations de BPA +14,6 % sur 30 jours
-- [faible] Tandem Diabetes Care, Inc. : estimations de BPA −15,3 % sur 30 jours
-- [faible] RadNet, Inc. : estimations de BPA +15,7 % sur 30 jours
-- [faible] Sally Beauty Holdings, Inc. : comptes de l'exercice clos le 2026-09-30
-- [faible] Logista Integral, S.A. : comptes de l'exercice clos le 2026-09-30
-- [faible] Arch Capital Group Ltd. sort des pépites candidates
+- [faible] ASUSTeK Computer Inc. : BPA publié +21,9 % par rapport à l'estimation
+- [faible] HANMI Semiconductor Co., Ltd. : BPA publié −62,4 % par rapport à l'estimation
+- [faible] APR Co., Ltd. : BPA publié −20,7 % par rapport à l'estimation
+- [faible] Doosan Corporation : BPA publié −62,1 % par rapport à l'estimation
+- [faible] Kakao Corp. : BPA publié −23,4 % par rapport à l'estimation
+- [faible] Sigma Lithium Corporation : BPA publié −373,7 % par rapport à l'estimation
+- [faible] Kyoto Financial Group,Inc. : BPA publié −36,4 % par rapport à l'estimation
 
 ## Sources
 
