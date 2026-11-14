@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genere_le": "2026-11-13T14:55:47Z",
+    "genere_le": "2026-11-14T06:52:47Z",
     "source": "agent-inities",
     "version_agent": "1.0",
     "description": "État des sources et signaux, à chaque exécution",
@@ -9,8 +9,8 @@
       "libelle": "Agent initiés",
       "ordre": 9,
       "workflow": "agent-inities.yml",
-      "derniere_execution": "2026-11-13T14:55:47Z",
-      "prochaine_prevue": "2026-11-14T06:35:00Z",
+      "derniere_execution": "2026-11-14T06:52:47Z",
+      "prochaine_prevue": "2026-11-15T06:35:00Z",
       "intervalle_min": 1440,
       "planning": {
         "crons": [
@@ -19,56 +19,56 @@
         ],
         "fuseau": "UTC"
       },
-      "sources_total": 13,
-      "sources_ok": 13,
+      "sources_total": 14,
+      "sources_ok": 14,
       "sources": [
         {
           "nom": "SEC EDGAR, correspondance ticker ↔ CIK",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-13T14:55:47Z"
+          "derniere_donnee_valide": "2026-11-14T06:52:47Z"
         },
         {
           "nom": "SEC EDGAR, index quotidiens des dépôts",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-13T14:55:47Z"
+          "derniere_donnee_valide": "2026-11-14T06:52:47Z"
         },
         {
           "nom": "SEC EDGAR, formulaires 4 (dirigeants)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-13T14:55:47Z"
+          "derniere_donnee_valide": "2026-11-14T06:52:47Z"
         },
         {
           "nom": "SEC EDGAR, formulaires 13D (activistes)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-13T14:55:47Z"
+          "derniere_donnee_valide": "2026-11-14T06:52:47Z"
         },
         {
           "nom": "AMF, base BDIF : déclarations des dirigeants",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-13T14:55:47Z"
+          "derniere_donnee_valide": "2026-11-14T06:52:47Z"
         },
         {
           "nom": "BaFin, base des « Directors' Dealings »",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-13T14:55:47Z"
+          "derniere_donnee_valide": "2026-11-14T06:52:47Z"
         },
         {
           "nom": "NSE (Inde), déclarations SAST (franchissements de 5 %)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-13T14:55:47Z"
+          "derniere_donnee_valide": "2026-11-14T06:52:47Z"
         },
         {
           "nom": "NSE (Inde), répartition de l'actionnariat (actionnaires de plus de 1 %)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-13T14:55:47Z"
+          "derniere_donnee_valide": "2026-11-14T06:52:47Z"
         },
         {
           "nom": "DART (Corée), déclarations de participation (clé DART_API_KEY)",
@@ -87,25 +87,31 @@
           "etat": "ok",
           "detail": null,
           "secondaire": true,
-          "derniere_donnee_valide": "2026-11-13T14:55:47Z"
+          "derniere_donnee_valide": "2026-11-14T06:52:47Z"
         },
         {
           "nom": "AMF, base BDIF : franchissements de seuil",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-13T14:55:47Z"
+          "derniere_donnee_valide": "2026-11-14T06:52:47Z"
         },
         {
           "nom": "SEC EDGAR, rapports 13F (super-investisseurs)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-13T14:55:47Z"
+          "derniere_donnee_valide": "2026-11-14T06:52:47Z"
+        },
+        {
+          "nom": "OpenFIGI (CUSIP → ticker des 13F)",
+          "etat": "ok",
+          "detail": null,
+          "derniere_donnee_valide": "2026-11-14T06:52:47Z"
         },
         {
           "nom": "Chambre des représentants, déclarations de transactions",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-13T14:55:47Z"
+          "derniere_donnee_valide": "2026-11-14T06:52:47Z"
         },
         {
           "nom": "Sénat, déclarations de transactions (efdsearch)",
@@ -117,7 +123,7 @@
           "nom": "Yahoo Finance via yfinance (cours sur 6 mois des sociétés achetées)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-13T14:55:47Z"
+          "derniere_donnee_valide": "2026-11-14T06:52:47Z"
         }
       ],
       "degrade": false,
@@ -152,6 +158,9 @@
         ],
         "SEC EDGAR, rapports 13F (super-investisseurs)": [
           "edgar_13f"
+        ],
+        "OpenFIGI (CUSIP → ticker des 13F)": [
+          "openfigi"
         ],
         "Chambre des représentants, déclarations de transactions": [
           "chambre"
@@ -2212,10 +2221,173 @@
           }
         }
       }
+    },
+    {
+      "genere_le": "2026-11-14T06:52:47Z",
+      "mode": "complet",
+      "etat_des_sources": {
+        "sec_tickers": "ok",
+        "edgar_index": "ok",
+        "edgar_form4": "ok",
+        "edgar_13d": "ok",
+        "amf_dirigeants": "ok",
+        "bafin": "ok",
+        "nse_sast": "ok",
+        "nse_actionnariat": "ok",
+        "dart": "non configurée",
+        "edinet": "non configurée",
+        "kap": "ok",
+        "amf_seuils": "ok",
+        "edgar_13f": "ok",
+        "openfigi": "ok",
+        "chambre": "ok",
+        "senat": "non configurée",
+        "yahoo_cours": "ok"
+      },
+      "achats_retenus": 76,
+      "signaux": [
+        "Altimmune, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 89/100)",
+        "Babcock & Wilcox Enterprises, Inc. : 4 dirigeants achètent sur le marché en 30 jours (score 95/100)",
+        "Kodiak Gas Services, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 87/100)",
+        "Hudson Pacific Properties, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 95/100)",
+        "FutureFuel Corp. : 4 dirigeants achètent sur le marché en 30 jours (score 95/100)",
+        "Csquare, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 95/100)",
+        "Seth Klarman (Baupost Group LLC) ouvre une position dans HONEYWELL AEROSPACE INC (3,5 % du portefeuille, T3 2026)",
+        "Seth Klarman (Baupost Group LLC) ouvre une position dans SITEONE LANDSCAPE SUPPLY INC (2,2 % du portefeuille, T3 2026)",
+        "INTERMARKET CORP/NY déclare 4,6 % de PYXUS INTERNATIONAL, INC. (13D, intention d'influencer)",
+        "NEW ENTERPRISE ASSOCIATES 13 LP déclare 5,1 % de Coursera, Inc. (13D, intention d'influencer)"
+      ],
+      "recherche_hors_us": {
+        "noms_cherches": {
+          "pabrai": [
+            "Pabrai",
+            "Dalal Street, LLC",
+            "Dalal Street LLC",
+            "Dhandho India Zero Fee Fund",
+            "Dhandho",
+            "파브라이",
+            "パブライ"
+          ],
+          "buffett": [
+            "Berkshire Hathaway",
+            "National Indemnity"
+          ],
+          "li-lu": [
+            "Himalaya Capital"
+          ],
+          "ackman": [
+            "Pershing Square"
+          ],
+          "klarman": [
+            "Baupost"
+          ],
+          "tepper": [
+            "Appaloosa"
+          ],
+          "burry": [
+            "Scion Asset Management"
+          ],
+          "einhorn": [
+            "Greenlight Capital",
+            "DME Capital",
+            "Greenlight Masters"
+          ],
+          "loeb": [
+            "Third Point"
+          ],
+          "akre": [
+            "Akre Capital"
+          ],
+          "gayner": [
+            "Markel"
+          ],
+          "berkowitz": [
+            "Fairholme"
+          ],
+          "tweedy": [
+            "Tweedy, Browne",
+            "Tweedy Browne"
+          ],
+          "pzena": [
+            "Pzena"
+          ],
+          "marks": [
+            "Oaktree Capital"
+          ]
+        },
+        "sources": {
+          "nse_sast": {
+            "source": "NSE, déclarations SAST (franchissements de 5 %, nom de l'acquéreur)",
+            "etat": "ok",
+            "periodes": [
+              "2026-10-25",
+              "2026-11-14"
+            ],
+            "documents_examines": 151,
+            "trouves": [],
+            "detail": null,
+            "nb_periodes": 1
+          },
+          "nse_actionnariat": {
+            "source": "NSE, répartition trimestrielle de l'actionnariat (actionnaires de plus de 1 %)",
+            "etat": "ok",
+            "periodes": [
+              "2026-11-09",
+              "2026-11-14"
+            ],
+            "documents_examines": 2,
+            "trouves": [],
+            "detail": "164 société(s) suivie(s) (repérées par SAST : 4) ; 2 nouvelle(s) répartition(s) lue(s)",
+            "nb_periodes": 1
+          },
+          "dart": {
+            "source": "DART (Corée), déclarations de participation (règle des 5 %)",
+            "etat": "non configurée",
+            "periodes": null,
+            "documents_examines": 0,
+            "trouves": [],
+            "detail": "clé non configurée (secret DART_API_KEY absent) : aucune recherche",
+            "nb_periodes": 0
+          },
+          "edinet": {
+            "source": "EDINET (Japon), déclarations de grands actionnaires (5 %)",
+            "etat": "non configurée",
+            "periodes": null,
+            "documents_examines": 0,
+            "trouves": [],
+            "detail": "clé non configurée (secret EDINET_API_KEY absent) : aucune recherche",
+            "nb_periodes": 0
+          },
+          "kap": {
+            "source": "KAP (Turquie), notifications « Pay Alım Satım Bildirimi » (source secondaire)",
+            "etat": "ok",
+            "periodes": [
+              "2026-09-21",
+              "2026-11-14"
+            ],
+            "documents_examines": 50,
+            "trouves": [],
+            "detail": null,
+            "nb_periodes": 14
+          },
+          "amf_seuils": {
+            "source": "AMF, franchissements de seuil",
+            "etat": "ok",
+            "periodes": [
+              "2026-11-04",
+              "2026-11-14"
+            ],
+            "documents_examines": 4,
+            "trouves": [],
+            "detail": null,
+            "nb_periodes": 1
+          }
+        }
+      }
     }
   ],
-  "derniere_execution": "2026-11-13T14:55:47Z",
-  "prochaine_prevue": "2026-11-14T06:35:00Z",
+  "derniere_execution": "2026-11-14T06:52:47Z",
+  "prochaine_prevue": "2026-11-15T06:35:00Z",
   "intervalle_min": 1440,
   "planning": {
     "crons": [
