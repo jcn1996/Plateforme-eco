@@ -75,7 +75,7 @@ Rotation sectorielle (score /100 de la famille « Adéquation au cycle », adapt
 | Immobilier | 65 | 40 | 35 | 62 |
 | Services de communication | 60 | 45 | 48 | 66 |
 
-Les secteurs suivent les mêmes règles que les autres catégories (percentiles dans la zone, pondérations selon le palier, verdict, conviction, hystérésis, momentum extrême, contrôle de cohérence) ; un verdict positif exige une famille motrice (fondamentaux, valorisation, tendance, flux ou résultats). Dans l'allocation modèle, 30 % de la part « cœur » des actions va aux secteurs à verdict positif dotés d'un ETF (une zone par secteur, la mieux notée ; 4 secteurs au plus), le reste aux pays ; les secteurs ne sont pas des satellites.
+Les secteurs suivent les mêmes règles que les autres catégories (percentiles dans la zone, pondérations selon le palier, verdict, conviction, hystérésis, suivi de tendance, contrôle de cohérence) ; un verdict positif exige une famille motrice (fondamentaux, valorisation, tendance, flux ou résultats). Dans l'allocation modèle, 30 % de la part « cœur » des actions va aux secteurs à verdict positif dotés d'un ETF (une zone par secteur, la mieux notée ; 4 secteurs au plus), le reste aux pays ; les secteurs ne sont pas des satellites.
 
 ## 3. Moteur de décision
 
@@ -131,12 +131,36 @@ Pour les pays, les entreprises et les matières premières (`risque_frein`) :
 - les familles « Risque » et « Géopolitique » sont plafonnées à 55/100 : un risque faible lève un frein mais ne porte pas la note (pour l'or, les obligations et les liquidités, le palier de risque reste un moteur, puisqu'il mesure leur rôle de refuge) ;
 - un verdict positif exige au moins une famille motrice (fondamentaux, valorisation, tendance ou flux) à 60/100 ou plus ; sinon le verdict est « Neutre », même si l'hystérésis l'aurait maintenu, et la raison est affichée.
 
-### Momentum extrême
+### Suivi de tendance (momentum)
 
-Une hausse passée au-delà du 90e percentile de sa classe, ou d'au moins 40 % sur 12 mois (le percentile est grossier dans une petite classe comme les matières premières), est traitée à part (`momentum`) :
-- elle ne compte pas dans la concordance de la conviction : elle ne peut pas porter seule une conviction forte ;
-- elle déclenche une vérification : valorisation (au moins 45/100) et positionnement ou flux (au moins 40/100, pour écarter une position encombrée) ; pour une matière première, un contexte géopolitique fort est signalé comme réversible ;
-- elle déclenche une objection systématique (règle du contradicteur appliquée par le chef d'orchestre), qui abaisse la conviction d'un cran. L'opportunité va dans « À surveiller », pas dans le top 5.
+Se laisser porter par ce qui marche, au lieu d'écarter systématiquement les fortes hausses (`suivi_tendance`, `agents/chef/tendance.py`) :
+
+- **tendance positive** : performance sur 12 mois hors dernier mois (« 12-1 ») positive **et** cours au-dessus de sa moyenne mobile 200 jours ;
+- **force relative** : percentile de la performance 12-1 dans la catégorie (pays, matières premières et or, entreprises analysées, secteurs ; 4 actifs au moins) ;
+- **tendance forte** : tendance positive et force relative dans le premier tiers (≥ 66,7) ;
+- une tendance forte **n'est pénalisée que si elle s'accompagne d'au moins un excès** :
+  - valorisation tendue : note absolue de valorisation ≤ 30 (au-delà du 70e percentile de cherté) ;
+  - positionnement encombré : gérants au 90e percentile ou plus de leur position nette sur 3 ans (CFTC, matières premières), ou flux des ETF extrêmes (note de flux ≥ 90, pays et secteurs) ;
+  - accélération parabolique : hausse sur 1 mois supérieure à 2,5 fois l'écart-type mensuel des 12 mois précédents ;
+  
+  avec un excès, objection sérieuse (conviction abaissée d'un cran ; la tendance ne compte ni dans la concordance ni comme famille motrice) et la ligne va dans « À surveiller » ;
+- **sans excès, c'est un signal positif** : la note de la famille « Tendance » est relevée à 65 au moins, elle compte dans la concordance et comme famille motrice (elle ne suffit jamais seule à une conviction forte, qui exige un signal solide) ;
+- rubrique **« Tendances fortes »** de « Où investir » (`tendances_fortes` dans `data/chef.json`) : les actifs du premier tiers de force relative dont la tendance est intacte, 6 par catégorie au plus, saines d'abord, avec le niveau qui invaliderait la tendance (la moyenne 200 jours) et le stop suiveur de la poche « tendance » du trader (−15 % du plus haut sur 12 mois).
+
+Cours utilisés : ETF pays (`data/cours/etf-pays.json`, quotidien), séries des matières premières (`data/matieres_premieres.json`, hebdomadaire), cours hebdomadaires des fiches entreprises, ETF sectoriels (Yahoo Finance, déjà lus pour les secteurs ; pas d'ETF pour les secteurs émergents). Fenêtres en jours calendaires (moyenne 200 jours ≈ 290 jours calendaires), valables pour les séries quotidiennes et hebdomadaires.
+
+**Seuils fixés par le backtest** (lot « tendance », `data/backtest/tendance-2026-11.md` : ETF pays, ETF sectoriels américains et ETF de matières premières, 2010-2026 ; réglages sur l'apprentissage jusqu'en juin 2018, vérification ensuite) :
+
+| Réglage | Retenu | Résultat (apprentissage / vérification) |
+|---|---|---|
+| Période de momentum | 12 mois hors dernier mois | IC moyen +0,011 / +0,012 à 1 mois, +0,005 / +0,035 à 3 mois ; 6 mois et 3-1 : IC négatif sur l'apprentissage |
+| Filtre de tendance | 12-1 > 0 et cours > moyenne 200 jours | premier tiers en tendance positive : +0,17 point à 3 mois relatif à la catégorie, contre −0,38 point sans |
+| Accélération parabolique | 2,5 fois la volatilité mensuelle | −0,1 / −2,4 points à 3 mois (excès − autres) ; à 1,5 et 2 fois, aucune pénalité (+1,1 / +0,3 et +0,8 / +2,1) |
+| Valorisation tendue | 70e percentile | −0,5 / −0,8 point (80e : −0,4 / −0,9) |
+| Positionnement CFTC | 90e percentile | −0,8 / −0,5 point |
+| Flux des ETF extrêmes | note ≥ 90 | non testable (pas d'historique des flux) : seuil conventionnel |
+
+Limites : écarts faibles et petits échantillons pour l'accélération parabolique (21 et 28 cas) ; valorisation approchée par le rendement du dividende de l'ETF pays (seule mesure historique gratuite).
 
 ### Verdict
 
@@ -185,11 +209,11 @@ Cette allocation servira de base au futur agent trader démo.
 ## 5. Synthèse et alertes
 
 **Panorama « Où investir »** (`panorama`) : un tour d'horizon large et équilibré plutôt qu'une seule pépite.
-- Top 5 : verdicts positifs dont le score dépasse le seuil « Renforcer » (pas seulement maintenus par l'hystérésis), sans objection sérieuse à lever ni momentum extrême ; d'abord une ligne par catégorie (pays, entreprises, matières premières, or, obligations, liquidités), puis deux, puis trois en dernier recours quand les autres catégories n'ont aucune ligne éligible.
+- Top 5 : verdicts positifs dont le score dépasse le seuil « Renforcer » (pas seulement maintenus par l'hystérésis), sans objection sérieuse à lever ni tendance en excès ; d'abord une ligne par catégorie (pays, entreprises, matières premières, or, obligations, liquidités), puis deux, puis trois en dernier recours quand les autres catégories n'ont aucune ligne éligible.
 - Listes par catégorie triées par score.
 - Par catégorie : top 5 des pays, top 3 des secteurs (une zone par secteur), top 3 des matières premières, position sur l'or, sur chaque ligne obligataire et sur les liquidités.
 - Entreprises : au moins 10 quand les données le permettent (verdicts positifs d'abord, puis meilleurs « Neutre »), au plus 2 par secteur et 3 par pays, au moins 4 secteurs et 4 pays ; un écart à ces objectifs est signalé.
-- « À surveiller » (8 au plus, 3 par catégorie) : opportunités à moins de 4 points du seuil « Renforcer », verdict maintenu par l'hystérésis sous le seuil, ou bien notées mais avec une objection sérieuse à lever ou un momentum extrême.
+- « À surveiller » (8 au plus, 3 par catégorie) : opportunités à moins de 4 points du seuil « Renforcer », verdict maintenu par l'hystérésis sous le seuil, ou bien notées mais avec une objection sérieuse à lever ou une tendance forte en excès.
 
 **Briefing quotidien** (`data/chef/briefing-AAAA-MM-JJ.md` et `.json`) : l'essentiel en 5 lignes, une par catégorie (risque et cycle ; pays ; matières premières et or ; obligations et liquidités ; secteurs et entreprises) ; le panorama complet ; « Ce qui a changé depuis hier » ; points de vigilance ; scénario central et scénario alternatif avec leurs déclencheurs ; agenda des 7 prochains jours ; « Ce qui pourrait me donner tort » ; état des données ; liste des faits utilisés.
 

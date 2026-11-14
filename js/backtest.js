@@ -8,7 +8,7 @@
 import { el, nombre } from './outils.js';
 
 const ORDRE = { Garder: 0, 'Alléger': 1, Supprimer: 2, 'Données insuffisantes': 3 };
-const SECTIONS = ['pays', 'chef', 'entreprises', 'matieres', 'secteurs'];
+const SECTIONS = ['pays', 'chef', 'entreprises', 'matieres', 'secteurs', 'tendance'];
 const NOTES = ['note_globale', 'note_globale_brute', 'note_recalibree', 'score_chef', 'equipondere', 'score_recalibre'];
 
 /** Classe CSS du badge d'un verdict. */
@@ -116,6 +116,13 @@ function blocRegles(s) {
       el('li', {}, `Autres tendances positives : ${signe(ae.tendance_positive_non_extreme.relative_moyenne_pct, 2, ' pt')} (${ae.tendance_positive_non_extreme.n} cas)`),
       el('li', {}, `Extrême et valorisation tendue : ${signe(ae.extreme_valorisation_tendue.relative_moyenne_pct, 2, ' pt')} · valorisation correcte : ${signe(ae.extreme_valorisation_correcte.relative_moyenne_pct, 2, ' pt')}`)));
   }
+  const td = rg.tendance?.horizons?.[h];
+  if (td) {
+    blocs.push(titre('Suivi de tendance', `chef d'orchestre, ${h} mois`), el('ul', { class: 'chef-texte' },
+      el('li', {}, `Tendances fortes saines : ${signe(td.forte_saine.relative_moyenne_pct, 2, ' pt')} (${td.forte_saine.n} cas)`),
+      el('li', {}, `Tendances fortes en excès : ${signe(td.forte_en_exces.relative_moyenne_pct, 2, ' pt')} (${td.forte_en_exces.n} cas)`),
+      el('li', {}, `Autres pays : ${signe(td.autres.relative_moyenne_pct, 2, ' pt')} (${td.autres.n} cas)`)));
+  }
   const co = rg.concentration;
   if (co?.lignes) {
     const ligne = (nom, x) => el('tr', {}, el('td', {}, nom), el('td', { class: 'mono' }, signe(x?.rendement_annuel_pct, 1, ' %')),
@@ -139,7 +146,44 @@ function blocRegles(s) {
   return blocs;
 }
 
+// Lot « tendance » : périodes de momentum, excès, poche « tendance » du trader
+export function blocTendance(t) {
+  if (!t) return [];
+  const defs = t.periodes?.definitions ?? {};
+  const poche = t.poche ?? {};
+  const ret = (poche.variantes ?? []).find((v) => v.definition === poche.retenue?.definition && v.variante === poche.retenue?.variante);
+  const ligneP = (nom, x) => el('tr', {}, el('td', {}, nom),
+    el('td', { class: 'mono' }, `${signe(x?.apprentissage?.rendement_annuel_pct, 1, ' %')} / ${signe(x?.verification?.rendement_annuel_pct, 1, ' %')}`),
+    el('td', { class: 'mono' }, `${signe(x?.apprentissage?.sharpe, 2)} / ${signe(x?.verification?.sharpe, 2)}`),
+    el('td', { class: 'mono' }, `${signe(x?.apprentissage?.perte_max_pct, 0, ' %')} / ${signe(x?.verification?.perte_max_pct, 0, ' %')}`));
+  const exces = ['parabolique', 'valorisation', 'positionnement'].filter((k) => t.exces?.[k]);
+  return [
+    titre('Périodes de momentum', `IC moyen dans chaque catégorie, apprentissage / vérification ; retenue : ${defs[t.definition]?.libelle ?? t.definition}`),
+    el('table', { class: 'chef-table' },
+      el('thead', {}, el('tr', {}, ['Période', 'IC 1 mois', 'IC 3 mois'].map((x) => el('th', {}, x)))),
+      el('tbody', {}, Object.entries(defs).map(([k, d]) => el('tr', { class: k === t.definition ? 'chef-ok' : '' }, el('td', {}, d.libelle),
+        el('td', { class: 'mono' }, `${signe(d.ic_1m?.apprentissage, 3)} / ${signe(d.ic_1m?.verification, 3)}`),
+        el('td', { class: 'mono' }, `${signe(d.ic_3m?.apprentissage, 3)} / ${signe(d.ic_3m?.verification, 3)}`))))),
+    titre('Excès retenus', 'tendances fortes : écart de rendement à 3 mois, en excès − autres'),
+    el('ul', { class: 'chef-texte' }, exces.map((k) => {
+      const e = t.exces[k];
+      const d = e.retenu != null ? e.seuils[e.retenu]['3m'] : null;
+      return el('li', {}, `${k} : ${e.retenu != null ? `seuil ${e.retenu}, ${signe(d.ecart_apprentissage_pct, 2, ' pt')} / ${signe(d.ecart_verification_pct, 2, ' pt')}${e.confirme ? ' (confirmé hors échantillon)' : ' (non confirmé)'}` : 'aucun seuil ne pénalise les excès'}`);
+    })),
+    titre('Poche « tendance »', `${poche.lignes ?? '?'} lignes au plus ; rendement, Sharpe, perte max : apprentissage / vérification`),
+    el('table', { class: 'chef-table' },
+      el('thead', {}, el('tr', {}, ['Règle', 'Rendement annuel', 'Sharpe', 'Perte max'].map((x) => el('th', {}, x)))),
+      el('tbody', {}, ret ? ligneP(`Retenue : ${ret.definition}, ${ret.variante}`, ret) : null,
+        ...Object.entries(poche.references ?? {}).map(([k, x]) => ligneP(k === 'indice' ? 'Indice mondial (ACWI)' : 'Univers équipondéré', x)))),
+  ];
+}
+
 function section(s) {
+  if (s.suivi_tendance) {
+    const p = s.suivi_tendance.periode ?? {};
+    return el('section', { class: 'bt-section' }, titre(s.titre, `${p.debut ?? '?'} → ${p.fin ?? '?'} · coupure au ${s.separation ?? '?'}`),
+      ...blocTendance(s.suivi_tendance));
+  }
   const p = s.periode ?? {};
   return el('section', { class: 'bt-section' },
     titre(s.titre, `${p.debut ?? '?'} → ${p.fin ?? '?'} · ${p.actifs ?? 0} actifs · horizon ${s.horizon_reference} mois · indice ${s.indice ?? 'n. d.'}`),

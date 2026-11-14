@@ -69,17 +69,15 @@ def conclusions_regles(chef: dict) -> list[str]:
     if g:
         out.append("- **Groupes concordants** (seuil actuel : 3 pour « forte », 2 pour « moyenne ») : " + " ; ".join(
             f"{k} {n(x.get('reussite_pct'), 0, unite=' %')} ({x.get('n', 0)})" for k, x in g.items() if x.get("n")) + ".")
-    ae = (rg.get("anti_euphorie") or {}).get("horizons", {}).get(h)
-    if ae:
-        e, ne = ae["extreme"], ae["tendance_positive_non_extreme"]
-        justifiee = e.get("relative_moyenne_pct") is not None and ne.get("relative_moyenne_pct") is not None and e["relative_moyenne_pct"] < ne["relative_moyenne_pct"]
-        out.append(f"- **Règle anti-euphorie** : momentum extrême {n(e.get('relative_moyenne_pct'), 2, True, ' pt')} ({e.get('n')} cas) contre "
-                   f"{n(ne.get('relative_moyenne_pct'), 2, True, ' pt')} pour les autres tendances positives ({ne.get('n')} cas) ; "
-                   f"valorisation tendue {n(ae['extreme_valorisation_tendue'].get('relative_moyenne_pct'), 2, True, ' pt')} "
-                   f"({ae['extreme_valorisation_tendue'].get('n')}), correcte {n(ae['extreme_valorisation_correcte'].get('relative_moyenne_pct'), 2, True, ' pt')} "
-                   f"({ae['extreme_valorisation_correcte'].get('n')}). "
-                   + ("Règle **justifiée** : après une hausse extrême, la suite est moins bonne." if justifiee else
-                      "Règle **non confirmée** : les hausses extrêmes n'ont pas moins bien fini que les autres (à alléger ou à revoir)."))
+    td = (rg.get("tendance") or {}).get("horizons", {}).get(h)
+    if td:
+        sa, ex, au = td["forte_saine"], td["forte_en_exces"], td["autres"]
+        ok = sa.get("relative_moyenne_pct") is not None and au.get("relative_moyenne_pct") is not None and sa["relative_moyenne_pct"] > au["relative_moyenne_pct"]
+        out.append(f"- **Suivi de tendance** : tendances fortes saines {n(sa.get('relative_moyenne_pct'), 2, True, ' pt')} ({sa.get('n')} cas), "
+                   f"tendances fortes en excès {n(ex.get('relative_moyenne_pct'), 2, True, ' pt')} ({ex.get('n')} cas), autres pays "
+                   f"{n(au.get('relative_moyenne_pct'), 2, True, ' pt')} ({au.get('n')} cas). "
+                   + ("Les tendances fortes saines **ont mieux fini** que les autres pays." if ok else
+                      "Les tendances fortes saines **n'ont pas mieux fini** que les autres pays sur cet horizon."))
     co = rg.get("concentration") or {}
     if co.get("lignes"):
         out.append(f"- **Concentration du trader** (cœur pays, plafond {co.get('plafond_ligne_pct')} % par ligne, règle actuelle : "
@@ -151,6 +149,11 @@ def rapport_markdown(res: dict, prop: dict) -> str:
                   "Familles reconstituées : fondamentaux, valorisation, tendance, cycle ; les familles sans historique (flux, risque, "
                   "géopolitique, dynamique des résultats) sont retirées et les poids renormalisés. Régime de marché (VIX) → palier "
                   "Calme ou Tension pour les multiplicateurs de poids.", ""] + _tableau(ch) + ["", "### Règles testées", ""] + conclusions_regles(ch) + [""]
+    st = res["sections"].get("tendance")
+    if st:
+        from .tendance import resume
+        L += [f"## {st['titre']}", "", "Seuils du suivi de tendance du chef d'orchestre et de la poche « tendance » du trader "
+              "(agents/backtest/tendance.py).", ""] + resume(st.get("suivi_tendance")) + [""]
     L += ["## Note actuelle contre note recalibrée", "",
           "Poids réglés sur la première moitié de l'historique seulement, jugés sur la seconde. Une proposition n'est retenue que si la "
           "note recalibrée fait mieux hors échantillon (IC et écart après frais).", "",

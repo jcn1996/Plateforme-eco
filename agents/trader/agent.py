@@ -39,7 +39,7 @@ VERSION_AGENT = "1.0"
 DOSSIER = Path(__file__).resolve().parent
 RACINE = DOSSIER.parents[1]
 WORKFLOW = "agent-trader.yml"
-LIBELLES_POCHES = {"coeur": "Cœur", "satellite": "Satellites", "liquidites": "Liquidités"}
+LIBELLES_POCHES = {"coeur": "Cœur", "satellite": "Satellites", "tendance": "Poche tendance", "liquidites": "Liquidités"}
 
 
 def charger_config() -> dict:
@@ -132,6 +132,7 @@ def decider(f, etat: dict, chef: dict, palier: str, valo: dict, operations: list
     # historique d'un an des candidats (corrélation, volatilité) et devises de cotation des nouvelles sociétés
     types = set(cc["types"]) | set(cs["types"]) | {"obligations"}
     cand = [l for l in lignes.values() if l["type"] in types and (l.get("verdict") in cs["verdicts"] or l["type"] == "obligations")]
+    cand += [lignes[x["id"]] for x in chef.get("tendances_fortes") or [] if x.get("saine") and x["id"] in lignes]  # poche « tendance »
     symboles = sorted({s["symbole"] for l in cand for s in S.supports_de(l, config)} | set(etat["positions"]))
     series, erreurs = {}, []
     try:
@@ -147,7 +148,7 @@ def decider(f, etat: dict, chef: dict, palier: str, valo: dict, operations: list
     c = S.cibles(chef, palier, etat, valo, series, entrees_ko, config, maintenant)
     ordres, notes, arbitrages = S.generer_ordres(c, etat, valo, operations, palier, config, maintenant)
     etat["ordres"].extend(ordres)
-    poches = {"coeur": 0.0, "satellite": 0.0}
+    poches = {"coeur": 0.0, "satellite": 0.0, "tendance": 0.0}
     classes = {}
     for e in c["lignes"].values():
         poches[e["poche"]] += e["cible"]
@@ -156,13 +157,15 @@ def decider(f, etat: dict, chef: dict, palier: str, valo: dict, operations: list
     classes["liquidites"] = c["liquidites"]
     n_coeur = sum(1 for e in c["lignes"].values() if e["poche"] == "coeur")
     sats = sorted([e for e in c["lignes"].values() if e["poche"] == "satellite"], key=lambda e: -e["cible"])
+    n_tend = sum(1 for e in c["lignes"].values() if e["poche"] == "tendance")
     achats = [o for o in ordres if o["sens"] == "achat"]
     ventes = [o for o in ordres if o["sens"] == "vente"]
     div = c["diversification"]
     attente = [a for a in arbitrages if a["action"] in ("conservée pour l'instant", "sortie reportée", "entrée reportée", "réduction reportée")]
     resume = (f"Décision du {date_fr(jour)} : palier « {palier} », liquidités minimales {fr(c['liquidites_min'], 0)} %. Cibles : {len(c['lignes'])} lignes "
-              f"({n_coeur} de cœur, {len(sats)} satellite(s)) sur {div['nombre_zones']} classes ou zones ; cœur {fr(poches['coeur'], 1)} %, "
-              f"satellites {fr(poches['satellite'], 1)} %, liquidités {fr(c['liquidites'], 1)} %. "
+              f"({n_coeur} de cœur, {len(sats)} satellite(s), {n_tend} en poche « tendance ») sur {div['nombre_zones']} classes ou zones ; "
+              f"cœur {fr(poches['coeur'], 1)} %, satellites {fr(poches['satellite'], 1)} %, poche « tendance » {fr(poches['tendance'], 1)} %, "
+              f"liquidités {fr(c['liquidites'], 1)} %. "
               f"{len(achats)} achat(s) et {len(ventes)} vente(s) à exécuter au premier cours disponible"
               + (f" ; {len(attente)} arbitrage(s) reporté(s) (détention minimale, sorties étalées, 15 lignes au plus)" if attente else "")
               + (f" ; {len(annules)} ordre(s) non exécuté(s) de la veille remplacé(s)." if annules else "."))
@@ -276,6 +279,9 @@ def sortie(etat: dict, valo: dict, stats: dict, operations: list, chef: dict | N
                    "Obligations : poids fixé par le verdict du chef d'orchestre (« Neutre » = poids neutre de "
                    f"{config['obligations']['poids_par_verdict']['Neutre']} %).",
                    f"Satellites : convictions fortes seulement, {config['ligne_min']} à {config['satellites']['max_ligne']} % par ligne, taille selon la volatilité.",
+                   f"Poche « tendance » ({fr(config['tendance']['part_satellites'] * config['satellites']['budget'], 0)} % des satellites) : tendances fortes et saines "
+                   f"du chef d'orchestre, {config['tendance']['max_lignes']} lignes au plus à parts égales ; stop suiveur −{config['tendance']['stop_suiveur_pct']} % "
+                   "du plus haut, sortie quand la force relative quitte le premier tiers ou que la tendance casse ; jamais de prise de bénéfices.",
                    "Jamais d'achat d'une opportunité « À surveiller » ou sous objection du contradicteur.",
                    "Liquidités minimales selon le palier de risque : " + ", ".join(f"{k} {v} %" for k, v in config["liquidites_min_par_palier"].items()) + ".",
                    f"Stop −{config['stops']['stop_pct']} % sur les satellites (suiveur dès +{config['stops']['suiveur_declenchement_pct']} %), "

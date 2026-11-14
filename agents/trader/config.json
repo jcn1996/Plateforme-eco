@@ -51,7 +51,7 @@
     "ordre_min_eur": 500
   },
   "satellites": {
-    "_commentaire": "Convictions fortes seulement (entreprises), signaux d'au moins 2 agents, taille ∝ conviction / volatilité, 4 à 8 % par ligne.",
+    "_commentaire": "Convictions fortes seulement (entreprises), signaux d'au moins 2 agents, taille ∝ conviction / volatilité, 4 à 8 % par ligne. Le budget est partagé avec la poche « tendance » (bloc tendance, part_satellites).",
     "convictions": {
       "forte": 2.0
     },
@@ -71,6 +71,16 @@
     "volatilite_jours": 63,
     "volatilite_plancher": 15,
     "volatilite_defaut": 35
+  },
+  "tendance": {
+    "_commentaire": "Poche « tendance » : une part des satellites (part_satellites × budget des satellites) investie sur les tendances fortes et saines du chef d'orchestre (rubrique « Tendances fortes » : premier tiers de force relative, tendance 12-1 positive et cours au-dessus de la moyenne 200 jours, sans excès), à parts égales, max_lignes lignes au plus. On laisse courir les gagnants : ni prise de bénéfices ni réduction tant que la tendance tient. Sorties : stop suiveur à −stop_suiveur_pct % du plus haut depuis l'achat (après `confirmations` relevé(s) sous le stop), ou force relative sortie du premier tiers (sortie_force_relative), ou tendance cassée (12-1 négatif ou cours sous la moyenne 200 jours), ou verdict « Alléger » / « Éviter ».",
+    "_backtest": "data/backtest/tendance-2026-11.md (ETF pays, secteurs et matières, 2010-2026). Variante retenue (meilleur Sharpe d'apprentissage parmi celles qui ne font pas moins bien hors échantillon que la sortie sur la force relative seule) : momentum 12-1, stop −15 % du plus haut, entrées filtrées des excès — rendement annuel +5,0 % / +8,3 % (apprentissage / vérification), Sharpe 0,24 / 0,41, perte maximale −24 % / −20 %, contre +1,6 % / +8,6 %, Sharpe −0,03 / 0,40 et −33 % / −24 % sans stop ni filtre. Stop sous la moyenne 200 jours : moins bon sur les deux périodes (Sharpe 0,03 / 0,25) ; −8 % et −12 % : trop de sorties (Sharpe 0,20 et 0,21 hors échantillon). Limite : sur 2010-2026, la poche fait moins bien que l'indice mondial ACWI (+9,5 % / +11,7 % par an) ; d'où une part limitée des satellites.",
+    "part_satellites": 0.33,
+    "max_lignes": 2,
+    "max_ligne": 6,
+    "stop_suiveur_pct": 15,
+    "confirmations": 1,
+    "sortie_force_relative": 66.7
   },
   "liquidites_min_par_palier": {
     "Calme": 5,

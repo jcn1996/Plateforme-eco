@@ -37,6 +37,7 @@ from . import moteur as M
 from . import suivi as S
 from . import synthese as Y
 from . import secteurs as SE
+from . import tendance as TD
 from . import univers as U
 from .sources import FournisseurReel, FournisseurTest
 
@@ -117,9 +118,9 @@ def decider(opps: list[dict], ctx: U.Contexte, objections: dict, entrees: dict, 
         M.appliquer_frein_risque(o, config)  # le risque est un frein, pas un moteur
         M.scorer(o, config, ctx.palier)
         objs = list(objections.get(o["id"], []))
-        mom = M.verifier_momentum(o, jour, config)
-        if mom:
-            objs.insert(0, mom)  # objection systématique sur une hausse passée extrême
+        exces = TD.verifier(o, jour, config)
+        if exces:
+            objs.insert(0, exces)  # tendance forte accompagnée d'un excès (valorisation, positionnement, accélération)
         agents = {x["agent"] for x in o["familles"].values()}
         frais = min([entrees[a].coef for a in agents if a in entrees] or [0])
         v_brut = M.verdict_de(o["score"], config)
@@ -242,6 +243,9 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
         obligs, liqs = U.opportunites_obligations(ctx)
         etat_travail = json.loads(json.dumps(etat))  # l'hystérésis n'est validée que pour les opportunités touchées
         premiers = pays + matieres + ([or_] if or_ else []) + obligs + liqs
+        series_t = TD.series_locales(ctx, data)
+        TD.preparer(pays, series_t, config, ctx)
+        TD.preparer(matieres + ([or_] if or_ else []), series_t, config, ctx)
         decider(premiers, ctx, objections, entrees, etat_travail, jour, config)
         attractifs = [o["cle"] for o in pays if M.DIRECTION.get(o["verdict"]) == 1]
         for o in pays:
@@ -251,6 +255,7 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
         fam_pays = {o["cle"]: o["familles"] for o in pays}
         selection = U.selection_entreprises(ctx, attractifs)
         entreprises = U.opportunites_entreprises(ctx, selection, fam_pays)
+        TD.preparer(entreprises, series_t, config, ctx)
         decider(entreprises, ctx, objections, entrees, etat_travail, jour, config)
         # Secteurs : 11 secteurs GICS, monde et grandes zones (cours et flux des ETF sectoriels)
         etf_secteurs = sorted({s for z in config["secteurs"]["etf"].values() for s in z.values()})
@@ -263,6 +268,7 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
             sources_secteurs["cours"] = {"etat": "échec", "detail": str(e)[:200]}
         flux_s, sources_secteurs["flux"] = SE.flux(f, data, config, maintenant.date())
         secteurs = SE.opportunites(ctx, series_s, flux_s, jour)
+        TD.preparer(secteurs, series_s, config, ctx)
         decider(secteurs, ctx, objections, entrees, etat_travail, jour, config)
         anciennes = {l["id"]: l for t in TYPES for l in (prec_donnees.get(t) or [])}
         if prec_donnees.get("or"):
@@ -380,7 +386,7 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
         "pays": lignes_par["pays"], "matieres": lignes_par["matieres"], "or": (lignes_par["or"] or [None])[0],
         "obligations": lignes_par["obligations"], "liquidites": lignes_par["liquidites"], "entreprises": lignes_par["entreprises"],
         "secteurs": lignes_par["secteurs"], "zones_secteurs": {z: c["libelle"] for z, c in config["secteurs"]["zones"].items()},
-        "panorama": pano, "exclues": [{"ticker": k, "nom": v} for k, v in sorted(ctx.exclues.items())],
+        "panorama": pano, "tendances_fortes": TD.tendances_fortes(lignes, config), "exclues": [{"ticker": k, "nom": v} for k, v in sorted(ctx.exclues.items())],
         "alertes_ecartees": ecartees[:30],
         "concentrations": conc, "changements": chg if recalcul else prec_donnees.get("changements", []), "vigilance": vig, "allocation": alloc,
         "entrees": [x.resume() for x in entrees.values()],

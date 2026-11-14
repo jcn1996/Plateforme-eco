@@ -91,6 +91,9 @@ def chef(jour: str, modifs: dict | None = None) -> dict:
         if type_ == "entrees":
             d["entrees"] = [e for e in d["entrees"] if e["cle"] != champs["retirer"]]
             continue
+        if type_ == "tendances_fortes":
+            d["tendances_fortes"] = champs
+            continue
         if type_ == "vider":
             d[id_] = []
             continue
@@ -99,6 +102,17 @@ def chef(jour: str, modifs: dict | None = None) -> dict:
             if l["id"] == id_:
                 l.update(champs)
     return d
+
+
+def tendance(id_: str, nom: str, force: float, saine: bool = True, exces=None) -> dict:
+    """Entrée de la rubrique « Tendances fortes » du chef d'orchestre."""
+    return {"id": id_, "nom": nom, "categorie": "pays", "force_relative": force, "perf_12_1": 25.0, "saine": saine, "exces": exces or [],
+            "verdict": "Neutre", "mm200": 1.0, "niveau_invalidation": 1.0}
+
+
+def suivi(force: float, positive: bool = True) -> dict:
+    return {"suivi_tendance": {"force_relative": force, "positive": positive, "perf_12_1": 25.0 if positive else -3.0, "au_dessus_mm200": positive,
+                               "forte": positive and force >= 66.7, "texte": f"force relative {force:.0f}e percentile (test)"}}
 
 
 def journal_sain(agent: str, maintenant: datetime, degrade: bool = False) -> dict:

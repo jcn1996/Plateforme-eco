@@ -14,7 +14,7 @@ import { el, nombre, classeNote } from './outils.js';
 const FICHIER = 'data/chef.json';
 const MENTION = 'Avis indicatif généré automatiquement, sans prise en compte d’un profil ou d’une situation personnelle.';
 export const ONGLETS_INVESTIR = {
-  panorama: 'Panorama', pays: 'Pays', secteurs: 'Secteurs', matieres: 'Matières premières', obligations: 'Obligations et liquidités', entreprises: 'Entreprises', allocation: 'Allocation',
+  panorama: 'Panorama', tendances: 'Tendances fortes', pays: 'Pays', secteurs: 'Secteurs', matieres: 'Matières premières', obligations: 'Obligations et liquidités', entreprises: 'Entreprises', allocation: 'Allocation',
 };
 const TYPES = { pays: 'Actions · pays', secteurs: 'Secteur', matieres: 'Matière première', or: 'Or · valeur refuge', obligations: 'Obligations', liquidites: 'Liquidités', entreprises: 'Entreprise' };
 const AGENTS = {
@@ -254,6 +254,10 @@ function ligneOpportunite(l, nav) {
     el('div', { class: 'chef-petit' }, `Dernier changement de verdict : ${dateFr(l.derniere_modification)}`)));
 }
 
+function signeFr(x, d = 1) {
+  return x == null ? 'n. d.' : `${x > 0 ? '+' : x < 0 ? '−' : ''}${nombre(Math.abs(x), d)}`;
+}
+
 function liste(lignes, nav) {
   return lignes?.length ? el('ul', { class: 'chef-liste' }, lignes.map((l) => ligneOpportunite(l, nav))) : el('p', { class: 'sante-ligne' }, 'Aucune donnée.');
 }
@@ -279,6 +283,7 @@ export function ecranInvestir(chef, nav, id) {
   const onglet = ONGLETS_INVESTIR[id] ? id : 'panorama';
   let corps;
   if (onglet === 'panorama') corps = ongletPanorama(chef, nav);
+  else if (onglet === 'tendances') corps = ongletTendances(chef, nav);
   else if (onglet === 'pays') corps = [titre('Actions par pays', `${chef.pays?.length ?? 0} pays suivis`), liste(chef.pays, nav)];
   else if (onglet === 'matieres') {
     corps = [titre('Or', 'valeur refuge, traité à part'), liste(chef.or ? [chef.or] : [], nav),
@@ -316,7 +321,7 @@ function blocEntrees(chef) {
 function lignePanorama(x, nav, raison) {
   return el('li', {}, el('button', { class: `chef-ligne chef-ligne--compacte ${classeVerdict(x.verdict)}`, type: 'button', onclick: () => nav.ouvrir({ type: 'investir', id: `o-${x.id}` }) },
     el('div', { class: 'chef-ligne-tete' }, el('strong', { class: 'chef-ligne-nom' }, x.nom), badgeScore(x.score), fleche(x.fleche), pastilleVerdict(x.verdict), pastilleConviction(x.conviction)),
-    !raison && x.a_surveiller ? el('div', { class: 'chef-petit chef-attente' }, 'À surveiller : objection à lever ou hausse passée extrême (voir la fiche).') : null,
+    !raison && x.a_surveiller ? el('div', { class: 'chef-petit chef-attente' }, 'À surveiller : objection à lever ou tendance en excès (voir la fiche).') : null,
     raison ? el('div', { class: 'chef-petit chef-attente' }, raison) : null,
     !raison && x.argument ? el('div', { class: 'chef-petit' }, `+ ${resume(x.argument, 140)}`) : null,
     !raison && x.contre ? el('div', { class: 'chef-petit' }, `− ${resume(x.contre, 140)}`) : null));
@@ -338,6 +343,51 @@ function ongletPanorama(chef, nav) {
     p.a_surveiller?.length ? el('ul', { class: 'chef-liste' }, p.a_surveiller.map((x) => lignePanorama(x, nav, x.raison))) : el('p', { class: 'chef-petit' }, 'Rien de proche du seuil.'),
     chef.exclues?.length ? el('p', { class: 'chef-petit' }, `Écartées (holdings, sociétés d’investissement, fonds, BDC, SPAC : la décote sur l’actif net n’est pas mesurable avec des sources gratuites) : ${chef.exclues.map((x) => x.nom).join(', ')}.`) : null,
   ];
+}
+
+/* ------------------------------------------------------------------ tendances fortes */
+
+const CATEGORIES_TENDANCE = { pays: 'Pays', secteurs: 'Secteurs', matieres: 'Matières premières et or', entreprises: 'Entreprises' };
+
+/** Tendances fortes regroupées par catégorie : saines d'abord (force relative décroissante), puis en excès. */
+export function groupesTendances(tf = []) {
+  const g = {};
+  for (const x of tf) (g[x.categorie] ??= []).push(x);
+  for (const l of Object.values(g)) l.sort((a, b) => (a.saine === b.saine ? (b.force_relative ?? 0) - (a.force_relative ?? 0) : a.saine ? -1 : 1));
+  return Object.keys(CATEGORIES_TENDANCE).filter((k) => g[k]?.length).map((k) => [k, g[k]]);
+}
+
+function ligneTendance(x, nav) {
+  return el('li', {}, el('button', { class: `chef-ligne chef-ligne--compacte ${x.saine ? 'chef-tendance--saine' : 'chef-tendance--exces'}`, type: 'button', onclick: () => nav.ouvrir({ type: 'investir', id: `o-${x.id}` }) },
+    el('div', { class: 'chef-ligne-tete' }, el('strong', { class: 'chef-ligne-nom' }, x.nom), x.symbole ? el('small', { class: 'mono' }, ` ${x.symbole}`) : null, pastilleVerdict(x.verdict)),
+    el('div', { class: 'chef-petit' }, `12 mois hors dernier mois ${signeFr(x.perf_12_1, 1)} % · force relative ${nombre(x.force_relative, 0)}e percentile${x.rang ? ` (${x.rang}e sur ${x.sur})` : ''}${x.perf_1m != null ? ` · 1 mois ${signeFr(x.perf_1m, 1)} %` : ''}`),
+    el('div', { class: 'chef-petit' }, x.niveau_invalidation != null
+      ? `Tendance invalidée sous ${nombre(x.niveau_invalidation, 2)} (moyenne 200 jours), soit ${signeFr(-(x.distance_invalidation_pct ?? 0), 1)} % · cours ${nombre(x.cours, 2)} le ${dateFr(x.date)}${x.stop_suiveur != null ? ` · stop suiveur du trader ${nombre(x.stop_suiveur, 2)}` : ''}`
+      : 'Niveau d’invalidation non calculable.'),
+    x.exces?.length ? el('div', { class: 'chef-petit chef-attente' }, `En excès : ${x.exces.map((e) => e.split(' : ')[0]).join(' ; ')}`) : null));
+}
+
+function ongletTendances(chef, nav) {
+  const groupes = groupesTendances(chef.tendances_fortes);
+  return [
+    titre('Tendances fortes', 'premier tiers de force relative dans la catégorie, tendance intacte'),
+    el('p', { class: 'chef-petit' }, 'Tendance intacte : performance sur 12 mois hors dernier mois positive et cours au-dessus de sa moyenne mobile 200 jours. '
+      + 'Une forte hausse est un signal positif, sauf si elle s’accompagne d’un excès (valorisation tendue, positionnement encombré, accélération parabolique) : la ligne passe alors dans « À surveiller ». '
+      + 'Seuils fixés par le backtest (data/backtest/tendance-2026-11.md).'),
+    ...(groupes.length ? groupes.flatMap(([k, xs]) => [titre(CATEGORIES_TENDANCE[k], `${xs.length} ligne${xs.length > 1 ? 's' : ''}`),
+      el('ul', { class: 'chef-liste' }, xs.map((x) => ligneTendance(x, nav)))]) : [el('p', { class: 'sante-ligne' }, 'Aucune tendance forte pour l’instant (ou analyse complète pas encore faite avec le suivi de tendance).')]),
+  ];
+}
+
+function blocSuiviTendance(st) {
+  const inv = st.invalidation ?? {};
+  return el('section', {}, titre('Suivi de tendance', st.forte ? (st.exces?.length ? 'tendance forte, mais en excès' : 'tendance forte et saine') : st.positive ? 'tendance positive' : 'pas de tendance positive'),
+    el('ul', { class: 'chef-texte' },
+      el('li', {}, `Performance sur 12 mois hors dernier mois : ${signeFr(st.perf_12_1, 1)} %${st.perf_1m != null ? ` ; sur 1 mois : ${signeFr(st.perf_1m, 1)} %` : ''}${st.vol_mensuelle != null ? ` (volatilité mensuelle habituelle ${nombre(st.vol_mensuelle, 1)} %)` : ''}`),
+      el('li', {}, `Cours ${nombre(st.cours, 2)} le ${dateFr(st.date)}, ${st.au_dessus_mm200 ? 'au-dessus' : 'en dessous'} de la moyenne 200 jours (${nombre(st.mm200, 2)}${inv.ecart_mm200_pct != null ? `, écart ${signeFr(inv.ecart_mm200_pct, 1)} %` : ''})`),
+      st.force_relative != null ? el('li', {}, `Force relative : ${nombre(st.force_relative, 0)}e percentile (${st.rang}e sur ${st.sur})`) : null,
+      st.forte ? el('li', {}, `Tendance invalidée sous ${nombre(inv.mm200, 2)} (moyenne 200 jours) ; stop suiveur à ${nombre(inv.stop_suiveur, 2)} (−15 % du plus haut sur 12 mois)`) : null,
+      ...(st.exces ?? []).map((x) => el('li', { class: 'chef-objection--serieuse' }, `Excès : ${x}`))));
 }
 
 /* ------------------------------------------------------------------ fiche détaillée */
@@ -363,8 +413,7 @@ function ficheOpportunite(l, chef, nav) {
     l.changement ? el('p', { class: 'chef-changement' }, l.changement.explication) : null,
     l.en_attente ? el('p', { class: 'chef-changement chef-attente' }, l.en_attente.texte) : null,
     l.plafond ? el('p', { class: 'chef-changement' }, l.plafond) : null,
-    l.verification_momentum ? el('section', {}, titre('Vérification du momentum', l.verification_momentum.ok ? 'valorisation et positionnement vérifiés' : 'points à lever'),
-      el('ul', { class: 'chef-texte' }, l.verification_momentum.points.map((x) => el('li', {}, x)))) : null,
+    l.suivi_tendance ? blocSuiviTendance(l.suivi_tendance) : null,
     el('section', {}, titre('Conviction', l.conviction), el('ul', { class: 'chef-texte' }, (l.conviction_raisons ?? []).map((r) => el('li', {}, r)))),
     el('section', {}, titre('Familles de signaux', 'score /100 · poids effectif dans le score'),
       el('ul', { class: 'chef-familles' }, familles.map(([cle, f]) => el('li', {},

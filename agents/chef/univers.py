@@ -238,6 +238,8 @@ def opportunites_matieres(ctx: Contexte) -> tuple[list[dict], dict | None]:
         fl = [x for x in (sn_("flux"), sn_("positionnement")) if x]
         if fl:
             ajouter(o, "flux", famille(mean(x["note"] for x in fl), " ; ".join(x["texte"] for x in fl), "agent matières premières (flux des ETF, CFTC)", "matieres_premieres", c))
+            if (sn_("positionnement") or {}).get("percentile") is not None:
+                o["familles"]["flux"]["percentile_cftc"] = sn_("positionnement")["percentile"]
         if sn_("geopolitique"):
             ajouter(o, "geopolitique", famille(sn_("geopolitique")["note"], sn_("geopolitique")["texte"], "agent matières premières (événements de l'agent géopolitique)", "matieres_premieres", c))
         cyc = famille_cycle(ctx, o["classe_cycle"], "monde", "Monde")

@@ -87,7 +87,7 @@ def appliquer_frein_risque(o: dict, config: dict) -> None:
 def familles_motrices(o: dict, config: dict) -> list[str]:
     seuil = config["conviction"]["seuil_concordance_haut"]
     return [f for f in config["risque_frein"]["moteurs"] if (o["familles"].get(f) or {}).get("note", 0) >= seuil
-            and not (f == "tendance" and o.get("momentum_extreme"))]
+            and not (f == "tendance" and o.get("tendance_excessive"))]
 
 
 def exiger_moteur(o: dict, v: str, config: dict) -> tuple[str, str | None]:
@@ -99,51 +99,11 @@ def exiger_moteur(o: dict, v: str, config: dict) -> tuple[str, str | None]:
                       "(un risque faible ne suffit pas à recommander)")
 
 
-def verifier_momentum(o: dict, jour: str, config: dict) -> dict | None:
-    """Hausse passée au-delà du 90e percentile : vérification de la valorisation et du positionnement, et objection
-    systématique (règle du contradicteur appliquée par le chef d'orchestre)."""
-    cm = config["momentum"]
-    t = o["familles"].get("tendance")
-    p = (t or {}).get("percentile_classe")
-    h = (t or {}).get("hausse_12m")
-    par_percentile = p is not None and p >= cm["percentile_extreme"]
-    par_hausse = h is not None and h >= cm["hausse_12m_extreme_pct"]
-    if not (par_percentile or par_hausse):
-        return None
-    o["momentum_extreme"] = True
-    val = o["familles"].get("valorisation")
-    pos = o["familles"].get("flux")
-    motif = (f"au-delà du {cm['percentile_extreme']}e percentile de sa classe (percentile {ent(p)})" if par_percentile
-             else f"de {fr(h, 1, True)} % sur 12 mois (seuil : +{cm['hausse_12m_extreme_pct']} %)")
-    points = [f"hausse passée {motif} : {t['texte']}"]
-    ok = True
-    if val is None:
-        points.append("valorisation non vérifiable (donnée manquante)")
-        ok = False
-    elif val["note"] < cm["valorisation_min"]:
-        points.append(f"valorisation tendue ({ent(val['note'])}/100) : {val['texte']}")
-        ok = False
-    else:
-        points.append(f"valorisation vérifiée ({ent(val['note'])}/100)")
-    if pos is not None and pos["note"] < cm["positionnement_min"]:
-        points.append(f"positionnement encombré ou flux sortants ({ent(pos['note'])}/100) : {pos['texte']}")
-        ok = False
-    elif pos is not None:
-        points.append(f"positionnement vérifié ({ent(pos['note'])}/100)")
-    geo = o["familles"].get("geopolitique")
-    if geo and (geo.get("note_avant_frein") or geo["note"]) >= 60 and o["type"] in ("matieres", "or"):
-        points.append("hausse liée en partie au contexte géopolitique, réversible en cas de détente")
-    o["verification_momentum"] = {"ok": ok, "points": points}
-    return {"objection": "Momentum extrême : " + " ; ".join(points) + ". Une forte hausse passée ne suffit pas à porter une conviction forte.",
-            "ajustement": "abaisser", "signal": "Règle de momentum (contradicteur, appliquée par le chef d'orchestre)", "date": jour,
-            "methode": "règle de momentum", "serieuse": True, "verification_ok": ok}
-
-
 def groupes_concordants(o: dict, direction: int, config: dict) -> list[str]:
     cc = config["conviction"]
     groupes = []
     for f, x in o["familles"].items():
-        if f == "tendance" and o.get("momentum_extreme") and direction > 0:
+        if f == "tendance" and o.get("tendance_excessive") and direction > 0:
             continue  # une forte hausse passée ne porte pas seule la conviction
         n = x["note"]
         ok = (direction > 0 and n >= cc["seuil_concordance_haut"]) or (direction < 0 and n <= cc["seuil_concordance_bas"]) \
@@ -218,7 +178,7 @@ def controle_coherence(l: dict, config: dict) -> str | None:
     fams = l.get("familles") or {}
     if d > 0:
         ok = [f for f, x in fams.items() if x["note"] >= cc["seuil_concordance_haut"] and f not in config["risque_frein"]["familles"]
-              and not (f == "tendance" and l.get("momentum_extreme"))]
+              and not (f == "tendance" and l.get("tendance_excessive"))]
     else:
         ok = [f for f, x in fams.items() if x["note"] <= cc["seuil_concordance_bas"]]
     solides = familles_solides(fams, d, config)
@@ -422,7 +382,7 @@ def ligne_publique(o: dict, objections: list[dict], config: dict) -> dict:
     garde = ("id", "type", "cle", "nom", "pays", "zone", "secteur", "secteur_nom", "symbole", "cours", "date_cours", "devise", "themes",
              "score", "score_brut", "qualite", "verdict", "verdict_brut", "plafond", "conviction", "fleche", "score_precedent", "depuis", "changement",
              "en_attente", "familles_manquantes", "poids_effectifs", "provenances", "societes", "note_agent", "verdict_agent", "recommandation_agent",
-             "rendement_reel", "famille_mp", "momentum_extreme", "verification_momentum", "industrie",
+             "rendement_reel", "famille_mp", "tendance_excessive", "tendance_forte", "suivi_tendance", "industrie",
              "zone_secteur", "zone_libelle", "nb_societes", "etf_approche")
     ligne = {k: o[k] for k in garde if k in o and o[k] is not None}
     ligne["familles"] = {f: {"libelle": config["familles"][f]["libelle"], **{k: v for k, v in x.items() if k != "percentile"}} for f, x in o["familles"].items()}

@@ -203,6 +203,9 @@ def _acheter(etat: dict, o: dict, b: dict, taux: dict, config: dict) -> dict | N
     p["dernier_cours_local"], p["dernier_cours_le"] = b["prix"], b["le"]
     p["dernier_cours_eur"] = en_euros(b["prix"], o["devise"], taux)
     p["dernier_achat_le"] = b["le"]
+    if p["poche"] == "tendance":  # stop suiveur sous le plus haut depuis l'achat (poche « tendance »)
+        p["plus_haut_local"] = max(p.get("plus_haut_local") or 0, prix_local)
+        p["stop_local"], p["stop_type"] = p["plus_haut_local"] * (1 - config["tendance"]["stop_suiveur_pct"] / 100), "suiveur"
     if p["poche"] == "satellite":
         initial = p["prix_revient_local"] * (1 - sp["stop_pct"] / 100)
         if p["stop_type"] != "suiveur" or (p["stop_local"] or 0) < initial:

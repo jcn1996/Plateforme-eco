@@ -2,7 +2,7 @@
 Backtest des règles de notation (méthode : agents/backtest/methode.md).
 
     python -m agents.backtest                         # tous les lots puis le rapport (vraies sources)
-    python -m agents.backtest --lot pays              # un lot (pays, entreprises, matieres, secteurs)
+    python -m agents.backtest --lot pays              # un lot (pays, entreprises, matieres, secteurs, tendance)
     python -m agents.backtest --lot sec --tranche 0/4 # téléchargement SEC d'une tranche (workflow, en parallèle)
     python -m agents.backtest --lot rapport           # assemble les lots déjà calculés
     python -m agents.backtest --test --sortie /tmp/bt # données synthétiques, sans réseau
@@ -33,11 +33,12 @@ from . import recalibrage as RC
 from . import regles as R
 from . import secteurs as SC
 from . import stats as S
+from . import tendance as T
 
 LOG = journal("backtest")
 DOSSIER = Path(__file__).resolve().parent
 RACINE = DOSSIER.parents[1]
-LOTS = ("pays", "entreprises", "matieres", "secteurs")
+LOTS = ("pays", "entreprises", "matieres", "secteurs", "tendance")
 
 LIBELLES = {
     # pays
@@ -63,7 +64,7 @@ LIBELLES = {
     "niveau": "Niveau historique", "cycle": "Phase du cycle (rotation)",
 }
 TITRES = {"pays": "Pays", "entreprises": "Entreprises américaines", "matieres": "Matières premières", "secteurs": "Secteurs (États-Unis)",
-          "chef": "Chef d'orchestre (pays)"}
+          "chef": "Chef d'orchestre (pays)", "tendance": "Suivi de tendance (ETF pays, secteurs, matières)"}
 
 
 def lire_configs(racine: Path) -> dict:
@@ -167,7 +168,7 @@ def lot_pays(f, c: dict, racine: Path, test: bool, regimes) -> dict:
     horizons = cfg["horizons_mois"]
     regles = {
         "verdicts": R.tester_verdicts(chef, lot["prix"], lot["indice"], horizons, c["chef"], sep),
-        "anti_euphorie": R.tester_anti_euphorie(chef, lot["prix"], lot["indice"], horizons, c["chef"]),
+        "tendance": R.tester_tendance(chef, lot["prix"], lot["indice"], horizons, c["chef"]),
         "concentration": R.tester_concentration(chef, lot["prix"], lot["indice"], c["trader"], cfg["regles"]["concentration_lignes"],
                                                 cfg["frais"]["pays"], sep),
         "horizon_reference": cfg["horizon_reference"]["chef"],
@@ -273,6 +274,14 @@ def lot_secteurs(f, c: dict, racine: Path, test: bool, regimes) -> dict:
             "_propositions": []}
 
 
+def lot_tendance(f, c: dict, racine: Path, test: bool, regimes) -> dict:
+    cfg = c["bt"]
+    pays_cfg = f.pays_test() if test else c["pays"]["pays"]
+    r = T.construire(f, cfg, pays_cfg, c["mp"], cfg["periode"]["debut"])
+    return {"tendance": {"titre": TITRES["tendance"], "periode": r["periode"], "separation": r["separation"], "signaux": {},
+                         "suivi_tendance": r}, "_propositions": []}
+
+
 def _iso(t):
     return t.strftime("%Y-%m-%d") if t is not None else None
 
@@ -281,7 +290,7 @@ def _iso(t):
 
 def assembler(lots: dict[str, dict], c: dict, sources: dict, jour: str, test: bool) -> tuple[dict, dict]:
     sections, propositions = {}, []
-    for nom in ("pays", "chef", "entreprises", "matieres", "secteurs"):
+    for nom in ("pays", "chef", "entreprises", "matieres", "secteurs", "tendance"):
         for l in lots.values():
             if l and nom in l:
                 sections[nom] = l[nom]
@@ -343,7 +352,7 @@ def main(argv=None) -> int:
     if a.lot != "rapport":
         vix = f.fred(c["bt"]["regimes"]["serie"])
         regimes = S.regimes_depuis_vix(vix, c["bt"]["regimes"]["seuil_tension"]) if len(vix) else None
-    fonctions = {"pays": lot_pays, "entreprises": lot_entreprises, "matieres": lot_matieres, "secteurs": lot_secteurs}
+    fonctions = {"pays": lot_pays, "entreprises": lot_entreprises, "matieres": lot_matieres, "secteurs": lot_secteurs, "tendance": lot_tendance}
     a_faire = LOTS if a.lot == "tout" else ((a.lot,) if a.lot in LOTS else ())
     for nom in a_faire:
         LOG.info("Lot %s…", nom)

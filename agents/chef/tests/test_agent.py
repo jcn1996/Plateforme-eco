@@ -12,6 +12,7 @@ from pathlib import Path
 
 from agents.chef import allocation as A
 from agents.chef import moteur as M
+from agents.chef import tendance as TD
 from agents.chef import suivi as S
 from agents.chef import synthese as Y
 from agents.chef.agent import charger_config, executer
@@ -74,6 +75,14 @@ class TestExecutionComplete(BaseChef):
         self.assertEqual(len(d["liquidites"]), 2)
         self.assertTrue(d["entreprises"])
         self.assertEqual(d["mention"], "Avis indicatif généré automatiquement, sans prise en compte d'un profil ou d'une situation personnelle.")
+        # Suivi de tendance : mesuré pour les pays (ETF), matières, entreprises et secteurs ; rubrique « Tendances fortes »
+        suivis = {l["type"] for l in r["lignes"] if l.get("suivi_tendance")}
+        self.assertTrue({"pays", "matieres", "entreprises", "secteurs"} <= suivis, suivis)
+        self.assertTrue(d["tendances_fortes"])
+        for x in d["tendances_fortes"]:
+            self.assertGreaterEqual(x["force_relative"], self.config["suivi_tendance"]["premier_tiers"])
+            self.assertGreater(x["perf_12_1"], 0)
+            self.assertGreater(x["cours"], x["mm200"])
         for l in r["lignes"]:
             self.assertIn(l["verdict"], VERDICTS)
             self.assertIn(l["conviction"], ("faible", "moyenne", "forte"))
@@ -526,11 +535,11 @@ class TestCorrectionsQualite(BaseChef):
         for l in r["lignes"]:
             if l["conviction"] == "forte" and M.DIRECTION[l["verdict"]] == 1:
                 pos = [f for f, x in l["familles"].items() if x["note"] >= 60 and f not in ("risque", "geopolitique")
-                       and not (f == "tendance" and l.get("momentum_extreme"))]
+                       and not (f == "tendance" and l.get("tendance_excessive"))]
                 self.assertGreaterEqual(len(pos), 3, l["nom"])
-            if l.get("momentum_extreme") and M.DIRECTION[l["verdict"]] == 1:
+            if l.get("tendance_excessive") and M.DIRECTION[l["verdict"]] == 1:
                 self.assertNotEqual(l["conviction"], "forte", l["nom"])
-                self.assertTrue(any("Momentum extrême" in o["objection"] for o in l["objections"]), l["nom"])
+                self.assertTrue(any("Tendance forte mais en excès" in o["objection"] for o in l["objections"]), l["nom"])
 
     def test_pays_jamais_recommande_par_le_seul_risque(self):
         r = self.lancer()
@@ -565,7 +574,7 @@ class TestCorrectionsQualite(BaseChef):
         for x in p["top"]:
             l = lignes[x["id"]]
             self.assertFalse((l.get("objection") or {}).get("serieuse"), x["nom"])
-            self.assertFalse(l.get("momentum_extreme"), x["nom"])
+            self.assertFalse(l.get("tendance_excessive"), x["nom"])
         self.assertLessEqual(max(Counter(x["type"] for x in p["a_surveiller"]).values() or [0]), cp["a_surveiller_par_type"])
         # le briefing résume par catégorie
         textes = [x["texte"] for x in r["briefing"]["essentiel"]]
@@ -612,22 +621,72 @@ class TestMoteurRegles(unittest.TestCase):
         M.appliquer_frein_risque(ob, self.config)
         self.assertEqual(ob["familles"]["risque"]["note"], 75)
 
-    def test_momentum_extreme(self):
-        o = self.opp({"tendance": 90, "valorisation": 30, "flux": 35, "fondamentaux": 65, "cycle": 62}, "matieres")
-        o["familles"]["tendance"].update({"percentile_classe": 95, "hausse_12m": 55})
-        obj = M.verifier_momentum(o, "2026-11-07", self.config)
-        self.assertTrue(o["momentum_extreme"])
-        self.assertFalse(o["verification_momentum"]["ok"])
+    @staticmethod
+    def serie(debut: float, fin: float, dernier_mois: float = 0.0, n: int = 300) -> list:
+        """Série quotidienne régulière de `debut` à `fin`, puis `dernier_mois` % sur les 21 dernières séances."""
+        from datetime import date as d_, timedelta as td_
+        j0 = d_(2025, 9, 1)
+        pts = []
+        for i in range(n):
+            x = debut + (fin - debut) * min(i, n - 22) / (n - 22)
+            if i >= n - 22:
+                x = fin * (1 + dernier_mois / 100 * (i - (n - 22)) / 21)
+            pts.append([(j0 + td_(days=round(i * 365 * 1.2 / n))).isoformat(), round(x, 4)])
+        return pts
+
+    def test_mesures_tendance(self):
+        m = TD.mesures(self.serie(100, 150), self.config)
+        self.assertGreater(m["perf_12_1"], 30)
+        self.assertTrue(m["au_dessus_mm200"])
+        self.assertLess(m["acceleration"] or 0, 1)
+        baisse = TD.mesures(self.serie(150, 100), self.config)
+        self.assertLess(baisse["perf_12_1"], 0)
+        self.assertFalse(baisse["au_dessus_mm200"])
+        self.assertIsNone(TD.mesures(self.serie(100, 150)[-100:], self.config))  # moins de 12 mois d'historique
+
+    def test_tendance_forte_saine_ou_en_exces(self):
+        cfg = self.config
+        opps = []
+        for i, (deb, fin) in enumerate([(100, 180), (100, 140), (100, 120), (100, 105), (100, 95), (100, 90)]):
+            o = self.opp({"tendance": 55, "valorisation": 60, "fondamentaux": 62, "cycle": 60}, "matieres")
+            o.update({"id": f"m{i}", "nom": f"M{i}", "symbole": f"S{i}"})
+            opps.append(o)
+        series = {f"S{i}": self.serie(d, f) for i, (d, f) in enumerate([(100, 180), (100, 140), (100, 120), (100, 105), (100, 95), (100, 90)])}
+        TD.preparer(opps, series, cfg)
+        forte, moyenne, faible = opps[0], opps[2], opps[5]
+        self.assertTrue(forte["suivi_tendance"]["forte"])
+        self.assertTrue(forte["tendance_forte"])
+        self.assertFalse(forte["tendance_excessive"])
+        self.assertEqual(forte["familles"]["tendance"]["note"], cfg["suivi_tendance"]["note_plancher_forte"])  # signal positif
+        self.assertIsNone(TD.verifier(forte, "2026-11-07", cfg))
+        self.assertFalse(moyenne["suivi_tendance"]["forte"])
+        self.assertFalse(faible["suivi_tendance"]["positive"])
+        # Même hausse, mais valorisation tendue (au-delà du 70e percentile) : excès → objection sérieuse
+        o = opps[1]
+        o["familles"]["valorisation"]["note_absolue"] = 20
+        TD.evaluer(o, cfg)
+        self.assertTrue(o["tendance_excessive"])
+        obj = TD.verifier(o, "2026-11-07", cfg)
         self.assertTrue(obj["serieuse"])
         self.assertIn("valorisation tendue", obj["objection"])
-        M.scorer(o, self.config, "Vigilance")
-        groupes = M.groupes_concordants(o, 1, self.config)
-        self.assertNotIn("marche", groupes)
-        self.assertNotEqual(M.conviction(o, "Renforcer", [obj], 1.0, self.config)["niveau"], "forte")
-        # hausse de +45 % sur 12 mois dans une petite classe : extrême même sous le 90e percentile
-        o2 = self.opp({"tendance": 80, "valorisation": 60}, "matieres")
-        o2["familles"]["tendance"].update({"percentile_classe": 85, "hausse_12m": 45})
-        self.assertIsNotNone(M.verifier_momentum(o2, "2026-11-07", self.config))
+        M.scorer(o, cfg, "Vigilance")
+        self.assertNotIn("marche", M.groupes_concordants(o, 1, cfg))
+        self.assertNotEqual(M.conviction(o, "Renforcer", [obj], 1.0, cfg)["niveau"], "forte")
+        # Positionnement encombré (CFTC au 90e percentile) et accélération parabolique
+        o = opps[0]
+        o["familles"]["flux"] = {"note": 40, "coef": 1.0, "texte": "CFTC", "source": "s", "agent": "mp", "percentile_cftc": 95}
+        TD.evaluer(o, cfg)
+        self.assertTrue(any("positionnement encombré" in x for x in o["suivi_tendance"]["exces"]))
+        o["familles"].pop("flux")
+        o["suivi_tendance"].update({"perf_1m": 25.0, "vol_mensuelle": 5.0, "acceleration": 5.0})
+        TD.evaluer(o, cfg)
+        self.assertTrue(any("parabolique" in x for x in o["suivi_tendance"]["exces"]))
+        # Rubrique « Tendances fortes » : niveau d'invalidation = moyenne 200 jours
+        tf = TD.tendances_fortes([dict(x, verdict="Neutre", score=60) for x in opps], cfg)
+        self.assertEqual({x["id"] for x in tf}, {x["id"] for x in opps if x["suivi_tendance"]["forte"]})
+        for x in tf:
+            self.assertEqual(x["niveau_invalidation"], x["mm200"])
+            self.assertGreater(x["distance_invalidation_pct"], 0)
 
     def test_controle_coherence(self):
         l = {"verdict": "Renforcer", "conviction": "forte", "familles": {"fondamentaux": {"note": 70}, "valorisation": {"note": 65},
