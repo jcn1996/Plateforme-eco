@@ -37,6 +37,7 @@ export const SECTIONS_MENU = [
     { libelle: 'Portefeuille démo', detail: 'agent trader, 100 000 € virtuels', route: { type: 'portefeuille' } },
     { libelle: 'Fiabilité du chef d’orchestre', detail: 'performance des verdicts', route: { type: 'fiabilite-chef' } },
     { libelle: 'Fiabilité des recommandations', detail: 'analyses à la demande', route: { type: 'fiabilite' } },
+    { libelle: 'Backtest', detail: 'quels signaux sont vraiment prédictifs', route: { type: 'backtest' } },
     { libelle: 'Santé des agents', detail: 'exécutions et sources', route: { type: 'sante' }, sante: true },
   ] },
   { titre: 'Affichage', entrees: [

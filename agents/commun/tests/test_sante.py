@@ -23,6 +23,17 @@ class TestPlanification(unittest.TestCase):
                          datetime(2026, 11, 7, 0, 7, tzinfo=UTC))
         self.assertEqual(sante.prochaine_execution(["0 6 * * *"], lundi), datetime(2026, 11, 3, 6, 0, tzinfo=UTC))
 
+    def test_planning_mensuel(self):
+        # Backtest : le 3 de chaque mois à 4 h 17 UTC (au-delà des 8 jours de l'ancienne recherche)
+        mensuel = ["17 4 3 * *"]
+        t = datetime(2026, 11, 14, 9, 0, tzinfo=UTC)
+        self.assertEqual(sante.prochaine_execution(mensuel, t), datetime(2026, 12, 3, 4, 17, tzinfo=UTC))
+        self.assertEqual(sante.precedente_execution(mensuel, t), datetime(2026, 11, 3, 4, 17, tzinfo=UTC))
+        self.assertEqual(sante.precedente_execution(mensuel, datetime(2026, 11, 3, 4, 17, tzinfo=UTC)), datetime(2026, 11, 3, 4, 17, tzinfo=UTC))
+        self.assertEqual(sante.bloc_sante("t", "T", 1, "x.yml", [], t, crons=mensuel)["intervalle_min"], 30 * 1440)
+        # Au-delà de 35 jours : rien
+        self.assertIsNone(sante.prochaine_execution(["0 0 29 2 *"], t))
+
     def test_intervalle_prevu(self):
         def intervalle(crons, t):
             return sante.bloc_sante("t", "T", 1, "x.yml", [], t, crons=crons)["intervalle_min"]

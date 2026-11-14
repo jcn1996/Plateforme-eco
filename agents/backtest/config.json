@@ -1,0 +1,108 @@
+{
+  "_commentaire": "Backtest des règles de notation (méthode : agents/backtest/methode.md). Aucun réglage d'un autre agent n'est modifié ici : les nouvelles pondérations ne sont que proposées (data/backtest/proposition-AAAA-MM.json), à valider dans une pull request séparée.",
+
+  "periode": {
+    "_commentaire": "Historique testé (fins de mois). La première moitié des mois sert aux réglages (« apprentissage »), la seconde à la vérification hors échantillon. `separation` force la date de coupure (AAAA-MM-JJ) ; null = milieu de l'historique de chaque lot.",
+    "debut": "2009-01-01",
+    "separation": null
+  },
+
+  "horizons_mois": [1, 3, 6, 12],
+  "horizon_reference": {
+    "_commentaire": "Horizon (mois) sur lequel se juge le verdict d'un signal, selon la durée de détention visée par l'agent qui l'utilise.",
+    "pays": 6,
+    "entreprises": 12,
+    "matieres": 3,
+    "secteurs": 3,
+    "chef": 6
+  },
+  "quantile": 0.2,
+
+  "frais": {
+    "_commentaire": "Coût d'un aller-retour complet (achat puis vente), en % du montant : frais de 0,1 % par ordre (agent trader) + écart achat/vente estimé (agents/trader/config.json). Appliqué au taux de rotation mensuel des paniers « meilleurs 20 % » et « pires 20 % ».",
+    "pays": 0.28,
+    "entreprises": 0.26,
+    "matieres": 0.4,
+    "secteurs": 0.24
+  },
+
+  "regimes": {
+    "_commentaire": "Régime de marché de chaque mois, d'après la moyenne mensuelle du VIX (FRED VIXCLS) : « calme » sous le seuil, « tension » au-dessus. Approximation des paliers de l'agent risque (Calme / Vigilance → calme ; Tension / Crise → tension), qui n'ont pas d'historique.",
+    "serie": "VIXCLS",
+    "seuil_tension": 22
+  },
+
+  "verdicts": {
+    "_commentaire": "Verdict par signal, à l'horizon de référence. « Données insuffisantes » : moins de mois_min mois mesurés en tout, ou moins de mois_min_verification hors échantillon, ou moins de actifs_min actifs par date. « Garder » : coefficient d'information (IC) positif en apprentissage, IC sur tout l'historique et hors échantillon ≥ ic_garder avec une statistique t (Newey-West) ≥ t_garder, et écart meilleurs − pires positif après frais hors échantillon. « Supprimer » : IC hors échantillon ≤ 0 et IC sur tout l'historique ≤ ic_supprimer (aucun pouvoir prédictif, ou de sens contraire). Sinon « Alléger ».",
+    "mois_min": 48,
+    "mois_min_verification": 24,
+    "actifs_min": 8,
+    "ic_garder": 0.03,
+    "t_garder": 1.5,
+    "ic_supprimer": 0.01
+  },
+
+  "recalibrage": {
+    "_commentaire": "Note recalibrée : poids réglés sur la première moitié seulement (apprentissage). Facteur de chaque signal = IC d'apprentissage ÷ ic_reference, borné entre 0 et facteur_max, puis mélangé à parts égales avec le poids actuel (retrait vers l'existant, contre le sur-ajustement). Un signal non testable garde son poids. La note recalibrée n'est proposée que si elle fait mieux que la note actuelle hors échantillon (IC et écart après frais).",
+    "ic_reference": 0.05,
+    "facteur_max": 2.0,
+    "retrait": 0.5
+  },
+
+  "pays": {
+    "_commentaire": "Univers : pays suivis par l'agent pays (agents/pays/config.json), indice national (config/indices_pays.json) ou ETF pays. Rendements mesurés sur l'ETF pays coté aux États-Unis (en dollars, dividendes réinvestis), seul support investissable avec 15 ans d'historique. Indice de référence : ACWI (MSCI ACWI, depuis 2008 ; URTH, référence de la plateforme, n'existe que depuis 2012). Retards de publication appliqués pour ne jamais utiliser une donnée avant sa date de publication.",
+    "indice_reference": "ACWI",
+    "retard_publication_mois": {"inflation": 1, "indicateur_avance": 2, "taux_directeur": 1, "croissance_pib": 4},
+    "valorisation_proxy": "rendement_dividende"
+  },
+
+  "entreprises": {
+    "_commentaire": "Univers : sociétés américaines non financières de la liste actuelle de l'agent entreprises (data/entreprises/univers.json) — biais du survivant. Comptes SEC XBRL (companyfacts) datés par leur date de dépôt réelle : à chaque fin de mois, seuls les 10-K et 10-Q déposés avant cette date sont lus (aucune donnée connue après coup). Cours Yahoo Finance (dividendes réinvestis pour les rendements ; non ajustés des dividendes, mais des divisions, pour la capitalisation). Indice de référence : SPY. Découpage en lots pour la SEC (8 requêtes par seconde au plus).",
+    "indice_reference": "SPY",
+    "max_societes": 600,
+    "_capitalisation_min": "Contre le biais du survivant : à chaque date, seules les sociétés dont la capitalisation dépasse ce seuil À CETTE DATE sont notées. Mesuré sur 2010-2026 : sans ce filtre, l'univers actuel rejoué dans le passé bat SPY d'environ 6 points par an (les petites sociétés d'hier encore cotées aujourd'hui sont surtout des réussites) et les signaux de qualité paraissent inversés ; avec un seuil de 2 Md$, l'écart tombe à environ 1 point.",
+    "capitalisation_min_usd": 2000000000,
+    "tranches": 4,
+    "secteurs_exclus": ["Financials", "Real Estate"]
+  },
+
+  "matieres": {
+    "_commentaire": "Univers : matières premières de l'agent matières premières (contrat le plus proche, Yahoo Finance). Structure de la courbe : historique des échéances indisponible gratuitement ; approchée par le rendement de portage = performance de l'ETF à contrats (USO, UNG…) − performance du contrat le plus proche sur 3 mois (positif = déport). Positionnement : CFTC (désagrégé, depuis juin 2006). Stocks : EIA (fichiers historiques publics, sans clé). Indice de référence : moyenne équipondérée de l'univers.",
+    "etf_portage": {"wti": "USO", "brent": "BNO", "gaz_us": "UNG", "cuivre": "CPER", "ble": "WEAT", "mais": "CORN", "soja": "SOYB", "sucre": "CANE", "argent": "SLV", "or": "GLD"},
+    "eia": {
+      "wti": [["https://www.eia.gov/dnav/pet/hist_xls/WCESTUS1w.xls", "brut"]],
+      "brent": [["https://www.eia.gov/dnav/pet/hist_xls/WCESTUS1w.xls", "brut"]],
+      "gaz_us": [["https://www.eia.gov/dnav/ng/hist_xls/NW2_EPG0_SWO_R48_BCFw.xls", "gaz"]]
+    },
+    "retard_cftc_jours": 3,
+    "retard_eia_jours": 7
+  },
+
+  "secteurs": {
+    "_commentaire": "ETF sectoriels américains SPDR (GICS). Phase du cycle reconstituée mois par mois avec la règle de l'agent macro (indicateur avancé de l'OCDE et inflation des États-Unis, votes sur 3 mois) ; inflexion par secteur et par phase lue dans agents/chef/config.json (cycle.secteurs). Indice de référence : SPY.",
+    "indice_reference": "SPY",
+    "etf": {
+      "Materials": "XLB", "Energy": "XLE", "Financials": "XLF", "Industrials": "XLI", "Information Technology": "XLK",
+      "Consumer Staples": "XLP", "Utilities": "XLU", "Health Care": "XLV", "Consumer Discretionary": "XLY",
+      "Real Estate": "XLRE", "Communication Services": "XLC"
+    }
+  },
+
+  "regles": {
+    "_commentaire": "Règles du chef d'orchestre et du trader testées sur les pays (familles reconstituables : fondamentaux, valorisation, tendance, cycle) et sur les entreprises (stops). Les familles sans historique (flux, géopolitique, risque pays, initiés, dynamique des résultats) sont retirées et les poids renormalisés, comme le fait le chef d'orchestre quand une famille manque.",
+    "concentration_lignes": [4, 6, 8, 12, 15],
+    "stops_lignes": 10,
+    "stops_detention_mois": 12
+  },
+
+  "non_testables": [
+    {"signal": "Géopolitique", "agent": "géopolitique / chef d'orchestre", "raison": "pas d'historique gratuit et daté des événements tels qu'ils étaient connus (le score est construit à partir de dépêches et d'une lecture par Gemini)"},
+    {"signal": "Flux des ETF pays et sectoriels", "agent": "pays / chef d'orchestre", "raison": "pas d'historique gratuit du nombre de parts en circulation : l'agent l'accumule depuis sa mise en service (quelques mois seulement)"},
+    {"signal": "Guidance et révisions des estimations", "agent": "entreprises (dynamique des résultats)", "raison": "historique des estimations des analystes payant ; guidance extraite des 8-K par Gemini, non reproductible à l'identique sur 15 ans"},
+    {"signal": "Textes rédigés par Gemini", "agent": "tous", "raison": "textes, sans valeur numérique à tester"},
+    {"signal": "Activité réelle (données alternatives)", "agent": "données alternatives", "raison": "séries (Google Trends, satellites, trafic) sans historique homogène gratuit sur 10 ans"},
+    {"signal": "Achats d'initiés (formulaires 4)", "agent": "initiés", "raison": "testable en principe (EDGAR depuis 2003), mais des centaines de milliers de formulaires à lire : non retenu pour tenir dans le temps de calcul d'un job GitHub ; option à ajouter en lot séparé"},
+    {"signal": "Risque pays, contradicteur", "agent": "risque", "raison": "objections et paliers construits à partir de sources sans historique (actualité, écarts de crédit souverains payants) ; seul le régime calme / tension est reconstitué (VIX)"},
+    {"signal": "Hystérésis des verdicts", "agent": "chef d'orchestre", "raison": "règle quotidienne (3 jours de confirmation) : sans objet en rééquilibrage mensuel"}
+  ]
+}

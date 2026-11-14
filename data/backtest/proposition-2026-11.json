@@ -1,0 +1,421 @@
+{
+  "jour": "2026-11-14",
+  "propositions": [
+    {
+      "agent": "pays",
+      "fichier": "agents/pays/config.json",
+      "chemin": [
+        "ponderations"
+      ],
+      "actuel": {
+        "croissance_pib": 0.2,
+        "indicateur_avance": 0.15,
+        "inflation": 0.2,
+        "taux_reel": 0.15,
+        "valorisation": 0.15,
+        "momentum": 0.15,
+        "activite_reelle": 0.1
+      },
+      "propose": {
+        "croissance_pib": 0.173,
+        "indicateur_avance": 0.13,
+        "inflation": 0.302,
+        "taux_reel": 0.13,
+        "valorisation": 0.13,
+        "momentum": 0.135,
+        "activite_reelle": 0.1
+      },
+      "retenue": false,
+      "raison": "pas d'amélioration hors échantillon (IC -0,060 → -0,063, écart après frais -0,3 → -1,6 %/an) : pondérations actuelles conservées",
+      "detail": {
+        "croissance_pib": "IC d'apprentissage -0,082 → facteur 0,50",
+        "indicateur_avance": "IC d'apprentissage -0,162 → facteur 0,50",
+        "inflation": "IC d'apprentissage +0,038 → facteur 0,88",
+        "taux_reel": "IC d'apprentissage -0,069 → facteur 0,50",
+        "valorisation": "IC d'apprentissage -0,006 → facteur 0,50",
+        "momentum": "IC d'apprentissage +0,002 → facteur 0,52"
+      },
+      "note_actuelle": {
+        "ic_verification": -0.0597,
+        "t_verification": -1.32,
+        "ecart_net_verification_pct": -0.32,
+        "ic_apprentissage": -0.0796,
+        "verdict": "Supprimer"
+      },
+      "note_recalibree": {
+        "ic_verification": -0.0627,
+        "t_verification": -1.36,
+        "ecart_net_verification_pct": -1.59,
+        "ic_apprentissage": -0.0619,
+        "verdict": "Supprimer"
+      }
+    },
+    {
+      "agent": "chef",
+      "fichier": "agents/chef/config.json",
+      "chemin": [
+        "poids",
+        "pays"
+      ],
+      "actuel": {
+        "fondamentaux": 20,
+        "valorisation": 15,
+        "tendance": 15,
+        "flux": 8,
+        "cycle": 12,
+        "risque": 12,
+        "geopolitique": 8,
+        "resultats": 10
+      },
+      "propose": {
+        "fondamentaux": 20,
+        "valorisation": 15,
+        "tendance": 15,
+        "flux": 8,
+        "cycle": 12,
+        "risque": 12,
+        "geopolitique": 8,
+        "resultats": 10
+      },
+      "retenue": false,
+      "raison": "pas d'amélioration hors échantillon (IC -0,030 → -0,026, écart après frais +0,1 → -0,6 %/an) : pondérations actuelles conservées",
+      "detail": {
+        "fondamentaux": "IC d'apprentissage -0,127 → facteur 0,50",
+        "valorisation": "IC d'apprentissage -0,006 → facteur 0,50",
+        "tendance": "IC d'apprentissage +0,002 → facteur 0,52",
+        "cycle": "IC d'apprentissage -0,058 → facteur 0,50"
+      },
+      "note_actuelle": {
+        "ic_verification": -0.0302,
+        "t_verification": -0.68,
+        "ecart_net_verification_pct": 0.05,
+        "ic_apprentissage": -0.0861,
+        "verdict": "Supprimer"
+      },
+      "note_recalibree": {
+        "ic_verification": -0.0265,
+        "t_verification": -0.6,
+        "ecart_net_verification_pct": -0.56,
+        "ic_apprentissage": -0.0865,
+        "verdict": "Supprimer"
+      }
+    },
+    {
+      "agent": "entreprises",
+      "fichier": "agents/entreprises/config.json",
+      "chemin": [
+        "ponderations"
+      ],
+      "actuel": {
+        "croissance_ca": 0.07,
+        "croissance_benefice": 0.06,
+        "marge_op": 0.06,
+        "conversion_cash": 0.05,
+        "dette_ebitda": 0.05,
+        "couverture_interets": 0.03,
+        "roic": 0.06,
+        "per_secteur": 0.06,
+        "ev_ebitda_secteur": 0.04,
+        "momentum_12m": 0.06,
+        "fscore": 0.06,
+        "fcf_yield": 0.05,
+        "benefices_normalises": 0.03,
+        "roic_wacc": 0.05,
+        "regularite": 0.04,
+        "rendement_actionnaire": 0.03,
+        "altman_z": 0.04,
+        "mscore": 0.02,
+        "goodwill_actif": 0.02,
+        "current_ratio": 0.02,
+        "marge_brute": 0.03,
+        "cycle_cash": 0.02,
+        "capex_amortissements": 0.01,
+        "intensite_rd": 0.01,
+        "detention_dirigeants": 0.02,
+        "evolution_actions": 0.01
+      },
+      "propose": {
+        "croissance_ca": 0.049,
+        "croissance_benefice": 0.042,
+        "marge_op": 0.042,
+        "conversion_cash": 0.105,
+        "dette_ebitda": 0.074,
+        "couverture_interets": 0.021,
+        "roic": 0.042,
+        "per_secteur": 0.042,
+        "ev_ebitda_secteur": 0.028,
+        "momentum_12m": 0.083,
+        "fscore": 0.06,
+        "fcf_yield": 0.047,
+        "benefices_normalises": 0.024,
+        "roic_wacc": 0.035,
+        "regularite": 0.035,
+        "rendement_actionnaire": 0.021,
+        "altman_z": 0.045,
+        "mscore": 0.029,
+        "goodwill_actif": 0.014,
+        "current_ratio": 0.014,
+        "marge_brute": 0.062,
+        "cycle_cash": 0.022,
+        "capex_amortissements": 0.007,
+        "intensite_rd": 0.021,
+        "detention_dirigeants": 0.02,
+        "evolution_actions": 0.016
+      },
+      "retenue": false,
+      "raison": "pas d'amélioration hors échantillon (IC +0,023 → +0,020, écart après frais -1,5 → -0,1 %/an) : pondérations actuelles conservées",
+      "detail": {
+        "croissance_ca": "IC d'apprentissage -0,041 → facteur 0,50",
+        "croissance_benefice": "IC d'apprentissage -0,024 → facteur 0,50",
+        "marge_op": "IC d'apprentissage -0,032 → facteur 0,50",
+        "conversion_cash": "IC d'apprentissage +0,095 → facteur 1,45",
+        "dette_ebitda": "IC d'apprentissage +0,055 → facteur 1,05",
+        "couverture_interets": "IC d'apprentissage -0,069 → facteur 0,50",
+        "roic": "IC d'apprentissage -0,004 → facteur 0,50",
+        "per_secteur": "IC d'apprentissage -0,071 → facteur 0,50",
+        "ev_ebitda_secteur": "IC d'apprentissage -0,086 → facteur 0,50",
+        "momentum_12m": "IC d'apprentissage +0,048 → facteur 0,98",
+        "fscore": "IC d'apprentissage +0,021 → facteur 0,71",
+        "fcf_yield": "IC d'apprentissage +0,017 → facteur 0,67",
+        "benefices_normalises": "IC d'apprentissage +0,007 → facteur 0,57",
+        "roic_wacc": "IC d'apprentissage -0,003 → facteur 0,50",
+        "regularite": "IC d'apprentissage +0,012 → facteur 0,62",
+        "rendement_actionnaire": "IC d'apprentissage -0,012 → facteur 0,50",
+        "altman_z": "IC d'apprentissage +0,030 → facteur 0,80",
+        "mscore": "IC d'apprentissage +0,053 → facteur 1,03",
+        "goodwill_actif": "IC d'apprentissage -0,059 → facteur 0,50",
+        "current_ratio": "IC d'apprentissage -0,030 → facteur 0,50",
+        "marge_brute": "IC d'apprentissage +0,095 → facteur 1,45",
+        "cycle_cash": "IC d'apprentissage +0,028 → facteur 0,78",
+        "capex_amortissements": "IC d'apprentissage -0,065 → facteur 0,50",
+        "intensite_rd": "IC d'apprentissage +0,143 → facteur 1,50",
+        "detention_dirigeants": "non testé ou données insuffisantes : poids inchangé",
+        "evolution_actions": "IC d'apprentissage +0,061 → facteur 1,11"
+      },
+      "note_actuelle": {
+        "ic_verification": 0.0228,
+        "t_verification": 0.77,
+        "ecart_net_verification_pct": -1.52,
+        "ic_apprentissage": -0.0006,
+        "verdict": "Alléger"
+      },
+      "note_recalibree": {
+        "ic_verification": 0.0203,
+        "t_verification": 0.63,
+        "ecart_net_verification_pct": -0.05,
+        "ic_apprentissage": 0.0324,
+        "verdict": "Alléger"
+      }
+    },
+    {
+      "agent": "matieres_premieres",
+      "fichier": "agents/matieres_premieres/config.json",
+      "chemin": [
+        "familles",
+        "metaux_precieux",
+        "ponderations"
+      ],
+      "actuel": {
+        "tendance": 15,
+        "courbe": 5,
+        "stocks": 0,
+        "positionnement": 15,
+        "macro": 30,
+        "geopolitique": 10,
+        "flux": 15,
+        "niveau": 10
+      },
+      "propose": {
+        "tendance": 8,
+        "courbe": 3,
+        "stocks": 0,
+        "positionnement": 18,
+        "macro": 30,
+        "geopolitique": 10,
+        "flux": 15,
+        "niveau": 16
+      },
+      "retenue": true,
+      "raison": "hors échantillon, IC -0,024 → -0,001 et écart après frais +8,9 → +10,7 %/an",
+      "detail": {
+        "tendance": "IC d'apprentissage -0,065 → facteur 0,50",
+        "courbe": "IC d'apprentissage +0,011 → facteur 0,61",
+        "stocks": "non testé ou données insuffisantes : poids inchangé",
+        "positionnement": "IC d'apprentissage +0,066 → facteur 1,16",
+        "niveau": "IC d'apprentissage +0,119 → facteur 1,50"
+      },
+      "note_actuelle": {
+        "ic_verification": -0.0244,
+        "t_verification": -0.59,
+        "ecart_net_verification_pct": 8.89,
+        "ic_apprentissage": 0.0006,
+        "verdict": "Supprimer"
+      },
+      "note_recalibree": {
+        "ic_verification": -0.0008,
+        "t_verification": -0.02,
+        "ecart_net_verification_pct": 10.65,
+        "ic_apprentissage": 0.0175,
+        "verdict": "Supprimer"
+      }
+    },
+    {
+      "agent": "matieres_premieres",
+      "fichier": "agents/matieres_premieres/config.json",
+      "chemin": [
+        "familles",
+        "metaux_industriels",
+        "ponderations"
+      ],
+      "actuel": {
+        "tendance": 20,
+        "courbe": 15,
+        "stocks": 10,
+        "positionnement": 15,
+        "macro": 20,
+        "geopolitique": 5,
+        "flux": 5,
+        "niveau": 10
+      },
+      "propose": {
+        "tendance": 12,
+        "courbe": 11,
+        "stocks": 10,
+        "positionnement": 20,
+        "macro": 20,
+        "geopolitique": 5,
+        "flux": 5,
+        "niveau": 17
+      },
+      "retenue": true,
+      "raison": "hors échantillon, IC -0,024 → -0,001 et écart après frais +8,9 → +10,7 %/an",
+      "detail": {
+        "tendance": "IC d'apprentissage -0,065 → facteur 0,50",
+        "courbe": "IC d'apprentissage +0,011 → facteur 0,61",
+        "stocks": "non testé ou données insuffisantes : poids inchangé",
+        "positionnement": "IC d'apprentissage +0,066 → facteur 1,16",
+        "niveau": "IC d'apprentissage +0,119 → facteur 1,50"
+      },
+      "note_actuelle": {
+        "ic_verification": -0.0244,
+        "t_verification": -0.59,
+        "ecart_net_verification_pct": 8.89,
+        "ic_apprentissage": 0.0006,
+        "verdict": "Supprimer"
+      },
+      "note_recalibree": {
+        "ic_verification": -0.0008,
+        "t_verification": -0.02,
+        "ecart_net_verification_pct": 10.65,
+        "ic_apprentissage": 0.0175,
+        "verdict": "Supprimer"
+      }
+    },
+    {
+      "agent": "matieres_premieres",
+      "fichier": "agents/matieres_premieres/config.json",
+      "chemin": [
+        "familles",
+        "energie",
+        "ponderations"
+      ],
+      "actuel": {
+        "tendance": 15,
+        "courbe": 20,
+        "stocks": 25,
+        "positionnement": 10,
+        "macro": 10,
+        "geopolitique": 10,
+        "flux": 5,
+        "niveau": 5
+      },
+      "propose": {
+        "tendance": 10,
+        "courbe": 15,
+        "stocks": 25,
+        "positionnement": 15,
+        "macro": 10,
+        "geopolitique": 10,
+        "flux": 5,
+        "niveau": 10
+      },
+      "retenue": true,
+      "raison": "hors échantillon, IC -0,024 → -0,001 et écart après frais +8,9 → +10,7 %/an",
+      "detail": {
+        "tendance": "IC d'apprentissage -0,065 → facteur 0,50",
+        "courbe": "IC d'apprentissage +0,011 → facteur 0,61",
+        "stocks": "non testé ou données insuffisantes : poids inchangé",
+        "positionnement": "IC d'apprentissage +0,066 → facteur 1,16",
+        "niveau": "IC d'apprentissage +0,119 → facteur 1,50"
+      },
+      "note_actuelle": {
+        "ic_verification": -0.0244,
+        "t_verification": -0.59,
+        "ecart_net_verification_pct": 8.89,
+        "ic_apprentissage": 0.0006,
+        "verdict": "Supprimer"
+      },
+      "note_recalibree": {
+        "ic_verification": -0.0008,
+        "t_verification": -0.02,
+        "ecart_net_verification_pct": 10.65,
+        "ic_apprentissage": 0.0175,
+        "verdict": "Supprimer"
+      }
+    },
+    {
+      "agent": "matieres_premieres",
+      "fichier": "agents/matieres_premieres/config.json",
+      "chemin": [
+        "familles",
+        "agricoles",
+        "ponderations"
+      ],
+      "actuel": {
+        "tendance": 15,
+        "courbe": 15,
+        "stocks": 25,
+        "positionnement": 15,
+        "macro": 5,
+        "geopolitique": 10,
+        "flux": 5,
+        "niveau": 10
+      },
+      "propose": {
+        "tendance": 8,
+        "courbe": 10,
+        "stocks": 25,
+        "positionnement": 20,
+        "macro": 5,
+        "geopolitique": 10,
+        "flux": 5,
+        "niveau": 17
+      },
+      "retenue": true,
+      "raison": "hors échantillon, IC -0,024 → -0,001 et écart après frais +8,9 → +10,7 %/an",
+      "detail": {
+        "tendance": "IC d'apprentissage -0,065 → facteur 0,50",
+        "courbe": "IC d'apprentissage +0,011 → facteur 0,61",
+        "stocks": "non testé ou données insuffisantes : poids inchangé",
+        "positionnement": "IC d'apprentissage +0,066 → facteur 1,16",
+        "niveau": "IC d'apprentissage +0,119 → facteur 1,50"
+      },
+      "note_actuelle": {
+        "ic_verification": -0.0244,
+        "t_verification": -0.59,
+        "ecart_net_verification_pct": 8.89,
+        "ic_apprentissage": 0.0006,
+        "verdict": "Supprimer"
+      },
+      "note_recalibree": {
+        "ic_verification": -0.0008,
+        "t_verification": -0.02,
+        "ecart_net_verification_pct": 10.65,
+        "ic_apprentissage": 0.0175,
+        "verdict": "Supprimer"
+      }
+    }
+  ],
+  "a_valider": true,
+  "mention": "Proposition seulement : rien n'est appliqué sans validation dans une pull request séparée."
+}

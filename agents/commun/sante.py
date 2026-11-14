@@ -101,10 +101,24 @@ def _correspond(cron: str, t: datetime) -> bool:
             and (t.isoweekday() % 7) in jours_sem)
 
 
+HORIZON_JOURS = 35  # assez pour un planning mensuel (backtest) ; les jours sans exécution prévue sont sautés
+
+
+def _jour_prevu(cron: str, t: datetime) -> bool:
+    """Le jour de t (mois, jour du mois, jour de la semaine) correspond-il à l'expression cron ?"""
+    _, _, jour, mois, jour_sem = cron.split()
+    jours_sem = {0 if j == 7 else j for j in _champ(jour_sem, 0, 7)}
+    return t.month in _champ(mois, 1, 12) and t.day in _champ(jour, 1, 31) and (t.isoweekday() % 7) in jours_sem
+
+
 def precedente_execution(crons: list[str], avant: datetime) -> datetime | None:
-    """Dernière minute planifiée (UTC) à ou avant `avant`, dans les 8 jours."""
+    """Dernière minute planifiée (UTC) à ou avant `avant`, dans les 35 jours."""
     t = avant.astimezone(timezone.utc).replace(second=0, microsecond=0)
-    for _ in range(8 * 24 * 60):
+    limite = t - timedelta(days=HORIZON_JOURS)
+    while t >= limite:
+        if not any(_jour_prevu(c, t) for c in crons):  # aucun créneau ce jour-là : fin de la veille
+            t = t.replace(hour=0, minute=0) - timedelta(minutes=1)
+            continue
         if any(_correspond(c, t) for c in crons):
             return t
         t -= timedelta(minutes=1)
@@ -112,9 +126,13 @@ def precedente_execution(crons: list[str], avant: datetime) -> datetime | None:
 
 
 def prochaine_execution(crons: list[str], apres: datetime) -> datetime | None:
-    """Prochaine minute (UTC) qui correspond à l'une des expressions cron, dans les 8 jours."""
+    """Prochaine minute (UTC) qui correspond à l'une des expressions cron, dans les 35 jours."""
     t = apres.astimezone(timezone.utc).replace(second=0, microsecond=0) + timedelta(minutes=1)
-    for _ in range(8 * 24 * 60):
+    limite = t + timedelta(days=HORIZON_JOURS)
+    while t <= limite:
+        if not any(_jour_prevu(c, t) for c in crons):  # aucun créneau ce jour-là : début du lendemain
+            t = t.replace(hour=0, minute=0) + timedelta(days=1)
+            continue
         if any(_correspond(c, t) for c in crons):
             return t
         t += timedelta(minutes=1)

@@ -1,0 +1,187 @@
+/* ==========================================================================
+   Écran « Backtest » (Menu → Suivi) : quels signaux des agents sont réellement
+   prédictifs ? Lit data/backtest/resultats.json (agent backtest, mensuel ;
+   méthode : agents/backtest/methode.md). Lecture seule : rien n'est modifié
+   automatiquement, les nouvelles pondérations sont proposées dans une pull request.
+   ========================================================================== */
+
+import { el, nombre } from './outils.js';
+
+const ORDRE = { Garder: 0, 'Alléger': 1, Supprimer: 2, 'Données insuffisantes': 3 };
+const SECTIONS = ['pays', 'chef', 'entreprises', 'matieres', 'secteurs'];
+const NOTES = ['note_globale', 'note_globale_brute', 'note_recalibree', 'score_chef', 'equipondere', 'score_recalibre'];
+
+/** Classe CSS du badge d'un verdict. */
+export function classeVerdict(v) {
+  return { Garder: 'bt-verdict--garder', 'Alléger': 'bt-verdict--alleger', Supprimer: 'bt-verdict--supprimer' }[v] ?? 'bt-verdict--insuffisant';
+}
+
+/** Signaux d'une section : d'abord les indicateurs (Garder, Alléger, Supprimer, insuffisant), puis les notes. */
+export function trierSignaux(signaux = {}) {
+  const cles = Object.keys(signaux);
+  const notes = NOTES.filter((k) => cles.includes(k));
+  const autres = cles.filter((k) => !NOTES.includes(k))
+    .sort((a, b) => (ORDRE[signaux[a].verdict] ?? 9) - (ORDRE[signaux[b].verdict] ?? 9)
+      || (signaux[b].echantillons?.verification?.ic_moyen ?? -9) - (signaux[a].echantillons?.verification?.ic_moyen ?? -9));
+  return [...autres, ...notes];
+}
+
+/** Nombre signé à la française : +0,034 ; n. d. si absent. */
+export function signe(x, d = 2, unite = '') {
+  if (x === null || x === undefined || Number.isNaN(x)) return 'n. d.';
+  const s = x > 0 ? '+' : x < 0 ? '−' : '';
+  return `${s}${nombre(Math.abs(x), d)}${unite}`;
+}
+
+export async function chargerBacktest() {
+  try {
+    const r = await fetch('data/backtest/resultats.json', { cache: 'no-cache' });
+    if (!r.ok) return null;
+    const j = await r.json();
+    return j?.donnees ? { meta: j.meta ?? {}, ...j.donnees } : null;
+  } catch {
+    return null;
+  }
+}
+
+const titre = (t, sous) => el('h3', { class: 'section-titre' }, t, sous ? el('small', {}, ` ${sous}`) : null);
+const badge = (v) => el('span', { class: `bt-verdict ${classeVerdict(v)}` }, v);
+
+function detailSignal(r) {
+  const e = r.echantillons ?? {};
+  const h = String(r.horizon_reference);
+  const reg = r.regimes ?? {};
+  const annees = Object.entries(r.stabilite?.par_annee ?? {});
+  return el('div', { class: 'bt-detail' },
+    el('p', { class: 'chef-petit' }, `${r.verdict} : ${r.raison}.`),
+    el('table', { class: 'chef-table' },
+      el('thead', {}, el('tr', {}, ['Horizon', 'IC', 't', 'Meilleurs 20 %', 'Pires 20 %', 'Indice', 'Réussite'].map((x) => el('th', {}, x)))),
+      el('tbody', {}, Object.entries(r.horizons ?? {}).map(([k, x]) => el('tr', { class: k === h ? 'bt-ligne-ref' : '' },
+        el('td', {}, `${k} mois`), el('td', { class: 'mono' }, signe(x.ic_moyen, 3)), el('td', { class: 'mono' }, x.ic_t != null ? nombre(x.ic_t, 1) : 'n. d.'),
+        el('td', { class: 'mono' }, signe(x.haut_pct, 1, ' %')), el('td', { class: 'mono' }, signe(x.bas_pct, 1, ' %')),
+        el('td', { class: 'mono' }, signe(x.indice_pct, 1, ' %')),
+        el('td', { class: 'mono' }, x.reussite_haut_pct != null ? `${nombre(x.reussite_haut_pct, 0)} %` : 'n. d.'))))),
+    el('p', { class: 'chef-petit' },
+      `Apprentissage (jusqu’à ${e.separation ?? 'n. d.'}) : IC ${signe(e.apprentissage?.ic_moyen, 3)} sur ${e.apprentissage?.mois ?? 0} mois · `
+      + `hors échantillon : IC ${signe(e.verification?.ic_moyen, 3)} (t = ${e.verification?.ic_t != null ? nombre(e.verification.ic_t, 1) : 'n. d.'}) sur ${e.verification?.mois ?? 0} mois, `
+      + `écart après frais ${signe(e.verification?.ecart_net_annuel_pct, 1, ' %/an')}. `
+      + `Mois calmes : IC ${signe(reg.calme?.ic_moyen, 3)} (${reg.calme?.mois ?? 0}) · tension : ${signe(reg.tension?.ic_moyen, 3)} (${reg.tension?.mois ?? 0}). `
+      + `Frais : rotation ${nombre(r.frais?.rotation_mensuelle_pct ?? 0, 0)} %/mois, coût ${signe(r.frais?.cout_annuel_pct, 1, ' %/an')}.`),
+    annees.length ? el('p', { class: 'chef-petit' }, 'IC par année : ' + annees.map(([a, v]) => `${a} ${signe(v, 2)}`).join(' · ')) : null);
+}
+
+function ligneSignal(r) {
+  const v = r.echantillons?.verification ?? {};
+  const h = r.horizons?.[String(r.horizon_reference)] ?? {};
+  return el('details', { class: 'bt-signal' },
+    el('summary', {},
+      el('span', { class: 'bt-signal-nom' }, r.libelle), badge(r.verdict),
+      el('span', { class: 'bt-signal-chiffres mono' },
+        `hors échantillon : IC ${signe(v.ic_moyen, 3)} · après frais ${signe(v.ecart_net_annuel_pct, 1, ' %/an')} · meilleurs − pires à ${r.horizon_reference} mois ${signe(h.ecart_pct, 1, ' %')}`)),
+    detailSignal(r));
+}
+
+function biais(s) {
+  const b = s.biais_survivant;
+  // Pays : tous existent depuis le début (l'écart à l'indice traduit le poids des États-Unis, pas un biais du survivant)
+  if (!b || b.univers_complet_vs_indice_pct == null || b.univers_retenu_vs_indice_pct == null) return null;
+  return el('p', { class: 'chef-petit bt-alerte' },
+    `Biais du survivant mesuré : l’univers actuel rejoué dans le passé fait ${signe(b.univers_complet_vs_indice_pct, 1, ' pt/an')} par rapport à l’indice`
+    + ` ; univers testé (sociétés valant déjà au moins ${nombre(b.seuil_capitalisation_usd / 1e9, 0)} Md$ à chaque date) : ${signe(b.univers_retenu_vs_indice_pct, 1, ' pt/an')}.`);
+}
+
+function blocRegles(s) {
+  const rg = s.regles ?? {};
+  const h = String(rg.horizon_reference ?? s.horizon_reference);
+  const blocs = [];
+  const v = rg.verdicts?.par_verdict?.[h];
+  if (v) {
+    blocs.push(titre('Seuils des verdicts', `${h} mois, performance relative à l’indice`),
+      el('table', { class: 'chef-table' },
+        el('thead', {}, el('tr', {}, ['Verdict', 'Cas', 'Relatif moyen', 'Réussite'].map((x) => el('th', {}, x)))),
+        el('tbody', {}, Object.entries(v).filter(([k]) => !k.startsWith('_')).map(([k, x]) => el('tr', {},
+          el('td', {}, k), el('td', { class: 'mono' }, String(x.n ?? 0)), el('td', { class: 'mono' }, signe(x.relative_moyenne_pct, 2, ' pt')),
+          el('td', { class: 'mono' }, x.reussite_pct != null ? `${nombre(x.reussite_pct, 0)} %` : 'n. d.'))))),
+      el('p', { class: `chef-petit ${v._ordonne ? 'chef-ok' : 'chef-ko'}` }, v._ordonne ? 'Verdicts ordonnés : la performance croît avec le verdict.' : 'Verdicts non ordonnés : les seuils ne séparent pas nettement les pays.'));
+  }
+  const c = rg.verdicts?.par_conviction?.[h];
+  if (c) {
+    blocs.push(titre('Conviction', 'verdicts positifs'), el('ul', { class: 'chef-texte' }, Object.entries(c).map(([k, x]) =>
+      el('li', {}, `${k} : réussite ${x.reussite_pct != null ? nombre(x.reussite_pct, 0) + ' %' : 'n. d.'}, ${signe(x.relative_moyenne_pct, 2, ' pt')} (${x.n ?? 0} cas)`))));
+  }
+  const ae = rg.anti_euphorie?.horizons?.[h];
+  if (ae) {
+    blocs.push(titre('Règle anti-euphorie', `momentum extrême, ${h} mois`), el('ul', { class: 'chef-texte' },
+      el('li', {}, `Après un momentum extrême : ${signe(ae.extreme.relative_moyenne_pct, 2, ' pt')} (${ae.extreme.n} cas)`),
+      el('li', {}, `Autres tendances positives : ${signe(ae.tendance_positive_non_extreme.relative_moyenne_pct, 2, ' pt')} (${ae.tendance_positive_non_extreme.n} cas)`),
+      el('li', {}, `Extrême et valorisation tendue : ${signe(ae.extreme_valorisation_tendue.relative_moyenne_pct, 2, ' pt')} · valorisation correcte : ${signe(ae.extreme_valorisation_correcte.relative_moyenne_pct, 2, ' pt')}`)));
+  }
+  const co = rg.concentration;
+  if (co?.lignes) {
+    const ligne = (nom, x) => el('tr', {}, el('td', {}, nom), el('td', { class: 'mono' }, signe(x?.rendement_annuel_pct, 1, ' %')),
+      el('td', { class: 'mono' }, x?.volatilite_pct != null ? `${nombre(x.volatilite_pct, 1)} %` : 'n. d.'),
+      el('td', { class: 'mono' }, signe(x?.sharpe, 2)), el('td', { class: 'mono' }, signe(x?.perte_max_pct, 0, ' %')));
+    blocs.push(titre('Concentration du trader', `hors échantillon ; règle actuelle : ${co.regle_actuelle} lignes au plus`),
+      el('table', { class: 'chef-table' },
+        el('thead', {}, el('tr', {}, ['Lignes', 'Rendement /an', 'Volatilité', 'Sharpe', 'Perte max'].map((x) => el('th', {}, x)))),
+        el('tbody', {}, ...Object.entries(co.lignes).map(([k, x]) => ligne(k === 'toutes' ? 'sans limite' : `${k} lignes`, x.verification)),
+          ligne('pays équipondérés', co.equipondere?.verification), co.indice ? ligne(`indice (${s.indice})`, co.indice.verification) : null)));
+  }
+  const st = rg.stops;
+  if (st?.total?.positions) {
+    const x = st.verification?.positions ? st.verification : st.total;
+    blocs.push(titre('Stops et prise de bénéfices du trader', `${st.lignes} meilleures sociétés par mois, gardées ${st.detention_mois} mois`),
+      el('ul', { class: 'chef-texte' },
+        el('li', {}, `Avec les règles : ${signe(x.moyenne_avec_pct, 1, ' %')} en moyenne, pire ${signe(x.pire_avec_pct, 0, ' %')}, réussite ${nombre(x.reussite_avec_pct ?? 0, 0)} %`),
+        el('li', {}, `Sans : ${signe(x.moyenne_sans_pct, 1, ' %')}, pire ${signe(x.pire_sans_pct, 0, ' %')}, réussite ${nombre(x.reussite_sans_pct ?? 0, 0)} %`),
+        el('li', { class: 'chef-petit' }, `${x.positions} positions · sorties : ${Object.entries(st.motifs ?? {}).map(([k, n]) => `${k} ${n}`).join(', ')}`)));
+  }
+  return blocs;
+}
+
+function section(s) {
+  const p = s.periode ?? {};
+  return el('section', { class: 'bt-section' },
+    titre(s.titre, `${p.debut ?? '?'} → ${p.fin ?? '?'} · ${p.actifs ?? 0} actifs · horizon ${s.horizon_reference} mois · indice ${s.indice ?? 'n. d.'}`),
+    biais(s),
+    ...trierSignaux(s.signaux).map((k) => ligneSignal(s.signaux[k])),
+    ...blocRegles(s));
+}
+
+function propositions(res) {
+  const ps = res.propositions ?? [];
+  if (!ps.length) return null;
+  return el('section', { class: 'bt-section' }, titre('Note actuelle contre note recalibrée', 'jugées hors échantillon'),
+    el('table', { class: 'chef-table' },
+      el('thead', {}, el('tr', {}, ['Réglage', 'IC actuel → recalibré', 'Après frais', 'Proposée'].map((x) => el('th', {}, x)))),
+      el('tbody', {}, ps.map((p) => el('tr', {},
+        el('td', {}, `${p.agent} · ${p.chemin.join(' → ')}`),
+        el('td', { class: 'mono' }, `${signe(p.note_actuelle?.ic_verification, 3)} → ${signe(p.note_recalibree?.ic_verification, 3)}`),
+        el('td', { class: 'mono' }, `${signe(p.note_actuelle?.ecart_net_verification_pct, 1, ' %')} → ${signe(p.note_recalibree?.ecart_net_verification_pct, 1, ' %')}`),
+        el('td', { class: p.retenue ? 'chef-ok' : '' }, p.retenue ? 'oui' : 'non'))))),
+    el('p', { class: 'chef-petit' }, 'Une proposition retenue est ouverte dans une pull request séparée, à valider à la main : aucune pondération n’est modifiée automatiquement.'));
+}
+
+export function ecranBacktest(res) {
+  const entete = el('header', {},
+    el('div', { class: 'fiche-surtitre' }, 'Suivi · agent backtest'),
+    el('h2', { class: 'fiche-titre' }, 'Backtest des règles de notation'));
+  if (res === undefined) return [entete, el('p', { class: 'sante-ligne' }, 'Chargement…')];
+  if (!res) return [entete, el('p', { class: 'sante-ligne' }, 'Aucun backtest encore (data/backtest/resultats.json introuvable). Il tourne chaque mois, ou à la main : Actions → « Backtest ».')];
+  const m = res.methode ?? {};
+  return [
+    entete,
+    res.meta?.fictif ? el('p', { class: 'chef-petit bt-alerte' }, 'Données de test (synthétiques) : aucun résultat réel.') : null,
+    el('p', { class: 'chef-petit' },
+      `Backtest du ${res.jour ?? 'n. d.'} · rééquilibrage mensuel · meilleurs ${m.quantile_pct ?? 20} % contre pires ${m.quantile_pct ?? 20} % et contre l’indice · `
+      + `horizons ${(m.horizons_mois ?? []).join(', ')} mois · frais inclus · verdict jugé hors échantillon (seconde moitié de l’historique). `
+      + `Rapport complet : ${res.meta?.rapport ?? 'data/backtest/'}.`),
+    el('p', { class: 'bt-synthese' }, Object.entries(res.verdicts ?? {}).sort((a, b) => (ORDRE[a[0]] ?? 9) - (ORDRE[b[0]] ?? 9))
+      .map(([v, n]) => el('span', { class: `bt-verdict ${classeVerdict(v)}` }, `${v} : ${n}`))),
+    ...SECTIONS.filter((k) => res.sections?.[k]).map((k) => section(res.sections[k])),
+    propositions(res),
+    el('section', { class: 'bt-section' }, titre('Non testables', 'faute d’historique gratuit'),
+      el('ul', { class: 'chef-texte' }, (res.non_testables ?? []).map((x) => el('li', {}, el('strong', {}, x.signal), ` (${x.agent}) : ${x.raison}.`)))),
+    el('p', { class: 'chef-petit' }, 'Limites : biais du survivant (univers actuel), séries macro révisées, approximations (valorisation des pays par le rendement du dividende, courbe des matières par le portage, paliers de risque par le VIX). Un IC de 0,02 à 0,05 est courant pour un signal utile.'),
+  ];
+}

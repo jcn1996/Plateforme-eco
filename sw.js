@@ -15,15 +15,15 @@
    - Agent trader (démo) : data/portefeuille.json préchargé (réseau d'abord : valeur en direct) ;
      journal complet des opérations (data/trader/) non préchargé.
    - Séries de cours des graphiques (data/cours/), matières premières (data/matieres_premieres.json),
-     initiés (data/inities.json) et données alternatives (data/donnees_alternatives.json) : non préchargées,
-     lues à la demande.
+     initiés (data/inities.json), données alternatives (data/donnees_alternatives.json) et backtest
+     (data/backtest/resultats.json) : non préchargés, lus à la demande.
    - Mes portefeuilles : les positions sont dans IndexedDB, jamais dans ce cache. Le fichier chiffré
      de synchronisation (requête « no-store » ou avec jeton) et la recherche ISIN → ticker
      (Yahoo Finance) ne passent pas par le cache. SheetJS (lecture Excel) est chargé à la demande.
    Changer VERSION vide les anciens caches chez tous les utilisateurs.
    ========================================================================== */
 
-const VERSION = 'salle-controle-v49';
+const VERSION = 'salle-controle-v50';
 
 const FICHIERS_APPLI = [
   './',
@@ -58,6 +58,7 @@ const FICHIERS_APPLI = [
   'js/pulsations.js',
   'js/dynamique-resultats.js',
   'js/analyse-financiere.js',
+  'js/backtest.js',
   'js/chef.js',
   'js/donnees-alternatives.js',
   'js/menu.js',

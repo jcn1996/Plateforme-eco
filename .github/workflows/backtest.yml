@@ -1,0 +1,218 @@
+# Backtest des règles de notation (sans IA) : quels signaux sont réellement prédictifs ?
+# Méthode : agents/backtest/methode.md. Résultats : data/backtest/ (rapport-AAAA-MM.md, resultats.json pour l'écran
+# « Backtest », proposition-AAAA-MM.json). Aucun réglage d'un agent n'est modifié : une proposition de nouvelles
+# pondérations est ouverte dans une pull request séparée (branche backtest/proposition-AAAA-MM), à valider à la main.
+# - chaque mois, le 3 à 4 h 17 UTC (lancé par le planificateur ; ce planning GitHub reste en secours) ;
+# - à la main : onglet Actions → « Backtest » → « Run workflow ».
+# Lots en parallèle (un job GitHub dure 6 h au plus) : comptes SEC en 4 tranches (8 requêtes par seconde au plus),
+# pays, matières premières, secteurs ; puis entreprises (comptes des 4 tranches) ; puis le rapport.
+# Pull request de proposition : le dépôt doit autoriser « Allow GitHub Actions to create and approve pull requests »
+# (Settings → Actions → General) ; sinon le rapport est publié et l'échec de la pull request est signalé dans le journal.
+name: Backtest
+
+on:
+  schedule:
+    - cron: "17 4 3 * *"
+  workflow_dispatch:
+    inputs:
+      proposition:
+        description: "Ouvrir la pull request de proposition si de nouvelles pondérations sont retenues"
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: backtest
+  cancel-in-progress: false
+
+env:
+  CACHE: agents/.cache/backtest
+
+jobs:
+  sec:
+    name: Comptes SEC (tranche ${{ matrix.tranche }}/4)
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        tranche: [0, 1, 2, 3]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: agents/requirements.txt
+      - run: pip install -r agents/requirements.txt
+      - name: Télécharger les comptes de la tranche
+        env:
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+        run: python -m agents.backtest --lot sec --tranche ${{ matrix.tranche }}/4 || echo "::warning::tranche SEC ${{ matrix.tranche }} incomplète"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sec-${{ matrix.tranche }}
+          path: |
+            ${{ env.CACHE }}/sec/
+            ${{ env.CACHE }}/lots/sources-sec-*.json
+          if-no-files-found: ignore
+          retention-days: 3
+
+  lots:
+    name: Lot ${{ matrix.lot }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        lot: [pays, matieres, secteurs]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: agents/requirements.txt
+      - run: pip install -r agents/requirements.txt
+      - name: Tester le module backtest et le module commun (données de test, sans réseau)
+        if: matrix.lot == 'pays'
+        run: |
+          python -m unittest discover -s agents/backtest -t .
+          python -m unittest discover -s agents/commun -t .
+      - name: Calculer le lot
+        run: python -m agents.backtest --lot ${{ matrix.lot }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lot-${{ matrix.lot }}
+          path: ${{ env.CACHE }}/lots/${{ matrix.lot }}.json
+          retention-days: 3
+
+  entreprises:
+    name: Lot entreprises
+    needs: sec
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: agents/requirements.txt
+      - run: pip install -r agents/requirements.txt
+      - name: Récupérer les comptes des 4 tranches
+        uses: actions/download-artifact@v4
+        with:
+          pattern: sec-*
+          path: ${{ env.CACHE }}
+          merge-multiple: true
+      - name: Calculer le lot
+        env:
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+        run: python -m agents.backtest --lot entreprises
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lot-entreprises
+          path: |
+            ${{ env.CACHE }}/lots/entreprises.json
+            ${{ env.CACHE }}/lots/sources-sec-*.json
+          retention-days: 3
+
+  rapport:
+    name: Rapport et proposition
+    needs: [lots, entreprises]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: agents/requirements.txt
+      - run: pip install -r agents/requirements.txt
+      - name: Récupérer les résultats des lots
+        uses: actions/download-artifact@v4
+        with:
+          pattern: lot-*
+          path: ${{ env.CACHE }}/lots
+          merge-multiple: true
+      - name: Assembler le rapport
+        # Un lot manquant est signalé (rapport et santé) sans empêcher la publication des autres
+        run: python -m agents.backtest --lot rapport || echo "::warning::au moins un lot n'a pas été calculé"
+      - name: Commiter le rapport sur main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/backtest/ data/journal/
+          if git diff --cached --quiet; then
+            echo "Aucun changement : pas de commit."
+          else
+            git commit -m "Backtest : rapport de $(date -u +%m/%Y)"
+            ok=0
+            for essai in 1 2 3; do
+              if git pull --rebase origin main && git push origin HEAD:main; then ok=1; break; fi
+              git rebase --abort 2>/dev/null || true
+              sleep $((essai * 5))
+            done
+            [ "$ok" = 1 ] || exit 1
+          fi
+      - name: Ouvrir la pull request de proposition (validation manuelle)
+        if: github.event_name == 'schedule' || inputs.proposition
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          MOIS=$(date -u +%Y-%m)
+          FICHIER="data/backtest/proposition-$MOIS.json"
+          if ! python -c "import json,sys; sys.exit(0 if json.load(open('$FICHIER'))['a_valider'] else 1)"; then
+            echo "Aucune nouvelle pondération retenue ce mois-ci : pas de pull request."
+            exit 0
+          fi
+          BRANCHE="backtest/proposition-$MOIS"
+          if [ -n "$(gh pr list --head "$BRANCHE" --state open --json number --jq '.[].number')" ]; then
+            echo "Pull request déjà ouverte pour $BRANCHE."
+            exit 0
+          fi
+          git checkout -B "$BRANCHE" origin/main
+          git pull --rebase origin main || true
+          python -m agents.backtest --appliquer-proposition "$FICHIER"
+          git add agents/pays/config.json agents/entreprises/config.json agents/chef/config.json agents/matieres_premieres/config.json
+          if git diff --cached --quiet; then
+            echo "Pondérations déjà à jour."
+            exit 0
+          fi
+          git commit -m "Backtest : proposition de pondérations ($MOIS)"
+          git push --force-with-lease origin "$BRANCHE"
+          python - "$FICHIER" > corps.md <<'PY'
+          import json, sys
+          p = json.load(open(sys.argv[1]))
+          print("Proposition de nouvelles pondérations issue du backtest mensuel (`agents/backtest/`). **À valider à la main** : rien n'est fusionné automatiquement.\n")
+          print(f"Rapport complet : `data/backtest/rapport-{p['jour'][:7]}.md` · méthode : `agents/backtest/methode.md`.\n")
+          for x in p["propositions"]:
+              if not x.get("retenue"):
+                  continue
+              print(f"### `{x['fichier']}` — {' → '.join(x['chemin'])}\n")
+              print(f"{x['raison']}.\n")
+              print("| Clé | Actuel | Proposé |\n|---|---|---|")
+              for k, v in x["propose"].items():
+                  if x["actuel"].get(k) != v:
+                      print(f"| {k} | {x['actuel'].get(k)} | {v} |")
+              print()
+          print("Poids réglés sur la première moitié de l'historique seulement, retenus parce qu'ils font mieux sur la seconde (hors échantillon). Biais du survivant et limites : voir le rapport.")
+          PY
+          gh pr create --base main --head "$BRANCHE" --title "Backtest : proposition de pondérations ($MOIS)" --body-file corps.md
