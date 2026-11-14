@@ -61,6 +61,41 @@ class TestAgent(unittest.TestCase):
         for x in p["propositions"]:
             self.assertAlmostEqual(sum(x["propose"].values()), sum(x["actuel"].values()), places=2)
 
+    def test_variations_reference_combinaisons(self):
+        d = json.loads((self.sortie / "resultats.json").read_text(encoding="utf-8"))["donnees"]
+        pays = d["sections"]["pays"]["signaux"]
+        for k in ("croissance_pib", "indicateur_avance", "inflation", "taux_reel", "devise_3m", "valorisation"):
+            self.assertIn(f"var3_{k}", pays)
+            self.assertIn(f"var6_{k}", pays)
+        self.assertEqual(pays["var3_inflation"]["libelle"], "Inflation — variation 3 mois")
+        self.assertIn("var_marge_op", d["sections"]["entreprises"]["signaux"])
+        self.assertIn("var3_positionnement", d["sections"]["matieres"]["signaux"])
+        for nom in ("pays", "entreprises", "matieres"):
+            s = d["sections"][nom]
+            self.assertIn("vs_indice_annuel_pct", s["reference_momentum"]["verification"])
+            ng = s["signaux"]["note_globale"]
+            self.assertIn("vs_momentum_annuel_pct", ng["portefeuille"]["verification"])  # chaque note face au momentum seul
+            for h in ("3", "6"):
+                self.assertIn("battent_indice_pct", ng["horizons"][h])
+                self.assertIn("gain_perte", ng["horizons"][h])
+            c = s["combinaisons"]
+            self.assertLessEqual(c["essais"], 8 * 7 // 2 + 8 * 7 * 6 // 6)  # au plus C(8,2) + C(8,3)
+            for r in c["retenues"]:
+                self.assertIn(r["verdict"], ("Confirmée", "Prometteuse (non significative)", "Non confirmée"))
+                self.assertIn("vs_momentum_annuel_pct", r["comparaison"]["verification"])
+                self.assertIn("gain_perte", r["cible"]["6"])
+        self.assertTrue(1 <= len(d["en_bref"]) <= 10)
+
+    def test_resume_final(self):
+        texte = (self.sortie / "rapport-2026-11.md").read_text(encoding="utf-8")
+        fin = texte.rstrip().split("## En bref")[-1].strip().splitlines()
+        self.assertTrue(texte.rstrip().rfind("## En bref") > texte.rfind("## Sources"))  # le rapport se termine par le résumé
+        self.assertLessEqual(len([l for l in fin if l.strip()]), 10)
+        for mot in ("Ce qui anticipe", "Ce qui n'anticipe pas", "Bat le momentum seul"):
+            self.assertIn(mot, texte.split("## En bref")[-1])
+        self.assertIn("Cible et comparaison au « momentum seul »", texte)
+        self.assertIn("Combinaisons de signaux", texte)
+
 
 if __name__ == "__main__":
     unittest.main()

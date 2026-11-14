@@ -35,6 +35,24 @@ class TestRecalibrage(unittest.TestCase):
         self.assertEqual(nv["a"] + nv["b"], 40)
         self.assertGreater(nv["b"], nv["a"])
 
+    def test_pas_de_recalibrage_rapproche(self):
+        appliquee = {"propositions": [{"fichier": "f.json", "chemin": ["p"], "retenue": True, "actuel": {"a": 10}, "propose": {"a": 12}}]}
+        nouvelle = lambda: [{"fichier": "f.json", "chemin": ["p"], "retenue": True, "actuel": {"a": 12}, "propose": {"a": 14}, "raison": "mieux"}]  # noqa: E731
+        p = nouvelle()
+        self.assertEqual(RC.bloquer_recalibrages_rapproches(p, [("2026-11", appliquee)], "2027-02", 6), ["p"])
+        self.assertFalse(p[0]["retenue"])
+        self.assertIn("déjà été recalibrées", p[0]["raison"])
+        # le mois suivant, la trace laissée par la proposition bloquée suffit (le fichier d'origine a pu être remplacé)
+        suivant = nouvelle()
+        self.assertEqual(RC.bloquer_recalibrages_rapproches(suivant, [("2027-02", {"propositions": p})], "2027-03", 6), ["p"])
+        self.assertEqual(suivant[0]["deja_recalibree_le"], "2026-11")
+        p = nouvelle()  # au-delà du délai : de nouveau possible
+        self.assertEqual(RC.bloquer_recalibrages_rapproches(p, [("2026-11", appliquee)], "2027-05", 6), [])
+        self.assertTrue(p[0]["retenue"])
+        p = nouvelle()  # ancienne proposition non appliquée (poids actuels différents) : pas de blocage
+        p[0]["actuel"] = {"a": 10}
+        self.assertEqual(RC.bloquer_recalibrages_rapproches(p, [("2026-11", appliquee)], "2026-12", 6), [])
+
     def test_meilleure(self):
         a = {"verdict": "Alléger", "echantillons": {"verification": {"ic_moyen": 0.02, "ecart_net_annuel_pct": 1.0}}}
         b = {"verdict": "Garder", "echantillons": {"verification": {"ic_moyen": 0.04, "ecart_net_annuel_pct": 2.0}}}

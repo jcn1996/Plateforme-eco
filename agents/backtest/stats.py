@@ -97,6 +97,20 @@ def rotation(panier: pd.DataFrame) -> pd.Series:
     return rot
 
 
+def cible(relatif: pd.DataFrame | pd.Series) -> dict:
+    """Actifs retenus (une valeur par actif et par date : performance relative à l'indice sur l'horizon) :
+    part qui bat l'indice, gain moyen des gagnants, perte moyenne des perdants et rapport gain / perte."""
+    v = relatif.to_numpy(dtype=float).ravel() if hasattr(relatif, "to_numpy") else np.asarray(relatif, dtype=float)
+    v = v[~np.isnan(v)]
+    if not len(v):
+        return {"battent_indice_pct": None, "gain_moyen_pct": None, "perte_moyenne_pct": None, "gain_perte": None, "cas": 0}
+    g, p = v[v > 0], v[v < 0]
+    gain = float(g.mean()) if len(g) else 0.0
+    perte = float(-p.mean()) if len(p) else 0.0
+    return {"battent_indice_pct": _r(100 * (v > 0).mean(), 1), "gain_moyen_pct": _r(100 * gain, 2),
+            "perte_moyenne_pct": _r(100 * perte, 2), "gain_perte": _r(gain / perte, 2) if perte > 0 else None, "cas": int(len(v))}
+
+
 def moyenne_panier(futur: pd.DataFrame, panier: pd.DataFrame) -> pd.Series:
     f, p = futur.align(panier, join="inner")
     return f.where(p).mean(axis=1)
@@ -139,6 +153,7 @@ def analyser_signal(signal: pd.DataFrame, prix: pd.DataFrame, indice: pd.Series 
             "mois_gagnants_pct": _r(100 * (ecart.dropna() > 0).mean(), 1) if valide.any() else None,
             "reussite_haut_pct": _r(100 * np.nanmean(r_haut.to_numpy(dtype=float)), 1) if r_haut.notna().any().any() else None,
             "reussite_bas_pct": _r(100 * np.nanmean(r_bas.to_numpy(dtype=float)), 1) if r_bas.notna().any().any() else None,
+            **cible(f_rel.where(haut & f_rel.notna())[valide]),
         }
     # Frais : rééquilibrage mensuel des deux paniers ; aller-retour payé sur la part renouvelée
     fut1 = rendements_futurs(prix, 1)

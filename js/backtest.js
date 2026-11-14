@@ -26,6 +26,18 @@ export function trierSignaux(signaux = {}) {
   return [...autres, ...notes];
 }
 
+/** Classe CSS du verdict d'une combinaison de signaux. */
+export function classeCombinaison(v) {
+  if (v === 'Confirmée') return 'bt-verdict--garder';
+  if ((v ?? '').startsWith('Prometteuse')) return 'bt-verdict--alleger';
+  return 'bt-verdict--supprimer';
+}
+
+/** Texte du rapport sans le gras Markdown (« **Ce qui anticipe** » → « Ce qui anticipe »). */
+export function sansGras(t) {
+  return String(t ?? '').replace(/\*\*/g, '');
+}
+
 /** Nombre signé à la française : +0,034 ; n. d. si absent. */
 export function signe(x, d = 2, unite = '') {
   if (x === null || x === undefined || Number.isNaN(x)) return 'n. d.';
@@ -67,7 +79,21 @@ function detailSignal(r) {
       + `écart après frais ${signe(e.verification?.ecart_net_annuel_pct, 1, ' %/an')}. `
       + `Mois calmes : IC ${signe(reg.calme?.ic_moyen, 3)} (${reg.calme?.mois ?? 0}) · tension : ${signe(reg.tension?.ic_moyen, 3)} (${reg.tension?.mois ?? 0}). `
       + `Frais : rotation ${nombre(r.frais?.rotation_mensuelle_pct ?? 0, 0)} %/mois, coût ${signe(r.frais?.cout_annuel_pct, 1, ' %/an')}.`),
-    annees.length ? el('p', { class: 'chef-petit' }, 'IC par année : ' + annees.map(([a, v]) => `${a} ${signe(v, 2)}`).join(' · ')) : null);
+    annees.length ? el('p', { class: 'chef-petit' }, 'IC par année : ' + annees.map(([a, v]) => `${a} ${signe(v, 2)}`).join(' · ')) : null,
+    cible(r.horizons?.['3'], r.horizons?.['6'], r.portefeuille?.verification));
+}
+
+const pct = (x) => (x != null ? `${nombre(x, 0)} %` : 'n. d.');
+const ratio = (x) => (x != null ? nombre(x, 2) : 'n. d.');
+
+/** Cible : part des actifs retenus qui battent l'indice à 3 et 6 mois, gain moyen / perte moyenne ; panier face à
+ *  l'indice et au « momentum seul », hors échantillon. */
+function cible(h3, h6, pv) {
+  return el('p', { class: 'chef-petit' },
+    `Cible : battent l’indice ${pct(h3?.battent_indice_pct)} à 3 mois, ${pct(h6?.battent_indice_pct)} à 6 mois · `
+    + `gain / perte ${ratio(h3?.gain_perte)} à 3 mois, ${ratio(h6?.gain_perte)} à 6 mois.`
+    + (pv ? ` Panier des meilleurs, hors échantillon : ${signe(pv.vs_indice_annuel_pct, 1, ' pt/an')} face à l’indice, `
+      + `${signe(pv.vs_momentum_annuel_pct, 1, ' pt/an')} face au momentum seul.` : ''));
 }
 
 function ligneSignal(r) {
@@ -77,7 +103,8 @@ function ligneSignal(r) {
     el('summary', {},
       el('span', { class: 'bt-signal-nom' }, r.libelle), badge(r.verdict),
       el('span', { class: 'bt-signal-chiffres mono' },
-        `hors échantillon : IC ${signe(v.ic_moyen, 3)} · après frais ${signe(v.ecart_net_annuel_pct, 1, ' %/an')} · meilleurs − pires à ${r.horizon_reference} mois ${signe(h.ecart_pct, 1, ' %')}`)),
+        `hors échantillon : IC ${signe(v.ic_moyen, 3)} · après frais ${signe(v.ecart_net_annuel_pct, 1, ' %/an')} · meilleurs − pires à ${r.horizon_reference} mois ${signe(h.ecart_pct, 1, ' %')}`
+        + (r.portefeuille?.verification?.vs_momentum_annuel_pct != null ? ` · face au momentum seul ${signe(r.portefeuille.verification.vs_momentum_annuel_pct, 1, ' pt/an')}` : ''))),
     detailSignal(r));
 }
 
@@ -178,6 +205,34 @@ export function blocTendance(t) {
   ];
 }
 
+function blocReference(s) {
+  const ref = s.reference_momentum;
+  if (!ref?.verification) return [];
+  const v = ref.verification;
+  return [titre('Référence « momentum seul »', ref.regle ?? ''),
+    el('p', { class: 'chef-petit' },
+      `Hors échantillon : ${signe(v.rendement_annuel_pct, 1, ' %/an')} (${signe(v.vs_indice_annuel_pct, 1, ' pt/an')} face à l’indice), Sharpe ${signe(v.sharpe, 2)}, `
+      + `perte max ${signe(v.perte_max_pct, 0, ' %')}. Ses actifs battent l’indice ${pct(ref.cible?.['3']?.battent_indice_pct)} à 3 mois, `
+      + `${pct(ref.cible?.['6']?.battent_indice_pct)} à 6 mois (gain / perte ${ratio(ref.cible?.['6']?.gain_perte)}). `
+      + 'Chaque signal est comparé à cette règle sans analyse.')];
+}
+
+function blocCombinaisons(s) {
+  const c = s.combinaisons;
+  if (!c) return [];
+  return [titre('Combinaisons de signaux', `${c.essais} essais · seuil t ≥ ${c.seuil_t_bonferroni != null ? nombre(c.seuil_t_bonferroni, 2) : 'n. d.'} (Bonferroni)`),
+    el('p', { class: 'chef-petit' }, `Règle : ${c.regle}. Combinaisons choisies sur l’apprentissage, jugées hors échantillon (correction de Holm). `
+      + `${c.passent_bonferroni_apprentissage ?? 0} combinaison(s) passent le seuil corrigé sur l’apprentissage.`),
+    c.retenues?.length ? el('ul', { class: 'chef-texte bt-combinaisons' }, c.retenues.map((r) => {
+      const v = r.comparaison?.verification ?? {};
+      const cv = r.cible_verification ?? r.cible ?? {};
+      return el('li', {}, el('span', { class: `bt-verdict ${classeCombinaison(r.verdict)}` }, r.verdict), ' ', el('strong', {}, r.libelle),
+        el('span', { class: 'chef-petit' }, ` · face à l’indice ${signe(v.vs_indice_annuel_pct, 1, ' pt/an')}, au momentum seul ${signe(v.vs_momentum_annuel_pct, 1, ' pt/an')}`
+          + ` · p corrigée ${r.p_holm != null ? nombre(r.p_holm, 3) : 'n. d.'} · battent l’indice ${pct(cv['3']?.battent_indice_pct)} / ${pct(cv['6']?.battent_indice_pct)} (3 / 6 mois)`
+          + ` · gain / perte ${ratio(cv['6']?.gain_perte)} · ${r.taille_moyenne != null ? nombre(r.taille_moyenne, 1) : '?'} actif(s) en moyenne`));
+    })) : el('p', { class: 'chef-petit' }, 'Aucune combinaison testable.')];
+}
+
 function section(s) {
   if (s.suivi_tendance) {
     const p = s.suivi_tendance.periode ?? {};
@@ -189,6 +244,8 @@ function section(s) {
     titre(s.titre, `${p.debut ?? '?'} → ${p.fin ?? '?'} · ${p.actifs ?? 0} actifs · horizon ${s.horizon_reference} mois · indice ${s.indice ?? 'n. d.'}`),
     biais(s),
     ...trierSignaux(s.signaux).map((k) => ligneSignal(s.signaux[k])),
+    ...blocReference(s),
+    ...blocCombinaisons(s),
     ...blocRegles(s));
 }
 
@@ -220,6 +277,8 @@ export function ecranBacktest(res) {
       `Backtest du ${res.jour ?? 'n. d.'} · rééquilibrage mensuel · meilleurs ${m.quantile_pct ?? 20} % contre pires ${m.quantile_pct ?? 20} % et contre l’indice · `
       + `horizons ${(m.horizons_mois ?? []).join(', ')} mois · frais inclus · verdict jugé hors échantillon (seconde moitié de l’historique). `
       + `Rapport complet : ${res.meta?.rapport ?? 'data/backtest/'}.`),
+    res.en_bref?.length ? el('section', { class: 'bt-section' }, titre('En bref'),
+      el('ul', { class: 'chef-texte bt-en-bref' }, res.en_bref.map((l) => el('li', {}, sansGras(l).replace(/^\d+\.\s*/, ''))))) : null,
     el('p', { class: 'bt-synthese' }, Object.entries(res.verdicts ?? {}).sort((a, b) => (ORDRE[a[0]] ?? 9) - (ORDRE[b[0]] ?? 9))
       .map(([v, n]) => el('span', { class: `bt-verdict ${classeVerdict(v)}` }, `${v} : ${n}`))),
     ...SECTIONS.filter((k) => res.sections?.[k]).map((k) => section(res.sections[k])),

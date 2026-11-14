@@ -41,6 +41,7 @@ def construire(fournisseur, cfg_mp: dict, cfg: dict, debut: str) -> dict:
     cfg_eia = {"brut": {"libelle": "stocks de brut", "unite": "Mb"}, "gaz": {"libelle": "stocks de gaz", "unite": "Gpi³"}}
     notes = {k: pd.DataFrame(np.nan, index=mois, columns=cles) for k in SOUS_NOTES}
     globale = pd.DataFrame(np.nan, index=mois, columns=cles)
+    brut = {k: pd.DataFrame(np.nan, index=mois, columns=cles) for k in ("stocks_ecart", "part_oi")}
     r_cftc, r_eia = cfg["matieres"]["retard_cftc_jours"], cfg["matieres"]["retard_eia_jours"]
     for m in matieres:
         if m["cle"] not in cles:
@@ -81,6 +82,10 @@ def construire(fournisseur, cfg_mp: dict, cfg: dict, debut: str) -> dict:
                     sous["positionnement"] = MA.positionnement(lignes[:kc], t.date(), seuils)
             cpi_t = [x for x in cpi if x[0] <= (t - pd.offsets.MonthEnd(1)).strftime("%Y-%m-%d")]
             sous["niveau"] = MA.niveau(serie[:k], cpi_t)
+            if sous.get("stocks") and sous["stocks"].get("ecart_moyen_pct") is not None:
+                brut["stocks_ecart"].at[t, m["cle"]] = sous["stocks"]["ecart_moyen_pct"]
+            if sous.get("positionnement") and sous["positionnement"].get("part_oi_pct") is not None:
+                brut["part_oi"].at[t, m["cle"]] = sous["positionnement"]["part_oi_pct"]
             for nom, sn in sous.items():
                 if sn and sn.get("note") is not None:
                     notes[nom].at[t, m["cle"]] = sn["note"]
@@ -88,4 +93,15 @@ def construire(fournisseur, cfg_mp: dict, cfg: dict, debut: str) -> dict:
             if g is not None:
                 globale.at[t, m["cle"]] = g
     return {"prix": prix, "indice": None, "notes": {k: v for k, v in notes.items() if v.notna().any().any()},
-            "note_globale": globale, "mois": mois}
+            "note_globale": globale, "mois": mois, "variations": variations(brut)}
+
+
+def variations(brut: dict[str, pd.DataFrame], mois_liste=(3, 6)) -> dict[str, pd.DataFrame]:
+    """Variation des stocks (écart à la moyenne sur 5 ans, en points ; une baisse est favorable, d'où le signe −) et du
+    positionnement des gérants (position nette en % de l'intérêt ouvert ; des achats sont comptés favorables), sur 3 et
+    6 mois. Mêmes décalages de publication que les niveaux (EIA + 7 jours, CFTC + 3 jours)."""
+    res = {}
+    for m in mois_liste:
+        res[f"var{m}_stocks"] = -(brut["stocks_ecart"] - brut["stocks_ecart"].shift(m))
+        res[f"var{m}_positionnement"] = brut["part_oi"] - brut["part_oi"].shift(m)
+    return {k: v for k, v in res.items() if v.notna().any().any()}
