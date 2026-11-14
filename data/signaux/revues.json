@@ -1,13 +1,336 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-14T02:43:00Z",
+    "genere_le": "2026-11-14T23:02:56Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "inities|achats_groupes|ALT|2026-11-14",
+      "revu_le": "2026-11-14T23:01:47Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "ALT",
+        "date": "2026-11-14",
+        "importance": "forte",
+        "titre": "Altimmune, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 89/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|BW|2026-11-14",
+      "revu_le": "2026-11-14T23:01:47Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "BW",
+        "date": "2026-11-14",
+        "importance": "forte",
+        "titre": "Babcock & Wilcox Enterprises, Inc. : 4 dirigeants achètent sur le marché en 30 jours (score 95/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|KGS|2026-11-14",
+      "revu_le": "2026-11-14T23:01:47Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "KGS",
+        "date": "2026-11-14",
+        "importance": "forte",
+        "titre": "Kodiak Gas Services, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 87/100)"
+      },
+      "objection": "Malgré ces achats d'initiés, l'entreprise supporte une dette nette sur EBITDA de 4,4× [F2] et une couverture des intérêts limitée à 2,1× [F3].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Kodiak Gas Services, Inc. : PER vs secteur +92,3 % (PER 27,5 ; médiane du secteur 14,3)",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "Kodiak Gas Services, Inc. : dette nette / EBITDA de 4,4×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F3",
+          "texte": "Kodiak Gas Services, Inc. : couverture des intérêts de 2,1×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F4",
+          "texte": "Kodiak Gas Services, Inc. : cours −31,1 % sur 3 mois, −38,3 % sur 6 mois, +37,2 % sur 12 mois",
+          "source": "agent entreprises (fiche)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F2",
+        "F3"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "inities|achats_groupes|HPP|2026-11-14",
+      "revu_le": "2026-11-14T23:01:47Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "HPP",
+        "date": "2026-11-14",
+        "importance": "forte",
+        "titre": "Hudson Pacific Properties, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 95/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|FF|2026-11-14",
+      "revu_le": "2026-11-14T23:01:47Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "FF",
+        "date": "2026-11-14",
+        "importance": "forte",
+        "titre": "FutureFuel Corp. : 4 dirigeants achètent sur le marché en 30 jours (score 95/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|CSQR|2026-11-14",
+      "revu_le": "2026-11-14T23:01:47Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "CSQR",
+        "date": "2026-11-14",
+        "importance": "forte",
+        "titre": "Csquare, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 95/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|nouvelle_position_super_investisseur|HONA|2026-11-14",
+      "revu_le": "2026-11-14T23:01:47Z",
+      "signal": {
+        "agent": "inities",
+        "type": "nouvelle_position_super_investisseur",
+        "cle": "HONA",
+        "date": "2026-11-14",
+        "importance": "moyenne",
+        "titre": "Seth Klarman (Baupost Group LLC) ouvre une position dans HONEYWELL AEROSPACE INC (3,5 % du portefeuille, T3 2026)"
+      },
+      "objection": "Cette nouvelle position intervient alors que la croissance du bénéfice affiche un recul de -36,8 % [F3] et que le PER dépasse la médiane du secteur de 108,3 % [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Honeywell Aerospace Inc. : PER vs secteur +108,3 % (PER 52,8 ; médiane du secteur 25,3)",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "Honeywell Aerospace Inc. : couverture des intérêts de 4,0×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F3",
+          "texte": "Honeywell Aerospace Inc. : croissance du bénéfice −36,8 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F3"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "inities|nouvelle_position_super_investisseur|SITE|2026-11-14",
+      "revu_le": "2026-11-14T23:01:47Z",
+      "signal": {
+        "agent": "inities",
+        "type": "nouvelle_position_super_investisseur",
+        "cle": "SITE",
+        "date": "2026-11-14",
+        "importance": "moyenne",
+        "titre": "Seth Klarman (Baupost Group LLC) ouvre une position dans SITEONE LANDSCAPE SUPPLY INC (2,2 % du portefeuille, T3 2026)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|evenement_grave|evt-d40435d5b052|2026-11-14",
+      "revu_le": "2026-11-14T23:01:47Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "evenement_grave",
+        "cle": "evt-d40435d5b052",
+        "date": "2026-11-14",
+        "importance": "haute",
+        "titre": "Événement de gravité 4 : Tensions sur l'Iran entre déclarations de Trump et requêtes de Netanyahu"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|EXE|2026-11-14",
+      "revu_le": "2026-11-14T23:01:47Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "EXE",
+        "date": "2026-11-14",
+        "importance": "moyenne",
+        "titre": "Expand Energy Corporation entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "En dépit de la croissance du bénéfice de +354,8 % [F2], le momentum à 12 mois reste négatif à -23,1 % [F1], suggérant un possible piège de valeur [F3].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Expand Energy Corporation : momentum 12 mois −23,1 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "Expand Energy Corporation : croissance du bénéfice +354,8 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F3",
+          "texte": "Expand Energy Corporation : piège de valeur possible : décote marquée associée à un cours ou à un bénéfice en recul (revue critique)",
+          "source": "agent entreprises (data/pepites.json)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2",
+        "F3"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|GFNORTEO.MX|2026-11-14",
+      "revu_le": "2026-11-14T23:01:47Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "GFNORTEO.MX",
+        "date": "2026-11-14",
+        "importance": "moyenne",
+        "titre": "Grupo Financiero Banorte, S.A.B. de C.V. entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "L'entrée de ce titre s'inscrit dans un contexte où la devise locale affiche une baisse de -8,4 % contre le dollar sur 3 mois et une volatilité à 1 mois de 11,9 % [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Mexique : MXN : volatilité à 1 mois de 11,9 %, −8,4 % contre le dollar sur 3 mois",
+          "source": "Yahoo Finance via yfinance, MXN=X (devise suivie par l'agent pays)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|alerte_comptable|SIE.DE|2026-11-14",
+      "revu_le": "2026-11-14T23:01:47Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "alerte_comptable",
+        "cle": "SIE.DE",
+        "date": "2026-11-14",
+        "importance": "moyenne",
+        "titre": "Siemens Aktiengesellschaft : hausse anormale des créances"
+      },
+      "objection": "Malgré la hausse des créances, la conversion du bénéfice en cash atteint 142,5 % [F1] et le F-score s'établit à 8/9 [F2].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Siemens Aktiengesellschaft : conversion du bénéfice en cash de 142,5 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "Siemens Aktiengesellschaft : F-score de 8/9",
+          "source": "agent entreprises (data/entreprises.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
     {
       "id": "matieres_premieres|changement_verdict|gaz_europe|2026-11-14",
       "revu_le": "2026-11-14T02:41:59Z",
@@ -189,6 +512,515 @@
         "date": "2026-11-14",
         "importance": "moyenne",
         "titre": "Turquie : score de risque géopolitique 35/100, +16 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "pays|sorties_inhabituelles|TW|2026-11-13",
+      "revu_le": "2026-11-14T23:01:47Z",
+      "signal": {
+        "agent": "pays",
+        "type": "sorties_inhabituelles",
+        "cle": "TW",
+        "date": "2026-11-13",
+        "importance": "forte",
+        "titre": "Taïwan : sorties inhabituelles sur l'ETF EWT"
+      },
+      "objection": "Les sorties sur l'ETF EWT s'inscrivent dans un contexte où l'ETF est déjà à −17,5 % de son plus haut sur 12 mois, avec une volatilité à 3 mois de 42,1 % [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Taïwan : ETF EWT à −17,5 % de son plus haut sur 12 mois, volatilité à 3 mois de 42,1 %",
+          "source": "Yahoo Finance via yfinance, ETF EWT"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "TW": {
+          "objection": "Objections spécifiques : ETF EWT à −17,5 % de son plus haut sur 12 mois [F1].",
+          "ajustement": "maintenir"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "pays|entrees_inhabituelles|TR|2026-11-13",
+      "revu_le": "2026-11-14T23:01:47Z",
+      "signal": {
+        "agent": "pays",
+        "type": "entrees_inhabituelles",
+        "cle": "TR",
+        "date": "2026-11-13",
+        "importance": "forte",
+        "titre": "Turquie : entrées inhabituelles sur l'ETF TUR"
+      },
+      "objection": "Ces entrées interviennent alors que l'inflation atteint 29,7 % pour une cible de 5,0 % [F1] et que l'ETF TUR se trouve à −25,5 % de son plus haut sur 12 mois avec une volatilité de 31,3 % [F2].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Turquie : inflation à 29,7 %, cible de 5,0 %",
+          "source": "agent pays / FMI"
+        },
+        {
+          "id": "F2",
+          "texte": "Turquie : ETF TUR à −25,5 % de son plus haut sur 12 mois, volatilité à 3 mois de 31,3 %",
+          "source": "Yahoo Finance via yfinance, ETF TUR"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "TR": {
+          "objection": "Objections spécifiques : inflation à 29,7 % pour une cible de 5,0 % [F1] ; ETF TUR à −25,5 % de son plus haut sur 12 mois [F2].",
+          "ajustement": "abaisser"
+        }
+      },
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "pays|sorties_inhabituelles|TH|2026-11-13",
+      "revu_le": "2026-11-14T23:01:47Z",
+      "signal": {
+        "agent": "pays",
+        "type": "sorties_inhabituelles",
+        "cle": "TH",
+        "date": "2026-11-13",
+        "importance": "forte",
+        "titre": "Thaïlande : sorties inhabituelles sur l'ETF THD"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "pays|sorties_inhabituelles|SG|2026-11-13",
+      "revu_le": "2026-11-14T23:01:47Z",
+      "signal": {
+        "agent": "pays",
+        "type": "sorties_inhabituelles",
+        "cle": "SG",
+        "date": "2026-11-13",
+        "importance": "forte",
+        "titre": "Singapour : sorties inhabituelles sur l'ETF EWS"
+      },
+      "objection": "Ces sorties de capitaux pèsent sur une économie caractérisée par une dette publique de 166 % du PIB [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Singapour : dette publique de 166 % du PIB",
+          "source": "FMI (GGXWDG_NGDP)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "SG": {
+          "objection": "Objections spécifiques : Singapour : dette publique de 166 % du PIB [F1].",
+          "ajustement": "maintenir"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "pays|entrees_inhabituelles|SE|2026-11-13",
+      "revu_le": "2026-11-14T23:01:47Z",
+      "signal": {
+        "agent": "pays",
+        "type": "entrees_inhabituelles",
+        "cle": "SE",
+        "date": "2026-11-13",
+        "importance": "forte",
+        "titre": "Suède : entrées inhabituelles sur l'ETF EWD"
+      },
+      "objection": "Cet afflux massif contraste avec des réserves limitées à 2,2 mois d'importations [F1] et une devise affichant une volatilité à 1 mois de 8,4 % ainsi qu'une baisse de −5,3 % contre le dollar sur 3 mois [F2].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Suède : réserves de 2,2 mois d'importations",
+          "source": "Banque mondiale (FI.RES.TOTL.MO)"
+        },
+        {
+          "id": "F2",
+          "texte": "Suède : SEK : volatilité à 1 mois de 8,4 %, −5,3 % contre le dollar sur 3 mois",
+          "source": "Yahoo Finance via yfinance, SEK=X (devise suivie par l'agent pays)"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "SE": {
+          "objection": "Objections spécifiques : réserves de change de 2,2 mois d'importations seulement [F1] ; devise à −5,3 % contre le dollar sur 3 mois (volatilité à 1 mois de 8,4 %) [F2].",
+          "ajustement": "abaisser"
+        }
+      },
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "pays|entrees_inhabituelles|PL|2026-11-13",
+      "revu_le": "2026-11-14T23:01:47Z",
+      "signal": {
+        "agent": "pays",
+        "type": "entrees_inhabituelles",
+        "cle": "PL",
+        "date": "2026-11-13",
+        "importance": "forte",
+        "titre": "Pologne : entrées inhabituelles sur l'ETF EPOL"
+      },
+      "objection": "Cet afflux doit être nuancé au regard de la devise, qui enregistre une volatilité à 1 mois de 8,3 % et un recul de −6,6 % contre le dollar sur 3 mois [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Pologne : PLN : volatilité à 1 mois de 8,3 %, −6,6 % contre le dollar sur 3 mois",
+          "source": "Yahoo Finance via yfinance, PLN=X (devise suivie par l'agent pays)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "PL": {
+          "objection": "Objections spécifiques : devise à −6,6 % contre le dollar sur 3 mois (volatilité à 1 mois de 8,3 %) [F1].",
+          "ajustement": "maintenir"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "pays|entrees_inhabituelles|NL|2026-11-13",
+      "revu_le": "2026-11-14T23:01:47Z",
+      "signal": {
+        "agent": "pays",
+        "type": "entrees_inhabituelles",
+        "cle": "NL",
+        "date": "2026-11-13",
+        "importance": "forte",
+        "titre": "Pays-Bas : entrées inhabituelles sur l'ETF EWN"
+      },
+      "objection": "Cette entrée de capitaux intervient alors que le pays dispose de réserves restreintes à 1,0 mois d'importations [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Pays-Bas : réserves de 1,0 mois d'importations",
+          "source": "Banque mondiale (FI.RES.TOTL.MO)"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "NL": {
+          "objection": "Objections spécifiques : réserves de change de 1,0 mois d'importations seulement [F1].",
+          "ajustement": "abaisser"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "pays|sorties_inhabituelles|IT|2026-11-13",
+      "revu_le": "2026-11-14T23:01:47Z",
+      "signal": {
+        "agent": "pays",
+        "type": "sorties_inhabituelles",
+        "cle": "IT",
+        "date": "2026-11-13",
+        "importance": "forte",
+        "titre": "Italie : sorties inhabituelles sur l'ETF EWI"
+      },
+      "objection": "Ces retraits surviennent dans un contexte de vulnérabilité marqué par une dette publique de 138 % du PIB [F1] et une inflation à 5,6 % éloignée de la cible de 2,0 % [F2].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Italie : dette publique de 138 % du PIB",
+          "source": "FMI (GGXWDG_NGDP)"
+        },
+        {
+          "id": "F2",
+          "texte": "Italie : inflation à 5,6 %, cible de 2,0 %",
+          "source": "agent pays / FMI"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "IT": {
+          "objection": "Objections spécifiques : Italie : dette publique de 138 % du PIB [F1] ; inflation à 5,6 % pour une cible de 2,0 % [F2].",
+          "ajustement": "abaisser"
+        }
+      },
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "pays|entrees_inhabituelles|IN|2026-11-13",
+      "revu_le": "2026-11-14T23:01:47Z",
+      "signal": {
+        "agent": "pays",
+        "type": "entrees_inhabituelles",
+        "cle": "IN",
+        "date": "2026-11-13",
+        "importance": "forte",
+        "titre": "Inde : entrées inhabituelles sur l'ETF INDA"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "pays|entrees_inhabituelles|ID|2026-11-13",
+      "revu_le": "2026-11-14T23:01:47Z",
+      "signal": {
+        "agent": "pays",
+        "type": "entrees_inhabituelles",
+        "cle": "ID",
+        "date": "2026-11-13",
+        "importance": "forte",
+        "titre": "Indonésie : entrées inhabituelles sur l'ETF EIDO"
+      },
+      "objection": "Cet afflux intervient alors que l'ETF EIDO se trouve à −43,8 % de son plus haut sur 12 mois avec une volatilité à 3 mois de 42,4 % [F2]. L'IDR affiche quant à elle une volatilité à 1 mois de 25,0 % et une baisse de −2,3 % contre le dollar sur 3 mois [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Indonésie : IDR : volatilité à 1 mois de 25,0 %, −2,3 % contre le dollar sur 3 mois",
+          "source": "Yahoo Finance via yfinance, IDR=X (devise suivie par l'agent pays)"
+        },
+        {
+          "id": "F2",
+          "texte": "Indonésie : ETF EIDO à −43,8 % de son plus haut sur 12 mois, volatilité à 3 mois de 42,4 %",
+          "source": "Yahoo Finance via yfinance, ETF EIDO"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "ID": {
+          "objection": "Objections spécifiques : devise à −2,3 % contre le dollar sur 3 mois (volatilité à 1 mois de 25,0 %) [F1] ; ETF EIDO à −43,8 % de son plus haut sur 12 mois [F2].",
+          "ajustement": "abaisser"
+        }
+      },
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "pays|entrees_inhabituelles|DE|2026-11-13",
+      "revu_le": "2026-11-14T23:01:47Z",
+      "signal": {
+        "agent": "pays",
+        "type": "entrees_inhabituelles",
+        "cle": "DE",
+        "date": "2026-11-13",
+        "importance": "forte",
+        "titre": "Allemagne : entrées inhabituelles sur l'ETF EWG"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "pays|sorties_inhabituelles|CL|2026-11-13",
+      "revu_le": "2026-11-14T23:01:47Z",
+      "signal": {
+        "agent": "pays",
+        "type": "sorties_inhabituelles",
+        "cle": "CL",
+        "date": "2026-11-13",
+        "importance": "forte",
+        "titre": "Chili : sorties inhabituelles sur l'ETF ECH"
+      },
+      "objection": "Ces sorties massives coïncident avec un ETF ECH situé à −23,8 % de son plus haut sur 12 mois et une volatilité à 3 mois de 22,7 % [F2]. Le CLP enregistre également une baisse de −8,0 % contre le dollar sur 3 mois et une volatilité à 1 mois de 21,4 % [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Chili : CLP : volatilité à 1 mois de 21,4 %, −8,0 % contre le dollar sur 3 mois",
+          "source": "Yahoo Finance via yfinance, CLP=X (devise suivie par l'agent pays)"
+        },
+        {
+          "id": "F2",
+          "texte": "Chili : ETF ECH à −23,8 % de son plus haut sur 12 mois, volatilité à 3 mois de 22,7 %",
+          "source": "Yahoo Finance via yfinance, ETF ECH"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "CL": {
+          "objection": "Objections spécifiques : devise à −8,0 % contre le dollar sur 3 mois (volatilité à 1 mois de 21,4 %) [F1] ; ETF ECH à −23,8 % de son plus haut sur 12 mois [F2].",
+          "ajustement": "abaisser"
+        }
+      },
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "pays|sorties_inhabituelles|BR|2026-11-13",
+      "revu_le": "2026-11-14T23:01:47Z",
+      "signal": {
+        "agent": "pays",
+        "type": "sorties_inhabituelles",
+        "cle": "BR",
+        "date": "2026-11-13",
+        "importance": "moyenne",
+        "titre": "Brésil : sorties inhabituelles sur l'ETF EWZ"
+      },
+      "objection": "Ces retraits surviennent dans un contexte de dette publique s'élevant à 97 % du PIB [F1]. L'ETF EWZ est à −26,0 % de son plus haut sur 12 mois avec une volatilité à 3 mois de 55,6 %, tandis que le BRL baisse de −7,8 % contre le dollar sur 3 mois [F2, F3].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Brésil : dette publique de 97 % du PIB",
+          "source": "FMI (GGXWDG_NGDP)"
+        },
+        {
+          "id": "F2",
+          "texte": "Brésil : BRL : volatilité à 1 mois de 29,6 %, −7,8 % contre le dollar sur 3 mois",
+          "source": "Yahoo Finance via yfinance, BRL=X (devise suivie par l'agent pays)"
+        },
+        {
+          "id": "F3",
+          "texte": "Brésil : ETF EWZ à −26,0 % de son plus haut sur 12 mois, volatilité à 3 mois de 55,6 %",
+          "source": "Yahoo Finance via yfinance, ETF EWZ"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "BR": {
+          "objection": "Objections spécifiques : Brésil : dette publique de 97 % du PIB [F1] ; devise à −7,8 % contre le dollar sur 3 mois (volatilité à 1 mois de 29,6 %) [F2] ; ETF EWZ à −26,0 % de son plus haut sur 12 mois [F3].",
+          "ajustement": "abaisser"
+        }
+      },
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2",
+        "F3"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "pays|entrees_inhabituelles|AU|2026-11-13",
+      "revu_le": "2026-11-14T23:01:47Z",
+      "signal": {
+        "agent": "pays",
+        "type": "entrees_inhabituelles",
+        "cle": "AU",
+        "date": "2026-11-13",
+        "importance": "moyenne",
+        "titre": "Australie : entrées inhabituelles sur l'ETF EWA"
+      },
+      "objection": "Cet afflux doit être nuancé par des réserves nationales limitées à 1,6 mois d'importations [F2]. Le pays présente par ailleurs un solde courant de −3,1 % du PIB [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Australie : solde courant de −3,1 % du PIB",
+          "source": "FMI (BCA_NGDPD)"
+        },
+        {
+          "id": "F2",
+          "texte": "Australie : réserves de 1,6 mois d'importations",
+          "source": "Banque mondiale (FI.RES.TOTL.MO)"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "AU": {
+          "objection": "Objections spécifiques : déficit courant de 3,1 % du PIB [F1] ; réserves de change de 1,6 mois d'importations seulement [F2].",
+          "ajustement": "abaisser"
+        }
+      },
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "pays|entrees_inhabituelles|AE|2026-11-13",
+      "revu_le": "2026-11-14T23:01:47Z",
+      "signal": {
+        "agent": "pays",
+        "type": "entrees_inhabituelles",
+        "cle": "AE",
+        "date": "2026-11-13",
+        "importance": "moyenne",
+        "titre": "Émirats arabes unis : entrées inhabituelles sur l'ETF UAE"
       },
       "objection": "Pas d'objection spécifique.",
       "faits": [],
@@ -518,6 +1350,47 @@
         "F1"
       ],
       "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "pays|inversion_flux|US|2026-11-12",
+      "revu_le": "2026-11-14T23:01:47Z",
+      "signal": {
+        "agent": "pays",
+        "type": "inversion_flux",
+        "cle": "US",
+        "date": "2026-11-12",
+        "importance": "moyenne",
+        "titre": "États-Unis : les flux de l'ETF SPY passent des sorties aux entrées"
+      },
+      "objection": "Objections spécifiques : États-Unis : dette publique de 127 % du PIB [F1] ; déficit courant de 3,9 % du PIB [F2] ; réserves de change de 2,8 mois d'importations seulement [F3].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "États-Unis : dette publique de 127 % du PIB",
+          "source": "FMI (GGXWDG_NGDP)"
+        },
+        {
+          "id": "F2",
+          "texte": "États-Unis : solde courant de −3,9 % du PIB",
+          "source": "FMI (BCA_NGDPD)"
+        },
+        {
+          "id": "F3",
+          "texte": "États-Unis : réserves de 2,8 mois d'importations",
+          "source": "Banque mondiale (FI.RES.TOTL.MO)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "règles",
+      "par_entite": {
+        "US": {
+          "objection": "Objections spécifiques : États-Unis : dette publique de 127 % du PIB [F1] ; déficit courant de 3,9 % du PIB [F2] ; réserves de change de 2,8 mois d'importations seulement [F3].",
+          "ajustement": "signal fragile"
+        }
+      },
+      "confiance": "moyen",
+      "version_regles": 3
     },
     {
       "id": "entreprises|guidance_relevee|CSCO|2026-11-12",
@@ -2984,6 +3857,37 @@
       "version_regles": 3
     },
     {
+      "id": "geopolitique|hausse_score|TH|2026-11-10",
+      "revu_le": "2026-11-14T23:01:47Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "TH",
+        "date": "2026-11-10",
+        "importance": "moyenne",
+        "titre": "Thaïlande : score de risque géopolitique 13/100, +13 pts sur 7 jours"
+      },
+      "objection": "Objections spécifiques : le marché ne confirme pas pour Thaïlande (ETF THD à +0,3 % depuis la veille du signal) [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "ETF THD (Thaïlande) : +0,3 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, THD"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "règles",
+      "par_entite": {
+        "TH": {
+          "objection": "Objections spécifiques : le marché ne confirme pas pour Thaïlande (ETF THD à +0,3 % depuis la veille du signal) [F1].",
+          "ajustement": "abaisser"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3
+    },
+    {
       "id": "geopolitique|hausse_score|TW|2026-11-10",
       "revu_le": "2026-11-14T02:41:59Z",
       "signal": {
@@ -3638,25 +4542,6 @@
         "date": "2026-11-09",
         "importance": "moyenne",
         "titre": "Ferguson Enterprises Inc. : guidance relevée (09/11/2026)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|nouvelle_pepite|ACGL|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "nouvelle_pepite",
-        "cle": "ACGL",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "Arch Capital Group Ltd. entre dans la liste « Qualité à prix raisonnable »"
       },
       "objection": "Pas d'objection spécifique.",
       "faits": [],

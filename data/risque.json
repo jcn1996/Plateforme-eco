@@ -1,11 +1,11 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-14T02:41:59Z",
+    "genere_le": "2026-11-14T23:01:47Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
-    "mise_a_jour_precedente": "2026-11-13T23:01:40Z",
+    "mise_a_jour_precedente": "2026-11-14T02:41:59Z",
     "etat_des_sources": {
       "FRED, CBOE Volatility Index (VIXCLS)": "ok",
       "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)": "ok",
@@ -370,7 +370,7 @@
         "poids": 5,
         "unite": "%",
         "decimales": 1,
-        "valeur": 3.785,
+        "valeur": 3.784,
         "date": "2026-11-13",
         "percentile": 88.9,
         "score": 88.9,
@@ -378,7 +378,7 @@
         "min_historique": -10.123,
         "max_historique": 9.775,
         "mediane_historique": 0.227,
-        "variation_1m": 1.978,
+        "variation_1m": 1.977,
         "tendance": "hausse",
         "source": "Yahoo Finance via yfinance, DX-Y.NYB",
         "secours": false,
@@ -674,7 +674,7 @@
         "nom": "États-Unis",
         "score": 26,
         "niveau": "faible",
-        "variation_7j": -1.4,
+        "variation_7j": -1.6,
         "composantes": {
           "marche": {
             "score": 9.4,
@@ -692,8 +692,8 @@
             "variation_1m": 1.38,
             "libelle": "indice du dollar (DXY)",
             "date": "2026-11-13",
-            "verification": "divergent",
-            "controle_agent_pays": 2.1,
+            "verification": "concordant",
+            "controle_agent_pays": 3.75,
             "texte": "indice du dollar (DXY) : volatilité à 1 mois de 5,4 %, +3,8 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, DX-Y.NYB (devise suivie par l'agent pays)"
           },
@@ -708,18 +708,18 @@
             "source": "OCDE via FRED (IRLTLT01…M156N), mensuel"
           },
           "macro": {
-            "score": 62.7,
+            "score": 62.8,
             "dette_pib": 126.8,
             "solde_courant": -3.9,
-            "inflation": 3.72,
+            "inflation": 3.74,
             "cible_inflation": 2.0,
             "reserves_mois": 2.79908191082269,
             "texte": "dette publique de 127 % du PIB (2026), solde courant de −3,9 % du PIB, inflation à 3,7 % pour une cible de 2,0 %, réserves de change de 2,8 mois d'importations",
             "source": "FMI (GGXWDG_NGDP, BCA_NGDPD), inflation : agent pays, Banque mondiale (FI.RES.TOTL.MO)"
           },
           "geopolitique": {
-            "score": 66.0,
-            "texte": "score de risque géopolitique de 66/100",
+            "score": 65.0,
+            "texte": "score de risque géopolitique de 65/100",
             "source": "agent géopolitique (data/geopolitique.json)"
           }
         },
@@ -731,13 +731,13 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "États-Unis : score de risque de 26/100 (−1 pt sur 7 jours), porté surtout par la composante géopolitique (66/100 : score de risque géopolitique de 66/100). Composante la plus basse : souverain (0/100 : taux à 10 ans de 4,99 % (09/2026))."
+        "texte": "États-Unis : score de risque de 26/100 (−2 pt sur 7 jours), porté surtout par la composante géopolitique (65/100 : score de risque géopolitique de 65/100). Composante la plus basse : souverain (0/100 : taux à 10 ans de 4,99 % (09/2026))."
       },
       "CA": {
         "nom": "Canada",
-        "score": 21,
+        "score": 22,
         "niveau": "faible",
-        "variation_7j": -2.9,
+        "variation_7j": -2.0,
         "composantes": {
           "marche": {
             "score": 12.3,
@@ -749,15 +749,15 @@
             "source": "Yahoo Finance via yfinance, ETF EWC"
           },
           "devise": {
-            "score": 15.1,
-            "volatilite_1m": 4.91,
-            "variation_3m": -2.74,
-            "variation_1m": -0.34,
+            "score": 14.7,
+            "volatilite_1m": 4.88,
+            "variation_3m": -2.6,
+            "variation_1m": -0.53,
             "libelle": "CAD",
-            "date": "2026-11-13",
-            "verification": "divergent",
-            "controle_agent_pays": -1.15,
-            "texte": "CAD : volatilité à 1 mois de 4,9 %, −2,7 % contre le dollar sur 3 mois",
+            "date": "2026-11-15",
+            "verification": "concordant",
+            "controle_agent_pays": -2.69,
+            "texte": "CAD : volatilité à 1 mois de 4,9 %, −2,6 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, CAD=X (devise suivie par l'agent pays)"
           },
           "souverain": {
@@ -781,8 +781,8 @@
             "source": "FMI (GGXWDG_NGDP, BCA_NGDPD), inflation : agent pays, Banque mondiale (FI.RES.TOTL.MO)"
           },
           "geopolitique": {
-            "score": 32.0,
-            "texte": "score de risque géopolitique de 32/100",
+            "score": 39.0,
+            "texte": "score de risque géopolitique de 39/100",
             "source": "agent géopolitique (data/geopolitique.json)"
           }
         },
@@ -794,13 +794,13 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Canada : score de risque de 21/100 (−3 pt sur 7 jours), porté surtout par la composante vulnérabilité macro (50/100 : dette publique de 116 % du PIB (2026), solde courant de −0,1 % du PIB, inflation à 3,1 % pour une cible de 2,0 %, réserves de change de 1,6 mois d'importations). Composante la plus basse : souverain (0/100 : taux à 10 ans de 3,88 % (09/2026), écart de −1,11 pt avec États-Unis)."
+        "texte": "Canada : score de risque de 22/100 (−2 pt sur 7 jours), porté surtout par la composante vulnérabilité macro (50/100 : dette publique de 116 % du PIB (2026), solde courant de −0,1 % du PIB, inflation à 3,1 % pour une cible de 2,0 %, réserves de change de 1,6 mois d'importations). Composante la plus basse : souverain (0/100 : taux à 10 ans de 3,88 % (09/2026), écart de −1,11 pt avec États-Unis)."
       },
       "MX": {
         "nom": "Mexique",
-        "score": 40,
+        "score": 39,
         "niveau": "modéré",
-        "variation_7j": 2.0,
+        "variation_7j": 1.7,
         "composantes": {
           "marche": {
             "score": 13.3,
@@ -819,7 +819,7 @@
             "libelle": "MXN",
             "date": "2026-11-13",
             "verification": "concordant",
-            "controle_agent_pays": -7.86,
+            "controle_agent_pays": -8.59,
             "texte": "MXN : volatilité à 1 mois de 11,9 %, −8,4 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, MXN=X (devise suivie par l'agent pays)"
           },
@@ -844,8 +844,8 @@
             "source": "FMI (GGXWDG_NGDP, BCA_NGDPD), inflation : agent pays, Banque mondiale (FI.RES.TOTL.MO)"
           },
           "geopolitique": {
-            "score": 41.0,
-            "texte": "score de risque géopolitique de 41/100",
+            "score": 39.0,
+            "texte": "score de risque géopolitique de 39/100",
             "source": "agent géopolitique (data/geopolitique.json)"
           }
         },
@@ -857,7 +857,7 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Mexique : score de risque de 40/100 (+2 pt sur 7 jours), porté surtout par la composante souverain (73/100 : taux à 10 ans de 9,35 % (09/2026), écart de +4,36 pt avec États-Unis). Composante la plus basse : marché (13/100 : ETF EWW à −3,6 % de son plus haut sur 12 mois, volatilité à 3 mois de 16,8 %)."
+        "texte": "Mexique : score de risque de 39/100 (+2 pt sur 7 jours), porté surtout par la composante souverain (73/100 : taux à 10 ans de 9,35 % (09/2026), écart de +4,36 pt avec États-Unis). Composante la plus basse : marché (13/100 : ETF EWW à −3,6 % de son plus haut sur 12 mois, volatilité à 3 mois de 16,8 %)."
       },
       "BR": {
         "nom": "Brésil",
@@ -882,15 +882,15 @@
             "libelle": "BRL",
             "date": "2026-11-13",
             "verification": "concordant",
-            "controle_agent_pays": -7.81,
+            "controle_agent_pays": -8.61,
             "texte": "BRL : volatilité à 1 mois de 29,6 %, −7,8 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, BRL=X (devise suivie par l'agent pays)"
           },
           "macro": {
-            "score": 37.4,
+            "score": 37.5,
             "dette_pib": 97.0,
             "solde_courant": -2.4,
-            "inflation": 4.58,
+            "inflation": 4.63,
             "cible_inflation": 3.0,
             "reserves_mois": 8.4209144130353,
             "texte": "dette publique de 97 % du PIB (2026), solde courant de −2,4 % du PIB, inflation à 4,6 % pour une cible de 3,0 %, réserves de change de 8,4 mois d'importations",
@@ -937,7 +937,7 @@
             "libelle": "ARS",
             "date": "2026-11-13",
             "verification": "concordant",
-            "controle_agent_pays": -3.39,
+            "controle_agent_pays": -3.46,
             "texte": "ARS : volatilité à 1 mois de 4,2 %, −3,7 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, ARS=X (devise suivie par l'agent pays)"
           },
@@ -971,9 +971,9 @@
       },
       "GB": {
         "nom": "Royaume-Uni",
-        "score": 25,
+        "score": 23,
         "niveau": "faible",
-        "variation_7j": 5.0,
+        "variation_7j": 3.5,
         "composantes": {
           "marche": {
             "score": 9.1,
@@ -991,8 +991,8 @@
             "variation_1m": 0.01,
             "libelle": "GBP",
             "date": "2026-11-13",
-            "verification": "divergent",
-            "controle_agent_pays": -0.65,
+            "verification": "concordant",
+            "controle_agent_pays": -2.29,
             "texte": "GBP : volatilité à 1 mois de 6,1 %, −2,4 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, GBPUSD=X (devise suivie par l'agent pays)"
           },
@@ -1017,8 +1017,8 @@
             "source": "FMI (GGXWDG_NGDP, BCA_NGDPD), inflation : agent pays, Banque mondiale (FI.RES.TOTL.MO)"
           },
           "geopolitique": {
-            "score": 46.0,
-            "texte": "score de risque géopolitique de 46/100",
+            "score": 36.0,
+            "texte": "score de risque géopolitique de 36/100",
             "source": "agent géopolitique (data/geopolitique.json)"
           }
         },
@@ -1030,13 +1030,13 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Royaume-Uni : score de risque de 25/100 (+5 pt sur 7 jours), porté surtout par la composante vulnérabilité macro (57/100 : dette publique de 102 % du PIB (2026), solde courant de −3,3 % du PIB, inflation à 3,5 % pour une cible de 2,0 %, réserves de change de 1,4 mois d'importations). Composante la plus basse : souverain (4/100 : taux à 10 ans de 5,24 % (09/2026), écart de +0,25 pt avec États-Unis)."
+        "texte": "Royaume-Uni : score de risque de 23/100 (+4 pt sur 7 jours), porté surtout par la composante vulnérabilité macro (57/100 : dette publique de 102 % du PIB (2026), solde courant de −3,3 % du PIB, inflation à 3,5 % pour une cible de 2,0 %, réserves de change de 1,4 mois d'importations). Composante la plus basse : souverain (4/100 : taux à 10 ans de 5,24 % (09/2026), écart de +0,25 pt avec États-Unis)."
       },
       "FR": {
         "nom": "France",
-        "score": 28,
+        "score": 27,
         "niveau": "faible",
-        "variation_7j": 3.7,
+        "variation_7j": 2.8,
         "composantes": {
           "marche": {
             "score": 19.8,
@@ -1055,7 +1055,7 @@
             "libelle": "EUR",
             "date": "2026-11-13",
             "verification": "concordant",
-            "controle_agent_pays": -3.13,
+            "controle_agent_pays": -4.45,
             "texte": "EUR : volatilité à 1 mois de 5,6 %, −4,6 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, EURUSD=X (devise suivie par l'agent pays)"
           },
@@ -1070,18 +1070,18 @@
             "source": "OCDE via FRED (IRLTLT01…M156N), mensuel ; vérifié avec la BCE (IRS)"
           },
           "macro": {
-            "score": 48.7,
+            "score": 49.1,
             "dette_pib": 118.5,
             "solde_courant": -0.7,
-            "inflation": 2.9,
+            "inflation": 3.1,
             "cible_inflation": 2.0,
             "reserves_mois": 3.41994528988313,
-            "texte": "dette publique de 118 % du PIB (2026), solde courant de −0,7 % du PIB, inflation à 2,9 % pour une cible de 2,0 %, réserves de change de 3,4 mois d'importations",
+            "texte": "dette publique de 118 % du PIB (2026), solde courant de −0,7 % du PIB, inflation à 3,1 % pour une cible de 2,0 %, réserves de change de 3,4 mois d'importations",
             "source": "FMI (GGXWDG_NGDP, BCA_NGDPD), inflation : agent pays, Banque mondiale (FI.RES.TOTL.MO)"
           },
           "geopolitique": {
-            "score": 40.0,
-            "texte": "score de risque géopolitique de 40/100",
+            "score": 33.0,
+            "texte": "score de risque géopolitique de 33/100",
             "source": "agent géopolitique (data/geopolitique.json)"
           }
         },
@@ -1093,13 +1093,13 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "France : score de risque de 28/100 (+4 pt sur 7 jours), porté surtout par la composante vulnérabilité macro (49/100 : dette publique de 118 % du PIB (2026), solde courant de −0,7 % du PIB, inflation à 2,9 % pour une cible de 2,0 %, réserves de change de 3,4 mois d'importations). Composante la plus basse : souverain (17/100 : taux à 10 ans de 4,48 % (09/2026), écart de +1,01 pt avec Allemagne)."
+        "texte": "France : score de risque de 27/100 (+3 pt sur 7 jours), porté surtout par la composante vulnérabilité macro (49/100 : dette publique de 118 % du PIB (2026), solde courant de −0,7 % du PIB, inflation à 3,1 % pour une cible de 2,0 %, réserves de change de 3,4 mois d'importations). Composante la plus basse : souverain (17/100 : taux à 10 ans de 4,48 % (09/2026), écart de +1,01 pt avec Allemagne)."
       },
       "DE": {
         "nom": "Allemagne",
         "score": 16,
         "niveau": "faible",
-        "variation_7j": 1.5,
+        "variation_7j": 1.1,
         "composantes": {
           "marche": {
             "score": 14.3,
@@ -1118,7 +1118,7 @@
             "libelle": "EUR",
             "date": "2026-11-13",
             "verification": "concordant",
-            "controle_agent_pays": -3.13,
+            "controle_agent_pays": -4.45,
             "texte": "EUR : volatilité à 1 mois de 5,6 %, −4,6 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, EURUSD=X (devise suivie par l'agent pays)"
           },
@@ -1133,18 +1133,18 @@
             "source": "OCDE via FRED (IRLTLT01…M156N), mensuel ; vérifié avec la BCE (IRS)"
           },
           "macro": {
-            "score": 30.5,
+            "score": 29.4,
             "dette_pib": 64.6,
             "solde_courant": 4.5,
-            "inflation": 3.26,
+            "inflation": 2.76,
             "cible_inflation": 2.0,
             "reserves_mois": 3.1063708317348,
-            "texte": "dette publique de 65 % du PIB (2026), solde courant de +4,5 % du PIB, inflation à 3,3 % pour une cible de 2,0 %, réserves de change de 3,1 mois d'importations",
+            "texte": "dette publique de 65 % du PIB (2026), solde courant de +4,5 % du PIB, inflation à 2,8 % pour une cible de 2,0 %, réserves de change de 3,1 mois d'importations",
             "source": "FMI (GGXWDG_NGDP, BCA_NGDPD), inflation : agent pays, Banque mondiale (FI.RES.TOTL.MO)"
           },
           "geopolitique": {
-            "score": 15.0,
-            "texte": "score de risque géopolitique de 15/100",
+            "score": 14.0,
+            "texte": "score de risque géopolitique de 14/100",
             "source": "agent géopolitique (data/geopolitique.json)"
           }
         },
@@ -1156,13 +1156,13 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Allemagne : score de risque de 16/100 (+2 pt sur 7 jours), porté surtout par la composante vulnérabilité macro (30/100 : dette publique de 65 % du PIB (2026), solde courant de +4,5 % du PIB, inflation à 3,3 % pour une cible de 2,0 %, réserves de change de 3,1 mois d'importations). Composante la plus basse : souverain (0/100 : taux à 10 ans de 3,47 % (09/2026))."
+        "texte": "Allemagne : score de risque de 16/100 (+1 pt sur 7 jours), porté surtout par la composante vulnérabilité macro (29/100 : dette publique de 65 % du PIB (2026), solde courant de +4,5 % du PIB, inflation à 2,8 % pour une cible de 2,0 %, réserves de change de 3,1 mois d'importations). Composante la plus basse : souverain (0/100 : taux à 10 ans de 3,47 % (09/2026))."
       },
       "CH": {
         "nom": "Suisse",
         "score": 11,
         "niveau": "faible",
-        "variation_7j": 0.5,
+        "variation_7j": 0.7,
         "composantes": {
           "marche": {
             "score": 11.4,
@@ -1174,15 +1174,15 @@
             "source": "Yahoo Finance via yfinance, ETF EWL"
           },
           "devise": {
-            "score": 20.9,
-            "volatilite_1m": 7.19,
-            "variation_3m": -3.03,
-            "variation_1m": -0.52,
+            "score": 20.7,
+            "volatilite_1m": 7.01,
+            "variation_3m": -3.1,
+            "variation_1m": -1.25,
             "libelle": "CHF",
-            "date": "2026-11-13",
-            "verification": "divergent",
-            "controle_agent_pays": -1.27,
-            "texte": "CHF : volatilité à 1 mois de 7,2 %, −3,0 % contre le dollar sur 3 mois",
+            "date": "2026-11-15",
+            "verification": "concordant",
+            "controle_agent_pays": -3.17,
+            "texte": "CHF : volatilité à 1 mois de 7,0 %, −3,1 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, CHF=X (devise suivie par l'agent pays)"
           },
           "souverain": {
@@ -1196,13 +1196,13 @@
             "source": "OCDE via FRED (IRLTLT01…M156N), mensuel"
           },
           "macro": {
-            "score": 0.0,
+            "score": 0.9,
             "dette_pib": 38.3,
             "solde_courant": 6.2,
-            "inflation": 0.99,
+            "inflation": 1.46,
             "cible_inflation": 1.0,
             "reserves_mois": 13.0667209456153,
-            "texte": "dette publique de 38 % du PIB (2026), solde courant de +6,2 % du PIB, inflation à 1,0 % pour une cible de 1,0 %, réserves de change de 13,1 mois d'importations",
+            "texte": "dette publique de 38 % du PIB (2026), solde courant de +6,2 % du PIB, inflation à 1,5 % pour une cible de 1,0 %, réserves de change de 13,1 mois d'importations",
             "source": "FMI (GGXWDG_NGDP, BCA_NGDPD), inflation : agent pays, Banque mondiale (FI.RES.TOTL.MO)"
           },
           "geopolitique": {
@@ -1219,7 +1219,7 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Suisse : score de risque de 11/100 (+0 pt sur 7 jours), porté surtout par la composante géopolitique (28/100 : score de risque géopolitique de 28/100). Composante la plus basse : vulnérabilité macro (0/100 : dette publique de 38 % du PIB (2026), solde courant de +6,2 % du PIB, inflation à 1,0 % pour une cible de 1,0 %, réserves de change de 13,1 mois d'importations)."
+        "texte": "Suisse : score de risque de 11/100 (+1 pt sur 7 jours), porté surtout par la composante géopolitique (28/100 : score de risque géopolitique de 28/100). Composante la plus basse : souverain (0/100 : taux à 10 ans de 0,59 % (09/2026), écart de −4,40 pt avec États-Unis)."
       },
       "SA": {
         "nom": "Arabie saoudite",
@@ -1243,8 +1243,8 @@
             "variation_1m": -1.21,
             "libelle": "SAR",
             "date": "2026-11-13",
-            "verification": "divergent",
-            "controle_agent_pays": -3.25,
+            "verification": "concordant",
+            "controle_agent_pays": -1.67,
             "texte": "SAR : volatilité à 1 mois de 4,3 %, −1,2 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, SAR=X (devise suivie par l'agent pays)"
           },
@@ -1278,9 +1278,9 @@
       },
       "ZA": {
         "nom": "Afrique du Sud",
-        "score": 42,
+        "score": 43,
         "niveau": "modéré",
-        "variation_7j": 2.6,
+        "variation_7j": 3.1,
         "composantes": {
           "marche": {
             "score": 56.2,
@@ -1292,15 +1292,15 @@
             "source": "Yahoo Finance via yfinance, ETF EZA"
           },
           "devise": {
-            "score": 25.6,
-            "volatilite_1m": 9.07,
-            "variation_3m": -3.2,
-            "variation_1m": -1.04,
+            "score": 28.1,
+            "volatilite_1m": 9.42,
+            "variation_3m": -3.96,
+            "variation_1m": -2.46,
             "libelle": "ZAR",
-            "date": "2026-11-13",
-            "verification": "divergent",
-            "controle_agent_pays": -1.65,
-            "texte": "ZAR : volatilité à 1 mois de 9,1 %, −3,2 % contre le dollar sur 3 mois",
+            "date": "2026-11-15",
+            "verification": "concordant",
+            "controle_agent_pays": -4.71,
+            "texte": "ZAR : volatilité à 1 mois de 9,4 %, −4,0 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, ZAR=X (devise suivie par l'agent pays)"
           },
           "souverain": {
@@ -1337,13 +1337,13 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Afrique du Sud : score de risque de 42/100 (+3 pt sur 7 jours), porté surtout par la composante souverain (66/100 : taux à 10 ans de 8,95 % (09/2026), écart de +3,96 pt avec États-Unis). Composante la plus basse : géopolitique (24/100 : score de risque géopolitique de 24/100)."
+        "texte": "Afrique du Sud : score de risque de 43/100 (+3 pt sur 7 jours), porté surtout par la composante souverain (66/100 : taux à 10 ans de 8,95 % (09/2026), écart de +3,96 pt avec États-Unis). Composante la plus basse : géopolitique (24/100 : score de risque géopolitique de 24/100)."
       },
       "IN": {
         "nom": "Inde",
         "score": 24,
         "niveau": "faible",
-        "variation_7j": -2.6,
+        "variation_7j": -3.2,
         "composantes": {
           "marche": {
             "score": 15.2,
@@ -1355,15 +1355,15 @@
             "source": "Yahoo Finance via yfinance, ETF INDA"
           },
           "devise": {
-            "score": 4.8,
-            "volatilite_1m": 4.87,
-            "variation_3m": 1.77,
-            "variation_1m": 1.19,
+            "score": 4.0,
+            "volatilite_1m": 4.43,
+            "variation_3m": 1.67,
+            "variation_1m": 0.3,
             "libelle": "INR",
-            "date": "2026-11-13",
+            "date": "2026-11-14",
             "verification": "concordant",
-            "controle_agent_pays": 1.45,
-            "texte": "INR : volatilité à 1 mois de 4,9 %, +1,8 % contre le dollar sur 3 mois",
+            "controle_agent_pays": 1.26,
+            "texte": "INR : volatilité à 1 mois de 4,4 %, +1,7 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, INR=X (devise suivie par l'agent pays)"
           },
           "souverain": {
@@ -1387,8 +1387,8 @@
             "source": "FMI (GGXWDG_NGDP, BCA_NGDPD), inflation : agent pays, Banque mondiale (FI.RES.TOTL.MO)"
           },
           "geopolitique": {
-            "score": 41.0,
-            "texte": "score de risque géopolitique de 41/100",
+            "score": 38.0,
+            "texte": "score de risque géopolitique de 38/100",
             "source": "agent géopolitique (data/geopolitique.json)"
           }
         },
@@ -1400,13 +1400,13 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Inde : score de risque de 24/100 (−3 pt sur 7 jours), porté surtout par la composante géopolitique (41/100 : score de risque géopolitique de 41/100). Composante la plus basse : devise (5/100 : INR : volatilité à 1 mois de 4,9 %, +1,8 % contre le dollar sur 3 mois)."
+        "texte": "Inde : score de risque de 24/100 (−3 pt sur 7 jours), porté surtout par la composante géopolitique (38/100 : score de risque géopolitique de 38/100). Composante la plus basse : devise (4/100 : INR : volatilité à 1 mois de 4,4 %, +1,7 % contre le dollar sur 3 mois)."
       },
       "CN": {
         "nom": "Chine",
         "score": 30,
         "niveau": "faible",
-        "variation_7j": 4.6,
+        "variation_7j": 4.3,
         "composantes": {
           "marche": {
             "score": 45.1,
@@ -1418,30 +1418,30 @@
             "source": "Yahoo Finance via yfinance, ETF MCHI"
           },
           "devise": {
-            "score": 2.2,
-            "volatilite_1m": 1.91,
-            "variation_3m": 1.04,
-            "variation_1m": 0.33,
+            "score": 1.8,
+            "volatilite_1m": 1.95,
+            "variation_3m": 1.21,
+            "variation_1m": 0.43,
             "libelle": "CNY",
-            "date": "2026-11-13",
+            "date": "2026-11-14",
             "verification": "concordant",
-            "controle_agent_pays": 1.07,
-            "texte": "CNY : volatilité à 1 mois de 1,9 %, +1,0 % contre le dollar sur 3 mois",
+            "controle_agent_pays": 1.04,
+            "texte": "CNY : volatilité à 1 mois de 1,9 %, +1,2 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, CNY=X (devise suivie par l'agent pays)"
           },
           "macro": {
-            "score": 19.1,
+            "score": 19.6,
             "dette_pib": 104.4,
             "solde_courant": 4.0,
-            "inflation": 0.9,
+            "inflation": 0.7,
             "cible_inflation": 3.0,
             "reserves_mois": 11.9430464176221,
-            "texte": "dette publique de 104 % du PIB (2026), solde courant de +4,0 % du PIB, inflation à 0,9 % pour une cible de 3,0 %, réserves de change de 11,9 mois d'importations",
+            "texte": "dette publique de 104 % du PIB (2026), solde courant de +4,0 % du PIB, inflation à 0,7 % pour une cible de 3,0 %, réserves de change de 11,9 mois d'importations",
             "source": "FMI (GGXWDG_NGDP, BCA_NGDPD), inflation : agent pays, Banque mondiale (FI.RES.TOTL.MO)"
           },
           "geopolitique": {
-            "score": 57.0,
-            "texte": "score de risque géopolitique de 57/100",
+            "score": 55.0,
+            "texte": "score de risque géopolitique de 55/100",
             "source": "agent géopolitique (data/geopolitique.json)"
           }
         },
@@ -1455,13 +1455,13 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Chine : score de risque de 30/100 (+5 pt sur 7 jours), porté surtout par la composante géopolitique (57/100 : score de risque géopolitique de 57/100). Composante la plus basse : devise (2/100 : CNY : volatilité à 1 mois de 1,9 %, +1,0 % contre le dollar sur 3 mois) ; non disponible : souverain."
+        "texte": "Chine : score de risque de 30/100 (+4 pt sur 7 jours), porté surtout par la composante géopolitique (55/100 : score de risque géopolitique de 55/100). Composante la plus basse : devise (2/100 : CNY : volatilité à 1 mois de 1,9 %, +1,2 % contre le dollar sur 3 mois) ; non disponible : souverain."
       },
       "KR": {
         "nom": "Corée du Sud",
         "score": 34,
         "niveau": "faible",
-        "variation_7j": -0.1,
+        "variation_7j": -0.2,
         "composantes": {
           "marche": {
             "score": 100.0,
@@ -1473,15 +1473,15 @@
             "source": "Yahoo Finance via yfinance, ETF EWY"
           },
           "devise": {
-            "score": 17.0,
-            "volatilite_1m": 10.49,
-            "variation_3m": 6.07,
-            "variation_1m": 0.42,
+            "score": 17.1,
+            "volatilite_1m": 10.5,
+            "variation_3m": 5.79,
+            "variation_1m": 0.36,
             "libelle": "KRW",
-            "date": "2026-11-13",
+            "date": "2026-11-14",
             "verification": "concordant",
-            "controle_agent_pays": 5.18,
-            "texte": "KRW : volatilité à 1 mois de 10,5 %, +6,1 % contre le dollar sur 3 mois",
+            "controle_agent_pays": 5.54,
+            "texte": "KRW : volatilité à 1 mois de 10,5 %, +5,8 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, KRW=X (devise suivie par l'agent pays)"
           },
           "souverain": {
@@ -1505,8 +1505,8 @@
             "source": "FMI (GGXWDG_NGDP, BCA_NGDPD), inflation : agent pays, Banque mondiale (FI.RES.TOTL.MO)"
           },
           "geopolitique": {
-            "score": 12.0,
-            "texte": "score de risque géopolitique de 12/100",
+            "score": 11.0,
+            "texte": "score de risque géopolitique de 11/100",
             "source": "agent géopolitique (data/geopolitique.json)"
           }
         },
@@ -1543,7 +1543,7 @@
             "libelle": "JPY",
             "date": "2026-11-13",
             "verification": "concordant",
-            "controle_agent_pays": 0.44,
+            "controle_agent_pays": -0.62,
             "texte": "JPY : volatilité à 1 mois de 6,2 %, −0,3 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, JPY=X (devise suivie par l'agent pays)"
           },
@@ -1587,7 +1587,7 @@
         "nom": "Australie",
         "score": 22,
         "niveau": "faible",
-        "variation_7j": 1.5,
+        "variation_7j": 1.3,
         "composantes": {
           "marche": {
             "score": 13.4,
@@ -1599,15 +1599,15 @@
             "source": "Yahoo Finance via yfinance, ETF EWA"
           },
           "devise": {
-            "score": 26.9,
-            "volatilite_1m": 8.58,
-            "variation_3m": -4.24,
-            "variation_1m": -2.46,
+            "score": 26.4,
+            "volatilite_1m": 8.27,
+            "variation_3m": -4.34,
+            "variation_1m": -2.09,
             "libelle": "AUD",
-            "date": "2026-11-13",
-            "verification": "divergent",
-            "controle_agent_pays": -2.4,
-            "texte": "AUD : volatilité à 1 mois de 8,6 %, −4,2 % contre le dollar sur 3 mois",
+            "date": "2026-11-14",
+            "verification": "concordant",
+            "controle_agent_pays": -4.19,
+            "texte": "AUD : volatilité à 1 mois de 8,3 %, −4,3 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, AUDUSD=X (devise suivie par l'agent pays)"
           },
           "souverain": {
@@ -1631,8 +1631,8 @@
             "source": "FMI (GGXWDG_NGDP, BCA_NGDPD), inflation : agent pays, Banque mondiale (FI.RES.TOTL.MO)"
           },
           "geopolitique": {
-            "score": 19.0,
-            "texte": "score de risque géopolitique de 19/100",
+            "score": 18.0,
+            "texte": "score de risque géopolitique de 18/100",
             "source": "agent géopolitique (data/geopolitique.json)"
           }
         },
@@ -1644,7 +1644,7 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Australie : score de risque de 22/100 (+2 pt sur 7 jours), porté surtout par la composante vulnérabilité macro (46/100 : dette publique de 53 % du PIB (2026), solde courant de −3,1 % du PIB, inflation à 4,3 % pour une cible de 2,5 %, réserves de change de 1,6 mois d'importations). Composante la plus basse : souverain (5/100 : taux à 10 ans de 5,28 % (09/2026), écart de +0,29 pt avec États-Unis)."
+        "texte": "Australie : score de risque de 22/100 (+1 pt sur 7 jours), porté surtout par la composante vulnérabilité macro (46/100 : dette publique de 53 % du PIB (2026), solde courant de −3,1 % du PIB, inflation à 4,3 % pour une cible de 2,5 %, réserves de change de 1,6 mois d'importations). Composante la plus basse : souverain (5/100 : taux à 10 ans de 5,28 % (09/2026), écart de +0,29 pt avec États-Unis)."
       },
       "IT": {
         "nom": "Italie",
@@ -1669,7 +1669,7 @@
             "libelle": "EUR",
             "date": "2026-11-13",
             "verification": "concordant",
-            "controle_agent_pays": -3.13,
+            "controle_agent_pays": -4.45,
             "texte": "EUR : volatilité à 1 mois de 5,6 %, −4,6 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, EURUSD=X (devise suivie par l'agent pays)"
           },
@@ -1713,7 +1713,7 @@
         "nom": "Espagne",
         "score": 23,
         "niveau": "faible",
-        "variation_7j": 3.1,
+        "variation_7j": 2.8,
         "composantes": {
           "marche": {
             "score": 19.1,
@@ -1732,7 +1732,7 @@
             "libelle": "EUR",
             "date": "2026-11-13",
             "verification": "concordant",
-            "controle_agent_pays": -3.13,
+            "controle_agent_pays": -4.45,
             "texte": "EUR : volatilité à 1 mois de 5,6 %, −4,6 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, EURUSD=X (devise suivie par l'agent pays)"
           },
@@ -1757,8 +1757,8 @@
             "source": "FMI (GGXWDG_NGDP, BCA_NGDPD), inflation : agent pays, Banque mondiale (FI.RES.TOTL.MO)"
           },
           "geopolitique": {
-            "score": 27.0,
-            "texte": "score de risque géopolitique de 27/100",
+            "score": 25.0,
+            "texte": "score de risque géopolitique de 25/100",
             "source": "agent géopolitique (data/geopolitique.json)"
           }
         },
@@ -1776,7 +1776,7 @@
         "nom": "Pays-Bas",
         "score": 19,
         "niveau": "faible",
-        "variation_7j": 1.7,
+        "variation_7j": 2.2,
         "composantes": {
           "marche": {
             "score": 27.2,
@@ -1795,7 +1795,7 @@
             "libelle": "EUR",
             "date": "2026-11-13",
             "verification": "concordant",
-            "controle_agent_pays": -3.13,
+            "controle_agent_pays": -4.45,
             "texte": "EUR : volatilité à 1 mois de 5,6 %, −4,6 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, EURUSD=X (devise suivie par l'agent pays)"
           },
@@ -1810,18 +1810,18 @@
             "source": "OCDE via FRED (IRLTLT01…M156N), mensuel ; vérifié avec la BCE (IRS)"
           },
           "macro": {
-            "score": 28.9,
+            "score": 29.8,
             "dette_pib": 45.4,
             "solde_courant": 8.3,
-            "inflation": 3.3,
+            "inflation": 3.71,
             "cible_inflation": 2.0,
             "reserves_mois": 1.00743941764888,
-            "texte": "dette publique de 45 % du PIB (2026), solde courant de +8,3 % du PIB, inflation à 3,3 % pour une cible de 2,0 %, réserves de change de 1,0 mois d'importations",
+            "texte": "dette publique de 45 % du PIB (2026), solde courant de +8,3 % du PIB, inflation à 3,7 % pour une cible de 2,0 %, réserves de change de 1,0 mois d'importations",
             "source": "FMI (GGXWDG_NGDP, BCA_NGDPD), inflation : agent pays, Banque mondiale (FI.RES.TOTL.MO)"
           },
           "geopolitique": {
-            "score": 12.0,
-            "texte": "score de risque géopolitique de 12/100",
+            "score": 14.0,
+            "texte": "score de risque géopolitique de 14/100",
             "source": "agent géopolitique (data/geopolitique.json)"
           }
         },
@@ -1833,13 +1833,13 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Pays-Bas : score de risque de 19/100 (+2 pt sur 7 jours), porté surtout par la composante vulnérabilité macro (29/100 : dette publique de 45 % du PIB (2026), solde courant de +8,3 % du PIB, inflation à 3,3 % pour une cible de 2,0 %, réserves de change de 1,0 mois d'importations). Composante la plus basse : souverain (2/100 : taux à 10 ans de 3,29 % (08/2026), écart de +0,10 pt avec Allemagne)."
+        "texte": "Pays-Bas : score de risque de 19/100 (+2 pt sur 7 jours), porté surtout par la composante vulnérabilité macro (30/100 : dette publique de 45 % du PIB (2026), solde courant de +8,3 % du PIB, inflation à 3,7 % pour une cible de 2,0 %, réserves de change de 1,0 mois d'importations). Composante la plus basse : souverain (2/100 : taux à 10 ans de 3,29 % (08/2026), écart de +0,10 pt avec Allemagne)."
       },
       "SE": {
         "nom": "Suède",
-        "score": 17,
+        "score": 16,
         "niveau": "faible",
-        "variation_7j": 2.8,
+        "variation_7j": 2.5,
         "composantes": {
           "marche": {
             "score": 13.6,
@@ -1851,15 +1851,15 @@
             "source": "Yahoo Finance via yfinance, ETF EWD"
           },
           "devise": {
-            "score": 28.7,
+            "score": 28.9,
             "volatilite_1m": 8.39,
-            "variation_3m": -5.23,
-            "variation_1m": -0.47,
+            "variation_3m": -5.34,
+            "variation_1m": -1.21,
             "libelle": "SEK",
-            "date": "2026-11-13",
-            "verification": "divergent",
-            "controle_agent_pays": -3.4,
-            "texte": "SEK : volatilité à 1 mois de 8,4 %, −5,2 % contre le dollar sur 3 mois",
+            "date": "2026-11-15",
+            "verification": "concordant",
+            "controle_agent_pays": -5.39,
+            "texte": "SEK : volatilité à 1 mois de 8,4 %, −5,3 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, SEK=X (devise suivie par l'agent pays)"
           },
           "souverain": {
@@ -1883,8 +1883,8 @@
             "source": "FMI (GGXWDG_NGDP, BCA_NGDPD), inflation : agent pays, Banque mondiale (FI.RES.TOTL.MO)"
           },
           "geopolitique": {
-            "score": 15.0,
-            "texte": "score de risque géopolitique de 15/100",
+            "score": 13.0,
+            "texte": "score de risque géopolitique de 13/100",
             "source": "agent géopolitique (data/geopolitique.json)"
           }
         },
@@ -1896,13 +1896,13 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Suède : score de risque de 17/100 (+3 pt sur 7 jours), porté surtout par la composante devise (29/100 : SEK : volatilité à 1 mois de 8,4 %, −5,2 % contre le dollar sur 3 mois). Composante la plus basse : souverain (0/100 : taux à 10 ans de 3,19 % (09/2026), écart de −1,80 pt avec États-Unis)."
+        "texte": "Suède : score de risque de 16/100 (+2 pt sur 7 jours), porté surtout par la composante devise (29/100 : SEK : volatilité à 1 mois de 8,4 %, −5,3 % contre le dollar sur 3 mois). Composante la plus basse : souverain (0/100 : taux à 10 ans de 3,19 % (09/2026), écart de −1,80 pt avec États-Unis)."
       },
       "PL": {
         "nom": "Pologne",
-        "score": 26,
+        "score": 25,
         "niveau": "faible",
-        "variation_7j": -0.1,
+        "variation_7j": -0.3,
         "composantes": {
           "marche": {
             "score": 20.1,
@@ -1920,8 +1920,8 @@
             "variation_1m": -2.01,
             "libelle": "PLN",
             "date": "2026-11-13",
-            "verification": "divergent",
-            "controle_agent_pays": -5.01,
+            "verification": "concordant",
+            "controle_agent_pays": -6.72,
             "texte": "PLN : volatilité à 1 mois de 8,3 %, −6,6 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, PLN=X (devise suivie par l'agent pays)"
           },
@@ -1946,8 +1946,8 @@
             "source": "FMI (GGXWDG_NGDP, BCA_NGDPD), inflation : agent pays, Banque mondiale (FI.RES.TOTL.MO)"
           },
           "geopolitique": {
-            "score": 20.0,
-            "texte": "score de risque géopolitique de 20/100",
+            "score": 19.0,
+            "texte": "score de risque géopolitique de 19/100",
             "source": "agent géopolitique (data/geopolitique.json)"
           }
         },
@@ -1959,7 +1959,7 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Pologne : score de risque de 26/100 (+0 pt sur 7 jours), porté surtout par la composante vulnérabilité macro (36/100 : dette publique de 67 % du PIB (2026), solde courant de −1,9 % du PIB, inflation à 4,1 % pour une cible de 2,5 %, réserves de change de 5,9 mois d'importations). Composante la plus basse : géopolitique (20/100 : score de risque géopolitique de 20/100)."
+        "texte": "Pologne : score de risque de 25/100 (+0 pt sur 7 jours), porté surtout par la composante vulnérabilité macro (36/100 : dette publique de 67 % du PIB (2026), solde courant de −1,9 % du PIB, inflation à 4,1 % pour une cible de 2,5 %, réserves de change de 5,9 mois d'importations). Composante la plus basse : géopolitique (19/100 : score de risque géopolitique de 19/100)."
       },
       "TW": {
         "nom": "Taïwan",
@@ -1983,8 +1983,8 @@
             "variation_1m": -2.27,
             "libelle": "TWD",
             "date": "2026-11-13",
-            "verification": "divergent",
-            "controle_agent_pays": -1.73,
+            "verification": "concordant",
+            "controle_agent_pays": -2.47,
             "texte": "TWD : volatilité à 1 mois de 7,2 %, −3,3 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, TWD=X (devise suivie par l'agent pays)"
           },
@@ -2018,9 +2018,9 @@
       },
       "ID": {
         "nom": "Indonésie",
-        "score": 52,
+        "score": 54,
         "niveau": "modéré",
-        "variation_7j": 2.4,
+        "variation_7j": 5.1,
         "composantes": {
           "marche": {
             "score": 96.0,
@@ -2032,30 +2032,30 @@
             "source": "Yahoo Finance via yfinance, ETF EIDO"
           },
           "devise": {
-            "score": 47.1,
-            "volatilite_1m": 22.78,
-            "variation_3m": 1.08,
-            "variation_1m": 1.08,
+            "score": 59.8,
+            "volatilite_1m": 25.02,
+            "variation_3m": -2.32,
+            "variation_1m": -0.93,
             "libelle": "IDR",
-            "date": "2026-11-13",
-            "verification": "divergent",
-            "controle_agent_pays": -1.76,
-            "texte": "IDR : volatilité à 1 mois de 22,8 %, +1,1 % contre le dollar sur 3 mois",
+            "date": "2026-11-14",
+            "verification": "concordant",
+            "controle_agent_pays": -2.51,
+            "texte": "IDR : volatilité à 1 mois de 25,0 %, −2,3 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, IDR=X (devise suivie par l'agent pays)"
           },
           "macro": {
-            "score": 28.2,
+            "score": 28.1,
             "dette_pib": 41.7,
             "solde_courant": -1.6,
-            "inflation": 3.28,
+            "inflation": 3.23,
             "cible_inflation": 2.5,
             "reserves_mois": 5.51422229377152,
-            "texte": "dette publique de 42 % du PIB (2026), solde courant de −1,6 % du PIB, inflation à 3,3 % pour une cible de 2,5 %, réserves de change de 5,5 mois d'importations",
+            "texte": "dette publique de 42 % du PIB (2026), solde courant de −1,6 % du PIB, inflation à 3,2 % pour une cible de 2,5 %, réserves de change de 5,5 mois d'importations",
             "source": "FMI (GGXWDG_NGDP, BCA_NGDPD), inflation : agent pays, Banque mondiale (FI.RES.TOTL.MO)"
           },
           "geopolitique": {
-            "score": 14.0,
-            "texte": "score de risque géopolitique de 14/100",
+            "score": 12.0,
+            "texte": "score de risque géopolitique de 12/100",
             "source": "agent géopolitique (data/geopolitique.json)"
           }
         },
@@ -2069,13 +2069,13 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Indonésie : score de risque de 52/100 (+2 pt sur 7 jours), porté surtout par la composante marché (96/100 : ETF EIDO à −43,8 % de son plus haut sur 12 mois, volatilité à 3 mois de 42,4 %). Composante la plus basse : géopolitique (14/100 : score de risque géopolitique de 14/100) ; non disponible : souverain."
+        "texte": "Indonésie : score de risque de 54/100 (+5 pt sur 7 jours), porté surtout par la composante marché (96/100 : ETF EIDO à −43,8 % de son plus haut sur 12 mois, volatilité à 3 mois de 42,4 %). Composante la plus basse : géopolitique (12/100 : score de risque géopolitique de 12/100) ; non disponible : souverain."
       },
       "VN": {
         "nom": "Vietnam",
         "score": 21,
         "niveau": "faible",
-        "variation_7j": 1.5,
+        "variation_7j": 1.1,
         "composantes": {
           "marche": {
             "score": 34.3,
@@ -2094,7 +2094,7 @@
             "libelle": "VND",
             "date": "2026-11-13",
             "verification": "concordant",
-            "controle_agent_pays": 2.72,
+            "controle_agent_pays": 1.54,
             "texte": "VND : volatilité à 1 mois de 2,6 %, +2,0 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, VND=X (devise suivie par l'agent pays)"
           },
@@ -2109,8 +2109,8 @@
             "source": "FMI (GGXWDG_NGDP, BCA_NGDPD), inflation : agent pays, Banque mondiale (FI.RES.TOTL.MO)"
           },
           "geopolitique": {
-            "score": 16.0,
-            "texte": "score de risque géopolitique de 16/100",
+            "score": 14.0,
+            "texte": "score de risque géopolitique de 14/100",
             "source": "agent géopolitique (data/geopolitique.json)"
           }
         },
@@ -2124,13 +2124,13 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Vietnam : score de risque de 21/100 (+2 pt sur 7 jours), porté surtout par la composante marché (34/100 : ETF VNM à −14,5 % de son plus haut sur 12 mois, volatilité à 3 mois de 18,7 %). Composante la plus basse : devise (0/100 : VND : volatilité à 1 mois de 2,6 %, +2,0 % contre le dollar sur 3 mois) ; non disponible : souverain."
+        "texte": "Vietnam : score de risque de 21/100 (+1 pt sur 7 jours), porté surtout par la composante marché (34/100 : ETF VNM à −14,5 % de son plus haut sur 12 mois, volatilité à 3 mois de 18,7 %). Composante la plus basse : devise (0/100 : VND : volatilité à 1 mois de 2,6 %, +2,0 % contre le dollar sur 3 mois) ; non disponible : souverain."
       },
       "SG": {
         "nom": "Singapour",
         "score": 24,
         "niveau": "faible",
-        "variation_7j": 2.4,
+        "variation_7j": 2.2,
         "composantes": {
           "marche": {
             "score": 25.5,
@@ -2143,13 +2143,13 @@
           },
           "devise": {
             "score": 6.2,
-            "volatilite_1m": 2.64,
-            "variation_3m": -0.74,
-            "variation_1m": -0.24,
+            "volatilite_1m": 2.56,
+            "variation_3m": -0.73,
+            "variation_1m": -0.48,
             "libelle": "SGD",
-            "date": "2026-11-13",
+            "date": "2026-11-15",
             "verification": "concordant",
-            "controle_agent_pays": -0.04,
+            "controle_agent_pays": -0.77,
             "texte": "SGD : volatilité à 1 mois de 2,6 %, −0,7 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, SGD=X (devise suivie par l'agent pays)"
           },
@@ -2164,8 +2164,8 @@
             "source": "FMI (GGXWDG_NGDP, BCA_NGDPD), inflation : agent pays, Banque mondiale (FI.RES.TOTL.MO)"
           },
           "geopolitique": {
-            "score": 19.0,
-            "texte": "score de risque géopolitique de 19/100",
+            "score": 18.0,
+            "texte": "score de risque géopolitique de 18/100",
             "source": "agent géopolitique (data/geopolitique.json)"
           }
         },
@@ -2183,9 +2183,9 @@
       },
       "TH": {
         "nom": "Thaïlande",
-        "score": 19,
+        "score": 20,
         "niveau": "faible",
-        "variation_7j": 0.2,
+        "variation_7j": 0.8,
         "composantes": {
           "marche": {
             "score": 24.0,
@@ -2204,7 +2204,7 @@
             "libelle": "THB",
             "date": "2026-11-13",
             "verification": "concordant",
-            "controle_agent_pays": -1.42,
+            "controle_agent_pays": -2.33,
             "texte": "THB : volatilité à 1 mois de 5,1 %, −2,5 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, THB=X (devise suivie par l'agent pays)"
           },
@@ -2219,8 +2219,8 @@
             "source": "FMI (GGXWDG_NGDP, BCA_NGDPD), inflation : agent pays, Banque mondiale (FI.RES.TOTL.MO)"
           },
           "geopolitique": {
-            "score": 9.0,
-            "texte": "score de risque géopolitique de 9/100",
+            "score": 12.0,
+            "texte": "score de risque géopolitique de 12/100",
             "source": "agent géopolitique (data/geopolitique.json)"
           }
         },
@@ -2234,13 +2234,13 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Thaïlande : score de risque de 19/100 (+0 pt sur 7 jours), porté surtout par la composante vulnérabilité macro (25/100 : dette publique de 67 % du PIB (2026), solde courant de −1,2 % du PIB, inflation à 2,1 % pour une cible de 2,0 %, réserves de change de 8,1 mois d'importations). Composante la plus basse : géopolitique (9/100 : score de risque géopolitique de 9/100) ; non disponible : souverain."
+        "texte": "Thaïlande : score de risque de 20/100 (+1 pt sur 7 jours), porté surtout par la composante vulnérabilité macro (25/100 : dette publique de 67 % du PIB (2026), solde courant de −1,2 % du PIB, inflation à 2,1 % pour une cible de 2,0 %, réserves de change de 8,1 mois d'importations). Composante la plus basse : géopolitique (12/100 : score de risque géopolitique de 12/100) ; non disponible : souverain."
       },
       "CL": {
         "nom": "Chili",
         "score": 38,
         "niveau": "modéré",
-        "variation_7j": 1.8,
+        "variation_7j": 2.1,
         "composantes": {
           "marche": {
             "score": 55.9,
@@ -2258,8 +2258,8 @@
             "variation_1m": -0.94,
             "libelle": "CLP",
             "date": "2026-11-13",
-            "verification": "divergent",
-            "controle_agent_pays": -5.89,
+            "verification": "concordant",
+            "controle_agent_pays": -8.07,
             "texte": "CLP : volatilité à 1 mois de 21,4 %, −8,0 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, CLP=X (devise suivie par l'agent pays)"
           },
@@ -2284,8 +2284,8 @@
             "source": "FMI (GGXWDG_NGDP, BCA_NGDPD), inflation : agent pays, Banque mondiale (FI.RES.TOTL.MO)"
           },
           "geopolitique": {
-            "score": 12.0,
-            "texte": "score de risque géopolitique de 12/100",
+            "score": 14.0,
+            "texte": "score de risque géopolitique de 14/100",
             "source": "agent géopolitique (data/geopolitique.json)"
           }
         },
@@ -2297,13 +2297,13 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Chili : score de risque de 38/100 (+2 pt sur 7 jours), porté surtout par la composante devise (64/100 : CLP : volatilité à 1 mois de 21,4 %, −8,0 % contre le dollar sur 3 mois). Composante la plus basse : géopolitique (12/100 : score de risque géopolitique de 12/100)."
+        "texte": "Chili : score de risque de 38/100 (+2 pt sur 7 jours), porté surtout par la composante devise (64/100 : CLP : volatilité à 1 mois de 21,4 %, −8,0 % contre le dollar sur 3 mois). Composante la plus basse : géopolitique (14/100 : score de risque géopolitique de 14/100)."
       },
       "CO": {
         "nom": "Colombie",
-        "score": 40,
+        "score": 41,
         "niveau": "modéré",
-        "variation_7j": 4.6,
+        "variation_7j": 5.0,
         "composantes": {
           "marche": {
             "score": 34.8,
@@ -2321,8 +2321,8 @@
             "variation_1m": -3.61,
             "libelle": "COP",
             "date": "2026-11-13",
-            "verification": "divergent",
-            "controle_agent_pays": -3.6,
+            "verification": "concordant",
+            "controle_agent_pays": -5.76,
             "texte": "COP : volatilité à 1 mois de 38,5 %, −5,5 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, COP=X (devise suivie par l'agent pays)"
           },
@@ -2337,8 +2337,8 @@
             "source": "FMI (GGXWDG_NGDP, BCA_NGDPD), inflation : agent pays, Banque mondiale (FI.RES.TOTL.MO)"
           },
           "geopolitique": {
-            "score": 21.0,
-            "texte": "score de risque géopolitique de 21/100",
+            "score": 23.0,
+            "texte": "score de risque géopolitique de 23/100",
             "source": "agent géopolitique (data/geopolitique.json)"
           }
         },
@@ -2352,13 +2352,13 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Colombie : score de risque de 40/100 (+5 pt sur 7 jours), porté surtout par la composante devise (67/100 : COP : volatilité à 1 mois de 38,5 %, −5,5 % contre le dollar sur 3 mois). Composante la plus basse : géopolitique (21/100 : score de risque géopolitique de 21/100) ; non disponible : souverain."
+        "texte": "Colombie : score de risque de 41/100 (+5 pt sur 7 jours), porté surtout par la composante devise (67/100 : COP : volatilité à 1 mois de 38,5 %, −5,5 % contre le dollar sur 3 mois). Composante la plus basse : géopolitique (23/100 : score de risque géopolitique de 23/100) ; non disponible : souverain."
       },
       "AE": {
         "nom": "Émirats arabes unis",
         "score": 15,
         "niveau": "faible",
-        "variation_7j": 0.7,
+        "variation_7j": 0.5,
         "composantes": {
           "marche": {
             "score": 14.8,
@@ -2377,7 +2377,7 @@
             "libelle": "AED",
             "date": "2026-11-13",
             "verification": "concordant",
-            "controle_agent_pays": -0.04,
+            "controle_agent_pays": 0.0,
             "texte": "AED : volatilité à 1 mois de 0,2 %, +0,0 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, AED=X (devise suivie par l'agent pays)"
           },
@@ -2392,8 +2392,8 @@
             "source": "FMI (GGXWDG_NGDP, BCA_NGDPD), inflation : agent pays, Banque mondiale (FI.RES.TOTL.MO)"
           },
           "geopolitique": {
-            "score": 20.0,
-            "texte": "score de risque géopolitique de 20/100",
+            "score": 19.0,
+            "texte": "score de risque géopolitique de 19/100",
             "source": "agent géopolitique (data/geopolitique.json)"
           }
         },
@@ -2407,13 +2407,13 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Émirats arabes unis : score de risque de 15/100 (+1 pt sur 7 jours), porté surtout par la composante vulnérabilité macro (22/100 : dette publique de 33 % du PIB (2026), solde courant de +4,8 % du PIB, inflation à 4,5 % pour une cible de 2,0 %, réserves de change de 5,2 mois d'importations). Composante la plus basse : devise (4/100 : AED : volatilité à 1 mois de 0,2 %, +0,0 % contre le dollar sur 3 mois) ; non disponible : souverain."
+        "texte": "Émirats arabes unis : score de risque de 15/100 (+0 pt sur 7 jours), porté surtout par la composante vulnérabilité macro (22/100 : dette publique de 33 % du PIB (2026), solde courant de +4,8 % du PIB, inflation à 4,5 % pour une cible de 2,0 %, réserves de change de 5,2 mois d'importations). Composante la plus basse : devise (4/100 : AED : volatilité à 1 mois de 0,2 %, +0,0 % contre le dollar sur 3 mois) ; non disponible : souverain."
       },
       "TR": {
         "nom": "Turquie",
         "score": 47,
         "niveau": "modéré",
-        "variation_7j": 1.9,
+        "variation_7j": 1.8,
         "composantes": {
           "marche": {
             "score": 71.7,
@@ -2432,7 +2432,7 @@
             "libelle": "TRY",
             "date": "2026-11-13",
             "verification": "concordant",
-            "controle_agent_pays": -4.87,
+            "controle_agent_pays": -4.93,
             "texte": "TRY : volatilité à 1 mois de 1,4 %, −4,7 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, TRY=X (devise suivie par l'agent pays)"
           },
@@ -2447,8 +2447,8 @@
             "source": "FMI (GGXWDG_NGDP, BCA_NGDPD), inflation : agent pays, Banque mondiale (FI.RES.TOTL.MO)"
           },
           "geopolitique": {
-            "score": 35.0,
-            "texte": "score de risque géopolitique de 35/100",
+            "score": 34.0,
+            "texte": "score de risque géopolitique de 34/100",
             "source": "agent géopolitique (data/geopolitique.json)"
           }
         },
@@ -2466,9 +2466,9 @@
       },
       "EG": {
         "nom": "Égypte",
-        "score": 42,
+        "score": 41,
         "niveau": "modéré",
-        "variation_7j": 1.2,
+        "variation_7j": 0.1,
         "composantes": {
           "devise": {
             "score": 44.4,
@@ -2477,8 +2477,8 @@
             "variation_1m": -0.68,
             "libelle": "EGP",
             "date": "2026-11-13",
-            "verification": "divergent",
-            "controle_agent_pays": -7.95,
+            "verification": "concordant",
+            "controle_agent_pays": -6.1,
             "texte": "EGP : volatilité à 1 mois de 14,4 %, −6,1 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, EGP=X (devise suivie par l'agent pays)"
           },
@@ -2493,8 +2493,8 @@
             "source": "FMI (GGXWDG_NGDP, BCA_NGDPD), inflation : agent pays, Banque mondiale (FI.RES.TOTL.MO)"
           },
           "geopolitique": {
-            "score": 16.0,
-            "texte": "score de risque géopolitique de 16/100",
+            "score": 12.0,
+            "texte": "score de risque géopolitique de 12/100",
             "source": "agent géopolitique (data/geopolitique.json)"
           }
         },
@@ -2509,20 +2509,20 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Égypte : score de risque de 42/100 (+1 pt sur 7 jours), porté surtout par la composante vulnérabilité macro (60/100 : dette publique de 84 % du PIB (2026), solde courant de −4,4 % du PIB, inflation à 13,3 % pour une cible de 7,0 %, réserves de change de 4,4 mois d'importations). Composante la plus basse : géopolitique (16/100 : score de risque géopolitique de 16/100) ; non disponibles : marché, souverain."
+        "texte": "Égypte : score de risque de 41/100 (+0 pt sur 7 jours), porté surtout par la composante vulnérabilité macro (60/100 : dette publique de 84 % du PIB (2026), solde courant de −4,4 % du PIB, inflation à 13,3 % pour une cible de 7,0 %, réserves de change de 4,4 mois d'importations). Composante la plus basse : géopolitique (12/100 : score de risque géopolitique de 12/100) ; non disponibles : marché, souverain."
       }
     },
     "objections": [
       {
-        "id": "matieres_premieres|changement_verdict|gaz_europe|2026-11-14",
-        "revu_le": "2026-11-14T02:41:59Z",
+        "id": "inities|achats_groupes|ALT|2026-11-14",
+        "revu_le": "2026-11-14T23:01:47Z",
         "signal": {
-          "agent": "matieres_premieres",
-          "type": "changement_verdict",
-          "cle": "gaz_europe",
+          "agent": "inities",
+          "type": "achats_groupes",
+          "cle": "ALT",
           "date": "2026-11-14",
           "importance": "forte",
-          "titre": "Gaz européen (TTF) : passage de « Neutre (biais positif) » à « Neutre »"
+          "titre": "Altimmune, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 89/100)"
         },
         "objection": "Pas d'objection spécifique.",
         "faits": [],
@@ -2533,15 +2533,15 @@
         "version_regles": 3
       },
       {
-        "id": "geopolitique|hausse_score|MX|2026-11-14",
-        "revu_le": "2026-11-14T02:41:59Z",
+        "id": "inities|achats_groupes|BW|2026-11-14",
+        "revu_le": "2026-11-14T23:01:47Z",
         "signal": {
-          "agent": "geopolitique",
-          "type": "hausse_score",
-          "cle": "MX",
+          "agent": "inities",
+          "type": "achats_groupes",
+          "cle": "BW",
           "date": "2026-11-14",
-          "importance": "moyenne",
-          "titre": "Mexique : score de risque géopolitique 41/100, +19 pts sur 7 jours"
+          "importance": "forte",
+          "titre": "Babcock & Wilcox Enterprises, Inc. : 4 dirigeants achètent sur le marché en 30 jours (score 95/100)"
         },
         "objection": "Pas d'objection spécifique.",
         "faits": [],
@@ -2552,242 +2552,298 @@
         "version_regles": 3
       },
       {
-        "id": "geopolitique|hausse_score|GB|2026-11-14",
-        "revu_le": "2026-11-14T02:41:59Z",
+        "id": "inities|achats_groupes|KGS|2026-11-14",
+        "revu_le": "2026-11-14T23:01:47Z",
         "signal": {
-          "agent": "geopolitique",
-          "type": "hausse_score",
-          "cle": "GB",
+          "agent": "inities",
+          "type": "achats_groupes",
+          "cle": "KGS",
           "date": "2026-11-14",
-          "importance": "moyenne",
-          "titre": "Royaume-Uni : score de risque géopolitique 46/100, +23 pts sur 7 jours"
+          "importance": "forte",
+          "titre": "Kodiak Gas Services, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 87/100)"
         },
-        "objection": "Pas d'objection spécifique.",
-        "faits": [],
-        "ajustement": "maintenir",
-        "specifique": false,
-        "methode": "règles",
-        "confiance": "moyen",
-        "version_regles": 3
-      },
-      {
-        "id": "geopolitique|hausse_score|FR|2026-11-14",
-        "revu_le": "2026-11-14T02:41:59Z",
-        "signal": {
-          "agent": "geopolitique",
-          "type": "hausse_score",
-          "cle": "FR",
-          "date": "2026-11-14",
-          "importance": "moyenne",
-          "titre": "France : score de risque géopolitique 40/100, +16 pts sur 7 jours"
-        },
-        "objection": "Pas d'objection spécifique.",
-        "faits": [],
-        "ajustement": "maintenir",
-        "specifique": false,
-        "methode": "règles",
-        "confiance": "moyen",
-        "version_regles": 3
-      },
-      {
-        "id": "geopolitique|hausse_score|CN|2026-11-14",
-        "revu_le": "2026-11-14T02:41:59Z",
-        "signal": {
-          "agent": "geopolitique",
-          "type": "hausse_score",
-          "cle": "CN",
-          "date": "2026-11-14",
-          "importance": "moyenne",
-          "titre": "Chine : score de risque géopolitique 57/100, +16 pts sur 7 jours"
-        },
-        "objection": "Pas d'objection spécifique.",
-        "faits": [],
-        "ajustement": "maintenir",
-        "specifique": false,
-        "methode": "règles",
-        "confiance": "moyen",
-        "version_regles": 3
-      },
-      {
-        "id": "geopolitique|hausse_score|ES|2026-11-14",
-        "revu_le": "2026-11-14T02:41:59Z",
-        "signal": {
-          "agent": "geopolitique",
-          "type": "hausse_score",
-          "cle": "ES",
-          "date": "2026-11-14",
-          "importance": "moyenne",
-          "titre": "Espagne : score de risque géopolitique 28/100, +14 pts sur 7 jours"
-        },
-        "objection": "Pas d'objection spécifique.",
-        "faits": [],
-        "ajustement": "maintenir",
-        "specifique": false,
-        "methode": "règles",
-        "confiance": "moyen",
-        "version_regles": 3
-      },
-      {
-        "id": "geopolitique|hausse_score|SE|2026-11-14",
-        "revu_le": "2026-11-14T02:41:59Z",
-        "signal": {
-          "agent": "geopolitique",
-          "type": "hausse_score",
-          "cle": "SE",
-          "date": "2026-11-14",
-          "importance": "moyenne",
-          "titre": "Suède : score de risque géopolitique 15/100, +11 pts sur 7 jours"
-        },
-        "objection": "Pas d'objection spécifique.",
-        "faits": [],
-        "ajustement": "maintenir",
-        "specifique": false,
-        "methode": "règles",
-        "confiance": "moyen",
-        "version_regles": 3
-      },
-      {
-        "id": "geopolitique|hausse_score|SG|2026-11-14",
-        "revu_le": "2026-11-14T02:41:59Z",
-        "signal": {
-          "agent": "geopolitique",
-          "type": "hausse_score",
-          "cle": "SG",
-          "date": "2026-11-14",
-          "importance": "moyenne",
-          "titre": "Singapour : score de risque géopolitique 19/100, +15 pts sur 7 jours"
-        },
-        "objection": "Pas d'objection spécifique.",
-        "faits": [],
-        "ajustement": "maintenir",
-        "specifique": false,
-        "methode": "règles",
-        "confiance": "moyen",
-        "version_regles": 3
-      },
-      {
-        "id": "geopolitique|hausse_score|AE|2026-11-14",
-        "revu_le": "2026-11-14T02:41:59Z",
-        "signal": {
-          "agent": "geopolitique",
-          "type": "hausse_score",
-          "cle": "AE",
-          "date": "2026-11-14",
-          "importance": "moyenne",
-          "titre": "Émirats arabes unis : score de risque géopolitique 20/100, +15 pts sur 7 jours"
-        },
-        "objection": "Pas d'objection spécifique.",
-        "faits": [],
-        "ajustement": "maintenir",
-        "specifique": false,
-        "methode": "règles",
-        "confiance": "moyen",
-        "version_regles": 3
-      },
-      {
-        "id": "geopolitique|hausse_score|TR|2026-11-14",
-        "revu_le": "2026-11-14T02:41:59Z",
-        "signal": {
-          "agent": "geopolitique",
-          "type": "hausse_score",
-          "cle": "TR",
-          "date": "2026-11-14",
-          "importance": "moyenne",
-          "titre": "Turquie : score de risque géopolitique 35/100, +16 pts sur 7 jours"
-        },
-        "objection": "Pas d'objection spécifique.",
-        "faits": [],
-        "ajustement": "maintenir",
-        "specifique": false,
-        "methode": "règles",
-        "confiance": "moyen",
-        "version_regles": 3
-      },
-      {
-        "id": "geopolitique|evenement_grave|theme-evt-471d58831fea|2026-11-13",
-        "revu_le": "2026-11-13T15:21:28Z",
-        "signal": {
-          "agent": "geopolitique",
-          "type": "evenement_grave",
-          "cle": "theme-evt-471d58831fea",
-          "date": "2026-11-13",
-          "importance": "haute",
-          "titre": "Événement de gravité 4 : Frappes israéliennes dans la bande de Gaza"
-        },
-        "objection": "Malgré l'événement, l'ETF TUR progresse de +0,2 % depuis la veille du signal [F1]. Cette stabilité s'inscrit dans un contexte de volatilité modérée avec le VIX en hausse de +0,9 pts [F2].",
+        "objection": "Malgré ces achats d'initiés, l'entreprise supporte une dette nette sur EBITDA de 4,4× [F2] et une couverture des intérêts limitée à 2,1× [F3].",
         "faits": [
           {
             "id": "F1",
-            "texte": "ETF TUR (Turquie) : +0,2 % depuis la veille du signal",
-            "source": "Yahoo Finance via yfinance, TUR"
+            "texte": "Kodiak Gas Services, Inc. : PER vs secteur +92,3 % (PER 27,5 ; médiane du secteur 14,3)",
+            "source": "agent entreprises (data/entreprises.json)"
           },
           {
             "id": "F2",
-            "texte": "VIX : +0,9 pts depuis la veille du signal (12/11/2026)",
-            "source": "Yahoo Finance via yfinance, ^VIX",
-            "contexte": true
+            "texte": "Kodiak Gas Services, Inc. : dette nette / EBITDA de 4,4×",
+            "source": "agent entreprises (data/entreprises.json)"
+          },
+          {
+            "id": "F3",
+            "texte": "Kodiak Gas Services, Inc. : couverture des intérêts de 2,1×",
+            "source": "agent entreprises (data/entreprises.json)"
+          },
+          {
+            "id": "F4",
+            "texte": "Kodiak Gas Services, Inc. : cours −31,1 % sur 3 mois, −38,3 % sur 6 mois, +37,2 % sur 12 mois",
+            "source": "agent entreprises (fiche)"
           }
         ],
-        "ajustement": "maintenir",
+        "ajustement": "signal fragile",
         "specifique": true,
         "methode": "gemini",
-        "par_entite": {
-          "TR": {
-            "objection": "Objections spécifiques : le marché ne confirme pas pour Turquie (ETF TUR à +0,2 % depuis la veille du signal) [F1].",
-            "ajustement": "abaisser"
-          }
-        },
-        "confiance": "faible",
+        "confiance": "moyen",
         "version_regles": 3,
         "faits_cites": [
-          "F1",
-          "F2"
+          "F2",
+          "F3"
         ],
         "modele": "gemini-3.5-flash-lite"
       },
       {
-        "id": "geopolitique|mesure_officielle|evt-feb49b87e2d1|2026-11-13",
-        "revu_le": "2026-11-13T10:31:31Z",
+        "id": "inities|achats_groupes|HPP|2026-11-14",
+        "revu_le": "2026-11-14T23:01:47Z",
         "signal": {
-          "agent": "geopolitique",
-          "type": "mesure_officielle",
-          "cle": "evt-feb49b87e2d1",
-          "date": "2026-11-13",
-          "importance": "moyenne",
-          "titre": "Sanctions (source officielle) : Publication des licences générales web 55F et 115D du règlement sur les sanctions relatives aux activités étrangères nuisibles de la Russie"
+          "agent": "inities",
+          "type": "achats_groupes",
+          "cle": "HPP",
+          "date": "2026-11-14",
+          "importance": "forte",
+          "titre": "Hudson Pacific Properties, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 95/100)"
         },
-        "objection": "Les réserves de 13,1 mois et la dette de 38 % du PIB [F1] ne prémunissent pas la Suisse contre les impacts sectoriels induits par ces licences russes.",
+        "objection": "Pas d'objection spécifique.",
+        "faits": [],
+        "ajustement": "maintenir",
+        "specifique": false,
+        "methode": "règles",
+        "confiance": "moyen",
+        "version_regles": 3
+      },
+      {
+        "id": "inities|achats_groupes|FF|2026-11-14",
+        "revu_le": "2026-11-14T23:01:47Z",
+        "signal": {
+          "agent": "inities",
+          "type": "achats_groupes",
+          "cle": "FF",
+          "date": "2026-11-14",
+          "importance": "forte",
+          "titre": "FutureFuel Corp. : 4 dirigeants achètent sur le marché en 30 jours (score 95/100)"
+        },
+        "objection": "Pas d'objection spécifique.",
+        "faits": [],
+        "ajustement": "maintenir",
+        "specifique": false,
+        "methode": "règles",
+        "confiance": "moyen",
+        "version_regles": 3
+      },
+      {
+        "id": "inities|achats_groupes|CSQR|2026-11-14",
+        "revu_le": "2026-11-14T23:01:47Z",
+        "signal": {
+          "agent": "inities",
+          "type": "achats_groupes",
+          "cle": "CSQR",
+          "date": "2026-11-14",
+          "importance": "forte",
+          "titre": "Csquare, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 95/100)"
+        },
+        "objection": "Pas d'objection spécifique.",
+        "faits": [],
+        "ajustement": "maintenir",
+        "specifique": false,
+        "methode": "règles",
+        "confiance": "moyen",
+        "version_regles": 3
+      },
+      {
+        "id": "inities|nouvelle_position_super_investisseur|HONA|2026-11-14",
+        "revu_le": "2026-11-14T23:01:47Z",
+        "signal": {
+          "agent": "inities",
+          "type": "nouvelle_position_super_investisseur",
+          "cle": "HONA",
+          "date": "2026-11-14",
+          "importance": "moyenne",
+          "titre": "Seth Klarman (Baupost Group LLC) ouvre une position dans HONEYWELL AEROSPACE INC (3,5 % du portefeuille, T3 2026)"
+        },
+        "objection": "Cette nouvelle position intervient alors que la croissance du bénéfice affiche un recul de -36,8 % [F3] et que le PER dépasse la médiane du secteur de 108,3 % [F1].",
         "faits": [
           {
             "id": "F1",
-            "texte": "Suisse : réserves de 13,1 mois, dette de 38 % du PIB",
-            "source": "FMI, Banque mondiale"
+            "texte": "Honeywell Aerospace Inc. : PER vs secteur +108,3 % (PER 52,8 ; médiane du secteur 25,3)",
+            "source": "agent entreprises (data/entreprises.json)"
+          },
+          {
+            "id": "F2",
+            "texte": "Honeywell Aerospace Inc. : couverture des intérêts de 4,0×",
+            "source": "agent entreprises (data/entreprises.json)"
+          },
+          {
+            "id": "F3",
+            "texte": "Honeywell Aerospace Inc. : croissance du bénéfice −36,8 %",
+            "source": "agent entreprises (data/entreprises.json)"
+          }
+        ],
+        "ajustement": "signal fragile",
+        "specifique": true,
+        "methode": "gemini",
+        "confiance": "moyen",
+        "version_regles": 3,
+        "faits_cites": [
+          "F1",
+          "F3"
+        ],
+        "modele": "gemini-3.5-flash-lite"
+      },
+      {
+        "id": "inities|nouvelle_position_super_investisseur|SITE|2026-11-14",
+        "revu_le": "2026-11-14T23:01:47Z",
+        "signal": {
+          "agent": "inities",
+          "type": "nouvelle_position_super_investisseur",
+          "cle": "SITE",
+          "date": "2026-11-14",
+          "importance": "moyenne",
+          "titre": "Seth Klarman (Baupost Group LLC) ouvre une position dans SITEONE LANDSCAPE SUPPLY INC (2,2 % du portefeuille, T3 2026)"
+        },
+        "objection": "Pas d'objection spécifique.",
+        "faits": [],
+        "ajustement": "maintenir",
+        "specifique": false,
+        "methode": "règles",
+        "confiance": "moyen",
+        "version_regles": 3
+      },
+      {
+        "id": "geopolitique|evenement_grave|evt-d40435d5b052|2026-11-14",
+        "revu_le": "2026-11-14T23:01:47Z",
+        "signal": {
+          "agent": "geopolitique",
+          "type": "evenement_grave",
+          "cle": "evt-d40435d5b052",
+          "date": "2026-11-14",
+          "importance": "haute",
+          "titre": "Événement de gravité 4 : Tensions sur l'Iran entre déclarations de Trump et requêtes de Netanyahu"
+        },
+        "objection": "Pas d'objection spécifique.",
+        "faits": [],
+        "ajustement": "maintenir",
+        "specifique": false,
+        "methode": "règles",
+        "confiance": "moyen",
+        "version_regles": 3
+      },
+      {
+        "id": "entreprises|nouvelle_pepite|EXE|2026-11-14",
+        "revu_le": "2026-11-14T23:01:47Z",
+        "signal": {
+          "agent": "entreprises",
+          "type": "nouvelle_pepite",
+          "cle": "EXE",
+          "date": "2026-11-14",
+          "importance": "moyenne",
+          "titre": "Expand Energy Corporation entre dans la liste « Qualité à prix raisonnable »"
+        },
+        "objection": "En dépit de la croissance du bénéfice de +354,8 % [F2], le momentum à 12 mois reste négatif à -23,1 % [F1], suggérant un possible piège de valeur [F3].",
+        "faits": [
+          {
+            "id": "F1",
+            "texte": "Expand Energy Corporation : momentum 12 mois −23,1 %",
+            "source": "agent entreprises (data/entreprises.json)"
+          },
+          {
+            "id": "F2",
+            "texte": "Expand Energy Corporation : croissance du bénéfice +354,8 %",
+            "source": "agent entreprises (data/entreprises.json)"
+          },
+          {
+            "id": "F3",
+            "texte": "Expand Energy Corporation : piège de valeur possible : décote marquée associée à un cours ou à un bénéfice en recul (revue critique)",
+            "source": "agent entreprises (data/pepites.json)"
+          }
+        ],
+        "ajustement": "signal fragile",
+        "specifique": true,
+        "methode": "gemini",
+        "confiance": "moyen",
+        "version_regles": 3,
+        "faits_cites": [
+          "F1",
+          "F2",
+          "F3"
+        ],
+        "modele": "gemini-3.5-flash-lite"
+      },
+      {
+        "id": "entreprises|nouvelle_pepite|GFNORTEO.MX|2026-11-14",
+        "revu_le": "2026-11-14T23:01:47Z",
+        "signal": {
+          "agent": "entreprises",
+          "type": "nouvelle_pepite",
+          "cle": "GFNORTEO.MX",
+          "date": "2026-11-14",
+          "importance": "moyenne",
+          "titre": "Grupo Financiero Banorte, S.A.B. de C.V. entre dans la liste « Qualité à prix raisonnable »"
+        },
+        "objection": "L'entrée de ce titre s'inscrit dans un contexte où la devise locale affiche une baisse de -8,4 % contre le dollar sur 3 mois et une volatilité à 1 mois de 11,9 % [F1].",
+        "faits": [
+          {
+            "id": "F1",
+            "texte": "Mexique : MXN : volatilité à 1 mois de 11,9 %, −8,4 % contre le dollar sur 3 mois",
+            "source": "Yahoo Finance via yfinance, MXN=X (devise suivie par l'agent pays)"
           }
         ],
         "ajustement": "maintenir",
         "specifique": true,
         "methode": "gemini",
-        "par_entite": {
-          "CH": {
-            "objection": "Objections spécifiques : Suisse dispose d'amortisseurs (réserves de 13,1 mois d'importations, dette publique de 38 % du PIB) [F1].",
-            "ajustement": "maintenir"
-          }
-        },
         "confiance": "faible",
         "version_regles": 3,
         "faits_cites": [
           "F1"
         ],
         "modele": "gemini-3.5-flash-lite"
+      },
+      {
+        "id": "entreprises|alerte_comptable|SIE.DE|2026-11-14",
+        "revu_le": "2026-11-14T23:01:47Z",
+        "signal": {
+          "agent": "entreprises",
+          "type": "alerte_comptable",
+          "cle": "SIE.DE",
+          "date": "2026-11-14",
+          "importance": "moyenne",
+          "titre": "Siemens Aktiengesellschaft : hausse anormale des créances"
+        },
+        "objection": "Malgré la hausse des créances, la conversion du bénéfice en cash atteint 142,5 % [F1] et le F-score s'établit à 8/9 [F2].",
+        "faits": [
+          {
+            "id": "F1",
+            "texte": "Siemens Aktiengesellschaft : conversion du bénéfice en cash de 142,5 %",
+            "source": "agent entreprises (data/entreprises.json)"
+          },
+          {
+            "id": "F2",
+            "texte": "Siemens Aktiengesellschaft : F-score de 8/9",
+            "source": "agent entreprises (data/entreprises.json)"
+          }
+        ],
+        "ajustement": "maintenir",
+        "specifique": true,
+        "methode": "gemini",
+        "confiance": "moyen",
+        "version_regles": 3,
+        "faits_cites": [
+          "F1",
+          "F2"
+        ],
+        "modele": "gemini-3.5-flash-lite"
       }
     ],
     "contradicteur": {
-      "revues_7j": 187,
-      "sans_objection": 58,
+      "revues_7j": 215,
+      "sans_objection": 68,
       "par_ajustement": {
-        "maintenir": 29,
+        "maintenir": 37,
         "abaisser": 8,
-        "signal fragile": 13
+        "signal fragile": 5
       },
       "mode": "gemini"
     },
