@@ -57,7 +57,7 @@ Prototype d'une application personnelle de suivi économique mondial, pensée d'
   - la lecture de l'agent ;
   - les sources et les dates exactes de chaque valeur.
 - **Tendances** : une flèche ↑ ↓ → indique l'évolution depuis la mise à jour précédente, sur chaque indicateur et chaque note (pays, secteur, entreprise). Le vert signale une note qui s'améliore, le rouge une note qui se dégrade.
-- **En-tête et Menu** : sur téléphone et tablette, l'en-tête ne garde que le titre, la pastille du palier de risque, la recherche, le portefeuille démo (avec sa performance) et le bouton **Menu**. Le Menu ouvre un panneau qui regroupe tous les écrans, classés : *Synthèse* (Où investir, Briefing), *Analyses* (Vue macro, Pays · Classement, Pépites, Matières premières, Géopolitique, Risque, Initiés, Données alternatives), *Outils* (Analyser une entreprise, Mes analyses, Comparateur, Mes alertes), *Suivi* (Mes portefeuilles, Portefeuille démo, Fiabilité, Santé des agents) et *Affichage* (Légende des couleurs, Mode léger). Une pastille rouge sur « Menu » signale un problème dans la santé des agents. Sur grand écran (à partir de 1 280 px), des raccourcis supplémentaires s'ajoutent à l'en-tête (icônes, libellé au survol), mais tout reste accessible par le Menu. Les bandeaux et onglets qui défilent horizontalement se font glisser au doigt.
+- **En-tête et Menu** : sur téléphone et tablette, l'en-tête ne garde que le titre, la pastille du palier de risque, la recherche, le portefeuille démo (avec sa performance) et le bouton **Menu**. Le Menu ouvre un panneau qui regroupe tous les écrans, classés : *Synthèse* (Où investir, Briefing), *Analyses* (Vue macro, Pays · Classement, Pépites, Matières premières, Géopolitique, Risque, Initiés, Données alternatives), *Outils* (Analyser une entreprise, Mes analyses, Comparateur, Mes alertes), *Suivi* (Mes portefeuilles, Portefeuille démo, Fiabilité, Backtest, Santé des agents) et *Affichage* (Légende des couleurs, Mode léger). Une pastille rouge sur « Menu » signale un problème dans la santé des agents. Sur grand écran (à partir de 1 280 px), des raccourcis supplémentaires s'ajoutent à l'en-tête (icônes, libellé au survol), mais tout reste accessible par le Menu. Les bandeaux et onglets qui défilent horizontalement se font glisser au doigt.
 - **Recherche** (loupe dans l'en-tête) : pays, secteurs et entreprises, par nom ou ticker, sans tenir compte des accents. Toucher un résultat ouvre la fiche et centre le globe.
 - **Fraîcheur des données** : sous chaque fiche, « Mis à jour le … · Source : … », lu dans le bloc `meta` des JSON.
 - **Filtres du globe** (puces en bas de l'écran) : la note globale, les 6 indicateurs des pays, les flux d'investissement et les risques.
@@ -560,6 +560,27 @@ Chaque fiche (agent entreprises, pépites, analyses à la demande) porte une rec
 
 Suivi : `data/historique/recommandations.json` (date, cours, recommandation, fourchette), écrit par `python -m agents.entreprises.suivi`, lancé juste avant chaque poussée par les workflows « Agent entreprises » et « Analyse à la demande » (`outils/pousser_avec_suivi.sh`). Performance à 3, 6 et 12 mois comparée au MSCI World (ETF URTH) et taux de réussite par type, affichés dans l'écran **Fiabilité des recommandations** (depuis Mes analyses ou une fiche).
 
+## Backtest des règles de notation (mensuel, sans IA)
+
+Le module `agents/backtest/` rejoue sur 10 à 15 ans les règles de notation des agents, **avec leurs propres fonctions**, pour savoir quels signaux sont réellement prédictifs : lesquels garder, alléger ou supprimer. Méthode complète : [`agents/backtest/methode.md`](agents/backtest/methode.md) ; réglages : `agents/backtest/config.json`.
+- **Données gratuites, datées par leur publication** : cours, dividendes et divisions (Yahoo Finance), indicateur avancé et inflation (OCDE), taux directeurs (BRI), croissance (FMI), VIX (FRED), comptes des sociétés américaines (SEC XBRL, **par date de dépôt réelle** : aucune donnée connue après coup), positionnement (CFTC, depuis 2006), stocks (EIA).
+- **Lots** : pays (et chef d'orchestre rejoué sur les pays), entreprises américaines, matières premières, secteurs (rotation selon la phase du cycle reconstituée).
+- **Mesures** (rééquilibrage mensuel, frais inclus) : meilleurs 20 % contre pires 20 % et contre l'indice, taux de réussite à 1, 3, 6 et 12 mois, coefficient d'information (statistique t de Newey-West), stabilité par année et par régime (calme, tension).
+- **Séparation stricte** : réglages sur la première moitié de l'historique, verdicts jugés sur la seconde (hors échantillon) ; « Données insuffisantes » sans conclusion sur un petit échantillon ; biais du survivant mesuré et corrigé pour les entreprises (seules les sociétés valant déjà 2 Md$ à chaque date sont notées).
+- **Règles testées** : pondérations, seuils des verdicts et de conviction, règle anti-euphorie du chef d'orchestre ; concentration, stops et prise de bénéfices du trader.
+- **Non testables** (indiqué dans le rapport) : géopolitique, flux des ETF, guidance, textes Gemini, activité réelle ; achats d'initiés en option.
+
+**Résultats** : `data/backtest/rapport-AAAA-MM.md`, `data/backtest/resultats.json` (écran **Backtest**, Menu → Suivi : verdict « Garder », « Alléger » ou « Supprimer » de chaque signal avec ses chiffres, note actuelle contre note recalibrée) et `data/backtest/proposition-AAAA-MM.json`. **Rien n'est modifié automatiquement** : une proposition de nouvelles pondérations, retenue seulement si elle fait mieux hors échantillon, est ouverte dans une pull request séparée (branche `backtest/proposition-AAAA-MM`), à valider à la main.
+
+**Exécution** : workflow `.github/workflows/backtest.yml`, chaque mois (le 3 à 4 h 17 UTC, lancé par le planificateur) et à la main (Actions → « Backtest » → « Run workflow »). Lots en parallèle (comptes SEC en 4 tranches). Secret `SEC_USER_AGENT` (déjà utilisé par l'agent entreprises) ; pour la pull request de proposition, cocher « Allow GitHub Actions to create and approve pull requests » (Settings → Actions → General). Santé : `data/journal/agent-backtest.json`.
+
+```
+python -m agents.backtest                         # tous les lots et le rapport (vraies sources)
+python -m agents.backtest --lot pays              # un lot : pays, entreprises, matieres, secteurs
+python -m agents.backtest --test --sortie /tmp/bt # données synthétiques, sans réseau
+python -m unittest discover -s agents/backtest -t .
+```
+
 ## Réveil externe (cron-job.org)
 
 Les tâches planifiées de GitHub (`schedule`) peuvent être retardées, voire sautées sans erreur. Un service externe appelle donc toutes les 15 minutes le workflow **Planificateur** (`.github/workflows/planificateur.yml`, déclenché uniquement par `workflow_dispatch`).
@@ -635,7 +656,7 @@ Règle : un test ne lit ni ne modifie jamais les vrais `config/` et `data/` (ils
 ```
 python -m unittest discover -s agents -t .   # tous les tests
 python -m unittest discover -s outils/synchro-portefeuilles -t outils/synchro-portefeuilles   # synchronisation (relevés fictifs)
-node --test js/tests/*.test.mjs              # logique de l'appli (planning, Mes portefeuilles avec un exemple fictif)
+node --test js/tests/*.test.mjs              # logique de l'appli (planning, Mes portefeuilles avec un exemple fictif, écran Backtest)
 ```
 
 ## Maintien
@@ -691,9 +712,10 @@ data/historique/flux_etf/  relevés quotidiens des ETF pays (parts en circulatio
 data/signaux/pays.json     signaux de l'agent pays (flux des ETF) pour le futur chef d'orchestre
 data/chef.json        sortie du chef d'orchestre (opportunités, verdicts, allocation) ; data/chef/ : briefings, suivi de performance, état
 data/alertes.json     alertes du jour (chef d'orchestre)
+data/backtest/        backtest mensuel des règles de notation (rapport, résultats de l'écran Backtest, proposition de pondérations)
 data/portefeuille.json  portefeuille démo (agent trader, aucun ordre réel) ; data/trader/ : journal des opérations et état
 data/*.json           autres données
-agents/               agents Python (agents/commun : téléchargement, cache, journal, écriture ; agents/pays : agent pays ; agents/marches : agent marchés ; agents/macro : agent macro ; agents/rattrapage : relance des exécutions manquées ; agents/entreprises : agent entreprises, recommandation et suivi ; agents/analyse_demande : analyse à la demande ; agents/risque : agent risque et contradicteur ; agents/matieres_premieres : agent matières premières ; agents/inities : agent initiés ; agents/donnees_alternatives : agent données alternatives ; agents/chef : chef d'orchestre ; agents/trader : agent trader démo)
+agents/               agents Python (agents/commun : téléchargement, cache, journal, écriture ; agents/pays : agent pays ; agents/marches : agent marchés ; agents/macro : agent macro ; agents/rattrapage : relance des exécutions manquées ; agents/entreprises : agent entreprises, recommandation et suivi ; agents/analyse_demande : analyse à la demande ; agents/risque : agent risque et contradicteur ; agents/matieres_premieres : agent matières premières ; agents/inities : agent initiés ; agents/donnees_alternatives : agent données alternatives ; agents/chef : chef d'orchestre ; agents/trader : agent trader démo ; agents/backtest : backtest des règles de notation)
 .github/workflows/    exécution planifiée des agents (GitHub Actions)
 data/countries-110m.json, countries-50m.json  frontières des pays (voir data/LICENCE-countries-110m.txt)
 outils/generer_donnees_fictives.py  régénère les données fictives

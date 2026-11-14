@@ -1723,6 +1723,24 @@ body.mode-leger .puce--pulsations { opacity: 0.55; }
   .chef-table td:last-child { min-width: 120px; }
 }
 .chef-classe { flex: 0 1 0; }
+
+/* ---------- Écran « Backtest » (js/backtest.js) ---------- */
+.bt-section { margin: 14px 0 18px; }
+.bt-synthese { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 4px; }
+.bt-verdict { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap;
+  border: 1px solid currentColor; }
+.bt-verdict--garder { color: var(--vert); }
+.bt-verdict--alleger { color: var(--orange); }
+.bt-verdict--supprimer { color: var(--rouge); }
+.bt-verdict--insuffisant { color: var(--texte-3); }
+.bt-signal { border: 1px solid var(--ligne); border-radius: 10px; background: var(--fond-2); margin: 6px 0; }
+.bt-signal summary { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; padding: 9px 10px; cursor: pointer; list-style: none; }
+.bt-signal summary::-webkit-details-marker { display: none; }
+.bt-signal-nom { flex: 1 1 auto; min-width: 0; font-size: 13px; }
+.bt-signal-chiffres { flex: 1 1 100%; font-size: 11px; color: var(--texte-2); }
+.bt-detail { padding: 0 10px 8px; }
+.bt-ligne-ref td { color: var(--texte); font-weight: 600; }
+.bt-alerte { color: var(--orange); }
 .chef-repartition { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 0 0 6px; font-size: 12px; color: var(--texte-2); }
 .chef-repartition > span { display: inline-flex; align-items: center; gap: 5px; }
 .chef-pastille { display: inline-block; width: 9px; height: 9px; border-radius: 2px; }

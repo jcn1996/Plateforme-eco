@@ -79,3 +79,17 @@ test('ancien journal sans planning : prochaine_prevue', () => {
   assert.equal(situationPlanning(s, t('2026-11-03T12:16:00Z')).etat, 'panne');
   assert.equal(situationPlanning({}, t('2026-11-03T12:16:00Z')).etat, 'panne');
 });
+
+test('agent mensuel (backtest) : prochaine exécution le mois suivant, seuils élargis', () => {
+  const MENSUEL = { crons: ['17 4 3 * *'], fuseau: 'UTC' };
+  const base = intervalleBase(MENSUEL.crons);
+  assert.equal(base, 28 * 24 * 60); // du 3 février au 3 mars 2026 (premiers créneaux après la semaine type)
+  assert.deepEqual(seuils(base), { retard: 8 * 60, panne: 48 * 60 });
+  const ok = situationPlanning({ derniere_execution: '2026-11-03T07:40:00Z', planning: MENSUEL }, t('2026-11-20T12:00:00Z'));
+  assert.equal(ok.prochaine, t('2026-12-03T04:17:00Z'));
+  assert.equal(ok.etat, 'pause'); // longue plage sans exécution prévue : ni retard ni panne
+  // Exécution du 3 décembre en cours (plusieurs heures) : pas de fausse alarme avant 8 h de retard
+  assert.equal(situationPlanning({ derniere_execution: '2026-11-03T07:40:00Z', planning: MENSUEL }, t('2026-12-03T09:00:00Z')).etat, 'ok');
+  assert.equal(situationPlanning({ derniere_execution: '2026-11-03T07:40:00Z', planning: MENSUEL }, t('2026-12-04T09:00:00Z')).etat, 'retard');
+  assert.equal(situationPlanning({ derniere_execution: '2026-11-03T07:40:00Z', planning: MENSUEL }, t('2026-12-06T09:00:00Z')).etat, 'panne');
+});

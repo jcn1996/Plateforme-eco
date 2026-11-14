@@ -16,11 +16,14 @@
    ========================================================================== */
 
 const MINUTE = 60_000;
-const HUIT_JOURS = 8 * 24 * 60;
+const JOUR = 24 * 60 * MINUTE;
+const HORIZON = 35 * JOUR; // assez pour un planning mensuel (backtest) ; les jours sans exécution prévue sont sautés
 
 /** Seuils (en minutes) selon l'intervalle de base de l'agent. */
 export function seuils(intervalleBase) {
   if (intervalleBase != null && intervalleBase <= 60) return { retard: 45, panne: 120 };
+  // Agent mensuel (backtest) : exécution de plusieurs heures, relancée par le planificateur en cas d'échec
+  if (intervalleBase != null && intervalleBase > 8 * 24 * 60) return { retard: 8 * 60, panne: 48 * 60 };
   return { retard: 120, panne: 26 * 60 };
 }
 
@@ -48,7 +51,7 @@ function champ(expr, mini, maxi) {
   return valeurs;
 }
 
-/** Compile une expression cron (5 champs, UTC) en fonction de test. */
+/** Compile une expression cron (5 champs, UTC) en fonction de test ; `.jour(d)` teste seulement le jour. */
 export function compilerCron(expr) {
   const [mi, h, j, mo, js] = expr.trim().split(/\s+/);
   const minutes = champ(mi, 0, 59);
@@ -56,30 +59,45 @@ export function compilerCron(expr) {
   const jours = champ(j, 1, 31);
   const mois = champ(mo, 1, 12);
   const joursSem = new Set([...champ(js, 0, 7)].map((v) => (v === 7 ? 0 : v)));
-  return (d) => minutes.has(d.getUTCMinutes()) && heures.has(d.getUTCHours())
-    && jours.has(d.getUTCDate()) && mois.has(d.getUTCMonth() + 1) && joursSem.has(d.getUTCDay());
+  const jour = (d) => jours.has(d.getUTCDate()) && mois.has(d.getUTCMonth() + 1) && joursSem.has(d.getUTCDay());
+  const test = (d) => minutes.has(d.getUTCMinutes()) && heures.has(d.getUTCHours()) && jour(d);
+  test.jour = jour;
+  return test;
 }
 
 function compiler(crons) {
   const tests = crons.map(compilerCron);
-  return (d) => tests.some((t) => t(d));
+  const test = (d) => tests.some((t) => t(d));
+  test.jour = (d) => tests.some((t) => t.jour(d));
+  return test;
 }
 
 const aLaMinute = (t) => Math.floor(t / MINUTE) * MINUTE;
+const debutDuJour = (t) => Math.floor(t / JOUR) * JOUR;
 
-/** Dernière minute planifiée (ms) à ou avant `t`, dans les 8 jours ; sinon null. */
+/** Dernière minute planifiée (ms) à ou avant `t`, dans les 35 jours ; sinon null. */
 export function precedente(crons, t) {
   const test = compiler(crons);
-  let m = aLaMinute(t);
-  for (let i = 0; i < HUIT_JOURS; i += 1, m -= MINUTE) if (test(new Date(m))) return m;
+  const limite = aLaMinute(t) - HORIZON;
+  for (let m = aLaMinute(t); m >= limite;) {
+    const d = new Date(m);
+    if (!test.jour(d)) { m = debutDuJour(m) - MINUTE; continue; } // aucun créneau ce jour-là : fin de la veille
+    if (test(d)) return m;
+    m -= MINUTE;
+  }
   return null;
 }
 
-/** Première minute planifiée (ms) strictement après `t`, dans les 8 jours ; sinon null. */
+/** Première minute planifiée (ms) strictement après `t`, dans les 35 jours ; sinon null. */
 export function suivante(crons, t) {
   const test = compiler(crons);
-  let m = aLaMinute(t) + MINUTE;
-  for (let i = 0; i < HUIT_JOURS; i += 1, m += MINUTE) if (test(new Date(m))) return m;
+  const limite = aLaMinute(t) + HORIZON;
+  for (let m = aLaMinute(t) + MINUTE; m <= limite;) {
+    const d = new Date(m);
+    if (!test.jour(d)) { m = debutDuJour(m) + JOUR; continue; } // aucun créneau ce jour-là : début du lendemain
+    if (test(d)) return m;
+    m += MINUTE;
+  }
   return null;
 }
 
@@ -94,7 +112,12 @@ export function intervalleBase(crons, depuis = Date.UTC(2026, 0, 5)) {
       precedenteMin = i;
     }
   }
-  return mini ?? (precedenteMin != null ? 7 * 24 * 60 : null);
+  if (mini != null) return mini;
+  if (precedenteMin != null) return 7 * 24 * 60;
+  // Aucune exécution dans la semaine type : planning mensuel, intervalle mesuré entre deux créneaux successifs
+  const a = suivante(crons, depuis);
+  const b = a != null ? suivante(crons, a) : null;
+  return a != null && b != null ? (b - a) / MINUTE : null;
 }
 
 /**
