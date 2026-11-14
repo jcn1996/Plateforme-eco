@@ -29,7 +29,9 @@ from . import donnees as D
 from . import entreprises as E
 from . import matieres as MT
 from . import pays as P
+from . import combinaisons as CB
 from . import recalibrage as RC
+from . import reference as RF
 from . import regles as R
 from . import secteurs as SC
 from . import stats as S
@@ -94,8 +96,36 @@ def analyser(signaux: dict[str, pd.DataFrame], lot: dict, nom: str, cfg: dict, r
             continue
         res[k] = S.analyser_signal(sig, lot["prix"], lot.get("indice"), cfg["horizons_mois"], h_ref, cfg["quantile"], frais,
                                    regimes, separation, cfg["verdicts"])
-        res[k]["libelle"] = LIBELLES.get(k, k)
+        res[k]["libelle"] = libelle(k)
+        ref = lot.get("reference")
+        if ref is not None:  # panier des meilleurs 20 % comparé à l'indice et au momentum seul
+            r = RF.rendement_signal(sig, lot["prix"], ref["indice_serie"], cfg["quantile"], frais)
+            res[k]["portefeuille"] = RF.comparer(r, ref["indice_serie"], ref["serie"], separation)
     return res
+
+
+def libelle(k: str) -> str:
+    """Libellé d'un signal, y compris les variations (var3_inflation → « Inflation — variation 3 mois »)."""
+    if k in LIBELLES:
+        return LIBELLES[k]
+    if k in E.VARIATIONS:
+        return E.VARIATIONS[k]
+    if k.startswith("var") and "_" in k:
+        mois, base = k[3:].split("_", 1)
+        if mois.isdigit():
+            return f"{LIBELLES.get(base, base)} — variation {mois} mois"
+    return k
+
+
+def avec_reference(lot: dict, nom: str, cfg: dict, sep, masque=None) -> dict:
+    """Ajoute au lot la référence « momentum seul » (meilleurs 20 % sur 12 mois hors dernier mois, frais compris)."""
+    lot["reference"] = RF.reference_momentum(lot["prix"], lot.get("indice"), cfg["quantile"], cfg["frais"][nom], sep, masque)
+    return lot["reference"]["resume"]
+
+
+def combiner_signaux(signaux: dict, res: dict, lot: dict, nom: str, cfg: dict, sep) -> dict:
+    return CB.tester(signaux, res, lot["prix"], lot.get("indice"), lot["reference"]["serie"], cfg["frais"][nom], sep,
+                     cfg["combinaisons"], {k: v.get("libelle", k) for k, v in res.items()})
 
 
 def _periode(lot: dict) -> dict:
@@ -136,8 +166,11 @@ def lot_pays(f, c: dict, racine: Path, test: bool, regimes) -> dict:
     poids = {k: v for k, v in c["pays"]["ponderations"].items() if not k.startswith("_")}
     lot = P.construire(f, pays_cfg, indices, poids, cfg, debut)
     sep = separation_du_lot(lot["note_globale"], cfg)
-    signaux = dict(lot["notes"]) | {"note_globale": lot["note_globale"], "note_globale_brute": lot["note_globale_brute"]}
+    ref = avec_reference(lot, "pays", cfg, sep)
+    var = P.variations(lot, cfg["variations"]["mois"])
+    signaux = dict(lot["notes"]) | var | {"note_globale": lot["note_globale"], "note_globale_brute": lot["note_globale_brute"]}
     res = analyser(signaux, lot, "pays", cfg, regimes, sep)
+    combis = combiner_signaux(dict(lot["notes"]) | var, res, lot, "pays", cfg, sep)
     poids_testes = {k: v for k, v in poids.items() if k in lot["notes"]}
     poids_fixes = {k: v for k, v in poids.items() if k not in poids_testes}
 
@@ -175,8 +208,10 @@ def lot_pays(f, c: dict, racine: Path, test: bool, regimes) -> dict:
     }
     return {"pays": {"titre": TITRES["pays"], "periode": _periode(lot), "separation": _iso(sep), "signaux": res,
                      "horizon_reference": cfg["horizon_reference"]["pays"], "indice": cfg["pays"]["indice_reference"],
-                     "biais_survivant": {"univers_complet_vs_indice_pct": E.exces_univers(lot["prix"], lot["indice"], None)}},
+                     "biais_survivant": {"univers_complet_vs_indice_pct": E.exces_univers(lot["prix"], lot["indice"], None)},
+                     "reference_momentum": ref, "combinaisons": combis},
             "chef": {"titre": TITRES["chef"], "periode": _periode(lot), "separation": _iso(sep), "signaux": res_chef, "regles": regles,
+                     "reference_momentum": ref,
                      "horizon_reference": cfg["horizon_reference"]["chef"], "indice": cfg["pays"]["indice_reference"]},
             "_propositions": [prop_pays, prop_chef]}
 
@@ -194,8 +229,11 @@ def lot_entreprises(f, c: dict, racine: Path, test: bool, regimes) -> dict | Non
     if not lot:
         return None
     sep = separation_du_lot(lot["note_globale"], cfg)
-    signaux = dict(lot["notes"]) | {"note_globale": lot["note_globale"], "note_globale_brute": lot["note_globale_brute"]}
+    ref = avec_reference(lot, "entreprises", cfg, sep, lot.get("retenues"))
+    var = lot.get("variations") or {}
+    signaux = dict(lot["notes"]) | var | {"note_globale": lot["note_globale"], "note_globale_brute": lot["note_globale_brute"]}
     res = analyser(signaux, lot, "entreprises", cfg, regimes, sep)
+    combis = combiner_signaux(dict(lot["notes"]) | var, res, lot, "entreprises", cfg, sep)
     from ..entreprises import analyse as A
     poids = {k: v for k, v in c["entreprises"]["ponderations"].items() if not k.startswith("_")}
     couverture = c["entreprises"]["analyse_financiere"].get("couverture_sur")
@@ -217,7 +255,8 @@ def lot_entreprises(f, c: dict, racine: Path, test: bool, regimes) -> dict | Non
                         cfg["frais"]["entreprises"], sep)
     return {"entreprises": {"titre": TITRES["entreprises"], "periode": _periode(lot), "separation": _iso(sep), "signaux": res,
                             "horizon_reference": cfg["horizon_reference"]["entreprises"], "indice": cfg["entreprises"]["indice_reference"],
-                            "regles": {"stops": st}, "biais_survivant": lot.get("biais_survivant")},
+                            "regles": {"stops": st}, "biais_survivant": lot.get("biais_survivant"),
+                            "reference_momentum": ref, "combinaisons": combis},
             "_propositions": [prop]}
 
 
@@ -225,7 +264,10 @@ def lot_matieres(f, c: dict, racine: Path, test: bool, regimes) -> dict:
     cfg = c["bt"]
     lot = MT.construire(f, c["mp"], cfg, cfg["periode"]["debut"])
     sep = separation_du_lot(lot["note_globale"], cfg)
-    res = analyser(dict(lot["notes"]) | {"note_globale": lot["note_globale"]}, lot, "matieres", cfg, regimes, sep)
+    ref = avec_reference(lot, "matieres", cfg, sep)
+    var = lot.get("variations") or {}
+    res = analyser(dict(lot["notes"]) | var | {"note_globale": lot["note_globale"]}, lot, "matieres", cfg, regimes, sep)
+    combis = combiner_signaux(dict(lot["notes"]) | var, res, lot, "matieres", cfg, sep)
     familles = {m["cle"]: m["famille"] for m in c["mp"]["matieres"]}
     from ..matieres_premieres import analyse as MA
     props = []
@@ -257,7 +299,8 @@ def lot_matieres(f, c: dict, racine: Path, test: bool, regimes) -> dict:
                           "detail": nouveaux_par_famille[fam][2], "note_actuelle": _resume_note(r["actuelle"]),
                           "note_recalibree": _resume_note(r["recalibree"])})
     return {"matieres": {"titre": TITRES["matieres"], "periode": _periode(lot), "separation": _iso(sep), "signaux": res,
-                         "horizon_reference": cfg["horizon_reference"]["matieres"], "indice": "moyenne équipondérée de l'univers"},
+                         "horizon_reference": cfg["horizon_reference"]["matieres"], "indice": "moyenne équipondérée de l'univers",
+                         "reference_momentum": ref, "combinaisons": combis},
             "_propositions": props}
 
 
@@ -309,6 +352,8 @@ def assembler(lots: dict[str, dict], c: dict, sources: dict, jour: str, test: bo
                              "recalibrage": {k: v for k, v in c["bt"]["recalibrage"].items() if not k.startswith("_")}},
                  "sources": list(sources.values()),
                  "propositions": [{k: v for k, v in p.items() if k != "detail"} | {"detail": p.get("detail")} for p in propositions]}
+    from .rapport import resume_simple
+    resultats["en_bref"] = [l for l in resume_simple(resultats)[2:] if l]
     proposition = {"jour": jour, "propositions": propositions,
                    "a_valider": any(p.get("retenue") for p in propositions),
                    "mention": "Proposition seulement : rien n'est appliqué sans validation dans une pull request séparée."}
@@ -381,6 +426,15 @@ def main(argv=None) -> int:
             e["ok"] += s.get("ok", 0)
             e["echecs"] += s.get("echecs", 0)
     resultats, proposition = assembler(lots, c, sources, jour, a.test)
+    # Garde-fou : pas de nouveau réglage d'une section récemment recalibrée (propositions précédentes, lues avant d'écrire)
+    anciennes = []
+    for fichier in sorted(sortie.glob("proposition-*.json")):
+        x = lire_json(fichier)
+        if x:
+            anciennes.append((fichier.stem.replace("proposition-", ""), x))
+    RC.bloquer_recalibrages_rapproches(proposition["propositions"], anciennes, jour[:7], c["bt"]["recalibrage"].get("delai_mois", 6))
+    proposition["a_valider"] = any(p.get("retenue") for p in proposition["propositions"])
+    resultats["propositions"] = [{k: v for k, v in p.items() if k != "detail"} | {"detail": p.get("detail")} for p in proposition["propositions"]]
     from .rapport import rapport_markdown
     mois = jour[:7]
     ecrire_json(sortie / "resultats.json", enveloppe(resultats, "agent backtest (données historiques gratuites)", fictif=a.test,

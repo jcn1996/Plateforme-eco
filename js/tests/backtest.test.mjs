@@ -1,7 +1,7 @@
 // Écran « Backtest » : logique sans navigateur (tri des signaux, verdicts, nombres).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { trierSignaux, classeVerdict, signe } from '../backtest.js';
+import { trierSignaux, classeVerdict, classeCombinaison, sansGras, signe } from '../backtest.js';
 
 const sig = (verdict, ic) => ({ verdict, echantillons: { verification: { ic_moyen: ic } } });
 
@@ -32,4 +32,12 @@ test('nombres signés à la française', () => {
   assert.match(signe(0.0345, 3), /^\+0,0(34|35)$/);
   assert.match(signe(-1.5, 1, ' %'), /^−1,5 %$/);
   assert.equal(signe(0, 1), '0,0');
+});
+
+test('verdicts des combinaisons et résumé sans gras', () => {
+  assert.equal(classeCombinaison('Confirmée'), 'bt-verdict--garder');
+  assert.equal(classeCombinaison('Prometteuse (non significative)'), 'bt-verdict--alleger');
+  assert.equal(classeCombinaison('Non confirmée'), 'bt-verdict--supprimer');
+  assert.equal(sansGras('1. **Ce qui anticipe** : rien.'), '1. Ce qui anticipe : rien.');
+  assert.equal(sansGras(undefined), '');
 });

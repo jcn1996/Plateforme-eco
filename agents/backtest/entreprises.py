@@ -85,6 +85,38 @@ class Comptes:
         return tuple(self.actions[i - 1]) if i else (None, None)
 
 
+VARIATIONS = {
+    "var_marge_op": "Marge opérationnelle — variation annuelle",
+    "var_marge_brute": "Marge brute — variation annuelle",
+    "var_croissance_ca": "Croissance du CA — accélération",
+    "var_intensite_rd": "Intensité en R&D — variation annuelle",
+}
+
+
+def _part(a: dict, num: str, den: str = "ca") -> float | None:
+    x, y = a.get(num), a.get(den)
+    return x / y * 100 if x is not None and y and y > 0 else None
+
+
+def variations_comptes(an: list[dict]) -> dict[str, float]:
+    """Variations entre les deux derniers exercices déposés (seule fréquence des 10-K ; chaque valeur n'est connue
+    qu'après le dépôt de l'exercice le plus récent, comme les niveaux) : marges et intensité en R&D (points de CA),
+    accélération de la croissance du CA (croissance du dernier exercice − celle du précédent, en points)."""
+    res = {}
+    if len(an) < 2:
+        return res
+    a0, a1 = an[0], an[1]
+    for cle, num in (("var_marge_op", "ebit"), ("var_marge_brute", "marge_brute"), ("var_intensite_rd", "rd")):
+        x0, x1 = _part(a0, num), _part(a1, num)
+        if x0 is not None and x1 is not None:
+            res[cle] = x0 - x1
+    if len(an) >= 3:
+        ca = [a.get("ca") for a in an[:3]]
+        if all(c and c > 0 for c in ca):
+            res["var_croissance_ca"] = ((ca[0] / ca[1]) - (ca[1] / ca[2])) * 100
+    return res
+
+
 def facteur_divisions(divisions: pd.Series) -> pd.Series:
     """Produit des divisions d'actions postérieures à chaque date (1 s'il n'y en a pas)."""
     d = divisions.fillna(0)
@@ -148,7 +180,7 @@ def construire(fournisseur, societes: list[dict], cfg_ent: dict, cfg: dict, debu
     couverture = cfg_af.get("couverture_sur")
     comptes = {t: Comptes(faits[t]) for t in tickers}
     cles = list(poids)
-    notes = {k: np.full((len(mois), len(tickers)), np.nan) for k in cles + ["note_globale", "note_globale_brute", "capitalisation"]}
+    notes = {k: np.full((len(mois), len(tickers)), np.nan) for k in cles + ["note_globale", "note_globale_brute", "capitalisation"] + list(VARIATIONS)}
     for i, t in enumerate(mois):
         jour = t.strftime("%Y-%m-%d")
         mes = {}
@@ -170,6 +202,8 @@ def construire(fournisseur, societes: list[dict], cfg_ent: dict, cfg: dict, debu
             cours = [(d.strftime("%Y-%m-%d"), float(v)) for d, v in serie.iloc[-400::5].items()]
             if cours and cours[-1][0] != serie.index[-1].strftime("%Y-%m-%d"):
                 cours.append((serie.index[-1].strftime("%Y-%m-%d"), float(serie.iloc[-1])))
+            for k, v in variations_comptes(an).items():
+                notes[k][i, j] = v
             s = {"annuel": an, "cours": cours, "capitalisation_usd": cap, "fx_comptes": 1.0, "secteur_gics": secteur.get(tk),
                  "financier": None}
             try:
@@ -203,6 +237,7 @@ def construire(fournisseur, societes: list[dict], cfg_ent: dict, cfg: dict, debu
         if k != "capitalisation":
             panneaux[k] = panneaux[k].where(retenues)
     return {"prix": prix, "indice": indice, "notes": {k: panneaux[k] for k in cles if panneaux[k].notna().any().any()},
+            "variations": {k: panneaux[k] for k in VARIATIONS if panneaux[k].notna().any().any()}, "retenues": retenues,
             "note_globale": panneaux["note_globale"], "note_globale_brute": panneaux["note_globale_brute"],
             "mois": mois, "quotidien": quotidien[tickers], "secteurs": secteur, "capitalisation": panneaux["capitalisation"],
             "biais_survivant": biais}

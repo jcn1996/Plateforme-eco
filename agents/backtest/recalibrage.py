@@ -55,6 +55,44 @@ def meilleure(actuelle: dict, recalibree: dict) -> tuple[bool, str]:
                    f"{n_a:+.1f} → {n_r:+.1f} %/an) : pondérations actuelles conservées").replace(".", ",")
 
 
+def _mois_ecart(a: str, b: str) -> int:
+    """Nombre de mois entre deux mois « AAAA-MM » (b − a)."""
+    return (int(b[:4]) - int(a[:4])) * 12 + int(b[5:7]) - int(a[5:7])
+
+
+def bloquer_recalibrages_rapproches(propositions: list[dict], anciennes: list[tuple[str, dict]], mois: str, delai_mois: int) -> list[str]:
+    """Pas de nouveau réglage d'une section dans les `delai_mois` qui suivent l'application d'une proposition : recalibrer
+    une seconde fois sur presque le même historique cumulerait le sur-ajustement (le facteur s'appliquerait aux poids
+    déjà recalibrés). Une ancienne proposition est jugée appliquée si ses poids proposés sont les poids actuels.
+    Modifie `propositions` en place ; renvoie les sections bloquées."""
+    bloquees = []
+    for p in propositions:
+        if not p.get("retenue"):
+            continue
+        for m_fichier, ancienne in anciennes:
+            for a in ancienne.get("propositions", []):
+                if a.get("fichier") != p["fichier"] or a.get("chemin") != p["chemin"]:
+                    continue
+                # proposition appliquée ce mois-là, ou trace d'une application antérieure conservée
+                if a.get("retenue") and a.get("propose") == p.get("actuel"):
+                    m = m_fichier
+                elif a.get("deja_recalibree_le") and a.get("actuel") == p.get("actuel"):
+                    m = a["deja_recalibree_le"]
+                else:
+                    continue
+                if not 0 <= _mois_ecart(m, mois) < delai_mois:
+                    continue
+                p["retenue"] = False
+                p["deja_recalibree_le"] = m  # trace conservée pour les mois suivants
+                p["raison"] = (f"{p['raison']} ; non proposée : ces pondérations ont déjà été recalibrées par le backtest de {m} "
+                               f"(proposition appliquée), pas de nouveau réglage sur presque les mêmes données avant {delai_mois} mois")
+                bloquees.append(" → ".join(p["chemin"]))
+                break
+            if not p["retenue"]:
+                break
+    return bloquees
+
+
 # ------------------------------------------------------------------ écriture dans les fichiers de configuration
 
 def _fin_objet(texte: str, ouv: int) -> int:

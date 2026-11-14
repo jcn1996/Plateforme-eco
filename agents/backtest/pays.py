@@ -154,3 +154,20 @@ def _notes_globales(notes: dict, ponderations: dict, colonnes, mois):
             g = N.note_globale(ind, poids, facultatifs=("activite_reelle",))
             out[i, j], brut[i, j] = g["note"], g["brute"]
     return pd.DataFrame(out, index=mois, columns=colonnes), pd.DataFrame(brut, index=mois, columns=colonnes)
+
+
+INDICATEURS_VARIATION = ("croissance_pib", "indicateur_avance", "inflation", "taux_reel", "devise_3m", "valorisation")
+
+
+def variations(lot: dict, mois_liste=(3, 6)) -> dict[str, pd.DataFrame]:
+    """Variation de la note de chaque indicateur sur 3 et 6 mois : amélioration (+) ou dégradation (−) selon les barèmes
+    de l'agent pays (pour l'inflation et le taux réel, rapprochement ou éloignement de la zone jugée saine). Les notes
+    étant calculées sur des séries déjà décalées de leur délai de publication, la variation l'est aussi."""
+    res = {}
+    for k in INDICATEURS_VARIATION:
+        n = lot["notes"].get(k)
+        if n is None:
+            continue
+        for m in mois_liste:
+            res[f"var{m}_{k}"] = n - n.shift(m)
+    return res

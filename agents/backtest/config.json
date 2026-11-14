@@ -46,7 +46,9 @@
     "_commentaire": "Note recalibrée : poids réglés sur la première moitié seulement (apprentissage). Facteur de chaque signal = IC d'apprentissage ÷ ic_reference, borné entre 0 et facteur_max, puis mélangé à parts égales avec le poids actuel (retrait vers l'existant, contre le sur-ajustement). Un signal non testable garde son poids. La note recalibrée n'est proposée que si elle fait mieux que la note actuelle hors échantillon (IC et écart après frais).",
     "ic_reference": 0.05,
     "facteur_max": 2.0,
-    "retrait": 0.5
+    "retrait": 0.5,
+    "_delai_mois": "Pas de nouveau réglage d'une section dans les delai_mois mois qui suivent l'application d'une proposition (poids proposés devenus les poids actuels) : recalibrer une seconde fois sur presque le même historique cumulerait le sur-ajustement.",
+    "delai_mois": 6
   },
 
   "pays": {
@@ -107,6 +109,25 @@
       {"nom": "−15 %, filtre des excès", "stop_pct": 15, "confirmations": 1, "filtre_exces": true},
       {"nom": "sans stop, filtre des excès", "filtre_exces": true}
     ]
+  },
+
+  "variations": {
+    "_commentaire": "Signaux en variation, testés comme des signaux distincts (mêmes dates de publication décalées que les niveaux). Pays : variation de la note de chaque indicateur sur 3 et 6 mois (sens des barèmes de l'agent pays). Entreprises : variation entre les deux derniers exercices déposés (marges, intensité en R&D, accélération de la croissance du CA), seule fréquence des 10-K. Matières premières : variation sur 3 et 6 mois des stocks (écart à la moyenne sur 5 ans, une baisse étant favorable) et du positionnement des gérants (position nette en % de l'intérêt ouvert).",
+    "mois": [3, 6]
+  },
+
+  "combinaisons": {
+    "_commentaire": "Paires et triplets de signaux « Garder » ou « Alléger » (IC d'apprentissage positif, au plus signaux_max candidats : au plus C(n,2) + C(n,3) essais). Actif retenu s'il est au-delà du percentile seuil_percentile sur chaque signal. Classement sur l'apprentissage seulement (t de l'écart à l'indice, au moins mois_min_apprentissage mois et des actifs retenus au moins mois_actifs_min_pct % des mois) ; seuil de Bonferroni sur le nombre d'essais ; les retenues_max meilleures jugées hors échantillon, correction de Holm. « Confirmée » : p corrigée < alpha, écart positif face à l'indice et au momentum seul.",
+    "signaux_max": 8,
+    "seuil_percentile": 70,
+    "retenues_max": 5,
+    "alpha": 0.05,
+    "mois_min_apprentissage": 36,
+    "mois_actifs_min_pct": 50
+  },
+
+  "reference_momentum": {
+    "_commentaire": "Portefeuille de comparaison « momentum seul » pour les pays, les entreprises et les matières premières : meilleurs 20 % (quantile) sur 12 mois hors dernier mois, équipondérés, rééquilibrage mensuel, frais du lot. Chaque note, chaque signal et chaque combinaison est comparé à l'indice et à cette référence."
   },
 
   "regles": {

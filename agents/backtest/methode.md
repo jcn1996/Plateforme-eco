@@ -52,6 +52,30 @@ Rééquilibrage **mensuel**. Rendements avec dividendes réinvestis, en dollars.
 - **Frais de transaction** : aller-retour par classe d'actifs (`config.json → frais`, d'après les frais et écarts achat/vente de l'agent trader), payé chaque mois sur la part renouvelée des deux paniers. L'**écart après frais** est annualisé.
 - **Stabilité** : IC par année civile et part des années positives.
 - **Régimes** : IC en mois calmes et en mois de tension.
+- **Cible** (à 3 et 6 mois, pour chaque signal et chaque combinaison) : part des actifs retenus qui battent l'indice, gain moyen de ceux qui le battent, perte moyenne des autres et **rapport gain / perte** (au-dessus de 1, les gagnants gagnent plus que les perdants ne perdent).
+- **Panier des meilleurs 20 %** de chaque signal et de chaque note, rééquilibré chaque mois, frais compris : rendement annuel, comparé à l'indice **et au « momentum seul »** (§ 3 bis), sur l'apprentissage et hors échantillon.
+
+### 3 bis. Référence simple : « momentum seul »
+
+Pour les pays, les entreprises et les matières premières : à chaque fin de mois, les **meilleurs 20 % sur 12 mois hors dernier mois** (cours de t − 12 à t − 1 ; le dernier mois, souvent en retournement, est exclu), équipondérés, rééquilibrés chaque mois, **frais compris** (même coût que les autres paniers). Pour les entreprises, même univers que les notes (sociétés valant au moins 2 Md$ à la date). C'est la règle sans analyse qu'une note doit battre pour être utile : le rapport compare chaque note et chaque combinaison à l'indice et à cette référence (`reference.py`).
+
+### 3 ter. Signaux en variation
+
+Chaque signal de niveau a aussi sa **variation**, testée comme un signal distinct (mêmes mesures, même verdict) et calculée sur des séries déjà décalées de leur délai de publication, donc **sans donnée connue après coup** :
+- **pays** : variation sur 3 et 6 mois de la note de la croissance, de l'indicateur avancé, de l'inflation, du taux réel, de la devise et de la valorisation (`var3_…`, `var6_…`). La note porte le sens des barèmes de l'agent pays : une hausse est une amélioration (pour l'inflation et le taux réel, un rapprochement de la zone jugée saine) ;
+- **entreprises** : variation entre les **deux derniers exercices déposés** de la marge opérationnelle, de la marge brute et de l'intensité en R&D (en points de chiffre d'affaires), et accélération de la croissance du CA (croissance du dernier exercice − celle du précédent). Les 10-K étant annuels, une variation « sur 3 ou 6 mois » d'un chiffre annuel serait presque toujours nulle ; chaque variation n'est connue qu'après le dépôt de l'exercice le plus récent ;
+- **matières premières** : variation sur 3 et 6 mois des stocks (écart à la moyenne sur 5 ans ; une **baisse** est comptée favorable) et du positionnement des gérants (position nette en % de l'intérêt ouvert ; des **achats** sont comptés favorables). Décalages : EIA + 7 jours, CFTC + 3 jours.
+
+Les variations ne changent pas les notes des agents ni les propositions de pondérations (elles n'existent dans aucun réglage) : elles disent seulement si une évolution anticipe mieux qu'un niveau.
+
+### 3 quater. Combinaisons de signaux (`combinaisons.py`)
+
+- **Règle** : un actif est retenu seulement s'il est dans les **meilleurs 30 %** (percentile > 70 dans sa classe, date par date) sur **chacun** des signaux combinés ; panier équipondéré, rééquilibrage mensuel, frais compris ; un mois sans aucun actif retenu, le panier reste dans l'indice.
+- **Candidats** : signaux classés « Garder » ou « Alléger », avec un IC positif sur l'apprentissage, au plus 8 (les meilleurs IC d'apprentissage), notes exclues ; deux variations du même indicateur ne sont pas combinées entre elles. D'où **au plus 28 paires et 56 triplets** par lot.
+- **Choix sur l'apprentissage seulement** : les combinaisons sont classées par la statistique t de leur écart à l'indice sur la première moitié (au moins 36 mois, et des actifs retenus au moins un mois sur deux). Le rapport indique le **seuil de Bonferroni** pour le nombre d'essais (t ≈ 3,2 pour 84 essais au lieu de 1,65 pour un seul) et combien de combinaisons le franchissent : sans cette correction, sur 84 essais, environ 4 « réussiraient » par pur hasard.
+- **Jugement hors échantillon** : les 5 meilleures de l'apprentissage seulement sont mesurées sur la seconde moitié ; p-value unilatérale de leur écart à l'indice, **corrigée par la méthode de Holm** sur ces 5 essais.
+- **Verdict** : « Confirmée » si la p-value corrigée est sous 5 % et que l'écart hors échantillon est positif face à l'indice **et** au momentum seul ; « Prometteuse (non significative) » si l'écart à l'indice est positif sans être significatif ; « Non confirmée » sinon.
+- **Limite assumée** : la liste des candidats s'appuie sur le verdict de chaque signal, qui regarde aussi la seconde moitié ; l'exigence d'un IC d'apprentissage positif et les deux corrections (Bonferroni pour classer, Holm pour juger) sont là pour compenser. Une combinaison « Prometteuse » n'est pas une preuve.
 
 ## 4. Séparation stricte apprentissage / vérification
 
@@ -97,6 +121,10 @@ Non testée : l'hystérésis (règle quotidienne, sans objet en rééquilibrage 
 - **Sur-ajustement** : réglage sur la première moitié seulement, retrait vers l'existant, adoption seulement si meilleur hors échantillon, validation humaine.
 - **Petits échantillons** : verdict « Données insuffisantes » sans conclusion (seuils au § 4).
 - **Non testables** faute d'historique, listés dans le rapport : géopolitique, flux des ETF, guidance et révisions, textes Gemini, activité réelle, risque pays et contradicteur ; achats d'initiés (formulaires 4) possibles en option dans un lot séparé si le temps de calcul le permet.
+
+## 7 bis. Résumé du rapport
+
+Le rapport se termine par **« En bref »**, dix lignes au plus en langage simple, entièrement tirées des chiffres : ce qui anticipe (verdict « Garder »), les combinaisons confirmées, ce qui n'anticipe pas (« Supprimer »), ce qui marche à l'envers (t ≤ −2), le momentum seul face à l'indice, les notes et combinaisons qui battent (ou non) le momentum seul hors échantillon, un bilan et les précautions. Le même résumé s'affiche en tête de l'écran « Backtest ».
 
 ## 8. Exécution
 
