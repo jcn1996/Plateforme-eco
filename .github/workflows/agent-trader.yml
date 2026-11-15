@@ -1,10 +1,11 @@
-# Agent trader (démo) : portefeuille VIRTUEL de 100 000 € géré à partir des recommandations du chef d'orchestre.
+# Agent trader (démo) : portefeuille VIRTUEL de 100 000 €, méthode par combinaisons du backtest (agents/trader/regles.md).
 # Aucun ordre réel, jamais : les ordres sont simulés (premier cours après la décision, frais, écart achat/vente, change).
-# - chaque jour de semaine à 7 h 33 UTC : décision, après l'analyse complète du chef d'orchestre (7 h 15) ; les ordres
-#   sont exécutés à l'ouverture des marchés concernés ;
-# - toutes les heures (minute 5) de 8 h à 21 h UTC en semaine : exécution des ordres en attente, valorisation, stops,
-#   prise de bénéfices, sorties sur verdict ou objection, plancher de liquidités ; décision du jour si elle n'a pas pu
-#   être prise à 7 h 33 (données du chef d'orchestre pas encore prêtes) ;
+# - chaque jour de semaine à 7 h 33 UTC : décision, après l'analyse complète du chef d'orchestre (7 h 15) — rééquilibrage
+#   au premier jour de décision du mois, simple vérification les autres jours ; les ordres sont exécutés à l'ouverture
+#   des marchés concernés ;
+# - toutes les heures (minute 5) de 8 h à 21 h UTC en semaine : exécution des ordres en attente, valorisation, contrôle
+#   des paris pays (vente dès qu'un excès se déclenche ou que la tendance casse) ; décision du jour si elle n'a pas pu
+#   être prise à 7 h 33 ; signaux en observation une fois par jour (data/observation.json) ;
 # - lancé par le planificateur (réveil externe) ; ces plannings GitHub restent en secours ;
 # - à la main : onglet Actions → « Agent trader (démo) » → « Run workflow ».
 name: Agent trader (démo)
@@ -16,7 +17,7 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: "horaire (ordres, valorisation, stops ; décision du jour si due), ou decision (forcer la décision)"
+        description: "horaire (ordres, valorisation, paris pays ; décision du jour si due), ou decision (forcer la décision)"
         type: choice
         options: [horaire, decision]
         default: horaire
@@ -75,7 +76,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/portefeuille.json data/trader/ data/journal/
+          git add data/portefeuille.json data/trader/ data/journal/ data/observation.json
           if git diff --cached --quiet; then
             echo "Aucun changement : pas de commit."
             exit 0

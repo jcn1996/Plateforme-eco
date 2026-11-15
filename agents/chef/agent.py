@@ -37,6 +37,7 @@ from . import moteur as M
 from . import suivi as S
 from . import synthese as Y
 from . import secteurs as SE
+from . import selections as SEL
 from . import tendance as TD
 from . import univers as U
 from .sources import FournisseurReel, FournisseurTest
@@ -296,6 +297,7 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
         secteurs = SE.opportunites(ctx, series_s, flux_s, jour)
         TD.preparer(secteurs, series_s, config, ctx)
         decider(secteurs, ctx, objections, entrees, etat_travail, jour, config)
+        selections = SEL.construire(ctx, pays, config, data, jour)
         anciennes = {l["id"]: l for t in TYPES for l in (prec_donnees.get(t) or [])}
         if prec_donnees.get("or"):
             anciennes["or"] = prec_donnees["or"]
@@ -317,6 +319,7 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
             etat["scores_precedents"] = {l["id"]: l.get("score") for l in lignes}
         etat["palier"] = ctx.palier
     else:
+        selections = prec_donnees.get("selections")
         for t in TYPES:
             lignes += prec_donnees.get(t) or []
         if prec_donnees.get("or"):
@@ -415,7 +418,7 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
         "pays": lignes_par["pays"], "matieres": lignes_par["matieres"], "or": (lignes_par["or"] or [None])[0],
         "obligations": lignes_par["obligations"], "liquidites": lignes_par["liquidites"], "entreprises": lignes_par["entreprises"],
         "secteurs": lignes_par["secteurs"], "zones_secteurs": {z: c["libelle"] for z, c in config["secteurs"]["zones"].items()},
-        "panorama": pano, "tendances_fortes": TD.tendances_fortes(lignes, config), "exclues": [{"ticker": k, "nom": v} for k, v in sorted(ctx.exclues.items())],
+        "panorama": pano, "selections": selections, "tendances_fortes": TD.tendances_fortes(lignes, config), "exclues": [{"ticker": k, "nom": v} for k, v in sorted(ctx.exclues.items())],
         "alertes_ecartees": ecartees[:30],
         "concentrations": conc, "changements": chg if recalcul else prec_donnees.get("changements", []), "vigilance": vig, "allocation": alloc,
         "entrees": [x.resume() for x in entrees.values()],

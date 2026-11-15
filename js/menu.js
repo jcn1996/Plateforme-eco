@@ -38,6 +38,7 @@ export const SECTIONS_MENU = [
     { libelle: 'Fiabilité du chef d’orchestre', detail: 'performance des verdicts', route: { type: 'fiabilite-chef' } },
     { libelle: 'Fiabilité des recommandations', detail: 'analyses à la demande', route: { type: 'fiabilite' } },
     { libelle: 'Backtest', detail: 'quels signaux sont vraiment prédictifs', route: { type: 'backtest' } },
+    { libelle: 'Signaux en observation', detail: 'initiés, analystes, guidance : suivis sans décider', route: { type: 'observation' } },
     { libelle: 'Santé des agents', detail: 'exécutions et sources', route: { type: 'sante' }, sante: true },
   ] },
   { titre: 'Affichage', entrees: [

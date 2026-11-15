@@ -159,6 +159,14 @@ def executer_ordres(etat: dict, f, maintenant: datetime, config: dict) -> tuple[
     return executees, annulees, erreur
 
 
+def noter_flux(etat: dict, le: str, poche: str | None, montant: float) -> None:
+    """Flux d'une poche le jour de l'opération (achat : argent entré dans la poche, frais compris ; vente : produit net sorti),
+    pour mesurer la performance de chaque poche indépendamment des apports et retraits."""
+    jour = str(le)[:10]
+    f = etat.setdefault("flux_poches", {}).setdefault(jour, {})
+    f[poche or "?"] = round(f.get(poche or "?", 0.0) + montant, 2)
+
+
 def _operation(etat: dict, o: dict, b: dict, taux: dict, **champs) -> dict:
     dev, facteur = devise_iso(o["devise"])
     return {"id": o["id"], "date": b["le"], "decide_le": o["cree_le"], "sens": o["sens"], "symbole": o["symbole"], "nom": o["nom"],
@@ -186,14 +194,13 @@ def _acheter(etat: dict, o: dict, b: dict, taux: dict, config: dict) -> dict | N
     etat["frais_total"] = etat.get("frais_total", 0.0) + fr_
     etat["ecarts_total"] = etat.get("ecarts_total", 0.0) + ecart_eur
     p = etat["positions"].get(o["symbole"])
-    sp = config["stops"]
     if p is None:
         p = {"symbole": o["symbole"], "nom": o["nom"], "ligne_id": o.get("ligne_id"), "poche": o.get("poche"), "classe": o.get("classe"),
              "type": o.get("type"), "pays": o.get("pays"), "secteur": o.get("secteur"), "themes": o.get("themes") or [], "devise": o["devise"],
              "quantite": 0, "cout_total_eur": 0.0, "prix_revient_local": 0.0, "ouverte_le": b["le"], "familles": o.get("familles") or {},
              "conviction": (o.get("raison") or {}).get("conviction"), "verdict": (o.get("raison") or {}).get("verdict"),
-             "plus_haut_local": prix_local, "stop_local": None, "stop_type": None, "confirmations_stop": 0, "prise_benefices_faite": False,
-             "contango": o.get("contango", False), "realise_eur": 0.0, "frais_eur": 0.0}
+             "plus_haut_local": prix_local, "contango": o.get("contango", False), "realise_eur": 0.0, "frais_eur": 0.0,
+             "raison_entree": (o.get("raison") or {}).get("texte")}
         etat["positions"][o["symbole"]] = p
     p["prix_revient_local"] = (p["prix_revient_local"] * p["quantite"] + prix_local * q) / (p["quantite"] + q)
     p["quantite"] += q
@@ -203,15 +210,9 @@ def _acheter(etat: dict, o: dict, b: dict, taux: dict, config: dict) -> dict | N
     p["dernier_cours_local"], p["dernier_cours_le"] = b["prix"], b["le"]
     p["dernier_cours_eur"] = en_euros(b["prix"], o["devise"], taux)
     p["dernier_achat_le"] = b["le"]
-    if p["poche"] == "tendance":  # stop suiveur sous le plus haut depuis l'achat (poche « tendance »)
-        p["plus_haut_local"] = max(p.get("plus_haut_local") or 0, prix_local)
-        p["stop_local"], p["stop_type"] = p["plus_haut_local"] * (1 - config["tendance"]["stop_suiveur_pct"] / 100), "suiveur"
-    if p["poche"] == "satellite":
-        initial = p["prix_revient_local"] * (1 - sp["stop_pct"] / 100)
-        if p["stop_type"] != "suiveur" or (p["stop_local"] or 0) < initial:
-            p["stop_local"], p["stop_type"] = initial, "initial"
+    noter_flux(etat, b["le"], p.get("poche"), cout + fr_)
     return _operation(etat, o, b, taux, quantite=q, prix_local=round(prix_local, 6), prix_eur=round(prix_eur, 6), montant_eur=round(cout, 2),
-                      frais_eur=round(fr_, 2), ecart_eur=round(ecart_eur, 2), stop=round(p["stop_local"], 6) if p.get("stop_local") else None)
+                      frais_eur=round(fr_, 2), ecart_eur=round(ecart_eur, 2))
 
 
 def _vendre(etat: dict, o: dict, b: dict, taux: dict, config: dict) -> dict | None:
@@ -236,18 +237,10 @@ def _vendre(etat: dict, o: dict, b: dict, taux: dict, config: dict) -> dict | No
     p["cout_total_eur"] -= revient
     p["realise_eur"] += pv
     p["frais_eur"] += fr_
-    if o.get("motif") == "prise de bénéfices":
-        p["prise_benefices_faite"] = True
-    # pas de rachat d'un titre vendu : 20 jours après une sortie sur règle de risque, 5 jours sinon (pas d'aller-retour)
-    jours = config["stops"]["delai_rachat_jours"] if o.get("motif") in ("stop", "sortie sur verdict", "sortie sur objection") else config["detention_min_jours"]
-    fin = (lire_iso(b["le"]) + timedelta(days=jours)).date().isoformat()
-    ancien = (etat.get("interdits") or {}).get(o["symbole"])
-    if not ancien or ancien["jusqua"] < fin:
-        etat.setdefault("interdits", {})[o["symbole"]] = {"jusqua": fin, "motif": o.get("motif")}
-    stop = p.get("stop_local")
+    noter_flux(etat, b["le"], p.get("poche"), -(produit - fr_))
     duree = (lire_iso(b["le"]) - lire_iso(p["ouverte_le"])).days if p.get("ouverte_le") else None
     op = _operation(etat, o, b, taux, quantite=q, prix_local=round(prix_local, 6), prix_eur=round(prix_eur, 6), montant_eur=round(produit, 2),
-                    frais_eur=round(fr_, 2), ecart_eur=round(ecart_eur, 2), stop=round(stop, 6) if stop else None,
+                    frais_eur=round(fr_, 2), ecart_eur=round(ecart_eur, 2),
                     resultat={"plus_value_eur": round(pv, 2), "plus_value_pct": round(pv / revient * 100, 2) if revient else None,
                               "prix_revient_eur": round(p["prix_revient_eur"], 6), "duree_jours": duree, "solde": p["quantite"] == 0,
                               "poche": p.get("poche"), "familles": {k: v.get("note") for k, v in (p.get("familles") or {}).items()}})

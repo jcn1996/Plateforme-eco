@@ -79,12 +79,62 @@ def attribution(etat: dict, capital: float) -> dict:
     def bloc(d, libelles=None):
         return sorted([{"cle": k, "libelle": (libelles or {}).get(k, k), "eur": round(v, 2), "points": round(v / capital * 100, 3)}
                        for k, v in (d or {}).items()], key=lambda x: -abs(x["eur"]))
-    return {"poches": bloc(cumul.get("poches"), {"coeur": "Cœur", "satellite": "Satellites", "tendance": "Poche tendance"}),
+    return {"poches": bloc(cumul.get("poches"), {"coeur": "Cœur (ancienne méthode)", "satellite": "Satellites (ancienne méthode)",
+                                                 "tendance": "Poche tendance (ancienne méthode)", "entreprises": "Entreprises",
+                                                 "matieres": "Matières premières", "pays": "ETF pays (paris)"}),
             "classes": bloc(cumul.get("classes"), {"actions": "Actions", "obligations": "Obligations", "or": "Or", "matieres": "Matières premières"}),
             "familles": bloc(cumul.get("familles"), LIBELLES_FAMILLES),
             "frais_eur": round(etat.get("frais_total", 0), 2), "ecarts_eur": round(etat.get("ecarts_total", 0), 2),
             "methode": "Plus-values réalisées et latentes de chaque ligne (frais compris), réparties entre les familles de signaux favorables "
                        "du chef d'orchestre au moment de l'achat, au prorata de (note − 50). Approximation destinée à l'agent calibrateur."}
+
+
+def indice_poche(historique: dict, flux: dict, poche: str) -> list[tuple[str, float]]:
+    """Indice (base 100) d'une poche, jour par jour, net des achats et des ventes du jour (méthode de Dietz simplifiée :
+    achats comptés en début de journée, ventes en fin de journée). Commence au premier jour où la poche existe."""
+    res, idx, prec = [], None, None
+    for d in sorted(historique):
+        v = ((historique[d].get("poches") or {}).get(poche))
+        if v is None:
+            continue
+        f = (flux.get(d) or {}).get(poche, 0.0)
+        if idx is None:
+            if f > 0:
+                idx = 100.0 * v / f  # premier jour : rendement des achats du jour
+            elif v > 0:
+                idx = 100.0
+            else:
+                continue
+        else:
+            base = (prec or 0.0) + max(f, 0.0)
+            if base > 0:
+                idx *= 1 + (v - (prec or 0.0) - f) / base
+        res.append((d, idx))
+        prec = v
+    return res
+
+
+def performance_poches(etat: dict, depuis: str | None) -> dict:
+    """Performance de chaque poche (entreprises, matières premières, ETF pays) depuis le changement de méthode, comparée au
+    MSCI World en euros (étalon, non détenu) sur les mêmes jours."""
+    h = {d: x for d, x in (etat.get("historique") or {}).items() if not depuis or d >= depuis}
+    flux = etat.get("flux_poches") or {}
+    res = {}
+    for poche in ("entreprises", "matieres", "pays"):
+        pts = indice_poche(h, flux, poche)
+        if not pts:
+            res[poche] = {"jours": 0}
+            continue
+        jours = [d for d, _ in pts]
+        msci = [(d, h[d].get("msci_world")) for d in jours if h[d].get("msci_world")]
+        perf = (pts[-1][1] / 100 - 1) * 100
+        perf_m = (msci[-1][1] / msci[0][1] - 1) * 100 if len(msci) >= 2 else None
+        res[poche] = {"depuis": jours[0], "jours": len(pts), "performance": _r(perf), "msci_world": _r(perf_m),
+                      "ecart_points": _r(perf - perf_m) if perf_m is not None else None,
+                      "un_mois": _r(perf_periode(pts, 30)), "trois_mois": _r(perf_periode(pts, 91)),
+                      "valeur_eur": _r((h[jours[-1]].get("poches") or {}).get(poche)),
+                      "serie": [[d, round(v, 3), round(dict(msci).get(d) / msci[0][1] * 100, 3) if msci and dict(msci).get(d) else None] for d, v in pts]}
+    return res
 
 
 def statistiques(etat: dict, operations: list[dict], config: dict) -> dict:
@@ -98,4 +148,5 @@ def statistiques(etat: dict, operations: list[dict], config: dict) -> dict:
     ref = (etat.get("reference_indice") or {})
     return {"performance": perfs(pf, capital), "performance_msci_world": perfs(ind, capital) if ref else {"depuis_debut": None, "un_mois": None, "trois_mois": None},
             "risque": risque(pf, config), "risque_msci_world": risque(ind, config) if ind else None,
-            "operations": stats_operations(operations), "attribution": attribution(etat, capital)}
+            "operations": stats_operations(operations), "attribution": attribution(etat, capital),
+            "poches": performance_poches(etat, (etat.get("methode") or {}).get("depuis"))}

@@ -102,6 +102,17 @@ class FournisseurReel:
                     res[s] = {"cours": float(c.iloc[-1]), "le": iso(_utc(c.index[-1]))}
         return res
 
+    def clotures(self, symboles: list[str]) -> dict:
+        """Dernière clôture quotidienne (signaux en observation : beaucoup de symboles, pas besoin de cours intrajournaliers)."""
+        res = {}
+        for i in range(0, len(symboles), 200):
+            brut = self._download(symboles[i:i + 200], period="10d", interval="1d")
+            for s in set(symboles[i:i + 200]):
+                c = self._colonne(brut, "Close", s) if brut is not None else None
+                if c is not None and len(c):
+                    res[s] = {"cours": float(c.iloc[-1]), "le": iso(_utc(c.index[-1]))}
+        return res
+
     def series(self, symboles: list[str], jours: int = 190) -> dict:
         res = {}
         brut = self._download(symboles, period=f"{jours}d", interval="1d")

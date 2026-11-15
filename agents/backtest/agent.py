@@ -202,7 +202,7 @@ def lot_pays(f, c: dict, racine: Path, test: bool, regimes) -> dict:
     regles = {
         "verdicts": R.tester_verdicts(chef, lot["prix"], lot["indice"], horizons, c["chef"], sep),
         "tendance": R.tester_tendance(chef, lot["prix"], lot["indice"], horizons, c["chef"]),
-        "concentration": R.tester_concentration(chef, lot["prix"], lot["indice"], c["trader"], cfg["regles"]["concentration_lignes"],
+        "concentration": R.tester_concentration(chef, lot["prix"], lot["indice"], cfg["regles"]["ancienne_methode_trader"], cfg["regles"]["concentration_lignes"],
                                                 cfg["frais"]["pays"], sep),
         "horizon_reference": cfg["horizon_reference"]["chef"],
     }
@@ -251,7 +251,7 @@ def lot_entreprises(f, c: dict, racine: Path, test: bool, regimes) -> dict | Non
                               "entreprises", regimes, sep, 3, note_actuelle=lot["note_globale"])
     if recal:
         res["note_recalibree"] = recal | {"libelle": LIBELLES["note_recalibree"]}
-    st = R.tester_stops(lot["note_globale"], lot["quotidien"], c["trader"], cfg["regles"]["stops_lignes"], cfg["regles"]["stops_detention_mois"],
+    st = R.tester_stops(lot["note_globale"], lot["quotidien"], cfg["regles"]["ancienne_methode_trader"], cfg["regles"]["stops_lignes"], cfg["regles"]["stops_detention_mois"],
                         cfg["frais"]["entreprises"], sep)
     return {"entreprises": {"titre": TITRES["entreprises"], "periode": _periode(lot), "separation": _iso(sep), "signaux": res,
                             "horizon_reference": cfg["horizon_reference"]["entreprises"], "indice": cfg["entreprises"]["indice_reference"],

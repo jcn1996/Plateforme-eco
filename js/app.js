@@ -37,6 +37,7 @@ import {
   chargerChef, initialiserSynthese, ecranInvestir, ecranFiabiliteChef, chargerSuiviChef, METRIQUE_ATTRACTIVITE, lireAttractivite, ONGLETS_INVESTIR,
 } from './chef.js';
 import { ecranBacktest, chargerBacktest } from './backtest.js';
+import { ecranObservation, chargerObservation } from './observation.js';
 
 const $ = (sel) => document.querySelector(sel);
 const dom = {
@@ -89,6 +90,7 @@ let pepites = null; // pépites candidates de l'agent entreprises (data/pepites.
 let chef = null; // chef d'orchestre (data/chef.json), ou null
 let suiviChef; // suivi de performance du chef d'orchestre : undefined = pas encore lu
 let backtest; // résultats du backtest des règles (data/backtest/resultats.json) : undefined = pas encore lu
+let observation; // signaux en observation (data/observation.json) : undefined = pas encore lu
 let analyses = { liste: [] }; // analyses à la demande (data/analyses/index.json)
 let enCours; // demandes d'analyse en cours (issues ouvertes) : undefined = pas encore lues, null = GitHub injoignable
 let recommandations; // historique des recommandations : undefined = pas encore lu
@@ -528,6 +530,7 @@ function filAriane(route) {
     }
     case 'fiabilite-chef': return [racine, { libelle: 'Où investir', route: { type: 'investir' } }, { libelle: 'Fiabilité', route }];
     case 'backtest': return [racine, { libelle: 'Backtest', route }];
+    case 'observation': return [racine, { libelle: 'Signaux en observation', route }];
     case 'analyses': return [racine, { libelle: 'Mes analyses', route }];
     case 'fiabilite': return [racine, { libelle: 'Mes analyses', route: { type: 'analyses' } }, { libelle: 'Fiabilité', route }];
     case 'analyse': {
@@ -553,7 +556,7 @@ function majAriane(route) {
 function routeValide(route) {
   switch (route.type) {
     case 'globe': case 'portefeuille': case 'mes-portefeuilles': case 'classement': case 'comparaison': case 'mes-alertes': case 'sante': case 'macro': case 'geopolitique': case 'risque': case 'pepites':
-    case 'analyses': case 'fiabilite': case 'matieres': case 'inities': case 'investir': case 'fiabilite-chef': case 'alternatives': case 'backtest': return true;
+    case 'analyses': case 'fiabilite': case 'matieres': case 'inities': case 'investir': case 'fiabilite-chef': case 'alternatives': case 'backtest': case 'observation': return true;
     case 'analyse': return Boolean(route.id);
     case 'pays': return d.paysParCode.has(route.id);
     case 'secteur': return d.secteurParId.has(route.id);
@@ -656,6 +659,7 @@ function afficher(route) {
     investir: { section: '#ecran-investir', contenu: '#investir-contenu', titre: 'Où investir', rendu: () => ecranInvestir(chef, navigateurPanneau, route.id) },
     'fiabilite-chef': { section: '#ecran-fiabilite-chef', contenu: '#fiabilite-chef-contenu', titre: 'Fiabilité du chef d’orchestre', rendu: () => ecranFiabiliteChef(suiviChef, navigateurPanneau) },
     backtest: { section: '#ecran-backtest', contenu: '#backtest-contenu', titre: 'Backtest', rendu: () => ecranBacktest(backtest) },
+    observation: { section: '#ecran-observation', contenu: '#observation-contenu', titre: 'Signaux en observation', rendu: () => ecranObservation(observation, navigateurPanneau) },
   };
   // Données lues à l'ouverture de l'écran, puis nouveau rendu s'il est toujours affiché
   if (route.type === 'analyses') {
@@ -704,6 +708,12 @@ function afficher(route) {
       if (routeActuelle.type === 'backtest') $('#backtest-contenu').replaceChildren(...ecranBacktest(backtest).filter(Boolean));
     });
   }
+  if (route.type === 'observation' && observation === undefined) {
+    chargerObservation().then((o) => {
+      observation = o;
+      if (routeActuelle.type === 'observation') $('#observation-contenu').replaceChildren(...ecranObservation(observation, navigateurPanneau).filter(Boolean));
+    });
+  }
   if (route.type === 'fiabilite' && recommandations === undefined) {
     chargerRecommandations().then((h) => {
       recommandations = h;
@@ -738,7 +748,7 @@ function afficher(route) {
 
 /** Le globe ne se dessine que s'il est visible (économie de batterie). */
 function majActiviteGlobe() {
-  const masque = ['portefeuille', 'mes-portefeuilles', 'classement', 'comparaison', 'mes-alertes', 'sante', 'macro', 'geopolitique', 'risque', 'pepites', 'analyses', 'fiabilite', 'matieres', 'inities', 'investir', 'fiabilite-chef', 'alternatives', 'backtest'].includes(routeActuelle.type)
+  const masque = ['portefeuille', 'mes-portefeuilles', 'classement', 'comparaison', 'mes-alertes', 'sante', 'macro', 'geopolitique', 'risque', 'pepites', 'analyses', 'fiabilite', 'matieres', 'inities', 'investir', 'fiabilite-chef', 'alternatives', 'backtest', 'observation'].includes(routeActuelle.type)
     || (dom.panneau.classList.contains('est-ouvert') && etatPanneau === 'plein' && !estLarge());
   globe?.definirActif(!masque);
 }

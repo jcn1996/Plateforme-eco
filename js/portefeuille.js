@@ -1,9 +1,11 @@
 /* ==========================================================================
    Écran « Portefeuille démo » : portefeuille VIRTUEL de 100 000 € géré par
-   l'agent trader à partir des recommandations du chef d'orchestre (aucun ordre
-   réel). Valeur en direct, performance comparée au MSCI World en euros,
-   indicateurs de risque, répartitions, positions, ordres en attente et fil
-   des opérations avec leur justification.
+   l'agent trader (aucun ordre réel), méthode par combinaisons du backtest :
+   poches entreprises, matières premières et ETF pays (paris pays). Valeur en
+   direct, performance comparée au MSCI World en euros (avec la date du
+   changement de méthode sur le graphique), performance de chaque poche,
+   journal des paris pays, indicateurs de risque, répartitions, positions,
+   ordres en attente et fil des opérations avec leur justification.
    Données : data/portefeuille.json (agent trader, agents/trader/regles.md).
    ========================================================================== */
 
@@ -11,6 +13,17 @@ import { el, svg, nombre, variation, dateCourte } from './outils.js';
 import { titreSection } from './panneau-pays.js';
 
 const MENTION = 'Portefeuille fictif à but de démonstration, aucun ordre réel.';
+export const POCHES = {
+  entreprises: 'Entreprises', matieres: 'Matières premières', pays: 'ETF pays (paris)',
+  coeur: 'Cœur (ancienne méthode)', satellite: 'Satellite (ancienne méthode)', tendance: 'Poche tendance (ancienne méthode)',
+};
+
+/** Index du premier point de l'historique à la date d'un changement de méthode (ou après) ; null s'il est hors du graphique. */
+export function indiceChangement(historique, date) {
+  if (!historique?.length || !date) return null;
+  const i = historique.findIndex((h) => h.date >= date);
+  return i < 0 ? null : i;
+}
 
 function eurosPrecis(v, dec = 0) {
   if (v == null || Number.isNaN(v)) return 'n. d.';
@@ -48,7 +61,7 @@ export function ecranPortefeuille(d, nav) {
         ecart == null ? ' · MSCI World : référence en cours de constitution'
           : ` · ${ecart >= 0 ? 'devant' : 'derrière'} le MSCI World en euros de ${nombre(Math.abs(ecart), 2)} pt`,
       ),
-      el('p', { class: 'chef-petit' }, `Mis à jour ${heureParis(pf.maj)} (heure de Paris) · palier de risque « ${pf.palier ?? 'n. d.'} » · profil « ${pf.profil_libelle ?? pf.profil} »`
+      el('p', { class: 'chef-petit' }, `Mis à jour ${heureParis(pf.maj)} (heure de Paris) · ${pf.methode?.libelle ?? 'méthode'}${pf.methode?.depuis ? ` depuis le ${dateCourte(pf.methode.depuis)}` : ''}`
         + (pf.cours_manquants?.length ? ` · dernier cours connu conservé pour ${pf.cours_manquants.join(', ')}` : '')),
     ),
 
@@ -56,15 +69,19 @@ export function ecranPortefeuille(d, nav) {
       kpi('Depuis le départ', pct(perf.depuis_debut), `MSCI World : ${pct(ref.depuis_debut)}`, perf.depuis_debut),
       kpi('1 mois', pct(perf.un_mois), `MSCI World : ${pct(ref.un_mois)}`, perf.un_mois),
       kpi('3 mois', pct(perf.trois_mois), `MSCI World : ${pct(ref.trois_mois)}`, perf.trois_mois),
-      kpi('Liquidités', `${nombre(pf.liquidites_pct ?? 0, 1)} %`, `minimum ${pf.liquidites_min ?? 'n. d.'} % (palier « ${pf.palier ?? 'n. d.'} »)`),
+      kpi('Liquidités', `${nombre(pf.liquidites_pct ?? 0, 1)} %`, 'le reste quand il manque des candidats'),
     ),
 
     el('section', { class: 'carte' },
       titreSection('Performance vs MSCI World', 'valeur de 100 000 € investis, en euros'),
-      pf.historique?.length >= 2 ? graphiquePerformance(pf.historique)
+      pf.historique?.length >= 2 ? graphiquePerformance(pf.historique, pf.changements_methode)
         : el('p', { class: 'chef-petit' }, 'Historique en cours de constitution : un point par jour de valorisation. Le graphique apparaît dès le deuxième jour.'),
       el('p', { class: 'chef-petit' }, `Référence : ${pf.indice?.nom ?? 'MSCI World'} (source du jour : ${pf.indice?.source ?? 'n. d.'}).`),
+      ...(pf.changements_methode ?? []).map((c) => el('p', { class: 'chef-petit pf-changement' }, `▏ ${dateCourte(c.date)} — ${c.texte}`)),
     ),
+
+    cartePoches(st.poches),
+    carteParis(pf.paris_pays),
 
     carteRisque(st),
     carteRepartition(pf),
@@ -92,6 +109,7 @@ export function ecranPortefeuille(d, nav) {
         : el('p', { class: 'chef-petit' }, 'Aucune opération exécutée pour l’instant.'),
     ),
 
+    pf.derniere_verification ? el('p', { class: 'chef-petit' }, pf.derniere_verification.resume) : null,
     carteDecision(pf.derniere_decision),
 
     el('section', { class: 'carte' },
@@ -116,6 +134,38 @@ function kpi(libelle, valeur, comparaison, signe) {
     el('div', { class: `stat-valeur ${signe == null ? '' : classeSigne(signe)}` }, valeur),
     el('div', { class: 'kpi-comparaison' }, comparaison),
   );
+}
+
+function cartePoches(poches) {
+  if (!poches) return null;
+  const lignes = Object.entries(poches).filter(([, x]) => x?.jours);
+  return el('section', { class: 'carte' },
+    titreSection('Performance par poche', 'chacune contre le MSCI World en euros (étalon, non détenu), depuis le changement de méthode'),
+    lignes.length ? el('table', { class: 'tableau' },
+      el('thead', {}, el('tr', {}, ['Poche', 'Depuis', 'Poche', 'MSCI World', 'Écart', '1 mois'].map((t, i) => el('th', { class: i > 1 ? 'nombre' : '' }, t)))),
+      el('tbody', {}, lignes.map(([cle, x]) => el('tr', {},
+        el('td', {}, POCHES[cle] ?? cle), el('td', {}, dateCourte(x.depuis)),
+        el('td', { class: `nombre ${classeSigne(x.performance)}` }, pct(x.performance, 1)),
+        el('td', { class: 'nombre' }, pct(x.msci_world, 1)),
+        el('td', { class: `nombre ${classeSigne(x.ecart_points)}` }, x.ecart_points == null ? 'n. d.' : `${x.ecart_points >= 0 ? '+' : '−'}${nombre(Math.abs(x.ecart_points), 1)} pt`),
+        el('td', { class: 'nombre' }, pct(x.un_mois, 1))))))
+      : el('p', { class: 'chef-petit' }, 'Suivi en cours de constitution : il commence au premier jour de la nouvelle méthode.'),
+    el('p', { class: 'chef-petit' }, 'Performance de chaque poche nette des achats et des ventes (indice chaîné jour par jour), frais compris.'));
+}
+
+function carteParis(paris) {
+  return el('section', { class: 'carte' },
+    titreSection('Paris pays', 'journal : entrée, sortie, performance contre le MSCI World'),
+    paris?.length ? el('ul', { class: 'pf-fil' }, paris.map((p) => el('li', {},
+      el('div', { class: 'pf-op-tete' },
+        el('span', { class: `pf-sens pf-sens--${p.statut === 'ouvert' ? 'achat' : 'vente'}` }, p.statut === 'ouvert' ? 'En cours' : 'Clos'),
+        el('strong', {}, p.nom),
+        el('span', { class: `mono ${classeSigne(p.ecart_points)}` }, p.ecart_points == null ? 'n. d.' : `${p.ecart_points >= 0 ? '+' : '−'}${nombre(Math.abs(p.ecart_points), 1)} pt`)),
+      el('p', { class: 'chef-petit' }, `Entrée le ${dateCourte(String(p.entree_le).slice(0, 10))}${p.sortie_le ? ` · sortie le ${dateCourte(String(p.sortie_le).slice(0, 10))}` : ''} · `
+        + `pari ${pct(p.performance_pct, 1)}, MSCI World ${pct(p.msci_world_pct, 1)}`),
+      justification([p.raison_entree ? `Entrée : ${p.raison_entree}` : null, p.raison_sortie ? `Sortie : ${p.raison_sortie}` : null].filter(Boolean).join(' '), [])))) :
+      el('p', { class: 'chef-petit' }, 'Aucun pari pays pour l’instant.'),
+    el('p', { class: 'chef-petit' }, 'Paris pays : tendance haussière et saine, valorisation non tendue ; sortie dès qu’un excès se déclenche ou que la tendance casse. La note pays n’est pas prédictive d’après le backtest.'));
 }
 
 function carteRisque(st) {
@@ -163,10 +213,10 @@ function carteRepartition(pf) {
   const cibles = pf.cibles;
   return el('section', { class: 'carte' },
     titreSection('Répartition', 'en % de la valeur du portefeuille'),
-    el('div', { class: 'fiche-surtitre' }, 'Cœur, satellites et liquidités'),
+    el('div', { class: 'fiche-surtitre' }, 'Poches et liquidités'),
     barre(r.poches ?? [], 'pf-poche--'),
     el('p', { class: 'chef-repartition' }, (r.poches ?? []).map((x) => el('span', {}, el('span', { class: `chef-pastille pf-poche--${x.cle}` }), `${x.libelle} ${nombre(x.pct, 1)} %`))),
-    cibles ? el('p', { class: 'chef-petit' }, `Cibles de la dernière décision : cœur ${nombre(cibles.coeur, 1)} %, satellites ${nombre(cibles.satellite, 1)} %${cibles.tendance ? `, poche tendance ${nombre(cibles.tendance, 1)} %` : ''}, liquidités ${nombre(cibles.liquidites, 1)} %.`) : null,
+    cibles ? el('p', { class: 'chef-petit' }, `Cibles du dernier rééquilibrage : entreprises ${nombre(cibles.entreprises ?? 0, 1)} % (70 à 85 %), matières premières ${nombre(cibles.matieres ?? 0, 1)} % (20 % au plus), ETF pays ${nombre(cibles.pays ?? 0, 1)} % (15 % au plus), liquidités ${nombre(cibles.liquidites ?? 0, 1)} %.`) : null,
     el('div', { class: 'fiche-surtitre' }, 'Classes d’actifs'),
     barre(r.classes ?? [], 'chef-classe--'),
     el('p', { class: 'chef-repartition' }, (r.classes ?? []).map((x) => el('span', {}, el('span', { class: `chef-pastille chef-classe--${x.cle}` }), `${x.libelle} ${nombre(x.pct, 1)} %`))),
@@ -193,19 +243,19 @@ function carteAttribution(a) {
 
 function tableauPositions(positions, d, nav) {
   return el('table', { class: 'chef-table pf-positions' },
-    el('thead', {}, el('tr', {}, ['Ligne', 'Revient / cours', 'Plus-value', 'Poids', 'Stop'].map((t) => el('th', {}, t)))),
+    el('thead', {}, el('tr', {}, ['Ligne', 'Revient / cours', 'Plus-value', 'Poids', 'Entrée'].map((t) => el('th', {}, t)))),
     el('tbody', {}, positions.map((p) => {
       const lien = p.ticker && d.entrepriseParTicker?.has(p.ticker);
       return el('tr', {},
         el('td', {},
           lien ? el('button', { class: 'lien', type: 'button', onclick: () => nav.ouvrirEntreprise(p.ticker) }, p.nom) : el('span', {}, p.nom),
-          el('br'), el('span', { class: 'poche' }, `${p.poche === 'satellite' ? 'Satellite' : p.poche === 'tendance' ? 'Poche tendance' : 'Cœur'} · ${p.symbole}${p.contango ? ' · contango' : ''}`)),
+          el('br'), el('span', { class: 'poche' }, `${POCHES[p.poche] ?? p.poche} · ${p.symbole}${p.contango ? ' · contango' : ''}`)),
         el('td', { class: 'mono' }, `${nombre(p.prix_revient_local, 2)}`, el('br'), p.cours_local == null ? 'n. d.' : `${nombre(p.cours_local, 2)}`,
           el('br'), el('span', { class: 'poche pf-devise' }, `${p.quantite} × · ${p.devise}`)),
         el('td', { class: `mono ${classeSigne(p.plus_value_eur)}` }, `${p.plus_value_eur >= 0 ? '+' : '−'}${eurosPrecis(Math.abs(p.plus_value_eur))}`, el('br'), pct(p.plus_value_pct, 1)),
         el('td', { class: 'mono' }, `${nombre(p.poids, 1)} %`, el('br'), eurosPrecis(p.valeur)),
-        el('td', { class: 'mono' }, p.stop_local == null ? '—' : `${nombre(p.stop_local, 2)}`,
-          p.stop_local == null ? null : el('br'), p.stop_local == null ? null : el('span', { class: 'poche' }, `${p.stop_type ?? ''} ${pct(p.stop_distance_pct, 1)}`)),
+        el('td', { class: 'pf-entree' }, p.ouverte_le ? dateCourte(p.ouverte_le.slice(0, 10)) : '—',
+          p.raison_entree ? el('details', { class: 'pf-justif' }, el('summary', {}, 'Raison'), el('p', {}, p.raison_entree)) : null),
       );
     })),
   );
@@ -236,7 +286,7 @@ function operation(o) {
       el('span', { class: 'mono' }, eurosPrecis(o.montant_eur))),
     el('p', { class: 'chef-petit' },
       `${heureParis(o.date)} · ${o.quantite} × ${nombre(o.prix_local, 2)} ${o.devise} (cours ${nombre(o.cours_marche, 2)}) · frais ${eurosPrecis(o.frais_eur, 2)} · ${o.motif}`
-      + (o.stop ? ` · stop ${nombre(o.stop, 2)}` : '')),
+    ),
     res ? el('p', { class: `chef-petit ${classeSigne(res.plus_value_eur)}` }, `Résultat : ${res.plus_value_eur >= 0 ? '+' : '−'}${eurosPrecis(Math.abs(res.plus_value_eur), 2)} (${pct(res.plus_value_pct, 1)})${res.duree_jours != null ? ` en ${res.duree_jours} j` : ''}`) : null,
     details ? el('p', { class: 'chef-petit' }, details) : null,
     r.objection ? el('p', { class: 'chef-petit' }, `Objection du contradicteur${r.objection_serieuse ? ' (sérieuse)' : ''} : ${r.objection}`) : null,
@@ -249,16 +299,16 @@ function carteDecision(dec) {
   return el('section', { class: 'carte decision' },
     el('div', { class: 'decision-entete' }, el('span', {}, 'Dernière décision · agent trader'), el('span', { class: 'mono' }, heureParis(dec.le))),
     el('p', {}, dec.resume),
+    dec.methode ? el('p', { class: 'chef-petit' }, `${dec.type ?? 'décision'} · ${dec.methode} · prochain rééquilibrage au premier jour de décision du mois suivant.`) : null,
     dec.notes?.length || dec.avertissements?.length ? el('ul', { class: 'chef-texte' }, [...(dec.notes ?? []), ...(dec.avertissements ?? [])].map((x) => el('li', {}, x))) : null,
     diversification(dec),
     dec.cibles?.lignes?.length ? el('details', { class: 'pf-justif' }, el('summary', {}, `Cibles (${dec.cibles.lignes.length} lignes)`),
       el('ul', { class: 'chef-texte' }, dec.cibles.lignes.map((x) => el('li', {},
-        `${x.nom} — ${x.poche === 'satellite' ? 'satellite' : x.poche === 'tendance' ? 'poche tendance' : 'cœur'}, ${x.zone ?? x.classe} : ${nombre(x.cible, 1)} %`
-        + (x.verdict ? ` (« ${x.verdict} », conviction ${x.conviction})` : ''))))) : null,
+        `${x.nom} — ${POCHES[x.poche] ?? x.poche}${x.secteur ? `, ${x.secteur}` : ''} : ${nombre(x.cible, 1)} %` + (x.raison ? ` (${x.raison})` : ''))))) : null,
     dec.arbitrages?.length ? el('details', { class: 'pf-justif', open: true }, el('summary', {}, `Arbitrages expliqués (${dec.arbitrages.length})`),
       el('ul', { class: 'chef-texte' }, dec.arbitrages.map((a) => el('li', {}, el('strong', {}, `${a.nom} — ${a.action}`), ` : ${a.raison}`)))) : null,
-    dec.satellites_ecartes?.length ? el('details', { class: 'pf-justif' }, el('summary', {}, `Opportunités écartées (${dec.satellites_ecartes.length})`),
-      el('ul', { class: 'chef-texte' }, dec.satellites_ecartes.map((x) => el('li', {}, `${x.nom} : ${x.raison}`)))) : null,
+    (dec.ecartees ?? dec.satellites_ecartes)?.length ? el('details', { class: 'pf-justif' }, el('summary', {}, `Candidats écartés (${(dec.ecartees ?? dec.satellites_ecartes).length})`),
+      el('ul', { class: 'chef-texte' }, (dec.ecartees ?? dec.satellites_ecartes).map((x) => el('li', {}, `${x.nom} : ${x.raison}`)))) : null,
     dec.donner_tort?.length ? el('div', {}, el('div', { class: 'fiche-surtitre' }, 'Ce qui pourrait me donner tort'),
       el('ul', { class: 'chef-texte' }, dec.donner_tort.map((x) => el('li', {}, x)))) : null,
   );
@@ -282,7 +332,7 @@ const SERIES = [
   { cle: 'msci_world', nom: 'MSCI World', couleur: 'var(--serie-indice)' },
 ];
 
-function graphiquePerformance(historique) {
+function graphiquePerformance(historique, changements = []) {
   const L = Math.round(Math.min(780, Math.max(300, innerWidth - 58))), H = 240;
   const m = { haut: 12, droite: 78, bas: 26, gauche: 50 };
   const n = historique.length;
@@ -322,12 +372,19 @@ function graphiquePerformance(historique) {
     courbes.append(svg('text', { class: 'etiquette-serie', x: L - m.droite + 8, y: yFin + 4 }, s.nom));
   }
 
+  const marqueurs = svg('g', { class: 'pf-marqueurs' });
+  for (const c of changements ?? []) {
+    const i = indiceChangement(historique, c.date);
+    if (i == null) continue;
+    marqueurs.append(svg('line', { class: 'pf-marqueur', x1: x(i), x2: x(i), y1: m.haut, y2: H - m.bas }),
+      svg('text', { class: 'pf-marqueur-texte', ...(x(i) > L - m.droite - 100 ? { x: x(i) - 4, 'text-anchor': 'end' } : { x: x(i) + 4 }), y: m.haut + 10 }, 'Nouvelle méthode'));
+  }
   const ligneCurseur = svg('line', { y1: m.haut, y2: H - m.bas });
   const points = series.map((s) => svg('circle', { r: 4.5, fill: s.couleur }));
   const curseur = svg('g', { class: 'curseur', visibility: 'hidden' }, ligneCurseur, ...points);
   const zone = svg('rect', { x: m.gauche, y: 0, width: L - m.gauche - m.droite, height: H, fill: 'transparent' });
   const dessin = svg('svg', { viewBox: `0 0 ${L} ${H}`, role: 'img', 'aria-label': 'Évolution du portefeuille démo comparée au MSCI World en euros' },
-    grille, axe, courbes, curseur, zone);
+    grille, axe, marqueurs, courbes, curseur, zone);
   const bulle = el('div', { class: 'infobulle', hidden: true });
 
   const montrer = (ev) => {

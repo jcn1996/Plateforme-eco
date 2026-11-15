@@ -74,6 +74,14 @@ class TestExecutionComplete(BaseChef):
         self.assertEqual(len(d["obligations"]), 4)
         self.assertEqual(len(d["liquidites"]), 2)
         self.assertTrue(d["entreprises"])
+        # Sélections du backtest (lues par l'agent trader et « Où investir »)
+        sel = d["selections"]
+        self.assertEqual(set(sel) >= {"entreprises", "matieres", "paris_pays", "mention_pays"}, True)
+        self.assertTrue(sel["matieres"]["retenues"])
+        self.assertTrue(sel["paris_pays"]["evaluation"])
+        for e in sel["paris_pays"]["candidats"]:
+            self.assertTrue(e["entree_ok"])
+            self.assertFalse(e["raisons_refus"])
         self.assertEqual(d["mention"], "Avis indicatif généré automatiquement, sans prise en compte d'un profil ou d'une situation personnelle.")
         # Suivi de tendance : mesuré pour les pays (ETF), matières, entreprises et secteurs ; rubrique « Tendances fortes »
         suivis = {l["type"] for l in r["lignes"] if l.get("suivi_tendance")}
@@ -571,6 +579,8 @@ class TestCorrectionsQualite(BaseChef):
         cle = [(x["a_surveiller"], -x["score"]) for x in p["pays"]]
         self.assertEqual(cle, sorted(cle))  # par score, les lignes « à surveiller » après les autres
         lignes = {l["id"]: l for l in r["lignes"]}
+        self.assertNotIn("pays", {x["type"] for x in p["top"]})  # note pays non prédictive : plus de classement des pays
+        self.assertNotIn("pays", {x["type"] for x in p["a_surveiller"]})
         for x in p["top"]:
             l = lignes[x["id"]]
             self.assertFalse((l.get("objection") or {}).get("serieuse"), x["nom"])
@@ -578,7 +588,7 @@ class TestCorrectionsQualite(BaseChef):
         self.assertLessEqual(max(Counter(x["type"] for x in p["a_surveiller"]).values() or [0]), cp["a_surveiller_par_type"])
         # le briefing résume par catégorie
         textes = [x["texte"] for x in r["briefing"]["essentiel"]]
-        for debut in ("Pays :", "Matières premières :", "Obligations et liquidités :", "Secteurs :"):
+        for debut in ("Pays (contexte économique, non prédictif d'après le backtest) :", "Matières premières :", "Obligations et liquidités :", "Secteurs :"):
             self.assertTrue(any(t.startswith(debut) for t in textes), debut)
 
     def test_raison_sans_gemini_et_chaine_de_secours(self):

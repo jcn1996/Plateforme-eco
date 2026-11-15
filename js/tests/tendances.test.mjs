@@ -3,8 +3,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { groupesTendances, ONGLETS_INVESTIR } from '../chef.js';
 
-test('l’onglet « Tendances fortes » suit le panorama', () => {
-  assert.deepEqual(Object.keys(ONGLETS_INVESTIR).slice(0, 2), ['panorama', 'tendances']);
+test('« Où investir » met en avant les entreprises puis les matières premières, les pays en contexte', () => {
+  assert.deepEqual(Object.keys(ONGLETS_INVESTIR).slice(0, 5), ['panorama', 'entreprises', 'matieres', 'paris', 'tendances']);
+  assert.equal(ONGLETS_INVESTIR.pays, 'Pays · contexte');
 });
 
 test('tendances regroupées par catégorie, saines d’abord puis par force relative', () => {
