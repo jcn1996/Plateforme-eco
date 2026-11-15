@@ -1,14 +1,14 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-15T07:35:18Z",
+    "genere_le": "2026-11-15T14:47:02Z",
     "source": "agent-chef",
     "fictif": false,
     "version_agent": "1.0"
   },
   "donnees": {
     "date": "2026-11-15",
-    "genere_le": "2026-11-15T07:31:38Z",
+    "genere_le": "2026-11-15T14:43:17Z",
     "mode": "gemini",
     "modele": "gemini-3.5-flash-lite",
     "palier": "Vigilance",
@@ -21,14 +21,14 @@
     ],
     "essentiel": [
       {
-        "texte": "Le palier de risque mondial est fixé à « Vigilance » avec un score de stress de 62 sur 100, tandis que la phase du cycle mondial est l'« Expansion sans inflation »,.",
+        "texte": "Le palier de risque mondial est établi à « Vigilance » avec un score de stress de 62/100, tandis que la phase du cycle mondial correspond à « Expansion sans inflation ».",
         "faits": [
           "F1",
           "F2"
         ]
       },
       {
-        "texte": "Concernant les pays, la Pologne est positionnée à « Renforcer » avec une conviction moyenne de 63 sur 100, et le Vietnam ainsi que la Corée du Sud sont à « Neutre » avec une conviction faible de 59 sur 100,,.",
+        "texte": "Concernant les pays, la Pologne affiche une recommandation « Renforcer » avec un score de 63/100, alors que le Vietnam et la Corée du Sud sont positionnés à « Neutre » avec 59/100.",
         "faits": [
           "F3",
           "F4",
@@ -36,25 +36,30 @@
         ]
       },
       {
-        "texte": "Pour les matières premières et l'or, le pétrole Brent et le gaz naturel américain sont à « Renforcer » avec une conviction moyenne de 58 sur 100, tandis que l'or est à « Neutre » avec un score de 44 sur 100,,.",
+        "texte": "Pour les matières premières et l'or, le pétrole Brent et le gaz naturel américain sont à « Renforcer » avec 58/100, le pétrole WTI à « Neutre » avec 57/100, et l'or à « Neutre » avec 44/100.",
         "faits": [
           "F6",
           "F7",
+          "F8",
           "F9"
         ]
       },
       {
-        "texte": "Les obligations d'État américaines à 10 ans sont à « Neutre » (53 sur 100), les obligations de la zone euro à 10 ans (Bund) sont à « Alléger » (33 sur 100), et les liquidités en dollars affichent un statut « Neutre » à 50 sur 100,,.",
+        "texte": "Sur le plan des obligations et des liquidités, les obligations américaines à 10 ans affichent 53/100 et celles à 2 ans 43/100, les obligations de la zone euro sont à « Alléger » (Bund à 35/100 et 2 ans à 33/100), et les liquidités sont neutres à 50/100 en dollars et 44/100 en euros.",
         "faits": [
           "F10",
+          "F11",
           "F12",
-          "F14"
+          "F13",
+          "F14",
+          "F15"
         ]
       },
       {
-        "texte": "Au niveau sectoriel, l'énergie aux États-Unis est à « Renforcer fortement » (70 sur 100), la finance mondiale à « Renforcer » (63 sur 100), et l'échantillon global comprend 12 entreprises réparties sur 7 secteurs et 9 pays,,.",
+        "texte": "Les secteurs et entreprises comprennent notamment l'énergie aux États-Unis à « Renforcer fortement » (70/100), la technologie émergente (66/100) et la finance mondiale (63/100), ainsi que des dossiers d'entreprises spécifiques évalués dans ces limites.",
         "faits": [
           "F16",
+          "F17",
           "F18",
           "F19"
         ]
@@ -62,9 +67,23 @@
     ],
     "vigilance": [
       {
-        "texte": "La matière première gaz naturel américain est classée « Renforcer » avec une conviction moyenne de 58 sur 100.",
+        "texte": "L'agent pays et l'agent matières premières sont à jour mais dégradés, ce qui implique que leurs signaux pèsent moins.",
         "faits": [
-          "F7"
+          "F23",
+          "F24"
+        ]
+      },
+      {
+        "texte": "Le dossier Adobe Inc. présente un piège de valeur possible avec une décote marquée et un momentum de −27,4 %.",
+        "faits": [
+          "F27"
+        ]
+      },
+      {
+        "texte": "La situation géopolitique signale l'invasion de l'Ukraine avec trois morts à la suite de frappes russes (gravité 4) ainsi que des frappes israéliennes dans la bande de Gaza (gravité 4).",
+        "faits": [
+          "F25",
+          "F26"
         ]
       }
     ],
@@ -120,6 +139,22 @@
         "objection": null
       },
       {
+        "id": "secteur-monde-finance",
+        "nom": "Finance — Monde",
+        "type": "secteurs",
+        "verdict": "Renforcer",
+        "conviction": "forte",
+        "score": 62.6,
+        "zone_secteur": "monde",
+        "a_surveiller": false,
+        "fleche": "→",
+        "pays": null,
+        "secteur": "Finance",
+        "argument": "PER médian 12,8, croissance médiane du bénéfice +12,3 % : rendement des bénéfices corrigé de la croissance de 10,9 contre 6,9 pour l'ensemble des secteurs de la zone",
+        "contre": null,
+        "objection": null
+      },
+      {
         "id": "entreprise-LPG",
         "nom": "Dorian LPG Ltd.",
         "type": "entreprises",
@@ -132,23 +167,7 @@
         "pays": "US",
         "secteur": "Énergie",
         "argument": "Note de l'agent entreprises 74/100 : Dossier solide sur les comptes ; points forts : marge opérationnelle : 44,0 %, croissance du ca : +36,3 %.",
-        "contre": "États-Unis : Risque géopolitique 66/100, 45 événement(s) en 14 jours (agent géopolitique)",
-        "objection": null
-      },
-      {
-        "id": "pays-PL",
-        "nom": "Pologne",
-        "type": "pays",
-        "verdict": "Renforcer",
-        "conviction": "moyenne",
-        "score": 63.2,
-        "zone_secteur": null,
-        "a_surveiller": false,
-        "fleche": "↑",
-        "pays": "PL",
-        "secteur": null,
-        "argument": "WIG20 +34,6 % sur 12 mois en monnaie locale (92/100) ; 12 mois hors dernier mois +34,3 %, cours au-dessus de la moyenne 200 jours, force relative 85e percentile des pays (5e sur 30)",
-        "contre": null,
+        "contre": "États-Unis : Risque géopolitique 66/100, 46 événement(s) en 14 jours (agent géopolitique)",
         "objection": null
       }
     ],
@@ -203,6 +222,22 @@
           "objection": null
         },
         {
+          "id": "secteur-monde-finance",
+          "nom": "Finance — Monde",
+          "type": "secteurs",
+          "verdict": "Renforcer",
+          "conviction": "forte",
+          "score": 62.6,
+          "zone_secteur": "monde",
+          "a_surveiller": false,
+          "fleche": "→",
+          "pays": null,
+          "secteur": "Finance",
+          "argument": "PER médian 12,8, croissance médiane du bénéfice +12,3 % : rendement des bénéfices corrigé de la croissance de 10,9 contre 6,9 pour l'ensemble des secteurs de la zone",
+          "contre": null,
+          "objection": null
+        },
+        {
           "id": "entreprise-LPG",
           "nom": "Dorian LPG Ltd.",
           "type": "entreprises",
@@ -215,23 +250,7 @@
           "pays": "US",
           "secteur": "Énergie",
           "argument": "Note de l'agent entreprises 74/100 : Dossier solide sur les comptes ; points forts : marge opérationnelle : 44,0 %, croissance du ca : +36,3 %.",
-          "contre": "États-Unis : Risque géopolitique 66/100, 45 événement(s) en 14 jours (agent géopolitique)",
-          "objection": null
-        },
-        {
-          "id": "pays-PL",
-          "nom": "Pologne",
-          "type": "pays",
-          "verdict": "Renforcer",
-          "conviction": "moyenne",
-          "score": 63.2,
-          "zone_secteur": null,
-          "a_surveiller": false,
-          "fleche": "↑",
-          "pays": "PL",
-          "secteur": null,
-          "argument": "WIG20 +34,6 % sur 12 mois en monnaie locale (92/100) ; 12 mois hors dernier mois +34,3 %, cours au-dessus de la moyenne 200 jours, force relative 85e percentile des pays (5e sur 30)",
-          "contre": null,
+          "contre": "États-Unis : Risque géopolitique 66/100, 46 événement(s) en 14 jours (agent géopolitique)",
           "objection": null
         }
       ],
@@ -245,7 +264,7 @@
           "score": 63.2,
           "zone_secteur": null,
           "a_surveiller": false,
-          "fleche": "↑",
+          "fleche": "→",
           "pays": "PL",
           "secteur": null,
           "argument": "WIG20 +34,6 % sur 12 mois en monnaie locale (92/100) ; 12 mois hors dernier mois +34,3 %, cours au-dessus de la moyenne 200 jours, force relative 85e percentile des pays (5e sur 30)",
@@ -261,7 +280,7 @@
           "score": 59.2,
           "zone_secteur": null,
           "a_surveiller": false,
-          "fleche": "↑",
+          "fleche": "→",
           "pays": "VN",
           "secteur": null,
           "argument": "Croissance du pib 8,4 % (100/100) ; inflation 4,7 % (87/100)",
@@ -277,7 +296,7 @@
           "score": 58.5,
           "zone_secteur": null,
           "a_surveiller": false,
-          "fleche": "↑",
+          "fleche": "→",
           "pays": "KR",
           "secteur": null,
           "argument": "PER de l'ETF EWY 9,7 contre une médiane de 14,8 pour les pays suivis (94/100)",
@@ -293,7 +312,7 @@
           "score": 58.5,
           "zone_secteur": null,
           "a_surveiller": false,
-          "fleche": "↑",
+          "fleche": "→",
           "pays": "AE",
           "secteur": null,
           "argument": "PER de l'ETF UAE 10,1 contre une médiane de 14,8 pour les pays suivis (92/100)",
@@ -309,7 +328,7 @@
           "score": 58.4,
           "zone_secteur": null,
           "a_surveiller": false,
-          "fleche": "↑",
+          "fleche": "→",
           "pays": "TH",
           "secteur": null,
           "argument": "Croissance du pib 2,1 % (52/100) ; inflation 2,1 % (88/100) ; taux réel −1,1 % (61/100)",
@@ -472,14 +491,14 @@
           "type": "obligations",
           "verdict": "Alléger",
           "conviction": "forte",
-          "score": 33.3,
+          "score": 34.9,
           "zone_secteur": null,
           "a_surveiller": false,
           "fleche": "→",
           "pays": null,
           "secteur": null,
           "argument": "Palier de risque mondial « Vigilance » : les obligations d'État longues servent de refuge quand le stress monte",
-          "contre": "Rendement de l'État allemand à 10 ans (OCDE via FRED, 2026-09) 3,47 % moins 4,0 % d'inflation : rendement réel de −0,53 %",
+          "contre": "Rendement de l'État allemand à 10 ans (OCDE via FRED, 2026-09) 3,47 % moins 3,8 % d'inflation : rendement réel de −0,33 %",
           "objection": null
         },
         {
@@ -488,14 +507,14 @@
           "type": "obligations",
           "verdict": "Alléger",
           "conviction": "forte",
-          "score": 31.6,
+          "score": 33.4,
           "zone_secteur": null,
           "a_surveiller": false,
           "fleche": "→",
           "pays": null,
           "secteur": null,
           "argument": "Zone euro en phase « Ralentissement inflationniste » (agent macro) : historiquement favorable aux obligations courtes (60/100)",
-          "contre": "Rendement allemand à 2 ans estimé (10 ans − pente 10 ans − 2 ans) 3,17 % moins 4,0 % d'inflation : rendement réel de −0,83 %",
+          "contre": "Rendement allemand à 2 ans estimé (10 ans − pente 10 ans − 2 ans) 3,17 % moins 3,8 % d'inflation : rendement réel de −0,63 %",
           "objection": null
         }
       ],
@@ -522,14 +541,14 @@
           "type": "liquidites",
           "verdict": "Neutre",
           "conviction": "faible",
-          "score": 42.9,
+          "score": 44.2,
           "zone_secteur": null,
           "a_surveiller": false,
           "fleche": "→",
           "pays": null,
           "secteur": null,
           "argument": "Zone euro en phase « Ralentissement inflationniste » (agent macro) : historiquement favorable aux liquidités (75/100)",
-          "contre": "Rendement monétaire réel : taux BCE 2,50 % − inflation 4,0 % = −1,50 %",
+          "contre": "Rendement monétaire réel : taux BCE 2,50 % − inflation 3,8 % = −1,30 %",
           "objection": null
         }
       ],
@@ -563,7 +582,7 @@
           "pays": "US",
           "secteur": "Énergie",
           "argument": "Note de l'agent entreprises 74/100 : Dossier solide sur les comptes ; points forts : marge opérationnelle : 44,0 %, croissance du ca : +36,3 %.",
-          "contre": "États-Unis : Risque géopolitique 66/100, 45 événement(s) en 14 jours (agent géopolitique)",
+          "contre": "États-Unis : Risque géopolitique 66/100, 46 événement(s) en 14 jours (agent géopolitique)",
           "objection": null
         },
         {
@@ -579,7 +598,7 @@
           "pays": "US",
           "secteur": "Matériaux",
           "argument": "Note de l'agent entreprises 80/100 : Dossier solide sur les comptes ; points forts : marge opérationnelle : 33,5 %, roic : 23,7 %.",
-          "contre": "États-Unis : Risque géopolitique 66/100, 45 événement(s) en 14 jours (agent géopolitique)",
+          "contre": "États-Unis : Risque géopolitique 66/100, 46 événement(s) en 14 jours (agent géopolitique)",
           "objection": null
         },
         {
@@ -604,7 +623,7 @@
           "type": "entreprises",
           "verdict": "Renforcer fortement",
           "conviction": "moyenne",
-          "score": 69.9,
+          "score": 70.1,
           "zone_secteur": null,
           "a_surveiller": false,
           "fleche": "→",
@@ -620,7 +639,7 @@
           "type": "entreprises",
           "verdict": "Renforcer",
           "conviction": "moyenne",
-          "score": 69.8,
+          "score": 70.0,
           "zone_secteur": null,
           "a_surveiller": false,
           "fleche": "→",
@@ -631,35 +650,35 @@
           "objection": null
         },
         {
-          "id": "entreprise-TBCG.L",
-          "nom": "TBC Bank Group PLC",
-          "type": "entreprises",
-          "verdict": "Renforcer",
-          "conviction": "moyenne",
-          "score": 69.2,
-          "zone_secteur": null,
-          "a_surveiller": false,
-          "fleche": "→",
-          "pays": "GB",
-          "secteur": "Finance",
-          "argument": "Note de l'agent entreprises 79/100 : Dossier solide sur les comptes ; points forts : roe : 22,6 %, coût / revenu : 39,7 %.",
-          "contre": "Royaume-Uni : Flux de l'ETF EWU : sorties nettes, −1,56 % de l'encours sur 1s (31/100 ; ETF cotés aux États-Unis seulement)",
-          "objection": null
-        },
-        {
           "id": "entreprise-CNQ.TO",
           "nom": "Canadian Natural Resources Limited",
           "type": "entreprises",
           "verdict": "Renforcer",
           "conviction": "moyenne",
-          "score": 68.7,
+          "score": 69.3,
           "zone_secteur": null,
           "a_surveiller": false,
           "fleche": "→",
           "pays": "CA",
           "secteur": "Énergie",
           "argument": "Note de l'agent entreprises 71/100 : Dossier solide sur les comptes ; points forts : croissance du bénéfice : +77,2 %, momentum 12 mois : +61,9 %.",
-          "contre": "Canada : Risque géopolitique 38/100, 6 événement(s) en 14 jours (agent géopolitique)",
+          "contre": "Canada : Risque géopolitique 33/100, 6 événement(s) en 14 jours (agent géopolitique)",
+          "objection": null
+        },
+        {
+          "id": "entreprise-TBCG.L",
+          "nom": "TBC Bank Group PLC",
+          "type": "entreprises",
+          "verdict": "Renforcer",
+          "conviction": "moyenne",
+          "score": 69.1,
+          "zone_secteur": null,
+          "a_surveiller": false,
+          "fleche": "→",
+          "pays": "GB",
+          "secteur": "Finance",
+          "argument": "Note de l'agent entreprises 79/100 : Dossier solide sur les comptes ; points forts : roe : 22,6 %, coût / revenu : 39,7 %.",
+          "contre": "Royaume-Uni : Risque géopolitique 36/100, 5 événement(s) en 14 jours (agent géopolitique)",
           "objection": null
         },
         {
@@ -675,7 +694,7 @@
           "pays": "US",
           "secteur": "Technologies de l'information",
           "argument": "Note de l'agent entreprises 77/100 : Dossier solide sur les comptes ; points forts : dette nette / ebitda : trésorerie nette, roic : 34,2 %.",
-          "contre": "États-Unis : Risque géopolitique 66/100, 45 événement(s) en 14 jours (agent géopolitique)",
+          "contre": "États-Unis : Risque géopolitique 66/100, 46 événement(s) en 14 jours (agent géopolitique)",
           "objection": null
         },
         {
@@ -691,7 +710,7 @@
           "pays": "CH",
           "secteur": "Santé",
           "argument": "Note de l'agent entreprises 78/100 : Dossier solide sur les comptes ; points forts : marge opérationnelle : 29,2 %, croissance du bénéfice : +55,6 %.",
-          "contre": "Suisse : Risque géopolitique 32/100, 1 événement(s) en 14 jours (agent géopolitique)",
+          "contre": null,
           "objection": null
         },
         {
@@ -752,57 +771,6 @@
           "contre": "Momentum sur 12 mois −27,1 % (6 mois : −1,8 %) ; 12 mois hors dernier mois −25,9 %, cours en dessous de la moyenne 200 jours, force relative 5e percentile des entreprises (54e sur 56)",
           "objection": "Le dossier présente un piège de valeur possible avec une décote marquée, souligné par un momentum de −27,4 %.",
           "raison": "bien noté (61/100) mais objection à lever : Le dossier présente un piège de valeur possible avec une décote marquée, souligné par un momentum de −27,4 %."
-        },
-        {
-          "id": "pays-VN",
-          "nom": "Vietnam",
-          "type": "pays",
-          "verdict": "Neutre",
-          "conviction": "faible",
-          "score": 59.2,
-          "zone_secteur": null,
-          "a_surveiller": false,
-          "fleche": "↑",
-          "pays": "VN",
-          "secteur": null,
-          "argument": "Croissance du pib 8,4 % (100/100) ; inflation 4,7 % (87/100)",
-          "contre": "VN-Index −2,6 % sur 12 mois en monnaie locale (47/100) ; 12 mois hors dernier mois −5,7 %, cours en dessous de la moyenne 200 jours, force relative 15e percentile des pays (26e sur 30)",
-          "objection": null,
-          "raison": "proche du seuil « Renforcer » (59/100 pour un seuil de 58), changement en attente vers « Renforcer »"
-        },
-        {
-          "id": "pays-SE",
-          "nom": "Suède",
-          "type": "pays",
-          "verdict": "Neutre",
-          "conviction": "faible",
-          "score": 58.8,
-          "zone_secteur": null,
-          "a_surveiller": true,
-          "fleche": "↑",
-          "pays": "SE",
-          "secteur": null,
-          "argument": "Croissance du pib 2,5 % (55/100) ; inflation 1,1 % (77/100) ; taux réel 0,6 % (80/100)",
-          "contre": "Dynamique des résultats médiane de 51/100 sur 52 sociétés du pays (révisions des analystes, surprises, guidance)",
-          "objection": "Objections spécifiques : réserves de change de 2,2 mois d'importations seulement ; devise à −5,3 % contre le dollar sur 3 mois (volatilité à 1 mois de 8,4 %).",
-          "raison": "proche du seuil « Renforcer » (59/100 pour un seuil de 58), changement en attente vers « Renforcer »"
-        },
-        {
-          "id": "pays-KR",
-          "nom": "Corée du Sud",
-          "type": "pays",
-          "verdict": "Neutre",
-          "conviction": "faible",
-          "score": 58.5,
-          "zone_secteur": null,
-          "a_surveiller": false,
-          "fleche": "↑",
-          "pays": "KR",
-          "secteur": null,
-          "argument": "PER de l'ETF EWY 9,7 contre une médiane de 14,8 pour les pays suivis (94/100)",
-          "contre": "Dynamique des résultats médiane de 44/100 sur 50 sociétés du pays (révisions des analystes, surprises, guidance)",
-          "objection": null,
-          "raison": "proche du seuil « Renforcer » (59/100 pour un seuil de 58), changement en attente vers « Renforcer »"
         },
         {
           "id": "secteur-europe-services-collectivites",
@@ -871,42 +839,76 @@
           "contre": "Zone euro en phase « Ralentissement inflationniste » (agent macro) : historiquement défavorable aux actions (25/100) ; secteur Services aux collectivités : +6 pt dans cette phase",
           "objection": null,
           "raison": "proche du seuil « Renforcer » (58/100 pour un seuil de 58)"
+        },
+        {
+          "id": "secteur-emergents-finance",
+          "nom": "Finance — Émergents",
+          "type": "secteurs",
+          "verdict": "Neutre",
+          "conviction": "moyenne",
+          "score": 57.2,
+          "zone_secteur": "emergents",
+          "a_surveiller": false,
+          "fleche": "→",
+          "pays": null,
+          "secteur": "Finance",
+          "argument": "Momentum médian des sociétés du secteur +13,6 % sur 12 mois (pas d'ETF sectoriel exploitable)",
+          "contre": null,
+          "objection": null,
+          "raison": "proche du seuil « Renforcer » (57/100 pour un seuil de 58)"
+        },
+        {
+          "id": "entreprise-RUI.PA",
+          "nom": "Rubis",
+          "type": "entreprises",
+          "verdict": "Renforcer",
+          "conviction": "moyenne",
+          "score": 57.1,
+          "zone_secteur": null,
+          "a_surveiller": false,
+          "fleche": "→",
+          "pays": "FR",
+          "secteur": "Services aux collectivités",
+          "argument": "PER vs secteur −33,8 % ; VE/EBITDA vs secteur −11,3 % ; valeur estimée +18,5 % par rapport au cours",
+          "contre": "Zone euro en phase « Ralentissement inflationniste » (agent macro) : historiquement défavorable aux actions (25/100) ; secteur Services aux collectivités : +6 pt dans cette phase",
+          "objection": null,
+          "raison": "verdict « Renforcer » maintenu par l'hystérésis, mais score repassé sous le seuil (57/100 pour 58)"
+        },
+        {
+          "id": "secteur-emergents-sante",
+          "nom": "Santé — Émergents",
+          "type": "secteurs",
+          "verdict": "Neutre",
+          "conviction": "moyenne",
+          "score": 56.9,
+          "zone_secteur": "emergents",
+          "a_surveiller": false,
+          "fleche": "→",
+          "pays": null,
+          "secteur": "Santé",
+          "argument": "Émergents en phase « Expansion sans inflation » : rotation sectorielle favorable au secteur (65/100)",
+          "contre": "PER médian 39,3, croissance médiane du bénéfice +25,9 % : rendement des bénéfices corrigé de la croissance de 9,0 contre 9,6 pour l'ensemble des secteurs de la zone",
+          "objection": null,
+          "raison": "proche du seuil « Renforcer » (57/100 pour un seuil de 58)"
         }
       ]
     },
-    "changements": [
-      {
-        "id": "pays-TW",
-        "date": "2026-11-15",
-        "pays": "TW",
-        "important": true,
-        "texte": "Taïwan : « Renforcer » → « Neutre »",
-        "explication": "De « Renforcer » à « Neutre » : score 57 → 58/100, le score reste au-delà du seuil depuis 3 jours."
-      },
-      {
-        "id": "oblig-us-courtes",
-        "date": "2026-11-15",
-        "pays": null,
-        "important": true,
-        "texte": "Obligations d'État américaines courtes (2 ans) : « Alléger » → « Neutre »",
-        "explication": "De « Alléger » à « Neutre » : score 43 → 43/100, le score reste au-delà du seuil depuis 3 jours."
-      }
-    ],
+    "changements": [],
     "scenarios": {
       "central": {
         "titre": "Le cycle mondial reste en « Expansion sans inflation » et le risque en « Vigilance »",
         "texte": "Scénario central : les tendances mesurées se prolongent ; les verdicts et l'allocation actuels restent valables.",
         "declencheurs": [
           "Une remontée de l'indicateur avancé (G20) sur 3 mois, confirmée par un second signal, ferait passer la croissance en accélération.",
-          "Un repli de l'inflation sur 3 mois, confirmé par un second signal, changerait la phase.",
+          "Une remontée de l'inflation sur 3 mois, confirmée par un second signal, changerait la phase.",
           "Les indices officiels hebdomadaires (Indice de stress financier de la Fed de Saint-Louis, Conditions financières de la Fed de Chicago (NFCI)) sont publiés avec environ une semaine de retard."
         ]
       },
       "alternatif": {
-        "titre": "Bascule vers « Surchauffe » et risque « Tension »",
+        "titre": "Bascule vers « Reprise » et risque « Tension »",
         "texte": "Scénario alternatif : retournement de la croissance mondiale ou montée du stress financier ; les actifs refuges (or, obligations d'État, liquidités) seraient favorisés.",
         "declencheurs": [
-          "Croissance qui accélère (indicateur avancé de l'OCDE, deux signaux concordants) : passage en « Surchauffe ».",
+          "Croissance qui accélère (indicateur avancé de l'OCDE, deux signaux concordants) : passage en « Reprise ».",
           "Score de stress financier au-dessus de 74/100 avec deux familles d'indicateurs concordantes : palier « Tension ».",
           "Un déclenchement de la règle de Sahm (0,5 pt) ou une nouvelle inversion de la courbe 10 ans − 3 mois contredirait une lecture favorable du cycle américain."
         ]
@@ -932,21 +934,21 @@
     ],
     "donner_tort": [
       "Fondamentaux (45/100) : Note médiane de 58/100 sur 72 sociétés du secteur (États-Unis)",
-      "Croissance qui accélère (indicateur avancé de l'OCDE, deux signaux concordants) : passage en « Surchauffe ».",
+      "Croissance qui accélère (indicateur avancé de l'OCDE, deux signaux concordants) : passage en « Reprise ».",
       "Score de stress financier au-dessus de 74/100 avec deux familles d'indicateurs concordantes : palier « Tension »."
     ],
     "donnees": [
       "Agent pays : à jour (1 h) — dégradé",
-      "Agent macro : à jour (1 h)",
+      "Agent macro : à jour (0 h)",
       "Agent marchés : à jour (0 h)",
-      "Agent risque : à jour (5 h)",
+      "Agent risque : à jour (13 h)",
       "Agent géopolitique : à jour (0 h)",
-      "Agent matières premières : à jour (29 h) — dégradé",
-      "Agent entreprises : à jour (20 h)",
-      "Agent entreprises (pépites) : à jour (20 h)",
-      "Agent initiés : à jour (1 h)",
-      "Analyses à la demande : à jour (282 h)",
-      "Contradicteur (agent risque) : à jour (5 h)"
+      "Agent matières premières : à jour (36 h) — dégradé",
+      "Agent entreprises : à jour (28 h)",
+      "Agent entreprises (pépites) : à jour (28 h)",
+      "Agent initiés : à jour (0 h)",
+      "Analyses à la demande : à jour (289 h)",
+      "Contradicteur (agent risque) : à jour (12 h)"
     ],
     "faits": [
       {
@@ -1006,12 +1008,12 @@
       },
       {
         "id": "F12",
-        "texte": "Obligations d'État de la zone euro longues (Bund 10 ans) : « Alléger », 33/100",
+        "texte": "Obligations d'État de la zone euro longues (Bund 10 ans) : « Alléger », 35/100",
         "source": "chef d'orchestre"
       },
       {
         "id": "F13",
-        "texte": "Obligations d'État de la zone euro courtes (2 ans) : « Alléger », 32/100",
+        "texte": "Obligations d'État de la zone euro courtes (2 ans) : « Alléger », 33/100",
         "source": "chef d'orchestre"
       },
       {
@@ -1021,7 +1023,7 @@
       },
       {
         "id": "F15",
-        "texte": "Liquidités en euros : « Neutre », 43/100",
+        "texte": "Liquidités en euros : « Neutre », 44/100",
         "source": "chef d'orchestre"
       },
       {
@@ -1061,36 +1063,26 @@
       },
       {
         "id": "F23",
-        "texte": "Taïwan : « Renforcer » → « Neutre »",
-        "source": "chef d'orchestre"
-      },
-      {
-        "id": "F24",
-        "texte": "Obligations d'État américaines courtes (2 ans) : « Alléger » → « Neutre »",
-        "source": "chef d'orchestre"
-      },
-      {
-        "id": "F25",
         "texte": "Données : Agent pays à jour et dégradé — ses signaux pèsent moins.",
         "source": "chef d'orchestre"
       },
       {
-        "id": "F26",
+        "id": "F24",
         "texte": "Données : Agent matières premières à jour et dégradé — ses signaux pèsent moins.",
         "source": "chef d'orchestre"
       },
       {
-        "id": "F27",
+        "id": "F25",
+        "texte": "Géopolitique : Invasion de l'Ukraine - Trois morts en Ukraine à la suite de frappes russes (gravité 4).",
+        "source": "chef d'orchestre"
+      },
+      {
+        "id": "F26",
         "texte": "Géopolitique : Frappes israéliennes dans la bande de Gaza (gravité 4).",
         "source": "chef d'orchestre"
       },
       {
-        "id": "F28",
-        "texte": "Géopolitique : Les États-Unis mènent des frappes limitées sur l'île iranienne de Qeshm (gravité 4).",
-        "source": "chef d'orchestre"
-      },
-      {
-        "id": "F29",
+        "id": "F27",
         "texte": "Adobe Inc. (renforcer) : objection du contradicteur — Le dossier présente un piège de valeur possible avec une décote marquée, souligné par un momentum de −27,4 %.",
         "source": "chef d'orchestre"
       }
