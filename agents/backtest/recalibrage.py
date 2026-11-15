@@ -169,15 +169,64 @@ def remplacer_valeurs(texte: str, chemin: list[str], valeurs: dict[str, float]) 
     return nouveau
 
 
+def remplacer_tableau(texte: str, chemin: list[str], valeur: list) -> str:
+    """Remplace le tableau de la clé `chemin[-1]` (clé directe de l'objet `chemin[:-1]`), un élément par ligne, sans
+    toucher au reste du fichier."""
+    a, b = _bloc(texte, chemin[:-1])
+    # clé directe : on parcourt les clés de l'objet sans entrer dans les objets imbriqués
+    i, pos = a + 1, None
+    cles = re.compile(r'"((?:[^"\\]|\\.)*)"\s*:\s*')
+    while i < b:
+        m = cles.match(texte, i)
+        if not m:
+            i += 1
+            continue
+        j = m.end()
+        if m.group(1) == chemin[-1] and texte[j] == "[":
+            pos = j
+            break
+        if texte[j] in "{[":
+            i = _fin_objet(texte, j) + 1
+        elif texte[j] == '"':
+            k = j + 1
+            while texte[k] != '"':
+                k += 2 if texte[k] == "\\" else 1
+            i = k + 1
+        else:
+            i = j + 1
+    if pos is None:
+        raise KeyError(f"tableau introuvable : {' → '.join(chemin)}")
+    fin = _fin_objet(texte, pos)
+    debut_ligne = texte.rfind("\n", 0, pos) + 1
+    retrait = re.match(r"\s*", texte[debut_ligne:]).group(0)
+    elements = [json.dumps(v, ensure_ascii=False) for v in valeur]
+    corps = "[\n" + ",\n".join(retrait + "  " + e for e in elements) + "\n" + retrait + "]" if elements else "[]"
+    nouveau = texte[:pos] + corps + texte[fin + 1:]
+    json.loads(nouveau)
+    return nouveau
+
+
 def appliquer(proposition: dict, racine: Path) -> list[str]:
-    """Écrit les pondérations proposées (et retenues) dans les fichiers de configuration des agents.
-    Utilisé seulement pour préparer la pull request séparée de proposition."""
+    """Écrit les réglages proposés (et retenus) dans les fichiers de configuration des agents : pondérations, et listes
+    de combinaisons du chef d'orchestre (type « combinaisons »). Utilisé seulement pour préparer la pull request de
+    recalibrage, validée à la main."""
     modifies = []
     for p in proposition.get("propositions", []):
         if not p.get("retenue"):
             continue
         chemin = Path(racine) / p["fichier"]
         texte = chemin.read_text(encoding="utf-8")
+        if p.get("type") == "combinaisons":
+            nouveau = remplacer_tableau(texte, p["chemin"], p["propose"])
+            verif = json.loads(nouveau)
+            for cle in p["chemin"]:
+                verif = verif[cle]
+            if verif != p["propose"]:  # garde-fou : le bon tableau a bien été remplacé
+                raise ValueError(f"{p['fichier']} : tableau {' → '.join(p['chemin'])} mal repéré")
+            if nouveau != texte:
+                chemin.write_text(nouveau, encoding="utf-8")
+                modifies.append(p["fichier"])
+            continue
         changes = {k: v for k, v in p["propose"].items() if p["actuel"].get(k) != v}
         if not changes:
             continue

@@ -56,11 +56,15 @@ def evaluation(cle, nom, etf, force, entree_ok=True, sortie=False, raisons=None)
 def selections(evaluations=None, entreprises=None, matieres=None) -> dict:
     ev = evaluations if evaluations is not None else [evaluation(c, n, e, f, ok, so, r) for c, n, e, f, ok, so, r in PARIS]
     ent = entreprises if entreprises is not None else SELECTION_ENTREPRISES
-    return {"date": "test", "entreprises": {"retenues": [
+    return {"date": "test", "source": "data/backtest/rapport-2026-11.md",
+            "entreprises": {"combinaisons": [{"cle": "goodwill_actif+fcf_yield", "signaux": ["goodwill_actif", "fcf_yield"],
+                                              "libelle": "Goodwill / actif + Rendement du FCF"}], "retenues": [
                 {"id": f"selection-{t}", "type": "entreprises", "ticker": t, "symbole": t, "nom": f"Société {t}", "pays": "US", "secteur": sec,
                  "secteur_nom": sec, "devise": "USD", "combinaisons": ["goodwill_actif+fcf_yield"],
                  "combinaisons_libelles": ["Goodwill / actif + Rendement du FCF"], "score": 90 - i} for i, (t, sec) in enumerate(ent)]},
-            "matieres": {"retenues": matieres if matieres is not None else [
+            "matieres": {"combinaisons": [{"cle": "niveau+positionnement", "signaux": ["niveau", "positionnement"],
+                                           "libelle": "Niveau historique + Positionnement CFTC"}],
+                         "retenues": matieres if matieres is not None else [
                 {"id": "matiere-palladium", "type": "matieres", "cle": "palladium", "nom": "Palladium", "symbole": "PA=F", "texte": "niveau 100e, positionnement 88e"},
                 {"id": "or", "type": "or", "cle": "or", "nom": "Or", "symbole": "GC=F", "texte": "niveau 80e, positionnement 75e"},
                 {"id": "matiere-cacao", "type": "matieres", "cle": "cacao", "nom": "Cacao", "symbole": "CC=F", "texte": "test"}]},

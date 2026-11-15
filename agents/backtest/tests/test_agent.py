@@ -59,7 +59,29 @@ class TestAgent(unittest.TestCase):
         fichiers = {x["fichier"] for x in p["propositions"]}
         self.assertTrue({"agents/pays/config.json", "agents/chef/config.json", "agents/entreprises/config.json"} <= fichiers)
         for x in p["propositions"]:
+            if x.get("type") == "combinaisons":
+                continue
             self.assertAlmostEqual(sum(x["propose"].values()), sum(x["actuel"].values()), places=2)
+
+    def test_entretien_de_la_methode(self):
+        d = json.loads((self.sortie / "resultats.json").read_text(encoding="utf-8"))["donnees"]
+        for nom in ("entreprises", "matieres"):
+            e = d["sections"][nom]["entretien"]
+            self.assertTrue(e["en_service"], nom)
+            for x in e["en_service"]:
+                self.assertIn(x["verdict"], ("Confirmée", "Prometteuse (non significative)", "Non confirmée", "Non évaluable"))
+        du = d["recalibrage"]["du_mois"]
+        self.assertEqual(du["mois"], "2026-11")
+        self.assertTrue(du["texte"].startswith("Recalibrage du mois"))
+        self.assertIn("Recalibrage du mois", d["en_bref"][-1])
+        h = json.loads((self.sortie / "recalibrages.json").read_text(encoding="utf-8"))
+        self.assertEqual([x["mois"] for x in h["donnees"]["historique"]], ["2026-11"])
+        p = json.loads((self.sortie / "proposition-2026-11.json").read_text(encoding="utf-8"))
+        self.assertEqual(p["recalibrage"]["texte"], du["texte"])
+        self.assertEqual(p["a_valider"], du["statut"] == "à valider")
+        texte = (self.sortie / "rapport-2026-11.md").read_text(encoding="utf-8")
+        self.assertIn("Entretien de la méthode", texte)
+        self.assertIn("deux mois", texte)
 
     def test_variations_reference_combinaisons(self):
         d = json.loads((self.sortie / "resultats.json").read_text(encoding="utf-8"))["donnees"]

@@ -1,6 +1,6 @@
 # Backtest des règles de notation — méthode
 
-Objectif : savoir **quels signaux des agents sont réellement prédictifs**, lesquels garder, alléger ou supprimer, et si les règles du chef d'orchestre et du trader tiennent sur 10 à 15 ans d'historique. Le backtest **ne modifie aucun réglage** : il publie un rapport, un écran et une proposition de pondérations, à valider à la main dans une pull request séparée.
+Objectif : savoir **quels signaux des agents sont réellement prédictifs**, lesquels garder, alléger ou supprimer, et si les règles du chef d'orchestre et du trader tiennent sur 10 à 15 ans d'historique. Le backtest **ne modifie aucun réglage** : il publie un rapport, un écran et, chaque mois, une proposition de recalibrage (combinaisons en service chez le chef d'orchestre et le trader, pondérations des agents), à valider à la main dans une pull request (§ 6 bis).
 
 Code : `agents/backtest/` · paramètres : [`config.json`](config.json) · résultats : `data/backtest/` · workflow : `.github/workflows/backtest.yml` (manuel et mensuel).
 
@@ -115,7 +115,25 @@ Non testée : l'hystérésis (règle quotidienne, sans objet en rééquilibrage 
 - Facteur de chaque signal = IC d'apprentissage ÷ 0,05, borné entre 0 et 2, mélangé à parts égales avec 1 (**retrait vers le poids actuel**, contre le sur-ajustement) ; la somme des poids est conservée ; un signal non testé garde son poids.
 - La note recalibrée est comparée à la note actuelle **hors échantillon** ; la proposition n'est **retenue** que si elle améliore à la fois l'IC et l'écart après frais.
 - Fichiers concernés : `agents/pays/config.json` (`ponderations`), `agents/entreprises/config.json` (`ponderations`), `agents/matieres_premieres/config.json` (`familles.*.ponderations`), `agents/chef/config.json` (`poids.pays`, familles reconstituables seulement).
-- Le workflow ouvre une **pull request séparée** (branche `backtest/proposition-AAAA-MM`) avec ces seules valeurs modifiées ; rien n'est fusionné automatiquement. Pour la préparer à la main : `python -m agents.backtest --appliquer-proposition data/backtest/proposition-AAAA-MM.json`.
+- Pas de nouveau réglage d'une section dans les 6 mois qui suivent l'application d'une proposition (`recalibrage.delai_mois`).
+- Les pondérations retenues font partie de la pull request de recalibrage du mois (§ 6 bis) ; rien n'est fusionné automatiquement.
+
+## 6 bis. Entretien de la méthode du chef d'orchestre et du trader (`entretien.py`)
+
+Le backtest mensuel entretient lui-même les combinaisons utilisées par le chef d'orchestre (`agents/chef/config.json` → `selections` → `entreprises` / `matieres` → `combinaisons`, lues par `agents/chef/selections.py`) et donc par l'agent trader, qui prend ses candidats dans ces sélections (`agents/trader/config.json` ne liste aucune combinaison). **Sous validation humaine** :
+
+1. **Comparaison** (dans les lots entreprises et matières premières) : chaque combinaison en service est rejugée hors échantillon avec les règles du rapport (§ 3 quater : écart à l'indice, correction de Holm sur le nombre de combinaisons en service, comparaison au momentum seul) → « Confirmée », « Prometteuse (non significative) », « Non confirmée » ou « Non évaluable » (signal absent du backtest).
+2. **Proposition** : combinaisons à conserver, à retirer, à ajouter, avec trois garde-fous contre le sur-ajustement :
+   - **retrait** seulement si la combinaison est « Non confirmée » **deux mois de suite** (verdict du mois précédent lu dans l'historique ; un mois manquant interrompt la série) ; la dernière combinaison d'une poche est conservée faute de remplaçante ;
+   - **ajout** seulement d'une combinaison du rapport qui **passe le seuil de Bonferroni sur l'apprentissage** (t ≥ seuil corrigé de tous les essais) **et bat l'indice et le momentum seul hors échantillon** ; les combinaisons de variations (non calculées au quotidien par les agents) sont exclues ; **une seule nouvelle combinaison par trimestre** civil, toutes poches confondues (un ajout en attente ou validé dans le trimestre bloque les suivants ; un ajout refusé ne compte pas) ; la candidate au meilleur t d'apprentissage passe d'abord ;
+   - **aucun changement si la proposition n'améliore pas le résultat hors échantillon** : le panier « union » (actif retenu par au moins une combinaison de la poche, équipondéré, mensuel, frais compris) après changement doit battre l'indice de plus que le panier actuel, sans faire moins bien face au momentum seul.
+3. **Pull request** : s'il y a un changement (combinaisons ou pondérations, § 6), le workflow l'applique sur une branche `backtest/proposition-AAAA-MM` (`--appliquer-proposition` : seul le tableau `combinaisons` concerné est réécrit, le reste du fichier est intact) et ouvre automatiquement la pull request « Backtest : recalibrage à valider (AAAA-MM) », décrite en **dix lignes au plus**, en langage simple (`--corps-pull-request`) : ce qui change, pourquoi, effet attendu, limites.
+4. **Sans changement**, pas de pull request : « Recalibrage du mois : rien à modifier » dans le récapitulatif du workflow, dans la dernière ligne de « En bref » et dans l'historique.
+5. **Historique** : `data/backtest/recalibrages.json` (date, rapport, verdicts des combinaisons en service, changement, garde-fous qui ont joué, statut « rien à modifier », « à valider », « validé » ou « non validé », lien de la pull request). Statut « validé » dès que les réglages proposés sont en service (pull request fusionnée) ; une proposition d'un mois passé jamais appliquée devient « non validé ».
+6. **Dernier rapport validé** : le chef d'orchestre publie dans `data/chef.json` → `selections` → `source` le rapport du dernier recalibrage validé (`agents/commun/methode.py`) ; le trader le lit là. Aucun nom de rapport n'est écrit en dur dans les réglages.
+7. **Appli** : alerte « Recalibrage à valider » avec le lien de la pull request (disparaît une fois la pull request fusionnée ou fermée, état lu sur GitHub) ; écran « Backtest » → « Entretien de la méthode » : verdicts du mois et historique des recalibrages (date, changement, validé ou non).
+
+Limites : la seconde moitié de l'historique, qui juge les changements, a déjà servi aux verdicts précédents (ce n'est pas un vrai test sur l'avenir) ; le panier union est un critère simple, non corrigé des essais ; les seuils (deux mois, un ajout par trimestre) se règlent dans `agents/backtest/config.json` → `entretien`.
 
 ## 7. Biais et garde-fous
 
@@ -130,8 +148,8 @@ Le rapport se termine par **« En bref »**, dix lignes au plus en langage simpl
 
 ## 8. Exécution
 
-- Workflow `backtest.yml` : à la main (onglet Actions → « Backtest » → « Run workflow ») et chaque mois (le 3 à 4 h 17 UTC). Lots en parallèle : SEC en 4 tranches (8 requêtes par seconde au plus), pays, matières premières, secteurs ; puis entreprises (comptes des 4 tranches), puis le rapport, commité sur `main`, et la pull request de proposition.
-- Secrets : `SEC_USER_AGENT` (déjà utilisé par l'agent entreprises ; sans lui, le lot entreprises est signalé « non calculé »). Pour la pull request de proposition : réglage du dépôt « Allow GitHub Actions to create and approve pull requests » (Settings → Actions → General).
+- Workflow `backtest.yml` : à la main (onglet Actions → « Backtest » → « Run workflow ») et chaque mois (le 3 à 4 h 17 UTC). Lots en parallèle : SEC en 4 tranches (8 requêtes par seconde au plus), pays, matières premières, secteurs ; puis entreprises (comptes des 4 tranches), puis le rapport, commité sur `main`, et la pull request de recalibrage s'il y a un changement à proposer (son lien est noté dans l'historique, `--noter-pull-request`).
+- Secrets : `SEC_USER_AGENT` (déjà utilisé par l'agent entreprises ; sans lui, le lot entreprises est signalé « non calculé »). Pour la pull request de recalibrage : réglage du dépôt « Allow GitHub Actions to create and approve pull requests » (Settings → Actions → General).
 - Santé : `data/journal/agent-backtest.json` (écran « Santé des agents »).
 
 ```

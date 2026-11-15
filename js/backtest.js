@@ -2,7 +2,10 @@
    Écran « Backtest » (Menu → Suivi) : quels signaux des agents sont réellement
    prédictifs ? Lit data/backtest/resultats.json (agent backtest, mensuel ;
    méthode : agents/backtest/methode.md). Lecture seule : rien n'est modifié
-   automatiquement, les nouvelles pondérations sont proposées dans une pull request.
+   automatiquement. Chaque mois, le backtest entretient la méthode du chef
+   d'orchestre et du trader (combinaisons à conserver, retirer, ajouter) ; un
+   changement passe par une pull request à valider à la main. Historique des
+   recalibrages : data/backtest/recalibrages.json (alerte « Recalibrage à valider »).
    ========================================================================== */
 
 import { el, nombre } from './outils.js';
@@ -44,6 +47,62 @@ export function signe(x, d = 2, unite = '') {
   const s = x > 0 ? '+' : x < 0 ? '−' : '';
   return `${s}${nombre(Math.abs(x), d)}${unite}`;
 }
+
+const DEPOT = 'jcn1996/Plateforme-eco';
+
+/** Historique des recalibrages (le plus récent d'abord) ; [] si absent. */
+export async function chargerRecalibrages() {
+  try {
+    const r = await fetch('data/backtest/recalibrages.json', { cache: 'no-cache' });
+    if (!r.ok) return [];
+    const j = await r.json();
+    return [...(j?.donnees?.historique ?? [])].sort((a, b) => String(b.mois).localeCompare(String(a.mois)));
+  } catch {
+    return [];
+  }
+}
+
+/** Numéro d'une pull request du dépôt d'après son lien ; null sinon. */
+export function numeroPullRequest(url) {
+  const m = /github\.com\/([^/]+\/[^/]+)\/pull\/(\d+)/.exec(String(url ?? ''));
+  return m && m[1] === DEPOT ? Number(m[2]) : null;
+}
+
+/** État d'une pull request sur GitHub (« ouverte », « fusionnée », « fermée ») ; null si inconnu (hors ligne, quota). */
+export async function etatPullRequest(url) {
+  const n = numeroPullRequest(url);
+  if (!n) return null;
+  try {
+    const r = await fetch(`https://api.github.com/repos/${DEPOT}/pulls/${n}`, { headers: { Accept: 'application/vnd.github+json' } });
+    if (!r.ok) return null;
+    const j = await r.json();
+    return j.merged_at ? 'fusionnée' : j.state === 'closed' ? 'fermée' : 'ouverte';
+  } catch {
+    return null;
+  }
+}
+
+/** Statut affiché d'un recalibrage : celui de l'historique, corrigé par l'état de sa pull request s'il est connu
+ *  (fusionnée → validé ; fermée sans fusion → non validé). */
+export function statutRecalibrage(e, etatPR) {
+  if (e?.statut === 'à valider' || e?.statut === 'non validé') {
+    if (etatPR === 'fusionnée') return 'validé';
+    if (etatPR === 'fermée') return 'non validé';
+  }
+  return e?.statut ?? 'n. d.';
+}
+
+/** Alerte « Recalibrage à valider » (avec le lien de la pull request) pour le dernier recalibrage en attente ; null sinon. */
+export function alerteRecalibrage(historique, etats = {}) {
+  const e = (historique ?? []).find((x) => x.pull_request && statutRecalibrage(x, etats[x.pull_request]) === 'à valider');
+  if (!e) return null;
+  return {
+    agent: 'backtest', niveau: 'neutre', heure: '⚙', titre: 'Recalibrage à valider', lien: e.pull_request,
+    texte: `${sansGras(e.texte ?? '').replace(/^Recalibrage du mois à valider : /, '')} (backtest de ${e.mois}). Ouvrir la pull request pour valider ou refuser.`,
+  };
+}
+
+const CLASSE_STATUT = { 'validé': 'bt-verdict--garder', 'à valider': 'bt-verdict--alleger', 'non validé': 'bt-verdict--supprimer' };
 
 export async function chargerBacktest() {
   try {
@@ -260,10 +319,41 @@ function propositions(res) {
         el('td', { class: 'mono' }, `${signe(p.note_actuelle?.ic_verification, 3)} → ${signe(p.note_recalibree?.ic_verification, 3)}`),
         el('td', { class: 'mono' }, `${signe(p.note_actuelle?.ecart_net_verification_pct, 1, ' %')} → ${signe(p.note_recalibree?.ecart_net_verification_pct, 1, ' %')}`),
         el('td', { class: p.retenue ? 'chef-ok' : '' }, p.retenue ? 'oui' : 'non'))))),
-    el('p', { class: 'chef-petit' }, 'Une proposition retenue est ouverte dans une pull request séparée, à valider à la main : aucune pondération n’est modifiée automatiquement.'));
+    el('p', { class: 'chef-petit' }, 'Une proposition retenue est ouverte dans la pull request de recalibrage du mois, à valider à la main : aucune pondération n’est modifiée automatiquement.'));
 }
 
-export function ecranBacktest(res) {
+/** Entretien de la méthode : recalibrage du mois, combinaisons en service rejugées, historique (date, changement, statut). */
+function blocRecalibrage(res, historique, etats) {
+  const du = res.recalibrage?.du_mois;
+  const hist = historique?.length ? historique : (res.recalibrage?.historique ?? []);
+  const service = ['entreprises', 'matieres'].map((k) => [k, res.sections?.[k]?.entretien]).filter(([, e]) => e?.en_service?.length);
+  return el('section', { class: 'bt-section' }, titre('Entretien de la méthode', 'chef d’orchestre et trader, sous validation humaine'),
+    du ? el('p', { class: 'chef-texte' }, el('strong', {}, sansGras(du.texte))) : null,
+    el('p', { class: 'chef-petit' }, 'Chaque mois, les combinaisons en service sont rejugées hors échantillon. Retrait seulement après deux mois « Non confirmée » de suite ; '
+      + 'ajout seulement d’une combinaison qui passe le seuil corrigé des essais sur l’apprentissage et bat l’indice et le momentum seul hors échantillon, une par trimestre au plus ; '
+      + 'aucun changement s’il ne fait pas mieux hors échantillon. Un changement est proposé dans une pull request, appliqué seulement une fois validée.'),
+    service.length ? el('table', { class: 'chef-table' },
+      el('thead', {}, el('tr', {}, ['Combinaison en service', 'Verdict du mois', 'Écart à l’indice', 'Écart au momentum'].map((x) => el('th', {}, x)))),
+      el('tbody', {}, service.flatMap(([, e]) => e.en_service.map((x) => el('tr', {},
+        el('td', {}, x.libelle),
+        el('td', {}, el('span', { class: `bt-verdict ${x.verdict === 'Non évaluable' ? 'bt-verdict--insuffisant' : classeCombinaison(x.verdict)}` }, x.verdict)),
+        el('td', { class: 'mono' }, signe(x.verification?.vs_indice_annuel_pct, 1, ' pt/an')),
+        el('td', { class: 'mono' }, signe(x.verification?.vs_momentum_annuel_pct, 1, ' pt/an'))))))) : null,
+    du?.refus?.length ? el('ul', { class: 'chef-petit' }, du.refus.map((x) => el('li', {}, x))) : null,
+    el('h4', {}, 'Historique des recalibrages'),
+    hist.length ? el('table', { class: 'chef-table' },
+      el('thead', {}, el('tr', {}, ['Date', 'Changement', 'Statut'].map((x) => el('th', {}, x)))),
+      el('tbody', {}, hist.map((e) => {
+        const statut = statutRecalibrage(e, etats?.[e.pull_request]);
+        return el('tr', {},
+          el('td', { class: 'mono' }, e.jour ?? e.mois),
+          el('td', {}, sansGras(e.texte ?? '')),
+          el('td', {}, el('span', { class: `bt-verdict ${CLASSE_STATUT[statut] ?? 'bt-verdict--insuffisant'}` }, statut),
+            e.pull_request ? [' ', el('a', { href: e.pull_request, target: '_blank', rel: 'noopener' }, 'pull request')] : null));
+      }))) : el('p', { class: 'chef-petit' }, 'Aucun recalibrage enregistré.'));
+}
+
+export function ecranBacktest(res, historique = [], etats = {}) {
   const entete = el('header', {},
     el('div', { class: 'fiche-surtitre' }, 'Suivi · agent backtest'),
     el('h2', { class: 'fiche-titre' }, 'Backtest des règles de notation'));
@@ -282,6 +372,7 @@ export function ecranBacktest(res) {
     el('p', { class: 'bt-synthese' }, Object.entries(res.verdicts ?? {}).sort((a, b) => (ORDRE[a[0]] ?? 9) - (ORDRE[b[0]] ?? 9))
       .map(([v, n]) => el('span', { class: `bt-verdict ${classeVerdict(v)}` }, `${v} : ${n}`))),
     ...SECTIONS.filter((k) => res.sections?.[k]).map((k) => section(res.sections[k])),
+    blocRecalibrage(res, historique, etats),
     propositions(res),
     el('section', { class: 'bt-section' }, titre('Non testables', 'faute d’historique gratuit'),
       el('ul', { class: 'chef-texte' }, (res.non_testables ?? []).map((x) => el('li', {}, el('strong', {}, x.signal), ` (${x.agent}) : ${x.raison}.`)))),

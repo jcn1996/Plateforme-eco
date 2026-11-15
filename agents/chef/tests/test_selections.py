@@ -78,6 +78,28 @@ class TestCombinaisons(unittest.TestCase):
         self.assertEqual(set(ids), {"or", "matiere-m8", "matiere-m7"})
 
 
+class TestRapportValide(unittest.TestCase):
+    """Le chef d'orchestre lit le dernier recalibrage validé (data/backtest/recalibrages.json), pas un nom en dur."""
+
+    def test_source_des_selections(self):
+        config = charger_config()
+        with tempfile.TemporaryDirectory() as d:
+            data = Path(d)
+            r = SEL.construire(Ctx(), [], config, data, "2027-01-05")
+            self.assertIsNone(r["source"], "aucun recalibrage validé : pas de rapport de référence")
+            (data / "backtest").mkdir()
+            h = [{"mois": "2026-11", "rapport": "data/backtest/rapport-2026-11.md", "statut": "validé", "pull_request": "https://x/pull/62"},
+                 {"mois": "2026-12", "rapport": "data/backtest/rapport-2026-12.md", "statut": "rien à modifier"},
+                 {"mois": "2027-01", "rapport": "data/backtest/rapport-2027-01.md", "statut": "à valider",
+                  "modifications": [{"fichier": "agents/chef/config.json", "chemin": ["selections", "entreprises", "combinaisons"],
+                                     "type": "combinaisons", "propose": [{"cle": "inconnue"}]}]}]
+            (data / "backtest/recalibrages.json").write_text(json.dumps({"meta": {}, "donnees": {"historique": h}}), encoding="utf-8")
+            r = SEL.construire(Ctx(), [], config, data, "2027-01-05")
+        self.assertEqual(r["source"], "data/backtest/rapport-2026-11.md", "ni « rien à modifier » ni une proposition en attente")
+        self.assertEqual(r["recalibrage_valide"]["pull_request"], "https://x/pull/62")
+        self.assertNotIn("source", config["selections"], "plus de nom de rapport écrit en dur")
+
+
 class TestParisPays(unittest.TestCase):
     def setUp(self):
         self.config = charger_config()

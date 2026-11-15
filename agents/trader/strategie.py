@@ -1,11 +1,11 @@
 """
-Stratégie de l'agent trader (démo), méthode par combinaisons du backtest (règles : regles.md ; rapport :
-data/backtest/rapport-2026-11.md). Aucun ETF monde.
+Stratégie de l'agent trader (démo), méthode par combinaisons du backtest (règles : regles.md ; rapport de référence :
+le dernier recalibrage validé, publié par le chef d'orchestre dans chef.json → selections → source). Aucun ETF monde.
 
 1. Trois poches, 15 lignes au plus, 4 à 8 % par ligne ; le reste en liquidités s'il manque des candidats.
-   - Entreprises (70 à 85 %) : sociétés retenues par les combinaisons « Prometteuse » (sélections du chef d'orchestre),
+   - Entreprises (70 à 85 %) : sociétés retenues par les combinaisons en service (sélections du chef d'orchestre),
      25 % au plus par secteur.
-   - Matières premières (0 à 20 %) : celles retenues par « Niveau historique + Positionnement CFTC ».
+   - Matières premières (0 à 20 %) : celles retenues par les combinaisons de matières premières en service.
    - ETF pays (0 à 15 %, 3 lignes au plus) : paris pays (tendance haussière et saine, valorisation non tendue).
 2. Ni stop ni prise de bénéfices. Vente quand l'actif sort de sa combinaison (vérification mensuelle, au premier
    rééquilibrage du mois) ; un pari pays est vendu dès qu'un excès se déclenche ou que la tendance casse (vérifié à chaque
