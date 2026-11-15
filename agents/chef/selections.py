@@ -1,13 +1,15 @@
 """
-Sélections issues du backtest (data/backtest/rapport-2026-11.md), publiées dans data/chef.json (« selections ») et
-utilisées par l'agent trader et l'écran « Où investir ».
+Sélections issues du backtest, publiées dans data/chef.json (« selections ») et utilisées par l'agent trader et l'écran
+« Où investir ». Rapport de référence : le dernier recalibrage validé (data/backtest/recalibrages.json, voir
+agents/commun/methode.py), jamais un nom de rapport écrit en dur. Les listes de combinaisons (config.json → selections)
+sont entretenues chaque mois par le backtest (agents/backtest/entretien.py), sous validation humaine.
 
-1. Entreprises : sociétés retenues par au moins une des combinaisons « Prometteuse » du rapport. Un actif est retenu par
+1. Entreprises : sociétés retenues par au moins une des combinaisons en service. Un actif est retenu par
    une combinaison s'il est dans les meilleurs 30 % (percentile > 70 dans l'univers) sur CHACUN de ses signaux. Univers :
    celui du backtest (sociétés américaines non financières, hors immobilier et holdings, capitalisation ≥ 2 Md$), notes
    de l'agent entreprises (mêmes barèmes que dans le backtest).
-2. Matières premières : celles retenues par « Niveau historique + Positionnement CFTC » (contrats à terme suivis par
-   l'agent matières premières, sous-notes de l'agent).
+2. Matières premières : celles retenues par les combinaisons en service (au départ « Niveau historique + Positionnement
+   CFTC » ; contrats à terme suivis par l'agent matières premières, sous-notes de l'agent).
 3. Paris pays : ETF pays en tendance haussière et saine (suivi de tendance existant : performance 12 mois hors dernier
    mois positive et cours au-dessus de la moyenne 200 jours, sans excès) dont la valorisation relative n'est pas tendue.
    Sortie dès qu'un critère d'excès du rapport se déclenche (accélération parabolique ≥ 2,5 fois la volatilité mensuelle,
@@ -19,6 +21,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from ..commun import methode as M
 from ..commun.sortie import lire_json
 from .moteur import ent, fr
 
@@ -186,6 +189,9 @@ def paris_pays(pays: list[dict], config: dict, detenus: set[str]) -> dict:
 
 def construire(ctx, pays: list[dict], config: dict, data: Path, jour: str) -> dict:
     cfg = config["selections"]
-    return {"date": jour, "source": cfg["source"], "seuil_percentile": cfg["seuil_percentile"],
+    valide = M.dernier_valide(data)
+    return {"date": jour, "source": valide["rapport"] if valide else None,
+            "recalibrage_valide": {k: valide.get(k) for k in ("mois", "texte", "pull_request", "valide_le")} if valide else None,
+            "seuil_percentile": cfg["seuil_percentile"],
             "methode": cfg["_commentaire"], "entreprises": entreprises(ctx, config), "matieres": matieres(ctx, config),
             "paris_pays": paris_pays(pays, config, symboles_detenus(data)), "mention_pays": cfg["mention_pays"]}

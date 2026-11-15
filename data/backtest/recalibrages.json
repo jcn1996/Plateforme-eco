@@ -1,0 +1,129 @@
+{
+  "meta": {
+    "version": 1,
+    "genere_le": "2026-11-15T09:47:06Z",
+    "source": "agent backtest (entretien de la méthode)",
+    "fictif": false
+  },
+  "donnees": {
+    "historique": [
+      {
+        "mois": "2026-11",
+        "jour": "2026-11-15",
+        "rapport": "data/backtest/rapport-2026-11.md",
+        "verdicts": {},
+        "changements": [
+          {
+            "classe": "entreprises",
+            "action": "ajouter",
+            "cle": "mscore+goodwill_actif",
+            "libelle": "M-score de Beneish + Goodwill / actif",
+            "signaux": [
+              "mscore",
+              "goodwill_actif"
+            ],
+            "raison": "mise en service de la méthode par combinaisons (combinaisons « Prometteuse » du rapport de novembre 2026)"
+          },
+          {
+            "classe": "entreprises",
+            "action": "ajouter",
+            "cle": "goodwill_actif+fcf_yield",
+            "libelle": "Goodwill / actif + Rendement du FCF",
+            "signaux": [
+              "goodwill_actif",
+              "fcf_yield"
+            ],
+            "raison": "mise en service de la méthode par combinaisons (combinaisons « Prometteuse » du rapport de novembre 2026)"
+          },
+          {
+            "classe": "entreprises",
+            "action": "ajouter",
+            "cle": "conversion_cash+goodwill_actif+fcf_yield",
+            "libelle": "Conversion du bénéfice en cash + Goodwill / actif + Rendement du FCF",
+            "signaux": [
+              "conversion_cash",
+              "goodwill_actif",
+              "fcf_yield"
+            ],
+            "raison": "mise en service de la méthode par combinaisons (combinaisons « Prometteuse » du rapport de novembre 2026)"
+          },
+          {
+            "classe": "matieres",
+            "action": "ajouter",
+            "cle": "niveau+positionnement",
+            "libelle": "Niveau historique + Positionnement CFTC",
+            "signaux": [
+              "niveau",
+              "positionnement"
+            ],
+            "raison": "mise en service de la méthode par combinaisons (combinaisons « Prometteuse » du rapport de novembre 2026)"
+          }
+        ],
+        "texte": "Mise en service de la méthode par combinaisons (chef d'orchestre et trader), validée à la main",
+        "refus": [],
+        "effets": {},
+        "modifications": [
+          {
+            "fichier": "agents/chef/config.json",
+            "chemin": [
+              "selections",
+              "entreprises",
+              "combinaisons"
+            ],
+            "type": "combinaisons",
+            "propose": [
+              {
+                "cle": "mscore+goodwill_actif",
+                "signaux": [
+                  "mscore",
+                  "goodwill_actif"
+                ],
+                "libelle": "M-score de Beneish + Goodwill / actif"
+              },
+              {
+                "cle": "goodwill_actif+fcf_yield",
+                "signaux": [
+                  "goodwill_actif",
+                  "fcf_yield"
+                ],
+                "libelle": "Goodwill / actif + Rendement du FCF"
+              },
+              {
+                "cle": "conversion_cash+goodwill_actif+fcf_yield",
+                "signaux": [
+                  "conversion_cash",
+                  "goodwill_actif",
+                  "fcf_yield"
+                ],
+                "libelle": "Conversion du bénéfice en cash + Goodwill / actif + Rendement du FCF"
+              }
+            ]
+          },
+          {
+            "fichier": "agents/chef/config.json",
+            "chemin": [
+              "selections",
+              "matieres",
+              "combinaisons"
+            ],
+            "type": "combinaisons",
+            "propose": [
+              {
+                "cle": "niveau+positionnement",
+                "signaux": [
+                  "niveau",
+                  "positionnement"
+                ],
+                "libelle": "Niveau historique + Positionnement CFTC"
+              }
+            ]
+          }
+        ],
+        "statut": "validé",
+        "pull_request": "https://github.com/jcn1996/Plateforme-eco/pull/62",
+        "valide_le": "2026-11-15"
+      }
+    ],
+    "regle": "Entretien de la méthode du chef d'orchestre et du trader (sous validation humaine)."
+  }
+}

@@ -1,12 +1,14 @@
 # Backtest des règles de notation (sans IA) : quels signaux sont réellement prédictifs ?
 # Méthode : agents/backtest/methode.md. Résultats : data/backtest/ (rapport-AAAA-MM.md, resultats.json pour l'écran
-# « Backtest », proposition-AAAA-MM.json). Aucun réglage d'un agent n'est modifié : une proposition de nouvelles
-# pondérations est ouverte dans une pull request séparée (branche backtest/proposition-AAAA-MM), à valider à la main.
+# « Backtest », proposition-AAAA-MM.json, recalibrages.json). Le backtest entretient la méthode du chef d'orchestre et du
+# trader (agents/backtest/entretien.py) : s'il propose un changement (combinaisons à retirer ou ajouter, pondérations),
+# une pull request le fait (branche backtest/proposition-AAAA-MM), à valider à la main ; sinon, pas de pull request et
+# « Recalibrage du mois : rien à modifier » dans le récapitulatif. Aucun réglage n'est modifié sans cette validation.
 # - chaque mois, le 3 à 4 h 17 UTC (lancé par le planificateur ; ce planning GitHub reste en secours) ;
 # - à la main : onglet Actions → « Backtest » → « Run workflow ».
 # Lots en parallèle (un job GitHub dure 6 h au plus) : comptes SEC en 4 tranches (8 requêtes par seconde au plus),
 # pays, matières premières, secteurs ; puis entreprises (comptes des 4 tranches) ; puis le rapport.
-# Pull request de proposition : le dépôt doit autoriser « Allow GitHub Actions to create and approve pull requests »
+# Pull request de recalibrage : le dépôt doit autoriser « Allow GitHub Actions to create and approve pull requests »
 # (Settings → Actions → General) ; sinon le rapport est publié et l'échec de la pull request est signalé dans le journal.
 name: Backtest
 
@@ -16,7 +18,7 @@ on:
   workflow_dispatch:
     inputs:
       proposition:
-        description: "Ouvrir la pull request de proposition si de nouvelles pondérations sont retenues"
+        description: "Ouvrir la pull request de recalibrage si un changement est proposé (combinaisons ou pondérations)"
         required: false
         default: true
         type: boolean
@@ -172,7 +174,9 @@ jobs:
             done
             [ "$ok" = 1 ] || exit 1
           fi
-      - name: Ouvrir la pull request de proposition (validation manuelle)
+      - name: Ouvrir la pull request de recalibrage (validation manuelle)
+        # Entretien de la méthode : combinaisons du chef d'orchestre et du trader à retirer ou ajouter, et pondérations.
+        # Sans changement, pas de pull request : « Recalibrage du mois : rien à modifier » dans le récapitulatif.
         if: github.event_name == 'schedule' || inputs.proposition
         env:
           GH_TOKEN: ${{ github.token }}
@@ -180,39 +184,37 @@ jobs:
           MOIS=$(date -u +%Y-%m)
           FICHIER="data/backtest/proposition-$MOIS.json"
           if ! python -c "import json,sys; sys.exit(0 if json.load(open('$FICHIER'))['a_valider'] else 1)"; then
-            echo "Aucune nouvelle pondération retenue ce mois-ci : pas de pull request."
+            echo "Recalibrage du mois : rien à modifier" | tee -a "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
           BRANCHE="backtest/proposition-$MOIS"
-          if [ -n "$(gh pr list --head "$BRANCHE" --state open --json number --jq '.[].number')" ]; then
-            echo "Pull request déjà ouverte pour $BRANCHE."
-            exit 0
+          URL=$(gh pr list --head "$BRANCHE" --state open --json url --jq '.[0].url // empty')
+          if [ -z "$URL" ]; then
+            git checkout -B "$BRANCHE" origin/main
+            git pull --rebase origin main || true
+            python -m agents.backtest --appliquer-proposition "$FICHIER"
+            git add agents/pays/config.json agents/entreprises/config.json agents/chef/config.json agents/matieres_premieres/config.json
+            if git diff --cached --quiet; then
+              echo "Recalibrage du mois : réglages déjà à jour" | tee -a "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            git commit -m "Backtest : recalibrage de la méthode ($MOIS)"
+            git push --force-with-lease origin "$BRANCHE"
+            python -m agents.backtest --corps-pull-request "$FICHIER" > corps.md
+            URL=$(gh pr create --base main --head "$BRANCHE" --title "Backtest : recalibrage à valider ($MOIS)" --body-file corps.md)
           fi
-          git checkout -B "$BRANCHE" origin/main
-          git pull --rebase origin main || true
-          python -m agents.backtest --appliquer-proposition "$FICHIER"
-          git add agents/pays/config.json agents/entreprises/config.json agents/chef/config.json agents/matieres_premieres/config.json
-          if git diff --cached --quiet; then
-            echo "Pondérations déjà à jour."
-            exit 0
-          fi
-          git commit -m "Backtest : proposition de pondérations ($MOIS)"
-          git push --force-with-lease origin "$BRANCHE"
-          python - "$FICHIER" > corps.md <<'PY'
-          import json, sys
-          p = json.load(open(sys.argv[1]))
-          print("Proposition de nouvelles pondérations issue du backtest mensuel (`agents/backtest/`). **À valider à la main** : rien n'est fusionné automatiquement.\n")
-          print(f"Rapport complet : `data/backtest/rapport-{p['jour'][:7]}.md` · méthode : `agents/backtest/methode.md`.\n")
-          for x in p["propositions"]:
-              if not x.get("retenue"):
-                  continue
-              print(f"### `{x['fichier']}` — {' → '.join(x['chemin'])}\n")
-              print(f"{x['raison']}.\n")
-              print("| Clé | Actuel | Proposé |\n|---|---|---|")
-              for k, v in x["propose"].items():
-                  if x["actuel"].get(k) != v:
-                      print(f"| {k} | {x['actuel'].get(k)} | {v} |")
-              print()
-          print("Poids réglés sur la première moitié de l'historique seulement, retenus parce qu'ils font mieux sur la seconde (hors échantillon). Biais du survivant et limites : voir le rapport.")
-          PY
-          gh pr create --base main --head "$BRANCHE" --title "Backtest : proposition de pondérations ($MOIS)" --body-file corps.md
+          { echo "Recalibrage du mois : à valider — $URL"; echo; cat corps.md 2>/dev/null || true; } >> "$GITHUB_STEP_SUMMARY"
+          # Lien de la pull request noté dans l'historique (alerte « Recalibrage à valider » de l'appli)
+          git checkout main
+          ok=0
+          for essai in 1 2 3; do
+            git pull --rebase origin main
+            python -m agents.backtest --noter-pull-request "$URL" --mois "$MOIS" || exit 0
+            git add data/backtest/recalibrages.json
+            if git diff --cached --quiet; then ok=1; break; fi
+            git commit -m "Backtest : recalibrage $MOIS à valider"
+            if git push origin HEAD:main; then ok=1; break; fi
+            git reset --hard origin/main
+            sleep $((essai * 5))
+          done
+          [ "$ok" = 1 ] || exit 1

@@ -6,12 +6,12 @@ Paramètres : [`config.json`](config.json) (bloc `methode`). Code : `agent.py` (
 
 ## 1. Méthode par combinaisons du backtest (depuis novembre 2026)
 
-Le backtest des règles de notation (`data/backtest/rapport-2026-11.md`) a montré que les notes et verdicts pays ne sont pas prédictifs et que les stops coûtaient du rendement. La méthode s'appuie désormais sur ce qui a le mieux tenu hors échantillon, sans jamais d'ETF monde :
+Le backtest des règles de notation (rapport de référence : le **dernier recalibrage validé**, publié par le chef d'orchestre dans `chef.json` → `selections` → `source` ; au départ celui de novembre 2026) a montré que les notes et verdicts pays ne sont pas prédictifs et que les stops coûtaient du rendement. La méthode s'appuie désormais sur ce qui a le mieux tenu hors échantillon, sans jamais d'ETF monde :
 
 | Poche | Part du portefeuille | Candidats (sélections du chef d'orchestre, `chef.json` → `selections`) |
 |---|---|---|
-| **Entreprises** | 70 à 85 % | sociétés retenues par une combinaison « Prometteuse » du rapport : M-score de Beneish + goodwill / actif ; goodwill / actif + rendement du FCF ; conversion du bénéfice en cash + goodwill / actif + rendement du FCF (meilleurs 30 % sur chaque signal, univers du backtest : sociétés américaines non financières d'au moins 2 Md$). **25 % au plus par secteur.** |
-| **Matières premières** | 0 à 20 % | celles retenues par « Niveau historique + Positionnement CFTC » (supports cotés : `supports` ; sans support coté, écartée) |
+| **Entreprises** | 70 à 85 % | sociétés retenues par une combinaison en service (au départ : M-score de Beneish + goodwill / actif ; goodwill / actif + rendement du FCF ; conversion du bénéfice en cash + goodwill / actif + rendement du FCF ; meilleurs 30 % sur chaque signal, univers du backtest : sociétés américaines non financières d'au moins 2 Md$). **25 % au plus par secteur.** |
+| **Matières premières** | 0 à 20 % | celles retenues par les combinaisons de matières premières en service (au départ « Niveau historique + Positionnement CFTC » ; supports cotés : `supports` ; sans support coté, écartée) |
 | **ETF pays (« paris pays »)** | 0 à 15 %, 3 lignes au plus | pays en tendance haussière et saine (suivi de tendance du chef d'orchestre : 12 mois hors dernier mois positive, cours au-dessus de la moyenne 200 jours, aucun excès) dont la valorisation relative n'est pas tendue ; les plus forts en premier |
 
 - **15 lignes au plus, 4 à 8 % par ligne** ; le reste en liquidités s'il manque des candidats (petit tampon de 1 % pour les frais).
@@ -20,6 +20,7 @@ Le backtest des règles de notation (`data/backtest/rapport-2026-11.md`) a montr
 - **Ni stop ni prise de bénéfices.** Une ligne est vendue quand elle **sort de sa combinaison**, vérifié **une fois par mois** (premier jour de décision du mois). Les autres jours, la décision se limite à une vérification.
 - **Paris pays** : vendus **dès qu'un excès se déclenche** — accélération parabolique ≥ 2,5 fois la volatilité mensuelle, valorisation au-delà du 70e percentile, positionnement au 90e percentile — **ou que la tendance casse** ; contrôlé à chaque exécution horaire, dès que le chef d'orchestre le signale. Un pari dont une condition d'entrée manque désormais (sans excès ni cassure) est gardé.
 - **Journal des paris pays** (`etat.json` → `paris_pays`, écran « Portefeuille démo ») : date et raison d'entrée, date et raison de sortie, performance du pari et du MSCI World en euros sur la même période, écart.
+- **Combinaisons entretenues par le backtest mensuel** (`agents/backtest/entretien.py`, méthode : `agents/backtest/methode.md` § 6 bis) : retrait d'une combinaison « Non confirmée » deux mois de suite, une nouvelle combinaison par trimestre au plus, aucun changement s'il ne fait pas mieux hors échantillon ; un changement ne s'applique qu'une fois sa pull request validée à la main. Les lignes qui sortent d'une combinaison retirée sont vendues au rééquilibrage mensuel suivant, comme toute sortie de combinaison.
 - **Plancher de liquidités par palier de risque : retiré** (la structure 70-85 % d'entreprises n'est pas compatible avec 20 à 35 % de liquidités en « Tension » ou en « Crise »). Le palier reste lu et affiché.
 
 ## 2. Changement de méthode (transition)

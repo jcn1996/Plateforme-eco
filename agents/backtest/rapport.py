@@ -166,7 +166,48 @@ def resume_simple(res: dict) -> list[str]:
             f"7. **Ne bat pas le momentum seul** : {', '.join(battues[:5]) or 'aucune note'}.",
             f"8. Bilan : {bilan}",
             "9. Prudence : univers actuel (biais du survivant), petits univers pour les pays et les matières, écarts souvent non significatifs.",
-            "10. Rien n'est modifié automatiquement : toute nouvelle pondération passe par une pull request à valider."]
+            f"10. {_ligne_recalibrage(res)}"]
+
+
+def entretien_markdown(res: dict) -> list[str]:
+    """Section « Entretien de la méthode » : combinaisons en service rejugées, candidates, décision du mois."""
+    rc = (res.get("recalibrage") or {}).get("du_mois") or {}
+    L = ["## Entretien de la méthode (chef d'orchestre et trader)", "",
+         "Combinaisons en service (agents/chef/config.json → selections) rejugées hors échantillon avec les règles de ce rapport. "
+         "Garde-fous : retrait seulement après deux mois « Non confirmée » de suite ; ajout seulement si la combinaison passe le seuil "
+         "corrigé des essais sur l'apprentissage et bat l'indice et le momentum seul hors échantillon, une seule par trimestre ; aucun "
+         "changement si le panier proposé (union des combinaisons) ne fait pas mieux hors échantillon.", ""]
+    for nom in ("entreprises", "matieres"):
+        ent = (res["sections"].get(nom) or {}).get("entretien")
+        if not ent:
+            continue
+        L += [f"### {res['sections'][nom]['titre']}", "", "| Combinaison en service | Verdict | Écart à l'indice (hors échantillon) | Écart au momentum seul |",
+              "|---|---|---|---|"]
+        for x in ent["en_service"]:
+            v = x.get("verification") or {}
+            L.append(f"| {x['libelle']} | {x['verdict']} | {n(v.get('vs_indice_annuel_pct'), 1, True, ' pt/an')} "
+                     f"| {n(v.get('vs_momentum_annuel_pct'), 1, True, ' pt/an')} |")
+        c = ent.get("candidat")
+        L += ["", f"Candidate à l'ajout : {c['libelle']} (t d'apprentissage {n(c['t_apprentissage'], 2)}, seuil {n(c['seuil_t'], 2)})." if c
+              else "Candidate à l'ajout : aucune (" + ("; ".join(f"{x['libelle']} : {', '.join(x['raisons'])}" for x in ent.get("ecartees", [])[:3])
+                                                     or "aucune combinaison retenue hors service") + ").", ""]
+    L.append(f"**{rc.get('texte') or RIEN_DEFAUT}**")
+    for c in rc.get("changements") or []:
+        L.append(f"- {c['action']} : {c['libelle']} — {c.get('raison') or ''}")
+    if rc.get("refus"):
+        L += ["", "Non proposé :"] + [f"- {x}" for x in rc["refus"]]
+    return L + [""]
+
+
+RIEN_DEFAUT = "Recalibrage du mois : rien à modifier"
+
+
+def _ligne_recalibrage(res: dict) -> str:
+    """Dernière ligne du résumé : le recalibrage du mois (rien à modifier, ou à valider dans une pull request)."""
+    texte = ((res.get("recalibrage") or {}).get("du_mois") or {}).get("texte")
+    if not texte:
+        return "Rien n'est modifié automatiquement : tout nouveau réglage passe par une pull request à valider."
+    return f"**{texte}**" + ("" if texte.endswith("rien à modifier") else " (pull request à valider ; rien n'est appliqué sans elle)") + "."
 
 
 def conclusions_regles(chef: dict) -> list[str]:
@@ -279,15 +320,18 @@ def rapport_markdown(res: dict, prop: dict) -> str:
           "note recalibrée fait mieux hors échantillon (IC et écart après frais).", "",
           "| Agent | Section | IC hors échantillon actuel → recalibré | Écart après frais actuel → recalibré | Retenue | Raison |", "|---|---|---|---|---|---|"]
     for p in prop["propositions"]:
+        if p.get("type") == "combinaisons":
+            continue
         a, r = p.get("note_actuelle") or {}, p.get("note_recalibree") or {}
         L.append(f"| {p['agent']} | {' → '.join(p['chemin'])} | {n(a.get('ic_verification'), 3, True)} → {n(r.get('ic_verification'), 3, True)} "
                  f"| {n(a.get('ecart_net_verification_pct'), 1, True, ' %')} → {n(r.get('ecart_net_verification_pct'), 1, True, ' %')} "
                  f"| {'oui' if p.get('retenue') else 'non'} | {p.get('raison', '')} |")
     L.append("")
     for p in prop["propositions"]:
-        if p.get("retenue"):
+        if p.get("retenue") and p.get("type") != "combinaisons":
             L.append(f"- `{p['fichier']}` ({' → '.join(p['chemin'])}) : " + ", ".join(
                 f"{k} {p['actuel'].get(k)} → {v}" for k, v in p["propose"].items() if p["actuel"].get(k) != v))
+    L += [""] + entretien_markdown(res)
     L += ["", "## Non testables (faute d'historique)", ""] + [f"- **{x['signal']}** ({x['agent']}) : {x['raison']}." for x in res["non_testables"]]
     L += ["", "## Biais et limites", "",
           "- **Biais du survivant** : l'univers est la liste actuelle (pays suivis, sociétés de l'agent entreprises). Les sociétés "

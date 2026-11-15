@@ -116,6 +116,14 @@
     "mois": [3, 6]
   },
 
+  "entretien": {
+    "_commentaire": "Entretien mensuel de la méthode du chef d'orchestre et du trader (entretien.py) : combinaisons en service (fichier → selections → classe → combinaisons) rejugées. Retrait après mois_consecutifs_retrait mois « Non confirmée » de suite ; ajout d'une combinaison qui passe le seuil de Bonferroni sur l'apprentissage et bat l'indice et le momentum seul hors échantillon, ajouts_par_trimestre au plus ; aucun changement si le panier union ne fait pas mieux hors échantillon. Les variations (préfixes_exclus) ne sont pas calculées au quotidien par les agents : pas d'ajout possible.",
+    "fichier": "agents/chef/config.json",
+    "classes": ["entreprises", "matieres"],
+    "mois_consecutifs_retrait": 2,
+    "ajouts_par_trimestre": 1,
+    "prefixes_exclus": ["var3_", "var6_", "var_"]
+  },
   "combinaisons": {
     "_commentaire": "Paires et triplets de signaux « Garder » ou « Alléger » (IC d'apprentissage positif, au plus signaux_max candidats : au plus C(n,2) + C(n,3) essais). Actif retenu s'il est au-delà du percentile seuil_percentile sur chaque signal. Classement sur l'apprentissage seulement (t de l'écart à l'indice, au moins mois_min_apprentissage mois et des actifs retenus au moins mois_actifs_min_pct % des mois) ; seuil de Bonferroni sur le nombre d'essais ; les retenues_max meilleures jugées hors échantillon, correction de Holm. « Confirmée » : p corrigée < alpha, écart positif face à l'indice et au momentum seul.",
     "signaux_max": 8,

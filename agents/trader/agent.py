@@ -159,13 +159,13 @@ def decider(f, etat: dict, chef: dict, palier: str, valo: dict, operations: list
               f"{len(ventes)} vente(s) et {len(achats)} achat(s) à exécuter au premier cours disponible"
               + (f" ; {len(annules)} ordre(s) non exécuté(s) remplacé(s)." if annules else "."))
     if transition:
-        etat["methode"] = {"version": cm["version"], "libelle": cm["libelle"], "depuis": jour, "rapport": cm["rapport"]}
+        etat["methode"] = {"version": cm["version"], "libelle": cm["libelle"], "depuis": jour, "rapport": rapport_valide(chef)}
         etat.setdefault("changements_methode", []).append({
             "date": jour, "version": cm["version"], "libelle": cm["libelle"],
-            "texte": (f"Nouvelle méthode : {cm['libelle']} ({cm['rapport']}). Lignes qui ne respectent pas ses règles vendues "
+            "texte": (f"Nouvelle méthode : {cm['libelle']} ({rapport_valide(chef)}). Lignes qui ne respectent pas ses règles vendues "
                       f"({len(ventes)} ordre(s) de vente), chacune avec sa raison ; historique de performance conservé.")})
     etat["dernier_reequilibrage"] = mois
-    donner_tort = ["Les combinaisons retenues sont « Prometteuses » mais non significatives dans le backtest : leur avantage peut disparaître.",
+    donner_tort = ["Les combinaisons en service ne sont pas significatives après correction des essais multiples dans le backtest (verdict « Prometteuse ») : leur avantage peut disparaître.",
                    "Biais du survivant : le backtest des entreprises porte sur l'univers actuel, corrigé mais pas annulé (sociétés d'au moins 2 Md$ à chaque date).",
                    "Ni stop ni prise de bénéfices : une forte baisse entre deux vérifications mensuelles est subie jusqu'au rééquilibrage suivant."]
     decision = {"date": jour, "le": iso(maintenant), "type": "changement de méthode" if transition else "rééquilibrage mensuel", "palier": palier,
@@ -273,14 +273,25 @@ def position_publique(p: dict, noms_pays: dict) -> dict:
             "ouverte_le": p.get("ouverte_le"), "contango": p.get("contango", False)}
 
 
-def regles_publiees(config: dict) -> list[str]:
+def rapport_valide(chef: dict | None) -> str:
+    """Rapport de backtest de référence : le dernier recalibrage validé, publié par le chef d'orchestre (jamais en dur)."""
+    return ((chef or {}).get("selections") or {}).get("source") or "dernier rapport validé introuvable"
+
+
+def libelles_combinaisons(chef: dict | None, classe: str) -> str:
+    combis = (((chef or {}).get("selections") or {}).get(classe) or {}).get("combinaisons") or []
+    return " ; ".join(c.get("libelle") or c.get("cle") for c in combis) or "aucune combinaison en service"
+
+
+def regles_publiees(config: dict, chef: dict | None = None) -> list[str]:
     cm = config["methode"]
-    return [f"{cm['libelle']} ({cm['rapport']}) : {cm['max_lignes']} lignes au plus, {cm['ligne_min']} à {cm['ligne_max']} % par ligne, sans ETF monde ; "
+    return [f"{cm['libelle']} (rapport de référence : {rapport_valide(chef)}, dernier recalibrage validé) : {cm['max_lignes']} lignes au plus, {cm['ligne_min']} à {cm['ligne_max']} % par ligne, sans ETF monde ; "
             "le reste en liquidités s'il manque des candidats.",
-            f"Entreprises ({cm['entreprises']['min_pct']} à {cm['entreprises']['max_pct']} %) : sociétés retenues par les combinaisons « Prometteuse » du "
-            "backtest (M-score + goodwill / actif ; goodwill / actif + rendement du FCF ; conversion en cash + goodwill / actif + rendement du FCF), "
-            f"{cm['entreprises']['max_secteur_pct']} % au plus par secteur.",
-            f"Matières premières (0 à {cm['matieres']['max_pct']} %) : celles retenues par « Niveau historique + Positionnement CFTC ».",
+            f"Entreprises ({cm['entreprises']['min_pct']} à {cm['entreprises']['max_pct']} %) : sociétés retenues par les combinaisons en service "
+            f"({libelles_combinaisons(chef, 'entreprises')}), {cm['entreprises']['max_secteur_pct']} % au plus par secteur.",
+            f"Matières premières (0 à {cm['matieres']['max_pct']} %) : celles retenues par {libelles_combinaisons(chef, 'matieres')}.",
+            "Combinaisons entretenues chaque mois par le backtest (retrait après deux mois « Non confirmée », un ajout par trimestre au plus), "
+            "appliquées seulement après validation humaine de la pull request de recalibrage.",
             f"ETF pays (0 à {cm['pays']['max_pct']} %, {cm['pays']['max_lignes']} lignes au plus) : paris pays — tendance haussière et saine, valorisation "
             "non tendue ; sortie dès qu'un excès se déclenche (parabolique ≥ 2,5, valorisation ≥ 70e percentile, positionnement ≥ 90e) ou que la tendance casse. "
             "Chaque pari est journalisé (entrée, sortie, performance contre le MSCI World).",
@@ -320,7 +331,7 @@ def sortie(etat: dict, valo: dict, stats: dict, operations: list, chef: dict | N
         "derniere_decision": etat.get("derniere_decision"), "derniere_verification": etat.get("derniere_verification"), "historique": hist,
         "paris_pays": list(reversed(etat.get("paris_pays") or [])),
         "cours_manquants": valo.get("manquants", []),
-        "regles": regles_publiees(config),
+        "regles": regles_publiees(config, chef),
         "mention": config["mention"],
     }
 

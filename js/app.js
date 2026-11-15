@@ -36,7 +36,7 @@ import { initialiserMenu } from './menu.js';
 import {
   chargerChef, initialiserSynthese, ecranInvestir, ecranFiabiliteChef, chargerSuiviChef, METRIQUE_ATTRACTIVITE, lireAttractivite, ONGLETS_INVESTIR,
 } from './chef.js';
-import { ecranBacktest, chargerBacktest } from './backtest.js';
+import { ecranBacktest, chargerBacktest, chargerRecalibrages, etatPullRequest, alerteRecalibrage } from './backtest.js';
 import { ecranObservation, chargerObservation } from './observation.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -90,6 +90,8 @@ let pepites = null; // pépites candidates de l'agent entreprises (data/pepites.
 let chef = null; // chef d'orchestre (data/chef.json), ou null
 let suiviChef; // suivi de performance du chef d'orchestre : undefined = pas encore lu
 let backtest; // résultats du backtest des règles (data/backtest/resultats.json) : undefined = pas encore lu
+let recalibrages = []; // historique des recalibrages de la méthode (data/backtest/recalibrages.json)
+const etatsPR = {}; // état sur GitHub des pull requests de recalibrage en attente (lien → « ouverte », « fusionnée », « fermée »)
 let observation; // signaux en observation (data/observation.json) : undefined = pas encore lu
 let analyses = { liste: [] }; // analyses à la demande (data/analyses/index.json)
 let enCours; // demandes d'analyse en cours (issues ouvertes) : undefined = pas encore lues, null = GitHub injoignable
@@ -182,6 +184,7 @@ async function demarrer() {
   );
   alertes.definirChef(chef);
   majAlertes(); // alertes des agents + mes alertes (règles vérifiées à chaque chargement)
+  suivreRecalibrages(); // alerte « Recalibrage à valider » (backtest mensuel)
   initialiserComparateur(d, { barre: dom.barreComparaison, ouvrir: () => naviguer({ type: 'comparaison' }) });
 
   // Filtres : ce que représentent les couleurs du globe (choix mémorisé)
@@ -333,7 +336,20 @@ function objetMetrique(cle) {
 
 /** Bandeau des alertes : « Qualité des données » et mes alertes en tête, puis celles des agents. */
 function majAlertes() {
-  alertes.afficher(d.alertes, evaluerRegles(d), alertesQualite());
+  const recal = alerteRecalibrage(recalibrages, etatsPR);
+  alertes.afficher(recal ? [{ ...recal, rang: 0 }, ...d.alertes] : d.alertes, evaluerRegles(d), alertesQualite());
+}
+
+/** Historique des recalibrages ; état des pull requests en attente vérifié sur GitHub (fusionnée → plus d'alerte). */
+async function suivreRecalibrages() {
+  recalibrages = await chargerRecalibrages();
+  majAlertes();
+  const enAttente = recalibrages.filter((e) => e.pull_request && (e.statut === 'à valider' || e.statut === 'non validé')).slice(0, 3);
+  for (const e of enAttente) etatsPR[e.pull_request] = await etatPullRequest(e.pull_request);
+  if (enAttente.length) {
+    majAlertes();
+    if (routeActuelle.type === 'backtest' && backtest !== undefined) $('#backtest-contenu').replaceChildren(...ecranBacktest(backtest, recalibrages, etatsPR).filter(Boolean));
+  }
 }
 
 /** Pays dont plus d'un tiers des sources ont échoué lors de la dernière exécution de l'agent pays. */
@@ -658,7 +674,7 @@ function afficher(route) {
     fiabilite: { section: '#ecran-fiabilite', contenu: '#fiabilite-contenu', titre: 'Fiabilité des recommandations', rendu: () => ecranFiabilite(recommandations, navigateurPanneau) },
     investir: { section: '#ecran-investir', contenu: '#investir-contenu', titre: 'Où investir', rendu: () => ecranInvestir(chef, navigateurPanneau, route.id) },
     'fiabilite-chef': { section: '#ecran-fiabilite-chef', contenu: '#fiabilite-chef-contenu', titre: 'Fiabilité du chef d’orchestre', rendu: () => ecranFiabiliteChef(suiviChef, navigateurPanneau) },
-    backtest: { section: '#ecran-backtest', contenu: '#backtest-contenu', titre: 'Backtest', rendu: () => ecranBacktest(backtest) },
+    backtest: { section: '#ecran-backtest', contenu: '#backtest-contenu', titre: 'Backtest', rendu: () => ecranBacktest(backtest, recalibrages, etatsPR) },
     observation: { section: '#ecran-observation', contenu: '#observation-contenu', titre: 'Signaux en observation', rendu: () => ecranObservation(observation, navigateurPanneau) },
   };
   // Données lues à l'ouverture de l'écran, puis nouveau rendu s'il est toujours affiché
@@ -705,7 +721,7 @@ function afficher(route) {
   if (route.type === 'backtest' && backtest === undefined) {
     chargerBacktest().then((r) => {
       backtest = r;
-      if (routeActuelle.type === 'backtest') $('#backtest-contenu').replaceChildren(...ecranBacktest(backtest).filter(Boolean));
+      if (routeActuelle.type === 'backtest') $('#backtest-contenu').replaceChildren(...ecranBacktest(backtest, recalibrages, etatsPR).filter(Boolean));
     });
   }
   if (route.type === 'observation' && observation === undefined) {

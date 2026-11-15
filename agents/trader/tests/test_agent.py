@@ -104,6 +104,13 @@ class TestDecision(BaseTrader):
             self.assertTrue(o["donner_tort"])
         self.assertEqual(r["etat"]["methode"]["version"], cm["version"])
         self.assertEqual(r["etat"]["changements_methode"][0]["date"], "2026-11-09")
+        # rapport de référence : le dernier recalibrage validé publié par le chef d'orchestre (jamais en dur dans les réglages)
+        self.assertNotIn("rapport", cm)
+        self.assertEqual(r["etat"]["methode"]["rapport"], "data/backtest/rapport-2026-11.md")
+        regles = " ".join(lire(self.data / "portefeuille.json")["donnees"]["regles"])
+        self.assertIn("data/backtest/rapport-2026-11.md", regles)
+        self.assertIn("Goodwill / actif + Rendement du FCF", regles, "combinaisons en service lues dans les sélections du chef")
+        self.assertIn("Niveau historique + Positionnement CFTC", regles)
         pf = lire(self.data / "portefeuille.json")["donnees"]
         self.assertEqual(pf["changements_methode"][0]["date"], "2026-11-09")
         self.assertEqual(pf["mention"], "Portefeuille fictif à but de démonstration, aucun ordre réel.")

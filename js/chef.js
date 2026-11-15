@@ -36,7 +36,7 @@ export function paysSansClassement(lignes) {
 const TYPES = { pays: 'Actions · pays', secteurs: 'Secteur', matieres: 'Matière première', or: 'Or · valeur refuge', obligations: 'Obligations', liquidites: 'Liquidités', entreprises: 'Entreprise' };
 const AGENTS = {
   pays: 'Agent pays', macro: 'Agent macro', entreprises: 'Agent entreprises', geopolitique: 'Agent géopolitique', risque: 'Agent risque',
-  matieres_premieres: 'Matières premières', inities: 'Agent initiés', chef: 'Chef d’orchestre',
+  matieres_premieres: 'Matières premières', inities: 'Agent initiés', chef: 'Chef d’orchestre', backtest: 'Backtest',
 };
 
 /** Charge data/chef.json ; null si absent (l'appli continue). */
@@ -129,9 +129,10 @@ export function initialiserSynthese({ bouton, liste, compte, apercu, titre }, pa
   function ligneAlerte(a) {
     const prefixe = a.qualite ? el('span', { class: 'badge-qualite' }, 'Qualité des données')
       : a.perso ? el('span', { class: 'badge-mon-alerte' }, 'Mon alerte') : el('span', {}, AGENTS[a.agent] ?? a.agent);
-    return el('li', {}, el('button', {
-      class: `alerte ${classeNote(NOTE_NIVEAU[a.niveau] ?? 57)}${a.perso ? ' alerte--perso' : ''}${a.qualite ? ' alerte--qualite' : ''}`,
-      type: 'button', onclick: () => aller(a.route ?? (a.pays ? { type: 'pays', id: a.pays } : { type: 'investir' })),
+    const classe = `alerte ${classeNote(NOTE_NIVEAU[a.niveau] ?? 57)}${a.perso ? ' alerte--perso' : ''}${a.qualite ? ' alerte--qualite' : ''}`;
+    // Alerte avec lien externe (ex. « Recalibrage à valider » → pull request) : un vrai lien, ouvert dans un nouvel onglet
+    return el('li', {}, el(a.lien ? 'a' : 'button', a.lien ? { class: classe, href: a.lien, target: '_blank', rel: 'noopener' } : {
+      class: classe, type: 'button', onclick: () => aller(a.route ?? (a.pays ? { type: 'pays', id: a.pays } : { type: 'investir' })),
     },
     el('span', { class: 'alerte-heure mono' }, a.heure ?? ''),
     el('span', { class: 'alerte-entete' }, prefixe, a.pays && !a.perso ? ['·', paysParCode.get(a.pays)?.nom ?? a.pays] : null),

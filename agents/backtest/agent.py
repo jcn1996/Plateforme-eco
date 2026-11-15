@@ -6,11 +6,15 @@ Backtest des règles de notation (méthode : agents/backtest/methode.md).
     python -m agents.backtest --lot sec --tranche 0/4 # téléchargement SEC d'une tranche (workflow, en parallèle)
     python -m agents.backtest --lot rapport           # assemble les lots déjà calculés
     python -m agents.backtest --test --sortie /tmp/bt # données synthétiques, sans réseau
-    python -m agents.backtest --appliquer-proposition data/backtest/proposition-2026-11.json
+    python -m agents.backtest --appliquer-proposition data/backtest/proposition-AAAA-MM.json
+    python -m agents.backtest --corps-pull-request data/backtest/proposition-AAAA-MM.json
+    python -m agents.backtest --noter-pull-request URL --mois AAAA-MM
 
 Résultats : data/backtest/resultats.json (écran « Backtest »), data/backtest/rapport-AAAA-MM.md,
-data/backtest/proposition-AAAA-MM.json. Aucun réglage d'un autre agent n'est modifié, sauf par
---appliquer-proposition, utilisé seulement pour préparer la pull request séparée de proposition.
+data/backtest/proposition-AAAA-MM.json, data/backtest/recalibrages.json (historique des recalibrages). Chaque mois,
+les combinaisons en service chez le chef d'orchestre (et donc le trader) sont rejugées (entretien.py). Aucun réglage
+d'un autre agent n'est modifié, sauf par --appliquer-proposition, utilisé seulement pour préparer la pull request de
+recalibrage, validée à la main.
 """
 from __future__ import annotations
 
@@ -22,11 +26,13 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from ..commun import methode as M
 from ..commun import sante
 from ..commun.journal import journal
 from ..commun.sortie import ecrire_json, enveloppe, lire_json
 from . import donnees as D
 from . import entreprises as E
+from . import entretien as EN
 from . import matieres as MT
 from . import pays as P
 from . import combinaisons as CB
@@ -121,6 +127,19 @@ def avec_reference(lot: dict, nom: str, cfg: dict, sep, masque=None) -> dict:
     """Ajoute au lot la référence « momentum seul » (meilleurs 20 % sur 12 mois hors dernier mois, frais compris)."""
     lot["reference"] = RF.reference_momentum(lot["prix"], lot.get("indice"), cfg["quantile"], cfg["frais"][nom], sep, masque)
     return lot["reference"]["resume"]
+
+
+def entretenir(c: dict, nom: str, signaux: dict, combis: dict, res: dict, lot: dict, sep) -> dict | None:
+    """Combinaisons en service chez le chef d'orchestre rejugées avec ce rapport (entretien.py). Un échec est signalé
+    sans empêcher le lot."""
+    cfg = c["bt"]
+    try:
+        return EN.evaluer_lot(c["chef"]["selections"][nom]["combinaisons"], combis, signaux, lot["prix"], lot.get("indice"),
+                              lot["reference"]["serie"], cfg["frais"][nom], sep, cfg["combinaisons"], cfg["entretien"],
+                              {k: v.get("libelle", k) for k, v in res.items()})
+    except Exception as e:  # noqa: BLE001
+        LOG.exception("entretien des combinaisons (%s) en échec : %s", nom, e)
+        return None
 
 
 def combiner_signaux(signaux: dict, res: dict, lot: dict, nom: str, cfg: dict, sep) -> dict:
@@ -234,6 +253,7 @@ def lot_entreprises(f, c: dict, racine: Path, test: bool, regimes) -> dict | Non
     signaux = dict(lot["notes"]) | var | {"note_globale": lot["note_globale"], "note_globale_brute": lot["note_globale_brute"]}
     res = analyser(signaux, lot, "entreprises", cfg, regimes, sep)
     combis = combiner_signaux(dict(lot["notes"]) | var, res, lot, "entreprises", cfg, sep)
+    entretien = entretenir(c, "entreprises", dict(lot["notes"]) | var, combis, res, lot, sep)
     from ..entreprises import analyse as A
     poids = {k: v for k, v in c["entreprises"]["ponderations"].items() if not k.startswith("_")}
     couverture = c["entreprises"]["analyse_financiere"].get("couverture_sur")
@@ -256,7 +276,7 @@ def lot_entreprises(f, c: dict, racine: Path, test: bool, regimes) -> dict | Non
     return {"entreprises": {"titre": TITRES["entreprises"], "periode": _periode(lot), "separation": _iso(sep), "signaux": res,
                             "horizon_reference": cfg["horizon_reference"]["entreprises"], "indice": cfg["entreprises"]["indice_reference"],
                             "regles": {"stops": st}, "biais_survivant": lot.get("biais_survivant"),
-                            "reference_momentum": ref, "combinaisons": combis},
+                            "reference_momentum": ref, "combinaisons": combis, "entretien": entretien},
             "_propositions": [prop]}
 
 
@@ -268,6 +288,7 @@ def lot_matieres(f, c: dict, racine: Path, test: bool, regimes) -> dict:
     var = lot.get("variations") or {}
     res = analyser(dict(lot["notes"]) | var | {"note_globale": lot["note_globale"]}, lot, "matieres", cfg, regimes, sep)
     combis = combiner_signaux(dict(lot["notes"]) | var, res, lot, "matieres", cfg, sep)
+    entretien = entretenir(c, "matieres", dict(lot["notes"]) | var, combis, res, lot, sep)
     familles = {m["cle"]: m["famille"] for m in c["mp"]["matieres"]}
     from ..matieres_premieres import analyse as MA
     props = []
@@ -300,7 +321,7 @@ def lot_matieres(f, c: dict, racine: Path, test: bool, regimes) -> dict:
                           "note_recalibree": _resume_note(r["recalibree"])})
     return {"matieres": {"titre": TITRES["matieres"], "periode": _periode(lot), "separation": _iso(sep), "signaux": res,
                          "horizon_reference": cfg["horizon_reference"]["matieres"], "indice": "moyenne équipondérée de l'univers",
-                         "reference_momentum": ref, "combinaisons": combis},
+                         "reference_momentum": ref, "combinaisons": combis, "entretien": entretien},
             "_propositions": props}
 
 
@@ -360,6 +381,11 @@ def assembler(lots: dict[str, dict], c: dict, sources: dict, jour: str, test: bo
     return resultats, proposition
 
 
+def ecrire_historique(sortie: Path, historique: list[dict], fictif: bool) -> None:
+    ecrire_json(sortie / "recalibrages.json", enveloppe({"historique": historique, "regle": EN.__doc__.strip().splitlines()[0]},
+                                                        "agent backtest (entretien de la méthode)", fictif=fictif))
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="Backtest des règles de notation")
     ap.add_argument("--lot", default="tout", choices=("tout", "rapport", "sec") + LOTS)
@@ -371,12 +397,26 @@ def main(argv=None) -> int:
     ap.add_argument("--cache", default=str(D.CACHE))
     ap.add_argument("--journal", help="journal de santé (défaut : data/journal/agent-backtest.json ; aucun en mode test)")
     ap.add_argument("--date", help="AAAA-MM-JJ (nom du rapport)")
-    ap.add_argument("--appliquer-proposition", help="écrit les pondérations retenues d'une proposition dans les configs des agents")
+    ap.add_argument("--appliquer-proposition", help="écrit les réglages retenus d'une proposition dans les configs des agents")
+    ap.add_argument("--corps-pull-request", help="description (dix lignes au plus) de la pull request d'une proposition")
+    ap.add_argument("--noter-pull-request", help="lien de la pull request de recalibrage du mois (--mois), noté dans l'historique")
+    ap.add_argument("--mois", help="AAAA-MM (avec --noter-pull-request)")
     a = ap.parse_args(argv)
     racine = Path(a.racine)
+    sortie = Path(a.sortie) if a.sortie else racine / "data" / "backtest"
     if a.appliquer_proposition:
         modifies = RC.appliquer(json.loads(Path(a.appliquer_proposition).read_text(encoding="utf-8")), racine)
-        print("\n".join(modifies) if modifies else "aucune pondération à modifier")
+        print("\n".join(modifies) if modifies else "aucun réglage à modifier")
+        return 0
+    if a.corps_pull_request:
+        print(EN.corps_pull_request(json.loads(Path(a.corps_pull_request).read_text(encoding="utf-8"))), end="")
+        return 0
+    if a.noter_pull_request:
+        historique = M.lire_historique(sortie / "recalibrages.json")
+        if not EN.noter_pull_request(historique, a.mois or datetime.now(timezone.utc).strftime("%Y-%m"), a.noter_pull_request):
+            print("aucun recalibrage à valider ce mois-ci")
+            return 1
+        ecrire_historique(sortie, historique, False)
         return 0
     c = lire_configs(racine)
     if a.test:
@@ -384,7 +424,6 @@ def main(argv=None) -> int:
         c["bt"]["verdicts"]["actifs_min"] = 5
         c["bt"]["entreprises"]["capitalisation_min_usd"] = 0  # sociétés fictives : capitalisations sans échelle réelle
     jour = a.date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    sortie = Path(a.sortie) if a.sortie else racine / "data" / "backtest"
     dossier_lots = Path(a.lots) if a.lots else (sortie / "lots" if a.test else Path(a.cache) / "lots")
     f = D.FournisseurTest() if a.test else D.FournisseurReel(Path(a.cache))
     if a.lot == "sec":
@@ -433,10 +472,23 @@ def main(argv=None) -> int:
         if x:
             anciennes.append((fichier.stem.replace("proposition-", ""), x))
     RC.bloquer_recalibrages_rapproches(proposition["propositions"], anciennes, jour[:7], c["bt"]["recalibrage"].get("delai_mois", 6))
-    proposition["a_valider"] = any(p.get("retenue") for p in proposition["propositions"])
-    resultats["propositions"] = [{k: v for k, v in p.items() if k != "detail"} | {"detail": p.get("detail")} for p in proposition["propositions"]]
-    from .rapport import rapport_markdown
     mois = jour[:7]
+    # Entretien de la méthode du chef d'orchestre et du trader : combinaisons à conserver, retirer, ajouter
+    historique = M.lire_historique(sortie / "recalibrages.json")
+    EN.mettre_a_jour_statuts(historique, racine, jour)
+    decision = EN.decider(resultats["sections"], historique, mois, c["chef"]["selections"], c["bt"]["entretien"])
+    ponderations = [p for p in proposition["propositions"] if p.get("retenue")]
+    ligne = EN.entree(jour, decision, ponderations, f"data/backtest/rapport-{mois}.md")
+    historique = EN.enregistrer(historique, ligne)
+    proposition["propositions"] += decision["modifications"]
+    proposition["recalibrage"] = {k: ligne[k] for k in ("texte", "changements", "refus", "effets")} | {"verdicts": decision["verdicts"]}
+    proposition["a_valider"] = any(p.get("retenue") for p in proposition["propositions"])
+    resultats["propositions"] = [{k: v for k, v in p.items() if k != "detail"} | {"detail": p.get("detail")} for p in proposition["propositions"]
+                                 if p.get("type") != "combinaisons"]
+    resultats["recalibrage"] = {"du_mois": ligne, "historique": list(reversed(historique))}
+    from .rapport import rapport_markdown, resume_simple
+    resultats["en_bref"] = [l for l in resume_simple(resultats)[2:] if l]
+    ecrire_historique(sortie, historique, a.test)
     ecrire_json(sortie / "resultats.json", enveloppe(resultats, "agent backtest (données historiques gratuites)", fictif=a.test,
                                                      rapport=f"data/backtest/rapport-{mois}.md", proposition=f"data/backtest/proposition-{mois}.json"))
     ecrire_json(sortie / f"proposition-{mois}.json", proposition)

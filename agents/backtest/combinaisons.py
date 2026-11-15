@@ -86,6 +86,39 @@ def evaluer(masque: pd.DataFrame, prix: pd.DataFrame, indice: pd.Series | None, 
             "cible_verification": {str(h): _cible(masque, prix, indice, h, ver) for h in (3, 6)} if ver else {}}
 
 
+def juger(essais: list[dict], alpha: float, libelles: dict) -> list[dict]:
+    """Verdict hors échantillon de combinaisons déjà choisies (sans regarder la suite) : p unilatérale de l'écart à
+    l'indice sur la vérification, correction de Holm sur leur nombre. « Confirmée » : significative après correction ET
+    positive face à l'indice et au momentum seul ; « Prometteuse » : positive face à l'indice ; sinon « Non confirmée ».
+    Chaque essai : {"signaux", "ev" (evaluer), "t_app"}."""
+    for e in essais:
+        v = e["ev"]["comparaison"].get("verification", {})
+        e["p"] = RF.p_unilaterale(v.get("t_vs_indice"))
+    ordre = sorted(range(len(essais)), key=lambda i: essais[i]["p"] if essais[i]["p"] is not None else 1.0)
+    k = len(essais)
+    maxi = 0.0
+    for rang, i in enumerate(ordre):
+        p = essais[i]["p"] if essais[i]["p"] is not None else 1.0
+        maxi = max(maxi, min(1.0, p * (k - rang)))
+        essais[i]["p_holm"] = maxi
+    sortie = []
+    for e in essais:
+        v = e["ev"]["comparaison"].get("verification", {})
+        vi, vm = v.get("vs_indice_annuel_pct"), v.get("vs_momentum_annuel_pct")
+        if (e["p_holm"] < alpha) and (vi or 0) > 0 and (vm is None or vm > 0):
+            verdict = "Confirmée"
+        elif (vi or 0) > 0:
+            verdict = "Prometteuse (non significative)"
+        else:
+            verdict = "Non confirmée"
+        sortie.append({"signaux": e["signaux"], "libelle": " + ".join(libelles.get(s, s) for s in e["signaux"]),
+                       "verdict": verdict, "t_apprentissage": e["t_app"], "p_verification": S._r(e["p"], 4),
+                       "p_holm": S._r(e["p_holm"], 4), "comparaison": e["ev"]["comparaison"],
+                       "taille_moyenne": e["ev"]["taille_moyenne"], "mois_avec_actifs_pct": e["ev"]["mois_avec_actifs_pct"],
+                       "cible": e["ev"]["cible"], "cible_verification": e["ev"]["cible_verification"]})
+    return sortie
+
+
 def tester(signaux: dict[str, pd.DataFrame], resultats: dict[str, dict], prix: pd.DataFrame, indice: pd.Series | None,
            momentum_r: pd.Series | None, frais_pct: float, separation, cfg: dict, libelles: dict) -> dict:
     cfg = {k: v for k, v in cfg.items() if not k.startswith("_")}
@@ -107,32 +140,7 @@ def tester(signaux: dict[str, pd.DataFrame], resultats: dict[str, dict], prix: p
                and e["ev"]["mois_avec_actifs_pct"] and e["ev"]["mois_avec_actifs_pct"] >= cfg["mois_actifs_min_pct"]]
     valides.sort(key=lambda e: e["t_app"], reverse=True)
     retenues = [e for e in valides if e["t_app"] > 0][:cfg["retenues_max"]]
-    # Hors échantillon : p unilatérale de l'écart à l'indice, correction de Holm sur les combinaisons retenues
-    for e in retenues:
-        v = e["ev"]["comparaison"].get("verification", {})
-        e["p"] = RF.p_unilaterale(v.get("t_vs_indice"))
-    ordre = sorted(range(len(retenues)), key=lambda i: retenues[i]["p"] if retenues[i]["p"] is not None else 1.0)
-    k = len(retenues)
-    maxi = 0.0
-    for rang, i in enumerate(ordre):
-        p = retenues[i]["p"] if retenues[i]["p"] is not None else 1.0
-        maxi = max(maxi, min(1.0, p * (k - rang)))
-        retenues[i]["p_holm"] = maxi
-    sortie = []
-    for e in retenues:
-        v = e["ev"]["comparaison"].get("verification", {})
-        vi, vm = v.get("vs_indice_annuel_pct"), v.get("vs_momentum_annuel_pct")
-        if (e["p_holm"] < alpha) and (vi or 0) > 0 and (vm is None or vm > 0):
-            verdict = "Confirmée"
-        elif (vi or 0) > 0:
-            verdict = "Prometteuse (non significative)"
-        else:
-            verdict = "Non confirmée"
-        sortie.append({"signaux": e["signaux"], "libelle": " + ".join(libelles.get(s, s) for s in e["signaux"]),
-                       "verdict": verdict, "t_apprentissage": e["t_app"], "p_verification": S._r(e["p"], 4),
-                       "p_holm": S._r(e["p_holm"], 4), "comparaison": e["ev"]["comparaison"],
-                       "taille_moyenne": e["ev"]["taille_moyenne"], "mois_avec_actifs_pct": e["ev"]["mois_avec_actifs_pct"],
-                       "cible": e["ev"]["cible"], "cible_verification": e["ev"]["cible_verification"]})
+    sortie = juger(retenues, alpha, libelles)
     return {"regle": f"actif retenu s'il est dans les meilleurs {100 - cfg['seuil_percentile']:.0f} % sur chaque signal combiné",
             "candidats": [{"cle": k, "libelle": libelles.get(k, k)} for k in pool], "essais": n_essais,
             "seuil_t_bonferroni": S._r(seuil_t, 2) if seuil_t else None,
