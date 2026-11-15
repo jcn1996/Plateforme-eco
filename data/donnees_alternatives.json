@@ -1,18 +1,18 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-15T05:54:08Z",
+    "genere_le": "2026-11-15T12:58:59Z",
     "source": "agent-donnees-alternatives",
     "fictif": false,
     "version_agent": "1.0",
-    "mise_a_jour_precedente": "2026-11-14T12:32:31Z",
+    "mise_a_jour_precedente": "2026-11-15T05:54:08Z",
     "etat_des_sources": {
       "camions_de": "ok",
       "camions_us": "ok",
       "fret_vrac": "ok",
       "fret_conteneurs": "ok",
       "ciment_cn": "secours",
-      "ciment_us": "erreur : https://www.usgs.gov/centers/national-minerals-information-center/cement-statistics-and-information : HTTP 504",
+      "ciment_us": "ok",
       "mises_en_chantier_us": "ok",
       "exportations_kr": "ok",
       "exportations_tw": "ok",
@@ -272,19 +272,21 @@
         "code": "US",
         "nom": "États-Unis",
         "suivi": true,
-        "score": 33,
+        "score": 36,
         "lecture": "ralentissement",
         "marque": false,
         "lecture_non_retenue": null,
-        "indicateurs_utilises": 5,
+        "indicateurs_utilises": 6,
         "confiance": {
-          "niveau": "élevé",
-          "score": 1.0,
+          "niveau": "moyen",
+          "score": 0.7,
           "raisons": [
-            "indicateurs à jour, concordants et à historique long"
+            "indicateurs peu concordants",
+            "historique court pour : Expéditions de ciment"
           ]
         },
         "pour": [
+          "ciment_us",
           "offres_emploi_us"
         ],
         "contre": [
@@ -293,7 +295,7 @@
           "electricite_us",
           "tsa_us"
         ],
-        "texte": "États-Unis : activité réelle « ralentissement » (score 33/100 sur 5 indicateurs) — offres d'emploi en ligne +3,1 % sur 12 mois ; demande d'électricité +0,9 % sur 12 mois ; passagers contrôlés dans les aéroports −1,0 % sur 12 mois.",
+        "texte": "États-Unis : activité réelle « ralentissement » (score 36/100 sur 6 indicateurs) — offres d'emploi en ligne +3,1 % sur 12 mois ; expéditions de ciment +1,4 % sur 12 mois ; demande d'électricité +0,9 % sur 12 mois.",
         "indicateurs": [
           "camions_us",
           "ciment_us",
@@ -307,13 +309,13 @@
           "texte": "croissance du pib 2,3 % (53/100) ; indicateur avancé (ocde) 101,0 (62/100)"
         },
         "ce_qui_pourrait_me_donner_tort": [
+          "Expéditions de ciment va dans l'autre sens (+1,4 % sur 12 mois).",
           "Offres d'emploi en ligne va dans l'autre sens (+3,1 % sur 12 mois).",
-          "La consommation d'électricité varie aussi avec les températures, pas seulement avec l'activité.",
-          "Les données mensuelles sont publiées avec retard et souvent révisées."
+          "La consommation d'électricité varie aussi avec les températures, pas seulement avec l'activité."
         ],
         "divergence": null,
         "precedent": {
-          "score": 36,
+          "score": 33,
           "lecture": "ralentissement"
         }
       }
@@ -1814,12 +1816,80 @@
         "mention": "données estimées, publiées avec environ trois mois de décalage",
         "categorie_nom": "Construction",
         "mention_proxy": false,
-        "note": null,
-        "valeur": null,
-        "date": null,
-        "serie": [],
-        "lecture": "Expéditions de ciment : source indisponible (erreur : https://www.usgs.gov/centers/national-minerals-information-center/cement-statistics-and-information : HTTP 504).",
-        "etat_source": "erreur : https://www.usgs.gov/centers/national-minerals-information-center/cement-statistics-and-information : HTTP 504"
+        "valeur": 10.1,
+        "date": "2026-07-01",
+        "variation_1m": 0.0,
+        "variation_12m": 1.4,
+        "ecart_tendance": null,
+        "ecart_saisonnier": null,
+        "percentile_12m": null,
+        "percentile_tendance": null,
+        "note": 55.8,
+        "methode_note": "échelle fixe (historique court)",
+        "historique_mois": 14,
+        "age_jours": 137,
+        "perimee": false,
+        "lecture": "Expéditions de ciment : +1,4 % sur 12 mois, 0,0 % sur 1 mois.",
+        "serie": [
+          [
+            "2025-01-01",
+            5.768
+          ],
+          [
+            "2025-02-01",
+            6.326
+          ],
+          [
+            "2025-03-01",
+            8.088
+          ],
+          [
+            "2025-04-01",
+            9.088
+          ],
+          [
+            "2025-05-01",
+            8.913
+          ],
+          [
+            "2025-06-01",
+            9.199
+          ],
+          [
+            "2025-07-01",
+            9.961
+          ],
+          [
+            "2026-01-01",
+            5.97
+          ],
+          [
+            "2026-02-01",
+            6.8
+          ],
+          [
+            "2026-03-01",
+            8.5
+          ],
+          [
+            "2026-04-01",
+            9.27
+          ],
+          [
+            "2026-05-01",
+            8.94
+          ],
+          [
+            "2026-06-01",
+            10.1
+          ],
+          [
+            "2026-07-01",
+            10.1
+          ]
+        ],
+        "etat_source": "ok",
+        "detail_source": "14 rapports mensuels (PDF)"
       },
       {
         "cle": "mises_en_chantier_us",
@@ -3317,20 +3387,20 @@
         "mention": "très sensible aux températures",
         "categorie_nom": "Énergie",
         "mention_proxy": false,
-        "valeur": 10755902.0,
+        "valeur": 10661762.0,
         "date": "2026-11-14",
-        "variation_1m": -8.53,
-        "variation_12m": 0.92,
-        "ecart_tendance": -4.11,
-        "ecart_saisonnier": -3.45,
+        "variation_1m": -8.56,
+        "variation_12m": 0.89,
+        "ecart_tendance": -4.13,
+        "ecart_saisonnier": -3.51,
         "percentile_12m": 35.1,
-        "percentile_tendance": 32.4,
-        "note": 34.0,
+        "percentile_tendance": 29.7,
+        "note": 32.9,
         "methode_note": "percentiles",
         "historique_mois": 49,
         "age_jours": 1,
         "perimee": false,
-        "lecture": "Demande d'électricité : +0,9 % sur 12 mois, −8,5 % sur 1 mois, écart à la tendance −4,1 %, percentile 35 de l'historique.",
+        "lecture": "Demande d'électricité : +0,9 % sur 12 mois, −8,6 % sur 1 mois, écart à la tendance −4,1 %, percentile 35 de l'historique.",
         "serie": [
           [
             "2024-11-17",
@@ -3746,11 +3816,11 @@
           ],
           [
             "2026-11-08",
-            10654198.429
+            10654164.0
           ],
           [
             "2026-11-14",
-            10760616.0
+            10744882.667
           ]
         ],
         "etat_source": "ok",
@@ -8241,21 +8311,22 @@
       "fret_vrac",
       "camions_us",
       "tsa_us",
-      "mises_en_chantier_us"
+      "mises_en_chantier_us",
+      "ciment_us"
     ],
     "attention": [
       {
-        "ticker": "MC.PA",
-        "nom": "LVMH Moët Hennessy - Louis Vuitton, Société Européenne",
-        "pays": "FR",
-        "liste": "surveillance",
+        "ticker": "TBCG.L",
+        "nom": "TBC Bank Group PLC",
+        "pays": "GB",
+        "liste": "pepites",
         "trends": {
-          "variation_pct": 224.0,
-          "niveau_recent": 5.8
+          "variation_pct": 38.0,
+          "niveau_recent": 2.5
         },
         "tendance": "en hausse",
-        "variation_moyenne_pct": 224.0,
-        "signal": true
+        "variation_moyenne_pct": 38.0,
+        "signal": false
       },
       {
         "ticker": "2914.T",
@@ -8277,16 +8348,16 @@
         "signal": false
       },
       {
-        "ticker": "PAF.L",
-        "nom": "Pan African Resources PLC",
-        "pays": "GB",
+        "ticker": "ENVA",
+        "nom": "Enova International, Inc.",
+        "pays": "US",
         "liste": "pepites",
         "trends": {
-          "variation_pct": 10.1,
-          "niveau_recent": 14
+          "variation_pct": 10.8,
+          "niveau_recent": 2.8
         },
         "tendance": "stable",
-        "variation_moyenne_pct": 10.1,
+        "variation_moyenne_pct": 10.8,
         "signal": false
       },
       {
@@ -8332,19 +8403,6 @@
         "signal": false
       },
       {
-        "ticker": "ENVA",
-        "nom": "Enova International, Inc.",
-        "pays": "US",
-        "liste": "pepites",
-        "trends": {
-          "variation_pct": 1.4,
-          "niveau_recent": 2.6
-        },
-        "tendance": "stable",
-        "variation_moyenne_pct": 1.4,
-        "signal": false
-      },
-      {
         "ticker": "NVMI",
         "nom": "Nova Ltd.",
         "pays": "US",
@@ -8355,11 +8413,24 @@
           "variation_pct": -0.1
         },
         "trends": {
-          "variation_pct": -5.0,
-          "niveau_recent": 80.1
+          "variation_pct": -4.7,
+          "niveau_recent": 80.0
         },
         "tendance": "stable",
-        "variation_moyenne_pct": -2.5,
+        "variation_moyenne_pct": -2.4,
+        "signal": false
+      },
+      {
+        "ticker": "PAF.L",
+        "nom": "Pan African Resources PLC",
+        "pays": "GB",
+        "liste": "pepites",
+        "trends": {
+          "variation_pct": -5.9,
+          "niveau_recent": 11.7
+        },
+        "tendance": "stable",
+        "variation_moyenne_pct": -5.9,
         "signal": false
       },
       {
@@ -8486,6 +8557,24 @@
         "signal": false
       },
       {
+        "ticker": "FHI",
+        "nom": "Federated Hermes, Inc.",
+        "pays": "US",
+        "liste": "pepites",
+        "wikipedia": {
+          "article": "Federated Hermes",
+          "vues_30j": 2110,
+          "variation_pct": -5.1
+        },
+        "trends": {
+          "variation_pct": -30.0,
+          "niveau_recent": 15.9
+        },
+        "tendance": "stable",
+        "variation_moyenne_pct": -17.6,
+        "signal": false
+      },
+      {
         "ticker": "BKNG",
         "nom": "Booking Holdings Inc.",
         "pays": "US",
@@ -8502,24 +8591,6 @@
           "niveau_recent": 6.0,
           "ancienne": true
         },
-        "signal": false
-      },
-      {
-        "ticker": "FHI",
-        "nom": "Federated Hermes, Inc.",
-        "pays": "US",
-        "liste": "pepites",
-        "wikipedia": {
-          "article": "Federated Hermes",
-          "vues_30j": 2110,
-          "variation_pct": -5.1
-        },
-        "trends": {
-          "variation_pct": -41.8,
-          "niveau_recent": 16.0
-        },
-        "tendance": "stable",
-        "variation_moyenne_pct": -23.4,
         "signal": false
       },
       {
@@ -8542,29 +8613,29 @@
         "signal": false
       },
       {
-        "ticker": "TBCG.L",
-        "nom": "TBC Bank Group PLC",
-        "pays": "GB",
-        "liste": "pepites",
-        "trends": {
-          "variation_pct": -29.0,
-          "niveau_recent": 2.4
-        },
-        "tendance": "stable",
-        "variation_moyenne_pct": -29.0,
-        "signal": false
-      },
-      {
         "ticker": "BNS.TO",
         "nom": "The Bank of Nova Scotia",
         "pays": "CA",
         "liste": "surveillance",
         "trends": {
-          "variation_pct": -36.1,
-          "niveau_recent": 7.6
+          "variation_pct": -57.2,
+          "niveau_recent": 4.1
         },
         "tendance": "en baisse",
-        "variation_moyenne_pct": -36.1,
+        "variation_moyenne_pct": -57.2,
+        "signal": false
+      },
+      {
+        "ticker": "1681.HK",
+        "nom": "Consun Pharmaceutical Group Limited",
+        "pays": "CN",
+        "liste": "pepites",
+        "trends": {
+          "variation_pct": -100.0,
+          "niveau_recent": 0
+        },
+        "tendance": "en baisse",
+        "variation_moyenne_pct": -100.0,
         "signal": false
       }
     ],
