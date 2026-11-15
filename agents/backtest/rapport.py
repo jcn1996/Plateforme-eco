@@ -200,7 +200,7 @@ def conclusions_regles(chef: dict) -> list[str]:
                       "Les tendances fortes saines **n'ont pas mieux fini** que les autres pays sur cet horizon."))
     co = rg.get("concentration") or {}
     if co.get("lignes"):
-        out.append(f"- **Concentration du trader** (cœur pays, plafond {co.get('plafond_ligne_pct')} % par ligne, règle actuelle : "
+        out.append(f"- **Concentration du trader, ancienne méthode** (cœur pays, plafond {co.get('plafond_ligne_pct')} % par ligne, règle d'alors : "
                    f"{co.get('regle_actuelle')} lignes au plus ; hors échantillon) : " + " ; ".join(
                        f"{k} lignes {n(x['verification'].get('rendement_annuel_pct'), 1, True, ' %/an')}, Sharpe {n(x['verification'].get('sharpe'), 2)}, "
                        f"perte max {n(x['verification'].get('perte_max_pct'), 0, unite=' %')}" for k, x in co["lignes"].items())
@@ -260,7 +260,7 @@ def rapport_markdown(res: dict, prop: dict) -> str:
         if ng:
             L += ["Note globale actuelle, par horizon :", ""] + _horizons(ng) + [""]
         if nom == "entreprises":
-            L += ["### Règles du trader (satellites)", ""] + conclusion_stops((s.get("regles") or {}).get("stops")) + [""]
+            L += ["### Règles de l'ancienne méthode du trader (satellites, retirées en novembre 2026)", ""] + conclusion_stops((s.get("regles") or {}).get("stops")) + [""]
         if nom == "secteurs" and s.get("phases"):
             L += ["Phases reconstituées (mois) : " + ", ".join(f"{k} {v}" for k, v in s["phases"].items()) + ".", ""]
         if nom == "pays" and res["sections"].get("chef"):

@@ -3,6 +3,7 @@
    + composants réutilisés par la fiche entreprise (jauge, indicateurs, agents).
    ========================================================================== */
 
+import { MENTION_PAYS } from './chef.js';
 import {
   el, svg, nombre, variation, classeNote, niveauNote, libelleNiveau, valeurIndicateur, AGENTS,
   complementIndicateur, badgeTendance, tendanceIndicateur, tendanceNote, texteFraicheur,
@@ -238,7 +239,8 @@ export function fichePays(d, p, nav) {
   const secteurs = d.secteursDuPays(p.code);
   return [
     enteteFiche({
-      note: p.note, surtitre: `Pays · ${libelleNiveau(niveauNote(p.note))}`, titre: p.nom, verdict: p.verdict,
+      note: p.note, surtitre: `Pays · ${libelleNiveau(niveauNote(p.note))} · ${MENTION_PAYS}`, titre: p.nom,
+      verdict: p.verdict,
       action: nav.boutonComparer?.('pays', p.code),
       tendance: tendanceNote(p),
     }),

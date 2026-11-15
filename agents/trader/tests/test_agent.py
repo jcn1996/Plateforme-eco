@@ -2,7 +2,6 @@
 dossier temporaire. Les vrais config/ et data/ ne sont jamais lus ni modifiés ; aucun accès au réseau."""
 from __future__ import annotations
 
-import copy
 import json
 import logging
 import shutil
@@ -17,11 +16,21 @@ from agents.trader import portefeuille as P
 from agents.trader import strategie as S
 from agents.trader.agent import charger_config, executer
 from agents.trader.sources import FournisseurSimule
-from agents.trader.tests.fabrique import preparer, simuler, suivi, tendance
+from agents.trader.tests.fabrique import PARIS, SELECTION_ENTREPRISES, evaluation, preparer, simuler
 
 SAMEDI = datetime(2026, 11, 7, 22, 30, tzinfo=timezone.utc)
 LUNDI_MATIN = datetime(2026, 11, 9, 7, 33, tzinfo=timezone.utc)
-OBJECTION = {"objection": "Objection nouvelle.", "serieuse": True}
+DECEMBRE = datetime(2026, 12, 1, 7, 33, tzinfo=timezone.utc)  # premier jour de décision de décembre : rééquilibrage mensuel
+
+
+def paris(**changements):
+    """Évaluations des paris pays, avec des changements {cle: {champ: valeur}}."""
+    res = []
+    for c, n, e, f, ok, so, r in PARIS:
+        x = evaluation(c, n, e, f, ok, so, r)
+        x.update(changements.get(c, {}))
+        res.append(x)
+    return res
 
 
 def setUpModule():
@@ -57,83 +66,67 @@ class BaseTrader(unittest.TestCase):
 
 
 class TestDecision(BaseTrader):
-    def test_premiere_decision(self):
+    def test_premiere_decision_changement_de_methode(self):
         r = self.lancer(LUNDI_MATIN, "decision")
         d = r["decision"]
-        self.assertIsNotNone(d)
+        self.assertEqual(d["type"], "changement de méthode")
+        cm = self.config["methode"]
         c = d["cibles"]
         lignes = c["lignes"]
         self.assertAlmostEqual(sum(c["poches"].values()), 100, delta=0.05)
-        self.assertGreaterEqual(c["poches"]["liquidites"], self.config["liquidites_min_par_palier"]["Vigilance"] - 1e-6)
-        # concentration : 15 lignes au plus, 4 % minimum
-        self.assertLessEqual(len(lignes), 15)
+        # structure : 15 lignes au plus, 4 à 8 % par ligne
+        self.assertLessEqual(len(lignes), cm["max_lignes"])
         for l in lignes:
-            self.assertGreaterEqual(l["cible"], 4 - 1e-6, l["nom"])
-        coeur = [l for l in lignes if l["poche"] == "coeur"]
-        sats = [l for l in lignes if l["poche"] == "satellite"]
-        self.assertTrue(8 <= len(coeur) <= 12, len(coeur))
-        # diversification : au moins 4 classes ou zones
-        self.assertGreaterEqual(d["diversification"]["nombre_zones"], 4)
-        self.assertGreaterEqual(len({l["zone"] for l in lignes}), 4)
-        # cœur : « Renforcer » de conviction moyenne ou forte (obligations exceptées), jamais d'ETF monde ni d'ETF pays « Neutre »
-        for l in coeur:
-            if l["classe"] != "obligations":
-                self.assertIn(l["verdict"], ("Renforcer", "Renforcer fortement"))
-                self.assertIn(l["conviction"], ("moyenne", "forte"))
+            self.assertGreaterEqual(l["cible"], cm["ligne_min"] - 1e-6, l["nom"])
+            self.assertLessEqual(l["cible"], cm["ligne_max"] + 1e-6, l["nom"])
+        # poches : entreprises 70-85 %, matières 0-20 %, ETF pays 0-15 % (3 lignes au plus)
+        self.assertTrue(cm["entreprises"]["min_pct"] - 1e-6 <= c["poches"]["entreprises"] <= cm["entreprises"]["max_pct"] + 1e-6, c["poches"])
+        self.assertLessEqual(c["poches"]["matieres"], cm["matieres"]["max_pct"] + 1e-6)
+        self.assertLessEqual(c["poches"]["pays"], cm["pays"]["max_pct"] + 1e-6)
+        pays = [l for l in lignes if l["poche"] == "pays"]
+        self.assertEqual({l["symbole"] for l in pays}, {"EWJ", "EWY", "INDA"}, "les 3 paris de plus forte tendance (pas le Mexique, 4e)")
+        # 25 % au plus par secteur : 3 sociétés de technologie sur 4
+        tech = [l for l in lignes if l.get("secteur") == "Information Technology"]
+        self.assertLessEqual(sum(l["cible"] for l in tech), cm["entreprises"]["max_secteur_pct"] + 1e-6)
+        self.assertEqual(len(tech), 3)
+        # matières : supports cotés (PALL, GLD) ; cacao sans support écarté ; jamais d'ETF monde
         symboles = {l["symbole"] for l in lignes}
-        self.assertFalse({"IXN", "URTH", "EWG", "EWU"} & symboles, "ni ETF monde, ni ETF pays « Neutre »")
-        # jamais d'achat « À surveiller » ou sous objection
-        self.assertFalse({"XLE", "KKK", "EWT", "BNO", "EEE"} & symboles)
-        ecartees = {x["nom"]: x["raison"] for x in d["satellites_ecartes"]}
-        self.assertIn("objection", ecartees["Énergie — États-Unis"])
-        self.assertIn("À surveiller", ecartees["Kappa Surveillée"])
-        self.assertIn("monde", ecartees["Technologie — Monde"])
-        self.assertIn("une seule source", ecartees["Phi Source Unique"])
-        # satellites : convictions fortes seulement
-        self.assertTrue(sats)
-        for l in sats:
-            self.assertEqual(l["conviction"], "forte")
-            self.assertLessEqual(l["cible"], self.config["satellites"]["max_ligne"] + 1e-6)
-        self.assertNotIn("CCC.T", symboles, "conviction moyenne : pas de satellite")
-        # obligations : poids neutre pour un verdict « Neutre »
-        for l in lignes:
-            if l["classe"] == "obligations":
-                self.assertEqual(l["cible"], 5)
-        self.assertNotIn("TLT", symboles)
-        # ordres en attente de l'ouverture, chacun justifié
+        self.assertTrue({"PALL", "GLD"} <= symboles)
+        self.assertFalse(set(self.config["etf_monde"]) & symboles)
+        ecartees = {x["nom"]: x["raison"] for x in d["ecartees"]}
+        self.assertIn("aucun support coté", ecartees["Cacao"])
+        self.assertIn("secteur", ecartees["Société S04"])
+        # ordres en attente de l'ouverture, chacun justifié ; méthode enregistrée avec sa date
         self.assertFalse(r["executees"])
         self.assertEqual(len(r["etat"]["ordres"]), len(lignes))
         for o in r["etat"]["ordres"]:
             self.assertTrue(o["raison"]["texte"])
             self.assertTrue(o["donner_tort"])
-        self.assertTrue(d["donner_tort"])
-        self.assertTrue(d["arbitrages"])
-        pf = lire(self.data / "portefeuille.json")
-        self.assertFalse(pf["meta"]["fictif"])
-        self.assertEqual(pf["donnees"]["mention"], "Portefeuille fictif à but de démonstration, aucun ordre réel.")
+        self.assertEqual(r["etat"]["methode"]["version"], cm["version"])
+        self.assertEqual(r["etat"]["changements_methode"][0]["date"], "2026-11-09")
+        pf = lire(self.data / "portefeuille.json")["donnees"]
+        self.assertEqual(pf["changements_methode"][0]["date"], "2026-11-09")
+        self.assertEqual(pf["mention"], "Portefeuille fictif à but de démonstration, aucun ordre réel.")
+        self.assertFalse(lire(self.data / "portefeuille.json")["meta"]["fictif"])
 
-    def test_correlation_sur_un_an(self):
-        self.f = FournisseurSimule(debut="2025-09-01", jumeaux={"EWD": "XLV"})
-        d = self.lancer(LUNDI_MATIN, "decision")["decision"]
-        symboles = {l["symbole"] for l in d["cibles"]["lignes"]}
-        self.assertIn("XLV", symboles)
-        self.assertNotIn("EWD", symboles)
-        raison = next(x["raison"] for x in d["satellites_ecartes"] if x["nom"] == "Suède")
-        self.assertIn("corrélation", raison)
-        self.assertLessEqual(d["diversification"]["correlation_max"]["valeur"], self.config["coeur"]["correlation_max"])
-        self.assertEqual(d["diversification"]["paires_mesurees"], d["diversification"]["paires_possibles"])
+    def test_peu_de_candidats_le_reste_en_liquidites(self):
+        modifs = {("selections", None): {"entreprises": SELECTION_ENTREPRISES[4:9], "matieres": [], "evaluations": []}}
+        d = self.lancer(LUNDI_MATIN, "decision", modifs=modifs)["decision"]
+        c = d["cibles"]
+        self.assertEqual(len(c["lignes"]), 5)
+        for l in c["lignes"]:
+            self.assertAlmostEqual(l["cible"], self.config["methode"]["ligne_max"], places=6)
+        self.assertAlmostEqual(c["poches"]["liquidites"], 60, places=4)
+        self.assertTrue(any("liquidités" in a for a in d["avertissements"]))
 
     def test_une_seule_decision_par_jour(self):
         self.lancer(LUNDI_MATIN, "decision")
         r = self.lancer(LUNDI_MATIN.replace(hour=15, minute=5))
-        achats = {o["symbole"] for o in r["executees"]}
-        self.assertTrue(achats)
+        self.assertTrue(r["executees"])
         n = len(r["etat"]["ordres"])
-        r = self.lancer(LUNDI_MATIN.replace(hour=17, minute=46), "decision", modifs={("pays", "pays-KR"): {"verdict": "Neutre"}})
+        r = self.lancer(LUNDI_MATIN.replace(hour=17, minute=46), "decision")
         self.assertIsNone(r["decision"], "la décision du jour n'est pas recalculée")
         self.assertEqual(len(r["etat"]["ordres"]), n)
-        self.assertFalse([o for o in r["etat"]["ordres"] if o["sens"] == "vente" and o["symbole"] in achats],
-                         "pas d'achat puis de vente du même titre le même jour")
         r = self.lancer(LUNDI_MATIN.replace(hour=18, minute=5), "decision", forcer=True)
         self.assertIsNotNone(r["decision"], "--forcer permet de refaire la décision (usage manuel)")
 
@@ -145,11 +138,11 @@ class TestDecision(BaseTrader):
             self.assertEqual(op["date"], "2026-11-09T14:30:00Z", "première barre après la décision")
             self.assertAlmostEqual(op["frais_eur"], op["montant_eur"] * 0.001, delta=0.011)
             self.assertGreater(op["prix_local"], op["cours_marche"], "écart achat/vente payé à l'achat")
-        sat = [x for x in r["executees"] if x["poche"] == "satellite"]
-        self.assertTrue(all(x["stop"] for x in sat), "stop associé à chaque satellite")
+            self.assertNotIn("stop", op, "plus de stop")
         v = r["valo"]
         self.assertAlmostEqual(v["valeur"], v["liquidites"] + sum(p["valeur_eur"] for p in r["etat"]["positions"].values()), delta=0.01)
         self.assertLessEqual(len(r["etat"]["positions"]), 15)
+        self.assertEqual({p["poche"] for p in r["etat"]["positions"].values()}, {"entreprises", "matieres", "pays"})
 
     def test_jamais_un_cours_passe(self):
         t = LUNDI_MATIN.replace(hour=16, minute=10)
@@ -167,9 +160,7 @@ class TestDecision(BaseTrader):
         self.assertTrue(r["executees"])
 
     def test_devise_en_sous_unites(self):
-        self.lancer(LUNDI_MATIN, "decision")
-        o = next(o for o in lire(self.data / "trader" / "etat.json")["ordres"] if o["symbole"] == "DDD.L")
-        self.assertEqual(o["devise"], "GBp", "Londres cote en pence, quelle que soit la devise des comptes")
+        self.assertEqual(P.devise_de("DDD.L", "GBP", self.config, {}), "GBp", "Londres cote en pence, quelle que soit la devise des comptes")
         self.assertAlmostEqual(P.en_euros(100, "GBp", {"GBP": 0.8}), 1.25)
 
 
@@ -192,7 +183,8 @@ class TestAttente(BaseTrader):
         cas = {
             "entrée manquante": ({("entrees", None): {"retirer": "entreprises"}}, "entrée « entreprises » manquante"),
             "scores absents": ({("pays", f"pays-{c}"): {"score": None} for c in ("US", "JP", "KR", "DE", "IN")}, "sans score ni verdict"),
-            "liste vide": ({("vider", "obligations"): {}}, "aucune ligne « obligations »"),
+            "liste vide": ({("vider", "pays"): {}}, "aucune ligne « pays »"),
+            "sélections absentes": ({("selections", None): None}, "sélections du backtest absentes"),
         }
         for nom, (modifs, attendu) in cas.items():
             with self.subTest(nom):
@@ -215,164 +207,141 @@ class TestAttente(BaseTrader):
         self.assertIsNone(r["decision"], "une seule décision par jour")
 
 
-class TestRisque(BaseTrader):
-    def test_stop_ecourte_la_detention_minimale(self):
-        self.f.chocs = {"III": [("2026-11-10", 0.78)]}
-        self.investir()
-        mardi = LUNDI_MATIN + timedelta(days=1)
-        r = self.lancer(mardi.replace(hour=15, minute=5))
-        self.assertEqual(r["etat"]["positions"]["III"]["confirmations_stop"], 1)
-        r = self.lancer(mardi.replace(hour=18, minute=5))
-        stop = [o for o in r["imposes"] if o["symbole"] == "III"]
-        self.assertEqual([o["motif"] for o in stop], ["stop"], "le stop s'applique même avant 5 jours de détention")
-        r = self.lancer(mardi.replace(hour=21, minute=5))
-        op = next(o for o in r["executees"] if o["symbole"] == "III")
-        self.assertLess(op["resultat"]["plus_value_eur"], 0)
-        r = self.lancer(mardi + timedelta(days=1), "decision")
-        self.assertNotIn("III", {l["symbole"] for l in r["decision"]["cibles"]["lignes"]}, "pas de rachat après un stop")
+class TestVerificationMensuelle(BaseTrader):
+    """Ni stop ni prise de bénéfices : vente quand l'actif sort de sa combinaison, vérifiée une fois par mois."""
+    SANS_S05 = {("selections", None): {"entreprises": [x for x in SELECTION_ENTREPRISES if x[0] != "S05"]}}
 
-    def test_sortie_sur_verdict_apres_detention_minimale(self):
+    def test_sortie_de_combinaison_au_rééquilibrage_du_mois(self):
         self.investir()
-        modifs = {("secteurs", "secteur-etats_unis-sante"): {"verdict": "Éviter"}, ("entreprises", "entreprise-BBB"): {"objection": OBJECTION}}
-        mardi = LUNDI_MATIN + timedelta(days=1, hours=1)
-        r = self.lancer(mardi, modifs=modifs)
-        self.assertFalse([o for o in r["imposes"] if o["symbole"] in ("XLV", "BBB")], "détention minimale de 5 jours")
-        lundi_suivant = LUNDI_MATIN + timedelta(days=7, hours=1)
-        r = self.lancer(lundi_suivant, modifs=modifs)
-        motifs = {o["symbole"]: o["motif"] for o in r["imposes"]}
-        self.assertEqual(motifs.get("XLV"), "sortie sur verdict")
-        self.assertEqual(motifs.get("BBB"), "sortie sur objection")
+        self.assertIn("S05", lire(self.data / "trader" / "etat.json")["positions"])
+        r = self.lancer(LUNDI_MATIN + timedelta(days=1), "decision", modifs=self.SANS_S05)
+        self.assertNotIn("cibles", r["decision"], "pas de rééquilibrage avant le mois suivant")
+        self.assertIn("vérification mensuelle", r["decision"]["resume"])
+        self.assertFalse([o for o in r["etat"]["ordres"] if o["symbole"] == "S05"])
+        self.assertFalse(r["imposes"])
+        r = self.lancer(DECEMBRE, "decision", modifs=self.SANS_S05)
+        self.assertEqual(r["decision"]["type"], "rééquilibrage mensuel")
+        vente = [o for o in r["etat"]["ordres"] if o["symbole"] == "S05"]
+        self.assertEqual([(o["sens"], o["motif"]) for o in vente], [("vente", "sortie de combinaison")])
+        self.assertIn("n'est plus retenue par sa combinaison", vente[0]["raison"]["texte"])
 
-    def test_prise_de_benefices_apres_detention_minimale(self):
-        self.f.chocs = {"BBB": [("2026-11-10", 1.4)]}
+    def test_forte_hausse_sans_prise_de_benefices(self):
+        self.f.chocs = {"S06": [("2026-11-10", 1.8)], "S07": [("2026-11-10", 0.6)]}
         self.investir()
-        r = self.lancer((LUNDI_MATIN + timedelta(days=1)).replace(hour=15, minute=5))
-        self.assertEqual(r["etat"]["positions"]["BBB"]["stop_type"], "suiveur")
-        self.assertFalse([o for o in r["imposes"] if o["symbole"] == "BBB"])
         r = self.lancer((LUNDI_MATIN + timedelta(days=7)).replace(hour=15, minute=5))
-        pb = [o for o in r["imposes"] if o["symbole"] == "BBB"]
-        self.assertEqual(pb[0]["motif"], "prise de bénéfices")
-
-    def test_plancher_de_liquidites_en_crise(self):
-        self.investir()
-        t = LUNDI_MATIN + timedelta(days=7, minutes=-1)
-        r = self.lancer(t, palier="Crise")
-        self.assertTrue([o for o in r["imposes"] if o["motif"] == "plancher de liquidités"])
-        r = self.lancer(t.replace(hour=15, minute=5), palier="Crise")
-        self.assertGreaterEqual(r["donnees"]["liquidites_pct"], 35 - self.config["tolerance_plancher_points"] - 0.5)
-
-
-class TestPocheTendance(BaseTrader):
-    """Poche « tendance » : tendances fortes et saines du chef d'orchestre, on laisse courir les gagnants."""
-    MODIFS = {("tendances_fortes", None): [tendance("pays-GB", "Royaume-Uni", 92), tendance("pays-DE", "Allemagne", 85),
-                                           tendance("entreprise-HHH", "Eta Neutre", 95, saine=False, exces=["valorisation tendue (20/100) : test"]),
-                                           tendance("matiere-cacao", "Cacao", 90)],
-              ("pays", "pays-GB"): suivi(92), ("pays", "pays-DE"): suivi(85)}
-
-    def test_entree_en_poche_tendance(self):
-        r = self.lancer(LUNDI_MATIN, "decision", modifs=self.MODIFS)
-        d = r["decision"]
-        tend = {l["symbole"]: l for l in d["cibles"]["lignes"] if l["poche"] == "tendance"}
-        self.assertEqual(set(tend), {"EWU", "EWG"}, "tendances fortes saines, même au verdict « Neutre »")
-        ct, cs = self.config["tendance"], self.config["satellites"]
-        for l in tend.values():
-            self.assertAlmostEqual(l["cible"], max(self.config["ligne_min"], min(ct["max_ligne"], cs["budget"] * ct["part_satellites"] / 2)), places=4)
-        self.assertLessEqual(len(d["cibles"]["lignes"]), self.config["max_lignes"])
-        ecartees = {x["nom"]: x["raison"] for x in d["satellites_ecartes"]}
-        self.assertIn("en excès", ecartees["Eta Neutre (tendance)"])
-        self.assertIn("aucun support coté", ecartees["Cacao (tendance)"])
-        self.assertLessEqual(d["cibles"]["poches"]["satellite"], cs["budget"] * (1 - ct["part_satellites"]) + 1e-6)
-        ordre = next(o for o in r["etat"]["ordres"] if o["symbole"] == "EWU")
-        self.assertEqual(ordre["poche"], "tendance")
-        self.assertIn("poche « tendance »", ordre["raison"]["texte"])
-
-    def test_stop_suiveur_sans_prise_de_benefices(self):
-        self.f.chocs = {"EWU": [("2026-11-10", 1.8)]}  # +80 % : poids au-dessus de la cible
-        self.investir(modifs=self.MODIFS)
-        r = self.lancer((LUNDI_MATIN + timedelta(days=7)).replace(hour=15, minute=5), modifs=self.MODIFS)
-        p = r["etat"]["positions"]["EWU"]
-        self.assertEqual(p["poche"], "tendance")
-        self.assertFalse([o for o in r["imposes"] if o["symbole"] == "EWU"], "pas de prise de bénéfices tant que la tendance tient")
-        self.assertAlmostEqual(p["stop_local"], p["plus_haut_local"] * (1 - self.config["tendance"]["stop_suiveur_pct"] / 100), places=4)
-        # décision suivante : le gagnant n'est pas réduit malgré un poids au-dessus de sa cible
-        r = self.lancer((LUNDI_MATIN + timedelta(days=8)).replace(hour=7, minute=33), "decision", modifs=self.MODIFS)
-        self.assertFalse([o for o in r["etat"]["ordres"] if o["symbole"] == "EWU" and o["sens"] == "vente"])
-        self.assertTrue(any(a["symbole"] == "EWU" and a["action"] == "conservée" for a in r["decision"]["arbitrages"]))
-        self.f.chocs = {"EWU": [("2026-11-10", 1.8), ("2026-11-19", 0.8)]}  # chocs cumulés : repli de 20 % du plus haut
-        self.f._cache.clear()
-        self.f._dernier.clear()
-        r = self.lancer((LUNDI_MATIN + timedelta(days=10)).replace(hour=15, minute=5), modifs=self.MODIFS)
-        self.assertEqual([o["motif"] for o in r["imposes"] if o["symbole"] == "EWU"], ["stop"])
-
-    def test_sortie_quand_la_force_relative_quitte_le_premier_tiers(self):
-        self.investir(modifs=self.MODIFS)
-        modifs = dict(self.MODIFS)
-        modifs[("pays", "pays-DE")] = suivi(55)
-        modifs[("tendances_fortes", None)] = [x for x in self.MODIFS[("tendances_fortes", None)] if x["id"] != "pays-DE"]
-        r = self.lancer(LUNDI_MATIN + timedelta(days=1, hours=1), modifs=modifs)
-        self.assertFalse([o for o in r["imposes"] if o["symbole"] == "EWG"], "détention minimale de 5 jours")
-        r = self.lancer(LUNDI_MATIN + timedelta(days=7, hours=1), modifs=modifs)
-        sortie = [o for o in r["imposes"] if o["symbole"] == "EWG"]
-        self.assertEqual([o["motif"] for o in sortie], ["sortie de tendance"])
-        self.assertIn("premier tiers", sortie[0]["raison"]["texte"])
-
-
-class TestTransition(BaseTrader):
-    """Lignes détenues qui ne respectent plus les règles : réduction progressive et expliquée."""
-
-    def test_reduction_progressive(self):
-        self.config = copy.deepcopy(self.config)
-        self.config["transition"]["sorties_max_par_jour"] = 2
-        self.investir()
-        tenues = set(lire(self.data / "trader" / "etat.json")["positions"])
-        # le chef d'orchestre change d'avis sur plusieurs lignes (sans « Alléger » : pas de sortie imposée)
-        modifs = {("pays", "pays-JP"): {"verdict": "Neutre"}, ("pays", "pays-IN"): {"objection": OBJECTION},
-                  ("or", "or"): {"conviction": "faible"}, ("panorama", None): {"a_surveiller": [{"id": "pays-SE"}]}}
-        mardi = LUNDI_MATIN + timedelta(days=1)
-        d = self.lancer(mardi, "decision", modifs=modifs)["decision"]
+        self.assertFalse(r["imposes"], "ni stop après −40 %, ni prise de bénéfices après +80 %")
+        self.assertTrue({"S06", "S07"} <= set(r["etat"]["positions"]))
+        # rééquilibrage du mois : la ligne trop lourde revient vers 8 % au plus, sans être vendue en totalité
+        d = self.lancer(DECEMBRE, "decision")["decision"]
         arb = {a["symbole"]: a for a in d["arbitrages"]}
-        for s in ("EWJ", "INDA", "GLD", "EWD"):
-            self.assertIn(s, tenues)
-            self.assertEqual(arb[s]["action"], "conservée pour l'instant", "détention minimale de 5 jours")
-            self.assertIn("2026-11-14", arb[s]["raison"])
-        self.assertIn("pas d'ETF pays « Neutre »", arb["EWJ"]["raison"])
-        self.assertIn("objection", arb["INDA"]["raison"])
-        self.assertIn("À surveiller", arb["EWD"]["raison"])
-        self.assertFalse([o for o in self.lancer(mardi.replace(hour=15, minute=5), modifs=modifs)["executees"] if o["sens"] == "vente"])
-        # après la détention minimale : au plus 2 sorties par décision, chacune expliquée, règles enfreintes d'abord
-        jour = LUNDI_MATIN + timedelta(days=7)
-        vendues = []
-        for _ in range(4):
-            d = self.lancer(jour, "decision", modifs=modifs)["decision"]
-            ventes = [a for a in d["arbitrages"] if a["action"] == "vente totale"]
-            self.assertLessEqual(len(ventes), 2)
-            if len(vendues) < 4:
-                self.assertTrue(set(a["symbole"] for a in ventes) <= {"EWJ", "INDA", "GLD", "EWD"}, "règles enfreintes soldées en premier")
-            vendues += [a["symbole"] for a in ventes]
-            for o in lire(self.data / "trader" / "etat.json")["ordres"]:
-                if o["motif"] == "mise en conformité":
-                    self.assertIn("Mise en conformité", o["raison"]["texte"])
-            self.lancer(jour.replace(hour=15, minute=5), modifs=modifs)
-            jour += timedelta(days=1)
-        self.assertEqual(vendues[:4] and set(vendues[:4]), {"EWJ", "INDA", "GLD", "EWD"})
-        positions = lire(self.data / "trader" / "etat.json")["positions"]
-        self.assertFalse({"EWJ", "INDA", "GLD", "EWD"} & set(positions))
-        self.assertLessEqual(len(positions), 15)
+        self.assertEqual(arb["S06"]["action"], "réduction")
+        self.assertIn("S06", r["etat"]["positions"])
 
-    def test_quinze_lignes_au_plus_pendant_la_transition(self):
-        """Un portefeuille trop dispersé n'ouvre aucune nouvelle ligne tant qu'il dépasse 15 lignes."""
-        maintenant = LUNDI_MATIN
-        etat = P.etat_initial(self.config, maintenant)
-        for i in range(20):
-            s = f"X{i:02d}"
-            etat["positions"][s] = {"symbole": s, "nom": s, "quantite": 10, "prix_revient_eur": 400, "dernier_cours_eur": 400, "poids": 4,
-                                    "poche": "coeur", "classe": "actions", "devise": "USD", "cout_total_eur": 4000, "ouverte_le": "2026-11-08T14:30:00Z"}
-        e = {"cible": 6, "poche": "coeur", "classe": "actions", "zone": "Europe", "support": {"symbole": "NEW", "nom": "Nouvelle", "devise": "USD"},
-             "ligne": {"id": "pays-NEW", "nom": "Nouvelle", "type": "pays"}}
-        c = {"lignes": {"NEW": e}, "exclusions": {f"X{i:02d}": (True, "règle enfreinte") for i in range(20)}, "liquidites": 10, "liquidites_min": 10}
-        ordres, _, arb = S.generer_ordres(c, etat, {"valeur": 100000, "liquidites": 20000}, [], "Vigilance", self.config, maintenant)
-        self.assertFalse(ordres, "détention minimale : aucune vente ; 20 lignes : aucune entrée")
-        self.assertEqual(next(a for a in arb if a["symbole"] == "NEW")["action"], "entrée reportée")
+    def test_lignes_detenues_avant_les_nouvelles(self):
+        self.investir()
+        tenues = {s for s, p in lire(self.data / "trader" / "etat.json")["positions"].items() if p["poche"] == "entreprises"}
+        nouvelles = [("N01", "Energy"), ("N02", "Health Care"), ("N03", "Materials")]
+        modifs = {("selections", None): {"entreprises": nouvelles + SELECTION_ENTREPRISES}}  # mieux classées que les détenues
+        d = self.lancer(DECEMBRE, "decision", modifs=modifs)["decision"]
+        retenues = {l["symbole"] for l in d["cibles"]["lignes"] if l["poche"] == "entreprises"}
+        self.assertTrue(tenues <= retenues, "toujours retenues par leur combinaison : gardées")
+
+
+class TestParisPays(BaseTrader):
+    def test_sortie_des_qu_un_exces_se_declenche_et_journal(self):
+        self.investir()
+        exces = ["valorisation tendue (25/100 : au-delà du 70e percentile)"]
+        modifs = {("selections", None): {"evaluations": paris(JP={"entree_ok": False, "sortie": True, "raisons_sortie": exces, "raisons_refus": exces})}}
+        mardi = LUNDI_MATIN + timedelta(days=1)
+        r = self.lancer(mardi.replace(hour=9, minute=5), modifs=modifs)
+        sortie = [o for o in r["imposes"] if o["symbole"] == "EWJ"]
+        self.assertEqual([o["motif"] for o in sortie], ["excès"], "vente dès que l'excès se déclenche, sans attendre le mois suivant")
+        self.assertIn("valorisation tendue", sortie[0]["raison"]["texte"])
+        self.lancer(mardi.replace(hour=15, minute=5), modifs=modifs)
+        pf = lire(self.data / "portefeuille.json")["donnees"]
+        p = next(x for x in pf["paris_pays"] if x["symbole"] == "EWJ")
+        self.assertEqual(p["statut"], "clos")
+        for champ in ("entree_le", "raison_entree", "sortie_le", "raison_sortie", "performance_pct", "msci_world_pct", "ecart_points"):
+            self.assertIsNotNone(p.get(champ), champ)
+        self.assertIn("pari pays", p["raison_entree"])
+        ouverts = [x for x in pf["paris_pays"] if x["statut"] == "ouvert"]
+        self.assertEqual({x["symbole"] for x in ouverts}, {"EWY", "INDA"})
+        self.assertTrue(all(x.get("performance_pct") is not None for x in ouverts))
+
+    def test_tendance_cassee(self):
+        self.investir()
+        cassee = ["tendance cassée : 12 mois hors dernier mois −2,0 %, cours sous la moyenne 200 jours"]
+        modifs = {("selections", None): {"evaluations": paris(KR={"entree_ok": False, "sortie": True, "raisons_sortie": cassee, "raisons_refus": cassee})}}
+        r = self.lancer(LUNDI_MATIN + timedelta(days=2, hours=2), modifs=modifs)
+        self.assertEqual([o["motif"] for o in r["imposes"] if o["symbole"] == "EWY"], ["sortie de tendance"])
+
+    def test_pari_garde_sans_exces_ni_cassure(self):
+        """Une condition d'entrée manque désormais (valorisation non publiée), mais ni excès ni cassure : le pari reste."""
+        self.investir()
+        modifs = {("selections", None): {"evaluations": paris(IN={"entree_ok": False, "raisons_refus": ["valorisation relative non disponible"]})}}
+        r = self.lancer(DECEMBRE, "decision", modifs=modifs)
+        self.assertIn("INDA", {l["symbole"] for l in r["decision"]["cibles"]["lignes"]})
+        self.assertFalse([o for o in r["etat"]["ordres"] if o["symbole"] == "INDA" and o["sens"] == "vente" and o["quantite"] and o["motif"] != "rééquilibrage"])
+
+
+class TestChangementDeMethode(BaseTrader):
+    def test_lignes_de_l_ancienne_methode_vendues_et_historique_conserve(self):
+        etat = P.etat_initial(self.config, LUNDI_MATIN - timedelta(days=30))
+        etat["liquidites"] = 40000.0
+        for s, poche in (("SPY", "coeur"), ("XLV", "coeur"), ("BBB", "satellite"), ("EWU", "tendance")):
+            etat["positions"][s] = {"symbole": s, "nom": s, "quantite": 100, "prix_revient_eur": 150, "prix_revient_local": 165, "dernier_cours_eur": 150,
+                                    "poids": 15, "poche": poche, "classe": "actions", "type": "pays", "devise": "USD", "cout_total_eur": 15000,
+                                    "ouverte_le": "2026-10-01T14:30:00Z", "realise_eur": 0.0, "frais_eur": 0.0}
+        etat["historique"] = {"2026-10-15": {"portefeuille": 99000.0, "msci_world": 100500.0}}
+        (self.data / "trader").mkdir(parents=True, exist_ok=True)
+        (self.data / "trader" / "etat.json").write_text(json.dumps(etat), encoding="utf-8")
+        r = self.lancer(LUNDI_MATIN, "decision")
+        d = r["decision"]
+        self.assertEqual(d["type"], "changement de méthode")
+        ventes = {o["symbole"]: o for o in r["etat"]["ordres"] if o["sens"] == "vente"}
+        self.assertEqual(set(ventes), {"SPY", "XLV", "BBB", "EWU"}, "toutes les lignes de l'ancienne méthode, en une fois")
+        for o in ventes.values():
+            self.assertEqual(o["motif"], "changement de méthode")
+            self.assertIn("ancienne méthode", o["raison"]["texte"])
+        r = self.lancer(LUNDI_MATIN.replace(hour=15, minute=5))
+        ops = lire(self.data / "trader" / "operations.json")["donnees"]
+        self.assertEqual({o["symbole"] for o in ops if o["motif"] == "changement de méthode"}, {"SPY", "XLV", "BBB", "EWU"})
+        pf = lire(self.data / "portefeuille.json")["donnees"]
+        self.assertEqual(pf["historique"][0]["date"], "2026-10-15", "historique de performance conservé")
+        self.assertEqual(pf["changements_methode"][0]["date"], "2026-11-09")
+        self.assertEqual(pf["methode"]["depuis"], "2026-11-09")
+        # une seconde décision le mois suivant n'est plus un changement de méthode
+        self.assertEqual(self.lancer(DECEMBRE, "decision")["decision"]["type"], "rééquilibrage mensuel")
+        self.assertEqual(len(lire(self.data / "trader" / "etat.json")["changements_methode"]), 1)
+
+
+class TestPoches(BaseTrader):
+    def test_indice_de_poche_neutre_aux_achats_et_ventes(self):
+        h = {"2026-11-09": {"poches": {"entreprises": 1010.0}, "msci_world": 100.0},
+             "2026-11-10": {"poches": {"entreprises": 2110.5}, "msci_world": 101.0},  # +1 000 achetés en début de journée, puis +5 %
+             "2026-11-11": {"poches": {"entreprises": 1050.0}, "msci_world": 102.0}}  # 1 060,50 vendus en fin de journée, cours inchangés
+        flux = {"2026-11-09": {"entreprises": 1000.0}, "2026-11-10": {"entreprises": 1000.0}, "2026-11-11": {"entreprises": -1060.5}}
+        pts = F.indice_poche(h, flux, "entreprises")
+        self.assertAlmostEqual(pts[0][1], 101.0)
+        self.assertAlmostEqual(pts[1][1], 101.0 * 1.05, places=6)
+        self.assertAlmostEqual(pts[2][1], 101.0 * 1.05, places=6)
+        etat = {"historique": h, "flux_poches": flux}
+        r = F.performance_poches(etat, "2026-11-09")["entreprises"]
+        self.assertAlmostEqual(r["performance"], 6.05, places=2)
+        self.assertAlmostEqual(r["msci_world"], 2.0, places=2)
+        self.assertAlmostEqual(r["ecart_points"], 4.05, places=2)
+
+    def test_suivi_separe_contre_le_msci_world(self):
+        self.investir()
+        for j in (1, 2, 3):
+            r = self.lancer((LUNDI_MATIN + timedelta(days=j)).replace(hour=15, minute=5))
+        st = lire(self.data / "portefeuille.json")["donnees"]["statistiques"]["poches"]
+        for poche in ("entreprises", "matieres", "pays"):
+            self.assertEqual(st[poche]["depuis"], "2026-11-09")
+            self.assertGreaterEqual(st[poche]["jours"], 4)
+            self.assertIsNotNone(st[poche]["performance"])
+            self.assertIsNotNone(st[poche]["msci_world"])
+        self.assertAlmostEqual(sum(st[p]["valeur_eur"] for p in st) + r["valo"]["liquidites"], r["valo"]["valeur"], delta=0.05)
 
 
 class TestRegles(unittest.TestCase):
@@ -380,37 +349,24 @@ class TestRegles(unittest.TestCase):
         self.config = charger_config()
 
     def test_seuil_de_reequilibrage(self):
-        maintenant = datetime(2026, 11, 20, 8, tzinfo=timezone.utc)
+        maintenant = datetime(2026, 12, 1, 8, tzinfo=timezone.utc)
         etat = P.etat_initial(self.config, maintenant)
-        etat["positions"] = {"SPY": {"symbole": "SPY", "nom": "SPY", "quantite": 10, "prix_revient_eur": 500, "dernier_cours_eur": 500, "poids": 10,
-                                     "poche": "coeur", "classe": "actions", "devise": "USD", "cout_total_eur": 5000, "ouverte_le": "2026-11-09T14:30:00Z"}}
-        e = {"cible": 12, "poche": "coeur", "classe": "actions", "zone": "Amérique du Nord", "support": {"symbole": "SPY", "nom": "SPY", "devise": "USD"},
-             "ligne": {"id": "pays-US"}}
-        c = {"lignes": {"SPY": e}, "exclusions": {}, "liquidites": 88, "liquidites_min": 10}
-        valo = {"valeur": 100000, "liquidites": 90000}
-        ordres, _, _ = S.generer_ordres(c, etat, valo, [], "Vigilance", self.config, maintenant)
+        etat["positions"] = {"S01": {"symbole": "S01", "nom": "S01", "quantite": 10, "prix_revient_eur": 500, "dernier_cours_eur": 500, "poids": 5,
+                                     "poche": "entreprises", "classe": "actions", "devise": "USD", "cout_total_eur": 5000, "ouverte_le": "2026-11-09T14:30:00Z"}}
+        e = {"cible": 7, "poche": "entreprises", "classe": "actions", "zone": "Amérique du Nord", "support": {"symbole": "S01", "nom": "S01", "devise": "USD"},
+             "ligne": {"id": "selection-S01", "type": "entreprises", "raison": "test"}}
+        c = {"lignes": {"S01": e}, "exclusions": {}}
+        valo = {"valeur": 100000, "liquidites": 95000}
+        ordres, _, arb = S.generer_ordres(c, etat, valo, self.config, maintenant)
         self.assertFalse(ordres, "écart de 2 points : sous le seuil de 3 points")
-        e["cible"] = 14
-        ordres, _, _ = S.generer_ordres(c, etat, valo, [], "Vigilance", self.config, maintenant)
+        self.assertEqual(arb[0]["action"], "conservée")
+        e["cible"] = 8
+        etat["positions"]["S01"]["poids"] = 3.5  # sous 4 % : rééquilibrée même sous le seuil
+        ordres, _, _ = S.generer_ordres(c, etat, valo, self.config, maintenant)
         self.assertEqual([o["sens"] for o in ordres], ["achat"])
-        e["cible"] = 6
-        ordres, _, _ = S.generer_ordres(c, etat, valo, [], "Vigilance", self.config, maintenant)
-        self.assertEqual([o["motif"] for o in ordres], ["rééquilibrage"])
-        ordres, _, arb = S.generer_ordres(c, etat, valo, [], "Vigilance", self.config, datetime(2026, 11, 12, 8, tzinfo=timezone.utc))
-        self.assertFalse(ordres, "réduction impossible avant 5 jours de détention")
-        self.assertEqual(arb[0]["action"], "réduction reportée")
-
-    def test_correlation(self):
-        a = [(f"d{i:03d}", 100 * (1.01 if i % 3 else 0.98) ** (i % 7)) for i in range(200)]
-        ra = S.rendements(a)
-        self.assertAlmostEqual(S.correlation(ra, ra), 1.0, places=6)
-        self.assertAlmostEqual(S.correlation(ra, {k: -v for k, v in ra.items()}), -1.0, places=6)
-        self.assertIsNone(S.correlation(ra, dict(list(ra.items())[:50])), "moins de 120 dates communes")
-
-    def test_volatilite(self):
-        pts = [(str(i), 100 * (1.01 if i % 2 else 0.99)) for i in range(80)]
-        self.assertGreater(S.volatilite(pts, 63), 10)
-        self.assertIsNone(S.volatilite(pts[:5], 63))
+        etat["positions"]["S01"]["poids"] = 12  # au-dessus de 8 %
+        ordres, _, _ = S.generer_ordres(c, etat, valo, self.config, maintenant)
+        self.assertEqual([(o["sens"], o["motif"]) for o in ordres], [("vente", "rééquilibrage")])
 
     def test_statistiques(self):
         h = {f"2026-0{1 + i // 28}-{1 + i % 28:02d}": {"portefeuille": 100000 * (1 + 0.001 * i), "msci_world": 100000} for i in range(40)}
@@ -427,48 +383,40 @@ class TestRegles(unittest.TestCase):
 
 class TestSimulation(BaseTrader):
     def test_simulation_trois_mois(self):
-        """Trois mois simulés : règles respectées à chaque séance ; performance, risque et attribution cohérents."""
-        self.f = FournisseurSimule(debut="2025-06-01", chocs={"III": [("2026-09-15", 0.8)], "BBB": [("2026-09-20", 1.35)]})
-        ev = {"2026-10-05": {"palier": "Tension"}, "2026-10-20": {"palier": "Vigilance"},
-              "2026-10-12": {"modifs": {("pays", "pays-JP"): {"verdict": "Neutre"}, ("secteurs", "secteur-etats_unis-sante"): {"verdict": "Alléger"}}}}
+        """Trois mois simulés : règles respectées à chaque séance, un rééquilibrage par mois, ni stop ni prise de bénéfices."""
+        self.f = FournisseurSimule(debut="2025-06-01", chocs={"S05": [("2026-09-15", 0.6)], "S06": [("2026-09-20", 1.5)]})
+        moins_s07 = [x for x in SELECTION_ENTREPRISES if x[0] != "S07"]
+        exces = ["accélération parabolique (test)"]
+        ev = {"2026-10-12": {"modifs": {("selections", None): {"entreprises": moins_s07}}},
+              "2026-10-20": {"modifs": {("selections", None): {"entreprises": moins_s07, "evaluations": paris(
+                  KR={"entree_ok": False, "sortie": True, "raisons_sortie": exces, "raisons_refus": exces})}}}}
         res = simuler(executer, self.f, self.config, self.data, "2026-09-01", 92, heures=(15, 21), evenements=ev)
         self.assertTrue(all(r["ok"] for r in res))
+        cm = self.config["methode"]
         for r in res:
-            self.assertLessEqual(len(r["etat"]["positions"]), 15)
-            if r["decision"]:
-                self.assertLessEqual(len(r["decision"]["cibles"]["lignes"]), 15)
-        decisions = defaultdict(int)
-        for r in res:
-            if r["decision"]:
-                decisions[r["decision"]["date"]] += 1
-        self.assertEqual(set(decisions.values()), {1}, "une seule décision par jour")
+            self.assertLessEqual(len(r["etat"]["positions"]), cm["max_lignes"])
+        reeq = [r["decision"] for r in res if r["decision"] and r["decision"].get("cibles")]
+        self.assertEqual([d["date"][:7] for d in reeq], ["2026-09", "2026-10", "2026-11", "2026-12"], "un rééquilibrage par mois")
+        self.assertEqual(reeq[0]["type"], "changement de méthode")
         ops = lire(self.data / "trader" / "operations.json")["donnees"]
-        achats = {}
+        motifs = {o["motif"] for o in ops}
+        self.assertFalse({"stop", "prise de bénéfices", "plancher de liquidités"} & motifs)
+        self.assertIn("excès", motifs, "pari pays vendu dès l'excès (20 octobre)")
+        s07 = [o for o in ops if o["symbole"] == "S07" and o["sens"] == "vente"]
+        self.assertEqual([o["motif"] for o in s07], ["sortie de combinaison"])
+        self.assertTrue(s07[0]["date"].startswith("2026-11-02"), "vendue au rééquilibrage de novembre, pas avant")
         par_jour = defaultdict(set)
         for o in ops:
             self.assertGreaterEqual(o["date"], o["decide_le"])
             par_jour[(o["date"][:10], o["symbole"])].add(o["sens"])
-            if o["sens"] == "achat":
-                achats[o["symbole"]] = o["date"]
-            elif o["motif"] != "stop":
-                dernier = achats.get(o["symbole"])
-                if dernier:
-                    jours = (datetime.fromisoformat(o["date"][:10]) - datetime.fromisoformat(dernier[:10])).days
-                    self.assertGreaterEqual(jours, 5, f"{o['symbole']} vendu {jours} j après un achat ({o['motif']})")
         self.assertFalse([k for k, v in par_jour.items() if v == {"achat", "vente"}], "pas d'achat et de vente du même titre le même jour")
         pf = lire(self.data / "portefeuille.json")["donnees"]
         st = pf["statistiques"]
         self.assertIsNotNone(st["risque"]["sharpe"])
-        self.assertIsNotNone(st["performance_msci_world"]["depuis_debut"])
-        total = sum(x["eur"] for x in st["attribution"]["poches"])
-        self.assertAlmostEqual(total, pf["valeur_actuelle"] - 100000, delta=1)
-        motifs = {o["motif"] for o in ops}
-        self.assertIn("stop", motifs)
-        for r in res:  # pendant la « Tension » : 20 % de liquidités au moins (tolérance d'un point, dérive des cours)
-            if "2026-10-07" <= r["donnees"]["maj"][:10] <= "2026-10-19":
-                self.assertGreaterEqual(r["donnees"]["liquidites_pct"], 20 - self.config["tolerance_plancher_points"] - 0.5)
-        self.assertTrue({"sortie sur verdict", "mise en conformité"} & motifs)
-        self.assertFalse({"EEE", "FFF", "GGG", "KKK", "XLE", "IXN", "EWG"} & {o["symbole"] for o in ops})
+        self.assertAlmostEqual(sum(x["eur"] for x in st["attribution"]["poches"]), pf["valeur_actuelle"] - 100000, delta=1)
+        for poche in ("entreprises", "matieres", "pays"):
+            self.assertGreater(st["poches"][poche]["jours"], 40)
+        self.assertTrue(any(p["statut"] == "clos" and p["symbole"] == "EWY" for p in pf["paris_pays"]))
 
 
 if __name__ == "__main__":

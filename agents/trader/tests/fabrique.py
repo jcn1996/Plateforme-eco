@@ -36,6 +36,38 @@ ENTREPRISES = [
 ]
 
 
+SELECTION_ENTREPRISES = [  # ticker, secteur — 4 sociétés de technologie : 25 % par secteur au plus (3 lignes à 7-8 %)
+    ("S01", "Information Technology"), ("S02", "Information Technology"), ("S03", "Information Technology"), ("S04", "Information Technology"),
+    ("S05", "Health Care"), ("S06", "Industrials"), ("S07", "Energy"), ("S08", "Consumer Staples"), ("S09", "Consumer Discretionary"),
+    ("S10", "Materials"), ("S11", "Utilities"), ("S12", "Communication")]
+PARIS = [  # pays, nom, ETF, force relative, entrée possible, sortie imposée, raisons
+    ("JP", "Japon", "EWJ", 90, True, False, []), ("KR", "Corée du Sud", "EWY", 85, True, False, []), ("IN", "Inde", "INDA", 80, True, False, []),
+    ("MX", "Mexique", "EWW", 70, True, False, []), ("DE", "Allemagne", "EWG", 60, False, False, ["valorisation relative non disponible"]),
+    ("BR", "Brésil", "EWZ", 20, False, True, ["tendance cassée : 12 mois hors dernier mois −8,0 %, cours sous la moyenne 200 jours"])]
+
+
+def evaluation(cle, nom, etf, force, entree_ok=True, sortie=False, raisons=None) -> dict:
+    """Évaluation d'un pari pays par le chef d'orchestre (bloc selections.paris_pays.evaluation)."""
+    return {"id": f"pays-{cle}", "cle": cle, "nom": nom, "symbole": etf, "entree_ok": entree_ok, "sortie": sortie,
+            "raisons_refus": [] if entree_ok else list(raisons or []), "raisons_sortie": list(raisons or []) if sortie else [],
+            "force_relative": force, "perf_12_1": 20.0, "valorisation_note": 55, "tendance": f"force relative {force}e percentile (test)"}
+
+
+def selections(evaluations=None, entreprises=None, matieres=None) -> dict:
+    ev = evaluations if evaluations is not None else [evaluation(c, n, e, f, ok, so, r) for c, n, e, f, ok, so, r in PARIS]
+    ent = entreprises if entreprises is not None else SELECTION_ENTREPRISES
+    return {"date": "test", "entreprises": {"retenues": [
+                {"id": f"selection-{t}", "type": "entreprises", "ticker": t, "symbole": t, "nom": f"Société {t}", "pays": "US", "secteur": sec,
+                 "secteur_nom": sec, "devise": "USD", "combinaisons": ["goodwill_actif+fcf_yield"],
+                 "combinaisons_libelles": ["Goodwill / actif + Rendement du FCF"], "score": 90 - i} for i, (t, sec) in enumerate(ent)]},
+            "matieres": {"retenues": matieres if matieres is not None else [
+                {"id": "matiere-palladium", "type": "matieres", "cle": "palladium", "nom": "Palladium", "symbole": "PA=F", "texte": "niveau 100e, positionnement 88e"},
+                {"id": "or", "type": "or", "cle": "or", "nom": "Or", "symbole": "GC=F", "texte": "niveau 80e, positionnement 75e"},
+                {"id": "matiere-cacao", "type": "matieres", "cle": "cacao", "nom": "Cacao", "symbole": "CC=F", "texte": "test"}]},
+            "paris_pays": {"candidats": sorted([e for e in ev if e["entree_ok"]], key=lambda e: -e["force_relative"]), "evaluation": ev,
+                           "a_revendre": [], "detenus": []}}
+
+
 def _familles(agents_pour, score):
     noms = {"entreprises": ("fondamentaux", "Fondamentaux"), "pays": ("flux", "Flux d'investissement"), "macro": ("cycle", "Adéquation au cycle"),
             "inities": ("inities", "Initiés et super-investisseurs"), "risque": ("risque", "Risque"), "geopolitique": ("geopolitique", "Géopolitique")}
@@ -77,7 +109,7 @@ def chef(jour: str, modifs: dict | None = None) -> dict:
         ("oblig-euro-courtes", "obligations", 6), ("or", "or", 5), ("matiere-brent", "matieres", 3), ("matiere-cacao", "matieres", 1),
         ("liquidites-eur", "liquidites", 7), ("entreprise-AAA", "actions", 2.5), ("entreprise-BBB", "actions", 2.5)]
     d = {"date": jour, "mode": "complet", "maj": f"{jour}T07:15:00Z", "regime": {"palier": "Vigilance"},
-         "panorama": {"a_surveiller": [{"id": i} for i in A_SURVEILLER]}, "secteurs": secteurs,
+         "panorama": {"a_surveiller": [{"id": i} for i in A_SURVEILLER]}, "secteurs": secteurs, "selections": selections(),
          "pays": pays, "matieres": matieres, "or": or_, "obligations": obligs, "liquidites": liqs, "entreprises": ent,
          "entrees": [{"cle": a, "etat": "à jour", "degrade": False} for a in ("pays", "macro", "risque", "entreprises", "inities", "geopolitique")],
          "allocation": {"palier": "Vigilance", "contraintes": {"max_pays": 40, "max_secteur": 12, "max_theme": 20},
@@ -93,6 +125,9 @@ def chef(jour: str, modifs: dict | None = None) -> dict:
             continue
         if type_ == "tendances_fortes":
             d["tendances_fortes"] = champs
+            continue
+        if type_ == "selections":  # champs : arguments de selections() (evaluations, entreprises, matieres)
+            d["selections"] = selections(**champs) if champs is not None else None
             continue
         if type_ == "vider":
             d[id_] = []

@@ -5,6 +5,7 @@
    Toucher une ligne ouvre la fiche correspondante.
    ========================================================================== */
 
+import { MENTION_PAYS } from './chef.js';
 import { el, nombre, classeNote, libelleNiveau, niveauNote, badgeTendance, tendanceNote } from './outils.js';
 
 const NB_ENTREPRISES = 20;
@@ -29,7 +30,8 @@ export function ecranClassement(d, nav) {
     ongletActif = cle;
     boutons.forEach((b, i) => b.setAttribute('aria-selected', String(onglets[i].cle === cle)));
     liste.setAttribute('aria-labelledby', `classement-${cle}`);
-    liste.replaceChildren(...(cle === 'pays' ? lignesPays(d, nav) : lignesEntreprises(d, nav)));
+    liste.replaceChildren(...(cle === 'pays' ? [el('p', { class: 'chef-petit classement-mention' }, `Notes pays : ${MENTION_PAYS}.`), ...lignesPays(d, nav)]
+      : lignesEntreprises(d, nav)));
   }
   choisir(ongletActif);
 

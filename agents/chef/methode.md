@@ -145,7 +145,7 @@ Se laisser porter par ce qui marche, au lieu d'écarter systématiquement les fo
   
   avec un excès, objection sérieuse (conviction abaissée d'un cran ; la tendance ne compte ni dans la concordance ni comme famille motrice) et la ligne va dans « À surveiller » ;
 - **sans excès, c'est un signal positif** : la note de la famille « Tendance » est relevée à 65 au moins, elle compte dans la concordance et comme famille motrice (elle ne suffit jamais seule à une conviction forte, qui exige un signal solide) ;
-- rubrique **« Tendances fortes »** de « Où investir » (`tendances_fortes` dans `data/chef.json`) : les actifs du premier tiers de force relative dont la tendance est intacte, 6 par catégorie au plus, saines d'abord, avec le niveau qui invaliderait la tendance (la moyenne 200 jours) et le stop suiveur de la poche « tendance » du trader (−15 % du plus haut sur 12 mois).
+- rubrique **« Tendances fortes »** de « Où investir » (`tendances_fortes` dans `data/chef.json`) : les actifs du premier tiers de force relative dont la tendance est intacte, 6 par catégorie au plus, saines d'abord, avec le niveau qui invaliderait la tendance (la moyenne 200 jours) et un repère de stop suiveur (−15 % du plus haut sur 12 mois ; le trader n'utilise plus de stop depuis novembre 2026).
 
 Cours utilisés : ETF pays (`data/cours/etf-pays.json`, quotidien), séries des matières premières (`data/matieres_premieres.json`, hebdomadaire), cours hebdomadaires des fiches entreprises, ETF sectoriels (Yahoo Finance, déjà lus pour les secteurs ; pas d'ETF pour les secteurs émergents). Fenêtres en jours calendaires (moyenne 200 jours ≈ 290 jours calendaires), valables pour les séries quotidiennes et hebdomadaires.
 
@@ -204,16 +204,25 @@ Trois profils (prudent, équilibré, dynamique), structure cœur-satellite (`all
 5. contraintes : 40 % par pays, 12 % par secteur, 20 % par thème, 8 % par ligne (25 % pour une ligne obligataire) ; l'excédent est redistribué ;
 6. rotation limitée : un écart de moins de 1,5 point avec l'allocation de la veille est ignoré ; chaque variation est justifiée.
 
-Cette allocation servira de base au futur agent trader démo.
+Cette allocation reste indicative : depuis novembre 2026, l'agent trader suit les sélections du backtest (§ 4 bis), non cette allocation.
+
+## 4 bis. Sélections du backtest (`selections`, `agents/chef/selections.py`)
+
+Depuis le backtest de novembre 2026 (`data/backtest/rapport-2026-11.md`), le chef d'orchestre publie trois sélections, lues par l'agent trader et mises en avant dans « Où investir » :
+- **Entreprises** : sociétés retenues par au moins une combinaison « Prometteuse » du rapport (M-score de Beneish + goodwill / actif ; goodwill / actif + rendement du FCF ; conversion du bénéfice en cash + goodwill / actif + rendement du FCF). Une société est retenue par une combinaison si elle est dans les **meilleurs 30 %** (percentile > 70, rangs moyens pour les égalités, comme le backtest) sur **chacun** de ses signaux. Univers du backtest : sociétés américaines non financières, hors immobilier et holdings, d'au moins 2 Md$ ; notes de l'agent entreprises (mêmes barèmes).
+- **Matières premières** : celles retenues par « Niveau historique + Positionnement CFTC » (contrats à terme suivis par l'agent matières premières).
+- **Paris pays** : pour chaque ETF pays, entrée possible si la tendance est haussière et saine (suivi de tendance : 12-1 positive, cours au-dessus de la moyenne 200 jours) sans excès et si la valorisation relative est connue et non tendue ; **sortie imposée** dès qu'un excès se déclenche (accélération parabolique ≥ 2,5 fois la volatilité mensuelle, valorisation au-delà du 70e percentile, positionnement au 90e percentile) ou que la tendance casse. Les ETF pays détenus comme paris par le portefeuille démo (`data/portefeuille.json`) et en sortie sont listés « à revendre ».
+
+**Notes et verdicts pays** : toujours calculés et affichés, avec la mention « contexte économique, non prédictif d'après le backtest » ; ils ne classent plus les pays dans « Où investir » (top 5 et « À surveiller » sans pays, onglet « Pays · contexte » par ordre alphabétique).
 
 ## 5. Synthèse et alertes
 
-**Panorama « Où investir »** (`panorama`) : un tour d'horizon large et équilibré plutôt qu'une seule pépite.
-- Top 5 : verdicts positifs dont le score dépasse le seuil « Renforcer » (pas seulement maintenus par l'hystérésis), sans objection sérieuse à lever ni tendance en excès ; d'abord une ligne par catégorie (pays, entreprises, matières premières, or, obligations, liquidités), puis deux, puis trois en dernier recours quand les autres catégories n'ont aucune ligne éligible.
-- Listes par catégorie triées par score.
-- Par catégorie : top 5 des pays, top 3 des secteurs (une zone par secteur), top 3 des matières premières, position sur l'or, sur chaque ligne obligataire et sur les liquidités.
+**Panorama « Où investir »** (`panorama`) : d'abord les entreprises puis les matières premières retenues par le backtest et les paris pays (sélections ci-dessus), puis un tour d'horizon large.
+- Top 5 (hors pays) : verdicts positifs dont le score dépasse le seuil « Renforcer » (pas seulement maintenus par l'hystérésis), sans objection sérieuse à lever ni tendance en excès ; d'abord une ligne par catégorie (entreprises, secteurs, matières premières, or, obligations, liquidités), puis deux, puis trois en dernier recours quand les autres catégories n'ont aucune ligne éligible.
+- Listes par catégorie triées par score (sauf les pays, présentés comme contexte économique).
+- Par catégorie : top 3 des secteurs (une zone par secteur), top 3 des matières premières, position sur l'or, sur chaque ligne obligataire et sur les liquidités ; liste des pays pour le briefing, sous la mention « contexte économique ».
 - Entreprises : au moins 10 quand les données le permettent (verdicts positifs d'abord, puis meilleurs « Neutre »), au plus 2 par secteur et 3 par pays, au moins 4 secteurs et 4 pays ; un écart à ces objectifs est signalé.
-- « À surveiller » (8 au plus, 3 par catégorie) : opportunités à moins de 4 points du seuil « Renforcer », verdict maintenu par l'hystérésis sous le seuil, ou bien notées mais avec une objection sérieuse à lever ou une tendance forte en excès.
+- « À surveiller » (8 au plus, 3 par catégorie, sans pays) : opportunités à moins de 4 points du seuil « Renforcer », verdict maintenu par l'hystérésis sous le seuil, ou bien notées mais avec une objection sérieuse à lever ou une tendance forte en excès.
 
 **Briefing quotidien** (`data/chef/briefing-AAAA-MM-JJ.md` et `.json`) : l'essentiel en 5 lignes, une par catégorie (risque et cycle ; pays ; matières premières et or ; obligations et liquidités ; secteurs et entreprises) ; le panorama complet ; « Ce qui a changé depuis hier » ; points de vigilance ; scénario central et scénario alternatif avec leurs déclencheurs ; agenda des 7 prochains jours ; « Ce qui pourrait me donner tort » ; état des données ; liste des faits utilisés.
 

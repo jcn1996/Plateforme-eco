@@ -2,64 +2,59 @@
 
 **Portefeuille fictif à but de démonstration, aucun ordre réel.** L'agent ne se connecte à aucun courtier et ne passe aucun ordre : chaque « ordre » est une ligne de `data/trader/etat.json`, exécutée sur le papier. Son seul but est de mesurer, en conditions réelles de marché, ce que valent les recommandations de la plateforme.
 
-Paramètres : [`config.json`](config.json). Code : `agent.py` (orchestration), `strategie.py` (cibles, ordres, risque), `portefeuille.py` (exécution simulée, valorisation), `performance.py` (statistiques, attribution), `sources.py` (cours).
+Paramètres : [`config.json`](config.json) (bloc `methode`). Code : `agent.py` (orchestration, journal des paris pays), `strategie.py` (poches, cibles, ordres, contrôle des paris pays), `portefeuille.py` (exécution simulée, valorisation, flux par poche), `performance.py` (statistiques, performance par poche, attribution), `observation.py` (signaux en observation), `sources.py` (cours).
 
-## 1. Stratégie : diversifiée mais concentrée
+## 1. Méthode par combinaisons du backtest (depuis novembre 2026)
 
-- **Départ** : 100 000 € en liquidités (`capital_initial`). Le portefeuille ne copie plus l'allocation modèle du chef d'orchestre : il en reprend les verdicts et les convictions pour choisir peu de lignes.
-- **Concentration** : **15 lignes au plus** (`max_lignes`, liquidités exceptées), **4 % minimum par ligne** (`ligne_min`) ; une ligne qui tomberait sous 4 % après les plafonds est écartée (les lignes déjà détenues en dernier).
-- **Cœur : 8 à 12 positions** (`coeur`) choisies parmi les opportunités « Renforcer » ou « Renforcer fortement » de conviction **moyenne ou forte** : ETF pays, ETF sectoriels régionaux (États-Unis, Europe), or (GLD), matières premières (BNO, USO… avec le contango signalé).
-  - **Jamais d'ETF monde** (secteurs « Monde », URTH, ACWI…) **ni d'ETF pays « Neutre »**.
-  - Classement par conviction puis score (+3 points pour une ligne déjà détenue et toujours éligible : moins de rotation, moins de frais).
-  - **Diversification** : au moins 4 classes ou zones (Asie, Europe, Amérique du Nord, Amérique latine, Moyen-Orient et Afrique, Océanie, Émergents, or, matières premières, obligations), 3 lignes de cœur au plus par zone et 35 % au plus du portefeuille par zone pour le cœur, 2 lignes au plus par secteur (ETF sectoriels et sociétés confondus).
-  - **Faible corrélation, vérifiée sur 1 an** de cours quotidiens : une ligne dont la corrélation avec une ligne déjà retenue dépasse 0,80 (sur au moins 120 séances communes) est écartée. La décision publie la corrélation moyenne et la plus forte paire.
-  - Poids ∝ conviction (forte 1,5, moyenne 1), 15 % au plus par ligne ; l'excédent des plafonds reste en liquidités.
-- **Obligations : poids fixé par le verdict** du chef d'orchestre (`obligations.poids_par_verdict`) : « Renforcer fortement » 15 %, « Renforcer » 10 %, « Neutre » 5 % (poids neutre), « Alléger » et « Éviter » 0 ; une conviction faible plafonne au poids neutre ; 20 % au total au plus ; un seul support par ligne (SHY, IEF, IBGS.AS, EXX6.DE). Elles comptent parmi les lignes du cœur.
-- **Satellites : convictions fortes seulement** (entreprises), signaux favorables (famille notée 60/100 ou plus) d'au moins 2 agents indépendants (**aucune décision fondée sur une seule source**), 4 au plus dans la limite des 15 lignes et de 5 lignes par zone (cœur compris) ; taille ∝ conviction ÷ volatilité sur 3 mois, **4 à 8 %** par ligne. Le budget non utilisé revient au cœur.
-- **Poche « tendance »** (bloc `tendance`) : un tiers du budget des satellites (`part_satellites` 0,33, soit 10 % du portefeuille) investi sur les **tendances fortes et saines** du chef d'orchestre (rubrique « Tendances fortes » : premier tiers de force relative dans la catégorie, performance sur 12 mois hors dernier mois positive, cours au-dessus de la moyenne 200 jours, sans excès de valorisation, de positionnement ni d'accélération), y compris au verdict « Neutre » : la tendance est le signal. 2 lignes au plus, à parts égales (5 % chacune), places réservées avant les satellites ; jamais une opportunité en excès, « À surveiller », sous objection, « Alléger » / « Éviter » ou sans support coté. **On laisse courir les gagnants** : ni prise de bénéfices ni réduction tant que la tendance tient. Sorties : **stop suiveur à −15 % du plus haut depuis l'achat** (1 relevé), **force relative sortie du premier tiers** ou **tendance cassée** (12-1 négatif ou cours sous la moyenne 200 jours), verdict « Alléger » / « Éviter ».
-  Seuils fixés par le backtest (`data/backtest/tendance-2026-11.md`, 2010-2026) : momentum 12-1 ; stop −15 % du plus haut et entrées filtrées des excès — rendement annuel +5,0 % / +8,3 % (apprentissage / vérification), Sharpe 0,24 / 0,41, perte maximale −24 % / −20 %, contre +1,6 % / +8,6 %, Sharpe −0,03 / 0,40 et −33 % / −24 % sans stop ni filtre. Un stop sous la moyenne 200 jours a fait moins bien sur les deux périodes (Sharpe 0,03 / 0,25), des stops serrés (−8 %, −12 %) multiplient les sorties sans gain hors échantillon. Limite assumée : sur 2010-2026, la poche fait moins bien que l'indice mondial (ACWI +9,5 % / +11,7 % par an), d'où sa part limitée.
-- **Jamais d'achat** d'une opportunité classée « À surveiller » par le chef d'orchestre ni **sous objection du contradicteur** (sérieuse ou non ; seule la revue « Pas d'objection spécifique » n'en est pas une).
-- Les liquidités restent en euros, non rémunérées. **Valorisation en euros** au change du jour (Londres, Johannesburg et Tel-Aviv cotent en sous-unités : pence, cents, agorot).
+Le backtest des règles de notation (`data/backtest/rapport-2026-11.md`) a montré que les notes et verdicts pays ne sont pas prédictifs et que les stops coûtaient du rendement. La méthode s'appuie désormais sur ce qui a le mieux tenu hors échantillon, sans jamais d'ETF monde :
 
-## 2. Gestion du risque
+| Poche | Part du portefeuille | Candidats (sélections du chef d'orchestre, `chef.json` → `selections`) |
+|---|---|---|
+| **Entreprises** | 70 à 85 % | sociétés retenues par une combinaison « Prometteuse » du rapport : M-score de Beneish + goodwill / actif ; goodwill / actif + rendement du FCF ; conversion du bénéfice en cash + goodwill / actif + rendement du FCF (meilleurs 30 % sur chaque signal, univers du backtest : sociétés américaines non financières d'au moins 2 Md$). **25 % au plus par secteur.** |
+| **Matières premières** | 0 à 20 % | celles retenues par « Niveau historique + Positionnement CFTC » (supports cotés : `supports` ; sans support coté, écartée) |
+| **ETF pays (« paris pays »)** | 0 à 15 %, 3 lignes au plus | pays en tendance haussière et saine (suivi de tendance du chef d'orchestre : 12 mois hors dernier mois positive, cours au-dessus de la moyenne 200 jours, aucun excès) dont la valorisation relative n'est pas tendue ; les plus forts en premier |
 
-- **Une seule série de décisions par jour**, calculée une fois puis exécutée : une seconde demande de décision le même jour est ignorée (sauf `--forcer`, usage manuel). Pas d'achat puis de vente du même titre le même jour.
-- **Détention minimale de 5 jours** (`detention_min_jours`) avant toute vente ou réduction, **sauf stop-loss** ; pas de rachat d'un titre vendu depuis moins de 5 jours (20 jours après un stop, un verdict « Alléger » / « Éviter » ou une objection).
-- **Liquidités minimales selon le palier de l'agent risque** (`liquidites_min_par_palier`) : 5 % en « Calme », 10 % en « Vigilance », 20 % en « Tension », 35 % en « Crise ». À la décision, les cibles en tiennent compte ; à chaque exécution, si les liquidités (achats en attente déduits) passent sous le plancher de plus d'un point, les lignes détenues depuis 5 jours au moins sont allégées en proportion.
-- **Stops des satellites** (hors poche « tendance », qui a son propre stop suiveur) : −15 % sous le prix de revient ; **suiveur** dès +20 % (15 % sous le plus haut, jamais abaissé) ; déclenché après **2 relevés** distincts sous le stop.
-- **Prise de bénéfices partielle** : un tiers de la ligne à +30 %, une fois.
-- **Sorties imposées** (après la détention minimale) : verdict « Alléger » ou « Éviter » sur une ligne détenue, objection sérieuse sur un satellite. Vérifiées à chaque exécution si le chef d'orchestre est à jour et sain.
-- **Rééquilibrage** : une ligne cible déjà détenue n'est rééquilibrée que si son écart dépasse **3 points**, ou si elle est sous 4 % ; aucun ordre de moins de 500 €. Réductions plafonnées à 30 % de la valeur sur 30 jours glissants.
-- **Lignes hors règles : réduction progressive** (`transition`). Une ligne détenue qui ne respecte plus les règles (règle enfreinte, ou non retenue par la concentration) est soldée après la détention minimale, **5 sorties au plus par décision**, les règles enfreintes d'abord puis les plus petites lignes. Aucune nouvelle ligne n'est ouverte tant que le portefeuille dépasse 15 lignes. Chaque cas figure dans les **arbitrages expliqués** de la décision : vente, conservée (et jusqu'à quand), sortie ou entrée reportée, renforcement, réduction.
-- **Aucune décision sur données périmées ou incomplètes** : sortie du chef d'orchestre de moins de 26 h avec l'analyse complète du jour et des données complètes (lignes pays, obligations et entreprises présentes, 20 % au plus sans score ni verdict, entrées pays, macro, risque et entreprises disponibles : `fraicheur.chef_complet`), agent risque de moins de 30 h avec un palier. Seul compte l'état des **données** : la santé des agents (écran Santé) n'est pas lue, si bien qu'un chef d'orchestre « dégradé » pour une raison étrangère à ses données (rédaction par Gemini, dépôt sur Google Drive) ne bloque rien. Sinon, l'agent attend, note les raisons et réessaie à l'exécution horaire suivante ; stops et valorisation continuent.
+- **15 lignes au plus, 4 à 8 % par ligne** ; le reste en liquidités s'il manque des candidats (petit tampon de 1 % pour les frais).
+- **Ordre de priorité** : entreprises (au moins 70 % si les candidats le permettent), puis matières premières, puis paris pays ; à poids égal dans chaque poche.
+- **Les lignes déjà détenues et toujours retenues passent avant les nouvelles** (moins de rotation, moins de frais).
+- **Ni stop ni prise de bénéfices.** Une ligne est vendue quand elle **sort de sa combinaison**, vérifié **une fois par mois** (premier jour de décision du mois). Les autres jours, la décision se limite à une vérification.
+- **Paris pays** : vendus **dès qu'un excès se déclenche** — accélération parabolique ≥ 2,5 fois la volatilité mensuelle, valorisation au-delà du 70e percentile, positionnement au 90e percentile — **ou que la tendance casse** ; contrôlé à chaque exécution horaire, dès que le chef d'orchestre le signale. Un pari dont une condition d'entrée manque désormais (sans excès ni cassure) est gardé.
+- **Journal des paris pays** (`etat.json` → `paris_pays`, écran « Portefeuille démo ») : date et raison d'entrée, date et raison de sortie, performance du pari et du MSCI World en euros sur la même période, écart.
+- **Plancher de liquidités par palier de risque : retiré** (la structure 70-85 % d'entreprises n'est pas compatible avec 20 à 35 % de liquidités en « Tension » ou en « Crise »). Le palier reste lu et affiché.
+
+## 2. Changement de méthode (transition)
+
+Au premier rééquilibrage de la nouvelle méthode, **toutes les lignes qui ne respectent pas ces règles sont vendues en une fois** (motif « changement de méthode »), chaque ordre étant journalisé avec sa raison dans `data/trader/operations.json`. L'historique de performance est conservé ; la date du changement est enregistrée (`etat.json` → `methode`, `changements_methode`) et marquée sur le graphique « Performance vs MSCI World ».
 
 ## 3. Exécution simulée
 
-- **Jamais à un cours passé** : un ordre est exécuté au premier cours disponible *après* l'heure de sa décision (ouverture de la première barre de 5 minutes de Yahoo Finance ; à défaut, ouverture de la première séance qui suit le jour de la décision). Les décisions de 7 h 33 UTC sont donc exécutées à l'ouverture des marchés concernés (Tokyo le lendemain, Europe vers 8 h, New York à 14 h 30 UTC). Ordres non exécutés au bout de 5 jours : expirés. Les ordres discrétionnaires non exécutés sont remplacés par la décision du lendemain.
-- **Ventes avant achats** ; achats limités aux liquidités disponibles au-dessus du plancher.
+- **Jamais à un cours passé** : un ordre est exécuté au premier cours disponible *après* l'heure de sa décision (ouverture de la première barre de 5 minutes de Yahoo Finance ; à défaut, ouverture de la première séance qui suit le jour de la décision). Les décisions de 7 h 33 UTC sont donc exécutées à l'ouverture des marchés concernés. Ordres non exécutés au bout de 5 jours : expirés.
+- **Ventes avant achats** ; achats limités aux liquidités disponibles (produit estimé des ventes compris).
 - **Frais** : 0,1 % du montant de chaque ordre (`execution.frais_pct`).
 - **Écart achat/vente estimé** (`execution.ecart_achat_vente_pct`) : 0,04 % pour les grands ETF, 0,10 % pour les autres ETF, 0,06 % pour les actions américaines, 0,12 % européennes, 0,20 % asiatiques développées, 0,35 % émergentes ; la moitié est payée à chaque achat et à chaque vente.
 - **Quantités entières** : un achat inférieur au prix d'une part est annulé et noté.
-- **Contango** : BNO, USO, UNG et les fonds de matières agricoles sont adossés à des contrats à terme ; chaque achat le signale dans « Ce qui pourrait me donner tort ».
-- **Journal** (`data/trader/operations.json`) : date d'exécution et de décision, sens, support, quantité, cours de marché, prix payé (écart compris) en devise et en euros, taux de change, frais, coût de l'écart, motif, raison détaillée (verdict, conviction, score, agents à l'origine, familles favorables, objection éventuelle, cible et poids), stop associé, « Ce qui pourrait me donner tort », et pour une vente le résultat (plus-value en euros et en %, durée de détention).
+- **Contango** : les fonds de matières premières adossés à des contrats à terme le signalent dans « Ce qui pourrait me donner tort ».
+- **Rééquilibrage mensuel** d'une ligne détenue et toujours retenue : seulement si son écart à la cible dépasse 3 points ou si elle sort de la fourchette 4-8 % ; aucun ordre de moins de 500 €.
 
 ## 4. Suivi de performance
 
-- Valeur et historique quotidien (dernière valorisation du jour), performance depuis le départ, sur 1 mois et sur 3 mois (« n. d. » tant que l'historique ne couvre pas la période).
-- **Référence** : MSCI World en euros = ETF URTH ÷ EUR/USD, base 100 000 € à la première valorisation (agent marchés s'il est à jour, sinon Yahoo Finance).
-- Ratio de Sharpe (taux sans risque 2 %), volatilité annualisée et perte maximale, du portefeuille et de la référence (à partir de 20 jours d'historique).
-- Taux de réussite des opérations clôturées (chaque vente, comparée au prix de revient frais compris), gain moyen et perte moyenne.
-- **Attribution** : plus-values réalisées et latentes (frais compris) par poche (cœur, satellites), par classe d'actifs et par famille de signaux du chef d'orchestre (fondamentaux, valorisation, tendance, flux, cycle, risque, géopolitique, initiés, dynamique des résultats), au prorata de (note − 50) des familles favorables au moment de l'achat. La somme des poches est égale au gain total. Approximation destinée au futur agent calibrateur.
+- Valeur et historique quotidien, performance depuis le départ, sur 1 mois et sur 3 mois ; **référence** : MSCI World en euros (ETF URTH ÷ EUR/USD).
+- **Performance séparée de chaque poche** (entreprises, matières premières, ETF pays) depuis le changement de méthode, chacune contre le MSCI World (étalon, non détenu) : indice chaîné jour par jour, net des achats et des ventes (achats comptés en début de journée, ventes en fin de journée), frais compris.
+- Ratio de Sharpe (taux sans risque 2 %), volatilité, perte maximale ; taux de réussite des opérations clôturées, gain moyen et perte moyenne ; attribution par poche et par classe d'actifs.
 
-## 5. Rythme
+## 5. Signaux en observation
 
-- Décision chaque jour de semaine à 7 h 33 UTC (workflow `agent-trader.yml`, lancé par le planificateur), après l'analyse complète du chef d'orchestre (7 h 15).
-- Toutes les heures (minute 5) de 8 h à 21 h UTC en semaine : exécution des ordres, valorisation en direct (barres de 5 minutes de Yahoo Finance, différées d'environ 15 minutes), stops, prise de bénéfices, sorties, plancher de liquidités ; décision du jour si elle n'a pas pu être prise à 7 h 33.
+Chaque jour, l'agent **enregistre sans les utiliser** trois familles de signaux que le backtest n'a pas pu tester faute d'historique gratuit : achats de dirigeants (agent initiés), révisions à la hausse des analystes (bénéfice par action de l'exercice relevé d'au moins 3 % en 30 jours, plus de relèvements que de baisses, au moins 5 analystes) et relèvements de guidance (agent entreprises). Pour chacun : cours au jour de l'enregistrement, puis performance à 1, 3 et 6 mois, comparée au MSCI World (ETF URTH). Résultat : `data/observation.json`, écran « Signaux en observation » (Menu → Suivi). Une panne de ce suivi ne bloque jamais l'agent.
 
-## 6. Règles de conduite
+## 6. Rythme
 
-- Ton froid et factuel ; chaque décision et chaque ordre disent aussi « Ce qui pourrait me donner tort ».
-- Aucune décision fondée sur une seule source : convictions moyennes ou fortes du chef d'orchestre (plusieurs groupes de signaux concordants) pour le cœur, au moins 2 agents favorables pour un satellite, stop confirmé par 2 relevés.
+- Décision chaque jour de semaine à 7 h 33 UTC (workflow `agent-trader.yml`, lancé par le planificateur), après l'analyse complète du chef d'orchestre (7 h 15) : rééquilibrage le premier jour de décision du mois, vérification les autres jours.
+- Toutes les heures (minute 5) de 8 h à 21 h UTC en semaine : exécution des ordres, valorisation, contrôle des paris pays, signaux en observation (une fois par jour) ; décision du jour si elle n'a pas pu être prise à 7 h 33.
+- **Aucune décision sur données périmées ou incomplètes** : sortie du chef d'orchestre de moins de 26 h avec l'analyse complète du jour, ses sélections et ses lignes pays, agent risque de moins de 30 h. Sinon, l'agent attend, note les raisons et réessaie à l'exécution horaire suivante.
+
+## 7. Règles de conduite
+
+- Ton froid et factuel ; chaque décision et chaque ordre disent aussi « Ce qui pourrait me donner tort » (combinaisons non significatives dans le backtest, biais du survivant, absence de stop).
 - Aucune donnée inventée : un cours manquant garde le dernier cours connu (signalé) ; une source indisponible fait attendre l'agent.
 
 ## Commandes

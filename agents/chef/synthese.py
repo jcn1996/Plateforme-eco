@@ -192,7 +192,8 @@ def panorama(lignes: list[dict], config: dict) -> dict:
     # Top 5 : verdicts positifs ; d'abord une ligne par catégorie, puis les suivantes (au plus 2 par catégorie)
     # Top 5 : verdict positif, score au-dessus du seuil (pas seulement maintenu par l'hystérésis), aucune objection
     # sérieuse à lever ni tendance en excès (celles-là vont dans « À surveiller »)
-    positifs = sorted((l for l in lignes if DIRECTION.get(l["verdict"]) == 1 and l.get("score") is not None and l["score"] >= seuil
+    # Pays exclus : le backtest juge la note pays non prédictive (contexte économique seulement ; paris pays à part)
+    positifs = sorted((l for l in lignes if l["type"] != "pays" and DIRECTION.get(l["verdict"]) == 1 and l.get("score") is not None and l["score"] >= seuil
                        and not (l.get("objection") or {}).get("serieuse") and not l.get("tendance_excessive")
                        and (l["type"] != "entreprises" or l in ent)), key=_cle_tri)
     top5, compte = [], {}
@@ -208,7 +209,7 @@ def panorama(lignes: list[dict], config: dict) -> dict:
     ids_top = {l["id"] for l in top5}
     surveiller = []
     for l in sorted(lignes, key=lambda l: -(l.get("score") or 0)):
-        if l["id"] in ids_top or l.get("score") is None:
+        if l["id"] in ids_top or l.get("score") is None or l["type"] == "pays":
             continue
         raison = None
         if DIRECTION.get(l["verdict"]) == 1 and l["score"] < seuil:
@@ -287,7 +288,7 @@ def briefing_regles(ctx: dict) -> dict:
                     ("à alléger : " + ", ".join(x["nom"] for x in obl_neg)) if obl_neg else None) if x) or "positions neutres") + "."
     essentiel = [
         {"texte": f"Risque mondial « {pal} » (stress {fr(mondial.get('score'), 0)}/100) ; cycle mondial en « {phase or 'n. d.'} ».", "faits": [i_pal, i_phase]},
-        {"texte": "Pays : " + (_liste_courte(pano["pays"], 3) or "aucune donnée") + ".", "faits": i_pays},
+        {"texte": "Pays (contexte économique, non prédictif d'après le backtest) : " + (_liste_courte(pano["pays"], 3) or "aucune donnée") + ".", "faits": i_pays},
         {"texte": "Matières premières : " + (_liste_courte(pano["matieres"], 3) or "aucune donnée")
          + (f" ; or : {pano['or']['verdict'].lower()} ({ent(pano['or']['score'])}/100)" if pano.get("or") else "") + ".", "faits": i_mat + i_or},
         {"texte": texte_obl, "faits": i_obl},
@@ -388,7 +389,7 @@ def briefing_markdown(b: dict) -> str:
         return lignes
     l += ["", "## Où investir : panorama"]
     l += tableau("Top 5 (au plus une ligne par catégorie, puis deux)", pano["top"])
-    l += tableau("Pays (top 5)", pano["pays"])
+    l += tableau("Pays — contexte économique, non prédictif d'après le backtest (pas de classement)", pano["pays"])
     l += tableau("Secteurs (top 3, une zone par secteur)", pano.get("secteurs", []))
     l += tableau("Matières premières (top 3)", pano["matieres"])
     l += tableau("Or (valeur refuge)", [pano["or"]] if pano.get("or") else [])

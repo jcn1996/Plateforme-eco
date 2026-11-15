@@ -106,6 +106,8 @@ Tests :
 - **concentration du trader** : cœur pays (verdicts positifs de conviction moyenne ou forte, poids ∝ conviction, 15 % au plus par ligne, excédent en liquidités) avec 4, 6, 8, 12 et 15 lignes et sans limite ; rendement, volatilité, ratio de Sharpe, perte maximale, frais compris ;
 - **stops et prise de bénéfices** : chaque mois, les 10 sociétés les mieux notées sont gardées 12 mois, avec et sans les règles du trader (stop −15 %, suiveur 15 % sous le plus haut dès +20 %, 2 relevés de confirmation, un tiers vendu à +30 %) sur cours quotidiens.
 
+Depuis novembre 2026, le trader suit les sélections issues de ce backtest (combinaisons « Prometteuse », paris pays), sans stop ni prise de bénéfices (`agents/trader/regles.md`). Les règles de l'ancienne méthode (cœur par conviction, stops) restent mesurées à titre de comparaison : leurs paramètres sont gardés dans `config.json → regles.ancienne_methode_trader`.
+
 Non testée : l'hystérésis (règle quotidienne, sans objet en rééquilibrage mensuel).
 
 ## 6. Note recalibrée et proposition de pondérations
@@ -149,4 +151,4 @@ python -m unittest discover -s agents/backtest -t . # tests
 3. **Excès** parmi les tendances fortes, pour chaque seuil d'une grille (`tendance.grilles`) : accélération parabolique (hausse sur 1 mois > k × écart-type mensuel des 12 mois précédents), valorisation tendue (pays : rendement du dividende sous le (100 − p)e percentile de ses 5 dernières années), positionnement encombré (matières : percentile CFTC sur 3 ans ≥ p). Seuil retenu : écart le plus défavorable aux actifs en excès sur l'apprentissage (20 cas au moins) ; « confirmé » s'il garde son signe hors échantillon.
 4. **Poche « tendance »** : simulation quotidienne de 6 lignes au plus, achetées en fin de mois parmi les tendances fortes (parts égales de la poche à l'achat, gagnants jamais allégés), avec plusieurs stops (aucun, moyenne 200 jours, −8 à −20 % du plus haut, combinaisons, filtre des excès) et sortie quand la force relative quitte le premier tiers ou que la tendance casse. Variante retenue : meilleur ratio de Sharpe sur l'apprentissage parmi celles qui ne font pas moins bien hors échantillon que la sortie sur la force relative seule (garde-fou contre une variante réglée sur le hasard de la première moitié). Références : univers équipondéré et indice mondial (ACWI).
 
-Résultats du 14/11/2026 : `data/backtest/tendance-2026-11.md` ; seuils reportés dans `agents/chef/config.json` (`suivi_tendance`) et `agents/trader/config.json` (`tendance`).
+Résultats du 14/11/2026 : `data/backtest/tendance-2026-11.md` ; seuils reportés dans `agents/chef/config.json` (`suivi_tendance`, utilisé aussi pour les paris pays).
