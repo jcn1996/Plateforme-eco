@@ -25,13 +25,18 @@
        historique: [{ date, valeur }],       un point par jour (valeur en euros)
        lignes: [{ id, nom, isin, ticker, type, quantite, prix_revient, cours, devise,
                   valeur, date_valeur, source_valeur,
+                  multiplicateur,                      options : taille du contrat (100 par défaut)
+                  option: { sous_jacent, echeance, prix_exercice, sens ('call' | 'put') },
+                  profil_public: { secteur, pays, source },   action sans fiche (Yahoo Finance, via la synchronisation)
                   categorie: { classe, zone, secteur, themes: [], indice } }]
      }],
      reglages: { requetes_par_titre: true, synchro: { depot, chemin, branche, url, jeton, active } },
      cle_synchro: CryptoKey | null,        clé PBKDF2 non extractible (mot de passe jamais stocké)
      synchro: { derniere, erreur, genere_le },
      series_synchro: { symbole: [[date, cours]] },   historiques fournis par la synchronisation
-     resolutions: { ISIN: { ticker, nom, type, source, date } }
+     resolutions: { ISIN: { ticker, nom, type, source, date } },
+     categories: { CLE_LIGNE: { classe, zone, secteur } }   catégories saisies (ISIN, ticker ou nom),
+                                                           réappliquées à chaque synchronisation
    }
    ========================================================================== */
 
@@ -60,6 +65,7 @@ export function etatVide() {
     synchro: { derniere: null, erreur: null, genere_le: null },
     series_synchro: {},
     resolutions: {},
+    categories: {},
   };
 }
 
@@ -121,6 +127,7 @@ export function contenuSauvegarde(etat) {
     exporte_le: new Date().toISOString(),
     portefeuilles: etat.portefeuilles,
     resolutions: etat.resolutions,
+    categories: etat.categories ?? {},
     reglages: { requetes_par_titre: etat.reglages.requetes_par_titre, synchro: { ...etat.reglages.synchro, jeton: '' } },
   };
 }
@@ -256,7 +263,28 @@ export async function telechargerSynchro(etat) {
 }
 
 /** Clé d'appariement de deux lignes (même titre). */
-const cleLigne = (l) => (l.isin || l.ticker || l.nom || '').toUpperCase();
+export const cleLigne = (l) => (l.isin || l.ticker || l.nom || '').toUpperCase();
+
+/**
+ * Catégorie saisie à la main pour une ligne (étiquette « catégorie à saisir ») :
+ * enregistrée sur la ligne ET dans etat.categories, pour être réappliquée par les synchronisations.
+ * categorie vide ou null : retour au classement automatique.
+ */
+export function memoriserCategorie(etat, ligne, categorie) {
+  etat.categories ??= {};
+  const cle = cleLigne(ligne);
+  const propre = Object.fromEntries(Object.entries(categorie ?? {}).filter(([, v]) => (Array.isArray(v) ? v.length : v)));
+  if (Object.keys(propre).length) {
+    ligne.categorie = propre;
+    if (cle) etat.categories[cle] = propre;
+  } else {
+    delete ligne.categorie;
+    if (cle) delete etat.categories[cle];
+  }
+}
+
+/** Types fixés par le courtier : ils l'emportent sur le type conservé d'une synchronisation précédente. */
+const TYPES_COURTIER = new Set(['option', 'crypto', 'liquidites']);
 
 /**
  * Intègre le contenu déchiffré de la synchronisation :
@@ -276,13 +304,18 @@ export function integrerSynchro(etat, contenu) {
     const anciennes = new Map(pf.lignes.map((l) => [cleLigne(l), l]));
     pf.lignes = (p.lignes ?? []).map((l) => {
       const a = anciennes.get(cleLigne(l));
-      return {
+      const ligne = {
         id: a?.id ?? nouvelId(),
-        nom: l.nom, isin: l.isin ?? null, ticker: l.ticker ?? a?.ticker ?? null, type: a?.type ?? l.type ?? 'action',
+        nom: l.nom, isin: l.isin ?? null, ticker: l.ticker ?? (l.type === 'option' ? null : a?.ticker ?? null),
+        type: TYPES_COURTIER.has(l.type) ? l.type : a?.type ?? l.type ?? 'action',
         quantite: l.quantite ?? null, prix_revient: l.prix_revient ?? null, cours: l.cours ?? null, devise: l.devise ?? null,
         valeur: l.valeur ?? null, date_valeur: l.date ?? aujourdhui, source_valeur: `synchronisation ${p.courtier ?? ''}`.trim(),
-        categorie: a?.categorie ?? l.categorie ?? undefined,
+        categorie: a?.categorie ?? etat.categories?.[cleLigne(l)] ?? l.categorie ?? undefined,
       };
+      if (l.multiplicateur != null) ligne.multiplicateur = l.multiplicateur;
+      if (l.option) ligne.option = l.option;
+      if (l.profil_public) ligne.profil_public = l.profil_public;
+      return ligne;
     });
     pf.maj_le = contenu.genere_le ?? new Date().toISOString();
     const total = pf.lignes.reduce((s, l) => s + (l.valeur ?? 0), 0);

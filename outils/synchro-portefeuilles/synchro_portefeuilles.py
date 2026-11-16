@@ -8,7 +8,8 @@ dépôt public de l'appli. Le workflow quotidien (workflow-synchro.yml) :
    - eToro : API publique officielle, clés en lecture seule (secrets ETORO_API_KEY, ETORO_USER_KEY) ;
    - BoursoBank : pas d'API, import CSV manuel dans l'appli ;
 2. ajoute les cours hebdomadaires sur 1 an des titres détenus (Yahoo Finance, pour
-   les corrélations calculées dans l'appli) ;
+   les corrélations calculées dans l'appli) et, pour les actions, le secteur et le pays
+   publiés par Yahoo Finance (seul le symbole est envoyé, jamais une quantité) ;
 3. chiffre le tout en AES-256-GCM, clé dérivée par PBKDF2-SHA-256 (600 000 itérations)
    du mot de passe connu seulement de l'utilisateur (secret PORTEFEUILLE_MOT_DE_PASSE) ;
 4. écrit le fichier chiffré (portefeuilles.chiffre.json), publié sur la branche « synchro »
@@ -112,7 +113,8 @@ SUFFIXES_IBKR = {
     "TSE": ".TO", "VENTURE": ".V", "ASX": ".AX", "SGX": ".SI", "KSE": ".KS", "NSE": ".NS",
     "NASDAQ": "", "NYSE": "", "ARCA": "", "AMEX": "", "BATS": "", "ISLAND": "", "PINK": "", "IEX": "",
 }
-TYPES_IBKR = {"STK": "action", "ETF": "etf", "FUND": "fonds", "BOND": "obligation", "CASH": "liquidites", "CRYPTO": "crypto", "OPT": "autre", "FUT": "autre", "WAR": "autre"}
+TYPES_IBKR = {"STK": "action", "ETF": "etf", "FUND": "fonds", "BOND": "obligation", "CASH": "liquidites", "CRYPTO": "crypto", "OPT": "option", "FOP": "option", "FUT": "autre", "WAR": "autre"}
+MOIS = {m: i + 1 for i, m in enumerate(["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"])}
 
 
 def symbole_yahoo_ibkr(symbole: str, place: str) -> str | None:
@@ -123,6 +125,50 @@ def symbole_yahoo_ibkr(symbole: str, place: str) -> str | None:
     if suffixe is None:
         return s if not place else None
     return f"{s}{suffixe}"
+
+
+def date_iso(v: str | None) -> str | None:
+    """20261218, 2026-12-18 ou 18DEC26 → 2026-12-18."""
+    t = (v or "").strip().split(";")[0]
+    if len(t) == 8 and t.isdigit():
+        return f"{t[:4]}-{t[4:6]}-{t[6:]}"
+    if len(t) == 10 and t[4] == "-" and t[7] == "-":
+        return t
+    if len(t) == 7 and t[:2].isdigit() and t[2:5].upper() in MOIS and t[5:].isdigit():
+        return f"20{t[5:]}-{MOIS[t[2:5].upper()]:02d}-{t[:2]}"
+    return None
+
+
+def option_ibkr(p) -> dict:
+    """Caractéristiques d'une option IBKR : champs Flex (Underlying Symbol, Expiry, Strike, Put/Call),
+    à défaut le symbole OCC (« AAPL  261218C00200000 ») ou la description (« AAPL 18DEC26 200 C »)."""
+    sous_jacent = p.get("underlyingSymbol") or None
+    echeance = date_iso(p.get("expiry"))
+    exercice = nombre(p.get("strike"))
+    sens = {"C": "call", "P": "put"}.get((p.get("putCall") or "").strip().upper()[:1])
+    symbole = (p.get("symbol") or "").strip()
+    occ = symbole.replace(" ", "")
+    if len(occ) > 15 and occ[-15:-9].isdigit() and occ[-9] in "CP" and occ[-8:].isdigit():
+        sous_jacent = sous_jacent or occ[:-15]
+        echeance = echeance or date_iso("20" + occ[-15:-9])
+        exercice = exercice if exercice is not None else int(occ[-8:]) / 1000
+        sens = sens or {"C": "call", "P": "put"}[occ[-9]]
+    morceaux = (p.get("description") or "").split()
+    if len(morceaux) >= 4 and morceaux[-1].upper() in ("C", "P"):
+        sous_jacent = sous_jacent or morceaux[0]
+        echeance = echeance or date_iso(morceaux[-3])
+        exercice = exercice if exercice is not None else nombre(morceaux[-2])
+        sens = sens or {"C": "call", "P": "put"}[morceaux[-1].upper()]
+    return {"sous_jacent": sous_jacent or (symbole.split()[0] if symbole else None), "echeance": echeance, "prix_exercice": exercice, "sens": sens}
+
+
+def prix_revient_ibkr(p, quantite: float, multiplicateur: float) -> float | None:
+    """Cost Basis Price ; s'il est vide (ou nul alors qu'un coût existe) : Cost Basis Money ÷ (quantité × multiplicateur)."""
+    prix = nombre(p.get("costBasisPrice"))
+    cout = nombre(p.get("costBasisMoney"))
+    if (prix is None or prix == 0) and cout and quantite:
+        return round(cout / (quantite * multiplicateur), 6)
+    return prix
 
 
 # ------------------------------------------------------------------ Interactive Brokers
@@ -171,19 +217,28 @@ def ibkr_positions(xml: bytes) -> list[dict]:
             categorie = (p.get("assetCategory") or "STK").upper()
             sous = (p.get("subCategory") or "").upper()
             type_ligne = "etf" if sous == "ETF" else TYPES_IBKR.get(categorie, "autre")
-            lignes.append({
+            option = type_ligne == "option"
+            # Multiplicateur du contrat (champ Flex « Multiplier ») : 100 par défaut pour une option
+            multiplicateur = nombre(p.get("multiplier")) or (100.0 if option else 1.0)
+            ligne = {
                 "nom": p.get("description") or p.get("symbol"),
                 "isin": p.get("isin") or None,
-                "ticker": symbole_yahoo_ibkr(p.get("symbol", ""), p.get("listingExchange", "")),
+                # une option n'a pas de fiche : surtout pas le ticker du sous-jacent (cours et note seraient faux)
+                "ticker": None if option else symbole_yahoo_ibkr(p.get("symbol", ""), p.get("listingExchange", "")),
                 "type": type_ligne,
                 "quantite": quantite,
-                "prix_revient": nombre(p.get("costBasisPrice")),
+                "prix_revient": prix_revient_ibkr(p, quantite, multiplicateur),
                 "cours": nombre(p.get("markPrice")),
                 "devise": p.get("currency") or None,
-                # valeur dans la devise de base du compte (à régler en EUR dans IBKR)
+                # valeur dans la devise de base du compte (à régler en EUR dans IBKR), multiplicateur inclus
                 "valeur": round(valeur * fx, 2) if valeur is not None else None,
                 "date": date or None,
-            })
+            }
+            if multiplicateur != 1:
+                ligne["multiplicateur"] = multiplicateur
+            if option:
+                ligne["option"] = option_ibkr(p)
+            lignes.append(ligne)
         # Liquidités (section « Cash Report », ligne de synthèse en devise de base)
         for c in releve.iter("CashReportCurrency"):
             if c.get("currency") == "BASE_SUMMARY":
@@ -199,6 +254,52 @@ def ibkr_positions(xml: bytes) -> list[dict]:
 def etoro_get(chemin: str, cle_api: str, cle_utilisateur: str) -> dict:
     entetes = {"x-api-key": cle_api, "x-user-key": cle_utilisateur, "x-request-id": str(uuid.uuid4()), "Accept": "application/json"}
     return json.loads(http(f"{ETORO_API}{chemin}", entetes))
+
+
+# Symbole eToro → symbole Yahoo Finance (celui des fiches de l'appli)
+SUFFIXES_ETORO = {
+    "ZU": ".SW", "SW": ".SW", "L": ".L", "PA": ".PA", "DE": ".DE", "MI": ".MI", "MC": ".MC", "AS": ".AS", "NV": ".AS",
+    "BR": ".BR", "LSB": ".LS", "LS": ".LS", "HE": ".HE", "ST": ".ST", "CO": ".CO", "OL": ".OL", "VI": ".VI", "IR": ".IR",
+    "HK": ".HK", "ASX": ".AX", "AX": ".AX", "TO": ".TO", "T": ".T", "TYO": ".T", "SG": ".SI",
+}
+# Classes d'actions : cotation suivie par l'appli
+CLASSES_ACTIONS = {"GOOG": "GOOGL", "BRK.B": "BRK-B", "BRK.A": "BRK-B", "BRK-A": "BRK-B", "BF.B": "BF-B", "FOX": "FOXA", "NWS": "NWSA", "UA": "UAA", "LBTYK": "LBTYA", "LBTYB": "LBTYA", "LEN.B": "LEN", "HEI.A": "HEI"}
+CRYPTOS = {
+    "BTC", "ETH", "XRP", "SOL", "ADA", "DOGE", "DOT", "LTC", "BCH", "LINK", "XLM", "TRX", "AVAX", "MATIC", "POL", "SHIB", "UNI",
+    "ATOM", "ETC", "XTZ", "EOS", "ALGO", "AAVE", "NEAR", "BNB", "SUI", "APT", "ARB", "FIL", "HBAR", "ICP", "MANA",
+    "XMR", "DASH", "ZEC", "MIOTA", "NEO", "MKR", "CRV", "GRT", "PEPE", "USDC", "USDT", "RENDER", "INJ",
+}
+
+
+def est_crypto(symbole: str) -> bool:
+    s = (symbole or "").upper()
+    for fin in ("-USD", "USD", "/USD"):
+        if s.endswith(fin) and s[: -len(fin)] in CRYPTOS:
+            return True
+    return s in CRYPTOS
+
+
+def symbole_yahoo_etoro(symbole: str, crypto: bool | None = None) -> str:
+    """GOOG → GOOGL ; ZURN.ZU → ZURN.SW ; 700.HK → 0700.HK ; BTC → BTC-USD.
+    crypto : type connu par eToro ; None (type inconnu) → déduit du symbole."""
+    s = (symbole or "").strip().upper()
+    if crypto or (crypto is None and est_crypto(s)):
+        base = s.removesuffix("-USD").removesuffix("/USD")
+        if base.endswith("USD") and base[:-3] in CRYPTOS:
+            base = base[:-3]
+        return f"{base}-USD"
+    if s in CLASSES_ACTIONS:
+        return CLASSES_ACTIONS[s]
+    if "." in s:
+        racine, place = s.rsplit(".", 1)
+        if place in ("A", "B", "C") and racine.isalpha():  # classe d'action américaine (BRK.B → BRK-B)
+            return CLASSES_ACTIONS.get(s, f"{racine}-{place}")
+        suffixe = SUFFIXES_ETORO.get(place)
+        if suffixe is not None:
+            if suffixe == ".HK" and racine.isdigit():
+                racine = racine.zfill(4)
+            return f"{racine}{suffixe}"
+    return s
 
 
 def _champ(d: dict, *noms):
@@ -240,11 +341,11 @@ def etoro_positions(portefeuille: dict, instruments: dict, eurusd: float | None,
         symbole = inst.get("symbolFull") or str(iid)
         type_inst = inst.get("instrumentTypeID")
         valeur_usd = a["investi"] + a["pnl"]
-        crypto = type_inst == 10
+        crypto = type_inst == 10 or (type_inst is None and est_crypto(symbole))
         lignes.append({
             "nom": inst.get("instrumentDisplayName") or symbole,
             "isin": None,
-            "ticker": f"{symbole}-USD" if crypto and "-" not in symbole else symbole,
+            "ticker": symbole_yahoo_etoro(symbole, crypto),
             "type": "crypto" if crypto else ("etf" if type_inst == 6 else "action"),
             "quantite": round(a["unites"], 8),
             "prix_revient": round(a["cout"] / abs(a["unites"]), 6) if a["unites"] else None,
@@ -305,12 +406,58 @@ def historiques(symboles: list[str]) -> dict:
     return res
 
 
+# Secteurs Yahoo Finance → clés GICS de l'appli
+SECTEURS_YAHOO = {
+    "Technology": "Information Technology", "Communication Services": "Communication", "Consumer Cyclical": "Consumer Discretionary",
+    "Consumer Defensive": "Consumer Staples", "Healthcare": "Health Care", "Financial Services": "Financials", "Industrials": "Industrials",
+    "Energy": "Energy", "Basic Materials": "Materials", "Utilities": "Utilities", "Real Estate": "Real Estate",
+}
+PAYS_YAHOO = {
+    "United States": "US", "Canada": "CA", "Mexico": "MX", "Brazil": "BR", "Argentina": "AR", "Chile": "CL", "Colombia": "CO",
+    "United Kingdom": "GB", "Ireland": "IE", "France": "FR", "Germany": "DE", "Netherlands": "NL", "Belgium": "BE", "Luxembourg": "LU",
+    "Switzerland": "CH", "Austria": "AT", "Italy": "IT", "Spain": "ES", "Portugal": "PT", "Sweden": "SE", "Norway": "NO", "Denmark": "DK",
+    "Finland": "FI", "Poland": "PL", "Greece": "GR", "Israel": "IL", "Turkey": "TR", "South Africa": "ZA", "Saudi Arabia": "SA",
+    "United Arab Emirates": "AE", "Japan": "JP", "China": "CN", "Hong Kong": "HK", "Taiwan": "TW", "South Korea": "KR", "India": "IN",
+    "Singapore": "SG", "Australia": "AU", "New Zealand": "NZ", "Indonesia": "ID", "Thailand": "TH", "Vietnam": "VN", "Bermuda": "BM",
+    "Cayman Islands": "KY", "Jersey": "JE", "Guernsey": "GG", "Uruguay": "UY", "Peru": "PE", "Egypt": "EG", "Malaysia": "MY", "Philippines": "PH",
+}
+
+
+def _info_yahoo(symbole: str) -> dict:
+    import yfinance as yf
+    return yf.Ticker(symbole).info or {}
+
+
+def profils_publics(symboles: list[str], lire=_info_yahoo) -> dict:
+    """Secteur et pays publiés par Yahoo Finance pour chaque action : seul le symbole est envoyé.
+    Sert aux titres sans fiche dans l'appli (ex. une introduction en Bourse récente)."""
+    res = {}
+    for s in sorted(set(x for x in symboles if x)):
+        try:
+            info = lire(s)
+        except Exception:  # noqa: BLE001
+            continue
+        secteur = SECTEURS_YAHOO.get(info.get("sector") or "")
+        pays = PAYS_YAHOO.get(info.get("country") or "")
+        if secteur or pays:
+            res[s] = {"secteur": secteur, "pays": pays, "source": "Yahoo Finance"}
+    return res
+
+
+def ajouter_profils(portefeuilles: list[dict], profils: dict) -> None:
+    for p in portefeuilles:
+        for l in p["lignes"]:
+            if l.get("type") == "action" and l.get("ticker") in profils:
+                l["profil_public"] = profils[l["ticker"]]
+
+
 # ------------------------------------------------------------------ programme
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--sortie", default="portefeuilles.chiffre.json")
     ap.add_argument("--sans-historiques", action="store_true", help="ne pas télécharger les cours sur 1 an")
+    ap.add_argument("--sans-profils", action="store_true", help="ne pas demander secteur et pays des actions à Yahoo Finance")
     args = ap.parse_args(argv)
 
     mot_de_passe = os.environ.get("PORTEFEUILLE_MOT_DE_PASSE", "")
@@ -341,6 +488,8 @@ def main(argv=None) -> int:
         return 1
 
     symboles = [l["ticker"] for p in portefeuilles for l in p["lignes"] if l.get("ticker") and l.get("type") != "liquidites"]
+    if not args.sans_profils:
+        ajouter_profils(portefeuilles, profils_publics([l["ticker"] for p in portefeuilles for l in p["lignes"] if l.get("type") == "action" and l.get("ticker")]))
     contenu = {
         "format": FORMAT_CONTENU,
         "version": 1,

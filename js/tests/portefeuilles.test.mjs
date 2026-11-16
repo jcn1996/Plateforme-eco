@@ -10,10 +10,10 @@ import {
 import { chiffrer, dechiffrer, cleDeBase } from '../portefeuilles-chiffrement.js';
 import {
   construireReferences, enrichir, expositions, correlations, crible, coherence, decorrelation, performance,
-  rendementsHebdo, correlation, cleSemaine, deviseSymbole, profilLigne,
+  rendementsHebdo, correlation, cleSemaine, deviseSymbole, profilLigne, normaliserSymbole, racineCrypto, descriptionOption, coutLigne, valeurLigne,
 } from '../portefeuilles-analyse.js';
 import { portefeuillesExemple, CSV_EXEMPLE } from '../portefeuilles-exemple.js';
-import { integrerSynchro, etatVide, noterValeur } from '../portefeuilles-donnees.js';
+import { integrerSynchro, etatVide, noterValeur, memoriserCategorie } from '../portefeuilles-donnees.js';
 
 /* ------------------------------- Import ------------------------------- */
 
@@ -292,4 +292,100 @@ test('portefeuille d’exemple fictif : analyse complète sans erreur', () => {
   correlations(e, r);
   assert.equal(correlation({}, {}), null);
   assert.deepEqual(rendementsHebdo([]), {});
+});
+
+/* ------------------------------- Options, prix de revient, symboles des courtiers ------------------------------- */
+
+// Lignes FICTIVES telles que les publie la synchronisation (script Python, relevés d'exemple)
+const OPTION = {
+  id: 'o', nom: 'MSFT 18DEC26 450 C', ticker: null, type: 'option', quantite: 2, prix_revient: 10, cours: 12.5, devise: 'USD',
+  valeur: 2250, date_valeur: '2099-01-01', multiplicateur: 100, option: { sous_jacent: 'MSFT', echeance: '2026-12-18', prix_exercice: 450, sens: 'call' },
+};
+
+test('option : multiplicateur dans le coût et la valeur, catégorie « Options » à part', () => {
+  const r = refs();
+  const e = enrichir([OPTION, { ...LIGNES[4] }], r);
+  const o = e.lignes[0];
+  assert.equal(o.valeur, 2250);
+  assert.ok(Math.abs(o.cout - (2 * 100 * 10) / 1.1) < 1e-9, 'coût = quantité × 100 × prix de revient, en euros');
+  assert.equal(o.profil.classe, 'options');
+  assert.equal(o.profil.entreprise, undefined, 'jamais confondue avec le sous-jacent');
+  assert.ok(!o.profil.nonClasse);
+  const exp = expositions(e, {});
+  assert.deepEqual(exp.classes.map((c) => c.cle).sort(), ['liquidites', 'options']);
+  assert.equal(exp.pays.length, 0);
+  // multiplicateur absent : 100 par défaut ; valeur recalculée depuis le cours saisi
+  const sans = { ...OPTION, multiplicateur: undefined, valeur: null };
+  assert.ok(Math.abs(valeurLigne(sans, r).valeur - (2 * 100 * 12.5) / 1.1) < 1e-9);
+  assert.match(descriptionOption(OPTION), /^Call MSFT · échéance 18 déc\.? 2026 · exercice 450 USD · ×100$/);
+  assert.match(descriptionOption({ ...OPTION, option: { ...OPTION.option, sens: 'put' } }), /^Put MSFT/);
+});
+
+test('prix de revient : devise non convertible (CAD) → taux implicite du courtier ; absent → coût inconnu', () => {
+  const r = refs();
+  const cad = { id: 'p', nom: 'PETROLE FICTIF', ticker: 'PFX.TO', type: 'action', quantite: 100, prix_revient: 15, cours: 20, devise: 'CAD', valeur: 1300 };
+  assert.equal(coutLigne(cad, r), 975); // 1 500 CAD × (1 300 € ÷ 2 000 CAD)
+  assert.equal(coutLigne({ ...cad, prix_revient: null }, r), null);
+});
+
+test('symboles eToro → fiches de l’appli (classes d’actions, suffixes de place, cryptoactifs)', () => {
+  assert.equal(normaliserSymbole('GOOG'), 'GOOGL');
+  assert.equal(normaliserSymbole('ZURN.ZU'), 'ZURN.SW');
+  assert.equal(normaliserSymbole('PHIA.NV'), 'PHIA.AS');
+  assert.equal(normaliserSymbole('700.HK'), '0700.HK');
+  assert.equal(normaliserSymbole('BRK.B'), 'BRK-B');
+  assert.equal(normaliserSymbole('MC.PA'), 'MC.PA');
+  assert.equal(normaliserSymbole('BARC.L'), 'BARC.L');
+  assert.equal(racineCrypto('BTC'), 'BTC');
+  assert.equal(racineCrypto('ETH-USD'), 'ETH');
+  assert.equal(racineCrypto('AAPL'), null);
+
+  const entreprises = [
+    ...ENTREPRISES,
+    { ticker: 'GOOGL', nom: 'Société fictive D', pays: 'US', devise: 'USD', secteur_gics: 'Communication', note: 65 },
+    { ticker: 'ZURN.SW', nom: 'Société fictive E', pays: 'CH', devise: 'CHF', secteur_gics: 'Financials', note: 60 },
+  ];
+  const r = construireReferences({ entreprises, pays: PAYS, chef: CHEF, series: SERIES, eurusd: 1.1 });
+  const goog = profilLigne({ nom: 'Classe C (exemple)', ticker: 'GOOG', type: 'action' }, r);
+  assert.equal(goog.entreprise?.ticker, 'GOOGL');
+  assert.equal(goog.secteur, 'Communication');
+  const zurn = profilLigne({ nom: 'Assureur (exemple)', ticker: 'ZURN.ZU', type: 'action' }, r);
+  assert.equal(zurn.entreprise?.ticker, 'ZURN.SW');
+  assert.deepEqual(zurn.pays, { CH: 100 });
+  // Action sans fiche : secteur et pays publiés par Yahoo Finance (via la synchronisation)
+  const fig = profilLigne({ nom: 'Introduction récente (exemple)', ticker: 'FIG', type: 'action', profil_public: { secteur: 'Information Technology', pays: 'US', source: 'Yahoo Finance' } }, r);
+  assert.equal(fig.classe, 'actions');
+  assert.equal(fig.secteur, 'Information Technology');
+  assert.deepEqual(fig.pays, { US: 100 });
+  assert.ok(!fig.nonClasse);
+  assert.ok(profilLigne({ nom: 'Sans fiche (exemple)', ticker: 'FIG', type: 'action' }, r).nonClasse);
+  // Bitcoin : cryptoactifs, même si une ancienne synchronisation l'avait classé « action »
+  assert.equal(profilLigne({ nom: 'Bitcoin', ticker: 'BTC-USD', type: 'crypto' }, r).classe, 'crypto');
+  assert.equal(profilLigne({ nom: 'Bitcoin', ticker: 'BTC', type: 'action' }, r).classe, 'crypto');
+});
+
+test('synchronisation : catégorie saisie conservée, champs des options repris, type du courtier prioritaire', () => {
+  const etat = etatVide();
+  const contenu = (lignes) => ({ genere_le: '2026-11-10T06:00:00Z', portefeuilles: [{ cle: 'ibkr-U***0000', nom: 'IBKR fictif', courtier: 'IBKR', lignes }] });
+  integrerSynchro(etat, contenu([
+    { nom: 'Fonds fictif', isin: 'LU0000000000', type: 'fonds', valeur: 100 },
+    { nom: 'MSFT 18DEC26 450 C', type: 'autre', valeur: 50 },
+  ]));
+  const fonds = etat.portefeuilles[0].lignes[0];
+  memoriserCategorie(etat, fonds, { classe: 'actions', secteur: 'diversifie', zone: 'europe', themes: [] });
+  assert.deepEqual(etat.categories.LU0000000000, { classe: 'actions', secteur: 'diversifie', zone: 'europe' });
+  // La ligne disparaît puis revient : la catégorie mémorisée sur l'appareil est réappliquée
+  integrerSynchro(etat, contenu([]));
+  integrerSynchro(etat, contenu([
+    { nom: 'Fonds fictif', isin: 'LU0000000000', type: 'fonds', valeur: 110 },
+    { ...OPTION, id: undefined, date: '2026-11-09' },
+  ]));
+  const [f2, o2] = etat.portefeuilles[0].lignes;
+  assert.equal(f2.categorie.zone, 'europe');
+  assert.equal(o2.type, 'option');
+  assert.equal(o2.multiplicateur, 100);
+  assert.equal(o2.option.sens, 'call');
+  memoriserCategorie(etat, f2, {});
+  assert.equal(f2.categorie, undefined);
+  assert.equal(etat.categories.LU0000000000, undefined);
 });

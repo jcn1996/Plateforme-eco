@@ -6,7 +6,9 @@
 
    - vue globale et vue par portefeuille (PEA, compte-titres, assurance vie…) ;
    - saisie manuelle, import CSV / Excel avec écran de correspondance des colonnes ;
-   - résolution ISIN → ticker ; fonds non reconnus classés « fonds », catégorie à saisir ;
+   - résolution ISIN → ticker ; fonds non reconnus classés « fonds », catégorie à saisir
+     (étiquette cliquable : classe, secteur, pays, mémorisés sur l'appareil) ;
+   - options : sous-jacent, échéance, prix d'exercice, call ou put, multiplicateur du contrat ;
    - analyses : expositions, corrélations, crible des agents, cohérence avec le chef
      d'orchestre, pistes de décorrélation, performance vs MSCI World en euros ;
    - sauvegarde chiffrée par mot de passe, synchronisation chiffrée facultative.
@@ -17,12 +19,13 @@ import { titreSection } from './panneau-pays.js';
 import {
   lireEtat, enregistrerEtat, toutEffacer, etatVide, nouvelId, noterValeur, contenuSauvegarde, TYPES_PORTEFEUILLE,
   chargerSeriesPubliques, chargerFichePublique, resoudreISIN, adresseSynchro, memoriserMotDePasse, telechargerSynchro, integrerSynchro,
+  memoriserCategorie,
 } from './portefeuilles-donnees.js';
 import { chiffrer, dechiffrer, estEnveloppe } from './portefeuilles-chiffrement.js';
 import { lireFichier, detecterColonnes, construireLignes, correspondanceSuffisante, CHAMPS, isinValide } from './portefeuilles-import.js';
 import {
   MENTION_ANALYSE, CLASSES, TYPES_LIGNE, ZONES, SECTEURS, THEMES, construireReferences, enrichir, expositions, correlations,
-  crible, coherence, decorrelation, performance, symboleLigne,
+  crible, coherence, decorrelation, performance, symboleLigne, entrepriseDe, descriptionOption,
 } from './portefeuilles-analyse.js';
 import { portefeuillesExemple } from './portefeuilles-exemple.js';
 
@@ -111,7 +114,7 @@ async function chargerFichesDetenues() {
   const tickers = new Set();
   if (etat?.reglages.requetes_par_titre) {
     for (const pf of etat.portefeuilles) for (const l of pf.lignes) {
-      const e = ctx.d.entrepriseParTicker.get(symboleLigne(l) ?? '');
+      const e = l.type === 'option' ? null : entrepriseDe(symboleLigne(l), ctx.d.entrepriseParTicker);
       if (e && !(e.ticker in fiches)) tickers.add(e.ticker);
     }
   }
@@ -340,17 +343,26 @@ function ongletPositions(enrichi, pf) {
       el('tbody', {}, lignes.map((x) => {
         const l = x.ligne;
         const pv = x.cout != null && x.valeur != null ? x.valeur - x.cout : null;
-        const e = ctx.d.entrepriseParTicker.get(symboleLigne(l) ?? '');
+        const e = l.type === 'option' ? null : entrepriseDe(symboleLigne(l), ctx.d.entrepriseParTicker);
+        const option = descriptionOption(l);
+        const unite = l.type === 'option' ? 'contrat(s)' : 'part(s)';
+        const pruInconnu = l.prix_revient == null && !['liquidites'].includes(l.type);
         return el('tr', {},
           el('td', {},
             e ? el('button', { class: 'lien', type: 'button', onclick: () => ctx.nav.ouvrirEntreprise(e.ticker) }, l.nom) : el('strong', {}, l.nom),
+            option ? el('div', { class: 'mpf-sous mpf-option' }, option) : null,
             el('div', { class: 'mpf-sous' },
-              [l.ticker, l.isin, TYPES_LIGNE[l.type] ?? l.type, l.quantite != null ? `${nombre(l.quantite, l.quantite % 1 ? 4 : 0)} part(s)` : null, pf ? null : nomPf(l._pf)].filter(Boolean).join(' · ')),
-            x.profil.nonClasse ? el('span', { class: 'mpf-pastille mpf-pastille--ambre' }, 'catégorie à saisir') : null,
+              [l.ticker, l.isin, TYPES_LIGNE[l.type] ?? l.type, l.quantite != null ? `${nombre(l.quantite, l.quantite % 1 ? 4 : 0)} ${unite}` : null, pf ? null : nomPf(l._pf)].filter(Boolean).join(' · ')),
+            x.profil.nonClasse ? el('button', {
+              class: 'mpf-pastille mpf-pastille--ambre mpf-pastille--bouton', type: 'button', title: 'Choisir la catégorie, le secteur et le pays',
+              onclick: () => { action = { type: 'categorie', pf: l._pf, id: l.id }; dessiner(); conteneur.scrollIntoView?.({ block: 'start' }); },
+            }, 'catégorie à saisir') : null,
             el('div', { class: 'mpf-sous mpf-source' }, x.sourceValeur)),
           el('td', { class: 'nombre' }, eur(x.valeur), el('div', { class: 'mpf-sous' }, `${nombre(x.poids, 1)} %`)),
-          el('td', { class: `nombre ${classeSigne(pv)}` }, pv == null ? '—' : `${pv >= 0 ? '+' : '−'}${eur(Math.abs(pv))}`,
-            pv == null || !x.cout ? null : el('div', { class: 'mpf-sous' }, pct((pv / x.cout) * 100))),
+          pruInconnu
+            ? el('td', { class: 'nombre mpf-sous' }, 'prix de revient inconnu')
+            : el('td', { class: `nombre ${classeSigne(pv)}` }, pv == null ? '—' : `${pv >= 0 ? '+' : '−'}${eur(Math.abs(pv))}`,
+              pv == null || !x.cout ? null : el('div', { class: 'mpf-sous' }, pct((pv / Math.abs(x.cout)) * 100))),
           pf ? el('td', { class: 'mpf-actions-ligne' },
             el('button', { class: 'bouton bouton--icone bouton--petit', type: 'button', title: 'Modifier', 'aria-label': `Modifier ${l.nom}`, onclick: () => { action = { type: 'ligne', ligne: pf.lignes.find((y) => y.id === l.id) }; dessiner(); conteneur.scrollIntoView?.({ block: 'start' }); } }, '✎'),
             el('button', { class: 'bouton bouton--icone bouton--petit bouton--danger', type: 'button', title: 'Supprimer', 'aria-label': `Supprimer ${l.nom}`, onclick: () => supprimerLigne(pf, l.id) }, '🗑')) : null,
@@ -582,6 +594,10 @@ function panneauAction() {
     case 'nouveau': return cadre('Nouveau portefeuille', formulairePortefeuille());
     case 'renommer': return cadre('Renommer le portefeuille', formulairePortefeuille(etat.portefeuilles.find((p) => p.id === vue)));
     case 'ligne': return cadre(action.ligne ? 'Modifier la ligne' : 'Nouvelle ligne', formulaireLigne(action.ligne));
+    case 'categorie': {
+      const ligne = etat.portefeuilles.find((p) => p.id === action.pf)?.lignes.find((l) => l.id === action.id);
+      return ligne ? cadre(`Catégorie : ${ligne.nom}`, formulaireCategorie(ligne)) : null;
+    }
     case 'import': return cadre('Importer un fichier du courtier', ...panneauImport());
     default: return null;
   }
@@ -621,6 +637,38 @@ const nombreSaisi = (v) => {
   return Number.isFinite(n) ? n : null;
 };
 
+/** Choix rapide de la catégorie d'une ligne non classée (étiquette « catégorie à saisir »). */
+function formulaireCategorie(ligne) {
+  const cat = ligne.categorie ?? {};
+  const classe = el('select', {}, options(CLASSES, cat.classe ?? (ligne.type === 'obligation' ? 'obligations' : 'actions')));
+  const secteur = el('select', {}, options(SECTEURS, cat.secteur ?? '', 'non précisé'));
+  const zone = el('select', {}, options(zonesEtPays(), cat.zone ?? '', 'non précisé'));
+  return el('form', {
+    class: 'mpf-formulaire',
+    onsubmit: async (e) => {
+      e.preventDefault();
+      memoriserCategorie(etat, ligne, { ...cat, classe: classe.value || undefined, secteur: secteur.value || undefined, zone: zone.value || undefined });
+      action = null;
+      await sauver();
+      afficherMessage(`Catégorie de « ${ligne.nom} » enregistrée sur cet appareil (conservée aux prochaines synchronisations).`);
+    },
+  },
+  el('p', { class: 'chef-petit' }, 'Mémorisé sur cet appareil uniquement, et réappliqué à chaque synchronisation.'),
+  el('div', { class: 'champs' },
+    champ('Catégorie (classe d’actifs)', classe),
+    champ('Secteur', secteur, 'actions et immobilier'),
+    champ('Pays ou zone', zone),
+  ),
+  el('button', { class: 'bouton bouton--accent bouton--plein', type: 'submit' }, 'Enregistrer'));
+}
+
+function zonesEtPays() {
+  return {
+    ...Object.fromEntries(Object.entries(ZONES).map(([k, z]) => [k, z.libelle])),
+    ...Object.fromEntries([...ctx.d.pays].sort((a, b) => a.nom.localeCompare(b.nom, 'fr')).map((p) => [p.code, p.nom])),
+  };
+}
+
 function formulaireLigne(ligne) {
   const pf = etat.portefeuilles.find((p) => p.id === vue);
   const l = ligne ?? { type: 'action', categorie: {} };
@@ -634,8 +682,7 @@ function formulaireLigne(ligne) {
   const devise = el('input', { type: 'text', value: l.devise ?? '', placeholder: 'EUR, USD…', maxlength: 3, autocapitalize: 'characters' });
   const valeur = el('input', { type: 'text', inputmode: 'decimal', value: l.valeur ?? '' });
   const classe = el('select', {}, options(CLASSES, cat.classe ?? '', 'automatique'));
-  const zonesEtPays = { ...Object.fromEntries(Object.entries(ZONES).map(([k, z]) => [k, z.libelle])), ...Object.fromEntries([...ctx.d.pays].sort((a, b) => a.nom.localeCompare(b.nom, 'fr')).map((p) => [p.code, p.nom])) };
-  const zone = el('select', {}, options(zonesEtPays, cat.zone ?? '', 'non précisée'));
+  const zone = el('select', {}, options(zonesEtPays(), cat.zone ?? '', 'non précisée'));
   const secteur = el('select', {}, options(SECTEURS, cat.secteur ?? '', 'non précisé'));
   const indice = el('input', { type: 'text', value: cat.indice ?? '', placeholder: 'ex. URTH, ^NDX (facultatif)' });
   const themes = Object.entries(THEMES).map(([k, t]) => el('label', { class: 'mpf-case' }, el('input', { type: 'checkbox', value: k, checked: (cat.themes ?? []).includes(k) }), t.libelle));
@@ -655,9 +702,12 @@ function formulaireLigne(ligne) {
           themes: themes.map((t) => t.querySelector('input')).filter((i) => i.checked).map((i) => i.value),
         },
       };
-      if (!Object.values(v.categorie).some((x) => (Array.isArray(x) ? x.length : x))) delete v.categorie;
+      const categorie = v.categorie;
+      delete v.categorie;
       if (v.valeur != null && v.valeur !== ligne?.valeur) { v.date_valeur = new Date().toISOString().slice(0, 10); v.source_valeur = 'valeur saisie'; }
-      if (ligne) Object.assign(ligne, v); else pf.lignes.push({ id: nouvelId(), ...v, cours: null, date_valeur: v.date_valeur ?? null });
+      let cible = ligne;
+      if (ligne) Object.assign(ligne, v); else { cible = { id: nouvelId(), ...v, cours: null, date_valeur: v.date_valeur ?? null }; pf.lignes.push(cible); }
+      memoriserCategorie(etat, cible, categorie);
       action = null;
       await sauver();
       dessiner();
@@ -906,6 +956,7 @@ function blocSauvegarde() {
           if (etat.portefeuilles.length && !confirm(`Remplacer les ${etat.portefeuilles.length} portefeuille(s) de cet appareil par les ${c.portefeuilles.length} de la sauvegarde ?`)) return;
           etat.portefeuilles = c.portefeuilles;
           etat.resolutions = { ...etat.resolutions, ...(c.resolutions ?? {}) };
+          etat.categories = { ...etat.categories, ...(c.categories ?? {}) };
           if (c.reglages) etat.reglages = { ...etat.reglages, requetes_par_titre: c.reglages.requetes_par_titre ?? true, synchro: { ...etat.reglages.synchro, ...c.reglages.synchro, jeton: etat.reglages.synchro.jeton } };
           vue = 'global';
           await sauver();
