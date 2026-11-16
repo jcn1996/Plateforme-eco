@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genere_le": "2026-11-13T22:30:41Z",
+    "genere_le": "2026-11-16T07:46:17Z",
     "source": "agent-trader",
     "version_agent": "1.0",
     "description": "Ordres exécutés, ordres imposés, décisions et attentes de l'agent trader (démo), à chaque exécution",
@@ -9,9 +9,9 @@
       "libelle": "Agent trader (démo)",
       "ordre": 11,
       "workflow": "agent-trader.yml",
-      "derniere_execution": "2026-11-13T22:30:41Z",
-      "prochaine_prevue": "2026-11-16T07:33:00Z",
-      "intervalle_min": 3508,
+      "derniere_execution": "2026-11-16T07:46:17Z",
+      "prochaine_prevue": "2026-11-16T08:05:00Z",
+      "intervalle_min": 32,
       "planning": {
         "crons": [
           "33 7 * * 1-5",
@@ -26,25 +26,25 @@
           "nom": "Chef d'orchestre (data/chef.json)",
           "etat": "ok",
           "detail": "0 h",
-          "derniere_donnee_valide": "2026-11-13T22:15:35Z"
+          "derniere_donnee_valide": "2026-11-16T07:31:41Z"
         },
         {
           "nom": "Agent risque (palier) (data/risque.json)",
           "etat": "ok",
           "detail": "0 h",
-          "derniere_donnee_valide": "2026-11-13T21:58:00Z"
+          "derniere_donnee_valide": "2026-11-16T07:31:47Z"
         },
         {
           "nom": "Agent marchés (indice de référence, EUR/USD ; facultatif)",
           "etat": "ok",
           "detail": "à jour",
-          "derniere_donnee_valide": "2026-11-13T22:16:23Z"
+          "derniere_donnee_valide": "2026-11-16T07:31:41Z"
         },
         {
           "nom": "Yahoo Finance via yfinance (cours, change, exécution)",
           "etat": "ok",
           "detail": "28 position(s) valorisée(s)",
-          "derniere_donnee_valide": "2026-11-13T22:30:41Z"
+          "derniere_donnee_valide": "2026-11-16T07:46:17Z"
         }
       ],
       "degrade": false,
@@ -1356,16 +1356,37 @@
       "attente": null,
       "ordres_en_attente": 0,
       "cours_manquants": []
+    },
+    {
+      "genere_le": "2026-11-16T07:46:17Z",
+      "mode": "decision",
+      "valeur": 101557.76,
+      "liquidites_pct": 10.02,
+      "palier": "Vigilance",
+      "executees": [],
+      "annulees": [],
+      "ordres_imposes": [],
+      "decision": "Changement de méthode et rééquilibrage du 16/11/2026 : 15 lignes — entreprises 70,0 % (10), matières premières 16,0 % (2), ETF pays 13,0 % (3), liquidités 1,0 %. 24 vente(s) et 15 achat(s) à exécuter au premier cours disponible.",
+      "attente": null,
+      "ordres_en_attente": 39,
+      "cours_manquants": [],
+      "observation": {
+        "nouveaux": 753,
+        "suivis": 753,
+        "cours": 625
+      },
+      "erreur_observation": null
     }
   ],
-  "derniere_execution": "2026-11-13T22:30:41Z",
-  "prochaine_prevue": "2026-11-16T07:33:00Z",
-  "intervalle_min": 3508,
+  "derniere_execution": "2026-11-16T07:46:17Z",
+  "prochaine_prevue": "2026-11-16T08:05:00Z",
+  "intervalle_min": 32,
   "planning": {
     "crons": [
       "33 7 * * 1-5",
       "5 8-21 * * 1-5"
     ],
     "fuseau": "UTC"
-  }
+  },
+  "derniere_tentative": null
 }

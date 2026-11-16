@@ -1,35 +1,47 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-13T22:30:41Z",
+    "genere_le": "2026-11-16T07:46:17Z",
     "source": "agent-trader",
     "fictif": false,
     "version_agent": "1.0",
     "demo": true,
-    "mise_a_jour_precedente": "2026-11-13T21:16:25Z",
+    "mise_a_jour_precedente": "2026-11-13T22:30:41Z",
     "description": "Portefeuille virtuel de l'agent trader (démo) : aucun ordre réel"
   },
   "donnees": {
     "capital_initial": 100000,
     "devise": "EUR",
     "date_debut": "2026-11-07",
-    "maj": "2026-11-13T22:30:41Z",
-    "valeur_actuelle": 101547.16,
+    "maj": "2026-11-16T07:46:17Z",
+    "valeur_actuelle": 101557.76,
     "liquidites": 10173.44,
     "liquidites_pct": 10.02,
-    "investi": 91373.72,
-    "gain_eur": 1547.16,
+    "investi": 91384.32,
+    "gain_eur": 1557.76,
     "statut": {
       "etat": "actif",
-      "texte": "Données à jour : décisions prises chaque jour de semaine vers 7 h 30 UTC."
+      "texte": "Données à jour : rééquilibrage mensuel (premier jour de décision du mois), paris pays contrôlés à chaque exécution."
     },
-    "profil": "equilibre",
-    "profil_libelle": "Équilibré",
     "palier": "Vigilance",
-    "liquidites_min": 10,
+    "methode": {
+      "version": 2,
+      "libelle": "Méthode par combinaisons du backtest",
+      "depuis": "2026-11-16",
+      "rapport": "data/backtest/rapport-2026-11.md",
+      "regles": "agents/trader/regles.md"
+    },
+    "changements_methode": [
+      {
+        "date": "2026-11-16",
+        "version": 2,
+        "libelle": "Méthode par combinaisons du backtest",
+        "texte": "Nouvelle méthode : Méthode par combinaisons du backtest (data/backtest/rapport-2026-11.md). Lignes qui ne respectent pas ses règles vendues (24 ordre(s) de vente), chacune avec sa raison ; historique de performance conservé."
+      }
+    ],
     "indice": {
       "nom": "MSCI World (ETF URTH, en euros)",
-      "source": "agent marchés",
+      "source": "Yahoo Finance",
       "reference": {
         "date": "2026-11-07",
         "cours_eur": 179.188728,
@@ -39,12 +51,12 @@
     },
     "statistiques": {
       "performance": {
-        "depuis_debut": 1.55,
+        "depuis_debut": 1.56,
         "un_mois": null,
         "trois_mois": null
       },
       "performance_msci_world": {
-        "depuis_debut": 3.52,
+        "depuis_debut": 3.57,
         "un_mois": null,
         "trois_mois": null
       },
@@ -52,15 +64,15 @@
         "volatilite": null,
         "sharpe": null,
         "perte_max": -0.1,
-        "points": 6,
-        "raison": "historique trop court (6 jour(s), 20 requis)"
+        "points": 7,
+        "raison": "historique trop court (7 jour(s), 20 requis)"
       },
       "risque_msci_world": {
         "volatilite": null,
         "sharpe": null,
         "perte_max": -0.1,
-        "points": 6,
-        "raison": "historique trop court (6 jour(s), 20 requis)"
+        "points": 7,
+        "raison": "historique trop court (7 jour(s), 20 requis)"
       },
       "operations": {
         "cloturees": 3,
@@ -77,117 +89,128 @@
         "poches": [
           {
             "cle": "coeur",
-            "libelle": "Cœur",
-            "eur": 790.34,
-            "points": 0.79
+            "libelle": "Cœur (ancienne méthode)",
+            "eur": 820.09,
+            "points": 0.82
           },
           {
             "cle": "satellite",
-            "libelle": "Satellites",
-            "eur": 756.82,
-            "points": 0.757
+            "libelle": "Satellites (ancienne méthode)",
+            "eur": 737.67,
+            "points": 0.738
           }
         ],
         "classes": [
           {
             "cle": "actions",
             "libelle": "Actions",
-            "eur": 1829.64,
-            "points": 1.83
+            "eur": 1829.38,
+            "points": 1.829
           },
           {
             "cle": "obligations",
             "libelle": "Obligations",
-            "eur": -285.0,
-            "points": -0.285
+            "eur": -276.33,
+            "points": -0.276
           },
           {
             "cle": "matieres",
             "libelle": "Matières premières",
-            "eur": 112.95,
-            "points": 0.113
+            "eur": 114.14,
+            "points": 0.114
           },
           {
             "cle": "or",
             "libelle": "Or",
-            "eur": -110.43,
-            "points": -0.11
+            "eur": -109.43,
+            "points": -0.109
           }
         ],
         "familles": [
           {
             "cle": "fondamentaux",
             "libelle": "Fondamentaux",
-            "eur": 489.34,
+            "eur": 489.28,
             "points": 0.489
           },
           {
             "cle": "tendance",
             "libelle": "Tendance et momentum",
-            "eur": 439.19,
-            "points": 0.439
+            "eur": 445.63,
+            "points": 0.446
           },
           {
             "cle": "resultats",
             "libelle": "Dynamique des résultats",
-            "eur": 297.5,
-            "points": 0.298
+            "eur": 296.12,
+            "points": 0.296
           },
           {
             "cle": "valorisation",
             "libelle": "Valorisation",
-            "eur": 116.82,
-            "points": 0.117
+            "eur": 119.32,
+            "points": 0.119
           },
           {
             "cle": "cycle",
             "libelle": "Adéquation au cycle",
-            "eur": 116.67,
-            "points": 0.117
+            "eur": 116.33,
+            "points": 0.116
           },
           {
             "cle": "geopolitique",
             "libelle": "Géopolitique",
-            "eur": 43.35,
-            "points": 0.043
+            "eur": 44.79,
+            "points": 0.045
           },
           {
             "cle": "inities",
             "libelle": "Initiés et super-investisseurs",
-            "eur": 42.24,
-            "points": 0.042
+            "eur": 42.75,
+            "points": 0.043
           },
           {
             "cle": "flux",
             "libelle": "Flux d'investissement",
-            "eur": 8.57,
+            "eur": 8.87,
             "points": 0.009
           },
           {
             "cle": "risque",
             "libelle": "Risque",
-            "eur": -6.51,
-            "points": -0.007
+            "eur": -5.33,
+            "points": -0.005
           }
         ],
         "frais_eur": 102.12,
         "ecarts_eur": 41.16,
         "methode": "Plus-values réalisées et latentes de chaque ligne (frais compris), réparties entre les familles de signaux favorables du chef d'orchestre au moment de l'achat, au prorata de (note − 50). Approximation destinée à l'agent calibrateur."
+      },
+      "poches": {
+        "entreprises": {
+          "jours": 0
+        },
+        "matieres": {
+          "jours": 0
+        },
+        "pays": {
+          "jours": 0
+        }
       }
     },
     "repartition": {
       "poches": [
         {
           "cle": "coeur",
-          "libelle": "Cœur",
-          "eur": 64246.96,
-          "pct": 63.27
+          "libelle": "Cœur (ancienne méthode)",
+          "eur": 64276.71,
+          "pct": 63.29
         },
         {
           "cle": "satellite",
-          "libelle": "Satellites",
-          "eur": 27126.76,
-          "pct": 26.71
+          "libelle": "Satellites (ancienne méthode)",
+          "eur": 27107.6,
+          "pct": 26.69
         },
         {
           "cle": "liquidites",
@@ -200,14 +223,14 @@
         {
           "cle": "actions",
           "libelle": "Actions",
-          "eur": 66736.09,
-          "pct": 65.72
+          "eur": 66735.83,
+          "pct": 65.71
         },
         {
           "cle": "obligations",
           "libelle": "Obligations",
-          "eur": 19668.28,
-          "pct": 19.37
+          "eur": 19676.95,
+          "pct": 19.38
         },
         {
           "cle": "liquidites",
@@ -218,13 +241,13 @@
         {
           "cle": "matieres",
           "libelle": "Matières premières",
-          "eur": 2713.09,
+          "eur": 2714.29,
           "pct": 2.67
         },
         {
           "cle": "or",
           "libelle": "Or",
-          "eur": 2256.25,
+          "eur": 2257.25,
           "pct": 2.22
         }
       ],
@@ -232,13 +255,13 @@
         {
           "cle": "États-Unis",
           "libelle": "États-Unis",
-          "eur": 41622.64,
-          "pct": 40.99
+          "eur": 41641.0,
+          "pct": 41.0
         },
         {
           "cle": "Autre",
           "libelle": "Autre",
-          "eur": 10627.64,
+          "eur": 10630.92,
           "pct": 10.47
         },
         {
@@ -250,93 +273,93 @@
         {
           "cle": "Japon",
           "libelle": "Japon",
-          "eur": 6037.06,
-          "pct": 5.95
+          "eur": 6034.58,
+          "pct": 5.94
         },
         {
           "cle": "Monde (or, matières premières)",
           "libelle": "Monde (or, matières premières)",
-          "eur": 4969.35,
-          "pct": 4.89
+          "eur": 4971.54,
+          "pct": 4.9
         },
         {
           "cle": "Corée du Sud",
           "libelle": "Corée du Sud",
-          "eur": 3624.24,
+          "eur": 3625.84,
           "pct": 3.57
         },
         {
           "cle": "Taïwan",
           "libelle": "Taïwan",
-          "eur": 3532.89,
+          "eur": 3534.45,
           "pct": 3.48
         },
         {
           "cle": "Pologne",
           "libelle": "Pologne",
-          "eur": 3521.5,
+          "eur": 3523.06,
           "pct": 3.47
         },
         {
           "cle": "Vietnam",
           "libelle": "Vietnam",
-          "eur": 3148.11,
+          "eur": 3149.5,
           "pct": 3.1
         },
         {
           "cle": "Thaïlande",
           "libelle": "Thaïlande",
-          "eur": 3084.93,
+          "eur": 3086.29,
           "pct": 3.04
         },
         {
           "cle": "Suède",
           "libelle": "Suède",
-          "eur": 2962.32,
+          "eur": 2966.44,
           "pct": 2.92
         },
         {
           "cle": "Colombie",
           "libelle": "Colombie",
-          "eur": 2722.52,
+          "eur": 2723.72,
           "pct": 2.68
         },
         {
           "cle": "Mexique",
           "libelle": "Mexique",
-          "eur": 2030.93,
+          "eur": 2031.83,
           "pct": 2.0
         },
         {
           "cle": "Chili",
           "libelle": "Chili",
-          "eur": 1774.52,
+          "eur": 1775.3,
           "pct": 1.75
         },
         {
           "cle": "Chine",
           "libelle": "Chine",
-          "eur": 1715.07,
-          "pct": 1.69
+          "eur": 1689.85,
+          "pct": 1.66
         }
       ],
       "secteurs": [
         {
           "cle": "ETF pays (multisectoriel)",
           "libelle": "ETF pays (multisectoriel)",
-          "eur": 28981.7,
-          "pct": 28.54
+          "eur": 28997.3,
+          "pct": 28.55
         },
         {
           "cle": "Obligations d'État",
           "libelle": "Obligations d'État",
-          "eur": 19668.28,
-          "pct": 19.37
+          "eur": 19676.95,
+          "pct": 19.38
         },
         {
           "cle": "Autre",
           "libelle": "Autre",
-          "eur": 10627.64,
+          "eur": 10630.92,
           "pct": 10.47
         },
         {
@@ -348,63 +371,64 @@
         {
           "cle": "Finance",
           "libelle": "Finance",
-          "eur": 9477.24,
-          "pct": 9.33
+          "eur": 9481.42,
+          "pct": 9.34
         },
         {
           "cle": "Consommation discrétionnaire",
           "libelle": "Consommation discrétionnaire",
-          "eur": 5258.44,
+          "eur": 5255.62,
           "pct": 5.18
         },
         {
           "cle": "Énergie",
           "libelle": "Énergie",
-          "eur": 3614.62,
+          "eur": 3616.22,
           "pct": 3.56
         },
         {
           "cle": "Industrie",
           "libelle": "Industrie",
-          "eur": 2937.22,
+          "eur": 2938.51,
           "pct": 2.89
         },
         {
           "cle": "Matières premières",
           "libelle": "Matières premières",
-          "eur": 2713.09,
+          "eur": 2714.29,
           "pct": 2.67
         },
         {
           "cle": "Or",
           "libelle": "Or",
-          "eur": 2256.25,
+          "eur": 2257.25,
           "pct": 2.22
         },
         {
           "cle": "Consommation de base",
           "libelle": "Consommation de base",
-          "eur": 2128.43,
+          "eur": 2129.37,
           "pct": 2.1
         },
         {
           "cle": "Immobilier",
           "libelle": "Immobilier",
-          "eur": 1995.74,
+          "eur": 1996.62,
           "pct": 1.97
         },
         {
           "cle": "Santé",
           "libelle": "Santé",
-          "eur": 1715.07,
-          "pct": 1.69
+          "eur": 1689.85,
+          "pct": 1.66
         }
       ]
     },
     "cibles": {
-      "coeur": 73.69,
-      "satellite": 8.0,
-      "liquidites": 18.31
+      "entreprises": 70.0,
+      "matieres": 16,
+      "pays": 13.0,
+      "liquidites": 1.0
     },
     "positions": [
       {
@@ -423,19 +447,14 @@
         "prix_revient_local": 92.0334,
         "prix_revient_eur": 82.2588,
         "cours_local": 90.045,
-        "cours_eur": 81.6528,
+        "cours_eur": 81.6888,
         "cours_le": "2026-11-13T20:55:00Z",
-        "valeur": 9879.99,
-        "plus_value_eur": -73.33,
-        "plus_value_pct": -0.74,
+        "valeur": 9884.35,
+        "plus_value_eur": -68.97,
+        "plus_value_pct": -0.69,
         "realise_eur": 0.0,
         "poids": 9.73,
-        "stop_local": null,
-        "stop_type": null,
-        "stop_distance_pct": null,
-        "prise_benefices_faite": false,
-        "verdict": "Neutre",
-        "conviction": "faible",
+        "raison_entree": null,
         "ouverte_le": "2026-11-09T14:30:00Z",
         "contango": false
       },
@@ -455,19 +474,14 @@
         "prix_revient_local": 82.2664,
         "prix_revient_eur": 73.5292,
         "cours_local": 79.37,
-        "cours_eur": 71.9727,
+        "cours_eur": 72.0045,
         "cours_le": "2026-11-13T20:55:00Z",
-        "valeur": 9788.29,
-        "plus_value_eur": -211.68,
-        "plus_value_pct": -2.12,
+        "valeur": 9792.61,
+        "plus_value_eur": -207.36,
+        "plus_value_pct": -2.07,
         "realise_eur": 0.0,
         "poids": 9.64,
-        "stop_local": null,
-        "stop_type": null,
-        "stop_distance_pct": null,
-        "prise_benefices_faite": false,
-        "verdict": "Neutre",
-        "conviction": "faible",
+        "raison_entree": null,
         "ouverte_le": "2026-11-09T14:30:00Z",
         "contango": false
       },
@@ -487,19 +501,14 @@
         "prix_revient_local": 350.2751,
         "prix_revient_eur": 313.0734,
         "cours_local": 353.74,
-        "cours_eur": 320.7714,
+        "cours_eur": 320.9129,
         "cours_le": "2026-11-13T20:55:00Z",
-        "valeur": 4170.03,
-        "plus_value_eur": 100.07,
-        "plus_value_pct": 2.46,
+        "valeur": 4171.87,
+        "plus_value_eur": 101.91,
+        "plus_value_pct": 2.5,
         "realise_eur": 0.0,
         "poids": 4.11,
-        "stop_local": 297.7338,
-        "stop_type": "initial",
-        "stop_distance_pct": -15.8,
-        "prise_benefices_faite": false,
-        "verdict": "Renforcer",
-        "conviction": "forte",
+        "raison_entree": null,
         "ouverte_le": "2026-11-09T14:30:00Z",
         "contango": false
       },
@@ -519,19 +528,14 @@
         "prix_revient_local": 137.1474,
         "prix_revient_eur": 122.5814,
         "cours_local": 142.7406,
-        "cours_eur": 129.4372,
+        "cours_eur": 129.4943,
         "cours_le": "2026-11-13T20:55:00Z",
-        "valeur": 3624.24,
-        "plus_value_eur": 191.96,
-        "plus_value_pct": 5.59,
+        "valeur": 3625.84,
+        "plus_value_eur": 193.56,
+        "plus_value_pct": 5.64,
         "realise_eur": 0.0,
         "poids": 3.57,
-        "stop_local": null,
-        "stop_type": null,
-        "stop_distance_pct": null,
-        "prise_benefices_faite": false,
-        "verdict": "Renforcer",
-        "conviction": "forte",
+        "raison_entree": null,
         "ouverte_le": "2026-11-09T14:30:00Z",
         "contango": false
       },
@@ -551,19 +555,14 @@
         "prix_revient_local": 34.9905,
         "prix_revient_eur": 31.2743,
         "cours_local": 36.57,
-        "cours_eur": 33.1617,
+        "cours_eur": 33.1763,
         "cours_le": "2026-11-13T20:55:00Z",
-        "valeur": 3614.62,
-        "plus_value_eur": 205.73,
-        "plus_value_pct": 6.04,
+        "valeur": 3616.22,
+        "plus_value_eur": 207.32,
+        "plus_value_pct": 6.08,
         "realise_eur": 0.0,
         "poids": 3.56,
-        "stop_local": 29.7419,
-        "stop_type": "initial",
-        "stop_distance_pct": -18.7,
-        "prise_benefices_faite": false,
-        "verdict": "Renforcer",
-        "conviction": "forte",
+        "raison_entree": null,
         "ouverte_le": "2026-11-09T14:30:00Z",
         "contango": false
       },
@@ -583,19 +582,14 @@
         "prix_revient_local": 92.8186,
         "prix_revient_eur": 82.9606,
         "cours_local": 97.4,
-        "cours_eur": 88.3223,
+        "cours_eur": 88.3613,
         "cours_le": "2026-11-13T20:55:00Z",
-        "valeur": 3532.89,
-        "plus_value_eur": 214.47,
-        "plus_value_pct": 6.46,
+        "valeur": 3534.45,
+        "plus_value_eur": 216.03,
+        "plus_value_pct": 6.51,
         "realise_eur": 0.0,
         "poids": 3.48,
-        "stop_local": null,
-        "stop_type": null,
-        "stop_distance_pct": null,
-        "prise_benefices_faite": false,
-        "verdict": "Renforcer",
-        "conviction": "faible",
+        "raison_entree": null,
         "ouverte_le": "2026-11-09T14:30:00Z",
         "contango": false
       },
@@ -615,19 +609,14 @@
         "prix_revient_local": 43.3917,
         "prix_revient_eur": 38.7832,
         "cours_local": 44.13,
-        "cours_eur": 40.0171,
+        "cours_eur": 40.0347,
         "cours_le": "2026-11-13T20:55:00Z",
-        "valeur": 3521.5,
-        "plus_value_eur": 108.58,
-        "plus_value_pct": 3.18,
+        "valeur": 3523.06,
+        "plus_value_eur": 110.14,
+        "plus_value_pct": 3.23,
         "realise_eur": 0.0,
         "poids": 3.47,
-        "stop_local": null,
-        "stop_type": null,
-        "stop_distance_pct": null,
-        "prise_benefices_faite": false,
-        "verdict": "Renforcer",
-        "conviction": "faible",
+        "raison_entree": null,
         "ouverte_le": "2026-11-09T14:30:00Z",
         "contango": false
       },
@@ -646,20 +635,15 @@
         "devise": "JPY",
         "prix_revient_local": 4160.156,
         "prix_revient_eur": 23.5928,
-        "cours_local": 4409.0,
-        "cours_eur": 25.0531,
-        "cours_le": "2026-11-13T06:20:00Z",
-        "valeur": 3457.33,
-        "plus_value_eur": 201.53,
-        "plus_value_pct": 6.19,
+        "cours_local": 4395.0,
+        "cours_eur": 25.0269,
+        "cours_le": "2026-11-16T06:20:00Z",
+        "valeur": 3453.71,
+        "plus_value_eur": 197.91,
+        "plus_value_pct": 6.08,
         "realise_eur": 0.0,
         "poids": 3.4,
-        "stop_local": 3536.1326,
-        "stop_type": "initial",
-        "stop_distance_pct": -19.8,
-        "prise_benefices_faite": false,
-        "verdict": "Renforcer",
-        "conviction": "forte",
+        "raison_entree": null,
         "ouverte_le": "2026-11-09T00:00:00Z",
         "contango": false
       },
@@ -679,19 +663,14 @@
         "prix_revient_local": 256.717,
         "prix_revient_eur": 229.4518,
         "cours_local": 267.71,
-        "cours_eur": 242.7594,
+        "cours_eur": 242.8665,
         "cours_le": "2026-11-13T20:55:00Z",
-        "valeur": 3398.63,
-        "plus_value_eur": 186.31,
-        "plus_value_pct": 5.8,
+        "valeur": 3400.13,
+        "plus_value_eur": 187.81,
+        "plus_value_pct": 5.85,
         "realise_eur": 0.0,
         "poids": 3.35,
-        "stop_local": 218.2095,
-        "stop_type": "initial",
-        "stop_distance_pct": -18.5,
-        "prise_benefices_faite": false,
-        "verdict": "Renforcer fortement",
-        "conviction": "forte",
+        "raison_entree": null,
         "ouverte_le": "2026-11-09T14:30:00Z",
         "contango": false
       },
@@ -718,12 +697,7 @@
         "plus_value_pct": 0.02,
         "realise_eur": 0.0,
         "poids": 3.13,
-        "stop_local": null,
-        "stop_type": null,
-        "stop_distance_pct": null,
-        "prise_benefices_faite": false,
-        "verdict": "Renforcer",
-        "conviction": "moyenne",
+        "raison_entree": null,
         "ouverte_le": "2026-11-10T08:00:00Z",
         "contango": false
       },
@@ -743,19 +717,14 @@
         "prix_revient_local": 17.0085,
         "prix_revient_eur": 15.2021,
         "cours_local": 16.935,
-        "cours_eur": 15.3567,
+        "cours_eur": 15.3634,
         "cours_le": "2026-11-13T20:55:00Z",
-        "valeur": 3148.11,
-        "plus_value_eur": 31.69,
-        "plus_value_pct": 1.02,
+        "valeur": 3149.5,
+        "plus_value_eur": 33.08,
+        "plus_value_pct": 1.06,
         "realise_eur": 0.0,
         "poids": 3.1,
-        "stop_local": null,
-        "stop_type": null,
-        "stop_distance_pct": null,
-        "prise_benefices_faite": false,
-        "verdict": "Renforcer",
-        "conviction": "faible",
+        "raison_entree": null,
         "ouverte_le": "2026-11-09T14:30:00Z",
         "contango": false
       },
@@ -775,19 +744,14 @@
         "prix_revient_local": 67.1436,
         "prix_revient_eur": 60.0124,
         "cours_local": 68.04,
-        "cours_eur": 61.6987,
+        "cours_eur": 61.7259,
         "cours_le": "2026-11-13T20:55:00Z",
-        "valeur": 3084.93,
-        "plus_value_eur": 84.31,
-        "plus_value_pct": 2.81,
+        "valeur": 3086.29,
+        "plus_value_eur": 85.67,
+        "plus_value_pct": 2.86,
         "realise_eur": 0.0,
         "poids": 3.04,
-        "stop_local": null,
-        "stop_type": null,
-        "stop_distance_pct": null,
-        "prise_benefices_faite": false,
-        "verdict": "Renforcer",
-        "conviction": "moyenne",
+        "raison_entree": null,
         "ouverte_le": "2026-11-09T14:30:00Z",
         "contango": false
       },
@@ -807,19 +771,14 @@
         "prix_revient_local": 61.2056,
         "prix_revient_eur": 54.7051,
         "cours_local": 64.93,
-        "cours_eur": 58.8785,
+        "cours_eur": 58.9045,
         "cours_le": "2026-11-13T20:55:00Z",
-        "valeur": 3061.68,
-        "plus_value_eur": 217.02,
-        "plus_value_pct": 7.63,
+        "valeur": 3063.03,
+        "plus_value_eur": 218.37,
+        "plus_value_pct": 7.68,
         "realise_eur": 0.0,
         "poids": 3.02,
-        "stop_local": null,
-        "stop_type": null,
-        "stop_distance_pct": null,
-        "prise_benefices_faite": false,
-        "verdict": "Renforcer fortement",
-        "conviction": "moyenne",
+        "raison_entree": null,
         "ouverte_le": "2026-11-09T14:30:00Z",
         "contango": false
       },
@@ -838,20 +797,15 @@
         "devise": "USD",
         "prix_revient_local": 52.8064,
         "prix_revient_eur": 47.198,
-        "cours_local": 52.69,
-        "cours_eur": 47.7793,
-        "cours_le": "2026-11-13T00:00:00Z",
-        "valeur": 2962.32,
-        "plus_value_eur": 36.04,
-        "plus_value_pct": 1.23,
+        "cours_local": 52.74,
+        "cours_eur": 47.8457,
+        "cours_le": "2026-11-13T20:55:00Z",
+        "valeur": 2966.44,
+        "plus_value_eur": 40.16,
+        "plus_value_pct": 1.37,
         "realise_eur": 0.0,
         "poids": 2.92,
-        "stop_local": null,
-        "stop_type": null,
-        "stop_distance_pct": null,
-        "prise_benefices_faite": false,
-        "verdict": "Renforcer",
-        "conviction": "moyenne",
+        "raison_entree": null,
         "ouverte_le": "2026-11-09T14:30:00Z",
         "contango": false
       },
@@ -871,19 +825,14 @@
         "prix_revient_local": 54.1362,
         "prix_revient_eur": 48.3866,
         "cours_local": 54.9,
-        "cours_eur": 49.7833,
+        "cours_eur": 49.8053,
         "cours_le": "2026-11-13T20:55:00Z",
-        "valeur": 2937.22,
-        "plus_value_eur": 82.41,
-        "plus_value_pct": 2.89,
+        "valeur": 2938.51,
+        "plus_value_eur": 83.7,
+        "plus_value_pct": 2.93,
         "realise_eur": 0.0,
         "poids": 2.89,
-        "stop_local": 46.0158,
-        "stop_type": "initial",
-        "stop_distance_pct": -16.2,
-        "prise_benefices_faite": false,
-        "verdict": "Renforcer",
-        "conviction": "forte",
+        "raison_entree": null,
         "ouverte_le": "2026-11-09T14:30:00Z",
         "contango": false
       },
@@ -903,19 +852,14 @@
         "prix_revient_local": 46.7133,
         "prix_revient_eur": 41.7521,
         "cours_local": 45.49,
-        "cours_eur": 41.2503,
+        "cours_eur": 41.2685,
         "cours_le": "2026-11-13T20:55:00Z",
-        "valeur": 2722.52,
-        "plus_value_eur": -33.11,
-        "plus_value_pct": -1.2,
+        "valeur": 2723.72,
+        "plus_value_eur": -31.91,
+        "plus_value_pct": -1.16,
         "realise_eur": 0.0,
         "poids": 2.68,
-        "stop_local": null,
-        "stop_type": null,
-        "stop_distance_pct": null,
-        "prise_benefices_faite": false,
-        "verdict": "Renforcer",
-        "conviction": "faible",
+        "raison_entree": null,
         "ouverte_le": "2026-11-09T14:30:00Z",
         "contango": false
       },
@@ -935,19 +879,14 @@
         "prix_revient_local": 59.3697,
         "prix_revient_eur": 53.0642,
         "cours_local": 61.06,
-        "cours_eur": 55.3692,
+        "cours_eur": 55.3936,
         "cours_le": "2026-11-13T20:55:00Z",
-        "valeur": 2713.09,
-        "plus_value_eur": 112.95,
-        "plus_value_pct": 4.34,
+        "valeur": 2714.29,
+        "plus_value_eur": 114.14,
+        "plus_value_pct": 4.39,
         "realise_eur": 0.0,
         "poids": 2.67,
-        "stop_local": null,
-        "stop_type": null,
-        "stop_distance_pct": null,
-        "prise_benefices_faite": false,
-        "verdict": "Renforcer",
-        "conviction": "faible",
+        "raison_entree": null,
         "ouverte_le": "2026-11-09T14:30:00Z",
         "contango": true
       },
@@ -967,19 +906,14 @@
         "prix_revient_local": 90.138,
         "prix_revient_eur": 80.5647,
         "cours_local": 91.77,
-        "cours_eur": 83.217,
+        "cours_eur": 83.2537,
         "cours_le": "2026-11-13T20:55:00Z",
-        "valeur": 2579.73,
-        "plus_value_eur": 82.22,
-        "plus_value_pct": 3.29,
+        "valeur": 2580.87,
+        "plus_value_eur": 83.36,
+        "plus_value_pct": 3.34,
         "realise_eur": 0.0,
         "poids": 2.54,
-        "stop_local": null,
-        "stop_type": null,
-        "stop_distance_pct": null,
-        "prise_benefices_faite": false,
-        "verdict": "Neutre",
-        "conviction": "moyenne",
+        "raison_entree": null,
         "ouverte_le": "2026-11-09T14:30:00Z",
         "contango": false
       },
@@ -999,19 +933,14 @@
         "prix_revient_local": 378.2726,
         "prix_revient_eur": 338.0974,
         "cours_local": 355.45,
-        "cours_eur": 322.3221,
+        "cours_eur": 322.4642,
         "cours_le": "2026-11-13T20:55:00Z",
-        "valeur": 2256.25,
-        "plus_value_eur": -110.43,
-        "plus_value_pct": -4.67,
+        "valeur": 2257.25,
+        "plus_value_eur": -109.43,
+        "plus_value_pct": -4.62,
         "realise_eur": 0.0,
         "poids": 2.22,
-        "stop_local": null,
-        "stop_type": null,
-        "stop_distance_pct": null,
-        "prise_benefices_faite": false,
-        "verdict": "Neutre",
-        "conviction": "faible",
+        "raison_entree": null,
         "ouverte_le": "2026-11-09T14:30:00Z",
         "contango": false
       },
@@ -1031,19 +960,14 @@
         "prix_revient_local": 128.114,
         "prix_revient_eur": 114.4433,
         "cours_local": 128.13,
-        "cours_eur": 116.1883,
+        "cours_eur": 116.2395,
         "cours_le": "2026-11-13T20:55:00Z",
-        "valeur": 2207.58,
-        "plus_value_eur": 33.16,
-        "plus_value_pct": 1.52,
+        "valeur": 2208.55,
+        "plus_value_eur": 34.13,
+        "plus_value_pct": 1.57,
         "realise_eur": 0.0,
         "poids": 2.17,
-        "stop_local": null,
-        "stop_type": null,
-        "stop_distance_pct": null,
-        "prise_benefices_faite": false,
-        "verdict": "Renforcer",
-        "conviction": "forte",
+        "raison_entree": null,
         "ouverte_le": "2026-11-09T17:50:00Z",
         "contango": false
       },
@@ -1063,19 +987,14 @@
         "prix_revient_local": 132.8764,
         "prix_revient_eur": 118.6975,
         "cours_local": 133.49,
-        "cours_eur": 121.0487,
+        "cours_eur": 121.1021,
         "cours_le": "2026-11-13T20:55:00Z",
-        "valeur": 2178.88,
-        "plus_value_eur": 42.32,
-        "plus_value_pct": 1.98,
+        "valeur": 2179.84,
+        "plus_value_eur": 43.28,
+        "plus_value_pct": 2.03,
         "realise_eur": 0.0,
         "poids": 2.15,
-        "stop_local": null,
-        "stop_type": null,
-        "stop_distance_pct": null,
-        "prise_benefices_faite": false,
-        "verdict": "Renforcer",
-        "conviction": "forte",
+        "raison_entree": null,
         "ouverte_le": "2026-11-09T17:50:00Z",
         "contango": false
       },
@@ -1095,19 +1014,14 @@
         "prix_revient_local": 133.0399,
         "prix_revient_eur": 118.9101,
         "cours_local": 138.07,
-        "cours_eur": 125.2019,
+        "cours_eur": 125.2571,
         "cours_le": "2026-11-13T20:55:00Z",
-        "valeur": 2128.43,
-        "plus_value_eur": 106.96,
-        "plus_value_pct": 5.29,
+        "valeur": 2129.37,
+        "plus_value_eur": 107.9,
+        "plus_value_pct": 5.34,
         "realise_eur": 0.0,
         "poids": 2.1,
-        "stop_local": 113.0839,
-        "stop_type": "initial",
-        "stop_distance_pct": -18.1,
-        "prise_benefices_faite": false,
-        "verdict": "Renforcer",
-        "conviction": "forte",
+        "raison_entree": null,
         "ouverte_le": "2026-11-09T14:30:00Z",
         "contango": false
       },
@@ -1127,19 +1041,14 @@
         "prix_revient_local": 77.2786,
         "prix_revient_eur": 69.0711,
         "cours_local": 77.23,
-        "cours_eur": 70.0322,
+        "cours_eur": 70.0631,
         "cours_le": "2026-11-13T20:55:00Z",
-        "valeur": 2030.93,
-        "plus_value_eur": 27.87,
-        "plus_value_pct": 1.39,
+        "valeur": 2031.83,
+        "plus_value_eur": 28.77,
+        "plus_value_pct": 1.44,
         "realise_eur": 0.0,
         "poids": 2.0,
-        "stop_local": null,
-        "stop_type": null,
-        "stop_distance_pct": null,
-        "prise_benefices_faite": false,
-        "verdict": "Neutre",
-        "conviction": "faible",
+        "raison_entree": null,
         "ouverte_le": "2026-11-09T14:30:00Z",
         "contango": false
       },
@@ -1159,19 +1068,14 @@
         "prix_revient_local": 378.4135,
         "prix_revient_eur": 338.2233,
         "cours_local": 366.81,
-        "cours_eur": 332.6233,
+        "cours_eur": 332.77,
         "cours_le": "2026-11-13T20:55:00Z",
-        "valeur": 1995.74,
-        "plus_value_eur": -33.6,
-        "plus_value_pct": -1.66,
+        "valeur": 1996.62,
+        "plus_value_eur": -32.72,
+        "plus_value_pct": -1.61,
         "realise_eur": 0.0,
         "poids": 1.97,
-        "stop_local": 321.6515,
-        "stop_type": "initial",
-        "stop_distance_pct": -12.3,
-        "prise_benefices_faite": false,
-        "verdict": "Renforcer",
-        "conviction": "forte",
+        "raison_entree": null,
         "ouverte_le": "2026-11-09T14:30:00Z",
         "contango": false
       },
@@ -1191,19 +1095,14 @@
         "prix_revient_local": 65.2096,
         "prix_revient_eur": 58.2838,
         "cours_local": 63.78,
-        "cours_eur": 57.8357,
+        "cours_eur": 57.8612,
         "cours_le": "2026-11-13T20:55:00Z",
-        "valeur": 1908.58,
-        "plus_value_eur": -14.79,
-        "plus_value_pct": -0.77,
+        "valeur": 1909.42,
+        "plus_value_eur": -13.95,
+        "plus_value_pct": -0.73,
         "realise_eur": 0.0,
         "poids": 1.88,
-        "stop_local": 55.4281,
-        "stop_type": "initial",
-        "stop_distance_pct": -13.1,
-        "prise_benefices_faite": false,
-        "verdict": "Renforcer",
-        "conviction": "forte",
+        "raison_entree": null,
         "ouverte_le": "2026-11-09T14:30:00Z",
         "contango": false
       },
@@ -1223,19 +1122,14 @@
         "prix_revient_local": 135.3306,
         "prix_revient_eur": 120.9575,
         "cours_local": 132.415,
-        "cours_eur": 120.0739,
+        "cours_eur": 120.1269,
         "cours_le": "2026-11-13T20:55:00Z",
-        "valeur": 1801.11,
-        "plus_value_eur": -13.25,
-        "plus_value_pct": -0.73,
+        "valeur": 1801.9,
+        "plus_value_eur": -12.46,
+        "plus_value_pct": -0.69,
         "realise_eur": 0.0,
         "poids": 1.77,
-        "stop_local": 115.031,
-        "stop_type": "initial",
-        "stop_distance_pct": -13.1,
-        "prise_benefices_faite": false,
-        "verdict": "Renforcer",
-        "conviction": "forte",
+        "raison_entree": null,
         "ouverte_le": "2026-11-09T14:30:00Z",
         "contango": false
       },
@@ -1255,19 +1149,14 @@
         "prix_revient_local": 36.6183,
         "prix_revient_eur": 32.7292,
         "cours_local": 35.58,
-        "cours_eur": 32.2639,
+        "cours_eur": 32.2782,
         "cours_le": "2026-11-13T20:55:00Z",
-        "valeur": 1774.52,
-        "plus_value_eur": -25.59,
-        "plus_value_pct": -1.42,
+        "valeur": 1775.3,
+        "plus_value_eur": -24.8,
+        "plus_value_pct": -1.38,
         "realise_eur": 0.0,
         "poids": 1.75,
-        "stop_local": null,
-        "stop_type": null,
-        "stop_distance_pct": null,
-        "prise_benefices_faite": false,
-        "verdict": "Neutre",
-        "conviction": "moyenne",
+        "raison_entree": null,
         "ouverte_le": "2026-11-09T14:30:00Z",
         "contango": false
       },
@@ -1286,25 +1175,661 @@
         "devise": "CNY",
         "prix_revient_local": 295.8468,
         "prix_revient_eur": 39.5469,
-        "cours_local": 280.2,
-        "cours_eur": 38.1126,
-        "cours_le": "2026-11-13T06:55:00Z",
-        "valeur": 1715.07,
-        "plus_value_eur": -64.54,
-        "plus_value_pct": -3.63,
+        "cours_local": 275.1,
+        "cours_eur": 37.5522,
+        "cours_le": "2026-11-16T06:55:00Z",
+        "valeur": 1689.85,
+        "plus_value_eur": -89.76,
+        "plus_value_pct": -5.04,
         "realise_eur": 0.0,
-        "poids": 1.69,
-        "stop_local": 251.4698,
-        "stop_type": "initial",
-        "stop_distance_pct": -10.3,
-        "prise_benefices_faite": false,
-        "verdict": "Renforcer",
-        "conviction": "forte",
+        "poids": 1.66,
+        "raison_entree": null,
         "ouverte_le": "2026-11-10T01:30:00Z",
         "contango": false
       }
     ],
-    "ordres_en_attente": [],
+    "ordres_en_attente": [
+      {
+        "id": "o00067",
+        "sens": "vente",
+        "symbole": "5108.T",
+        "nom": "Bridgestone Corporation",
+        "poche": "satellite",
+        "motif": "changement de méthode",
+        "montant_eur": null,
+        "quantite": 138,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Vente de Bridgestone Corporation (3,4 % du portefeuille) : ligne de l'ancienne méthode (poche « Satellites (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest.",
+        "donner_tort": [
+          "L'actif peut progresser après sa vente : la règle privilégie la discipline à la conviction."
+        ]
+      },
+      {
+        "id": "o00068",
+        "sens": "vente",
+        "symbole": "ALL",
+        "nom": "The Allstate Corporation",
+        "poche": "satellite",
+        "motif": "changement de méthode",
+        "montant_eur": null,
+        "quantite": 14,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Vente de The Allstate Corporation (3,3 % du portefeuille) : ligne de l'ancienne méthode (poche « Satellites (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest.",
+        "donner_tort": [
+          "L'actif peut progresser après sa vente : la règle privilégie la discipline à la conviction."
+        ]
+      },
+      {
+        "id": "o00069",
+        "sens": "vente",
+        "symbole": "BNO",
+        "nom": "United States Brent Oil Fund",
+        "poche": "coeur",
+        "motif": "changement de méthode",
+        "montant_eur": null,
+        "quantite": 49,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Vente de United States Brent Oil Fund (2,7 % du portefeuille) : ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest.",
+        "donner_tort": [
+          "L'actif peut progresser après sa vente : la règle privilégie la discipline à la conviction."
+        ]
+      },
+      {
+        "id": "o00070",
+        "sens": "vente",
+        "symbole": "DLTR",
+        "nom": "Dollar Tree, Inc.",
+        "poche": "satellite",
+        "motif": "changement de méthode",
+        "montant_eur": null,
+        "quantite": 17,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Vente de Dollar Tree, Inc. (2,1 % du portefeuille) : ligne de l'ancienne méthode (poche « Satellites (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest.",
+        "donner_tort": [
+          "L'actif peut progresser après sa vente : la règle privilégie la discipline à la conviction."
+        ]
+      },
+      {
+        "id": "o00071",
+        "sens": "vente",
+        "symbole": "ECH",
+        "nom": "ETF Chili (ECH)",
+        "poche": "coeur",
+        "motif": "changement de méthode",
+        "montant_eur": null,
+        "quantite": 55,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Vente de ETF Chili (ECH) (1,7 % du portefeuille) : ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest.",
+        "donner_tort": [
+          "L'actif peut progresser après sa vente : la règle privilégie la discipline à la conviction."
+        ]
+      },
+      {
+        "id": "o00072",
+        "sens": "vente",
+        "symbole": "EWD",
+        "nom": "ETF Suède (EWD)",
+        "poche": "coeur",
+        "motif": "changement de méthode",
+        "montant_eur": null,
+        "quantite": 62,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Vente de ETF Suède (EWD) (2,9 % du portefeuille) : ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest.",
+        "donner_tort": [
+          "L'actif peut progresser après sa vente : la règle privilégie la discipline à la conviction."
+        ]
+      },
+      {
+        "id": "o00073",
+        "sens": "vente",
+        "symbole": "EWJ",
+        "nom": "ETF Japon (EWJ)",
+        "poche": "coeur",
+        "motif": "changement de méthode",
+        "montant_eur": null,
+        "quantite": 31,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Vente de ETF Japon (EWJ) (2,5 % du portefeuille) : ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest.",
+        "donner_tort": [
+          "L'actif peut progresser après sa vente : la règle privilégie la discipline à la conviction."
+        ]
+      },
+      {
+        "id": "o00074",
+        "sens": "vente",
+        "symbole": "EWT",
+        "nom": "ETF Taïwan (EWT)",
+        "poche": "coeur",
+        "motif": "changement de méthode",
+        "montant_eur": null,
+        "quantite": 40,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Vente de ETF Taïwan (EWT) (3,5 % du portefeuille) : ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest.",
+        "donner_tort": [
+          "L'actif peut progresser après sa vente : la règle privilégie la discipline à la conviction."
+        ]
+      },
+      {
+        "id": "o00075",
+        "sens": "vente",
+        "symbole": "EWY",
+        "nom": "ETF Corée du Sud (EWY)",
+        "poche": "coeur",
+        "motif": "changement de méthode",
+        "montant_eur": null,
+        "quantite": 28,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Vente de ETF Corée du Sud (EWY) (3,6 % du portefeuille) : ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest.",
+        "donner_tort": [
+          "L'actif peut progresser après sa vente : la règle privilégie la discipline à la conviction."
+        ]
+      },
+      {
+        "id": "o00076",
+        "sens": "vente",
+        "symbole": "FHI",
+        "nom": "Federated Hermes, Inc.",
+        "poche": "satellite",
+        "motif": "changement de méthode",
+        "montant_eur": null,
+        "quantite": 33,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Vente de Federated Hermes, Inc. (1,9 % du portefeuille) : ligne de l'ancienne méthode (poche « Satellites (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest.",
+        "donner_tort": [
+          "L'actif peut progresser après sa vente : la règle privilégie la discipline à la conviction."
+        ]
+      },
+      {
+        "id": "o00077",
+        "sens": "vente",
+        "symbole": "GLD",
+        "nom": "SPDR Gold Shares",
+        "poche": "coeur",
+        "motif": "changement de méthode",
+        "montant_eur": null,
+        "quantite": 7,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Vente de SPDR Gold Shares (2,2 % du portefeuille) : ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest.",
+        "donner_tort": [
+          "L'actif peut progresser après sa vente : la règle privilégie la discipline à la conviction."
+        ]
+      },
+      {
+        "id": "o00078",
+        "sens": "vente",
+        "symbole": "IEF",
+        "nom": "iShares 7-10 Year Treasury Bond ETF",
+        "poche": "coeur",
+        "motif": "changement de méthode",
+        "montant_eur": null,
+        "quantite": 121,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Vente de iShares 7-10 Year Treasury Bond ETF (9,7 % du portefeuille) : ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest.",
+        "donner_tort": [
+          "L'actif peut progresser après sa vente : la règle privilégie la discipline à la conviction."
+        ]
+      },
+      {
+        "id": "o00079",
+        "sens": "vente",
+        "symbole": "JLL",
+        "nom": "Jones Lang LaSalle Incorporated",
+        "poche": "satellite",
+        "motif": "changement de méthode",
+        "montant_eur": null,
+        "quantite": 6,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Vente de Jones Lang LaSalle Incorporated (2,0 % du portefeuille) : ligne de l'ancienne méthode (poche « Satellites (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest.",
+        "donner_tort": [
+          "L'actif peut progresser après sa vente : la règle privilégie la discipline à la conviction."
+        ]
+      },
+      {
+        "id": "o00080",
+        "sens": "vente",
+        "symbole": "MLI",
+        "nom": "Mueller Industries, Inc.",
+        "poche": "satellite",
+        "motif": "changement de méthode",
+        "montant_eur": null,
+        "quantite": 59,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Vente de Mueller Industries, Inc. (2,9 % du portefeuille) : ligne de l'ancienne méthode (poche « Satellites (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest.",
+        "donner_tort": [
+          "L'actif peut progresser après sa vente : la règle privilégie la discipline à la conviction."
+        ]
+      },
+      {
+        "id": "o00081",
+        "sens": "vente",
+        "symbole": "RNR",
+        "nom": "RenaissanceRe Holdings Ltd.",
+        "poche": "satellite",
+        "motif": "changement de méthode",
+        "montant_eur": null,
+        "quantite": 13,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Vente de RenaissanceRe Holdings Ltd. (4,1 % du portefeuille) : ligne de l'ancienne méthode (poche « Satellites (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest.",
+        "donner_tort": [
+          "L'actif peut progresser après sa vente : la règle privilégie la discipline à la conviction."
+        ]
+      },
+      {
+        "id": "o00082",
+        "sens": "vente",
+        "symbole": "THD",
+        "nom": "ETF Thaïlande (THD)",
+        "poche": "coeur",
+        "motif": "changement de méthode",
+        "montant_eur": null,
+        "quantite": 50,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Vente de ETF Thaïlande (THD) (3,0 % du portefeuille) : ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest.",
+        "donner_tort": [
+          "L'actif peut progresser après sa vente : la règle privilégie la discipline à la conviction."
+        ]
+      },
+      {
+        "id": "o00083",
+        "sens": "vente",
+        "symbole": "TLT",
+        "nom": "iShares 20+ Year Treasury Bond ETF",
+        "poche": "coeur",
+        "motif": "changement de méthode",
+        "montant_eur": null,
+        "quantite": 136,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Vente de iShares 20+ Year Treasury Bond ETF (9,6 % du portefeuille) : ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest.",
+        "donner_tort": [
+          "L'actif peut progresser après sa vente : la règle privilégie la discipline à la conviction."
+        ]
+      },
+      {
+        "id": "o00084",
+        "sens": "vente",
+        "symbole": "TPR",
+        "nom": "Tapestry, Inc.",
+        "poche": "satellite",
+        "motif": "changement de méthode",
+        "montant_eur": null,
+        "quantite": 15,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Vente de Tapestry, Inc. (1,8 % du portefeuille) : ligne de l'ancienne méthode (poche « Satellites (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest.",
+        "donner_tort": [
+          "L'actif peut progresser après sa vente : la règle privilégie la discipline à la conviction."
+        ]
+      },
+      {
+        "id": "o00085",
+        "sens": "vente",
+        "symbole": "VNM",
+        "nom": "ETF Vietnam (VNM)",
+        "poche": "coeur",
+        "motif": "changement de méthode",
+        "montant_eur": null,
+        "quantite": 205,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Vente de ETF Vietnam (VNM) (3,1 % du portefeuille) : ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest.",
+        "donner_tort": [
+          "L'actif peut progresser après sa vente : la règle privilégie la discipline à la conviction."
+        ]
+      },
+      {
+        "id": "o00086",
+        "sens": "vente",
+        "symbole": "XLE",
+        "nom": "Énergie — États-Unis",
+        "poche": "coeur",
+        "motif": "changement de méthode",
+        "montant_eur": null,
+        "quantite": 52,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Vente de Énergie — États-Unis (3,0 % du portefeuille) : ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest.",
+        "donner_tort": [
+          "L'actif peut progresser après sa vente : la règle privilégie la discipline à la conviction."
+        ]
+      },
+      {
+        "id": "o00087",
+        "sens": "vente",
+        "symbole": "IXG",
+        "nom": "Finance — Monde",
+        "poche": "coeur",
+        "motif": "changement de méthode",
+        "montant_eur": null,
+        "quantite": 18,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Vente de Finance — Monde (2,1 % du portefeuille) : ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest.",
+        "donner_tort": [
+          "L'actif peut progresser après sa vente : la règle privilégie la discipline à la conviction."
+        ]
+      },
+      {
+        "id": "o00088",
+        "sens": "vente",
+        "symbole": "IXN",
+        "nom": "Technologies de l'information — Monde",
+        "poche": "coeur",
+        "motif": "changement de méthode",
+        "montant_eur": null,
+        "quantite": 19,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Vente de Technologies de l'information — Monde (2,2 % du portefeuille) : ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest.",
+        "donner_tort": [
+          "L'actif peut progresser après sa vente : la règle privilégie la discipline à la conviction."
+        ]
+      },
+      {
+        "id": "o00089",
+        "sens": "vente",
+        "symbole": "688235.SS",
+        "nom": "BeOne Medicines AG",
+        "poche": "satellite",
+        "motif": "changement de méthode",
+        "montant_eur": null,
+        "quantite": 45,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Vente de BeOne Medicines AG (1,7 % du portefeuille) : ligne de l'ancienne méthode (poche « Satellites (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest.",
+        "donner_tort": [
+          "L'actif peut progresser après sa vente : la règle privilégie la discipline à la conviction."
+        ]
+      },
+      {
+        "id": "o00090",
+        "sens": "vente",
+        "symbole": "EXV4.DE",
+        "nom": "Santé — Europe",
+        "poche": "coeur",
+        "motif": "changement de méthode",
+        "montant_eur": null,
+        "quantite": 25,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Vente de Santé — Europe (3,1 % du portefeuille) : ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest.",
+        "donner_tort": [
+          "L'actif peut progresser après sa vente : la règle privilégie la discipline à la conviction."
+        ]
+      },
+      {
+        "id": "o00091",
+        "sens": "achat",
+        "symbole": "CNX",
+        "nom": "CNX Resources Corporation",
+        "poche": "entreprises",
+        "motif": "rééquilibrage",
+        "montant_eur": 3492.83,
+        "quantite": null,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Renforcement de CNX Resources Corporation : poids 3,6 % pour une cible de 7,0 %.",
+        "donner_tort": [
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Combinaison jugée « Prometteuse » mais non significative par le backtest : elle peut ne pas tenir."
+        ]
+      },
+      {
+        "id": "o00092",
+        "sens": "achat",
+        "symbole": "COLO",
+        "nom": "ETF Colombie (COLO)",
+        "poche": "pays",
+        "motif": "rééquilibrage",
+        "montant_eur": 1677.11,
+        "quantite": null,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Renforcement de ETF Colombie (COLO) : poids 2,7 % pour une cible de 4,3 %.",
+        "donner_tort": [
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "La note pays n'est pas prédictive d'après le backtest : ce pari ne repose que sur la tendance, qui peut casser."
+        ]
+      },
+      {
+        "id": "o00093",
+        "sens": "achat",
+        "symbole": "EPOL",
+        "nom": "ETF Pologne (EPOL)",
+        "poche": "pays",
+        "motif": "rééquilibrage",
+        "montant_eur": 877.78,
+        "quantite": null,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Renforcement de ETF Pologne (EPOL) : poids 3,5 % pour une cible de 4,3 %.",
+        "donner_tort": [
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "La note pays n'est pas prédictive d'après le backtest : ce pari ne repose que sur la tendance, qui peut casser."
+        ]
+      },
+      {
+        "id": "o00094",
+        "sens": "achat",
+        "symbole": "EWW",
+        "nom": "ETF Mexique (EWW)",
+        "poche": "pays",
+        "motif": "rééquilibrage",
+        "montant_eur": 2369.01,
+        "quantite": null,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Renforcement de ETF Mexique (EWW) : poids 2,0 % pour une cible de 4,3 %.",
+        "donner_tort": [
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "La note pays n'est pas prédictive d'après le backtest : ce pari ne repose que sur la tendance, qui peut casser."
+        ]
+      },
+      {
+        "id": "o00095",
+        "sens": "achat",
+        "symbole": "PTON",
+        "nom": "Peloton Interactive, Inc.",
+        "poche": "entreprises",
+        "motif": "entrée entreprises",
+        "montant_eur": 7109.04,
+        "quantite": null,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Entrée entreprises : Peloton Interactive, Inc.. Cible 7,0 % ; retenue par M-score de Beneish + Goodwill / actif ; Goodwill / actif + Rendement du FCF ; Conversion du bénéfice en cash + Goodwill / actif + Rendement du FCF.",
+        "donner_tort": [
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Combinaison jugée « Prometteuse » mais non significative par le backtest : elle peut ne pas tenir."
+        ]
+      },
+      {
+        "id": "o00096",
+        "sens": "achat",
+        "symbole": "TTD",
+        "nom": "The Trade Desk, Inc.",
+        "poche": "entreprises",
+        "motif": "entrée entreprises",
+        "montant_eur": 7109.04,
+        "quantite": null,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Entrée entreprises : The Trade Desk, Inc.. Cible 7,0 % ; retenue par M-score de Beneish + Goodwill / actif ; Goodwill / actif + Rendement du FCF ; Conversion du bénéfice en cash + Goodwill / actif + Rendement du FCF.",
+        "donner_tort": [
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Combinaison jugée « Prometteuse » mais non significative par le backtest : elle peut ne pas tenir."
+        ]
+      },
+      {
+        "id": "o00097",
+        "sens": "achat",
+        "symbole": "CHRD",
+        "nom": "Chord Energy Corporation",
+        "poche": "entreprises",
+        "motif": "entrée entreprises",
+        "montant_eur": 7109.04,
+        "quantite": null,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Entrée entreprises : Chord Energy Corporation. Cible 7,0 % ; retenue par M-score de Beneish + Goodwill / actif ; Goodwill / actif + Rendement du FCF ; Conversion du bénéfice en cash + Goodwill / actif + Rendement du FCF.",
+        "donner_tort": [
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Combinaison jugée « Prometteuse » mais non significative par le backtest : elle peut ne pas tenir."
+        ]
+      },
+      {
+        "id": "o00098",
+        "sens": "achat",
+        "symbole": "ETSY",
+        "nom": "Etsy, Inc.",
+        "poche": "entreprises",
+        "motif": "entrée entreprises",
+        "montant_eur": 7109.04,
+        "quantite": null,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Entrée entreprises : Etsy, Inc.. Cible 7,0 % ; retenue par M-score de Beneish + Goodwill / actif ; Goodwill / actif + Rendement du FCF ; Conversion du bénéfice en cash + Goodwill / actif + Rendement du FCF.",
+        "donner_tort": [
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Combinaison jugée « Prometteuse » mais non significative par le backtest : elle peut ne pas tenir."
+        ]
+      },
+      {
+        "id": "o00099",
+        "sens": "achat",
+        "symbole": "CARG",
+        "nom": "CarGurus, Inc.",
+        "poche": "entreprises",
+        "motif": "entrée entreprises",
+        "montant_eur": 7109.04,
+        "quantite": null,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Entrée entreprises : CarGurus, Inc.. Cible 7,0 % ; retenue par M-score de Beneish + Goodwill / actif ; Goodwill / actif + Rendement du FCF ; Conversion du bénéfice en cash + Goodwill / actif + Rendement du FCF.",
+        "donner_tort": [
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Combinaison jugée « Prometteuse » mais non significative par le backtest : elle peut ne pas tenir."
+        ]
+      },
+      {
+        "id": "o00100",
+        "sens": "achat",
+        "symbole": "DXC",
+        "nom": "DXC Technology Company",
+        "poche": "entreprises",
+        "motif": "entrée entreprises",
+        "montant_eur": 7109.04,
+        "quantite": null,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Entrée entreprises : DXC Technology Company. Cible 7,0 % ; retenue par M-score de Beneish + Goodwill / actif ; Goodwill / actif + Rendement du FCF ; Conversion du bénéfice en cash + Goodwill / actif + Rendement du FCF.",
+        "donner_tort": [
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Combinaison jugée « Prometteuse » mais non significative par le backtest : elle peut ne pas tenir."
+        ]
+      },
+      {
+        "id": "o00101",
+        "sens": "achat",
+        "symbole": "PINS",
+        "nom": "Pinterest, Inc.",
+        "poche": "entreprises",
+        "motif": "entrée entreprises",
+        "montant_eur": 7109.04,
+        "quantite": null,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Entrée entreprises : Pinterest, Inc.. Cible 7,0 % ; retenue par M-score de Beneish + Goodwill / actif ; Goodwill / actif + Rendement du FCF ; Conversion du bénéfice en cash + Goodwill / actif + Rendement du FCF.",
+        "donner_tort": [
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Combinaison jugée « Prometteuse » mais non significative par le backtest : elle peut ne pas tenir."
+        ]
+      },
+      {
+        "id": "o00102",
+        "sens": "achat",
+        "symbole": "DAN",
+        "nom": "Dana Incorporated",
+        "poche": "entreprises",
+        "motif": "entrée entreprises",
+        "montant_eur": 7109.04,
+        "quantite": null,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Entrée entreprises : Dana Incorporated. Cible 7,0 % ; retenue par M-score de Beneish + Goodwill / actif ; Goodwill / actif + Rendement du FCF ; Conversion du bénéfice en cash + Goodwill / actif + Rendement du FCF.",
+        "donner_tort": [
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Combinaison jugée « Prometteuse » mais non significative par le backtest : elle peut ne pas tenir."
+        ]
+      },
+      {
+        "id": "o00103",
+        "sens": "achat",
+        "symbole": "TPC",
+        "nom": "Tutor Perini Corporation",
+        "poche": "entreprises",
+        "motif": "entrée entreprises",
+        "montant_eur": 7109.04,
+        "quantite": null,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Entrée entreprises : Tutor Perini Corporation. Cible 7,0 % ; retenue par M-score de Beneish + Goodwill / actif ; Goodwill / actif + Rendement du FCF ; Conversion du bénéfice en cash + Goodwill / actif + Rendement du FCF.",
+        "donner_tort": [
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Combinaison jugée « Prometteuse » mais non significative par le backtest : elle peut ne pas tenir."
+        ]
+      },
+      {
+        "id": "o00104",
+        "sens": "achat",
+        "symbole": "PALL",
+        "nom": "abrdn Palladium ETF",
+        "poche": "matieres",
+        "motif": "entrée matieres",
+        "montant_eur": 8124.62,
+        "quantite": null,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Entrée matières premières : abrdn Palladium ETF. Cible 8,0 % ; retenue par Niveau historique + Positionnement CFTC (niveau historique 100e percentile, positionnement CFTC 88e percentile).",
+        "donner_tort": [
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Univers d'environ 16 matières : la combinaison repose sur peu de cas."
+        ]
+      },
+      {
+        "id": "o00105",
+        "sens": "achat",
+        "symbole": "UNG",
+        "nom": "United States Natural Gas Fund",
+        "poche": "matieres",
+        "motif": "entrée matieres",
+        "montant_eur": 7727.17,
+        "quantite": null,
+        "cree_le": "2026-11-16T07:46:17Z",
+        "imposee": false,
+        "texte": "Entrée matières premières : United States Natural Gas Fund. Cible 8,0 % ; retenue par Niveau historique + Positionnement CFTC (niveau historique 75e percentile, positionnement CFTC 88e percentile). Support adossé à des contrats à terme : coût de renouvellement (contango) à prévoir.",
+        "donner_tort": [
+          "Fonds adossé à des contrats à terme : quand les échéances suivantes coûtent plus cher (contango), le renouvellement des contrats retranche du rendement chaque mois, même à cours du pétrole inchangé.",
+          "Le change joue : une hausse de l'euro réduit la valeur en euros de ce support.",
+          "Univers d'environ 16 matières : la combinaison repose sur peu de cas."
+        ]
+      }
+    ],
     "operations": [
       {
         "id": "o00064",
@@ -2830,458 +3355,686 @@
       }
     ],
     "derniere_decision": {
-      "date": "2026-11-13",
-      "le": "2026-11-13T07:46:32Z",
+      "date": "2026-11-16",
+      "le": "2026-11-16T07:46:17Z",
+      "type": "changement de méthode",
       "palier": "Vigilance",
-      "profil": "equilibre",
-      "liquidites_min": 10,
+      "methode": "Méthode par combinaisons du backtest",
       "cibles": {
         "poches": {
-          "coeur": 73.69,
-          "satellite": 8.0,
-          "liquidites": 18.31
-        },
-        "classes": {
-          "obligations": 5,
-          "matieres": 14.44,
-          "actions": 62.25,
-          "liquidites": 18.31
+          "entreprises": 70.0,
+          "matieres": 16,
+          "pays": 13.0,
+          "liquidites": 1.0
         },
         "lignes": [
           {
-            "symbole": "UNG",
-            "nom": "United States Natural Gas Fund",
-            "poche": "coeur",
+            "symbole": "CNX",
+            "nom": "CNX Resources Corporation",
+            "poche": "entreprises",
+            "classe": "actions",
+            "zone": "Amérique du Nord",
+            "cible": 7.0,
+            "ligne_id": "selection-CNX",
+            "raison": "retenue par Goodwill / actif + Rendement du FCF",
+            "secteur": "Énergie"
+          },
+          {
+            "symbole": "PTON",
+            "nom": "Peloton Interactive, Inc.",
+            "poche": "entreprises",
+            "classe": "actions",
+            "zone": "Amérique du Nord",
+            "cible": 7.0,
+            "ligne_id": "selection-PTON",
+            "raison": "retenue par M-score de Beneish + Goodwill / actif ; Goodwill / actif + Rendement du FCF ; Conversion du bénéfice en cash + Goodwill / actif + Rendement du FCF",
+            "secteur": "Consommation discrétionnaire"
+          },
+          {
+            "symbole": "TTD",
+            "nom": "The Trade Desk, Inc.",
+            "poche": "entreprises",
+            "classe": "actions",
+            "zone": "Amérique du Nord",
+            "cible": 7.0,
+            "ligne_id": "selection-TTD",
+            "raison": "retenue par M-score de Beneish + Goodwill / actif ; Goodwill / actif + Rendement du FCF ; Conversion du bénéfice en cash + Goodwill / actif + Rendement du FCF",
+            "secteur": "Services de communication"
+          },
+          {
+            "symbole": "CHRD",
+            "nom": "Chord Energy Corporation",
+            "poche": "entreprises",
+            "classe": "actions",
+            "zone": "Amérique du Nord",
+            "cible": 7.0,
+            "ligne_id": "selection-CHRD",
+            "raison": "retenue par M-score de Beneish + Goodwill / actif ; Goodwill / actif + Rendement du FCF ; Conversion du bénéfice en cash + Goodwill / actif + Rendement du FCF",
+            "secteur": "Énergie"
+          },
+          {
+            "symbole": "ETSY",
+            "nom": "Etsy, Inc.",
+            "poche": "entreprises",
+            "classe": "actions",
+            "zone": "Amérique du Nord",
+            "cible": 7.0,
+            "ligne_id": "selection-ETSY",
+            "raison": "retenue par M-score de Beneish + Goodwill / actif ; Goodwill / actif + Rendement du FCF ; Conversion du bénéfice en cash + Goodwill / actif + Rendement du FCF",
+            "secteur": "Consommation discrétionnaire"
+          },
+          {
+            "symbole": "CARG",
+            "nom": "CarGurus, Inc.",
+            "poche": "entreprises",
+            "classe": "actions",
+            "zone": "Amérique du Nord",
+            "cible": 7.0,
+            "ligne_id": "selection-CARG",
+            "raison": "retenue par M-score de Beneish + Goodwill / actif ; Goodwill / actif + Rendement du FCF ; Conversion du bénéfice en cash + Goodwill / actif + Rendement du FCF",
+            "secteur": "Services de communication"
+          },
+          {
+            "symbole": "DXC",
+            "nom": "DXC Technology Company",
+            "poche": "entreprises",
+            "classe": "actions",
+            "zone": "Amérique du Nord",
+            "cible": 7.0,
+            "ligne_id": "selection-DXC",
+            "raison": "retenue par M-score de Beneish + Goodwill / actif ; Goodwill / actif + Rendement du FCF ; Conversion du bénéfice en cash + Goodwill / actif + Rendement du FCF",
+            "secteur": "Technologies de l'information"
+          },
+          {
+            "symbole": "PINS",
+            "nom": "Pinterest, Inc.",
+            "poche": "entreprises",
+            "classe": "actions",
+            "zone": "Amérique du Nord",
+            "cible": 7.0,
+            "ligne_id": "selection-PINS",
+            "raison": "retenue par M-score de Beneish + Goodwill / actif ; Goodwill / actif + Rendement du FCF ; Conversion du bénéfice en cash + Goodwill / actif + Rendement du FCF",
+            "secteur": "Services de communication"
+          },
+          {
+            "symbole": "DAN",
+            "nom": "Dana Incorporated",
+            "poche": "entreprises",
+            "classe": "actions",
+            "zone": "Amérique du Nord",
+            "cible": 7.0,
+            "ligne_id": "selection-DAN",
+            "raison": "retenue par M-score de Beneish + Goodwill / actif ; Goodwill / actif + Rendement du FCF ; Conversion du bénéfice en cash + Goodwill / actif + Rendement du FCF",
+            "secteur": "Consommation discrétionnaire"
+          },
+          {
+            "symbole": "TPC",
+            "nom": "Tutor Perini Corporation",
+            "poche": "entreprises",
+            "classe": "actions",
+            "zone": "Amérique du Nord",
+            "cible": 7.0,
+            "ligne_id": "selection-TPC",
+            "raison": "retenue par M-score de Beneish + Goodwill / actif ; Goodwill / actif + Rendement du FCF ; Conversion du bénéfice en cash + Goodwill / actif + Rendement du FCF",
+            "secteur": "Industrie"
+          },
+          {
+            "symbole": "PALL",
+            "nom": "abrdn Palladium ETF",
+            "poche": "matieres",
             "classe": "matieres",
             "zone": "Matières premières",
-            "cible": 14.44,
-            "ligne_id": "matiere-gaz_us",
-            "verdict": "Renforcer",
-            "conviction": "forte"
-          },
-          {
-            "symbole": "XLK",
-            "nom": "Technologies de l'information — États-Unis",
-            "poche": "coeur",
-            "classe": "actions",
-            "zone": "Amérique du Nord",
-            "cible": 11.67,
-            "ligne_id": "secteur-etats_unis-technologie",
-            "verdict": "Renforcer",
-            "conviction": "forte"
-          },
-          {
-            "symbole": "XLF",
-            "nom": "Finance — États-Unis",
-            "poche": "coeur",
-            "classe": "actions",
-            "zone": "Amérique du Nord",
-            "cible": 11.67,
-            "ligne_id": "secteur-etats_unis-finance",
-            "verdict": "Renforcer",
-            "conviction": "forte"
-          },
-          {
-            "symbole": "XLV",
-            "nom": "Santé — États-Unis",
-            "poche": "coeur",
-            "classe": "actions",
-            "zone": "Amérique du Nord",
-            "cible": 11.67,
-            "ligne_id": "secteur-etats_unis-sante",
-            "verdict": "Renforcer",
-            "conviction": "forte"
-          },
-          {
-            "symbole": "EXV4.DE",
-            "nom": "Santé — Europe",
-            "poche": "coeur",
-            "classe": "actions",
-            "zone": "Europe",
-            "cible": 9.62,
-            "ligne_id": "secteur-europe-sante",
-            "verdict": "Renforcer",
-            "conviction": "moyenne"
-          },
-          {
-            "symbole": "EXV1.DE",
-            "nom": "Finance — Europe",
-            "poche": "coeur",
-            "classe": "actions",
-            "zone": "Europe",
-            "cible": 9.62,
-            "ligne_id": "secteur-europe-finance",
-            "verdict": "Renforcer",
-            "conviction": "moyenne"
-          },
-          {
-            "symbole": "2914.T",
-            "nom": "Japan Tobacco Inc.",
-            "poche": "satellite",
-            "classe": "actions",
-            "zone": "Asie",
             "cible": 8,
-            "ligne_id": "entreprise-2914.T",
-            "verdict": "Renforcer",
-            "conviction": "forte"
+            "ligne_id": "matiere-palladium",
+            "raison": "retenue par Niveau historique + Positionnement CFTC (niveau historique 100e percentile, positionnement CFTC 88e percentile)",
+            "secteur": null
           },
           {
-            "symbole": "IEF",
-            "nom": "iShares 7-10 Year Treasury Bond ETF",
-            "poche": "coeur",
-            "classe": "obligations",
-            "zone": "Obligations",
-            "cible": 5,
-            "ligne_id": "oblig-us-longues",
-            "verdict": "Neutre",
-            "conviction": "faible"
+            "symbole": "UNG",
+            "nom": "United States Natural Gas Fund",
+            "poche": "matieres",
+            "classe": "matieres",
+            "zone": "Matières premières",
+            "cible": 8,
+            "ligne_id": "matiere-gaz_us",
+            "raison": "retenue par Niveau historique + Positionnement CFTC (niveau historique 75e percentile, positionnement CFTC 88e percentile)",
+            "secteur": null
+          },
+          {
+            "symbole": "COLO",
+            "nom": "ETF Colombie (COLO)",
+            "poche": "pays",
+            "classe": "actions",
+            "zone": "Amérique latine",
+            "cible": 4.33,
+            "ligne_id": "pays-CO",
+            "raison": "pari pays : tendance haussière et saine (12 mois hors dernier mois +39,7 %, cours au-dessus de la moyenne 200 jours, force relative 92e percentile des pays (3e sur 30)), valorisation relative non tendue (95/100)",
+            "secteur": null
+          },
+          {
+            "symbole": "EPOL",
+            "nom": "ETF Pologne (EPOL)",
+            "poche": "pays",
+            "classe": "actions",
+            "zone": "Europe",
+            "cible": 4.33,
+            "ligne_id": "pays-PL",
+            "raison": "pari pays : tendance haussière et saine (12 mois hors dernier mois +34,3 %, cours au-dessus de la moyenne 200 jours, force relative 85e percentile des pays (5e sur 30)), valorisation relative non tendue (68/100)",
+            "secteur": null
+          },
+          {
+            "symbole": "EWW",
+            "nom": "ETF Mexique (EWW)",
+            "poche": "pays",
+            "classe": "actions",
+            "zone": "Amérique latine",
+            "cible": 4.33,
+            "ligne_id": "pays-MX",
+            "raison": "pari pays : tendance haussière et saine (12 mois hors dernier mois +11,6 %, cours au-dessus de la moyenne 200 jours, force relative 52e percentile des pays (15e sur 30)), valorisation relative non tendue (74/100)",
+            "secteur": null
           }
         ]
       },
-      "diversification": {
-        "zones": [
-          "Amérique du Nord",
-          "Asie",
-          "Europe",
-          "Matières premières",
-          "Obligations"
-        ],
-        "nombre_zones": 5,
-        "correlation_moyenne": 0.1,
-        "correlation_max": {
-          "valeur": 0.63,
-          "entre": [
-            "EXV4.DE",
-            "XLV"
-          ]
-        },
-        "paires_mesurees": 28,
-        "paires_possibles": 28
+      "candidats": {
+        "entreprises": 110,
+        "matieres": 2,
+        "pays": 10
       },
       "arbitrages": [
         {
-          "symbole": "688235.SS",
-          "nom": "BeOne Medicines AG",
-          "action": "conservée pour l'instant",
-          "raison": "ligne plus analysée par le chef d'orchestre. Détention minimale de 5 jours : sortie possible à partir du 2026-11-15."
-        },
-        {
-          "symbole": "ECH",
-          "nom": "ETF Chili (ECH)",
-          "action": "conservée pour l'instant",
-          "raison": "verdict « Neutre » : pas d'ETF pays « Neutre ». Détention minimale de 5 jours : sortie possible à partir du 2026-11-14."
-        },
-        {
-          "symbole": "TPR",
-          "nom": "Tapestry, Inc.",
-          "action": "conservée pour l'instant",
-          "raison": "ligne plus analysée par le chef d'orchestre. Détention minimale de 5 jours : sortie possible à partir du 2026-11-14."
-        },
-        {
-          "symbole": "FHI",
-          "nom": "Federated Hermes, Inc.",
-          "action": "conservée pour l'instant",
-          "raison": "conviction moyenne (exigée : forte). Détention minimale de 5 jours : sortie possible à partir du 2026-11-14."
-        },
-        {
-          "symbole": "JLL",
-          "nom": "Jones Lang LaSalle Incorporated",
-          "action": "conservée pour l'instant",
-          "raison": "conviction moyenne (exigée : forte). Détention minimale de 5 jours : sortie possible à partir du 2026-11-14."
-        },
-        {
-          "symbole": "EWW",
-          "nom": "ETF Mexique (EWW)",
-          "action": "conservée pour l'instant",
-          "raison": "verdict « Neutre » : pas d'ETF pays « Neutre ». Détention minimale de 5 jours : sortie possible à partir du 2026-11-14."
-        },
-        {
-          "symbole": "IXG",
-          "nom": "Finance — Monde",
-          "action": "conservée pour l'instant",
-          "raison": "ETF sectoriel mondial : pas d'ETF monde. Détention minimale de 5 jours : sortie possible à partir du 2026-11-14."
-        },
-        {
-          "symbole": "DLTR",
-          "nom": "Dollar Tree, Inc.",
-          "action": "conservée pour l'instant",
-          "raison": "conviction moyenne (exigée : forte). Détention minimale de 5 jours : sortie possible à partir du 2026-11-14."
-        },
-        {
-          "symbole": "IXN",
-          "nom": "Technologies de l'information — Monde",
-          "action": "conservée pour l'instant",
-          "raison": "ETF sectoriel mondial : pas d'ETF monde. Détention minimale de 5 jours : sortie possible à partir du 2026-11-14."
-        },
-        {
-          "symbole": "GLD",
-          "nom": "SPDR Gold Shares",
-          "action": "conservée pour l'instant",
-          "raison": "verdict « Neutre ». Détention minimale de 5 jours : sortie possible à partir du 2026-11-14."
-        },
-        {
-          "symbole": "EWJ",
-          "nom": "ETF Japon (EWJ)",
-          "action": "conservée pour l'instant",
-          "raison": "verdict « Neutre » : pas d'ETF pays « Neutre ». Détention minimale de 5 jours : sortie possible à partir du 2026-11-14."
-        },
-        {
-          "symbole": "BNO",
-          "nom": "United States Brent Oil Fund",
-          "action": "conservée pour l'instant",
-          "raison": "conviction faible (exigée : forte ou moyenne). Détention minimale de 5 jours : sortie possible à partir du 2026-11-14."
-        },
-        {
-          "symbole": "COLO",
-          "nom": "ETF Colombie (COLO)",
-          "action": "conservée pour l'instant",
-          "raison": "verdict « Neutre » : pas d'ETF pays « Neutre ». Détention minimale de 5 jours : sortie possible à partir du 2026-11-14."
-        },
-        {
-          "symbole": "MLI",
-          "nom": "Mueller Industries, Inc.",
-          "action": "conservée pour l'instant",
-          "raison": "conviction moyenne (exigée : forte). Détention minimale de 5 jours : sortie possible à partir du 2026-11-14."
-        },
-        {
-          "symbole": "EWD",
-          "nom": "ETF Suède (EWD)",
-          "action": "conservée pour l'instant",
-          "raison": "verdict « Neutre » : pas d'ETF pays « Neutre ». Détention minimale de 5 jours : sortie possible à partir du 2026-11-14."
-        },
-        {
-          "symbole": "XLE",
-          "nom": "Énergie — États-Unis",
-          "action": "conservée pour l'instant",
-          "raison": "objection du contradicteur : Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 96) : ETF XLE +46,6 % sur 12 mois, +12,2 % sur 6 mois (cours du 12/11/2026) ; valorisation vérifiée (67/100) ; positionnement vérifié (53/100). Une forte hausse passée ne suffit pas à porter une conviction forte.. Détention minimale de 5 jours : sortie possible à partir du 2026-11-14."
-        },
-        {
-          "symbole": "THD",
-          "nom": "ETF Thaïlande (THD)",
-          "action": "conservée pour l'instant",
-          "raison": "conviction faible (exigée : forte ou moyenne). Détention minimale de 5 jours : sortie possible à partir du 2026-11-14."
-        },
-        {
-          "symbole": "VNM",
-          "nom": "ETF Vietnam (VNM)",
-          "action": "conservée pour l'instant",
-          "raison": "données d'un agent utilisé périmées ou dégradées. Détention minimale de 5 jours : sortie possible à partir du 2026-11-14."
+          "symbole": "5108.T",
+          "nom": "Bridgestone Corporation",
+          "action": "vente totale",
+          "raison": "ligne de l'ancienne méthode (poche « Satellites (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest"
         },
         {
           "symbole": "ALL",
           "nom": "The Allstate Corporation",
-          "action": "conservée pour l'instant",
-          "raison": "ligne plus analysée par le chef d'orchestre. Détention minimale de 5 jours : sortie possible à partir du 2026-11-14."
+          "action": "vente totale",
+          "raison": "ligne de l'ancienne méthode (poche « Satellites (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest"
         },
         {
-          "symbole": "5108.T",
-          "nom": "Bridgestone Corporation",
-          "action": "conservée pour l'instant",
-          "raison": "ligne plus analysée par le chef d'orchestre. Détention minimale de 5 jours : sortie possible à partir du 2026-11-14."
+          "symbole": "BNO",
+          "nom": "United States Brent Oil Fund",
+          "action": "vente totale",
+          "raison": "ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest"
         },
         {
-          "symbole": "EPOL",
-          "nom": "ETF Pologne (EPOL)",
-          "action": "conservée pour l'instant",
-          "raison": "conviction faible (exigée : forte ou moyenne). Détention minimale de 5 jours : sortie possible à partir du 2026-11-14."
+          "symbole": "DLTR",
+          "nom": "Dollar Tree, Inc.",
+          "action": "vente totale",
+          "raison": "ligne de l'ancienne méthode (poche « Satellites (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest"
+        },
+        {
+          "symbole": "ECH",
+          "nom": "ETF Chili (ECH)",
+          "action": "vente totale",
+          "raison": "ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest"
+        },
+        {
+          "symbole": "EWD",
+          "nom": "ETF Suède (EWD)",
+          "action": "vente totale",
+          "raison": "ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest"
+        },
+        {
+          "symbole": "EWJ",
+          "nom": "ETF Japon (EWJ)",
+          "action": "vente totale",
+          "raison": "ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest"
         },
         {
           "symbole": "EWT",
           "nom": "ETF Taïwan (EWT)",
-          "action": "conservée pour l'instant",
-          "raison": "conviction faible (exigée : forte ou moyenne). Détention minimale de 5 jours : sortie possible à partir du 2026-11-14."
-        },
-        {
-          "symbole": "CNX",
-          "nom": "CNX Resources Corporation",
-          "action": "conservée pour l'instant",
-          "raison": "ligne plus analysée par le chef d'orchestre. Détention minimale de 5 jours : sortie possible à partir du 2026-11-14."
+          "action": "vente totale",
+          "raison": "ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest"
         },
         {
           "symbole": "EWY",
           "nom": "ETF Corée du Sud (EWY)",
-          "action": "conservée pour l'instant",
-          "raison": "conviction faible (exigée : forte ou moyenne). Détention minimale de 5 jours : sortie possible à partir du 2026-11-14."
+          "action": "vente totale",
+          "raison": "ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest"
         },
         {
-          "symbole": "RNR",
-          "nom": "RenaissanceRe Holdings Ltd.",
-          "action": "conservée pour l'instant",
-          "raison": "ligne plus analysée par le chef d'orchestre. Détention minimale de 5 jours : sortie possible à partir du 2026-11-14."
+          "symbole": "FHI",
+          "nom": "Federated Hermes, Inc.",
+          "action": "vente totale",
+          "raison": "ligne de l'ancienne méthode (poche « Satellites (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest"
         },
         {
-          "symbole": "TLT",
-          "nom": "iShares 20+ Year Treasury Bond ETF",
-          "action": "conservée pour l'instant",
-          "raison": "obligations : verdict « Neutre », conviction faible → poids neutre de 5 % porté par un seul support. Détention minimale de 5 jours : sortie possible à partir du 2026-11-14."
+          "symbole": "GLD",
+          "nom": "SPDR Gold Shares",
+          "action": "vente totale",
+          "raison": "ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest"
         },
         {
           "symbole": "IEF",
           "nom": "iShares 7-10 Year Treasury Bond ETF",
-          "action": "réduction reportée",
-          "raison": "poids 9,7 % pour une cible de 5,0 % ; détention minimale de 5 jours (réduction possible à partir du 2026-11-14)."
+          "action": "vente totale",
+          "raison": "ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest"
+        },
+        {
+          "symbole": "JLL",
+          "nom": "Jones Lang LaSalle Incorporated",
+          "action": "vente totale",
+          "raison": "ligne de l'ancienne méthode (poche « Satellites (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest"
+        },
+        {
+          "symbole": "MLI",
+          "nom": "Mueller Industries, Inc.",
+          "action": "vente totale",
+          "raison": "ligne de l'ancienne méthode (poche « Satellites (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest"
+        },
+        {
+          "symbole": "RNR",
+          "nom": "RenaissanceRe Holdings Ltd.",
+          "action": "vente totale",
+          "raison": "ligne de l'ancienne méthode (poche « Satellites (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest"
+        },
+        {
+          "symbole": "THD",
+          "nom": "ETF Thaïlande (THD)",
+          "action": "vente totale",
+          "raison": "ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest"
+        },
+        {
+          "symbole": "TLT",
+          "nom": "iShares 20+ Year Treasury Bond ETF",
+          "action": "vente totale",
+          "raison": "ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest"
+        },
+        {
+          "symbole": "TPR",
+          "nom": "Tapestry, Inc.",
+          "action": "vente totale",
+          "raison": "ligne de l'ancienne méthode (poche « Satellites (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest"
+        },
+        {
+          "symbole": "VNM",
+          "nom": "ETF Vietnam (VNM)",
+          "action": "vente totale",
+          "raison": "ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest"
+        },
+        {
+          "symbole": "XLE",
+          "nom": "Énergie — États-Unis",
+          "action": "vente totale",
+          "raison": "ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest"
+        },
+        {
+          "symbole": "IXG",
+          "nom": "Finance — Monde",
+          "action": "vente totale",
+          "raison": "ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest"
+        },
+        {
+          "symbole": "IXN",
+          "nom": "Technologies de l'information — Monde",
+          "action": "vente totale",
+          "raison": "ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest"
+        },
+        {
+          "symbole": "688235.SS",
+          "nom": "BeOne Medicines AG",
+          "action": "vente totale",
+          "raison": "ligne de l'ancienne méthode (poche « Satellites (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest"
         },
         {
           "symbole": "EXV4.DE",
           "nom": "Santé — Europe",
+          "action": "vente totale",
+          "raison": "ligne de l'ancienne méthode (poche « Cœur (ancienne méthode) ») : elle ne respecte pas les règles par combinaisons du backtest"
+        },
+        {
+          "symbole": "CNX",
+          "nom": "CNX Resources Corporation",
           "action": "renforcement",
-          "raison": "poids 3,1 % pour une cible de 9,6 % (minimum 4 % par ligne)"
+          "raison": "poids 3,6 % pour une cible de 7,0 %"
+        },
+        {
+          "symbole": "COLO",
+          "nom": "ETF Colombie (COLO)",
+          "action": "renforcement",
+          "raison": "poids 2,7 % pour une cible de 4,3 %"
+        },
+        {
+          "symbole": "EPOL",
+          "nom": "ETF Pologne (EPOL)",
+          "action": "renforcement",
+          "raison": "poids 3,5 % pour une cible de 4,3 %"
+        },
+        {
+          "symbole": "EWW",
+          "nom": "ETF Mexique (EWW)",
+          "action": "renforcement",
+          "raison": "poids 2,0 % pour une cible de 4,3 %"
+        },
+        {
+          "symbole": "PTON",
+          "nom": "Peloton Interactive, Inc.",
+          "action": "entrée",
+          "raison": "Entreprises : cible 7,0 %"
+        },
+        {
+          "symbole": "TTD",
+          "nom": "The Trade Desk, Inc.",
+          "action": "entrée",
+          "raison": "Entreprises : cible 7,0 %"
+        },
+        {
+          "symbole": "CHRD",
+          "nom": "Chord Energy Corporation",
+          "action": "entrée",
+          "raison": "Entreprises : cible 7,0 %"
+        },
+        {
+          "symbole": "ETSY",
+          "nom": "Etsy, Inc.",
+          "action": "entrée",
+          "raison": "Entreprises : cible 7,0 %"
+        },
+        {
+          "symbole": "CARG",
+          "nom": "CarGurus, Inc.",
+          "action": "entrée",
+          "raison": "Entreprises : cible 7,0 %"
+        },
+        {
+          "symbole": "DXC",
+          "nom": "DXC Technology Company",
+          "action": "entrée",
+          "raison": "Entreprises : cible 7,0 %"
+        },
+        {
+          "symbole": "PINS",
+          "nom": "Pinterest, Inc.",
+          "action": "entrée",
+          "raison": "Entreprises : cible 7,0 %"
+        },
+        {
+          "symbole": "DAN",
+          "nom": "Dana Incorporated",
+          "action": "entrée",
+          "raison": "Entreprises : cible 7,0 %"
+        },
+        {
+          "symbole": "TPC",
+          "nom": "Tutor Perini Corporation",
+          "action": "entrée",
+          "raison": "Entreprises : cible 7,0 %"
+        },
+        {
+          "symbole": "PALL",
+          "nom": "abrdn Palladium ETF",
+          "action": "entrée",
+          "raison": "Matières premières : cible 8,0 %"
         },
         {
           "symbole": "UNG",
           "nom": "United States Natural Gas Fund",
-          "action": "entrée reportée",
-          "raison": "cible 14,4 % ; 15 lignes au plus : entrée quand les lignes hors règles auront été soldées."
-        },
-        {
-          "symbole": "XLK",
-          "nom": "Technologies de l'information — États-Unis",
-          "action": "entrée reportée",
-          "raison": "cible 11,7 % ; 15 lignes au plus : entrée quand les lignes hors règles auront été soldées."
-        },
-        {
-          "symbole": "XLF",
-          "nom": "Finance — États-Unis",
-          "action": "entrée reportée",
-          "raison": "cible 11,7 % ; 15 lignes au plus : entrée quand les lignes hors règles auront été soldées."
-        },
-        {
-          "symbole": "XLV",
-          "nom": "Santé — États-Unis",
-          "action": "entrée reportée",
-          "raison": "cible 11,7 % ; 15 lignes au plus : entrée quand les lignes hors règles auront été soldées."
-        },
-        {
-          "symbole": "EXV1.DE",
-          "nom": "Finance — Europe",
-          "action": "entrée reportée",
-          "raison": "cible 9,6 % ; 15 lignes au plus : entrée quand les lignes hors règles auront été soldées."
-        },
-        {
-          "symbole": "2914.T",
-          "nom": "Japan Tobacco Inc.",
-          "action": "entrée reportée",
-          "raison": "cible 8,0 % ; 15 lignes au plus : entrée quand les lignes hors règles auront été soldées."
+          "action": "entrée",
+          "raison": "Matières premières : cible 8,0 %"
         }
       ],
-      "ordres": [],
-      "achats": 0,
-      "ventes": 0,
+      "ordres": [
+        "o00067",
+        "o00068",
+        "o00069",
+        "o00070",
+        "o00071",
+        "o00072",
+        "o00073",
+        "o00074",
+        "o00075",
+        "o00076",
+        "o00077",
+        "o00078",
+        "o00079",
+        "o00080",
+        "o00081",
+        "o00082",
+        "o00083",
+        "o00084",
+        "o00085",
+        "o00086",
+        "o00087",
+        "o00088",
+        "o00089",
+        "o00090",
+        "o00091",
+        "o00092",
+        "o00093",
+        "o00094",
+        "o00095",
+        "o00096",
+        "o00097",
+        "o00098",
+        "o00099",
+        "o00100",
+        "o00101",
+        "o00102",
+        "o00103",
+        "o00104",
+        "o00105"
+      ],
+      "achats": 15,
+      "ventes": 24,
       "annules": 0,
-      "resume": "Décision du 13/11/2026 : palier « Vigilance », liquidités minimales 10 %. Cibles : 8 lignes (7 de cœur, 1 satellite(s)) sur 5 classes ou zones ; cœur 73,7 %, satellites 8,0 %, liquidités 18,3 %. 0 achat(s) et 0 vente(s) à exécuter au premier cours disponible ; 33 arbitrage(s) reporté(s) (détention minimale, sorties étalées, 15 lignes au plus).",
-      "notes": [
-        "Renforcements réduits à 1 % : liquidités disponibles au-dessus du plancher de 10 % insuffisantes."
-      ],
-      "avertissements": [
-        "Seulement 7 ligne(s) de cœur respectent les règles (minimum visé : 8) : la part non placée reste en liquidités."
-      ],
-      "satellites_ecartes": [
+      "resume": "Changement de méthode et rééquilibrage du 16/11/2026 : 15 lignes — entreprises 70,0 % (10), matières premières 16,0 % (2), ETF pays 13,0 % (3), liquidités 1,0 %. 24 vente(s) et 15 achat(s) à exécuter au premier cours disponible.",
+      "notes": [],
+      "avertissements": [],
+      "ecartees": [
         {
-          "id": "pays-PL",
-          "nom": "Pologne",
-          "raison": "conviction faible (exigée : forte ou moyenne)"
+          "id": "pays-SE",
+          "nom": "Suède",
+          "raison": "poche complète (3 lignes)"
         },
         {
-          "id": "pays-TW",
-          "nom": "Taïwan",
-          "raison": "conviction faible (exigée : forte ou moyenne)"
+          "id": "pays-CA",
+          "nom": "Canada",
+          "raison": "poche complète (3 lignes)"
         },
         {
-          "id": "pays-VN",
-          "nom": "Vietnam",
-          "raison": "données d'un agent utilisé périmées ou dégradées"
+          "id": "pays-ES",
+          "nom": "Espagne",
+          "raison": "poche complète (3 lignes)"
         },
         {
-          "id": "pays-TH",
-          "nom": "Thaïlande",
-          "raison": "conviction faible (exigée : forte ou moyenne)"
+          "id": "pays-GB",
+          "nom": "Royaume-Uni",
+          "raison": "poche complète (3 lignes)"
         },
         {
-          "id": "pays-KR",
-          "nom": "Corée du Sud",
-          "raison": "conviction faible (exigée : forte ou moyenne)"
+          "id": "pays-IT",
+          "nom": "Italie",
+          "raison": "poche complète (3 lignes)"
         },
         {
-          "id": "secteur-etats_unis-energie",
-          "nom": "Énergie — États-Unis",
-          "raison": "objection du contradicteur : Momentum extrême : hausse passée au-delà du 90e percentile de sa classe (percentile 96) : ETF XLE +46,6 % sur 12 mois, +12,2 % sur 6 mois (cours du 12/11/2026) ; valorisation vérifiée (67/100) ; positionnement vérifié (53/100). Une forte hausse passée ne suffit pas à porter une conviction forte."
+          "id": "pays-AE",
+          "nom": "Émirats arabes unis",
+          "raison": "poche complète (3 lignes)"
         },
         {
-          "id": "secteur-monde-technologie",
-          "nom": "Technologies de l'information — Monde",
-          "raison": "ETF sectoriel mondial : pas d'ETF monde"
+          "id": "pays-DE",
+          "nom": "Allemagne",
+          "raison": "poche complète (3 lignes)"
         },
         {
-          "id": "secteur-emergents-technologie",
-          "nom": "Technologies de l'information — Émergents",
-          "raison": "conviction faible (exigée : forte ou moyenne)"
+          "id": "selection-CHWY",
+          "nom": "Chewy, Inc.",
+          "raison": "secteur « Consommation discrétionnaire » complet (25 % au plus)"
         },
         {
-          "id": "secteur-europe-energie",
-          "nom": "Énergie — Europe",
-          "raison": "conviction faible (exigée : forte ou moyenne)"
+          "id": "selection-AGX",
+          "nom": "Argan, Inc.",
+          "raison": "poche complète (10 lignes)"
         },
         {
-          "id": "secteur-monde-finance",
-          "nom": "Finance — Monde",
-          "raison": "ETF sectoriel mondial : pas d'ETF monde"
+          "id": "selection-UNFI",
+          "nom": "United Natural Foods, Inc.",
+          "raison": "poche complète (10 lignes)"
         },
         {
-          "id": "secteur-monde-sante",
-          "nom": "Santé — Monde",
-          "raison": "ETF sectoriel mondial : pas d'ETF monde"
+          "id": "selection-RNG",
+          "nom": "RingCentral, Inc.",
+          "raison": "poche complète (10 lignes)"
         },
         {
-          "id": "matiere-brent",
-          "nom": "Pétrole Brent",
-          "raison": "conviction faible (exigée : forte ou moyenne)"
+          "id": "selection-PGNY",
+          "nom": "Progyny, Inc.",
+          "raison": "poche complète (10 lignes)"
         },
         {
-          "id": "matiere-wti",
-          "nom": "Pétrole WTI",
-          "raison": "verdict « Neutre »"
+          "id": "selection-ALKS",
+          "nom": "Alkermes plc",
+          "raison": "poche complète (10 lignes)"
         },
         {
-          "id": "entreprise-ADVANC.BK",
-          "nom": "Advanced Info Service Public Company Limited",
-          "raison": "signaux favorables de moins de 2 agents indépendants (une seule source)"
+          "id": "selection-KR",
+          "nom": "The Kroger Co.",
+          "raison": "poche complète (10 lignes)"
         },
         {
-          "id": "entreprise-086280.KS",
-          "nom": "Hyundai Glovis Co., Ltd.",
-          "raison": "signaux favorables de moins de 2 agents indépendants (une seule source)"
+          "id": "selection-IRDM",
+          "nom": "Iridium Communications Inc.",
+          "raison": "poche complète (10 lignes)"
         },
         {
-          "id": "entreprise-PZU.WA",
-          "nom": "Powszechny Zaklad Ubezpieczen SA",
-          "raison": "signaux favorables de moins de 2 agents indépendants (une seule source)"
+          "id": "selection-RRR",
+          "nom": "Red Rock Resorts, Inc.",
+          "raison": "poche complète (10 lignes)"
         },
         {
-          "id": "entreprise-1579.HK",
-          "nom": "Yihai International Holding Ltd.",
-          "raison": "signaux favorables de moins de 2 agents indépendants (une seule source)"
+          "id": "selection-ACI",
+          "nom": "Albertsons Companies, Inc.",
+          "raison": "poche complète (10 lignes)"
         },
         {
-          "id": "entreprise-1681.HK",
-          "nom": "Consun Pharmaceutical Group Limited",
-          "raison": "déjà 2 lignes du secteur « Santé »"
+          "id": "selection-SNDR",
+          "nom": "Schneider National, Inc.",
+          "raison": "poche complète (10 lignes)"
         },
         {
-          "id": "entreprise-000333.SZ",
-          "nom": "Midea Group Co., Ltd.",
-          "raison": "signaux favorables de moins de 2 agents indépendants (une seule source)"
+          "id": "selection-ABNB",
+          "nom": "Airbnb, Inc.",
+          "raison": "poche complète (10 lignes)"
+        },
+        {
+          "id": "selection-NGVT",
+          "nom": "Ingevity Corporation",
+          "raison": "poche complète (10 lignes)"
+        },
+        {
+          "id": "selection-KMX",
+          "nom": "CarMax, Inc.",
+          "raison": "poche complète (10 lignes)"
+        },
+        {
+          "id": "selection-LUMN",
+          "nom": "Lumen Technologies, Inc.",
+          "raison": "poche complète (10 lignes)"
+        },
+        {
+          "id": "selection-PII",
+          "nom": "Polaris Inc.",
+          "raison": "poche complète (10 lignes)"
+        },
+        {
+          "id": "selection-GATX",
+          "nom": "GATX Corporation",
+          "raison": "poche complète (10 lignes)"
+        },
+        {
+          "id": "selection-CBT",
+          "nom": "Cabot Corporation",
+          "raison": "poche complète (10 lignes)"
+        },
+        {
+          "id": "selection-IDCC",
+          "nom": "InterDigital, Inc.",
+          "raison": "poche complète (10 lignes)"
+        },
+        {
+          "id": "selection-VC",
+          "nom": "Visteon Corporation",
+          "raison": "poche complète (10 lignes)"
+        },
+        {
+          "id": "selection-RH",
+          "nom": "RH",
+          "raison": "poche complète (10 lignes)"
+        },
+        {
+          "id": "selection-PARR",
+          "nom": "Par Pacific Holdings, Inc.",
+          "raison": "poche complète (10 lignes)"
+        },
+        {
+          "id": "selection-DPZ",
+          "nom": "Domino's Pizza, Inc.",
+          "raison": "poche complète (10 lignes)"
+        },
+        {
+          "id": "selection-SIG",
+          "nom": "Signet Jewelers Limited",
+          "raison": "poche complète (10 lignes)"
+        },
+        {
+          "id": "selection-WYNN",
+          "nom": "Wynn Resorts, Limited",
+          "raison": "poche complète (10 lignes)"
+        },
+        {
+          "id": "selection-KD",
+          "nom": "Kyndryl Holdings, Inc.",
+          "raison": "poche complète (10 lignes)"
+        },
+        {
+          "id": "selection-EQT",
+          "nom": "EQT Corporation",
+          "raison": "poche complète (10 lignes)"
+        },
+        {
+          "id": "selection-TMUS",
+          "nom": "T-Mobile US, Inc.",
+          "raison": "poche complète (10 lignes)"
+        },
+        {
+          "id": "selection-BMRN",
+          "nom": "BioMarin Pharmaceutical Inc.",
+          "raison": "poche complète (10 lignes)"
+        },
+        {
+          "id": "selection-EAT",
+          "nom": "Brinker International, Inc.",
+          "raison": "poche complète (10 lignes)"
+        },
+        {
+          "id": "selection-VFC",
+          "nom": "V.F. Corporation",
+          "raison": "poche complète (10 lignes)"
+        },
+        {
+          "id": "selection-YOU",
+          "nom": "Clear Secure, Inc.",
+          "raison": "poche complète (10 lignes)"
+        },
+        {
+          "id": "selection-BBY",
+          "nom": "Best Buy Co., Inc.",
+          "raison": "poche complète (10 lignes)"
         }
       ],
       "donner_tort": [
-        "Le palier de risque peut monter : en « Tension », la part minimale de liquidités passerait à 20 % et des ventes seraient imposées.",
-        "Corrélations mesurées sur 1 an (moyenne 0,10, maximum 0,63 entre EXV4.DE et XLV) : en crise, les corrélations montent et la diversification protège moins.",
-        "Japan Tobacco Inc. (premier satellite) : Dynamique des résultats (49/100) : 49/100 : estimations de BPA 0,0 % sur 30 jours ; +1,5 % sur 90 jours ; BPA publié au-dessus de l'estimation sur 2 des 4 derniers trimestres (écart moyen −1,0 %)",
-        "Concentré sur 15 lignes au plus : une erreur de verdict du chef d'orchestre pèse davantage qu'avec un portefeuille dispersé."
+        "Les combinaisons en service ne sont pas significatives après correction des essais multiples dans le backtest (verdict « Prometteuse ») : leur avantage peut disparaître.",
+        "Biais du survivant : le backtest des entreprises porte sur l'univers actuel, corrigé mais pas annulé (sociétés d'au moins 2 Md$ à chaque date).",
+        "Ni stop ni prise de bénéfices : une forte baisse entre deux vérifications mensuelles est subie jusqu'au rééquilibrage suivant."
       ],
       "erreurs": [],
-      "chef_date": "2026-11-13",
-      "chef_maj": "2026-11-13T07:31:35Z"
+      "chef_date": "2026-11-16",
+      "chef_maj": "2026-11-16T07:31:41Z"
     },
+    "derniere_verification": null,
     "historique": [
       {
         "date": "2026-11-07",
@@ -3312,21 +4065,25 @@
         "date": "2026-11-13",
         "portefeuille": 101547.16,
         "msci_world": 103517.38
+      },
+      {
+        "date": "2026-11-16",
+        "portefeuille": 101557.76,
+        "msci_world": 103568.67
       }
     ],
+    "paris_pays": [],
     "cours_manquants": [],
     "regles": [
-      "15 lignes au plus (liquidités exceptées), 4 % minimum par ligne ; détention minimale de 5 jours (sauf stop) ; une seule série de décisions par jour.",
-      "Cœur : 8 à 12 opportunités « Renforcer » de conviction moyenne ou forte (pays, secteurs régionaux, or, matières premières), au moins 4 classes ou zones, corrélation vérifiée sur 1 an ; pas d'ETF monde ni d'ETF pays « Neutre ».",
-      "Obligations : poids fixé par le verdict du chef d'orchestre (« Neutre » = poids neutre de 5 %).",
-      "Satellites : convictions fortes seulement, 4 à 8 % par ligne, taille selon la volatilité.",
-      "Jamais d'achat d'une opportunité « À surveiller » ou sous objection du contradicteur.",
-      "Liquidités minimales selon le palier de risque : Calme 5 %, Vigilance 10 %, Tension 20 %, Crise 35 %.",
-      "Stop −15 % sur les satellites (suiveur dès +20 %), prise de bénéfices partielle à +30 %.",
+      "Méthode par combinaisons du backtest (rapport de référence : data/backtest/rapport-2026-11.md, dernier recalibrage validé) : 15 lignes au plus, 4 à 8 % par ligne, sans ETF monde ; le reste en liquidités s'il manque des candidats.",
+      "Entreprises (70 à 85 %) : sociétés retenues par les combinaisons en service (M-score de Beneish + Goodwill / actif ; Goodwill / actif + Rendement du FCF ; Conversion du bénéfice en cash + Goodwill / actif + Rendement du FCF), 25 % au plus par secteur.",
+      "Matières premières (0 à 20 %) : celles retenues par Niveau historique + Positionnement CFTC.",
+      "Combinaisons entretenues chaque mois par le backtest (retrait après deux mois « Non confirmée », un ajout par trimestre au plus), appliquées seulement après validation humaine de la pull request de recalibrage.",
+      "ETF pays (0 à 15 %, 3 lignes au plus) : paris pays — tendance haussière et saine, valorisation non tendue ; sortie dès qu'un excès se déclenche (parabolique ≥ 2,5, valorisation ≥ 70e percentile, positionnement ≥ 90e) ou que la tendance casse. Chaque pari est journalisé (entrée, sortie, performance contre le MSCI World).",
+      "Ni stop ni prise de bénéfices : vente quand l'actif sort de sa combinaison (vérification mensuelle) ; les lignes détenues et toujours retenues passent avant les nouvelles.",
       "Exécution au premier cours après la décision ; frais 0,1 % et écart achat/vente estimé ; change du jour.",
-      "Lignes hors règles soldées progressivement (sorties étalées), chaque arbitrage expliqué."
+      "Performance de chaque poche suivie contre le MSCI World (étalon, non détenu)."
     ],
-    "methode": "agents/trader/regles.md",
     "mention": "Portefeuille fictif à but de démonstration, aucun ordre réel."
   }
 }
