@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genere_le": "2026-11-16T18:57:56Z",
+    "genere_le": "2026-11-16T20:02:10Z",
     "source": "agent-chef",
     "version_agent": "1.0",
     "description": "Entrées, recalcul, changements de verdict, alertes et briefing, à chaque exécution",
@@ -9,8 +9,8 @@
       "libelle": "Chef d'orchestre",
       "ordre": 10,
       "workflow": "agent-chef.yml",
-      "derniere_execution": "2026-11-16T18:57:56Z",
-      "prochaine_prevue": "2026-11-16T19:50:00Z",
+      "derniere_execution": "2026-11-16T20:02:10Z",
+      "prochaine_prevue": "2026-11-16T20:50:00Z",
       "intervalle_min": 60,
       "planning": {
         "crons": [
@@ -20,80 +20,92 @@
         ],
         "fuseau": "UTC"
       },
-      "sources_total": 12,
-      "sources_ok": 12,
+      "sources_total": 14,
+      "sources_ok": 14,
       "sources": [
+        {
+          "nom": "Yahoo Finance (cours des ETF sectoriels)",
+          "etat": "ok",
+          "detail": "33/33 ETF sectoriels",
+          "derniere_donnee_valide": "2026-11-16T20:02:10Z"
+        },
+        {
+          "nom": "Émetteurs et Yahoo Finance (flux des ETF sectoriels : SSGA, iShares)",
+          "etat": "ok",
+          "detail": "ssga : 11, ishares : 11, yahoo_parts : 15",
+          "derniere_donnee_valide": "2026-11-16T20:02:10Z"
+        },
         {
           "nom": "Agent pays (data/pays.json)",
           "etat": "ok",
-          "detail": "dégradé (3 h) ; agent dégradé : pèse moins",
+          "detail": "dégradé (4 h) ; agent dégradé : pèse moins",
           "derniere_donnee_valide": "2026-11-16T15:37:14Z"
         },
         {
           "nom": "Agent macro (data/macro.json)",
           "etat": "ok",
-          "detail": "à jour (3 h)",
+          "detail": "à jour (4 h)",
           "derniere_donnee_valide": "2026-11-16T16:22:13Z"
         },
         {
           "nom": "Agent marchés (data/marches.json)",
           "etat": "ok",
-          "detail": "à jour (1 h)",
-          "derniere_donnee_valide": "2026-11-16T17:31:37Z"
+          "detail": "à jour (0 h)",
+          "derniere_donnee_valide": "2026-11-16T19:46:28Z"
         },
         {
           "nom": "Agent risque (data/risque.json)",
           "etat": "ok",
           "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-16T18:31:41Z"
+          "derniere_donnee_valide": "2026-11-16T19:31:53Z"
         },
         {
           "nom": "Agent géopolitique (data/geopolitique.json)",
           "etat": "ok",
           "detail": "à jour (1 h)",
-          "derniere_donnee_valide": "2026-11-16T18:21:48Z"
+          "derniere_donnee_valide": "2026-11-16T19:16:59Z"
         },
         {
           "nom": "Agent matières premières (data/matieres_premieres.json)",
           "etat": "ok",
-          "detail": "dégradé (64 h) ; agent dégradé : pèse moins",
+          "detail": "dégradé (66 h) ; agent dégradé : pèse moins",
           "derniere_donnee_valide": "2026-11-14T02:32:40Z"
         },
         {
           "nom": "Agent entreprises (data/entreprises.json)",
           "etat": "ok",
-          "detail": "à jour (56 h)",
+          "detail": "à jour (57 h)",
           "derniere_donnee_valide": "2026-11-14T11:14:38Z"
         },
         {
           "nom": "Agent entreprises (pépites) (data/pepites.json)",
           "etat": "ok",
-          "detail": "à jour (56 h)",
+          "detail": "à jour (57 h)",
           "derniere_donnee_valide": "2026-11-14T11:14:38Z"
         },
         {
           "nom": "Agent initiés (data/inities.json)",
           "etat": "ok",
-          "detail": "à jour (3 h)",
+          "detail": "à jour (4 h)",
           "derniere_donnee_valide": "2026-11-16T16:23:14Z"
         },
         {
           "nom": "Analyses à la demande (data/analyses/index.json)",
           "etat": "ok",
-          "detail": "à jour (317 h)",
+          "detail": "à jour (318 h)",
           "derniere_donnee_valide": "2026-11-03T13:35:53Z"
         },
         {
           "nom": "Contradicteur (agent risque) (data/signaux/revues.json)",
           "etat": "ok",
           "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-16T18:31:55Z"
+          "derniere_donnee_valide": "2026-11-16T19:32:05Z"
         },
         {
           "nom": "Gemini (rédaction du briefing)",
           "etat": "ok",
           "detail": "briefing rédigé par gemini-3.6-flash (nouvelle tentative réussie à 18:57 UTC)",
-          "derniere_donnee_valide": "2026-11-16T18:57:56Z"
+          "derniere_donnee_valide": "2026-11-16T20:02:10Z"
         }
       ],
       "degrade": false,
@@ -7740,10 +7752,84 @@
         "analyses": "à jour",
         "revues": "à jour"
       }
+    },
+    {
+      "genere_le": "2026-11-16T20:02:10Z",
+      "mode": "leger",
+      "recalcul": true,
+      "declencheurs": [
+        "choc de marché : Pétrole WTI −3,3 %"
+      ],
+      "palier": "Vigilance",
+      "opportunites": 155,
+      "changements": [],
+      "alertes": 4,
+      "alertes_ecartees": [
+        "inities · Altimmune, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 89/100) : société hors de l'univers analysé ou sans note",
+        "inities · Babcock & Wilcox Enterprises, Inc. : 4 dirigeants achètent sur le marché en 30 jours (scor : société hors de l'univers analysé ou sans note",
+        "inities · Hudson Pacific Properties, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 9 : société hors de l'univers analysé ou sans note",
+        "inities · FutureFuel Corp. : 4 dirigeants achètent sur le marché en 30 jours (score 95/100) : société hors de l'univers analysé ou sans note",
+        "inities · Csquare, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 95/100) : société hors de l'univers analysé ou sans note",
+        "inities · Seth Klarman (Baupost Group LLC) ouvre une position dans HONEYWELL AEROSPACE INC (3,5 % du : fonds, véhicule de crédit, holding ou SPAC",
+        "inities · Seth Klarman (Baupost Group LLC) ouvre une position dans SITEONE LANDSCAPE SUPPLY INC (2,2 : société hors de l'univers analysé ou sans note",
+        "inities · INTERMARKET CORP/NY déclare 4,6 % de PYXUS INTERNATIONAL, INC. (13D, intention d'influence : société hors de l'univers analysé ou sans note",
+        "inities · NEW ENTERPRISE ASSOCIATES 13 LP déclare 5,1 % de Coursera, Inc. (13D, intention d'influenc : société hors de l'univers analysé ou sans note"
+      ],
+      "exclues": [
+        "Azimut Holding S.p.A.",
+        "Bajaj Finserv Ltd.",
+        "China International Capital Corporation Limited",
+        "Equitable Holdings, Inc.",
+        "Georgia Capital PLC",
+        "Hilltop Holdings Inc.",
+        "Investor AB (publ)",
+        "ORIX Corporation",
+        "Partners Group Holding AG",
+        "Patria Investments Limited",
+        "SEI Investments Company",
+        "Victory Capital Holdings, Inc.",
+        "Virtus Investment Partners, Inc.",
+        "Vontobel Holding AG",
+        "Voya Financial, Inc.",
+        "Vylor Inc.",
+        "Wendel",
+        "Yuanta Financial Holding Co., Ltd."
+      ],
+      "coherence_retrogradees": [],
+      "raison_briefing_regles": null,
+      "briefing": null,
+      "reprise_redaction": null,
+      "gemini": {
+        "appels": 0,
+        "reussites": 0,
+        "quota_atteint": false,
+        "rejets": [],
+        "erreurs": []
+      },
+      "suivi": {
+        "ajoutes": null,
+        "mesures": null,
+        "en_attente": null,
+        "total": 260,
+        "erreur": null
+      },
+      "entrees": {
+        "pays": "dégradé (dégradé)",
+        "macro": "à jour",
+        "marches": "à jour",
+        "risque": "à jour",
+        "geopolitique": "à jour",
+        "matieres_premieres": "dégradé (dégradé)",
+        "entreprises": "à jour",
+        "pepites": "à jour",
+        "inities": "à jour",
+        "analyses": "à jour",
+        "revues": "à jour"
+      }
     }
   ],
-  "derniere_execution": "2026-11-16T18:57:56Z",
-  "prochaine_prevue": "2026-11-16T19:50:00Z",
+  "derniere_execution": "2026-11-16T20:02:10Z",
+  "prochaine_prevue": "2026-11-16T20:50:00Z",
   "intervalle_min": 60,
   "planning": {
     "crons": [
