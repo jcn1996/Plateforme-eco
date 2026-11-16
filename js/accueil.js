@@ -5,7 +5,7 @@
    - la scène du réseau (js/reseau-scene.js) : le chef d'orchestre au centre,
      11 agents autour, une information par bulle (config/reseau_agents.json) ;
    - une légende discrète des liens ;
-   - la carte repliable « À retenir aujourd'hui » (sélections du chef d'orchestre) ;
+   - la carte repliable « À retenir aujourd'hui » (liste unique du chef d'orchestre, révisée chaque mois) ;
    - le panneau de synthèse d'un agent, ouvert en touchant sa bulle (#/accueil/<agent>).
    Le globe reste accessible par la bulle « Pays » et par le Menu.
    ========================================================================== */
@@ -153,10 +153,10 @@ export function creerAccueil({ section, sources = {}, chargeurs = {}, contexte, 
           bloc.total > bloc.lignes.length ? el('span', { class: 'a-retenir-plus' }, `et ${bloc.total - bloc.lignes.length} autre${bloc.total - bloc.lignes.length > 1 ? 's' : ''}`) : null)
         : el('p', { class: 'a-retenir-vide' }, vide));
     corps.replaceChildren(
-      rubrique('À acheter · entreprises', r.entreprises, (x) => (entrepriseExiste(x.ticker) ? { type: 'entreprise', id: x.ticker } : { type: 'investir', id: 'entreprises' }), 'Aucune entreprise retenue aujourd’hui.'),
-      rubrique('À acheter · matières premières', r.matieres, (x) => ({ type: 'matieres', id: x.cle }), 'Aucune matière première retenue aujourd’hui.'),
-      rubrique('Paris pays', r.paris, (x) => (paysExiste(x.code) ? { type: 'pays', id: x.code } : { type: 'investir', id: 'paris' }), 'Aucun pari pays aujourd’hui.'),
-      rubrique('À revendre', r.aRevendre, (x) => (paysExiste(x.code) ? { type: 'pays', id: x.code } : { type: 'investir', id: 'paris' }), 'Rien à revendre.'),
+      rubrique('Liste · entreprises', r.entreprises, (x) => (entrepriseExiste(x.ticker) ? { type: 'entreprise', id: x.ticker } : { type: 'investir' }), 'Aucune entreprise dans la liste.'),
+      rubrique('Liste · matières premières', r.matieres, (x) => ({ type: 'matieres', id: x.cle }), 'Aucune matière première dans la liste.'),
+      rubrique('Paris pays', r.paris, (x) => (paysExiste(x.code) ? { type: 'pays', id: x.code } : { type: 'investir' }), 'Aucun pari pays dans la liste.'),
+      rubrique('Sorties du mois', r.aRevendre, (x) => (x.code && paysExiste(x.code) ? { type: 'pays', id: x.code } : { type: 'investir', id: 'mouvements' }), 'Aucune sortie ce mois-ci.'),
       el('div', { class: 'a-retenir-rubrique a-retenir-alerte' },
         el('h3', {}, 'Alerte du jour'),
         r.alerte ? lien(r.alerte.titre, r.alerte.route) : el('p', { class: 'a-retenir-vide' }, 'Aucune alerte aujourd’hui.')),
@@ -174,7 +174,7 @@ export function creerAccueil({ section, sources = {}, chargeurs = {}, contexte, 
     switch (cle) {
       case 'entreprises': return noms(r.entreprises) && `Meilleures retenues : ${noms(r.entreprises)}`;
       case 'matieres': return noms(r.matieres) && `Retenues : ${noms(r.matieres)}`;
-      case 'pays': return noms(r.paris) && `Paris pays : ${noms(r.paris)}${r.aRevendre.total ? ` ; à revendre : ${noms(r.aRevendre)}` : ''}`;
+      case 'pays': return noms(r.paris) && `Paris pays : ${noms(r.paris)}${r.aRevendre.total ? ` ; sorties du mois : ${noms(r.aRevendre)}` : ''}`;
       case 'risque': {
         const m = donnees['data/risque.json']?.mondial;
         return m ? `Stress financier ${Math.round(m.score)}/100, palier « ${m.palier} » depuis le ${String(m.depuis ?? '').split('-').reverse().join('/')}.` : null;

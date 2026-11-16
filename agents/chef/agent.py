@@ -37,6 +37,7 @@ from . import moteur as M
 from . import suivi as S
 from . import synthese as Y
 from . import secteurs as SE
+from . import liste as LI
 from . import selections as SEL
 from . import tendance as TD
 from . import univers as U
@@ -298,6 +299,9 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
         TD.preparer(secteurs, series_s, config, ctx)
         decider(secteurs, ctx, objections, entrees, etat_travail, jour, config)
         selections = SEL.construire(ctx, pays, config, data, jour)
+        # Liste unique (révision mensuelle, sorties confirmées) : seule liste affichée et seule source des achats du trader
+        liste, etat["liste"] = LI.mettre_a_jour(etat.get("liste"), selections, jour, config, LI.resultats_backtest(data, config["liste"]),
+                                                LI.symboles_detenus(data))
         anciennes = {l["id"]: l for t in TYPES for l in (prec_donnees.get(t) or [])}
         if prec_donnees.get("or"):
             anciennes["or"] = prec_donnees["or"]
@@ -320,6 +324,7 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
         etat["palier"] = ctx.palier
     else:
         selections = prec_donnees.get("selections")
+        liste = prec_donnees.get("liste")
         for t in TYPES:
             lignes += prec_donnees.get(t) or []
         if prec_donnees.get("or"):
@@ -343,7 +348,9 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
         if not ok:
             ecartees.append(f"{agent} · {s.get('titre', '')[:90]} : {raison}")
         return ok, raison
-    al = Y.alertes(signaux, revues, chg, maintenant, config, tickers_appli, admissible)
+    mouvements_jour = [{"important": True, "date": m["date"], "id": m["id"], "texte": m["texte"], "pays": m["id"][5:] if m["categorie"] == "pays" else None,
+                        "type": "liste_chef"} for m in (liste or {}).get("mouvements") or [] if m["date"] == jour]
+    al = Y.alertes(signaux, revues, mouvements_jour, maintenant, config, tickers_appli, admissible)
     # Pannes d'agents (aucune exécution réussie depuis plus de 24 h) : toujours en tête des alertes
     pannes = alertes_pannes(data, maintenant)
     al = [{**x, "rang": i + 1} for i, x in enumerate(pannes + al)]
@@ -354,8 +361,8 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
     # Briefing quotidien (analyse complète)
     if mode == "complet":
         sc = Y.scenarios(ctx.macro, ctx.risque)
-        tops = [next(l for l in lignes if l["id"] == x["id"]) for x in pano["top"]]
-        ctx_b = {"lignes": lignes, "panorama": pano, "palier": ctx.palier, "risque_mondial": mondial, "phase_monde": phase_monde, "changements": chg, "vigilance": vig}
+        ctx_b = {"lignes": lignes, "panorama": pano, "palier": ctx.palier, "risque_mondial": mondial, "phase_monde": phase_monde, "changements": chg, "vigilance": vig,
+                 "liste": liste or {}}
         regles = Y.briefing_regles(ctx_b)
         redige = None
         if cle_gemini:
@@ -384,9 +391,9 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
                     "raison_regles": raison_regles, "modeles_essayes": [m["nom"] for m in config["gemini"]["modeles"]],
                     "essentiel": b["essentiel"], "vigilance": b["vigilance"], "rubriques_regles": b.get("rubriques_regles", []),
                     "affirmations_supprimees": b.get("supprimees", []),
-                    "ou_investir": pano["top"], "panorama": pano,
-                    "changements": chg, "scenarios": sc, "agenda": Y.agenda(maintenant.date(), ctx.macro, config, resultats),
-                    "donner_tort": ([tops[0]["donner_tort"][0]] if tops and tops[0].get("donner_tort") else []) + sc["alternatif"]["declencheurs"][:2],
+                    "liste": liste or {}, "mouvements": (liste or {}).get("mouvements") or [], "scenarios": sc, "agenda": Y.agenda(maintenant.date(), ctx.macro, config, resultats),
+                    "donner_tort": ["Les combinaisons retenues sont « Prometteuses » mais non significatives au backtest : elles peuvent ne pas tenir."]
+                                   + sc["alternatif"]["declencheurs"][:2],
                     "donnees": donnees_b, "faits": regles["faits"], "mention": config["mention"]}
         d_chef = data / "chef"
         d_chef.mkdir(parents=True, exist_ok=True)
@@ -405,20 +412,19 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
         suivi_r = {"fiabilite": suivi_meta.get("fiabilite"), "total": suivi_meta.get("nombre", 0)}
 
     # data/chef.json
-    top5 = pano["top"]
     donnees = {
         "date": jour if recalcul else prec_donnees.get("date", jour), "mode": mode, "maj": iso(maintenant),
         "declencheurs": raisons_leger,
         "regime": {"palier": ctx.palier, "score_risque": mondial.get("score"), "phase_monde": phase_monde,
                    "phases": {z: ctx.phase(z) for z in ("monde", "etats_unis", "zone_euro", "chine", "japon", "emergents")},
                    "poids": M.poids("pays", config, ctx.palier), "multiplicateurs": config["regimes"].get(ctx.palier) or {}},
-        "synthese": {"top3": [{"id": l["id"], "nom": l["nom"], "type": l["type"], "verdict": l["verdict"], "conviction": l["conviction"], "score": l["score"]} for l in top5[:3]],
+        "synthese": {"top3": (liste or {}).get("top3") or [],
                      "essentiel": [x["texte"] for x in (briefing or {}).get("essentiel", [])], "briefing": f"data/chef/briefing-{(briefing or {}).get('date', jour)}.json" if briefing else None,
                      "alertes": len(al)},
         "pays": lignes_par["pays"], "matieres": lignes_par["matieres"], "or": (lignes_par["or"] or [None])[0],
         "obligations": lignes_par["obligations"], "liquidites": lignes_par["liquidites"], "entreprises": lignes_par["entreprises"],
         "secteurs": lignes_par["secteurs"], "zones_secteurs": {z: c["libelle"] for z, c in config["secteurs"]["zones"].items()},
-        "panorama": pano, "selections": selections, "tendances_fortes": TD.tendances_fortes(lignes, config), "exclues": [{"ticker": k, "nom": v} for k, v in sorted(ctx.exclues.items())],
+        "liste": liste, "panorama": pano, "selections": selections, "tendances_fortes": TD.tendances_fortes(lignes, config), "exclues": [{"ticker": k, "nom": v} for k, v in sorted(ctx.exclues.items())],
         "alertes_ecartees": ecartees[:30],
         "concentrations": conc, "changements": chg if recalcul else prec_donnees.get("changements", []), "vigilance": vig, "allocation": alloc,
         "entrees": [x.resume() for x in entrees.values()],

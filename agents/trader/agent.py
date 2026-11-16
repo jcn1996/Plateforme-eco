@@ -406,7 +406,7 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "hor
     suivre_paris(etat, executees, indice)
 
     # 3. contrôles de risque
-    nouveaux = S.controler_paris_pays(etat, chef, config, maintenant)
+    nouveaux = S.controler_paris_pays(etat, chef, config, maintenant) + S.controler_liste(etat, chef, config, maintenant)
     etat.setdefault("ordres", []).extend(nouveaux)
     for o in nouveaux:
         LOG.info("Ordre imposé : %s %s — %s", o["sens"], o["symbole"], o["motif"])

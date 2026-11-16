@@ -61,7 +61,16 @@ def supports_de(ligne: dict, config: dict) -> list[dict]:
 
 
 def candidats(chef: dict) -> dict[str, list[dict]]:
-    """Candidats de chaque poche, tirés des sélections du chef d'orchestre, sous forme de lignes (type, symbole, nom…)."""
+    """Candidats de chaque poche : la liste unique du chef d'orchestre (chef.json → liste), la même que celle affichée
+    dans l'appli ; à défaut (ancienne sortie du chef d'orchestre), ses sélections."""
+    li = chef.get("liste") or {}
+    if li.get("lignes") is not None:
+        res = {"entreprises": [], "matieres": [], "pays": []}
+        for l in li["lignes"]:
+            raison = (f"liste du chef d'orchestre (entrée le {l.get('date_entree')}) : retenue par " + " ; ".join(l.get("combinaisons_libelles") or [])
+                      + f", conviction {l.get('conviction')}")
+            res[l["categorie"]].append({**l, "type": l.get("type") or l["categorie"], "poche": l["categorie"], "raison": raison})
+        return res
     sel = chef.get("selections") or {}
     ent_ = [{**x, "type": "entreprises", "poche": "entreprises",
              "raison": "retenue par " + " ; ".join(x.get("combinaisons_libelles") or x.get("combinaisons") or [])}
@@ -292,6 +301,29 @@ def generer_ordres(c: dict, etat: dict, valo: dict, config: dict, maintenant: da
 
 
 # ------------------------------------------------------------------ contrôles à chaque exécution : paris pays
+
+def controler_liste(etat: dict, chef: dict | None, config: dict, maintenant: datetime) -> list[dict]:
+    """Entreprise ou matière première sortie en cours de mois de la liste du chef d'orchestre (sortie de sa combinaison
+    confirmée 5 jours de suite) : vendue sans attendre le rééquilibrage. Les paris pays suivent controler_paris_pays."""
+    li = (chef or {}).get("liste") or {}
+    if chef is None or li.get("lignes") is None or li.get("mois") != maintenant.date().isoformat()[:7]:
+        return []
+    dans = {l.get("symbole") for l in li["lignes"]} | {l["id"] for l in li["lignes"]}
+    sorties = {m["id"]: m for m in li.get("mouvements") or [] if m.get("sens") == "sortie"}
+    deja = {o["symbole"] for o in etat.get("ordres", []) if o.get("statut") == "en attente" and o["sens"] == "vente"}
+    ordres = []
+    for s, p in etat["positions"].items():
+        if p.get("poche") not in ("entreprises", "matieres") or s in deja or s in dans or p.get("ligne_id") in dans:
+            continue
+        m = sorties.get(p.get("ligne_id"))
+        if not m:
+            continue
+        texte = f"Sortie de la liste du chef d'orchestre le {m['date']} : {m['texte']}."
+        o = _ordre(etat, "vente", p, maintenant, config, quantite=p["quantite"], motif="sortie de la liste", texte=texte, imposee=True, actuel=p.get("poids", 0))
+        o.pop("_montant", None)
+        ordres.append(o)
+    return ordres
+
 
 def controler_paris_pays(etat: dict, chef: dict | None, config: dict, maintenant: datetime) -> list[dict]:
     """Un pari pays est vendu dès que le chef d'orchestre signale un excès ou une tendance cassée. Sans données du chef

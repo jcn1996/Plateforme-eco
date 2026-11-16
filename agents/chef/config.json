@@ -125,6 +125,16 @@
     "moteurs": ["fondamentaux", "valorisation", "tendance", "flux", "resultats"]
   },
 
+  "liste": {
+    "_commentaire": "Liste d'investissement unique (agents/chef/liste.py), seule liste affichée (« Où investir », top 3, carte « À retenir », bulle centrale, briefing) et seule source des achats du trader. Tirée des sélections du dernier recalibrage validé (bloc selections). Au plus max_lignes lignes : entreprises, puis matières premières (max_matieres au plus), puis paris pays (max_pays au plus) ; les entreprises gardent au moins min_entreprises lignes quand il y en a (comme la poche entreprises du trader, 70 % à 8 % par ligne). Révision une fois par mois (première analyse complète du mois, avant le rééquilibrage du trader) ; entre deux, aucune entrée ; sorties : excès ou tendance cassée pour un pari pays (immédiate), sortie de la combinaison confirmée jours_confirmation jours de suite pour les autres. Conviction : nombre de combinaisons qui retiennent la ligne (3 forte, 2 moyenne, 1 faible). Résultat du backtest affiché : écart annuel contre l'indice et part des actifs qui battent l'indice à horizon_gagnants_mois mois, hors échantillon.",
+    "max_lignes": 15,
+    "max_matieres": 5,
+    "max_pays": 3,
+    "min_entreprises": 9,
+    "jours_confirmation": 5,
+    "horizon_gagnants_mois": 6
+  },
+
   "selections": {
     "_commentaire": "Sélections issues du backtest (agents/chef/selections.py ; rapport : le dernier recalibrage validé, lu dans data/backtest/recalibrages.json). Les listes « combinaisons » sont entretenues par le backtest mensuel (agents/backtest/entretien.py) et ne changent que par une pull request de recalibrage fusionnée à la main. Entreprises : sociétés retenues par au moins une combinaison du backtest (meilleurs 30 %, percentile > seuil_percentile, sur chacun de ses signaux), univers du backtest (sociétés américaines non financières, hors immobilier et holdings, capitalisation ≥ capitalisation_min_md Md$). Matières premières : « Niveau historique + Positionnement CFTC » (contrats à terme). Paris pays : tendance haussière et saine (suivi_tendance) et valorisation non tendue ; sortie sur excès (seuils de suivi_tendance : parabole_k, valorisation_percentile, cftc_percentile) ou tendance cassée. Les notes et verdicts pays restent publiés, comme contexte économique, mais ne classent plus les pays dans « Où investir ».",
     "seuil_percentile": 70,
@@ -303,7 +313,7 @@
       "changement_de_palier": "defavorable", "ecart_credit_hausse": "defavorable", "devise_decrochage": "defavorable", "rupture_correlation": "neutre",
       "evenement_grave": "defavorable", "sorties_inhabituelles": "defavorable", "entrees_inhabituelles": "attractif", "inversion_flux": "neutre",
       "nouvelle_pepite": "attractif", "achats_groupes": "attractif", "nouvelle_position": "attractif", "positionnement_extreme": "neutre",
-      "changement_de_verdict": "neutre", "choc_de_stocks": "neutre", "retournement_courbe": "neutre", "changement_de_phase": "neutre", "verdict_chef": "neutre",
+      "changement_de_verdict": "neutre", "choc_de_stocks": "neutre", "retournement_courbe": "neutre", "changement_de_phase": "neutre", "verdict_chef": "neutre", "liste_chef": "neutre",
       "activite_acceleration": "attractif", "activite_ralentissement": "defavorable", "divergence_officielle": "neutre", "attention_forte_hausse": "neutre"
     }
   },
