@@ -7,6 +7,15 @@ Prototype d'une application personnelle de suivi économique mondial, pensée d'
 
 ## Ce que fait le prototype
 
+- **Accueil « réseau d'agents »** (premier écran, `#/` ; `js/accueil.js`, `js/reseau-scene.js`, `js/reseau.js`). Sous l'en-tête et le bandeau des marchés, inchangés :
+  - **scène 3D** (Three.js) : au centre, la sphère lumineuse du **chef d'orchestre** (« Où investir », nombre de lignes cibles du portefeuille démo) ; autour, en profondeur, 11 sphères : Entreprises, Matières premières, Initiés, Macro, Risque, Géopolitique, Données alternatives, Marchés, Pays, Backtest, Trader démo. Style « neurones » : liens lumineux et impulsions qui voyagent vers le centre (depuis le centre pour le trader démo, qui applique les décisions) ;
+  - **une information par bulle**, sous son nom, lue dans les données existantes. La table de correspondance est dans [`config/reseau_agents.json`](config/reseau_agents.json) (fichier, chemin dans le bloc `donnees`, mesure : valeur, longueur d'une liste, compte, pourcentage ; modèle de texte accordé au singulier ou au pluriel). Aujourd'hui : Risque → palier ; Pays → nombre de paris pays ; Trader démo → performance ; Entreprises et Matières premières → nombre retenues ; Backtest → signaux gardés ; Initiés → achats de dirigeants ; Macro → phase du cycle ; Géopolitique → événements suivis ; Données alternatives → pays lus ; Marchés → cotations ;
+  - **liens** : trait épais = l'agent pèse dans la décision (Entreprises, Matières premières, Risque, Pays, Backtest) ; pointillé = contexte ; orange = dégradé ; rouge, interrompu et sans impulsion = en panne ou données périmées. L'état vient du journal de l'agent (`data/journal/*.json`, statut calculé comme l'écran « Santé des agents » : en panne, en retard ou dégradé) et du bloc `entrees` de `data/chef.json` (`périmée` ou `manquante` = rouge, `degrade` = orange). Il est aussi écrit sous la bulle (« ⚠ dégradé », « ✕ en panne », « ✕ périmé ») : rien ne repose sur la couleur seule. Légende discrète sous la scène ;
+  - **gestes** : libellés toujours face à l'écran, 11 px au moins, jamais superposés (séparés à chaque image où la scène bouge) ; rotation au doigt avec inertie, amplitude limitée et retour doux à la position de face ; pincer (ou molette) pour zoomer ; toucher une bulle = la caméra s'en approche et le **panneau de synthèse de l'agent** s'ouvre (`#/accueil/<agent>` : information, état et raisons, dernière exécution, poids dans la décision, rôle, détail, bouton vers son écran) ; toucher le centre = écran « Où investir ». Zones tactiles de 44 px au moins (bulle et libellé forment un seul bouton) ;
+  - **carte « À retenir aujourd'hui »** sous la scène, repliable (choix mémorisé) : à acheter (entreprises et matières premières retenues), paris pays, à revendre, alerte du jour, bouton « Voir le détail ». Contenu issu des sélections du chef d'orchestre (`selections` de `data/chef.json`) ;
+  - **mode léger** et réglage « réduire les animations » de l'appareil : version 2D à plat du même réseau (SVG), sans impulsions ; aussi utilisée si WebGL est indisponible. Scène en pause quand l'onglet est caché ou l'écran quitté ; 30 images par seconde au repos, pleine cadence pendant un geste ;
+  - **accessibilité** : chaque bulle est un vrai bouton (navigation au clavier, nom lu par le lecteur d'écran : agent, information, poids, état) ; Échap ferme la synthèse et rend le focus à la bulle.
+  - Le **globe** reste accessible par la bulle « Pays » (bouton « Voir le globe des pays ») et par le Menu (« Globe des pays ») ; son adresse est `#/globe`.
 - **Globe 100 % vectoriel** (aucune image), net à tous les niveaux de zoom.
   - L'océan est une sphère bleu nuit unie.
   - Tous les pays sont des polygones 3D opaques :
@@ -57,7 +66,7 @@ Prototype d'une application personnelle de suivi économique mondial, pensée d'
   - la lecture de l'agent ;
   - les sources et les dates exactes de chaque valeur.
 - **Tendances** : une flèche ↑ ↓ → indique l'évolution depuis la mise à jour précédente, sur chaque indicateur et chaque note (pays, secteur, entreprise). Le vert signale une note qui s'améliore, le rouge une note qui se dégrade.
-- **En-tête et Menu** : sur téléphone et tablette, l'en-tête ne garde que le titre, la pastille du palier de risque, la recherche, le portefeuille démo (avec sa performance) et le bouton **Menu**. Le Menu ouvre un panneau qui regroupe tous les écrans, classés : *Synthèse* (Où investir, Briefing), *Analyses* (Vue macro, Pays · Classement, Pépites, Matières premières, Géopolitique, Risque, Initiés, Données alternatives), *Outils* (Analyser une entreprise, Mes analyses, Comparateur, Mes alertes), *Suivi* (Mes portefeuilles, Portefeuille démo, Fiabilité, Backtest, Signaux en observation, Santé des agents) et *Affichage* (Légende des couleurs, Mode léger). Une pastille rouge sur « Menu » signale un problème dans la santé des agents. Sur grand écran (à partir de 1 280 px), des raccourcis supplémentaires s'ajoutent à l'en-tête (icônes, libellé au survol), mais tout reste accessible par le Menu. Les bandeaux et onglets qui défilent horizontalement se font glisser au doigt.
+- **En-tête et Menu** : sur téléphone et tablette, l'en-tête ne garde que le titre, la pastille du palier de risque, la recherche, le portefeuille démo (avec sa performance) et le bouton **Menu**. Le Menu ouvre un panneau qui regroupe tous les écrans, classés : *Synthèse* (Accueil · réseau des agents, Où investir, Briefing), *Analyses* (Globe des pays, Vue macro, Pays · Classement, Pépites, Matières premières, Géopolitique, Risque, Initiés, Données alternatives), *Outils* (Analyser une entreprise, Mes analyses, Comparateur, Mes alertes), *Suivi* (Mes portefeuilles, Portefeuille démo, Fiabilité, Backtest, Signaux en observation, Santé des agents) et *Affichage* (Légende des couleurs, Mode léger). Une pastille rouge sur « Menu » signale un problème dans la santé des agents. Sur grand écran (à partir de 1 280 px), des raccourcis supplémentaires s'ajoutent à l'en-tête (icônes, libellé au survol), mais tout reste accessible par le Menu. Les bandeaux et onglets qui défilent horizontalement se font glisser au doigt.
 - **Recherche** (loupe dans l'en-tête) : pays, secteurs et entreprises, par nom ou ticker, sans tenir compte des accents. Toucher un résultat ouvre la fiche et centre le globe.
 - **Fraîcheur des données** : sous chaque fiche, « Mis à jour le … · Source : … », lu dans le bloc `meta` des JSON.
 - **Filtres du globe** (puces en bas de l'écran) : la note globale, les 6 indicateurs des pays, les flux d'investissement et les risques.
@@ -673,7 +682,7 @@ Règle : un test ne lit ni ne modifie jamais les vrais `config/` et `data/` (ils
 ```
 python -m unittest discover -s agents -t .   # tous les tests
 python -m unittest discover -s outils/synchro-portefeuilles -t outils/synchro-portefeuilles   # synchronisation (relevés fictifs)
-node --test js/tests/*.test.mjs              # logique de l'appli (planning, Mes portefeuilles avec un exemple fictif, écran Backtest)
+node --test js/tests/*.test.mjs              # logique de l'appli (planning, Mes portefeuilles avec un exemple fictif, écran Backtest, accueil « réseau d'agents »)
 ```
 
 ## Maintien
@@ -689,6 +698,10 @@ index.html            page unique
 manifest.json, sw.js  PWA (installation, cache hors ligne)
 css/style.css         thème « salle de contrôle »
 js/app.js             démarrage, navigation, fil d'Ariane
+js/accueil.js         accueil « réseau d'agents » : scène, légende, carte « À retenir aujourd'hui », synthèse d'un agent
+js/reseau-scene.js    scène du réseau : 3D (Three.js) ou 2D à plat (SVG), gestes, libellés, bulles-boutons
+js/reseau.js          réseau des agents sans affichage : infos des bulles, états, disposition, libellés jamais superposés (testé)
+config/reseau_agents.json  table de correspondance des bulles de l'accueil (information, journal, poids, écran)
 js/donnees.js         chargement des JSON (seul fichier à modifier si les chemins changent)
 js/globe.js           globe 3D (Three.js r160), gestes, zoom, flux, étiquettes
 js/carte-vecteur.js   carte vectorielle : pays triangulés, trait de frontière, niveaux 110m / 50m

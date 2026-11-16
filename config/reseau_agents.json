@@ -1,0 +1,159 @@
+{
+  "meta": {
+    "description": "Accueil « réseau d'agents » : une bulle par agent autour du chef d'orchestre. Pour chaque bulle : l'information affichée sous son nom (table de correspondance), le journal et les entrées du chef d'orchestre qui donnent son état, son poids dans la décision et l'écran ouvert depuis sa synthèse.",
+    "aide": {
+      "info.fichier": "fichier de données lu (data/…) ; le chemin part du bloc « donnees » du fichier",
+      "info.chemin": "chemin dans le bloc « donnees », segments séparés par des points (un nombre = rang dans une liste) ; vide = le bloc entier",
+      "info.mesure": "valeur (texte ou nombre tel quel) | longueur (taille d'une liste) | compte (éléments dont « champ » est renseigné) | pourcentage (nombre signé, en %)",
+      "info.modele": "texte affiché, « {} » remplacé par la valeur ; une liste [singulier, pluriel] accorde selon le nombre",
+      "journal": "clé de l'agent dans data/journal/index.json (statut calculé comme l'écran « Santé des agents »)",
+      "entrees": "clés du bloc « entrees » de data/chef.json (périmée ou manquante = en panne, degrade = dégradé)",
+      "poids": "decision = trait épais (l'agent pèse dans la décision) ; contexte = trait pointillé",
+      "sens": "vers_centre (impulsions vers le chef d'orchestre) ou depuis_centre (l'agent applique les décisions)"
+    }
+  },
+  "centre": {
+    "cle": "chef",
+    "nom": "Où investir",
+    "role": "Chef d'orchestre",
+    "journal": "chef",
+    "entrees": [],
+    "route": { "type": "investir" },
+    "description": "Rassemble les signaux de tous les agents, retient les entreprises, matières premières et paris pays issus du backtest, et fixe les lignes cibles du portefeuille démo.",
+    "info": { "fichier": "data/portefeuille.json", "chemin": "derniere_decision.cibles.lignes", "mesure": "longueur", "modele": ["{} ligne cible", "{} lignes cibles"] }
+  },
+  "agents": [
+    {
+      "cle": "entreprises",
+      "nom": "Entreprises",
+      "journal": "entreprises",
+      "entrees": ["entreprises", "pepites"],
+      "poids": "decision",
+      "sens": "vers_centre",
+      "route": { "type": "investir", "id": "entreprises" },
+      "action": "Voir les entreprises retenues",
+      "description": "Note les sociétés cotées (fondamentaux, valorisation, résultats) ; le chef d'orchestre retient celles que valident les combinaisons du backtest.",
+      "info": { "fichier": "data/chef.json", "chemin": "selections.entreprises.retenues", "mesure": "longueur", "modele": ["{} retenue", "{} retenues"] }
+    },
+    {
+      "cle": "matieres",
+      "nom": "Matières premières",
+      "journal": "matieres-premieres",
+      "entrees": ["matieres_premieres"],
+      "poids": "decision",
+      "sens": "vers_centre",
+      "route": { "type": "matieres" },
+      "action": "Ouvrir les matières premières",
+      "description": "Suit cours, courbes, stocks et positionnement CFTC des matières premières ; le chef d'orchestre retient celles que valide le backtest.",
+      "info": { "fichier": "data/chef.json", "chemin": "selections.matieres.retenues", "mesure": "longueur", "modele": ["{} retenue", "{} retenues"] }
+    },
+    {
+      "cle": "inities",
+      "nom": "Initiés",
+      "journal": "inities",
+      "entrees": ["inities"],
+      "poids": "contexte",
+      "sens": "vers_centre",
+      "route": { "type": "inities" },
+      "action": "Ouvrir les initiés",
+      "description": "Achats des dirigeants, super-investisseurs, activistes et élus : signaux en observation, sans effet direct sur les sélections.",
+      "info": { "fichier": "data/inities.json", "chemin": "dirigeants.achats", "mesure": "longueur", "modele": ["{} achat dirigeant", "{} achats dirigeants"] }
+    },
+    {
+      "cle": "macro",
+      "nom": "Macro",
+      "journal": "macro",
+      "entrees": ["macro"],
+      "poids": "contexte",
+      "sens": "vers_centre",
+      "route": { "type": "macro" },
+      "action": "Ouvrir la vue macro",
+      "description": "Cycle économique, signaux de récession, banques centrales et taux réels.",
+      "info": { "fichier": "data/macro.json", "chemin": "cycle.zones.0.phase", "mesure": "valeur", "modele": "{}" }
+    },
+    {
+      "cle": "risque",
+      "nom": "Risque",
+      "journal": "risque",
+      "entrees": ["risque", "revues"],
+      "poids": "decision",
+      "sens": "vers_centre",
+      "route": { "type": "risque" },
+      "action": "Ouvrir le risque",
+      "description": "Stress financier mondial : son palier règle la pondération des signaux et la part de liquidités ; le contradicteur relit chaque signal.",
+      "info": { "fichier": "data/risque.json", "chemin": "mondial.palier", "mesure": "valeur", "modele": "Palier {}" }
+    },
+    {
+      "cle": "geopolitique",
+      "nom": "Géopolitique",
+      "journal": "geopolitique",
+      "entrees": ["geopolitique"],
+      "poids": "contexte",
+      "sens": "vers_centre",
+      "route": { "type": "geopolitique" },
+      "action": "Ouvrir la géopolitique",
+      "description": "Événements suivis et risque géopolitique par pays.",
+      "info": { "fichier": "data/geopolitique.json", "chemin": "evenements", "mesure": "longueur", "modele": ["{} événement", "{} événements"] }
+    },
+    {
+      "cle": "alternatives",
+      "nom": "Données alternatives",
+      "journal": "donnees-alternatives",
+      "entrees": [],
+      "poids": "contexte",
+      "sens": "vers_centre",
+      "route": { "type": "alternatives" },
+      "action": "Ouvrir les données alternatives",
+      "description": "L'activité réelle avant les chiffres officiels : transport, construction, commerce, énergie.",
+      "info": { "fichier": "data/donnees_alternatives.json", "chemin": "pays", "mesure": "compte", "champ": "score", "modele": ["{} pays lu", "{} pays lus"] }
+    },
+    {
+      "cle": "marches",
+      "nom": "Marchés",
+      "journal": "marches",
+      "entrees": ["marches"],
+      "poids": "contexte",
+      "sens": "vers_centre",
+      "route": null,
+      "action": null,
+      "description": "Cours différés d'environ 15 minutes des grands indices, de l'or, du pétrole, du bitcoin et de l'euro-dollar (bandeau en haut de l'écran).",
+      "info": { "fichier": "data/marches.json", "chemin": "", "mesure": "longueur", "modele": ["{} cotation", "{} cotations"] }
+    },
+    {
+      "cle": "pays",
+      "nom": "Pays",
+      "journal": "pays",
+      "entrees": ["pays"],
+      "poids": "decision",
+      "sens": "vers_centre",
+      "route": { "type": "globe" },
+      "action": "Voir le globe des pays",
+      "description": "Indicateurs réels de 31 pays ; les paris pays suivent une tendance saine à valorisation non tendue.",
+      "info": { "fichier": "data/chef.json", "chemin": "selections.paris_pays.candidats", "mesure": "longueur", "modele": ["{} pari pays", "{} paris pays"] }
+    },
+    {
+      "cle": "backtest",
+      "nom": "Backtest",
+      "journal": "backtest",
+      "entrees": [],
+      "poids": "decision",
+      "sens": "vers_centre",
+      "route": { "type": "backtest" },
+      "action": "Ouvrir le backtest",
+      "description": "Teste chaque mois quels signaux anticipent vraiment ; seuls les signaux gardés et leurs combinaisons font les sélections.",
+      "info": { "fichier": "data/backtest/resultats.json", "chemin": "verdicts.Garder", "mesure": "valeur", "modele": ["{} signal gardé", "{} signaux gardés"] }
+    },
+    {
+      "cle": "trader",
+      "nom": "Trader démo",
+      "journal": "trader",
+      "entrees": [],
+      "poids": "contexte",
+      "sens": "depuis_centre",
+      "route": { "type": "portefeuille" },
+      "action": "Ouvrir le portefeuille démo",
+      "description": "Applique les décisions du chef d'orchestre à 100 000 € virtuels, aux cours réels (aucun ordre réel).",
+      "info": { "fichier": "data/portefeuille.json", "chemin": "statistiques.performance.depuis_debut", "mesure": "pourcentage", "modele": "{}" }
+    }
+  ]
+}

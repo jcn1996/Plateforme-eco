@@ -13,10 +13,12 @@ import { el } from './outils.js';
  */
 export const SECTIONS_MENU = [
   { titre: 'Synthèse', entrees: [
+    { libelle: 'Accueil · réseau des agents', detail: 'le chef d’orchestre et ses 11 agents', route: { type: 'accueil' } },
     { libelle: 'Où investir', detail: 'chef d’orchestre : verdicts et allocation', route: { type: 'investir' } },
     { libelle: 'Briefing', detail: 'briefing complet du jour', action: 'briefing' },
   ] },
   { titre: 'Analyses', entrees: [
+    { libelle: 'Globe des pays', detail: 'notes, flux d’investissement, risques', route: { type: 'globe' } },
     { libelle: 'Vue macro', detail: 'cycle, récession, banques centrales', route: { type: 'macro' } },
     { libelle: 'Pays · Classement', detail: 'notes des pays suivis', route: { type: 'classement' } },
     { libelle: 'Pépites', detail: 'sociétés candidates', route: { type: 'pepites' } },

@@ -1960,3 +1960,159 @@ body.menu-ouvert { overflow: hidden; }
 .mpf-espace { margin-top: 14px; }
 .mpf-apercu { font-size: 11.5px; }
 .mpf-apercu td { white-space: nowrap; padding: 5px 6px; }
+
+/* ==========================================================================
+   Accueil : réseau des agents (js/accueil.js, js/reseau-scene.js)
+   Premier écran, sous l'en-tête et le bandeau des marchés ; le globe est en #/globe.
+   ========================================================================== */
+.accueil {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  top: var(--haut-accueil, 104px);
+  z-index: 6;
+}
+body.accueil-actif #globe,
+body.accueil-actif .etiquettes,
+body.accueil-actif .filtres,
+body.accueil-actif .alertes { display: none !important; }
+.accueil-defilement {
+  height: 100%; overflow-y: auto; overscroll-behavior: contain;
+  width: 100%; max-width: 860px; margin: 0 auto;
+  padding: 0 var(--marge) calc(var(--bas-sur) + 24px);
+}
+.accueil.a-un-agent .accueil-defilement { padding-bottom: calc(min(52dvh, 460px) + 16px); }
+
+/* Scène : canevas 3D (ou SVG à plat) et calque des bulles-boutons */
+.reseau-zone {
+  position: relative;
+  height: clamp(360px, 60dvh, 600px);
+  margin: 0 calc(var(--marge) * -1);
+  overflow: hidden;
+  touch-action: none;            /* rotation et pincement gérés en JavaScript */
+  cursor: grab;
+  user-select: none; -webkit-user-select: none;
+}
+.reseau-zone:active { cursor: grabbing; }
+.reseau-zone[data-mode="2d"] { touch-action: pan-y; cursor: default; }
+.reseau-fond, .reseau-calque { position: absolute; inset: 0; }
+.reseau-toile, .reseau-svg { display: block; width: 100%; height: 100%; }
+.reseau-calque { pointer-events: none; }
+.reseau-erreur { padding: 40px 12px; text-align: center; color: var(--texte-2); }
+
+/* Chaque bulle est un vrai bouton : zone tactile ≥ 44 px (bulle + libellé) */
+.reseau-noeud {
+  position: absolute; left: 0; top: 0;
+  min-width: 44px; min-height: 44px;
+  margin: 0; padding: 0; border: 0; border-radius: 10px;
+  background: none; color: inherit;
+  pointer-events: auto; cursor: pointer;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.reseau-zone[data-mode="2d"] .reseau-noeud { touch-action: manipulation; }
+.reseau-noeud:focus-visible { outline: 2px solid var(--cyan); outline-offset: 0; }
+.reseau-noeud.est-loin { visibility: hidden; }
+/* Libellés toujours face à l'écran, 11 px au moins, jamais superposés (séparés en JavaScript) */
+.reseau-libelle {
+  position: absolute; left: 0; top: 0;
+  display: flex; flex-direction: column; align-items: center;
+  width: max-content; max-width: 94px;
+  padding: 1px 5px 2px;
+  border-radius: 6px;
+  background: rgba(5, 11, 24, 0.62);
+  text-align: center; line-height: 1.15;
+  pointer-events: none;
+  transition: opacity 0.25s;
+}
+.reseau-nom { font-family: var(--police-titre); font-size: 12px; font-weight: 600; color: #eafcff; letter-spacing: 0.02em; }
+.reseau-info { font-family: var(--police-mono); font-size: 11px; color: var(--texte-2); }
+.reseau-etat { font-size: 11px; font-weight: 600; }
+.reseau-noeud--degrade .reseau-etat { color: var(--orange); }
+.reseau-noeud--panne .reseau-etat, .reseau-noeud--perimee .reseau-etat { color: var(--rouge); }
+.reseau-noeud--panne .reseau-nom, .reseau-noeud--perimee .reseau-nom { color: #ffd6dd; }
+.reseau-noeud--centre .reseau-libelle { max-width: 130px; border: 1px solid var(--ligne-forte); }
+.reseau-noeud--centre .reseau-nom { font-size: 13px; color: var(--cyan); }
+.reseau-noeud--centre .reseau-info { color: #d9fbff; }
+.reseau-noeud:hover .reseau-libelle, .reseau-noeud.est-focus .reseau-libelle { background: rgba(0, 40, 60, 0.85); box-shadow: 0 0 0 1px var(--cyan); }
+.reseau-calque.a-un-focus .reseau-noeud:not(.est-focus) .reseau-libelle { opacity: 0.35; }
+
+/* Légende discrète sous la scène : le style du trait dit le poids, le texte dit l'état */
+.reseau-legende {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 12px;
+  margin-top: 2px;
+  font-size: 11px; color: var(--texte-3);
+}
+.reseau-legende li { display: flex; align-items: center; gap: 5px; }
+.reseau-trait { flex: none; width: 26px; height: 8px; }
+.reseau-trait line { stroke: var(--cyan); }
+.reseau-trait--degrade line { stroke: var(--orange); }
+.reseau-trait--panne line { stroke: var(--rouge); }
+.reseau-mode { margin-top: 4px; text-align: center; font-size: 11px; color: var(--texte-3); }
+
+/* Carte « À retenir aujourd'hui » (repliable) */
+.a-retenir { margin-top: 14px; padding: 0; overflow: hidden; }
+.a-retenir-bascule {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; min-height: 48px; padding: 8px 12px;
+  border: 0; background: none; cursor: pointer; text-align: left;
+}
+.a-retenir-bascule h2 { flex: 1; font-size: 15px; color: #eafcff; }
+.a-retenir-date { font-size: 12px; color: var(--texte-3); }
+.a-retenir-bascule .chevron { transform: rotate(135deg); }
+.a-retenir-bascule[aria-expanded="false"] .chevron { transform: rotate(-45deg); }
+.a-retenir-corps { display: grid; gap: 12px; padding: 0 12px 14px; }
+.a-retenir-rubrique h3 { margin-bottom: 4px; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--texte-2); }
+.a-retenir-rubrique h3 .mono { color: var(--texte-3); }
+.a-retenir-lignes { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.a-retenir-lien {
+  display: inline-flex; align-items: center;
+  min-height: 44px; padding: 4px 11px;
+  border: 1px solid var(--ligne-forte); border-radius: 10px;
+  background: rgba(0, 229, 255, 0.06); color: var(--texte);
+  font-size: 13px; text-align: left; cursor: pointer;
+}
+.a-retenir-lien:hover { background: rgba(0, 229, 255, 0.14); }
+.a-retenir-lien--texte { cursor: default; }
+.a-retenir-alerte .a-retenir-lien { border-color: color-mix(in srgb, var(--orange) 55%, transparent); width: 100%; }
+.a-retenir-plus, .a-retenir-vide { font-size: 12.5px; color: var(--texte-3); }
+.a-retenir-vide { padding: 2px 0; }
+.a-retenir-detail { justify-self: start; min-height: 44px; }
+
+/* Panneau de synthèse d'un agent (toucher une bulle) */
+.synthese-agent {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 12;
+  max-height: min(52dvh, 460px); overflow-y: auto; overscroll-behavior: contain;
+  padding: 12px var(--marge) calc(var(--bas-sur) + 16px);
+  border-top: 1px solid var(--ligne-forte);
+  border-radius: 16px 16px 0 0;
+  background: var(--verre);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.45);
+  animation: apparition 0.25s ease;
+}
+.synthese-agent > * + * { margin-top: 8px; }
+.synthese-agent-tete { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.synthese-agent-tete .bouton--icone { width: 44px; min-height: 44px; }
+.synthese-agent-sur { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--texte-3); }
+.synthese-agent h2 { font-size: 20px; color: #eafcff; }
+.synthese-agent h2:focus { outline: none; }
+.synthese-agent-info { font-size: 16px; color: var(--cyan); }
+.synthese-agent-etat { padding-left: 9px; border-left: 3px solid var(--vert); font-size: 13px; color: var(--texte-2); }
+.synthese-agent-etat strong { color: var(--texte); }
+.synthese-agent-etat--degrade { border-left-color: var(--orange); border-left-style: dashed; }
+.synthese-agent-etat--panne, .synthese-agent-etat--perimee { border-left-color: var(--rouge); border-left-style: double; border-left-width: 4px; }
+.synthese-agent-raisons { padding-left: 14px; font-size: 12.5px; color: var(--texte-2); list-style: disc; }
+.synthese-agent-role, .synthese-agent-texte, .synthese-agent-detail { font-size: 13.5px; color: var(--texte-2); }
+.synthese-agent-detail { color: var(--texte); }
+.synthese-agent-action { min-height: 44px; margin-top: 12px !important; }
+body.mode-leger .synthese-agent { backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--fond-2); }
+@media (prefers-reduced-motion: reduce) {
+  .synthese-agent { animation: none; }
+  .reseau-libelle { transition: none; }
+}
+@media (min-width: 960px) {
+  .synthese-agent {
+    left: auto; top: var(--haut-accueil, 104px); width: 400px; max-height: none;
+    border-top: 0; border-left: 1px solid var(--ligne-forte); border-radius: 0;
+  }
+  .accueil.a-un-agent .accueil-defilement { padding-bottom: calc(var(--bas-sur) + 24px); padding-right: 420px; max-width: none; }
+}
