@@ -37,7 +37,7 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <!-- Globe 3D (rendu par Three.js) -->
+  <!-- Globe 3D (rendu par Three.js) : écran #/globe (le premier écran est l'accueil « réseau d'agents ») -->
   <canvas id="globe" aria-label="Globe interactif des pays suivis"></canvas>
   <!-- Étiquettes des pays, positionnées au-dessus du globe -->
   <div id="etiquettes" class="etiquettes"></div>
@@ -181,6 +181,12 @@
       <p class="legende-aide">Pour un indicateur, la couleur suit sa note sur 100 attribuée par les agents. Pincez ou double-touchez pour zoomer.</p>
     </div>
   </header>
+
+  <!-- ===================== ACCUEIL : RÉSEAU DES AGENTS (premier écran, js/accueil.js) =====================
+       Sous l'en-tête et le bandeau des marchés : le chef d'orchestre au centre et 11 agents autour
+       (scène 3D, version 2D à plat en mode léger), la légende des liens, la carte « À retenir
+       aujourd'hui » et le panneau de synthèse d'un agent. Le globe est en #/globe. -->
+  <section id="accueil" class="accueil" aria-label="Accueil : réseau des agents" hidden></section>
 
   <!-- ===================== FILTRES DU GLOBE ===================== -->
   <nav id="filtres" class="filtres" aria-label="Ce que représentent les couleurs">

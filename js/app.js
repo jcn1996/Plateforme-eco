@@ -3,7 +3,9 @@
    --------------------------------------------------------------------------
    - charge les données (data/*.json)
    - démarre le globe, l'horloge, le bandeau des marchés et les alertes
-   - gère la navigation : Globe › Pays › Secteur › Entreprise, Portefeuille et Classement
+   - premier écran : l'accueil « réseau d'agents » (#/, js/accueil.js) ; le globe
+     est en #/globe (bulle « Pays » de l'accueil, ou Menu)
+   - gère la navigation : Accueil, Globe › Pays › Secteur › Entreprise, Portefeuille et Classement
      L'adresse de la page reflète l'écran affiché (#/pays/FR…), ce qui fait
      fonctionner le bouton « retour » du téléphone.
    ========================================================================== */
@@ -38,6 +40,7 @@ import {
 } from './chef.js';
 import { ecranBacktest, chargerBacktest, chargerRecalibrages, etatPullRequest, alerteRecalibrage } from './backtest.js';
 import { ecranObservation, chargerObservation } from './observation.js';
+import { creerAccueil } from './accueil.js';
 
 const $ = (sel) => document.querySelector(sel);
 const dom = {
@@ -61,9 +64,11 @@ const dom = {
 let d = null;      // données chargées
 let menu = null;   // panneau « Menu » (tous les écrans)
 let globe = null;  // instance du globe 3D (null si WebGL indisponible)
+let globeEnEchec = false; // le globe 3D n'a pas pu démarrer : liste des pays proposée en secours
+let accueil = null; // accueil « réseau d'agents » (premier écran)
 let alertes = null;
 let recherche = null;
-let routeActuelle = { type: 'globe' };
+let routeActuelle = { type: 'accueil' };
 
 /*
  * Hauteurs du panneau sur téléphone (fractions de la hauteur d'écran).
@@ -108,6 +113,7 @@ async function majSante() {
   bouton.title = probleme ? 'Santé des agents : problème détecté' : 'Santé des agents';
   $('#btn-sante .visuellement-cache').textContent = bouton.title;
   if (routeActuelle?.type === 'sante') $('#sante-contenu').replaceChildren(...ecranSante(agentsSante));
+  accueil?.majSante(agentsSante); // états des bulles du réseau (en panne, dégradé…)
 }
 
 /**
@@ -149,6 +155,7 @@ async function rafraichirPortefeuille() {
     d.portefeuille = j.donnees;
     d.meta.portefeuille = j.meta;
     afficherPerformancePortefeuille();
+    accueil?.majSource('data/portefeuille.json', d.portefeuille);
     if (routeActuelle?.type === 'portefeuille') afficher(routeActuelle);
   } catch { /* hors ligne : dernière valeur conservée */ }
 }
@@ -175,7 +182,7 @@ async function demarrer() {
   }
 
   // La mention « Données fictives » disparaît quand plus aucun fichier n'est fictif
-  majBadgesFictifs({ type: 'globe' });
+  majBadgesFictifs({ type: 'accueil' });
   remplirBandeau($('#bandeau-piste'), d.marches);
   // Panneau « Synthèse » du chef d'orchestre (à la place de l'ancien bandeau des alertes)
   alertes = initialiserSynthese(
@@ -222,6 +229,25 @@ async function demarrer() {
 
   // Mode léger
   let leger = lireModeLeger();
+
+  // Accueil « réseau d'agents » : données déjà lues réutilisées ; les autres fichiers de la
+  // table de correspondance (config/reseau_agents.json) sont lus après le premier affichage
+  accueil = creerAccueil({
+    section: $('#accueil'),
+    sources: {
+      'data/chef.json': chef, 'data/risque.json': risque, 'data/macro.json': macro, 'data/geopolitique.json': geopolitique,
+      'data/marches.json': d.marches, 'data/portefeuille.json': d.portefeuille,
+    },
+    chargeurs: {
+      'data/inities.json': () => chargerInities(),
+      'data/donnees_alternatives.json': () => chargerAlternatives().then((a) => { d.alternatives = a; return a; }),
+      'data/backtest/resultats.json': () => chargerBacktest().then((r) => { if (backtest === undefined) backtest = r; return r; }),
+    },
+    contexte: () => ({ chef, alertes: d.alertes, entrepriseExiste: (t) => d.entrepriseParTicker.has(t), paysExiste: (c) => d.paysParCode.has(c) }),
+    naviguer,
+    fermer: () => allerVers({ type: 'accueil' }),
+    leger,
+  });
   appliquerModeLeger(leger);
   dom.btnLeger.addEventListener('click', () => {
     leger = !leger;
@@ -245,7 +271,7 @@ async function demarrer() {
   $('#btn-analyses').addEventListener('click', () => naviguer({ type: 'analyses' }));
   // Menu : tous les écrans, classés (sur téléphone, l'en-tête ne garde que l'essentiel)
   menu = initialiserMenu({ bouton: $('#btn-menu'), menu: $('#menu'), contenu: $('#menu-contenu') }, naviguer, {
-    briefing: () => { if (routeActuelle.type !== 'globe') allerVers({ type: 'globe' }); alertes.ouvrirBriefing(); },
+    briefing: () => { if (routeActuelle.type !== 'globe') allerVers({ type: 'globe' }); setTimeout(() => alertes.ouvrirBriefing(), 0); },
     analyser: () => ouvrirDialogue(),
     legende: () => {
       if (routeActuelle.type !== 'globe') allerVers({ type: 'globe' });
@@ -273,7 +299,7 @@ async function demarrer() {
     if (e.key !== 'Escape') return;
     if (menu?.ouvert()) menu.fermer();
     else if (recherche?.ouverte()) recherche.fermer();
-    else if (routeActuelle.type !== 'globe') retour();
+    else if (routeActuelle.type !== 'accueil' || routeActuelle.id) retour(); // Échap ferme aussi la synthèse d'un agent
   });
   brancherGlissementPanneau();
 
@@ -293,12 +319,14 @@ async function demarrer() {
     });
   } catch (erreur) {
     console.error(erreur);
-    afficherSecours();
+    globeEnEchec = true; // liste des pays proposée à l'ouverture du globe
   }
   // Accès au globe pour les tests automatiques uniquement (adresse avec ?test)
   if (new URLSearchParams(location.search).has('test')) window.__globe = globe;
 
-  addEventListener('resize', () => { appliquerEtatPanneau(); majCadrage(); });
+  addEventListener('resize', () => { appliquerEtatPanneau(); majHautAccueil(); majCadrage(); });
+  majHautAccueil();
+  if ('ResizeObserver' in window) new ResizeObserver(majHautAccueil).observe($('.entete-ligne'));
   addEventListener('hashchange', surChangementAdresse);
   pile = [location.hash || '#/'];
   afficher(lireAdresse());
@@ -366,6 +394,7 @@ function appliquerModeLeger(actif) {
   dom.btnLeger.setAttribute('aria-pressed', String(actif));
   dom.btnLeger.title = actif ? 'Mode léger activé (cliquer pour le désactiver)' : 'Activer le mode léger (économie de batterie)';
   globe?.definirLeger(actif);
+  accueil?.definirLeger(actif); // version 2D à plat du réseau, sans impulsions
   majLegendePulsations();
 }
 
@@ -431,13 +460,14 @@ function textePulsation(x) {
 function versAdresse(route) {
   // Lien direct vers une analyse à la demande : #analyse-TICKER (adresse donnée dans la réponse de l'issue)
   if (route.type === 'analyse') return `#analyse-${encodeURIComponent(route.id)}`;
-  return route.type === 'globe' ? '#/' : route.id ? `#/${route.type}/${encodeURIComponent(route.id)}` : `#/${route.type}`;
+  // Accueil « réseau d'agents » : #/ ; synthèse d'un agent : #/accueil/risque ; globe : #/globe
+  return route.type === 'accueil' && !route.id ? '#/' : route.id ? `#/${route.type}/${encodeURIComponent(route.id)}` : `#/${route.type}`;
 }
 function lireAdresse() {
   const analyse = location.hash.match(/^#analyse-(.+)$/);
   if (analyse) return { type: 'analyse', id: decodeURIComponent(analyse[1]) };
   const [type, id] = location.hash.replace(/^#\/?/, '').split('/');
-  if (!type) return { type: 'globe' };
+  if (!type) return { type: 'accueil' };
   return { type, id: id ? decodeURIComponent(id) : undefined };
 }
 
@@ -486,28 +516,31 @@ function retour() {
   if (pile.length > 1) history.back();
   else {
     const chemin = filAriane(routeActuelle);
-    allerVers(chemin.length > 1 ? chemin[chemin.length - 2].route : { type: 'globe' });
+    allerVers(chemin.length > 1 ? chemin[chemin.length - 2].route : { type: 'accueil' });
   }
 }
 
 /**
- * Fil d'Ariane d'une route : liste des niveaux depuis le globe.
- * Chaque entrée : { libelle, route }.
+ * Fil d'Ariane d'une route : liste des niveaux depuis l'accueil (depuis le globe pour
+ * les fiches pays, secteur et entreprise). Chaque entrée : { libelle, route }.
  */
 function filAriane(route) {
-  const racine = { libelle: 'Globe', route: { type: 'globe' } };
+  const racine = { libelle: 'Accueil', route: { type: 'accueil' } };
+  const niveauGlobe = { libelle: 'Globe', route: { type: 'globe' } };
   const niveauPays = (code) => ({ libelle: d.paysParCode.get(code)?.nom ?? code, route: { type: 'pays', id: code } });
   const niveauSecteur = (s) => ({ libelle: s.nom, route: { type: 'secteur', id: s.id } });
   switch (route.type) {
-    case 'pays': return [racine, niveauPays(route.id)];
+    case 'globe': return [racine, niveauGlobe];
+    case 'accueil': return [racine];
+    case 'pays': return [niveauGlobe, niveauPays(route.id)];
     case 'secteur': {
       const s = d.secteurParId.get(route.id);
-      return [racine, niveauPays(s.pays), niveauSecteur(s)];
+      return [niveauGlobe, niveauPays(s.pays), niveauSecteur(s)];
     }
     case 'entreprise': {
       const e = d.entrepriseParTicker.get(route.id);
       const s = d.secteurParId.get(e.secteur);
-      return [racine, niveauPays(e.pays), niveauSecteur(s), { libelle: e.nom, route }];
+      return [niveauGlobe, niveauPays(e.pays), niveauSecteur(s), { libelle: e.nom, route }];
     }
     case 'portefeuille': return [racine, { libelle: 'Portefeuille démo', route }];
     case 'mes-portefeuilles': return [racine, { libelle: 'Mes portefeuilles', route }];
@@ -571,6 +604,7 @@ function majAriane(route) {
 /** Vérifie qu'une route désigne bien un élément existant. */
 function routeValide(route) {
   switch (route.type) {
+    case 'accueil': return !route.id || (accueil?.agentExiste(route.id) ?? false);
     case 'globe': case 'portefeuille': case 'mes-portefeuilles': case 'classement': case 'comparaison': case 'mes-alertes': case 'sante': case 'macro': case 'geopolitique': case 'risque': case 'pepites':
     case 'analyses': case 'fiabilite': case 'matieres': case 'inities': case 'investir': case 'fiabilite-chef': case 'alternatives': case 'backtest': case 'observation': return true;
     case 'analyse': return Boolean(route.id);
@@ -588,7 +622,7 @@ function afficher(route) {
   if (!routeValide(route)) {
     history.replaceState(null, '', '#/');
     pile[pile.length - 1] = '#/';
-    route = { type: 'globe' };
+    route = { type: 'accueil' };
   }
   routeActuelle = route;
   const navigateurPanneau = {
@@ -746,6 +780,12 @@ function afficher(route) {
     $(ecran.section).hidden = !visible;
   }
   majBarre(route.type === 'comparaison');
+  // Accueil « réseau d'agents » : scène active seulement quand il est affiché
+  const surAccueil = route.type === 'accueil';
+  document.body.classList.toggle('accueil-actif', surAccueil);
+  accueil?.definirActif(surAccueil);
+  if (surAccueil) accueil.afficher(route.id);
+  if (route.type === 'globe' && globeEnEchec) afficherSecours();
   // Les pays sont produits par l'agent pays (données réelles) : pas de badge « Données fictives » sur leur fiche
   majBadgesFictifs(route);
   document.body.classList.toggle('ecran-ouvert', route.type in ECRANS);
@@ -764,7 +804,7 @@ function afficher(route) {
 
 /** Le globe ne se dessine que s'il est visible (économie de batterie). */
 function majActiviteGlobe() {
-  const masque = ['portefeuille', 'mes-portefeuilles', 'classement', 'comparaison', 'mes-alertes', 'sante', 'macro', 'geopolitique', 'risque', 'pepites', 'analyses', 'fiabilite', 'matieres', 'inities', 'investir', 'fiabilite-chef', 'alternatives', 'backtest', 'observation'].includes(routeActuelle.type)
+  const masque = ['accueil', 'portefeuille', 'mes-portefeuilles', 'classement', 'comparaison', 'mes-alertes', 'sante', 'macro', 'geopolitique', 'risque', 'pepites', 'analyses', 'fiabilite', 'matieres', 'inities', 'investir', 'fiabilite-chef', 'alternatives', 'backtest', 'observation'].includes(routeActuelle.type)
     || (dom.panneau.classList.contains('est-ouvert') && etatPanneau === 'plein' && !estLarge());
   globe?.definirActif(!masque);
 }
@@ -799,6 +839,13 @@ function brancherLegende() {
 function fermerLegende() {
   dom.legende.hidden = true;
   dom.btnLegende.setAttribute('aria-expanded', 'false');
+}
+
+/** Haut de l'accueil : sous l'en-tête et le bandeau des marchés (leur hauteur varie selon l'écran). */
+function majHautAccueil() {
+  const bandeau = document.querySelector('.bandeau-marches');
+  const bas = (bandeau?.getBoundingClientRect().bottom || dom.entete.getBoundingClientRect().bottom) + 14; // + mention « Cours différés »
+  document.documentElement.style.setProperty('--haut-accueil', `${Math.round(bas)}px`);
 }
 
 /**
