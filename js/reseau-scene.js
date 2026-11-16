@@ -1,22 +1,31 @@
 /* ==========================================================================
    Scène du réseau des agents (accueil)
    --------------------------------------------------------------------------
-   - Version 3D (Three.js, déjà chargé pour le globe) : sphère centrale lumineuse
-     (chef d'orchestre) et une sphère par agent, disposées en profondeur ; liens
-     lumineux (épais = pèse dans la décision, pointillés = contexte ; rouge sans
-     impulsion = en panne ; un agent dégradé garde son lien normal, seule une
-     pastille orange discrète le signale sous son nom) ; impulsions
-     qui voyagent vers le centre (depuis le centre pour le trader démo).
+   - Version 3D (Three.js, déjà chargé pour le globe), rendu « verre lumineux » :
+     · bulles = sphères lisses translucides (shader : intérieur presque transparent,
+       contour plus intense sur les bords par effet Fresnel, léger noyau brillant) ;
+       on voit les liens et les autres bulles à travers (tout est additif) ;
+     · bulle centrale (chef d'orchestre) plus grande : noyau d'énergie qui « respire »
+       et deux anneaux fins en rotation lente ;
+     · chaque bulle flotte (dérive douce, désynchronisée) et réagit au toucher (onde
+       lumineuse, léger grossissement avec rebond amorti) ;
+     · liens courbes (shader : dégradé de lumière de l'agent vers le centre, épais =
+       pèse dans la décision, pointillés = contexte), impulsions en forme de traînée
+       vers le centre (depuis le centre pour le trader démo) ; en panne : lien rouge
+       terne, interrompu, sans impulsion ; un agent dégradé garde son lien normal,
+       seule une pastille orange discrète le signale sous son nom ;
+     · profondeur : fond de particules très discret, bulles du fond plus petites et
+       moins lumineuses, flou lumineux (bloom) maison qui garde la transparence du canevas ;
+     · qualité adaptative : sous 40 images/s, bloom puis particules réduits automatiquement.
    - Version 2D à plat (SVG, sans impulsion) : mode léger, « réduire les animations »,
      ou WebGL indisponible.
-   - Libellés en HTML, toujours face à l'écran, jamais superposés (séparation à
-     chaque image où la scène bouge) ; chaque bulle est un vrai bouton (clavier,
-     lecteur d'écran), zone tactile de 44 px au moins.
+   - Libellés en HTML, au-dessus du canevas (aucun effet ne passe devant), toujours face
+     à l'écran, au pixel près (nets), jamais superposés ; chaque bulle est un vrai bouton
+     (clavier, lecteur d'écran), zone tactile de 44 px au moins.
    - Gestes : rotation au doigt avec inertie, amplitude limitée et retour doux à la
      position de face ; pincer (ou molette) pour zoomer ; toucher une bulle = la caméra
-     s'en approche (l'appli ouvre la synthèse de l'agent).
-   - Scène en pause quand l'onglet est caché ou l'écran masqué ; 30 images/s au repos,
-     pleine cadence pendant un geste.
+     s'en approche (ressort critique, environ 400 ms, sans à-coup ; l'appli ouvre la synthèse).
+   - Scène en pause quand l'onglet est caché ou l'écran masqué.
    ========================================================================== */
 
 import { disposition, separerEtiquettes, texteAccessible, ETATS_RESEAU } from './reseau.js';
@@ -31,11 +40,16 @@ const RAPPEL = 0.0035;       // force de retour à la position de face
 const AMORTI = 0.9;          // inertie (par image à 60 images/s)
 const ZOOM_MIN = 0.75, ZOOM_MAX = 2.2;
 const DISTANCE = 10, CHAMP = 40; // caméra : distance au centre, champ vertical (degrés)
-const RAYON_AGENT = 0.3, RAYON_CENTRE = 0.56; // rayons des sphères (unités de la scène)
+const RAYON_AGENT = 0.3, RAYON_CENTRE = 0.7; // rayons des sphères (unités de la scène)
 const TACTILE = 44; // zone tactile minimale (px)
 const MARGE_X = 50, MARGE_HAUT = 30, MARGE_BAS = 62; // place réservée aux libellés autour de l'ellipse (px)
+const PULSATION_CAMERA = 11;  // ressort critique de la caméra (rad/s) : ~95 % du trajet en 400 ms, départ et arrivée doux
+const RESSORT = { raideur: 170, amorti: 11 }; // rebond amorti d'une bulle touchée
+const PARTICULES = 220;
+const IMPULSIONS = [0, 0.5]; // phases des deux impulsions de chaque lien
+const TRAINEE = 0.2;         // longueur de la traînée (fraction du lien)
 
-/** Texture ronde et floue pour les halos et les impulsions. */
+/** Texture ronde et floue pour les noyaux et les têtes d'impulsion. */
 function textureHalo(THREE) {
   const t = 64;
   const toile = document.createElement('canvas');
@@ -52,23 +66,211 @@ function textureHalo(THREE) {
   return texture;
 }
 
-/** Charge Three.js et les lignes épaisses (null si indisponible : la version 2D prend le relais). */
+/** Mélange additif qui laisse l'alpha intact (le canevas reste transparent, la lumière s'ajoute). */
+function additif(THREE, m) {
+  Object.assign(m, {
+    transparent: true, depthWrite: false, blending: THREE.CustomBlending, blendEquation: THREE.AddEquation,
+    blendSrc: THREE.SrcAlphaFactor, blendDst: THREE.OneFactor, blendSrcAlpha: THREE.ZeroFactor, blendDstAlpha: THREE.OneFactor,
+  });
+  return m;
+}
+
+/* ------------------------------------------------------------------ shaders */
+
+const VS_BULLE = /* glsl */`
+  varying vec3 vNormale;
+  varying vec3 vVue;
+  void main() {
+    vec4 mv = modelViewMatrix * vec4(position, 1.0);
+    vNormale = normalize(normalMatrix * normal);
+    vVue = normalize(-mv.xyz);
+    gl_Position = projectionMatrix * mv;
+  }`;
+
+/** Verre lumineux : Fresnel sur les bords, noyau doux au centre, reflet, onde au toucher. */
+const FS_BULLE = /* glsl */`
+  uniform vec3 uCouleur;
+  uniform float uBord;     // intensité du contour
+  uniform float uNoyau;    // intensité du noyau
+  uniform float uOnde;     // 0 = pas d'onde ; 0..1 = avancée de l'onde
+  uniform float uLumiere;  // profondeur, focus, panne
+  varying vec3 vNormale;
+  varying vec3 vVue;
+  void main() {
+    vec3 n = normalize(vNormale);
+    float nv = clamp(dot(n, normalize(vVue)), 0.0, 1.0);
+    float fresnel = pow(1.0 - nv, 2.4);
+    vec3 c = uCouleur * (0.03 + fresnel * 1.35 * uBord);
+    c += mix(uCouleur, vec3(1.0), 0.55) * pow(nv, 9.0) * uNoyau * 0.4;
+    c += vec3(0.85, 0.97, 1.0) * pow(max(dot(n, normalize(vec3(-0.45, 0.55, 0.7))), 0.0), 70.0) * 0.55;
+    float d = sqrt(max(0.0, 1.0 - nv * nv));
+    float onde = uOnde > 0.0 ? exp(-pow((d - uOnde) * 7.0, 2.0)) * (1.0 - uOnde) : 0.0;
+    c += mix(uCouleur, vec3(1.0), 0.5) * onde * 1.8;
+    gl_FragColor = vec4(c * uLumiere, 1.0);
+    #include <colorspace_fragment>
+  }`;
+
+/** Noyau d'énergie du centre : bandes lumineuses qui tournent doucement, plus clair au cœur. */
+const FS_ENERGIE = /* glsl */`
+  uniform vec3 uCouleur;
+  uniform float uTemps;
+  uniform float uSouffle;
+  varying vec3 vNormale;
+  varying vec3 vVue;
+  void main() {
+    vec3 n = normalize(vNormale);
+    float nv = clamp(dot(n, normalize(vVue)), 0.0, 1.0);
+    float bandes = 0.5 + 0.5 * sin(n.y * 9.0 + sin(n.x * 4.0 + uTemps * 0.7) * 1.6 - uTemps * 0.9);
+    float coeur = pow(nv, 2.2);
+    vec3 c = mix(uCouleur, vec3(1.0), 0.45 * coeur) * (0.25 + 0.75 * coeur) * (0.55 + 0.45 * bandes);
+    gl_FragColor = vec4(c * uSouffle, 1.0);
+    #include <colorspace_fragment>
+  }`;
+
+/** Lien courbe (Bézier quadratique calculée sur la carte graphique, largeur en pixels). */
+const VS_LIEN = /* glsl */`
+  uniform vec3 uA;  // agent
+  uniform vec3 uB;  // point de contrôle
+  uniform vec3 uC;  // centre
+  uniform float uLargeur;
+  uniform vec2 uResolution;
+  attribute float aU;
+  attribute float aCote;
+  varying float vU;
+  varying float vCote;
+  vec3 bezier(float t) { float m = 1.0 - t; return m * m * uA + 2.0 * m * t * uB + t * t * uC; }
+  void main() {
+    mat4 mvp = projectionMatrix * modelViewMatrix;
+    vec4 c = mvp * vec4(bezier(aU), 1.0);
+    vec4 c1 = mvp * vec4(bezier(max(aU - 0.01, 0.0)), 1.0);
+    vec4 c2 = mvp * vec4(bezier(min(aU + 0.01, 1.0)), 1.0);
+    vec2 d = (c2.xy / c2.w - c1.xy / c1.w) * uResolution;
+    d = length(d) > 1e-5 ? normalize(d) : vec2(1.0, 0.0);
+    c.xy += vec2(-d.y, d.x) * aCote * (uLargeur / uResolution) * c.w;
+    gl_Position = c;
+    vU = aU;
+    vCote = aCote;
+  }`;
+
+const FS_LIEN = /* glsl */`
+  uniform vec3 uCouleur;
+  uniform vec3 uCouleurCentre;
+  uniform float uOpacite;
+  uniform float uLargeur;
+  uniform float uTirets;     // 0 = trait plein ; sinon nombre de tirets
+  uniform float uRemplissage;
+  uniform float uActif;      // impulsions (0 en panne)
+  uniform float uSens;       // 1 = vers le centre, -1 = depuis le centre
+  uniform float uTemps;
+  uniform float uVitesse;
+  varying float vU;
+  varying float vCote;
+  void main() {
+    float bord = 1.0 - smoothstep(max(0.0, 1.0 - 2.4 / uLargeur), 1.0, abs(vCote));
+    float s = uSens > 0.0 ? vU : 1.0 - vU; // avancée dans le sens du trajet
+    vec3 c = mix(uCouleur, uCouleurCentre, smoothstep(0.0, 1.0, vU) * 0.65 * uActif);
+    float lum = mix(0.35, 1.0, vU) * uOpacite;
+    if (uTirets > 0.0) {
+      float f = fract(vU * uTirets);
+      float w = fwidth(vU * uTirets);
+      lum *= smoothstep(uRemplissage + w, uRemplissage - w, f) * smoothstep(0.0, w, f);
+    }
+    float trainee = 0.0;
+    for (int i = 0; i < 2; i++) {
+      float h = fract(uTemps * uVitesse + float(i) * 0.5);
+      float e = h - s;
+      float fondu = sin(3.14159 * h);
+      if (e >= 0.0 && e < ${TRAINEE.toFixed(2)}) trainee += pow(1.0 - e / ${TRAINEE.toFixed(2)}, 1.8) * fondu;
+    }
+    vec3 lumiere = c * lum + mix(uCouleur, vec3(1.0), 0.35) * trainee * 1.6 * uActif;
+    gl_FragColor = vec4(lumiere * bord, 1.0);
+    #include <colorspace_fragment>
+  }`;
+
+const VS_PARTICULES = /* glsl */`
+  attribute float aTaille;
+  attribute float aPhase;
+  uniform float uEchelle;
+  uniform float uTemps;
+  varying float vScintille;
+  void main() {
+    vec4 mv = modelViewMatrix * vec4(position, 1.0);
+    gl_PointSize = aTaille * uEchelle / -mv.z;
+    vScintille = 0.65 + 0.35 * sin(uTemps * 0.6 + aPhase);
+    gl_Position = projectionMatrix * mv;
+  }`;
+
+const FS_PARTICULES = /* glsl */`
+  uniform float uOpacite;
+  varying float vScintille;
+  void main() {
+    float a = smoothstep(0.5, 0.0, length(gl_PointCoord - 0.5));
+    gl_FragColor = vec4(vec3(0.55, 0.82, 1.0) * a * uOpacite * vScintille, 1.0);
+    #include <colorspace_fragment>
+  }`;
+
+const VS_ECRAN = /* glsl */`
+  varying vec2 vUv;
+  void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }`;
+
+/** Bloom : extraction des zones brillantes (avec réduction 4 points). */
+const FS_SEUIL = /* glsl */`
+  uniform sampler2D tSource;
+  uniform vec2 uTexel;
+  uniform float uSeuil;
+  varying vec2 vUv;
+  void main() {
+    vec3 c = 0.25 * (texture2D(tSource, vUv + uTexel * vec2(-1.0, -1.0)).rgb + texture2D(tSource, vUv + uTexel * vec2(1.0, -1.0)).rgb
+      + texture2D(tSource, vUv + uTexel * vec2(-1.0, 1.0)).rgb + texture2D(tSource, vUv + uTexel * vec2(1.0, 1.0)).rgb);
+    float l = max(c.r, max(c.g, c.b));
+    gl_FragColor = vec4(c * smoothstep(uSeuil, uSeuil + 0.35, l), 1.0);
+  }`;
+
+/** Bloom : flou gaussien séparable (9 points). */
+const FS_FLOU = /* glsl */`
+  uniform sampler2D tSource;
+  uniform vec2 uPas;
+  varying vec2 vUv;
+  void main() {
+    vec3 c = texture2D(tSource, vUv).rgb * 0.2270270270;
+    c += (texture2D(tSource, vUv + uPas * 1.3846153846).rgb + texture2D(tSource, vUv - uPas * 1.3846153846).rgb) * 0.3162162162;
+    c += (texture2D(tSource, vUv + uPas * 3.2307692308).rgb + texture2D(tSource, vUv - uPas * 3.2307692308).rgb) * 0.0702702703;
+    gl_FragColor = vec4(c, 1.0);
+  }`;
+
+/** Composition finale : scène + bloom ; alpha = lumière (le fond de la page reste visible ailleurs). */
+const FS_COMPOSITION = /* glsl */`
+  uniform sampler2D tScene;
+  uniform sampler2D tBloom;
+  uniform float uBloom;
+  varying vec2 vUv;
+  void main() {
+    vec3 c = texture2D(tScene, vUv).rgb + texture2D(tBloom, vUv).rgb * uBloom;
+    gl_FragColor = vec4(c, 1.0);
+    #include <colorspace_fragment>
+    gl_FragColor.a = clamp(max(gl_FragColor.r, max(gl_FragColor.g, gl_FragColor.b)), 0.0, 1.0);
+  }`;
+
+/** Charge Three.js (null si indisponible : la version 2D prend le relais). */
 async function chargerThree() {
   try {
     const THREE = await import('three');
-    let lignes = null;
-    try {
-      const [{ LineSegments2 }, { LineSegmentsGeometry }, { LineMaterial }] = await Promise.all([
-        import('three/addons/lines/LineSegments2.js'), import('three/addons/lines/LineSegmentsGeometry.js'), import('three/addons/lines/LineMaterial.js'),
-      ]);
-      lignes = { LineSegments2, LineSegmentsGeometry, LineMaterial };
-    } catch { /* lignes de 1 px en secours */ }
     const essai = document.createElement('canvas');
     if (!(essai.getContext('webgl2') || essai.getContext('webgl'))) return null;
-    return { THREE, lignes };
+    return { THREE };
   } catch {
     return null;
   }
+}
+
+/** Point d'une Bézier quadratique (a, b, c : Vector3) dans `sortie`. */
+function bezier(a, b, c, t, sortie) {
+  const m = 1 - t;
+  return sortie.set(
+    m * m * a.x + 2 * m * t * b.x + t * t * c.x,
+    m * m * a.y + 2 * m * t * b.y + t * t * c.y,
+    m * m * a.z + 2 * m * t * b.z + t * t * c.z,
+  );
 }
 
 export class SceneReseau {
@@ -140,7 +342,12 @@ export class SceneReseau {
       lib.className = 'reseau-libelle';
       lib.setAttribute('aria-hidden', 'true');
       b.append(lib);
-      b.addEventListener('click', () => (n.centre ? this.surCentre() : this.surChoix(n.cle)));
+      b.addEventListener('pointerdown', () => this.#appuyer(n.cle, true));
+      for (const ev of ['pointerup', 'pointercancel', 'pointerleave']) b.addEventListener(ev, () => this.#appuyer(n.cle, false));
+      b.addEventListener('click', () => {
+        this.#reagir(n.cle);
+        if (n.centre) this.surCentre(); else this.surChoix(n.cle);
+      });
       this.calque.append(b);
       this.boutons.set(n.cle, { bouton: b, libelle: lib, l: 0, h: 0, x: 0, y: 0, cle: n.cle });
     }
@@ -195,6 +402,7 @@ export class SceneReseau {
     separerEtiquettes(etiquettes, obstacles, borner ? { l: this.largeur, h: this.hauteur } : null);
     for (const p of projections) {
       const e = this.boutons.get(p.cle);
+      e.x = Math.round(e.x); e.y = Math.round(e.y); // au pixel près : texte net
       const R = Math.max(TACTILE / 2, p.r);
       const x0 = Math.min(p.x - R, e.x), y0 = Math.min(p.y - R, e.y);
       const x1 = Math.max(p.x + R, e.x + e.l), y1 = Math.max(p.y + R, e.y + e.h);
@@ -268,60 +476,148 @@ export class SceneReseau {
     this.#placer(projections, true);
   }
 
+
   /* ============================== Version 3D (Three.js) ============================== */
 
-  #construire3D({ THREE, lignes }) {
+  #construire3D({ THREE }) {
     const toile = document.createElement('canvas');
     toile.className = 'reseau-toile';
     toile.setAttribute('aria-hidden', 'true');
     this.fond.replaceChildren(toile);
-    const rendu = new THREE.WebGLRenderer({ canvas: toile, antialias: true, alpha: true, powerPreference: 'low-power' });
+    const rendu = new THREE.WebGLRenderer({ canvas: toile, antialias: false, alpha: true, premultipliedAlpha: true, powerPreference: 'default' });
     rendu.setClearColor(0x000000, 0);
+    rendu.autoClear = true;
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(CHAMP, 1, 0.1, 100);
     camera.position.set(0, 0, DISTANCE);
-    scene.add(new THREE.AmbientLight(0x6f8fb0, 0.9));
-    const soleil = new THREE.DirectionalLight(0xffffff, 1.1);
-    soleil.position.set(-3, 4, 6);
-    scene.add(soleil);
-    const lumiereCentre = new THREE.PointLight(0x7ff3ff, 18, 12, 1.6);
     const groupe = new THREE.Group();
     scene.add(groupe);
-    groupe.add(lumiereCentre);
     const halo = textureHalo(THREE);
-    const geo = new THREE.IcosahedronGeometry(1, 3);
-    const t = { THREE, lignes, rendu, scene, camera, groupe, halo, geo, toile, noeuds: new Map(), liens: [], impulsions: [], materiauxLignes: [] };
+    const geoBulle = new THREE.SphereGeometry(1, 48, 32);
+    const temps = { value: 0 };
+    const resolution = { value: new THREE.Vector2(1, 1) };
+    const t = {
+      THREE, rendu, scene, camera, groupe, halo, geoBulle, toile, temps, resolution, noeuds: new Map(), liens: [],
+      camPos: camera.position.clone(), camVit: new THREE.Vector3(), vise: new THREE.Vector3(), viseVit: new THREE.Vector3(),
+      tmp: new THREE.Vector3(),
+    };
     this.trois = t;
+    this.qualite = 2;
+    this.conteneur.dataset.qualite = '2';
+    this.mesure = { debut: 0, images: 0, pire: 0 };
 
-    // Sphère centrale lumineuse
-    const centre = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: COULEURS.centre, emissive: 0x38e8ff, emissiveIntensity: 0.9, roughness: 0.35, metalness: 0.1 }));
-    centre.scale.setScalar(RAYON_CENTRE);
-    const haloCentre = new THREE.Sprite(new THREE.SpriteMaterial({ map: halo, color: 0x5ff0ff, transparent: true, opacity: 0.75, blending: THREE.AdditiveBlending, depthWrite: false }));
-    haloCentre.scale.setScalar(RAYON_CENTRE * 5);
-    groupe.add(centre, haloCentre);
-    t.noeuds.set(this.reseau.centre.cle, { mesh: centre, halo: haloCentre, rayon: RAYON_CENTRE, pos: new THREE.Vector3() });
-    t.haloCentre = haloCentre;
+    const materiauBulle = (c, bord, noyau) => additif(THREE, new THREE.ShaderMaterial({
+      vertexShader: VS_BULLE, fragmentShader: FS_BULLE,
+      uniforms: { uCouleur: { value: new THREE.Color(c) }, uBord: { value: bord }, uNoyau: { value: noyau }, uOnde: { value: 0 }, uLumiere: { value: 1 } },
+    }));
+    const sprite = (c, opacite) => new THREE.Sprite(additif(THREE, new THREE.SpriteMaterial({ map: halo, color: c, opacity: opacite })));
+    const noeud = (cle, rayon, c, bord, noyau, i) => {
+      const racine = new THREE.Group();
+      const verre = new THREE.Mesh(geoBulle, materiauBulle(c, bord, noyau));
+      const coeur = sprite(c, 0.3);
+      coeur.scale.setScalar(0.62);
+      racine.add(verre, coeur);
+      groupe.add(racine);
+      const o = {
+        cle, racine, verre, coeur, rayonBase: rayon, rayon, pos: new THREE.Vector3(), base: new THREE.Vector3(),
+        phases: [i * 1.7, i * 2.3 + 1, i * 0.9 + 2], frequences: [0.31 + (i % 4) * 0.045, 0.26 + (i % 3) * 0.05, 0.22 + (i % 5) * 0.03],
+        amplitude: 0.07, coeurBase: 0.3, echelle: 1, vEchelle: 0, cibleEchelle: 1, onde: -1, lumiere: 1, lumiereCible: 1, profondeur: 1,
+      };
+      t.noeuds.set(cle, o);
+      return o;
+    };
 
-    // Agents, liens et impulsions
-    this.reseau.agents.forEach((n) => {
-      const mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: COULEURS.ok, emissive: COULEURS.ok, emissiveIntensity: 0.35, roughness: 0.4, metalness: 0.15 }));
-      mesh.scale.setScalar(RAYON_AGENT);
-      const h = new THREE.Sprite(new THREE.SpriteMaterial({ map: halo, color: COULEURS.ok, transparent: true, opacity: 0.45, blending: THREE.AdditiveBlending, depthWrite: false }));
-      h.scale.setScalar(RAYON_AGENT * 4.2);
-      groupe.add(mesh, h);
-      t.noeuds.set(n.cle, { mesh, halo: h, rayon: RAYON_AGENT, pos: new THREE.Vector3() });
-      const pulses = [0, 0.5].map((phase) => {
-        const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: halo, color: COULEURS.ok, transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending, depthWrite: false }));
-        s.scale.setScalar(0.2);
-        groupe.add(s);
-        return { sprite: s, phase, cle: n.cle };
-      });
-      t.impulsions.push(...pulses);
+    // Bulle centrale : verre, noyau d'énergie qui respire, deux anneaux fins
+    const centre = noeud(this.reseau.centre.cle, RAYON_CENTRE, COULEURS.centre, 1.1, 0.3, 0);
+    centre.amplitude = 0.025;
+    centre.coeur.material.color.setHex(0x8ff6ff);
+    const energie = new THREE.Mesh(geoBulle, additif(THREE, new THREE.ShaderMaterial({
+      vertexShader: VS_BULLE, fragmentShader: FS_ENERGIE,
+      uniforms: { uCouleur: { value: new THREE.Color(0x38e8ff) }, uTemps: temps, uSouffle: { value: 1 } },
+    })));
+    energie.scale.setScalar(0.42);
+    const anneaux = [[1.32, 0.011, [1.15, 0.2, 0]], [1.5, 0.007, [-0.5, 0.9, 0.3]]].map(([r, e, rot]) => {
+      const a = new THREE.Mesh(new THREE.TorusGeometry(r, e, 6, 128), additif(THREE, new THREE.MeshBasicMaterial({ color: 0x7ff3ff, opacity: 0.55 })));
+      a.rotation.set(...rot);
+      centre.racine.add(a);
+      return a;
     });
+    centre.racine.add(energie);
+    Object.assign(t, { centre, energie, anneaux });
+
+    // Agents, liens courbes, têtes d'impulsion
+    const N = 40;
+    const u = new Float32Array((N + 1) * 2), cote = new Float32Array((N + 1) * 2), index = [];
+    for (let i = 0; i <= N; i++) {
+      u[2 * i] = u[2 * i + 1] = i / N;
+      cote[2 * i] = -1; cote[2 * i + 1] = 1;
+      if (i < N) index.push(2 * i, 2 * i + 1, 2 * i + 2, 2 * i + 1, 2 * i + 3, 2 * i + 2);
+    }
+    const geoLien = new THREE.BufferGeometry();
+    geoLien.setAttribute('position', new THREE.BufferAttribute(new Float32Array((N + 1) * 6), 3));
+    geoLien.setAttribute('aU', new THREE.BufferAttribute(u, 1));
+    geoLien.setAttribute('aCote', new THREE.BufferAttribute(cote, 1));
+    geoLien.setIndex(index);
+    t.geoLien = geoLien;
+
+    this.reseau.agents.forEach((n, i) => {
+      noeud(n.cle, RAYON_AGENT, COULEURS.ok, 1, 0.45, i + 1);
+      const materiau = additif(THREE, new THREE.ShaderMaterial({
+        vertexShader: VS_LIEN, fragmentShader: FS_LIEN, extensions: { derivatives: true }, side: THREE.DoubleSide,
+        uniforms: {
+          uA: { value: new THREE.Vector3() }, uB: { value: new THREE.Vector3() }, uC: { value: new THREE.Vector3() },
+          uLargeur: { value: 3 }, uResolution: resolution, uCouleur: { value: new THREE.Color(COULEURS.ok) },
+          uCouleurCentre: { value: new THREE.Color(COULEURS.centre) }, uOpacite: { value: 0.8 }, uTirets: { value: 0 },
+          uRemplissage: { value: 0.55 }, uActif: { value: 1 }, uSens: { value: 1 }, uTemps: temps, uVitesse: { value: 0.4 },
+        },
+      }));
+      const mesh = new THREE.Mesh(geoLien, materiau);
+      mesh.frustumCulled = false; // la courbe est calculée par le shader
+      mesh.renderOrder = -1;
+      groupe.add(mesh);
+      const tetes = IMPULSIONS.map(() => { const s = sprite(COULEURS.ok, 0.9); s.scale.setScalar(0.17); groupe.add(s); return s; });
+      t.liens.push({ cle: n.cle, mesh, materiau, tetes, controle: new THREE.Vector3(), actif: true, sens: 1, vitesse: 0.4 });
+    });
+
+    // Fond de particules très discret (hors du groupe : il ne tourne pas avec le réseau)
+    const pos = new Float32Array(PARTICULES * 3), taille = new Float32Array(PARTICULES), phase = new Float32Array(PARTICULES);
+    let graine = 7;
+    const hasard = () => ((graine = (graine * 16807) % 2147483647) / 2147483647);
+    for (let i = 0; i < PARTICULES; i++) {
+      pos[3 * i] = (hasard() - 0.5) * 22; pos[3 * i + 1] = (hasard() - 0.5) * 15; pos[3 * i + 2] = -2.5 - hasard() * 8;
+      taille[i] = 1.2 + hasard() * 2.2; phase[i] = hasard() * 6.28;
+    }
+    const geoP = new THREE.BufferGeometry();
+    geoP.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    geoP.setAttribute('aTaille', new THREE.BufferAttribute(taille, 1));
+    geoP.setAttribute('aPhase', new THREE.BufferAttribute(phase, 1));
+    t.particules = new THREE.Points(geoP, additif(THREE, new THREE.ShaderMaterial({
+      vertexShader: VS_PARTICULES, fragmentShader: FS_PARTICULES,
+      uniforms: { uEchelle: { value: 10 }, uTemps: temps, uOpacite: { value: 0.32 } },
+    })));
+    t.particules.frustumCulled = false;
+    t.particules.renderOrder = -2;
+    scene.add(t.particules);
+
+    // Bloom maison : scène dans une texture, zones brillantes floutées au quart de la résolution
+    const ecran = new THREE.Mesh(new THREE.PlaneGeometry(2, 2));
+    ecran.frustumCulled = false;
+    const passe = (fs, uniforms) => new THREE.ShaderMaterial({ vertexShader: VS_ECRAN, fragmentShader: fs, uniforms, depthTest: false, depthWrite: false });
+    t.post = {
+      ecran, scene: new THREE.Scene().add(ecran), camera: new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1),
+      seuil: passe(FS_SEUIL, { tSource: { value: null }, uTexel: { value: new THREE.Vector2() }, uSeuil: { value: 0.4 } }),
+      flou: passe(FS_FLOU, { tSource: { value: null }, uPas: { value: new THREE.Vector2() } }),
+      composition: passe(FS_COMPOSITION, { tScene: { value: null }, tBloom: { value: null }, uBloom: { value: 0.95 } }),
+    };
+    const flottant = rendu.capabilities.isWebGL2 && (rendu.extensions.has('EXT_color_buffer_float') || rendu.extensions.has('EXT_color_buffer_half_float'));
+    const options = { type: flottant ? THREE.HalfFloatType : THREE.UnsignedByteType, depthBuffer: false };
+    t.post.rtScene = new THREE.WebGLRenderTarget(1, 1, { ...options, depthBuffer: true, samples: rendu.capabilities.isWebGL2 ? 4 : 0 });
+    t.post.rtA = new THREE.WebGLRenderTarget(1, 1, options);
+    t.post.rtB = new THREE.WebGLRenderTarget(1, 1, options);
     this.#majStyles3D();
   }
 
-  /** Positions des sphères d'après la taille de la zone (l'ellipse remplit la scène). */
+  /** Positions de repos des sphères d'après la taille de la zone (l'ellipse remplit la scène). */
   #positions3D() {
     const t = this.trois;
     const { rx, ry, cy } = this.#cadre();
@@ -332,40 +628,14 @@ export class SceneReseau {
     t.pxParUnite = pxParUnite;
     const pos = disposition(this.reseau.agents.length);
     this.reseau.agents.forEach((n, i) => {
-      const x = (pos[i].x * rx * reduction) / pxParUnite, y = (pos[i].y * ry * reduction) / pxParUnite, z = pos[i].z * profondeur;
       const o = t.noeuds.get(n.cle);
-      o.pos.set(x, y, z);
-      o.mesh.position.copy(o.pos);
-      o.halo.position.copy(o.pos);
+      o.base.set((pos[i].x * rx * reduction) / pxParUnite, (pos[i].y * ry * reduction) / pxParUnite, pos[i].z * profondeur);
+      // Bulles du fond un peu plus petites et moins lumineuses
+      const fond = Math.max(0, -pos[i].z) / 0.55;
+      o.rayon = o.rayonBase * (1 - 0.15 * fond);
+      o.profondeur = 1 - 0.38 * fond;
     });
-    // Liens : reconstruits (épaisseur en pixels, pointillés pour le contexte)
-    for (const l of t.liens) { t.groupe.remove(l.objet); l.objet.geometry.dispose(); l.objet.material.dispose(); }
-    t.liens = [];
-    t.materiauxLignes = [];
-    for (const n of this.reseau.agents) {
-      const o = t.noeuds.get(n.cle);
-      const p = [o.pos.x, o.pos.y, o.pos.z, 0, 0, 0];
-      let objet;
-      const dec = n.poids === 'decision';
-      if (t.lignes) {
-        const { LineSegments2, LineSegmentsGeometry, LineMaterial } = t.lignes;
-        const g = new LineSegmentsGeometry();
-        g.setPositions(p);
-        const m = new LineMaterial({ linewidth: dec ? 3 : 1.6, transparent: true, depthWrite: false, dashed: !dec, dashSize: 0.14, gapSize: 0.12 });
-        m.resolution.set(this.largeur, this.hauteur);
-        t.materiauxLignes.push(m);
-        objet = new LineSegments2(g, m);
-        objet.computeLineDistances();
-      } else {
-        const g = new t.THREE.BufferGeometry().setAttribute('position', new t.THREE.Float32BufferAttribute(p, 3));
-        objet = new t.THREE.LineSegments(g, dec ? new t.THREE.LineBasicMaterial({ transparent: true }) : new t.THREE.LineDashedMaterial({ transparent: true, dashSize: 0.14, gapSize: 0.12 }));
-        objet.computeLineDistances();
-      }
-      objet.renderOrder = -1;
-      t.groupe.add(objet);
-      t.liens.push({ cle: n.cle, objet });
-    }
-    this.#majStyles3D();
+    this.#deriver(0);
   }
 
   /** Couleurs selon l'état ; pas d'impulsion pour un agent en panne ; un agent dégradé garde ses couleurs. */
@@ -377,42 +647,88 @@ export class SceneReseau {
       const o = t.noeuds.get(n.cle);
       if (!o) continue;
       const panne = n.etat === 'panne';
-      o.mesh.material.color.setHex(c);
-      o.mesh.material.emissive.setHex(c);
-      o.mesh.material.emissiveIntensity = panne ? 0.18 : 0.38;
-      o.halo.material.color.setHex(c);
-      o.halo.material.opacity = panne ? 0.2 : 0.45;
+      o.panne = panne;
+      o.verre.material.uniforms.uCouleur.value.setHex(c);
+      o.verre.material.uniforms.uBord.value = panne ? 0.55 : 1;
+      o.verre.material.uniforms.uNoyau.value = panne ? 0.12 : 0.45;
+      o.coeur.material.color.setHex(c);
+      o.coeurBase = panne ? 0.08 : 0.3;
       const lien = t.liens.find((l) => l.cle === n.cle);
-      if (lien) {
-        lien.objet.material.color.setHex(c);
-        lien.objet.material.opacity = panne ? 0.75 : n.poids === 'decision' ? 0.85 : 0.6;
-        // En panne : trait épais interrompu (l'état ne repose pas sur la couleur seule)
-        const m = lien.objet.material;
-        if (t.lignes) {
-          const pointille = n.poids !== 'decision' || panne;
-          if (m.dashed !== pointille) { m.dashed = pointille; m.needsUpdate = true; }
-          m.dashSize = panne && n.poids === 'decision' ? 0.3 : 0.14;
-          m.gapSize = panne && n.poids === 'decision' ? 0.1 : 0.12;
-        }
-      }
+      if (!lien) continue;
+      const dec = n.poids === 'decision';
+      const u = lien.materiau.uniforms;
+      u.uCouleur.value.setHex(c);
+      u.uLargeur.value = (dec ? 3 : 1.7) + 2; // + 2 px de fondu (anticrénelage)
+      u.uOpacite.value = panne ? 0.42 : dec ? 0.85 : 0.6; // rouge terne en panne
+      // En panne : trait interrompu à longs tirets (l'état ne repose pas sur la couleur seule) ; contexte : pointillés
+      u.uTirets.value = panne ? 9 : dec ? 0 : 26;
+      u.uRemplissage.value = panne ? 0.72 : 0.5;
+      u.uActif.value = panne ? 0 : 1;
+      lien.actif = !panne;
+      lien.sens = n.sens === 'depuis_centre' ? -1 : 1;
+      lien.vitesse = dec ? 0.42 : 0.26;
+      u.uSens.value = lien.sens;
+      u.uVitesse.value = lien.vitesse;
+      for (const s of lien.tetes) { s.visible = !panne; s.material.color.setHex(c); }
     }
-    for (const imp of t.impulsions) {
-      const n = this.reseau.agents.find((a) => a.cle === imp.cle);
-      imp.actif = Boolean(n) && n.etat !== 'panne';
-      imp.sprite.visible = imp.actif;
-      imp.sens = n?.sens;
-      imp.vitesse = n?.poids === 'decision' ? 0.42 : 0.26;
-      imp.sprite.material.color.setHex(couleur(n?.etat));
-    }
+  }
+
+  /** Qualité : 2 = complète ; 1 = bloom allégé, moitié des particules ; 0 = sans bloom ni particules. */
+  #appliquerQualite() {
+    const t = this.trois;
+    t.particules.visible = this.qualite > 0;
+    t.particules.geometry.setDrawRange(0, this.qualite === 2 ? PARTICULES : PARTICULES / 2);
+    this.#redimensionner3D();
   }
 
   #redimensionner3D() {
     const t = this.trois;
-    t.rendu.setPixelRatio(Math.min(devicePixelRatio || 1, 2.5));
+    const ratio = Math.min(devicePixelRatio || 1, this.qualite === 0 ? 1.5 : 2);
+    t.rendu.setPixelRatio(ratio);
     t.rendu.setSize(this.largeur, this.hauteur, false);
     t.camera.aspect = this.largeur / this.hauteur;
     t.camera.updateProjectionMatrix();
+    const L = Math.max(1, Math.round(this.largeur * ratio)), H = Math.max(1, Math.round(this.hauteur * ratio));
+    t.post.rtScene.setSize(L, H);
+    const l4 = Math.max(1, Math.round(L / 4)), h4 = Math.max(1, Math.round(H / 4));
+    t.post.rtA.setSize(l4, h4);
+    t.post.rtB.setSize(l4, h4);
+    t.post.seuil.uniforms.uTexel.value.set(1 / L, 1 / H); // 4 lectures bilinéaires = moyenne 4 × 4
+    t.post.l4 = l4; t.post.h4 = h4;
+    t.resolution.value.set(this.largeur, this.hauteur);
+    t.particules.material.uniforms.uEchelle.value = 9 * ratio;
     this.#positions3D();
+  }
+
+  /** Dérive douce et désynchronisée de chaque bulle ; liens et têtes d'impulsion suivent. */
+  #deriver(s) {
+    const t = this.trois;
+    for (const o of t.noeuds.values()) {
+      const [p1, p2, p3] = o.phases, [f1, f2, f3] = o.frequences;
+      o.pos.set(
+        o.base.x + Math.sin(s * f1 * 2 * Math.PI * 0.5 + p1) * o.amplitude,
+        o.base.y + Math.sin(s * f2 * 2 * Math.PI * 0.5 + p2) * o.amplitude * 0.85,
+        o.base.z + Math.sin(s * f3 * 2 * Math.PI * 0.5 + p3) * o.amplitude * 0.7,
+      );
+      o.racine.position.copy(o.pos);
+      o.racine.scale.setScalar(o.rayon * o.echelle);
+    }
+    const c = t.centre.pos;
+    for (const lien of t.liens) {
+      const a = t.noeuds.get(lien.cle).pos;
+      // Point de contrôle : milieu décalé perpendiculairement (tous dans le même sens) et un peu vers l'avant
+      const dx = c.x - a.x, dy = c.y - a.y;
+      lien.controle.set((a.x + c.x) / 2 - dy * 0.2, (a.y + c.y) / 2 + dx * 0.2, (a.z + c.z) / 2 + 0.25);
+      const u = lien.materiau.uniforms;
+      u.uA.value.copy(a); u.uB.value.copy(lien.controle); u.uC.value.copy(c);
+      if (!lien.actif) continue;
+      IMPULSIONS.forEach((phase, i) => {
+        const h = (s * lien.vitesse + phase) % 1;
+        const tete = lien.tetes[i];
+        bezier(a, lien.controle, c, lien.sens > 0 ? h : 1 - h, tete.position);
+        tete.material.opacity = Math.sin(Math.PI * h) * 0.9;
+      });
+    }
   }
 
   /** Position à l'écran (px) et rayon apparent de chaque sphère. */
@@ -427,9 +743,27 @@ export class SceneReseau {
       vc.copy(v).applyMatrix4(t.camera.matrixWorldInverse);
       const profondeur = -vc.z;
       v.project(t.camera);
-      res.push({ cle, x: (v.x + 1) / 2 * this.largeur, y: (1 - v.y) / 2 * this.hauteur, r: profondeur > 0.1 ? (o.rayon * f) / profondeur : 0, cache: profondeur <= 0.1 }); // derrière la caméra ; hors champ, la zone rogne (le bouton reste atteignable au clavier)
+      // Positions arrondies au pixel : libellés nets
+      res.push({ cle, x: Math.round((v.x + 1) / 2 * this.largeur), y: Math.round((1 - v.y) / 2 * this.hauteur), r: profondeur > 0.1 ? (o.rayon * o.echelle * f) / profondeur : 0, cache: profondeur <= 0.1 }); // derrière la caméra ; hors champ, la zone rogne (le bouton reste atteignable au clavier)
     }
     return res;
+  }
+
+  /** Réaction au toucher : appui = léger grossissement ; relâché = rebond amorti ; validation = onde lumineuse. */
+  #appuyer(cle, appui) {
+    const o = this.trois?.noeuds.get(cle);
+    if (!o) return;
+    o.cibleEchelle = appui ? 1.14 : 1;
+    this.#demander(true);
+  }
+
+  #reagir(cle) {
+    const o = this.trois?.noeuds.get(cle);
+    if (!o) return;
+    o.onde = performance.now();
+    o.cibleEchelle = 1;
+    o.vEchelle += 2.2; // petite impulsion : la bulle gonfle puis revient en rebondissant
+    this.#demander(true);
   }
 
   /* ============================== Focus (caméra vers une bulle) ============================== */
@@ -449,7 +783,8 @@ export class SceneReseau {
     const cible = (t.cible ??= { pos: new t.THREE.Vector3(), vise: new t.THREE.Vector3() });
     if (this.focusCle && t.noeuds.has(this.focusCle)) {
       const o = t.noeuds.get(this.focusCle);
-      const p = (t.vf ??= new t.THREE.Vector3()).copy(o.pos).applyMatrix4(t.groupe.matrixWorld);
+      // Position de repos (sans la dérive) : la caméra ne tangue pas
+      const p = (t.vf ??= new t.THREE.Vector3()).copy(o.base).applyMatrix4(t.groupe.matrixWorld);
       const d = 6;
       const demi = d * Math.tan((CHAMP * Math.PI) / 360);
       const fraction = typeof this.fractionFocus === 'function' ? this.fractionFocus() : this.fractionFocus;
@@ -500,6 +835,7 @@ export class SceneReseau {
       if (!depart || e.pointerId !== depart.id || this.focusCle) return;
       if (!this.aGlisse && Math.hypot(e.clientX - depart.x, e.clientY - depart.y) > 7) {
         this.aGlisse = true;
+        for (const cle of this.boutons.keys()) this.#appuyer(cle, false); // un glissement n'est pas un appui
         try { c.setPointerCapture(e.pointerId); } catch { /* idem */ }
       }
       if (!this.aGlisse) return;
@@ -539,6 +875,7 @@ export class SceneReseau {
     }, { passive: false });
   }
 
+
   /* ============================== Boucle ============================== */
 
   definirActif(actif) {
@@ -553,65 +890,135 @@ export class SceneReseau {
     if (this.actif && !document.hidden && this.svg) this.#placer(this.projections2D ?? [], true);
   }
 
-  /** Demande une image (pleine cadence si `interaction`). */
+  /** Demande une image (`interaction` : geste en cours, la rotation n'est pas rappelée). */
   #demander(interaction = false) {
     if (interaction) this.derniereInteraction = performance.now();
     this.#relancer();
+  }
+
+  /** Cadence mesurée sur 2 s ; sous 40 images/s, la qualité baisse d'un cran (bloom, puis particules). */
+  #surveillerCadence(maintenant, ecart) {
+    const m = this.mesure;
+    if (!m.debut || ecart > 250) { m.debut = maintenant; m.images = 0; return; } // reprise après une pause : on ne compte pas
+    m.images++;
+    const duree = maintenant - m.debut;
+    if (duree < 2000) return;
+    const ips = (m.images * 1000) / duree;
+    m.debut = maintenant; m.images = 0;
+    if (ips < 40 && this.qualite > 0 && maintenant - this.debut > 1500) {
+      this.qualite--;
+      this.conteneur.dataset.qualite = String(this.qualite);
+      this.#appliquerQualite();
+    }
+  }
+
+  /** Ressort critique (sans dépassement) : départ et arrivée doux. */
+  static #ressort(x, v, cible, ds) {
+    const w = PULSATION_CAMERA;
+    v.x += (w * w * (cible.x - x.x) - 2 * w * v.x) * ds; x.x += v.x * ds;
+    v.y += (w * w * (cible.y - x.y) - 2 * w * v.y) * ds; x.y += v.y * ds;
+    v.z += (w * w * (cible.z - x.z) - 2 * w * v.z) * ds; x.z += v.z * ds;
   }
 
   #image(maintenant) {
     this.raf = 0;
     if (!this.actif || document.hidden || !this.trois) return;
     this.raf = requestAnimationFrame(this.boucle);
-    const enGeste = this.pointeurs.size > 0 || maintenant - this.derniereInteraction < 1500;
-    // Au repos : 30 images/s (les impulsions continuent) ; pendant un geste : pleine cadence
-    if (!enGeste && maintenant - this.dernierRendu < 32) return;
-    const dt = Math.min(3, (maintenant - (this.dernierRendu || maintenant)) / 16.7 || 1);
+    const ecart = maintenant - (this.dernierRendu || maintenant);
     this.dernierRendu = maintenant;
+    this.#surveillerCadence(maintenant, ecart);
+    const dt = Math.min(3, ecart / 16.7 || 1);
+    const secondes = Math.min(0.05, ecart / 1000 || 1 / 60);
+    const pas = Math.max(1, Math.ceil(secondes / (1 / 120))); // sous-pas : ressorts stables même à basse cadence
+    const ds = secondes / pas;
     const t = this.trois;
 
     // Rotation : inertie, amplitude limitée, retour doux à la position de face
     if (!(this.pointeurs.size && this.aGlisse)) {
-      const cibleL = 0, cibleT = 0;
-      this.vLacet += (cibleL - this.lacet) * RAPPEL * dt * (Math.abs(this.lacet) > LIMITE_LACET ? 6 : 1);
-      this.vTangage += (cibleT - this.tangage) * RAPPEL * dt * (Math.abs(this.tangage) > LIMITE_TANGAGE ? 6 : 1);
+      this.vLacet += -this.lacet * RAPPEL * dt * (Math.abs(this.lacet) > LIMITE_LACET ? 6 : 1);
+      this.vTangage += -this.tangage * RAPPEL * dt * (Math.abs(this.tangage) > LIMITE_TANGAGE ? 6 : 1);
       const a = AMORTI ** dt;
       this.vLacet *= a; this.vTangage *= a;
       this.lacet += this.vLacet * dt;
       this.tangage += this.vTangage * dt;
     }
-    this.zoom += (this.zoomCible - this.zoom) * Math.min(1, 0.15 * dt);
+    this.zoom += (this.zoomCible - this.zoom) * (1 - Math.exp(-secondes * 9));
     t.groupe.rotation.set(this.tangage, this.lacet, 0);
     t.groupe.updateMatrixWorld();
 
-    // Caméra : approche douce de sa cible (vue d'ensemble ou bulle choisie)
+    // Caméra : ressort critique vers sa cible (vue d'ensemble ou bulle choisie), ~400 ms, sans à-coup
     const cible = this.#cibleCamera();
-    const k = Math.min(1, 0.09 * dt);
-    t.camera.position.lerp(cible.pos, k);
-    t.vise = (t.vise ??= new t.THREE.Vector3()).lerp(cible.vise, k);
+    for (let i = 0; i < pas; i++) {
+      SceneReseau.#ressort(t.camPos, t.camVit, cible.pos, ds);
+      SceneReseau.#ressort(t.vise, t.viseVit, cible.vise, ds);
+    }
+    t.camera.position.copy(t.camPos);
     t.camera.lookAt(t.vise);
     t.camera.updateMatrixWorld();
 
-    // Impulsions le long des liens ; la sphère centrale « respire »
+    // Bulles : rebond amorti, onde au toucher, lumière (profondeur, focus) en fondu de ~350 ms
     const s = (maintenant - this.debut) / 1000;
-    t.haloCentre.scale.setScalar(RAYON_CENTRE * (4.8 + 0.5 * Math.sin(s * 1.6)));
-    for (const imp of t.impulsions) {
-      if (!imp.actif) continue;
-      const o = t.noeuds.get(imp.cle);
-      let u = (s * imp.vitesse + imp.phase) % 1;
-      if (imp.sens === 'depuis_centre') u = 1 - u;
-      imp.sprite.position.copy(o.pos).multiplyScalar(1 - u);
-      imp.sprite.material.opacity = Math.sin(Math.PI * u) * 0.95;
+    t.temps.value = s;
+    const fondu = 1 - Math.exp(-secondes / 0.11);
+    for (const o of t.noeuds.values()) {
+      for (let i = 0; i < pas; i++) {
+        o.vEchelle += (RESSORT.raideur * (o.cibleEchelle - o.echelle) - RESSORT.amorti * o.vEchelle) * ds;
+        o.echelle += o.vEchelle * ds;
+      }
+      const u = o.verre.material.uniforms;
+      const onde = o.onde > 0 ? (maintenant - o.onde) / 750 : 2;
+      u.uOnde.value = onde > 0 && onde < 1 ? Math.max(0.001, onde) : 0;
+      if (onde >= 1) o.onde = -1;
+      o.lumiereCible = this.focusCle && this.focusCle !== o.cle ? 0.3 : 1;
+      o.lumiere += (o.lumiereCible - o.lumiere) * fondu;
+      u.uLumiere.value = o.lumiere * o.profondeur;
+      o.coeur.material.opacity = (o.coeurBase ?? 0.5) * o.lumiere * o.profondeur;
     }
-    t.rendu.render(t.scene, t.camera);
+    // Centre : noyau d'énergie qui respire (cycle de 4,5 s), anneaux en rotation lente
+    const souffle = 0.5 + 0.5 * Math.sin((s * 2 * Math.PI) / 4.5);
+    t.energie.scale.setScalar(0.38 + 0.07 * souffle);
+    t.energie.material.uniforms.uSouffle.value = 0.7 + 0.4 * souffle;
+    t.centre.coeur.scale.setScalar(0.7 + 0.2 * souffle);
+    t.anneaux[0].rotation.z += 0.16 * secondes;
+    t.anneaux[1].rotation.z -= 0.1 * secondes;
+    t.anneaux[1].rotation.x += 0.035 * secondes;
+    t.particules.rotation.y = Math.sin(s * 0.05) * 0.06;
+    this.#deriver(s);
+    this.#rendre();
 
-    // Libellés : recalculés seulement si la vue a bougé
-    const sig = `${this.lacet.toFixed(4)}|${this.tangage.toFixed(4)}|${t.camera.position.x.toFixed(3)},${t.camera.position.y.toFixed(3)},${t.camera.position.z.toFixed(3)}|${this.largeur}x${this.hauteur}`;
-    if (sig !== this.signature) {
-      this.signature = sig;
-      const vueEnsemble = !this.focusCle && this.zoom <= 1.02;
-      this.#placer(this.#projeter3D(), vueEnsemble);
+    // Libellés : suivent les bulles (dérive comprise), au pixel près
+    const vueEnsemble = !this.focusCle && this.zoom <= 1.02;
+    this.#placer(this.#projeter3D(), vueEnsemble);
+  }
+
+  /** Scène dans une texture, bloom au quart de la résolution, composition sur le canevas transparent. */
+  #rendre() {
+    const t = this.trois, P = t.post, r = t.rendu;
+    r.setRenderTarget(P.rtScene);
+    r.render(t.scene, t.camera);
+    if (this.qualite > 0) {
+      P.ecran.material = P.seuil;
+      P.seuil.uniforms.tSource.value = P.rtScene.texture;
+      r.setRenderTarget(P.rtA);
+      r.render(P.scene, P.camera);
+      for (const k of this.qualite === 2 ? [1, 2.2] : [1.6]) {
+        P.ecran.material = P.flou;
+        P.flou.uniforms.tSource.value = P.rtA.texture;
+        P.flou.uniforms.uPas.value.set(k / P.l4, 0);
+        r.setRenderTarget(P.rtB);
+        r.render(P.scene, P.camera);
+        P.flou.uniforms.tSource.value = P.rtB.texture;
+        P.flou.uniforms.uPas.value.set(0, k / P.h4);
+        r.setRenderTarget(P.rtA);
+        r.render(P.scene, P.camera);
+      }
     }
+    P.ecran.material = P.composition;
+    P.composition.uniforms.tScene.value = P.rtScene.texture;
+    P.composition.uniforms.tBloom.value = P.rtA.texture;
+    P.composition.uniforms.uBloom.value = this.qualite === 2 ? 0.95 : this.qualite === 1 ? 0.7 : 0;
+    r.setRenderTarget(null);
+    r.render(P.scene, P.camera);
   }
 
   detruire() {
@@ -620,9 +1027,13 @@ export class SceneReseau {
     this.observateur.disconnect();
     document.removeEventListener('visibilitychange', this.surVisibilite);
     if (this.trois) {
-      this.trois.rendu.dispose();
-      this.trois.scene.traverse((o) => { o.geometry?.dispose?.(); o.material?.dispose?.(); });
-      this.trois.halo.dispose();
+      const { rendu, scene, post, halo } = this.trois;
+      scene.traverse((o) => { o.geometry?.dispose?.(); o.material?.dispose?.(); });
+      post.ecran.geometry.dispose();
+      [post.seuil, post.flou, post.composition].forEach((m) => m.dispose());
+      [post.rtScene, post.rtA, post.rtB].forEach((rt) => rt.dispose());
+      halo.dispose();
+      rendu.dispose();
     }
     this.trois = null;
     this.svg = null;
