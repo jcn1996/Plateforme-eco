@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genere_le": "2026-11-15T14:43:17Z",
+    "genere_le": "2026-11-16T07:31:41Z",
     "source": "agent-chef",
     "version_agent": "1.0",
     "description": "Entrées, recalcul, changements de verdict, alertes et briefing, à chaque exécution",
@@ -9,9 +9,9 @@
       "libelle": "Chef d'orchestre",
       "ordre": 10,
       "workflow": "agent-chef.yml",
-      "derniere_execution": "2026-11-15T14:58:30Z",
-      "prochaine_prevue": "2026-11-16T07:15:00Z",
-      "intervalle_min": 1410,
+      "derniere_execution": "2026-11-16T07:31:41Z",
+      "prochaine_prevue": "2026-11-16T07:45:00Z",
+      "intervalle_min": 30,
       "planning": {
         "crons": [
           "15 7 * * *",
@@ -20,86 +20,92 @@
         ],
         "fuseau": "UTC"
       },
-      "sources_total": 15,
-      "sources_ok": 15,
+      "sources_total": 14,
+      "sources_ok": 12,
       "sources": [
         {
           "nom": "Yahoo Finance (cours des ETF sectoriels)",
           "etat": "ok",
           "detail": "33/33 ETF sectoriels",
-          "derniere_donnee_valide": "2026-11-15T14:43:17Z"
+          "derniere_donnee_valide": "2026-11-16T07:31:41Z"
         },
         {
           "nom": "Émetteurs et Yahoo Finance (flux des ETF sectoriels : SSGA, iShares)",
           "etat": "ok",
-          "detail": "ssga : 11, ishares : 11, yahoo_parts : 8",
-          "derniere_donnee_valide": "2026-11-15T14:43:17Z"
+          "detail": "ssga : 11, ishares : 11, yahoo_parts : 15",
+          "derniere_donnee_valide": "2026-11-16T07:31:41Z"
         },
         {
           "nom": "Agent pays (data/pays.json)",
           "etat": "ok",
           "detail": "à jour (1 h) ; agent dégradé : pèse moins",
-          "derniere_donnee_valide": "2026-11-15T13:53:58Z"
+          "derniere_donnee_valide": "2026-11-16T06:22:03Z"
         },
         {
           "nom": "Agent macro (data/macro.json)",
           "etat": "ok",
-          "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-15T14:16:35Z"
+          "detail": "à jour (1 h)",
+          "derniere_donnee_valide": "2026-11-16T06:46:53Z"
         },
         {
           "nom": "Agent marchés (data/marches.json)",
           "etat": "ok",
           "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-15T14:42:40Z"
+          "derniere_donnee_valide": "2026-11-16T07:16:34Z"
         },
         {
           "nom": "Agent risque (data/risque.json)",
           "etat": "ok",
-          "detail": "à jour (13 h)",
-          "derniere_donnee_valide": "2026-11-15T02:08:49Z"
+          "detail": "à jour (5 h)",
+          "derniere_donnee_valide": "2026-11-16T02:24:22Z"
         },
         {
           "nom": "Agent géopolitique (data/geopolitique.json)",
           "etat": "ok",
           "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-15T14:41:16Z"
+          "derniere_donnee_valide": "2026-11-16T07:16:29Z"
         },
         {
           "nom": "Agent matières premières (data/matieres_premieres.json)",
           "etat": "ok",
-          "detail": "à jour (36 h) ; agent dégradé : pèse moins",
+          "detail": "à jour (53 h) ; agent dégradé : pèse moins",
           "derniere_donnee_valide": "2026-11-14T02:32:40Z"
         },
         {
           "nom": "Agent entreprises (data/entreprises.json)",
-          "etat": "ok",
-          "detail": "à jour (28 h)",
+          "etat": "périmée",
+          "detail": "donnée de 44 h (au-delà de 30 h) : pèse moins",
           "derniere_donnee_valide": "2026-11-14T11:14:38Z"
         },
         {
           "nom": "Agent entreprises (pépites) (data/pepites.json)",
-          "etat": "ok",
-          "detail": "à jour (28 h)",
+          "etat": "périmée",
+          "detail": "donnée de 44 h (au-delà de 30 h) : pèse moins",
           "derniere_donnee_valide": "2026-11-14T11:14:38Z"
         },
         {
           "nom": "Agent initiés (data/inities.json)",
           "etat": "ok",
-          "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-15T14:18:52Z"
+          "detail": "à jour (1 h)",
+          "derniere_donnee_valide": "2026-11-16T06:48:57Z"
         },
         {
           "nom": "Analyses à la demande (data/analyses/index.json)",
           "etat": "ok",
-          "detail": "à jour (289 h)",
+          "detail": "à jour (306 h)",
           "derniere_donnee_valide": "2026-11-03T13:35:53Z"
         },
         {
           "nom": "Contradicteur (agent risque) (data/signaux/revues.json)",
           "etat": "ok",
-          "detail": "à jour (12 h)",
-          "derniere_donnee_valide": "2026-11-15T02:10:21Z"
+          "detail": "à jour (5 h)",
+          "derniere_donnee_valide": "2026-11-16T02:24:57Z"
+        },
+        {
+          "nom": "Gemini (rédaction du briefing)",
+          "etat": "information",
+          "detail": "rédaction par règles : Gemini indisponible sur toute la chaîne de modèles : gemini-flash-latest : HTTP 503 : { \"error\": { \"code\": 503, \"message\": \"This model is currently experiencing high demand. ; nouvelle tentative de rédaction vers 08:01 UTC",
+          "derniere_donnee_valide": null
         },
         {
           "nom": "Google Drive (dépôt du briefing, facultatif)",
@@ -111,17 +117,14 @@
           "nom": "Yahoo Finance (suivi de performance des verdicts)",
           "etat": "ok",
           "detail": "0 mesure(s) ; 0 verdict(s) arrivé(s) à échéance",
-          "derniere_donnee_valide": "2026-11-15T14:43:17Z"
-        },
-        {
-          "nom": "Gemini (rédaction du briefing)",
-          "etat": "ok",
-          "detail": "briefing rédigé par gemini-3.5-flash-lite",
-          "derniere_donnee_valide": "2026-11-15T14:58:30Z"
+          "derniere_donnee_valide": "2026-11-16T07:31:41Z"
         }
       ],
-      "degrade": false,
-      "raisons": [],
+      "degrade": true,
+      "raisons": [
+        "Agent entreprises (data/entreprises.json) : périmée",
+        "Agent entreprises (pépites) (data/pepites.json) : périmée"
+      ],
       "palier": "Vigilance"
     }
   },
@@ -7067,11 +7070,92 @@
       "genere_le": "2026-11-15T14:58:30Z",
       "mode": "redaction",
       "reprise_redaction": "aucune rédaction en attente"
+    },
+    {
+      "genere_le": "2026-11-16T07:31:41Z",
+      "mode": "complet",
+      "recalcul": true,
+      "declencheurs": [],
+      "palier": "Vigilance",
+      "opportunites": 155,
+      "changements": [
+        "Uranium : « Alléger » → « Neutre »",
+        "Pétrole Brent : « Renforcer » → « Neutre »",
+        "Gaz naturel américain : « Renforcer » → « Neutre »",
+        "Rubis : « Renforcer » → « Neutre »"
+      ],
+      "alertes": 4,
+      "alertes_ecartees": [
+        "inities · Altimmune, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 89/100) : société hors de l'univers analysé ou sans note",
+        "inities · Babcock & Wilcox Enterprises, Inc. : 4 dirigeants achètent sur le marché en 30 jours (scor : société hors de l'univers analysé ou sans note",
+        "inities · Hudson Pacific Properties, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 9 : société hors de l'univers analysé ou sans note",
+        "inities · FutureFuel Corp. : 4 dirigeants achètent sur le marché en 30 jours (score 95/100) : société hors de l'univers analysé ou sans note",
+        "inities · Csquare, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 95/100) : société hors de l'univers analysé ou sans note",
+        "inities · Seth Klarman (Baupost Group LLC) ouvre une position dans HONEYWELL AEROSPACE INC (3,5 % du : fonds, véhicule de crédit, holding ou SPAC",
+        "inities · Seth Klarman (Baupost Group LLC) ouvre une position dans SITEONE LANDSCAPE SUPPLY INC (2,2 : société hors de l'univers analysé ou sans note",
+        "inities · INTERMARKET CORP/NY déclare 4,6 % de PYXUS INTERNATIONAL, INC. (13D, intention d'influence : société hors de l'univers analysé ou sans note",
+        "inities · NEW ENTERPRISE ASSOCIATES 13 LP déclare 5,1 % de Coursera, Inc. (13D, intention d'influenc : société hors de l'univers analysé ou sans note"
+      ],
+      "exclues": [
+        "Azimut Holding S.p.A.",
+        "Bajaj Finserv Ltd.",
+        "China International Capital Corporation Limited",
+        "Equitable Holdings, Inc.",
+        "Georgia Capital PLC",
+        "Hilltop Holdings Inc.",
+        "Investor AB (publ)",
+        "ORIX Corporation",
+        "Partners Group Holding AG",
+        "Patria Investments Limited",
+        "SEI Investments Company",
+        "Victory Capital Holdings, Inc.",
+        "Virtus Investment Partners, Inc.",
+        "Vontobel Holding AG",
+        "Voya Financial, Inc.",
+        "Vylor Inc.",
+        "Wendel",
+        "Yuanta Financial Holding Co., Ltd."
+      ],
+      "coherence_retrogradees": [],
+      "raison_briefing_regles": "Gemini indisponible sur toute la chaîne de modèles : gemini-flash-latest : HTTP 503 : { \"error\": { \"code\": 503, \"message\": \"This model is currently experiencing high demand. ; nouvelle tentative de rédaction vers 08:01 UTC",
+      "briefing": "règles",
+      "reprise_redaction": null,
+      "gemini": {
+        "appels": 3,
+        "reussites": 0,
+        "quota_atteint": false,
+        "rejets": [
+          "réponse JSON illisible"
+        ],
+        "erreurs": [
+          "gemini-flash-latest : HTTP 503 : { \"error\": { \"code\": 503, \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\", \"statu (après"
+        ]
+      },
+      "suivi": {
+        "ajoutes": 4,
+        "mesures": 0,
+        "en_attente": 0,
+        "total": 260,
+        "erreur": null
+      },
+      "entrees": {
+        "pays": "à jour (dégradé)",
+        "macro": "à jour",
+        "marches": "à jour",
+        "risque": "à jour",
+        "geopolitique": "à jour",
+        "matieres_premieres": "à jour (dégradé)",
+        "entreprises": "périmée",
+        "pepites": "périmée",
+        "inities": "à jour",
+        "analyses": "à jour",
+        "revues": "à jour"
+      }
     }
   ],
-  "derniere_execution": "2026-11-15T14:58:30Z",
-  "prochaine_prevue": "2026-11-16T07:15:00Z",
-  "intervalle_min": 1410,
+  "derniere_execution": "2026-11-16T07:31:41Z",
+  "prochaine_prevue": "2026-11-16T07:45:00Z",
+  "intervalle_min": 30,
   "planning": {
     "crons": [
       "15 7 * * *",
