@@ -1,13 +1,67 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-16T16:59:05Z",
+    "genere_le": "2026-11-16T17:31:58Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "geopolitique|hausse_score|JP|2026-11-16",
+      "revu_le": "2026-11-16T17:31:44Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "JP",
+        "date": "2026-11-16",
+        "importance": "moyenne",
+        "titre": "Japon : score de risque géopolitique 27/100, +13 pts sur 7 jours"
+      },
+      "objection": "La baisse de l'ETF EWJ de −1,4 % depuis la veille du signal [F1] suggère une vulnérabilité immédiate face à cette tension géopolitique.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "ETF EWJ (Japon) : −1,4 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWJ"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "JP": {
+          "objection": "Objections spécifiques : le marché ne confirme pas pour Japon (ETF EWJ à −1,4 % depuis la veille du signal) [F1].",
+          "ajustement": "abaisser"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "geopolitique|hausse_score|TW|2026-11-16",
+      "revu_le": "2026-11-16T17:31:44Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "TW",
+        "date": "2026-11-16",
+        "importance": "moyenne",
+        "titre": "Taïwan : score de risque géopolitique 31/100, +17 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
     {
       "id": "geopolitique|evenement_grave|evt-1d8b75d91b8c|2026-11-16",
       "revu_le": "2026-11-16T16:31:34Z",
@@ -3928,41 +3982,6 @@
       "methode": "règles",
       "confiance": "moyen",
       "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|TW|2026-11-10",
-      "revu_le": "2026-11-14T02:41:59Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "TW",
-        "date": "2026-11-10",
-        "importance": "moyenne",
-        "titre": "Taïwan : score de risque géopolitique 16/100, +16 pts sur 7 jours"
-      },
-      "objection": "Malgré la hausse du score de risque à 16/100, l'ETF EWT progresse de +1,8 % depuis la veille, ce qui contredit un impact négatif immédiat [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "ETF EWT (Taïwan) : +1,8 % depuis la veille du signal",
-          "source": "Yahoo Finance via yfinance, EWT"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "TW": {
-          "objection": "Objections spécifiques : le marché ne confirme pas pour Taïwan (ETF EWT à +1,8 % depuis la veille du signal) [F1].",
-          "ajustement": "abaisser"
-        }
-      },
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
     },
     {
       "id": "entreprises|guidance_relevee|MRCY|2026-11-10",
