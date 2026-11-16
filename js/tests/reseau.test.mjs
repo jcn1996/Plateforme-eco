@@ -26,8 +26,8 @@ const CHEF = {
   date: '2026-11-16',
   entrees: [
     { cle: 'risque', libelle: 'Agent risque', etat: 'à jour', degrade: false, raisons_degrade: [] },
-    { cle: 'entreprises', libelle: 'Agent entreprises', etat: 'périmée', age_h: 48.8, degrade: false, raisons_degrade: [] },
-    { cle: 'pepites', libelle: 'Agent entreprises (pépites)', etat: 'à jour', degrade: true, raisons_degrade: ['Source X perdue'] },
+    { cle: 'entreprises', libelle: 'Agent entreprises', etat: 'en panne', age_h: 60.8, degrade: false, raisons_degrade: [], panne: { raison: 'exécution prévue le 2026-11-16 22:30 UTC manquée (marge de 11,2 h)' } },
+    { cle: 'pepites', libelle: 'Agent entreprises (pépites)', etat: 'dégradé', degrade: true, raisons_degrade: ['Source X : perdue'], raisons_depuis: { 'Source X': '2026-11-14T15:37:00Z' } },
   ],
   selections: {
     date: '2026-11-16',
@@ -67,20 +67,23 @@ test('fichiersReseau : fichiers cités, sans doublon', () => {
   assert.deepEqual(fichiersReseau(CONFIG), ['data/portefeuille.json', 'data/risque.json', 'data/chef.json', 'data/donnees_alternatives.json']);
 });
 
-test('etatAgent : en panne > données périmées > dégradé > OK, avec un texte pour chaque état', () => {
+test('etatAgent : trois états (en panne > dégradé > OK), avec la raison et la date pour chacun', () => {
   assert.equal(etatAgent({ statutJournal: 'ok' }).etat, 'ok');
   assert.equal(etatAgent({ statutJournal: 'pause' }).etat, 'ok');
-  const panne = etatAgent({ statutJournal: 'panne', journal: { derniere_execution: '2026-11-14T10:37:27Z' }, entrees: [{ cle: 'x', etat: 'périmée', age_h: 50 }] });
+  const panne = etatAgent({ statutJournal: 'panne', journal: { derniere_execution: '2026-11-14T10:37:27Z' }, entrees: [{ cle: 'x', etat: 'en panne', panne: { raison: 'exécution prévue manquée' } }] });
   assert.equal(panne.etat, 'panne');
   assert.equal(panne.raisons.length, 2);
-  const perimee = etatAgent({ statutJournal: 'ok', entrees: [{ cle: 'x', libelle: 'Agent X', etat: 'périmée', age_h: 48.8 }] });
-  assert.equal(perimee.etat, 'perimee');
-  assert.match(perimee.raisons[0], /Agent X : données de 49 h, périmées/);
-  assert.equal(etatAgent({ entrees: [{ cle: 'x', etat: 'manquante' }] }).etat, 'perimee');
-  const degrade = etatAgent({ statutJournal: 'ok', entrees: [{ cle: 'x', etat: 'à jour', degrade: true, raisons_degrade: ['Source perdue'] }] });
+  const echec = etatAgent({ statutJournal: 'panne', journal: { derniere_execution: '2026-11-14T10:37:27Z', derniere_tentative: { date: '2026-11-15T10:00:00Z', statut: 'echec', raison: 'HTTP 500' } } });
+  assert.match(echec.raisons[0], /en échec.*HTTP 500/);
+  // Entrée du chef en panne (exécution prévue manquée) ou manquante : en panne, plus d'état « périmé »
+  const ep = etatAgent({ statutJournal: 'ok', entrees: [{ cle: 'x', libelle: 'Agent X', etat: 'en panne', panne: { raison: 'exécution prévue le 2026-11-16 22:30 UTC manquée' } }] });
+  assert.equal(ep.etat, 'panne');
+  assert.match(ep.raisons[0], /Agent X : exécution prévue le 2026-11-16 22:30 UTC manquée/);
+  assert.equal(etatAgent({ entrees: [{ cle: 'x', etat: 'manquante' }] }).etat, 'panne');
+  // Dégradé : quelle source, depuis quand
+  const degrade = etatAgent({ statutJournal: 'ok', entrees: [{ cle: 'x', etat: 'dégradé', degrade: true, raisons_degrade: ['Argentine · Flux : perdue globalx'], raisons_depuis: { 'Argentine · Flux': '2026-11-14T15:00:00Z' } }] });
   assert.equal(degrade.etat, 'degrade');
-  assert.deepEqual(degrade.raisons, ['Source perdue']);
-  assert.equal(etatAgent({ statutJournal: 'retard' }).etat, 'degrade');
+  assert.deepEqual(degrade.raisons, ['Argentine · Flux : perdue globalx — depuis le 14/11']);
   assert.equal(etatAgent({ statutJournal: 'degrade', journal: { raisons: ['Indicateur sans source'] } }).raisons[0], 'Indicateur sans source');
 });
 
@@ -102,7 +105,8 @@ test('calculerReseau : infos lues dans les données, états, poids et sens des l
   assert.equal(par.risque.etat, 'ok');
   assert.equal(par.risque.poids, 'decision');
   assert.equal(par.entreprises.info, '3 retenues');
-  assert.equal(par.entreprises.etat, 'perimee'); // entreprises périmée (et pépites dégradée)
+  assert.equal(par.entreprises.etat, 'panne'); // exécution prévue manquée (et pépites dégradée)
+  assert.ok(par.entreprises.raisons.some((r) => /depuis le 14\/11/.test(r)));
   assert.equal(par.trader.info, '+1,6 %');
   assert.equal(par.trader.etat, 'panne');
   assert.equal(par.trader.sens, 'depuis_centre');

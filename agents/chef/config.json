@@ -2,7 +2,7 @@
   "_commentaire": "Chef d'orchestre : tous les poids et seuils. Méthode détaillée dans agents/chef/methode.md. Les scores de famille et le score final sont sur 100 (50 = neutre).",
 
   "entrees": {
-    "_commentaire": "Fichiers lus, âge maximal avant que la donnée soit jugée périmée (heures), journal de santé de l'agent producteur. Coefficient de fraîcheur : 1 jusqu'à age_max_h, puis décroissance linéaire jusqu'à coef_perime_min à 3 × age_max_h. Agent dégradé : × coef_degrade. Confiance : coefficients par niveau.",
+    "_commentaire": "Fichiers lus et journal de santé de l'agent producteur. État de chaque entrée selon le planning de l'agent (agents/commun/sante.py, etat_execution) : « en panne » seulement si une exécution prévue a été manquée (marge de 3 à 12 h selon la durée observée de ses exécutions) ou si la dernière a échoué ; la fraîcheur décroît alors de 1 à coef_perime_min en decroissance_h heures. age_max_h ne sert que de repli pour un journal sans planning. Agent dégradé (source secondaire manquante) : × coef_degrade. Confiance : coefficients par niveau.",
     "fichiers": {
       "pays": {"fichier": "pays.json", "journal": "agent-pays.json", "libelle": "Agent pays", "age_max_h": 30},
       "macro": {"fichier": "macro.json", "journal": "agent-macro.json", "libelle": "Agent macro", "age_max_h": 30},
@@ -17,6 +17,7 @@
       "revues": {"fichier": "signaux/revues.json", "journal": "agent-risque.json", "libelle": "Contradicteur (agent risque)", "age_max_h": 30}
     },
     "coef_perime_min": 0.4,
+  "decroissance_h": 48,
     "coef_degrade": 0.8,
     "confiance": {"élevé": 1.0, "élevée": 1.0, "moyen": 0.85, "moyenne": 0.85, "faible": 0.6}
   },

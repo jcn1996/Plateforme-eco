@@ -40,7 +40,7 @@ def _j(texte: str) -> date:
 
 # ------------------------------------------------------------------ relevé du jour : choix et vérification croisée
 
-def choisir_releve(etf: str, emetteur: str, src: dict, config_flux: dict, aujourdhui: date) -> dict:
+def choisir_releve(etf: str, emetteur: str, src: dict, config_flux: dict, aujourdhui: date, etats: dict | None = None) -> dict:
     """Relevé retenu pour un ETF : l'émetteur d'abord, Yahoo Finance en secours.
     Renvoie {retenu: relevé | None, sources: [...], verification}."""
     tol_parts, tol_encours = config_flux["tolerance_parts_pct"], config_flux["tolerance_encours_pct"]
@@ -50,7 +50,9 @@ def choisir_releve(etf: str, emetteur: str, src: dict, config_flux: dict, aujour
         nom = NOMS[cle].format(etf=etf)
         donnees = src.get(f"flux_{cle}")
         if donnees is None:
-            sources.append({"source": cle, "nom": nom, "statut": "échec", "raison": "source indisponible lors de cette exécution"})
+            detail = str((etats or {}).get(f"flux_{cle}") or "").removeprefix("erreur : ")
+            sources.append({"source": cle, "nom": nom, "statut": "échec",
+                            "raison": f"source indisponible lors de cette exécution{' : ' + detail[:220] if detail else ''}"})
             continue
         r = donnees.get(etf)
         if not r:
@@ -296,6 +298,11 @@ def indicateur(etf: str | None, emetteur: str | None, choix: dict | None, serie:
     choisie = next((k for k in ("1m", "1s") if periodes.get(k, {}).get("complet")), None)
     if not choisie:
         jours = periodes["1s"]["jours_disponibles"] if "1s" in periodes else 0
+        if (choix or {}).get("verification") == "aucune_source" and (aujourdhui - fin).days >= 1:
+            pannes = " ; ".join(f"{COURTS.get(x['source'], x['source'])} : {x.get('raison')}" for x in sources if x.get("statut") == "échec")
+            return {**commun, "valeur": None, "note": None, "disponible": False, "periode_valeur": None,
+                    "raison": f"aucune source disponible depuis le relevé du {serie[-1]['date']} ({pannes or 'sources en échec'}) : "
+                              "flux déclarés manquants"}
         # La fiche montre quand même les cumuls partiels, marqués « en cours de constitution »
         return {**commun, "valeur": None, "note": None, "disponible": False, "periode_valeur": None,
                 "raison": f"relevés en cours de constitution ({len(serie)} relevé{'s' if len(serie) > 1 else ''}, "

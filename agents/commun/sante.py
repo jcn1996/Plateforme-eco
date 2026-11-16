@@ -26,10 +26,16 @@ ni dégrader l'agent).
 derniere_execution, prochaine_prevue, intervalle_min et planning sont aussi recopiés au
 premier niveau du journal.
 
-L'appli calcule elle-même le statut à l'ouverture (js/planning.js), à partir du planning :
-« en retard » / « en panne » si la première exécution prévue après la dernière exécution
-réussie manque depuis plus de 45 min / 2 h (agent à 15 min) ou 2 h / 26 h (agent quotidien),
-« dégradé » si `degrade` est vrai, « en pause » hors des heures prévues, sinon « OK ».
+Trois états, calculés de la même façon par le chef d'orchestre (etat_execution ci-dessous), l'écran
+« Santé des agents » et le réseau de l'accueil (js/planning.js, même règle) :
+- « en panne » : la première exécution prévue par le planning de l'agent après sa dernière exécution
+  réussie est passée depuis plus d'une marge (exécution manquée), ou la dernière tentative a échoué ;
+  la marge vient du planning de l'agent : 1,5 fois la durée observée de sa dernière exécution
+  (écart entre le créneau prévu et la fin réelle), entre 3 h et 12 h. Un agent qui ne tourne que
+  quelques fois par semaine n'est donc jamais « périmé » entre deux exécutions prévues ;
+- « dégradé » : l'agent a tourné, mais une source manque (`degrade` vrai) ; `raisons_depuis` donne
+  pour chaque raison la date à laquelle elle est apparue ;
+- « à jour » sinon (« en pause » dans l'écran Santé hors des heures prévues).
 
 Règle « dégradé » : un indicateur est dégradé quand il a moins de sources valides que sa
 référence, c'est-à-dire les sources valides lors de la dernière exécution saine, limitées à
@@ -148,6 +154,55 @@ def crons_du_workflow(fichier: str) -> list[str]:
     return re.findall(r"""^\s*-\s*cron:\s*["']([^"']+)["']""", texte, re.MULTILINE)
 
 
+# ------------------------- État d'exécution (règle commune) -------------------------
+
+MARGE_MIN_H, MARGE_MAX_H, FACTEUR_DUREE = 3.0, 12.0, 1.5
+
+
+def marge_h(sante: dict | None) -> float:
+    """Marge avant de déclarer une exécution prévue « manquée » : 1,5 fois la durée observée de la dernière
+    exécution (du créneau prévu auquel elle se rattache à sa fin réelle), bornée entre 3 h et 12 h."""
+    crons = ((sante or {}).get("planning") or {}).get("crons") or []
+    derniere = lire_iso((sante or {}).get("derniere_execution"))
+    if not crons or not derniere:
+        return MARGE_MIN_H
+    creneau = precedente_execution(crons, derniere)
+    duree = (derniere - creneau).total_seconds() / 3600 if creneau else 0.0
+    return round(min(MARGE_MAX_H, max(MARGE_MIN_H, FACTEUR_DUREE * duree)), 1)
+
+
+def etat_execution(sante: dict | None, maintenant: datetime) -> dict:
+    """{"etat": "à jour" | "en panne", "raison", "manquante", "marge_h"} d'après le planning de l'agent."""
+    if not sante:
+        return {"etat": "en panne", "raison": "journal absent ou illisible", "manquante": None, "marge_h": MARGE_MIN_H}
+    if sante.get("a_la_demande") or sante.get("appel_externe"):
+        return {"etat": "à jour", "raison": None, "manquante": None, "marge_h": None}
+    derniere = lire_iso(sante.get("derniere_execution"))
+    marge = marge_h(sante)
+    if not derniere:
+        return {"etat": "en panne", "raison": "aucune exécution réussie enregistrée", "manquante": None, "marge_h": marge}
+    t = sante.get("derniere_tentative")
+    if isinstance(t, dict) and t.get("statut") == "echec" and (lire_iso(t.get("date")) or derniere) > derniere:
+        return {"etat": "en panne", "raison": f"dernière exécution en échec le {t.get('date', '')[:16].replace('T', ' ')} UTC"
+                + (f" : {t['raison']}" if t.get("raison") else ""), "manquante": None, "marge_h": marge}
+    crons = (sante.get("planning") or {}).get("crons") or []
+    manquante = prochaine_execution(crons, derniere) if crons else None
+    if manquante and manquante + timedelta(hours=marge) < maintenant:
+        return {"etat": "en panne", "raison": f"exécution prévue le {iso(manquante)[:16].replace('T', ' ')} UTC manquée (marge de {str(marge).replace('.', ',').removesuffix(',0')} h)",
+                "manquante": iso(manquante), "marge_h": marge}
+    return {"etat": "à jour", "raison": None, "manquante": None, "marge_h": marge}
+
+
+def raisons_depuis(raisons: list[str], precedent: dict | None, maintenant: datetime) -> dict[str, str]:
+    """Date d'apparition de chaque raison de dégradation (clé : texte avant « : », stable d'une exécution à l'autre)."""
+    anciennes = (precedent or {}).get("raisons_depuis") or {}
+    res = {}
+    for r in raisons:
+        cle = r.split(" : ")[0]
+        res[cle] = anciennes.get(cle) or iso(maintenant)
+    return res
+
+
 # ------------------------- Écriture du bloc « sante » -------------------------
 
 def degradation(indicateurs: dict[str, dict], references: dict[str, list[str]]) -> tuple[list[str], dict]:
@@ -212,6 +267,7 @@ def bloc_sante(agent: str, libelle: str, ordre: int, workflow: str, sources: lis
         "sources": liste,
         "degrade": bool(raisons),
         "raisons": raisons,
+        "raisons_depuis": raisons_depuis(raisons, precedent, maintenant),
     }
     if references is not None:
         bloc["references"] = references

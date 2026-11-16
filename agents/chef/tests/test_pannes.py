@@ -1,4 +1,4 @@
-"""Alerte de panne : un agent quotidien sans exécution réussie depuis plus de 24 h est affiché en tête des alertes."""
+"""Alerte de panne : un agent dont une exécution prévue a été manquée (au-delà de sa marge) ou a échoué est affiché en tête des alertes."""
 import json
 import tempfile
 import unittest
@@ -32,6 +32,14 @@ class TestAlertesPannes(unittest.TestCase):
             self.assertIn("Agent pays", a["titre"])
             self.assertIn("09/11/2026", a["texte"])
             self.assertIn("signal non conforme", a["texte"])
+            # Agent de quelques exécutions par semaine, entre deux exécutions prévues : pas d'alerte
+            ent = {"meta": {"sante": {"agent": "entreprises", "derniere_execution": "2026-11-14T10:37:27Z",
+                                      "planning": {"crons": ["30 22 * * 1-5", "10 3 * * 6"]}}}}
+            (data / "journal" / "agent-entreprises.json").write_text(json.dumps(ent), encoding="utf-8")
+            index["donnees"].append({"agent": "entreprises", "libelle": "Agent entreprises", "ordre": 4, "fichier": "agent-entreprises.json"})
+            (data / "journal" / "index.json").write_text(json.dumps(index), encoding="utf-8")
+            self.assertEqual([x["id"] for x in alertes_pannes(data, datetime(2026, 11, 16, 17, 0, tzinfo=timezone.utc))
+                              if x["id"] == "panne-entreprises"], [])
 
 
 if __name__ == "__main__":

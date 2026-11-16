@@ -28,6 +28,8 @@ ISHARES = "https://www.ishares.com"
 SSGA = "https://www.ssga.com"
 VANECK_HISTO = "https://www.vaneck.com/us/en/investments/{slug}/downloads/fundhistoprices/"
 GLOBALX = "https://www.globalxetfs.com"
+GLOBALX_PAUSE_S = 5  # Global X limite le rythme des requêtes : une page de fonds toutes les 5 s au plus
+BLOCAGE_ANTI_ROBOTS = ("Security Checkpoint", "Vercel Security", "cf-challenge", "captcha")
 NAVIGATEUR = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
 
 # Libellés exacts des sources (recopiés dans chaque indicateur)
@@ -127,6 +129,15 @@ def lire_globalx(page: str) -> dict:
     return _verifier(r, "Global X")
 
 
+def diagnostic_blocage(erreur: str, corps: str) -> str | None:
+    """Réponse 429 servie par une protection anti-robots (page de contrôle à exécuter dans un navigateur) : une reprise
+    ne changera rien. Renvoie un texte explicite, ou None si ce n'est pas le cas."""
+    if "429" in erreur and any(m.lower() in (corps or "").lower() for m in BLOCAGE_ANTI_ROBOTS):
+        return ("requêtes automatiques bloquées par la protection anti-robots du site (page « Security Checkpoint », HTTP 429) ; "
+                "pas de contournement : parts en circulation déclarées manquantes tant que le blocage dure")
+    return None
+
+
 # ------------------------------------------------------------------ fichiers Excel (SSGA, VanEck)
 
 def _lignes_excel(contenu: bytes) -> list[tuple]:
@@ -200,13 +211,23 @@ def _methodes_reelles(cls):
 
     def emetteur(self, nom: str, etfs: dict) -> dict:
         """Relevés d'un émetteur pour plusieurs ETF ; un ETF en échec est sauté (journalisé)."""
+        import time
         res, erreurs = {}, []
-        for etf, cfg in etfs.items():
+        for i, (etf, cfg) in enumerate(etfs.items()):
             try:
+                if nom == "globalx" and i:
+                    time.sleep(GLOBALX_PAUSE_S)  # requêtes espacées (Global X renvoie 429 sinon)
                 if nom == "ishares":
                     res[etf] = lire_ishares(self._page(ISHARES + cfg["page"]))
                 elif nom == "globalx":
-                    res[etf] = lire_globalx(self._page(GLOBALX + cfg["page"]))
+                    try:
+                        res[etf] = lire_globalx(self._page(GLOBALX + cfg["page"]))
+                    except Exception as e:
+                        blocage = diagnostic_blocage(str(e), getattr(self.t, "derniere_reponse", ""))
+                        if blocage:
+                            erreurs.append(f"{etf} : {blocage}")
+                            break  # même blocage pour tous les fonds : inutile d'insister
+                        raise
                 elif nom == "ssga":
                     res[etf] = lire_ssga(self.t.octets(SSGA + cfg["fichier"], entetes={"User-Agent": NAVIGATEUR}))
                 elif nom == "vaneck":

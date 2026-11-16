@@ -3,28 +3,40 @@
    agent dans son journal (data/journal/*.json, champ `planning`).
    Sans dépendance au DOM : testé sous Node (js/tests/planning.test.mjs).
 
-   Statut lié au planning, à l'instant `maintenant` :
+   Même règle que le chef d'orchestre (agents/commun/sante.py, etat_execution) :
    - « manquante » : première exécution prévue après la dernière exécution
      réussie, déjà passée (null si aucune n'est passée) ;
-   - « en retard »  : elle manque depuis plus de 45 min (agent infra-horaire)
-                      ou 2 h (agent quotidien) ;
-   - « en panne »   : elle manque depuis plus de 2 h (agent infra-horaire)
-                      ou 26 h (agent quotidien) ;
-   - « en pause »   : rien ne manque et l'on est dans une longue plage sans
-                      exécution prévue (nuit) : écart entre la dernière exécution
-                      prévue et la suivante supérieur au seuil de panne.
+   - « en panne »  : elle manque depuis plus d'une marge propre à l'agent :
+     1,5 fois la durée observée de sa dernière exécution (du créneau prévu à sa
+     fin réelle), entre 3 h et 12 h. Un agent qui ne tourne que quelques fois
+     par semaine n'est jamais en panne entre deux exécutions prévues ;
+   - « en pause »  : rien ne manque et l'on est dans une longue plage sans
+     exécution prévue (nuit, week-end) ;
+   - « ok »        : sinon (y compris pendant la marge).
    ========================================================================== */
 
 const MINUTE = 60_000;
 const JOUR = 24 * 60 * MINUTE;
 const HORIZON = 35 * JOUR; // assez pour un planning mensuel (backtest) ; les jours sans exécution prévue sont sautés
 
-/** Seuils (en minutes) selon l'intervalle de base de l'agent. */
-export function seuils(intervalleBase) {
-  if (intervalleBase != null && intervalleBase <= 60) return { retard: 45, panne: 120 };
-  // Agent mensuel (backtest) : exécution de plusieurs heures, relancée par le planificateur en cas d'échec
-  if (intervalleBase != null && intervalleBase > 8 * 24 * 60) return { retard: 8 * 60, panne: 48 * 60 };
-  return { retard: 120, panne: 26 * 60 };
+export const MARGE_MIN = 3 * 60;
+export const MARGE_MAX = 12 * 60;
+
+/** Seuil (en minutes) au-delà duquel une plage sans exécution prévue est une « pause » (nuit, week-end). */
+export function seuilPause(intervalleBase) {
+  if (intervalleBase != null && intervalleBase <= 60) return 120;
+  if (intervalleBase != null && intervalleBase > 8 * 24 * 60) return 48 * 60;
+  return 26 * 60;
+}
+
+/** Marge (minutes) avant « en panne » : 1,5 × durée observée de la dernière exécution, entre 3 h et 12 h. */
+export function marge(sante) {
+  const crons = sante?.planning?.crons;
+  const derniere = Date.parse(sante?.derniere_execution ?? '');
+  if (!crons?.length || Number.isNaN(derniere)) return MARGE_MIN;
+  const creneau = precedente(crons, derniere);
+  const duree = creneau != null ? (derniere - creneau) / MINUTE : 0;
+  return Math.min(MARGE_MAX, Math.max(MARGE_MIN, Math.round(1.5 * duree)));
 }
 
 function champ(expr, mini, maxi) {
@@ -123,11 +135,11 @@ export function intervalleBase(crons, depuis = Date.UTC(2026, 0, 5)) {
 /**
  * Situation d'un agent vis-à-vis de son planning.
  * `sante` : { derniere_execution, prochaine_prevue, intervalle_min, planning: { crons, fuseau } }.
- * Renvoie { etat: 'ok' | 'pause' | 'retard' | 'panne', manquante, retardMin, prochaine, seuils, base }.
+ * Renvoie { etat: 'ok' | 'pause' | 'panne', manquante, retardMin, prochaine, marge, base }.
  */
 export function situationPlanning(sante, maintenant = Date.now()) {
   const derniere = Date.parse(sante?.derniere_execution ?? '');
-  if (Number.isNaN(derniere)) return { etat: 'panne', manquante: null, retardMin: null, prochaine: null, seuils: seuils(null), base: null };
+  if (Number.isNaN(derniere)) return { etat: 'panne', manquante: null, retardMin: null, prochaine: null, marge: MARGE_MIN, base: null };
   const crons = sante.planning?.crons?.length ? sante.planning.crons : null;
   let manquante;
   let prochaine;
@@ -147,14 +159,13 @@ export function situationPlanning(sante, maintenant = Date.now()) {
     prochaine = manquante != null && manquante > maintenant ? manquante : null;
     ecartPlage = manquante != null ? (manquante - derniere) / MINUTE : null;
   }
-  const s = seuils(base);
+  const m = marge(sante);
   if (manquante != null && manquante <= maintenant) {
     const retardMin = (maintenant - manquante) / MINUTE;
-    const etat = retardMin > s.panne ? 'panne' : retardMin > s.retard ? 'retard' : 'ok';
-    return { etat, manquante, retardMin, prochaine, seuils: s, base };
+    return { etat: retardMin > m ? 'panne' : 'ok', manquante, retardMin, prochaine, marge: m, base };
   }
-  const etat = ecartPlage != null && ecartPlage > s.panne ? 'pause' : 'ok';
-  return { etat, manquante: null, retardMin: 0, prochaine, seuils: s, base };
+  const etat = ecartPlage != null && ecartPlage > seuilPause(base) ? 'pause' : 'ok';
+  return { etat, manquante: null, retardMin: 0, prochaine, marge: m, base };
 }
 
 /** Vrai si le planning prévoit des exécutions espacées de 24 h au plus (agent « quotidien » ou plus fréquent). */

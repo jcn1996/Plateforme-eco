@@ -165,3 +165,49 @@ class TestPanneProlongee(unittest.TestCase):
             j = lire_json(chemin)
             self.assertEqual(j["meta"]["sante"]["derniere_tentative"], t)
             self.assertEqual(sante.noter_tentative(chemin, "ok")["statut"], "ok")
+
+
+class TestEtatExecution(unittest.TestCase):
+    """Règle commune (chef d'orchestre, écran Santé, réseau) : en panne seulement si une exécution prévue a été manquée."""
+    ENT = {"crons": ["30 22 * * 1-5", "10 3 * * 6"], "fuseau": "UTC"}
+    MP = {"crons": ["15 22 * * 1-5"], "fuseau": "UTC"}
+
+    def t(self, s):
+        from datetime import datetime
+        return datetime.fromisoformat(s.replace("Z", "+00:00"))
+
+    def test_marge_selon_la_duree_observee(self):
+        from agents.commun.sante import marge_h
+        self.assertEqual(marge_h({"derniere_execution": "2026-11-14T02:32:40Z", "planning": self.MP}), 6.4)  # 4 h 17 × 1,5
+        self.assertEqual(marge_h({"derniere_execution": "2026-11-14T10:37:27Z", "planning": self.ENT}), 11.2)
+        self.assertEqual(marge_h({"derniere_execution": "2026-11-16T22:31:00Z", "planning": self.ENT}), 3.0)  # minimum
+        self.assertEqual(marge_h(None), 3.0)
+
+    def test_agent_de_quelques_executions_par_semaine(self):
+        from agents.commun.sante import etat_execution
+        s = {"derniere_execution": "2026-11-14T10:37:27Z", "planning": self.ENT}
+        # lundi 17 h : 54 h sans exécution, mais aucune exécution prévue n'a été manquée
+        self.assertEqual(etat_execution(s, self.t("2026-11-16T17:00:00Z"))["etat"], "à jour")
+        self.assertEqual(etat_execution(s, self.t("2026-11-17T09:00:00Z"))["etat"], "à jour")  # dans la marge de 11,2 h
+        e = etat_execution(s, self.t("2026-11-17T10:00:00Z"))
+        self.assertEqual(e["etat"], "en panne")
+        self.assertIn("2026-11-16 22:30 UTC manquée", e["raison"])
+
+    def test_echec_et_cas_particuliers(self):
+        from agents.commun.sante import etat_execution
+        s = {"derniere_execution": "2026-11-16T15:00:00Z", "planning": {"crons": ["0 * * * *"]},
+             "derniere_tentative": {"date": "2026-11-16T16:00:00Z", "statut": "echec", "raison": "HTTP 500"}}
+        e = etat_execution(s, self.t("2026-11-16T16:05:00Z"))
+        self.assertEqual(e["etat"], "en panne")
+        self.assertIn("HTTP 500", e["raison"])
+        self.assertEqual(etat_execution({"a_la_demande": True, "derniere_execution": "2026-11-03T13:35:50Z"}, self.t("2026-11-16T16:00:00Z"))["etat"], "à jour")
+        self.assertEqual(etat_execution(None, self.t("2026-11-16T16:00:00Z"))["etat"], "en panne")
+
+    def test_raisons_datees(self):
+        from agents.commun.sante import bloc_sante
+        ind = {"Argentine · Flux étrangers": {"valides": [], "configurees": ["globalx"]}}
+        b1 = bloc_sante("pays", "Agent pays", 1, "x.yml", [], self.t("2026-11-14T15:00:00Z"), {"references": {"Argentine · Flux étrangers": ["globalx"]}},
+                        crons=["11 6 * * *"], indicateurs=ind)
+        self.assertEqual(b1["raisons_depuis"], {"Argentine · Flux étrangers": "2026-11-14T15:00:00Z"})
+        b2 = bloc_sante("pays", "Agent pays", 1, "x.yml", [], self.t("2026-11-16T15:00:00Z"), b1, crons=["11 6 * * *"], indicateurs=ind)
+        self.assertEqual(b2["raisons_depuis"], {"Argentine · Flux étrangers": "2026-11-14T15:00:00Z"})  # date d'apparition conservée

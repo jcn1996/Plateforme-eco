@@ -679,7 +679,7 @@ def qualite(tentatives: list, seuil: float = 1 / 3) -> dict:
 # Programme principal
 # ---------------------------------------------------------------------------
 
-def calculer_flux(src: dict, config: dict, historique: dict, aujourdhui: date) -> tuple[dict, set, list, list]:
+def calculer_flux(src: dict, config: dict, historique: dict, aujourdhui: date, etats: dict | None = None) -> tuple[dict, set, list, list]:
     """Flux des ETF pays. Complète `historique` avec les relevés du jour.
     Renvoie ({code: indicateur flux_etrangers}, dates modifiées, signaux, échecs et rejets)."""
     cfg = config["flux_etf"]
@@ -687,7 +687,7 @@ def calculer_flux(src: dict, config: dict, historique: dict, aujourdhui: date) -
     for code, p in config["pays"].items():
         etf = p.get("etf")
         emetteur = (cfg["emetteurs"].get(etf) or {}).get("emetteur") if etf else None
-        choix = flux_etf.choisir_releve(etf, emetteur, src, cfg, aujourdhui) if emetteur else None
+        choix = flux_etf.choisir_releve(etf, emetteur, src, cfg, aujourdhui, etats) if emetteur else None
         if choix and choix["retenu"]:
             modifiees |= set(flux_etf.completer_historique(historique, etf, choix["retenu"], choix["verification"],
                                                            cfg["remplissage_jours"], aujourdhui))
@@ -764,7 +764,7 @@ def executer(fournisseur, config: dict, ancien: dict | None, aujourdhui: date, s
     for code, cfg in config["pays"].items():
         par_pays[code], tentatives[code] = indicateurs_pays(code, cfg, src, aujourdhui, config)
     completer_valorisation(par_pays, aujourdhui)
-    resultats_flux, flux["modifiees"], flux["signaux"], echecs_flux = calculer_flux(src, config, flux["historique"], aujourdhui)
+    resultats_flux, flux["modifiees"], flux["signaux"], echecs_flux = calculer_flux(src, config, flux["historique"], aujourdhui, etats)
     for code, ind in resultats_flux.items():
         par_pays[code]["flux_etrangers"] = ind
 
@@ -950,7 +950,7 @@ def executer_flux(fournisseur, config: dict, ancien: dict, aujourdhui: date, flu
     """Mode « flux » : seul l'indicateur « Flux étrangers » est recalculé ; le reste de data/pays.json est repris tel quel.
     Renvoie (pays, états des sources du jour, échecs et rejets du jour)."""
     src, etats = interroger(appels_flux(fournisseur, config), attendus_flux(config))
-    resultats, flux["modifiees"], flux["signaux"], echecs = calculer_flux(src, config, flux["historique"], aujourdhui)
+    resultats, flux["modifiees"], flux["signaux"], echecs = calculer_flux(src, config, flux["historique"], aujourdhui, etats)
     sortie = []
     for p in json.loads(json.dumps(ancien.get("donnees", []))):  # copie profonde
         if p["code"] in resultats:

@@ -57,6 +57,19 @@ DBNOMICS = "https://api.db.nomics.world/v22/series/{fournisseur}/{jeu}/{serie}"
 NBS = "https://data.stats.gov.cn/easyquery.htm"
 DOUANES_TAIWAN = "https://opendata.customs.gov.tw/data/6053/csv.csv"
 USGS_PAGE = "https://www.usgs.gov/centers/national-minerals-information-center/cement-statistics-and-information"
+USGS_PDF = "https://d9-wret.s3.us-west-2.amazonaws.com/assets/palladium/production/s3fs-public/media/files/mis-{mois}-cemen.pdf"
+
+
+def liens_usgs_directs(aujourdhui: date, n: int) -> list[tuple[str, str]]:
+    """Adresses directes des rapports mensuels USGS (stockage des PDF du site), du plus récent au plus ancien, sur les
+    `n` mois précédents : repli quand la page d'index ne répond pas. Les mois non publiés (404) sont simplement sautés."""
+    res, a, m = [], aujourdhui.year, aujourdhui.month
+    for _ in range(n):
+        m -= 1
+        if m == 0:
+            a, m = a - 1, 12
+        res.append((USGS_PDF.format(mois=f"{a}{m:02d}"), f"{a}{m:02d}"))
+    return res
 DREWRY = "https://www.drewry.co.uk/supply-chain-advisors/supply-chain-expertise/world-container-index-assessed-by-drewry"
 INDEED = "https://raw.githubusercontent.com/hiring-lab/job_postings_tracker/master/{pays}/aggregate_job_postings_{pays}.csv"
 TSA = "https://www.tsa.gov/travel/passenger-volumes"
@@ -283,12 +296,27 @@ class FournisseurReel:
 
     def _usgs_ciment(self, p, aujourdhui):
         from pypdf import PdfReader
-        page = self.t.texte(USGS_PAGE)
-        liens = sorted(set(re.findall(r'href="([^"]+mis-(\d{6})-cemen\.pdf)"', page)), key=lambda x: x[1], reverse=True)
+        n = p.get("rapports", 14)
+        repli = None
+        try:
+            page = self.t.texte(USGS_PAGE)
+            liens = sorted(set(re.findall(r'href="([^"]+mis-(\d{6})-cemen\.pdf)"', page)), key=lambda x: x[1], reverse=True)
+        except Exception as e:  # page d'index indisponible (HTTP 504 le 15/11/2026) : adresses directes des PDF
+            liens, repli = [], str(e)[:120]
+        if not liens:
+            liens = liens_usgs_directs(aujourdhui, n + 4)
+            repli = repli or "aucun lien sur la page d'index"
+        else:  # rapports déjà déposés mais pas encore listés sur la page d'index (elle a souvent un mois de retard)
+            plus_recent = liens[0][1]
+            liens = [x for x in liens_usgs_directs(aujourdhui, 4) if x[1] > plus_recent] + liens
         points, derives = {}, {}
-        for url, _ in liens[: p.get("rapports", 14)]:
+        lus = 0
+        for url, _ in liens:
+            if lus >= n:
+                break
             try:
                 pdf = PdfReader(io.BytesIO(self.t.octets(url)))
+                lus += 1
                 r = lire_usgs("\n".join((pdf.pages[i].extract_text() or "") for i in range(min(2, len(pdf.pages)))))
             except Exception as e:  # un rapport illisible n'arrête pas la source
                 LOG.warning("USGS %s illisible : %s", url, str(e)[:120])
@@ -300,8 +328,8 @@ class FournisseurReel:
         for m, v in derives.items():
             points.setdefault(m, v)  # mois d'il y a un an : déduit de la variation publiée
         if not points:
-            raise ErreurSource("USGS : aucun rapport mensuel lisible")
-        return sorted(points.items()), f"{len(liens[: p.get('rapports', 14)])} rapports mensuels (PDF)"
+            raise ErreurSource("USGS : aucun rapport mensuel lisible" + (f" (page d'index : {repli})" if repli else ""))
+        return sorted(points.items()), f"{lus} rapports mensuels (PDF)" + (f", adresses directes (page d'index indisponible : {repli})" if repli else "")
 
     def _drewry(self, p, aujourdhui):
         r = lire_drewry(self.t.texte(DREWRY))
