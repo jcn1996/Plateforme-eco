@@ -65,8 +65,8 @@ export function creerAccueil({ section, sources = {}, chargeurs = {}, contexte, 
   const legende = el('ul', { class: 'reseau-legende', 'aria-label': 'Légende des liens du réseau' },
     el('li', {}, trait('decision'), 'pèse dans la décision'),
     el('li', {}, trait('contexte'), 'contexte'),
-    el('li', {}, trait('decision', 'degrade'), 'orange : dégradé (⚠)'),
-    el('li', {}, trait('decision', 'panne'), 'rouge sans impulsion : en panne ou données périmées (✕)'),
+    el('li', {}, trait('decision', 'panne'), 'rouge sans impulsion : en panne (✕)'),
+    el('li', {}, el('span', { class: 'reseau-etat reseau-pastille-degrade', 'aria-hidden': 'true' }, '●'), ' sous le nom : dégradé, une source secondaire manque'),
   );
   const etatScene = el('p', { class: 'reseau-mode', 'aria-live': 'polite' });
   const carte = el('section', { class: 'carte a-retenir', 'aria-labelledby': 'a-retenir-titre' });

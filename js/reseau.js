@@ -14,9 +14,8 @@ export const CONFIG_RESEAU = 'config/reseau_agents.json';
 /** États d'un agent : libellé lisible (les états ne reposent jamais sur la couleur seule). */
 export const ETATS_RESEAU = {
   ok: { libelle: 'OK', court: '' },
-  degrade: { libelle: 'Dégradé', court: '⚠ dégradé' },
+  degrade: { libelle: 'Dégradé (source secondaire manquante)', court: '● dégradé' },
   panne: { libelle: 'En panne', court: '✕ en panne' },
-  perimee: { libelle: 'Données périmées', court: '✕ périmé' },
 };
 
 /* ------------------------------------------------------------------ table de correspondance */
@@ -85,32 +84,40 @@ const dateHeure = (iso) => {
 };
 
 /**
- * État d'un agent.
- * - statutJournal : statut calculé par l'écran « Santé des agents » (ok, pause, retard, degrade, panne) ou undefined ;
- * - journal : bloc santé fusionné (derniere_execution, raisons…) ou null ;
+ * État d'un agent, trois états sans ambiguïté (même règle que l'écran « Santé des agents » et le chef d'orchestre) :
+ * - « panne » : exécution prévue manquée (au-delà de la marge de l'agent) ou en échec, ou données manquantes ;
+ * - « degrade » : l'agent a tourné, mais une source secondaire manque (laquelle, depuis quand) ;
+ * - « ok » sinon.
+ * - statutJournal : statut calculé par l'écran « Santé des agents » (ok, pause, degrade, panne) ou undefined ;
+ * - journal : bloc santé fusionné (derniere_execution, raisons, raisons_depuis…) ou null ;
  * - entrees : lignes du bloc « entrees » de data/chef.json pour cet agent.
- * Priorité : en panne > données périmées > dégradé > OK.
  */
 export function etatAgent({ statutJournal, journal, entrees = [] } = {}) {
   const raisons = [];
   let etat = 'ok';
   const derniere = dateHeure(journal?.derniere_execution);
+  const ajouter = (r) => { if (r && !raisons.includes(r)) raisons.push(r); };
   if (statutJournal === 'panne') {
     etat = 'panne';
-    raisons.push(derniere ? `Pas d’exécution réussie attendue depuis le ${derniere}.` : 'Journal illisible ou sans exécution réussie.');
+    const t = journal?.derniere_tentative;
+    if (t && typeof t === 'object' && t.statut === 'echec' && Date.parse(t.date) > Date.parse(journal?.derniere_execution ?? '')) {
+      ajouter(`Dernière exécution en échec le ${dateHeure(t.date)} : ${t.raison ?? 'raison inconnue'}.`);
+    } else ajouter(derniere ? `Exécution prévue manquée : dernière exécution réussie le ${derniere}.` : 'Journal illisible ou sans exécution réussie.');
   }
-  const perimees = entrees.filter((e) => e?.etat === 'périmée' || e?.etat === 'manquante');
-  if (perimees.length) {
-    if (etat === 'ok') etat = 'perimee';
-    perimees.forEach((e) => raisons.push(e.etat === 'manquante'
-      ? `${e.libelle ?? e.cle} : données manquantes pour le chef d’orchestre.`
-      : `${e.libelle ?? e.cle} : données de ${fr(e.age_h ?? 0)} h, périmées pour le chef d’orchestre (elles pèsent moins).`));
+  for (const e of entrees) {
+    if (e?.etat === 'en panne' || e?.etat === 'manquante') {
+      etat = 'panne';
+      ajouter(e.etat === 'manquante' ? `${e.libelle ?? e.cle} : données manquantes pour le chef d’orchestre.`
+        : `${e.libelle ?? e.cle} : ${e.panne?.raison ?? 'exécution prévue manquée'}.`);
+    }
   }
+  const depuis = (r, d) => (d ? `${r} — depuis le ${d.slice(8, 10)}/${d.slice(5, 7)}` : r);
   const degradees = entrees.filter((e) => e?.degrade);
-  if (etat === 'ok' && (statutJournal === 'degrade' || statutJournal === 'retard' || degradees.length)) etat = 'degrade';
-  if (statutJournal === 'retard') raisons.push('Exécution en retard sur le planning.');
-  if (statutJournal === 'degrade') (journal?.raisons ?? []).slice(0, 3).forEach((r) => raisons.push(String(r)));
-  degradees.forEach((e) => (e.raisons_degrade ?? []).slice(0, 3).forEach((r) => { if (!raisons.includes(r)) raisons.push(r); }));
+  if (etat === 'ok' && (statutJournal === 'degrade' || degradees.length)) etat = 'degrade';
+  if (statutJournal === 'degrade') {
+    (journal?.raisons ?? []).slice(0, 3).forEach((r) => ajouter(depuis(String(r), journal?.raisons_depuis?.[String(r).split(' : ')[0]])));
+  }
+  degradees.forEach((e) => (e.raisons_degrade ?? []).slice(0, 3).forEach((r) => ajouter(depuis(r, e.raisons_depuis?.[r.split(' : ')[0]]))));
   return { etat, raisons, derniere };
 }
 

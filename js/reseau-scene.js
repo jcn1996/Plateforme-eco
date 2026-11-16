@@ -3,8 +3,9 @@
    --------------------------------------------------------------------------
    - Version 3D (Three.js, déjà chargé pour le globe) : sphère centrale lumineuse
      (chef d'orchestre) et une sphère par agent, disposées en profondeur ; liens
-     lumineux (épais = pèse dans la décision, pointillés = contexte ; orange =
-     dégradé ; rouge sans impulsion = en panne ou données périmées) ; impulsions
+     lumineux (épais = pèse dans la décision, pointillés = contexte ; rouge sans
+     impulsion = en panne ; un agent dégradé garde son lien normal, seule une
+     pastille orange discrète le signale sous son nom) ; impulsions
      qui voyagent vers le centre (depuis le centre pour le trader démo).
    - Version 2D à plat (SVG, sans impulsion) : mode léger, « réduire les animations »,
      ou WebGL indisponible.
@@ -20,7 +21,9 @@
 
 import { disposition, separerEtiquettes, texteAccessible, ETATS_RESEAU } from './reseau.js';
 
-const COULEURS = { ok: 0x00e5ff, degrade: 0xffb547, panne: 0xff4d6a, perimee: 0xff4d6a, centre: 0xbff6ff };
+const COULEURS = { ok: 0x00e5ff, degrade: 0xffb547, panne: 0xff4d6a, centre: 0xbff6ff };
+/** Couleur du lien, de la sphère et des impulsions : un agent dégradé (source secondaire) garde la couleur normale. */
+const couleur = (etat) => (etat === 'panne' ? COULEURS.panne : COULEURS.ok);
 const css = (n) => `#${n.toString(16).padStart(6, '0')}`;
 const LIMITE_LACET = 0.55;   // rotation horizontale maximale (radians)
 const LIMITE_TANGAGE = 0.32; // rotation verticale maximale
@@ -249,13 +252,13 @@ export class SceneReseau {
     const projections = [{ cle: this.reseau.centre.cle, x: cx, y: cy, r: 26 }];
     this.reseau.agents.forEach((n, i) => {
       const x = cx + pos[i].x * rx, y = cy - pos[i].y * ry;
-      const panne = n.etat === 'panne' || n.etat === 'perimee';
+      const panne = n.etat === 'panne';
       liens.append(mk('line', {
-        x1: x, y1: y, x2: cx, y2: cy, stroke: css(COULEURS[n.etat] ?? COULEURS.ok),
+        x1: x, y1: y, x2: cx, y2: cy, stroke: css(couleur(n.etat)),
         'stroke-width': n.poids === 'decision' ? 3 : 1.6, 'stroke-dasharray': n.poids === 'decision' ? (panne ? '10 4' : 'none') : '4 5',
         'stroke-opacity': panne ? 0.85 : n.poids === 'decision' ? 0.8 : 0.6, 'stroke-linecap': 'round',
       }));
-      bulles.append(mk('circle', { cx: x, cy: y, r: 14, fill: `url(#reseau-g-${n.etat in COULEURS ? n.etat : 'ok'})`, stroke: css(COULEURS[n.etat] ?? COULEURS.ok), 'stroke-width': 1.2 }));
+      bulles.append(mk('circle', { cx: x, cy: y, r: 14, fill: `url(#reseau-g-${n.etat === 'panne' ? 'panne' : 'ok'})`, stroke: css(couleur(n.etat)), 'stroke-width': 1.2 }));
       projections.push({ cle: n.cle, x, y, r: 14 });
     });
     bulles.prepend(mk('circle', { cx, cy, r: 26, fill: 'url(#reseau-g-centre)', stroke: '#eaffff', 'stroke-width': 1.5 }));
@@ -365,15 +368,15 @@ export class SceneReseau {
     this.#majStyles3D();
   }
 
-  /** Couleurs selon l'état ; pas d'impulsion pour un agent en panne ou aux données périmées. */
+  /** Couleurs selon l'état ; pas d'impulsion pour un agent en panne ; un agent dégradé garde ses couleurs. */
   #majStyles3D() {
     const t = this.trois;
     if (!t) return;
     for (const n of this.reseau.agents) {
-      const c = COULEURS[n.etat] ?? COULEURS.ok;
+      const c = couleur(n.etat);
       const o = t.noeuds.get(n.cle);
       if (!o) continue;
-      const panne = n.etat === 'panne' || n.etat === 'perimee';
+      const panne = n.etat === 'panne';
       o.mesh.material.color.setHex(c);
       o.mesh.material.emissive.setHex(c);
       o.mesh.material.emissiveIntensity = panne ? 0.18 : 0.38;
@@ -395,11 +398,11 @@ export class SceneReseau {
     }
     for (const imp of t.impulsions) {
       const n = this.reseau.agents.find((a) => a.cle === imp.cle);
-      imp.actif = Boolean(n) && n.etat !== 'panne' && n.etat !== 'perimee';
+      imp.actif = Boolean(n) && n.etat !== 'panne';
       imp.sprite.visible = imp.actif;
       imp.sens = n?.sens;
       imp.vitesse = n?.poids === 'decision' ? 0.42 : 0.26;
-      imp.sprite.material.color.setHex(COULEURS[n?.etat] ?? COULEURS.ok);
+      imp.sprite.material.color.setHex(couleur(n?.etat));
     }
   }
 

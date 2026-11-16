@@ -8,17 +8,17 @@
    Statut (calculé ici, car il dépend de l'heure), d'après le planning cron (UTC) que
    chaque agent déclare dans son journal (voir js/planning.js) :
    - « en panne »  : la première exécution prévue après la dernière exécution réussie
-                     manque depuis plus de 2 h (agent à 15 min) ou 26 h (agent quotidien),
-                     ou journal illisible ;
-   - « en retard » : elle manque depuis plus de 45 min (agent à 15 min) ou 2 h (quotidien) ;
-   - « dégradé »   : un indicateur a perdu une source qu'il devrait avoir (champ `degrade`
-                     calculé par l'agent ; voir agents/commun/sante.py) ;
+                     manque depuis plus d'une marge propre à l'agent (3 à 12 h, selon la durée
+                     observée de ses exécutions), ou la dernière tentative a échoué, ou journal
+                     illisible — même règle que le chef d'orchestre ;
+   - « dégradé »   : l'agent a tourné, mais un indicateur a perdu une source qu'il devrait avoir
+                     (champ `degrade` ; date d'apparition dans `raisons_depuis`) ;
    - « en pause »  : hors des heures prévues (nuit), rien ne manque ;
    - « OK »        : sinon.
    ========================================================================== */
 
 import { el } from './outils.js';
-import { situationPlanning, heureParis, panneProlongee } from './planning.js';
+import { situationPlanning, heureParis } from './planning.js';
 
 const INDEX = 'data/journal/index.json';
 const ETATS_PROBLEME = new Set(['secours', 'partielle', 'échec', 'périmée']);
@@ -28,7 +28,6 @@ const LIBELLES_ETAT = {
 export const STATUTS = {
   ok: { libelle: 'OK', classe: 'sante--ok' },
   pause: { libelle: 'En pause', classe: 'sante--pause' },
-  retard: { libelle: 'En retard', classe: 'sante--retard' },
   degrade: { libelle: 'Dégradé', classe: 'sante--degrade' },
   panne: { libelle: 'En panne', classe: 'sante--panne' },
 };
@@ -101,6 +100,21 @@ export async function chargerSante() {
 }
 
 /** Statut d'un agent à l'instant `maintenant`. */
+/** Dernière tentative en échec, postérieure à la dernière exécution réussie. */
+export function echecRecent(s) {
+  const t = s?.derniere_tentative;
+  return Boolean(t && typeof t === 'object' && t.statut === 'echec' && Date.parse(t.date) > Date.parse(s.derniere_execution ?? ''));
+}
+
+/** Raisons de dégradation avec leur date d'apparition (« … — depuis le 14/11 »). */
+export function raisonsDatees(s) {
+  const depuis = s?.raisons_depuis ?? {};
+  return (s?.raisons ?? []).map((r) => {
+    const d = depuis[String(r).split(' : ')[0]];
+    return d ? `${r} — depuis le ${d.slice(8, 10)}/${d.slice(5, 7)}` : String(r);
+  });
+}
+
 export function statutAgent(agent, maintenant = Date.now()) {
   const s = agent.sante;
   // Analyse à la demande : pas de planning ; dégradée si la dernière exécution a échoué
@@ -111,10 +125,10 @@ export function statutAgent(agent, maintenant = Date.now()) {
     if (maintenant - Date.parse(s.derniere_execution) > (s.panne_minutes ?? 45) * 60_000) return 'panne';
     return s.degrade ? 'degrade' : 'ok';
   }
-  // Agent quotidien sans exécution réussie depuis plus de 24 h : en panne (rouge), quel que soit le planning
-  if (panneProlongee(s, maintenant)) return 'panne';
+  // Dernière tentative en échec (après la dernière réussite) : en panne
+  if (echecRecent(s)) return 'panne';
   const { etat } = situationPlanning(s, maintenant);
-  if (etat === 'panne' || etat === 'retard') return etat;
+  if (etat === 'panne') return etat;
   // Règle de l'agent (sources attendues par indicateur) ; à défaut, toute source en difficulté
   const degrade = typeof s.degrade === 'boolean' ? s.degrade : (s.sources ?? []).some((src) => ETATS_PROBLEME.has(src.etat));
   if (degrade) return 'degrade';
@@ -235,16 +249,14 @@ function carteAgent(agent, maintenant) {
   // Listes manuelles vérifiées (composition impossible à récupérer automatiquement) : information
   const manuelles = (s.sources ?? []).filter((src) => src.manuelle && src.etat === 'ok');
   const alertes = echeances(agent, maintenant).filter((e) => e.etat !== 'ok');
-  const panne = panneProlongee(s, maintenant);
+  const echec = echecRecent(s) ? s.derniere_tentative : null;
   const tentative = s.derniere_tentative;
   return el('article', { class: `carte sante-carte ${classe}` },
     enTete,
-    panne
+    echec
       ? el('p', { class: 'sante-alerte' },
-        `Aucune exécution réussie depuis ${duree(age)} (plus de 24 h) : les données de cet agent ne sont plus mises à jour.`
-        + (tentative?.statut === 'echec' ? ` Dernière tentative ${dateLisible(tentative.date)} en échec`
-          + `${tentative.echecs_consecutifs > 1 ? ` (${tentative.echecs_consecutifs} échecs consécutifs)` : ''} : ${tentative.raison ?? 'raison inconnue'}.` : '')
-        + ` Vérifier l’onglet Actions (workflow ${s.workflow ?? ''}).`)
+        `Dernière tentative ${dateLisible(echec.date)} en échec${echec.echecs_consecutifs > 1 ? ` (${echec.echecs_consecutifs} échecs consécutifs)` : ''} : `
+        + `${echec.raison ?? 'raison inconnue'}. Dernière exécution réussie il y a ${duree(age)}. Vérifier l’onglet Actions (workflow ${s.workflow ?? ''}).`)
       : null,
     el('dl', { class: 'sante-details' },
       el('dt', {}, 'Dernière exécution réussie'),
@@ -257,7 +269,7 @@ function carteAgent(agent, maintenant) {
       el('dt', {}, 'Prochaine mise à jour'),
       el('dd', {}, plan.prochaine != null ? `${heureParis(plan.prochaine)} (heure de Paris)` : 'inconnue'),
       el('dt', {}, 'Intervalle prévu'),
-      el('dd', {}, plan.base ? `${duree(plan.base)} (retard au-delà de ${duree(plan.seuils.retard)}, panne au-delà de ${duree(plan.seuils.panne)})` : 'inconnu'),
+      el('dd', {}, plan.base ? `${duree(plan.base)} (en panne si une exécution prévue manque depuis plus de ${duree(plan.marge)})` : 'inconnu'),
       // Agents qui appellent une IA sous quota gratuit (agent géopolitique) : consommation du jour
       s.ia ? el('dt', {}, 'Analyse par IA') : null,
       s.ia ? el('dd', {}, `${s.ia.mode === 'gemini' ? 'Gemini' : 'sans IA'} · jour du Pacifique ${s.ia.jour_quota ?? ''} : `,
@@ -267,8 +279,8 @@ function carteAgent(agent, maintenant) {
     statut === 'pause'
       ? el('p', { class: 'sante-ligne' }, `Hors des heures prévues. Prochaine mise à jour : ${heureParis(plan.prochaine)}.`)
       : null,
-    plan.manquante != null && plan.etat !== 'ok'
-      ? el('p', { class: plan.etat === 'panne' ? 'sante-alerte' : 'sante-alerte sante-alerte--retard' },
+    plan.manquante != null && plan.etat === 'panne'
+      ? el('p', { class: 'sante-alerte' },
         `Exécution prévue ${heureParis(plan.manquante)} (heure de Paris) manquante depuis ${duree(plan.retardMin)}. `
         + `Le workflow « Rattrapage » la relance après 1 h ; sinon, vérifier l’onglet Actions (workflow ${s.workflow ?? ''}).`)
       : null,
@@ -287,7 +299,7 @@ function carteAgent(agent, maintenant) {
     statut === 'degrade' && s.raisons?.length
       ? el('div', {},
         el('h4', { class: 'sante-sous-titre' }, 'Causes de la dégradation'),
-        el('ul', { class: 'sante-sources' }, s.raisons.map((r) => el('li', { class: 'sante-source-info' }, r))))
+        el('ul', { class: 'sante-sources' }, raisonsDatees(s).map((r) => el('li', { class: 'sante-source-info' }, r))))
       : null,
     problemes.length
       ? el('div', {},
@@ -324,7 +336,7 @@ function carteAgent(agent, maintenant) {
 
 export function ecranSante(agents) {
   const maintenant = Date.now();
-  const nb = { ok: 0, pause: 0, retard: 0, degrade: 0, panne: 0 };
+  const nb = { ok: 0, pause: 0, degrade: 0, panne: 0 };
   agents.forEach((a) => { nb[statutAgent(a, maintenant)] += 1; });
   return [
     el('header', {},
@@ -332,10 +344,10 @@ export function ecranSante(agents) {
       el('h2', { class: 'fiche-titre' }, 'Santé des agents'),
     ),
     agents.length
-      ? el('p', { class: 'sante-resume' }, [`${nb.ok} OK`, nb.pause ? `${nb.pause} en pause` : null, nb.retard ? `${nb.retard} en retard` : null,
+      ? el('p', { class: 'sante-resume' }, [`${nb.ok} OK`, nb.pause ? `${nb.pause} en pause` : null,
         `${nb.degrade} dégradé${nb.degrade > 1 ? 's' : ''}`, `${nb.panne} en panne`].filter(Boolean).join(' · '))
       : el('p', { class: 'sante-ligne' }, 'Aucun journal d’agent disponible (data/journal/index.json introuvable).'),
     ...agents.map((a) => carteAgent(a, maintenant)),
-    el('p', { class: 'mention-legale' }, 'Lu dans data/journal/*.json (planning cron en UTC déclaré par chaque agent). « En retard » : exécution prévue manquante depuis plus de 45 min (agent à 15 min) ou 2 h (agent quotidien) ; « En panne » : depuis plus de 2 h ou 26 h ; « En pause » : hors des heures prévues.'),
+    el('p', { class: 'mention-legale' }, 'Lu dans data/journal/*.json (planning cron en UTC déclaré par chaque agent). « En panne » : une exécution prévue manque depuis plus de la marge de l’agent (1,5 fois la durée observée de ses exécutions, entre 3 h et 12 h), ou la dernière a échoué — même règle que le chef d’orchestre et le réseau de l’accueil ; « Dégradé » : l’agent a tourné mais une source manque (laquelle, depuis quand) ; « En pause » : hors des heures prévues.'),
   ];
 }

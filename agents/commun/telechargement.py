@@ -23,6 +23,19 @@ LOG = journal("telechargement")
 AGENT_HTTP = "SalleDeControle-AgentPays/1.0 (+https://github.com/jcn1996/Plateforme-eco)"
 
 
+ATTENTE_MAX_S = 120
+
+
+def attente_demandee(r) -> float:
+    """Attente demandée par le serveur (en-tête Retry-After, en secondes) après un 429 ou un 503, bornée à 2 min."""
+    if r is None or r.status_code not in (429, 503):
+        return 0.0
+    try:
+        return min(ATTENTE_MAX_S, max(0.0, float(r.headers.get("Retry-After", 0))))
+    except (TypeError, ValueError):
+        return 0.0
+
+
 class ErreurSource(Exception):
     """Une source n'a pas pu être lue (après toutes les reprises)."""
 
@@ -40,6 +53,7 @@ class Telechargeur:
         self.session = requests.Session()
         self.session.headers["User-Agent"] = AGENT_HTTP
         self._derniere_requete = 0.0
+        self.derniere_reponse = ""  # début du corps de la dernière réponse en erreur (diagnostic)
 
     def _chemin_cache(self, url: str, params: dict | None) -> Path:
         cle = url + "?" + json.dumps(params or {}, sort_keys=True)
@@ -64,12 +78,14 @@ class Telechargeur:
                     cache.write_text(r.text, encoding="utf-8")
                     return r.text
                 derniere_erreur = f"HTTP {r.status_code}"
+                self.derniere_reponse = r.text[:4000]
                 if r.status_code not in (429, 500, 502, 503, 504):
                     break  # erreur définitive (404…) : inutile d'insister
             except requests.RequestException as e:
                 derniere_erreur = f"{type(e).__name__}: {e}"
+                r = None
             if essai < self.essais:
-                pause = self.attente_initiale * 2 ** (essai - 1)
+                pause = max(self.attente_initiale * 2 ** (essai - 1), attente_demandee(r))
                 LOG.warning("Échec %s (%s), nouvel essai dans %.0f s", url, derniere_erreur, pause)
                 time.sleep(pause)
         raise ErreurSource(f"{url} : {derniere_erreur}")
@@ -95,8 +111,9 @@ class Telechargeur:
                     break
             except requests.RequestException as e:
                 derniere_erreur = f"{type(e).__name__}: {e}"
+                r = None
             if essai < self.essais:
-                pause = self.attente_initiale * 2 ** (essai - 1)
+                pause = max(self.attente_initiale * 2 ** (essai - 1), attente_demandee(r))
                 LOG.warning("Échec %s (%s), nouvel essai dans %.0f s", url, derniere_erreur, pause)
                 time.sleep(pause)
         raise ErreurSource(f"{url} : {derniere_erreur}")

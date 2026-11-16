@@ -52,9 +52,10 @@ TYPES_CHOC = ("pays", "entreprises", "matieres", "or", "secteurs")
 TYPES = ("pays", "secteurs", "matieres", "obligations", "liquidites", "entreprises")
 
 
-def alertes_pannes(data: Path, maintenant: datetime, heures: float = 24) -> list[dict]:
-    """Une alerte par agent quotidien sans exécution réussie depuis plus de `heures` heures (journaux listés dans
-    data/journal/index.json ; règle commune avec l'écran « Santé des agents » : agents/commun/sante.panne_prolongee)."""
+def alertes_pannes(data: Path, maintenant: datetime) -> list[dict]:
+    """Une alerte par agent « en panne » : exécution prévue par son planning manquée au-delà de sa marge, ou dernière
+    tentative en échec (règle commune avec l'écran « Santé des agents » et le réseau : agents/commun/sante.etat_execution).
+    Un agent seulement « dégradé » (source secondaire manquante) ne déclenche pas d'alerte."""
     index = (lire_json(data / "journal" / "index.json") or {}).get("donnees") or []
     res = []
     for e in sorted(index, key=lambda e: e.get("ordre", 99)):
@@ -62,19 +63,22 @@ def alertes_pannes(data: Path, maintenant: datetime, heures: float = 24) -> list
             continue
         jrn = lire_json(data / "journal" / e["fichier"]) or {}
         bloc = (jrn.get("meta") or {}).get("sante") or {}
-        p = sante.panne_prolongee({**bloc, "libelle": bloc.get("libelle") or e.get("libelle"), "agent": bloc.get("agent") or e.get("agent")},
-                                  maintenant, heures)
-        if not p:
+        if not bloc:
             continue
-        depuis = sante.lire_iso(p["depuis"])
-        texte = (f"Aucune exécution réussie depuis le {depuis.strftime('%d/%m/%Y à %H:%M')} UTC ({p['heures']} h) : ses données ne sont plus "
-                 "mises à jour.")
-        if p.get("raison"):
-            texte += f" Dernière erreur : {p['raison'][:180]}"
-        texte += f" Vérifier l'onglet Actions (workflow {p.get('workflow') or '?'})."
-        res.append({"id": f"panne-{p['agent']}", "rang": 0, "heure": "⛔", "date": maintenant.date().isoformat(), "agent": "sante",
+        ex = sante.etat_execution(bloc, maintenant)
+        if ex["etat"] != "en panne":
+            continue
+        libelle = bloc.get("libelle") or e.get("libelle") or e.get("agent")
+        derniere = sante.lire_iso(bloc.get("derniere_execution"))
+        texte = (f"{ex['raison'][0].upper()}{ex['raison'][1:]}." + (f" Dernière exécution réussie le {derniere.strftime('%d/%m/%Y à %H:%M')} UTC : "
+                 "ses données ne sont plus mises à jour." if derniere else ""))
+        t = bloc.get("derniere_tentative")
+        if isinstance(t, dict) and t.get("statut") == "echec" and t.get("raison") and t["raison"] not in texte:
+            texte += f" Dernière erreur : {t['raison'][:180]}"
+        texte += f" Vérifier l'onglet Actions (workflow {bloc.get('workflow') or '?'})."
+        res.append({"id": f"panne-{bloc.get('agent') or e.get('agent')}", "rang": 0, "heure": "⛔", "date": maintenant.date().isoformat(), "agent": "sante",
                     "pays": None, "niveau": "defavorable", "importance": "forte", "panne": True,
-                    "titre": f"{p['libelle']} en panne depuis plus de {int(heures)} h", "texte": texte, "route": {"type": "sante"}})
+                    "titre": f"{libelle} en panne", "texte": texte, "route": {"type": "sante"}})
     return res
 
 
@@ -205,8 +209,10 @@ def changements(lignes: list[dict]) -> list[dict]:
 def vigilance(lignes: list[dict], conc: list[dict], entrees: dict, ctx: U.Contexte, jour: str) -> list[str]:
     res = [c["texte"] for c in conc]
     for x in entrees.values():
-        if x.etat in ("périmée", "manquante") or x.degrade:
-            res.append(f"Données : {x.libelle} {x.etat}{' et dégradé' if x.degrade else ''} — ses signaux pèsent moins.")
+        if x.etat in ("en panne", "manquante"):
+            res.append(f"Données : {x.libelle} {x.etat} ({(x.panne or {}).get('raison') or 'fichier absent'}) — ses signaux pèsent moins.")
+        elif x.degrade:
+            res.append(f"Données : {x.libelle} dégradé ({'; '.join(x.raisons_degrade[:2])}) — ses signaux pèsent moins.")
     att = ((ctx.risque.get("mondial") or {}).get("changement_en_attente") or {})
     if att.get("vers"):
         res.append(f"Agent risque : changement de palier en attente vers « {att['vers']} ».")
@@ -657,8 +663,8 @@ def sources_sante(entrees: dict, gemini: dict | None, depot: dict | None, suivi_
     for x in entrees.values():
         if x.etat == "manquante":
             etat, detail = "échec", "fichier absent ou illisible"
-        elif x.etat == "périmée":
-            etat, detail = "périmée", f"donnée de {fr(x.age_h, 0)} h (au-delà de {x.cfg['age_max_h']} h) : pèse moins"
+        elif x.etat == "en panne":
+            etat, detail = "périmée", f"agent en panne ({(x.panne or {}).get('raison')}) : sa donnée de {fr(x.age_h, 0)} h pèse moins"
         else:
             etat, detail = "ok", f"{x.etat} ({fr(x.age_h, 0)} h)" if x.age_h is not None else x.etat
         if x.degrade and etat == "ok":

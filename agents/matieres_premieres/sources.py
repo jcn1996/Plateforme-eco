@@ -124,6 +124,22 @@ def lire_wasde(texte: str, titre: str) -> dict | None:
     return res
 
 
+YAHOO_CHART = "https://query1.finance.yahoo.com/v8/finance/chart/{sym}"
+
+
+def lire_chart_yahoo(j: dict) -> Serie:
+    """Réponse de l'API « chart » de Yahoo → [(date, clôture)] (clôtures manquantes ignorées)."""
+    from datetime import datetime as _dt, timezone as _tz
+    r = ((j or {}).get("chart") or {}).get("result") or []
+    if not r:
+        return []
+    r = r[0]
+    dates = r.get("timestamp") or []
+    clot = (((r.get("indicators") or {}).get("quote") or [{}])[0]).get("close") or []
+    decal = (r.get("meta") or {}).get("gmtoffset") or 0
+    return [(_dt.fromtimestamp(t + decal, _tz.utc).strftime("%Y-%m-%d"), round(float(c), 4)) for t, c in zip(dates, clot) if c is not None]
+
+
 # ------------------------------------------------------------------ fournisseur réel
 
 class FournisseurReel:
@@ -144,9 +160,35 @@ class FournisseurReel:
                 serie = cloture[s].dropna()
                 if len(serie):
                     res[s] = compacter([(d.strftime("%Y-%m-%d"), round(float(v), 4)) for d, v in serie.items()], aujourdhui)
+        # Symboles absents du téléchargement groupé (limite de requêtes de Yahoo, jeton refusé) : nouvel essai un par un,
+        # puis par l'API « chart » de Yahoo (sans jeton), même source et mêmes clôtures
+        for sym in [x for x in symboles if x not in res]:
+            serie = self._cours_seul(sym)
+            if serie:
+                res[sym] = compacter(serie, aujourdhui)
         if not res:
             raise ErreurSource("Yahoo Finance : aucun cours reçu")
         return res
+
+    def _cours_seul(self, sym: str) -> Serie:
+        import time
+        import yfinance as yf
+        try:
+            time.sleep(1.5)
+            brut = yf.download(sym, period="11y", interval="1d", progress=False, auto_adjust=False, threads=False)
+            col = brut["Close"]
+            col = col[sym] if hasattr(col, "columns") and sym in col else col
+            serie = col.dropna()
+            if len(serie):
+                return [(d.strftime("%Y-%m-%d"), round(float(v), 4)) for d, v in serie.items()]
+        except Exception as e:  # noqa: BLE001
+            LOG.warning("Yahoo (%s, essai seul) : %s", sym, str(e)[:120])
+        try:
+            return lire_chart_yahoo(self.t.json(YAHOO_CHART.format(sym=sym), params={"range": "10y", "interval": "1d"},
+                                                entetes={"User-Agent": "Mozilla/5.0"}))
+        except Exception as e:  # noqa: BLE001
+            LOG.warning("Yahoo (%s, API chart) : %s", sym, str(e)[:120])
+            return []
 
     def courbes(self, contrats: list[str]) -> dict[str, list]:
         """Dernière clôture de chaque contrat d'échéance : {symbole: [date, clôture]}."""
