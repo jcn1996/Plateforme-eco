@@ -69,6 +69,15 @@ def main():
             d = f["donnees"].get("dynamique") or {}
             f["donnees"]["dynamique"] = {k: d.get(k) for k in ("note", "fiabilite", "texte")} if d else None
             ecrire(CIBLE / e["fiche"].removeprefix("data/"), f)
+    bt = lire(SOURCE / "backtest" / "resultats.json")  # résultats par combinaison et suivi de tendance (liste unique)
+    sec = bt["donnees"]["sections"]
+
+    def combis(nom):
+        return {"combinaisons": {"retenues": [{k: x.get(k) for k in ("signaux", "libelle", "verdict", "comparaison", "cible_verification")}
+                                              for x in ((sec.get(nom) or {}).get("combinaisons") or {}).get("retenues", [])]}}
+    t = sec["tendance"]["suivi_tendance"]
+    ecrire(CIBLE / "backtest" / "resultats.json", {"meta": bt["meta"], "donnees": {"jour": bt["donnees"]["jour"], "sections": {
+        "entreprises": combis("entreprises"), "matieres": combis("matieres"), "tendance": {"suivi_tendance": {"poche": t["poche"], "filtre": t["filtre"]}}}}})
     ini = lire(SOURCE / "inities.json")
     ini["donnees"] = {"societes": {k: v for k, v in ini["donnees"]["societes"].items() if k in garde}}
     ecrire(CIBLE / "inities.json", ini)

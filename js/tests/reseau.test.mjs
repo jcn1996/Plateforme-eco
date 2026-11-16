@@ -143,7 +143,7 @@ test('separerEtiquettes : aucun libellé superposé, bulles évitées, cadre de 
   assert.deepEqual(chevauchements(reel), []);
 });
 
-test('aRetenir : à acheter (entreprises et matières, par score), paris pays, à revendre, alerte du jour', () => {
+test('aRetenir (ancienne sortie, sans liste unique) : sélections par score, paris pays, à revendre, alerte du jour', () => {
   const r = aRetenir(CHEF, [{ rang: 2, titre: 'Deuxième' }, { rang: 1, titre: 'Événement grave', pays: 'US' }], { max: 2 });
   assert.equal(r.date, '2026-11-16');
   assert.deepEqual(r.entreprises.lignes.map((x) => x.nom), ['Bêta', 'Gamma']);
@@ -153,6 +153,18 @@ test('aRetenir : à acheter (entreprises et matières, par score), paris pays, �
   assert.deepEqual(r.aRevendre.lignes.map((x) => x.nom), ['Japon']);
   assert.equal(r.alerte.titre, 'Événement grave');
   assert.deepEqual(r.alerte.route, { type: 'pays', id: 'US' });
+  // Liste unique : seules ses lignes, dans son ordre ; sorties du mois
+  const avecListe = { ...CHEF, liste: { revise_le: '2026-11-02', lignes: [
+    { id: 'selection-B', categorie: 'entreprises', nom: 'Bêta', ticker: 'B' }, { id: 'matiere-cuivre', categorie: 'matieres', nom: 'Cuivre', cle: 'cuivre' },
+    { id: 'pays-PL', categorie: 'pays', nom: 'Pologne', cle: 'PL', symbole: 'EPOL' }],
+  mouvements: [{ date: '2026-11-10', sens: 'sortie', id: 'pays-CO', nom: 'Colombie', categorie: 'pays', texte: 'Sortie · Colombie — tendance cassée' },
+    { date: '2026-11-02', sens: 'entrée', id: 'selection-B', nom: 'Bêta', categorie: 'entreprises', texte: 'Entrée · Bêta' }] } };
+  const l = aRetenir(avecListe, []);
+  assert.equal(l.date, '2026-11-02');
+  assert.deepEqual(l.entreprises.lignes.map((x) => x.nom), ['Bêta']);
+  assert.deepEqual(l.matieres.lignes.map((x) => x.cle), ['cuivre']);
+  assert.deepEqual(l.paris.lignes.map((x) => x.code), ['PL']);
+  assert.deepEqual(l.aRevendre.lignes.map((x) => [x.nom, x.code]), [['Colombie', 'CO']]);
   // Sans chef d'orchestre ni alerte : listes vides
   const vide = aRetenir(null, []);
   assert.equal(vide.entreprises.total, 0);

@@ -263,20 +263,31 @@ export function chevauchements(etiquettes) {
  * entreprises et matières premières retenues (à acheter), paris pays, lignes à revendre, alerte du jour.
  */
 export function aRetenir(chef, alertes = [], { max = 5 } = {}) {
-  const sel = chef?.selections ?? {};
-  const parScore = (l) => [...(l ?? [])].sort((a, b) => (b.score ?? -Infinity) - (a.score ?? -Infinity));
-  const entreprises = parScore(sel.entreprises?.retenues);
-  const matieres = parScore(sel.matieres?.retenues);
-  const pp = sel.paris_pays ?? {};
-  const paris = (pp.candidats ?? []).filter((c) => c.entree_ok !== false && !c.sortie);
-  const aRevendre = pp.a_revendre ?? [];
   const alerte = [...(alertes ?? [])].sort((a, b) => (a.rang ?? 99) - (b.rang ?? 99))[0] ?? null;
+  const li = chef?.liste;
+  let entreprises, matieres, paris, sorties;
+  if (li?.lignes) {
+    // Liste unique du chef d'orchestre (révisée une fois par mois) : même ordre que « Où investir »
+    const de = (k) => li.lignes.filter((l) => l.categorie === k);
+    entreprises = de('entreprises');
+    matieres = de('matieres');
+    paris = de('pays');
+    sorties = (li.mouvements ?? []).filter((m) => m.sens === 'sortie').map((m) => ({ ...m, cle: m.categorie === 'pays' ? m.id.replace(/^pays-/, '') : null }));
+  } else {
+    // Ancienne sortie du chef d'orchestre (sans liste unique) : sélections du jour
+    const sel = chef?.selections ?? {};
+    const parScore = (l) => [...(l ?? [])].sort((a, b) => (b.score ?? -Infinity) - (a.score ?? -Infinity));
+    entreprises = parScore(sel.entreprises?.retenues);
+    matieres = parScore(sel.matieres?.retenues);
+    paris = (sel.paris_pays?.candidats ?? []).filter((c) => c.entree_ok !== false && !c.sortie);
+    sorties = sel.paris_pays?.a_revendre ?? [];
+  }
   return {
-    date: sel.date ?? chef?.date ?? null,
+    date: li?.revise_le ?? chef?.selections?.date ?? chef?.date ?? null,
     entreprises: { lignes: entreprises.slice(0, max).map((e) => ({ id: e.id, nom: e.nom, ticker: e.ticker ?? e.symbole, pays: e.pays })), total: entreprises.length },
     matieres: { lignes: matieres.slice(0, max).map((m) => ({ id: m.id, nom: m.nom, cle: m.cle })), total: matieres.length },
     paris: { lignes: paris.slice(0, max).map((p) => ({ id: p.id, nom: p.nom, code: p.cle, symbole: p.symbole })), total: paris.length },
-    aRevendre: { lignes: aRevendre.slice(0, max).map((p) => ({ id: p.id, nom: p.nom, code: p.cle, symbole: p.symbole })), total: aRevendre.length },
+    aRevendre: { lignes: sorties.slice(0, max).map((p) => ({ id: p.id, nom: p.nom, code: p.cle, symbole: p.symbole, texte: p.texte })), total: sorties.length },
     alerte: alerte ? { titre: alerte.titre, texte: alerte.texte || null, route: alerte.route ?? (alerte.pays ? { type: 'pays', id: alerte.pays } : null) } : null,
   };
 }

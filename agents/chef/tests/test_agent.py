@@ -106,11 +106,28 @@ class TestExecutionComplete(BaseChef):
         for p in d["pays"]:
             if p["verdict"] in ("Renforcer", "Renforcer fortement"):
                 self.assertTrue(1 <= len(p.get("societes") or []) <= 3)
+        # Liste unique : sélections du dernier recalibrage validé, 15 lignes au plus, top 3 tiré de la liste
+        li = d["liste"]
+        self.assertTrue(li["lignes"])
+        self.assertLessEqual(li["nombre"], self.config["liste"]["max_lignes"])
+        self.assertEqual([x["id"] for x in d["synthese"]["top3"]], [x["id"] for x in li["top3"]])
+        ids_sel = {x["id"] for k in ("entreprises", "matieres") for x in d["selections"][k]["retenues"]} | {
+            x["id"] for x in d["selections"]["paris_pays"]["candidats"]}
+        for l in li["lignes"]:
+            self.assertIn(l["id"], ids_sel)
+            self.assertIn(l["conviction"], ("forte", "moyenne", "faible"))
+            self.assertTrue(l["backtest"] and l["backtest"][0]["ecart_indice_pct"] is not None, l["id"])
+            self.assertTrue(l["sortie_si"] and l["date_entree"])
+        self.assertNotIn("verdict", d["synthese"]["top3"][0])
+        # alertes : plus de changements de verdict, seulement les entrées et sorties de la liste
+        self.assertFalse([a for a in lire(self.data / "alertes.json")["donnees"] if (a.get("id") or "").startswith("chef-verdict_chef")])
         # briefing, alertes, historique, revue hebdomadaire (samedi), suivi, santé
         jour = "2026-11-07"
         b = lire(self.data / "chef" / f"briefing-{jour}.json")["donnees"]
-        self.assertEqual(len(b["essentiel"]), 5)
-        self.assertLessEqual(len(b["ou_investir"]), 5)
+        self.assertEqual(len(b["essentiel"]), 6)
+        self.assertEqual(b["liste"]["lignes"], d["liste"]["lignes"])  # le briefing ne présente que la liste unique
+        self.assertNotIn("ou_investir", b)
+        self.assertNotIn("panorama", b)
         self.assertEqual(b["mode"], "règles")
         self.assertIn("central", b["scenarios"])
         self.assertTrue(b["scenarios"]["alternatif"]["declencheurs"])
@@ -586,10 +603,11 @@ class TestCorrectionsQualite(BaseChef):
             self.assertFalse((l.get("objection") or {}).get("serieuse"), x["nom"])
             self.assertFalse(l.get("tendance_excessive"), x["nom"])
         self.assertLessEqual(max(Counter(x["type"] for x in p["a_surveiller"]).values() or [0]), cp["a_surveiller_par_type"])
-        # le briefing résume par catégorie
+        # le briefing ne résume que la liste unique
         textes = [x["texte"] for x in r["briefing"]["essentiel"]]
-        for debut in ("Pays (contexte économique, non prédictif d'après le backtest) :", "Matières premières :", "Obligations et liquidités :", "Secteurs :"):
+        for debut in ("Liste d'investissement :", "Entreprises :", "Matières premières :"):
             self.assertTrue(any(t.startswith(debut) for t in textes), debut)
+        self.assertFalse(any("Renforcer" in t or "Alléger" in t for t in textes))
 
     def test_raison_sans_gemini_et_chaine_de_secours(self):
         r = self.lancer()
@@ -610,6 +628,20 @@ class TestCorrectionsQualite(BaseChef):
         self.assertEqual(r["briefing"]["mode"], "gemini")
         self.assertEqual(r["briefing"]["modele"], "gemini-3.5-flash-lite")  # modèle de secours
         self.assertTrue(any("flash-latest" in u for u in appels))
+
+
+class TestListeStable(BaseChef):
+    def test_liste_revisee_une_fois_par_mois(self):
+        r1 = self.lancer()
+        ids1 = [l["id"] for l in r1["donnees"]["liste"]["lignes"]]
+        # le lendemain, même liste (aucune entrée en cours de mois), même date d'entrée
+        r2 = self.lancer(maintenant=MAINTENANT + timedelta(days=1))
+        li = r2["donnees"]["liste"]
+        self.assertEqual([l["id"] for l in li["lignes"]], ids1)
+        self.assertEqual({l["date_entree"] for l in li["lignes"]}, {MAINTENANT.date().isoformat()})
+        self.assertEqual(li["revise_le"], MAINTENANT.date().isoformat())
+        etat = lire(self.data / "chef" / "etat.json")
+        self.assertEqual(etat["liste"]["mois"], MAINTENANT.date().isoformat()[:7])
 
 
 class TestMoteurRegles(unittest.TestCase):
@@ -751,8 +783,10 @@ class TestSecteurs(BaseChef):
         p = d["panorama"]
         self.assertLessEqual(len(p["secteurs"]), 3)
         self.assertEqual(len({x["nom"].split(" — ")[0] for x in p["secteurs"]}), len(p["secteurs"]))
-        self.assertTrue(any(x["texte"].startswith("Secteurs :") for x in r["briefing"]["essentiel"]))
-        self.assertIn("Secteurs (top 3", (self.data / "chef" / "briefing-2026-11-07.md").read_text(encoding="utf-8"))
+        md = (self.data / "chef" / "briefing-2026-11-07.md").read_text(encoding="utf-8")
+        self.assertIn("## Où investir : la liste", md)
+        self.assertIn("## Entrées et sorties du mois", md)
+        self.assertNotIn("Top 5", md)
         lignes = {l["id"]: l for l in r["lignes"]}
         cs = self.config["secteurs"]
         for prof in d["allocation"]["profils"].values():

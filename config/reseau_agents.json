@@ -19,8 +19,8 @@
     "journal": "chef",
     "entrees": [],
     "route": { "type": "investir" },
-    "description": "Rassemble les signaux de tous les agents, retient les entreprises, matières premières et paris pays issus du backtest, et fixe les lignes cibles du portefeuille démo.",
-    "info": { "fichier": "data/portefeuille.json", "chemin": "derniere_decision.cibles.lignes", "mesure": "longueur", "modele": ["{} ligne cible", "{} lignes cibles"] }
+    "description": "Rassemble les signaux de tous les agents et publie une liste unique (15 lignes au plus, révisée une fois par mois) : entreprises, matières premières et paris pays retenus par les combinaisons du backtest, les mêmes que celles du portefeuille démo.",
+    "info": { "fichier": "data/chef.json", "chemin": "liste.lignes", "mesure": "longueur", "modele": ["{} ligne retenue", "{} lignes retenues"] }
   },
   "agents": [
     {
@@ -30,10 +30,10 @@
       "entrees": ["entreprises", "pepites"],
       "poids": "decision",
       "sens": "vers_centre",
-      "route": { "type": "investir", "id": "entreprises" },
-      "action": "Voir les entreprises retenues",
+      "route": { "type": "investir" },
+      "action": "Voir la liste d'investissement",
       "description": "Note les sociétés cotées (fondamentaux, valorisation, résultats) ; le chef d'orchestre retient celles que valident les combinaisons du backtest.",
-      "info": { "fichier": "data/chef.json", "chemin": "selections.entreprises.retenues", "mesure": "longueur", "modele": ["{} retenue", "{} retenues"] }
+      "info": { "fichier": "data/chef.json", "chemin": "selections.entreprises.retenues", "mesure": "longueur", "modele": ["{} candidate au backtest", "{} candidates au backtest"] }
     },
     {
       "cle": "matieres",
@@ -45,7 +45,7 @@
       "route": { "type": "matieres" },
       "action": "Ouvrir les matières premières",
       "description": "Suit cours, courbes, stocks et positionnement CFTC des matières premières ; le chef d'orchestre retient celles que valide le backtest.",
-      "info": { "fichier": "data/chef.json", "chemin": "selections.matieres.retenues", "mesure": "longueur", "modele": ["{} retenue", "{} retenues"] }
+      "info": { "fichier": "data/chef.json", "chemin": "selections.matieres.retenues", "mesure": "longueur", "modele": ["{} candidate au backtest", "{} candidates au backtest"] }
     },
     {
       "cle": "inities",
@@ -129,7 +129,7 @@
       "route": { "type": "globe" },
       "action": "Voir le globe des pays",
       "description": "Indicateurs réels de 31 pays ; les paris pays suivent une tendance saine à valorisation non tendue.",
-      "info": { "fichier": "data/chef.json", "chemin": "selections.paris_pays.candidats", "mesure": "longueur", "modele": ["{} pari pays", "{} paris pays"] }
+      "info": { "fichier": "data/chef.json", "chemin": "selections.paris_pays.candidats", "mesure": "longueur", "modele": ["{} pari possible", "{} paris possibles"] }
     },
     {
       "cle": "backtest",

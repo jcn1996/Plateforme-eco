@@ -72,6 +72,20 @@ def selections(evaluations=None, entreprises=None, matieres=None) -> dict:
                            "a_revendre": [], "detenus": []}}
 
 
+def liste(jour: str, sel: dict, garder: list[str] | None = None, sorties: list[str] | None = None) -> dict:
+    """Liste unique du chef d'orchestre (agents/chef/liste.py) : `garder` restreint la liste à ces identifiants ;
+    `sorties` = identifiants sortis en cours de mois (journal des mouvements)."""
+    from agents.chef import liste as LI
+    from agents.chef.agent import charger_config as config_chef
+    li, _ = LI.mettre_a_jour(None, sel, jour, config_chef(), {"jour": "test"})
+    if garder is not None:
+        li["lignes"] = [l for l in li["lignes"] if l["id"] in garder]
+    for i in sorties or []:
+        li["mouvements"].append({"date": jour, "sens": "sortie", "id": i, "nom": i, "categorie": "entreprises",
+                                 "texte": f"Sortie · {i} — sortie de sa combinaison confirmée 5 jours de suite"})
+    return li
+
+
 def _familles(agents_pour, score):
     noms = {"entreprises": ("fondamentaux", "Fondamentaux"), "pays": ("flux", "Flux d'investissement"), "macro": ("cycle", "Adéquation au cycle"),
             "inities": ("inities", "Initiés et super-investisseurs"), "risque": ("risque", "Risque"), "geopolitique": ("geopolitique", "Géopolitique")}
@@ -129,6 +143,9 @@ def chef(jour: str, modifs: dict | None = None) -> dict:
             continue
         if type_ == "tendances_fortes":
             d["tendances_fortes"] = champs
+            continue
+        if type_ == "liste":  # liste unique du chef d'orchestre, calculée par agents/chef/liste.py à partir des sélections
+            d["liste"] = liste(jour, d["selections"], **champs)
             continue
         if type_ == "selections":  # champs : arguments de selections() (evaluations, entreprises, matieres)
             d["selections"] = selections(**champs) if champs is not None else None

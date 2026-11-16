@@ -1,23 +1,22 @@
 /* ==========================================================================
    Chef d'orchestre (data/chef.json, data/chef/briefing-AAAA-MM-JJ.json, data/chef/suivi.json)
-   - panneau « Synthèse » repliable en bas du globe (à la place du bandeau des alertes) :
-     palier de risque, phase du cycle, top 3 « Où investir », alertes du jour ; toucher pour
-     déplier, puis « Briefing complet » ;
-   - écran « Où investir » à onglets : d'abord les entreprises puis les matières premières retenues par les
-     combinaisons du backtest, les paris pays, puis secteurs, obligations et liquidités, pays (contexte économique,
-     non prédictif d'après le backtest : sans classement), allocation ; chaque ligne ouvre sa fiche ;
-   - écran « Fiabilité du chef d'orchestre » (suivi de performance des verdicts) ;
-   - filtre du globe « Attractivité » (score du chef d'orchestre).
+   Une seule liste d'investissement (chef.json → liste), tirée du dernier recalibrage validé du backtest, la même
+   que celle du portefeuille démo, révisée une fois par mois :
+   - panneau « Synthèse » : palier de risque, cycle, top 3 de la liste, alertes du jour, briefing ;
+   - écran « Où investir » : la liste (entreprises, matières premières, paris pays ; combinaison, résultat au
+     backtest, date d'entrée, ce qui la ferait sortir), les entrées et sorties du mois, et le contexte (notes du
+     chef d'orchestre, non prédictives d'après le backtest, sans verdict) ;
+   - écran « Fiabilité du chef d'orchestre » (suivi de performance des anciens verdicts) ;
+   - filtre du globe « Note de contexte ».
    ========================================================================== */
 
 import { el, nombre, classeNote } from './outils.js';
 
 const FICHIER = 'data/chef.json';
 const MENTION = 'Avis indicatif généré automatiquement, sans prise en compte d’un profil ou d’une situation personnelle.';
-export const ONGLETS_INVESTIR = {
-  panorama: 'Panorama', entreprises: 'Entreprises', matieres: 'Matières premières', paris: 'Paris pays', tendances: 'Tendances fortes',
-  secteurs: 'Secteurs', obligations: 'Obligations et liquidités', pays: 'Pays · contexte', allocation: 'Allocation',
-};
+export const ONGLETS_INVESTIR = { liste: 'Liste d’investissement', mouvements: 'Entrées et sorties du mois', contexte: 'Contexte (notes)' };
+export const CATEGORIES_LISTE = { entreprises: 'Entreprises', matieres: 'Matières premières', pays: 'Paris pays' };
+const NIVEAUX_CONVICTION = { forte: 'retenue par 3 combinaisons', moyenne: 'retenue par 2 combinaisons', faible: 'retenue par 1 combinaison' };
 /** Mention des notes et verdicts pays : ils restent affichés, mais le backtest les juge non prédictifs. */
 export const MENTION_PAYS = 'contexte économique, non prédictif d’après le backtest';
 const SIGNAUX = { mscore: 'M-score', goodwill_actif: 'goodwill / actif', fcf_yield: 'rendement du FCF', conversion_cash: 'conversion en cash',
@@ -64,10 +63,6 @@ async function chargerJson(chemin) {
 /* ------------------------------------------------------------------ outils */
 
 const dateFr = (iso) => (iso ? `${iso.slice(8, 10)}/${iso.slice(5, 7)}/${iso.slice(0, 4)}` : 'n. d.');
-const classeVerdict = (v) => ({
-  'Renforcer fortement': 'verdict--fort', Renforcer: 'verdict--pos', Neutre: 'verdict--neutre', Alléger: 'verdict--neg', Éviter: 'verdict--tres-neg',
-}[v] ?? 'verdict--neutre');
-const niveauVerdict = (v) => ((v === 'Renforcer' || v === 'Renforcer fortement') ? 'attractif' : v === 'Neutre' ? 'neutre' : 'defavorable');
 
 /** Couleur d'un score selon les seuils de verdict du chef d'orchestre (≥ 58 : renforcer ; ≥ 43 : neutre). */
 const classeScore = (s) => `note--${s >= 58 ? 'attractif' : s >= 43 ? 'neutre' : 'defavorable'}`;
@@ -76,9 +71,7 @@ function badgeScore(score) {
   if (score == null) return el('span', { class: 'chef-score' }, 'n. d.');
   return el('span', { class: `chef-score ${classeScore(score)}` }, el('strong', { class: 'mono' }, nombre(score)), '/100');
 }
-const pastilleVerdict = (v) => el('span', { class: `chef-verdict ${classeVerdict(v)}` }, v);
-const pastilleConviction = (c) => el('span', { class: `chef-conviction chef-conviction--${c}` }, `conviction ${c}`);
-const fleche = (f) => el('span', { class: `chef-fleche chef-fleche--${f === '↑' ? 'haut' : f === '↓' ? 'bas' : 'stable'}`, title: 'Évolution du score depuis l’analyse complète précédente' }, f ?? '→');
+const pastilleConviction = (c) => el('span', { class: `chef-conviction chef-conviction--${c}`, title: NIVEAUX_CONVICTION[c] ?? '' }, `conviction ${c}`);
 const mention = () => el('p', { class: 'chef-mention' }, MENTION);
 
 /** Toutes les opportunités, à plat. */
@@ -89,13 +82,13 @@ function toutes(chef) {
 
 /* ------------------------------------------------------------------ globe */
 
-export const METRIQUE_ATTRACTIVITE = { cle: 'attractivite', libelle: 'Attractivité', court: 'Attractivité', source: 'chef' };
+export const METRIQUE_ATTRACTIVITE = { cle: 'attractivite', libelle: 'Note de contexte (chef d’orchestre)', court: 'Note (contexte)', source: 'chef' };
 
-/** Filtre du globe « Attractivité » : score du chef d'orchestre, couleur selon le verdict. */
+/** Filtre du globe « Note de contexte » : score du chef d'orchestre (non prédictif d'après le backtest), sans verdict. */
 export function lireAttractivite(chef, code) {
   const l = chef?.pays?.find((p) => p.cle === code);
   if (!l || l.score == null) return null;
-  return { valeur: l.score, note: l.score, niveau: niveauVerdict(l.verdict), texte: nombre(l.score), unite: '/100' };
+  return { valeur: l.score, note: l.score, niveau: l.score >= 58 ? 'attractif' : l.score >= 43 ? 'neutre' : 'defavorable', texte: nombre(l.score), unite: '/100' };
 }
 
 /* ------------------------------------------------------------------ panneau « Synthèse » */
@@ -156,7 +149,7 @@ export function initialiserSynthese({ bouton, liste, compte, apercu, titre }, pa
     titre.textContent = chef ? 'Synthèse' : 'Alertes du jour';
     apercu.replaceChildren(...(chef ? [
       regime?.palier ? el('span', { class: `synthese-palier risque-palier--${(regime.palier ?? 'inconnu').toLowerCase()}` }, regime.palier) : null,
-      top.length ? `Où investir : ${top.map((t) => t.nom).join(' · ')}` : 'Aucune opportunité à verdict positif',
+      top.length ? `Liste : ${top.map((t) => t.nom).join(' · ')}` : 'Liste d’investissement vide',
     ] : [toutesAlertes[0] ? `${toutesAlertes[0].heure ?? ''} · ${toutesAlertes[0].titre}` : 'Aucune alerte notable']).filter(Boolean));
     const blocs = [];
     if (chef) {
@@ -166,10 +159,10 @@ export function initialiserSynthese({ bouton, liste, compte, apercu, titre }, pa
           regime?.score_risque != null ? el('small', {}, ` stress ${nombre(regime.score_risque)}/100`) : null),
         el('div', {}, el('span', { class: 'synthese-etiquette' }, 'Cycle'), ` ${regime?.phase_monde ?? 'n. d.'}`)));
       blocs.push(el('li', { class: 'synthese-top' },
-        el('div', { class: 'synthese-etiquette' }, 'Où investir'),
+        el('div', { class: 'synthese-etiquette' }, 'Où investir · top 3 de la liste'),
         top.length ? el('ol', {}, top.map((t) => el('li', {}, el('button', { class: 'lien', type: 'button', onclick: () => aller({ type: 'investir', id: `o-${t.id}` }) },
-          t.nom), ' ', pastilleVerdict(t.verdict), ' ', pastilleConviction(t.conviction), ' ', badgeScore(t.score))))
-          : el('p', {}, 'Aucune opportunité à verdict positif aujourd’hui.')));
+          t.nom), ' ', pastilleConviction(t.conviction), el('small', { class: 'chef-petit' }, ` ${CATEGORIES_LISTE[t.categorie] ?? ''} · ${(t.combinaisons_libelles ?? []).join(' ; ')}`))))
+          : el('p', {}, 'Aucune ligne dans la liste d’investissement.')));
       blocs.push(el('li', { class: 'alertes-outils synthese-boutons' },
         el('button', { class: 'bouton bouton--plein', type: 'button', onclick: () => basculerBriefing() }, briefingOuvert ? 'Masquer le briefing' : '📋 Briefing complet'),
         el('button', { class: 'bouton bouton--plein', type: 'button', onclick: () => aller({ type: 'investir' }) }, '🧭 Où investir'),
@@ -222,16 +215,11 @@ function briefingComplet(b, aller) {
   return el('div', { class: 'chef-briefing' },
     el('p', { class: 'chef-briefing-tete' }, `Briefing du ${dateFr(b.date)} · rédaction : ${b.mode === 'gemini' ? 'Gemini (affirmations vérifiées contre les données)' : 'règles'}`),
     section('L’essentiel', liste((b.essentiel ?? []).map((x) => x.texte))),
-    section('Où investir : top 5', b.ou_investir?.length ? el('ol', {}, b.ou_investir.map((x) => el('li', {},
+    section('Où investir : la liste', b.liste?.lignes?.length ? el('ol', {}, b.liste.lignes.map((x) => el('li', {},
       el('button', { class: 'lien', type: 'button', onclick: () => aller({ type: 'investir', id: `o-${x.id}` }) }, x.nom), ' ',
-      pastilleVerdict(x.verdict), ' ', pastilleConviction(x.conviction), ' ', badgeScore(x.score),
-      x.argument ? el('div', { class: 'chef-petit' }, x.argument) : null))) : el('p', {}, 'Aucune opportunité à verdict positif sans objection à lever.')),
-    b.panorama ? section('Panorama par catégorie', el('ul', {}, [
-      ['Pays', b.panorama.pays], ['Matières premières', b.panorama.matieres], ['Or', b.panorama.or ? [b.panorama.or] : []],
-      ['Obligations et liquidités', [...(b.panorama.obligations ?? []), ...(b.panorama.liquidites ?? [])]], ['Entreprises', b.panorama.entreprises],
-    ].map(([t, xs]) => el('li', {}, el('strong', {}, `${t} : `), (xs ?? []).map((x) => `${x.nom} (${x.verdict.toLowerCase()})`).join(', ') || 'aucune donnée'))),
-    b.panorama.a_surveiller?.length ? el('p', { class: 'chef-petit' }, `À surveiller : ${b.panorama.a_surveiller.map((x) => x.nom).join(', ')}`) : null) : null,
-    section('Ce qui a changé depuis hier', liste(b.changements?.length ? b.changements.map((c) => c.texte) : ['Aucun verdict modifié.'])),
+      pastilleConviction(x.conviction), el('div', { class: 'chef-petit' }, `${CATEGORIES_LISTE[x.categorie] ?? ''} · ${(x.combinaisons_libelles ?? []).join(' ; ')}`))))
+      : el('p', {}, 'Liste vide.')),
+    section('Entrées et sorties du mois', liste((b.mouvements ?? []).length ? b.mouvements.map((m) => `${dateFr(m.date)} · ${m.texte}`) : ['Aucune entrée ni sortie ce mois-ci.'])),
     section('Points de vigilance', liste(b.vigilance?.length ? b.vigilance.map((v) => v.texte) : ['Aucun.'])),
     ...['central', 'alternatif'].map((k) => {
       const s = b.scenarios?.[k];
@@ -243,7 +231,7 @@ function briefingComplet(b, aller) {
   );
 }
 
-/* ------------------------------------------------------------------ écran « Où investir » */
+/* ------------------------------------------------------------------ écran « Où investir » : la liste unique */
 
 function barreOnglets(actif, nav) {
   return el('div', { class: 'ini-onglets', role: 'tablist' }, Object.entries(ONGLETS_INVESTIR).map(([cle, libelle]) =>
@@ -254,74 +242,122 @@ function barreOnglets(actif, nav) {
 /** Texte d'un argument pour / contre : celui de sa famille de signaux. */
 const texteArgument = (l, a) => l.familles?.[a.cle]?.texte ?? a.texte ?? '';
 
-function resume(t, n = 110) {
-  return t && t.length > n ? `${t.slice(0, n - 1)}…` : t;
-}
-
-/** Une ligne de la liste : score, verdict, conviction, flèche, 3 pour, 3 contre, objection, date du dernier changement. */
-function ligneOpportunite(l, nav) {
-  return el('li', {}, el('button', { class: `chef-ligne ${classeVerdict(l.verdict)}`, type: 'button', onclick: () => nav.ouvrir({ type: 'investir', id: `o-${l.id}` }) },
-    el('div', { class: 'chef-ligne-tete' },
-      el('strong', { class: 'chef-ligne-nom' }, l.nom),
-      badgeScore(l.score), fleche(l.fleche), pastilleVerdict(l.verdict), pastilleConviction(l.conviction)),
-    l.en_attente ? el('div', { class: 'chef-petit chef-attente' }, `En attente : vers « ${l.en_attente.vers} »`) : null,
-    el('div', { class: 'chef-args' },
-      el('ul', { class: 'chef-pour' }, (l.pour ?? []).map((a) => el('li', {}, `${a.famille} : ${resume(texteArgument(l, a))}`))),
-      el('ul', { class: 'chef-contre' }, (l.contre ?? []).map((a) => el('li', {}, `${a.famille} : ${resume(texteArgument(l, a))}`)))),
-    l.objection ? el('div', { class: `chef-objection${l.objection.serieuse ? ' chef-objection--serieuse' : ''}` }, `Contradicteur (${l.objection.ajustement}) : ${resume(l.objection.objection, 160)}`) : null,
-    el('div', { class: 'chef-petit' }, `Dernier changement de verdict : ${dateFr(l.derniere_modification)}`)));
-}
-
 function signeFr(x, d = 1) {
   return x == null ? 'n. d.' : `${x > 0 ? '+' : x < 0 ? '−' : ''}${nombre(Math.abs(x), d)}`;
 }
 
-function liste(lignes, nav) {
-  return lignes?.length ? el('ul', { class: 'chef-liste' }, lignes.map((l) => ligneOpportunite(l, nav))) : el('p', { class: 'sante-ligne' }, 'Aucune donnée.');
-}
+const majuscule = (t) => (t ? t[0].toUpperCase() + t.slice(1) : 'n. d.');
+const MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+/** « 2026-12 » → « décembre 2026 ». */
+export const moisFr = (m) => (m ? `${MOIS[Number(m.slice(5, 7)) - 1] ?? m.slice(5, 7)} ${m.slice(0, 4)}` : 'n. d.');
 
 function titre(t, sous) {
   return el('h3', { class: 'section-titre' }, t, sous ? el('small', {}, ` ${sous}`) : null);
 }
 
+/** Lignes de la liste unique regroupées par catégorie, dans l'ordre : entreprises, matières premières, paris pays. */
+export function lignesListe(chef) {
+  const ls = chef?.liste?.lignes ?? [];
+  return Object.keys(CATEGORIES_LISTE).map((k) => [k, CATEGORIES_LISTE[k], ls.filter((l) => l.categorie === k)]).filter(([, , xs]) => xs.length);
+}
+
+/** Résultat au backtest d'une combinaison : écart annuel contre l'indice et part des actifs gagnants (hors échantillon). */
+export function texteBacktest(b) {
+  const ecart = b?.ecart_indice_pct != null ? `${signeFr(b.ecart_indice_pct, 1)} pt/an contre l’indice` : 'écart contre l’indice n. d.';
+  const gagnants = b?.gagnants_pct != null ? `${nombre(b.gagnants_pct, 0)} % des actifs retenus ont battu l’indice` : 'part des gagnants n. d.';
+  return `${b?.combinaison ?? 'Combinaison'} : ${ecart}, ${gagnants} (hors échantillon)`;
+}
+
+function ligneListe(l, nav) {
+  return el('li', {}, el('button', { class: `chef-ligne chef-liste-ligne chef-liste--${l.categorie}`, type: 'button', onclick: () => nav.ouvrir({ type: 'investir', id: `o-${l.id}` }) },
+    el('div', { class: 'chef-ligne-tete' }, el('strong', { class: 'chef-ligne-nom' }, l.nom), l.symbole ? el('small', { class: 'mono' }, ` ${l.symbole}`) : null,
+      pastilleConviction(l.conviction)),
+    el('div', { class: 'chef-petit' }, `Retenue par : ${(l.combinaisons_libelles ?? []).join(' ; ')}${l.detail ? ` — ${l.detail}` : ''}`),
+    el('ul', { class: 'chef-texte chef-backtest' }, (l.backtest ?? []).map((b) => el('li', {}, texteBacktest(b)))),
+    el('div', { class: 'chef-petit' }, `Dans la liste depuis le ${dateFr(l.date_entree)}`),
+    el('div', { class: 'chef-petit' }, `Ce qui la ferait sortir : ${l.sortie_si ?? 'n. d.'}`),
+    l.alerte_sortie ? el('div', { class: 'chef-petit chef-attente' }, `⚠ ${l.alerte_sortie}`) : null));
+}
+
+function ongletListe(chef, nav) {
+  const li = chef.liste;
+  if (!li) return [el('p', { class: 'sante-ligne' }, 'Liste pas encore calculée (prochaine analyse complète).')];
+  const groupes = lignesListe(chef);
+  return [
+    titre('Liste d’investissement', `${li.nombre ?? 0} ligne${(li.nombre ?? 0) > 1 ? 's' : ''} sur ${li.max_lignes ?? 15} au plus · révisée le ${dateFr(li.revise_le)} · prochaine révision : ${moisFr(li.prochaine_revision)}`),
+    el('p', { class: 'chef-petit' }, li.regle ?? ''),
+    ...(groupes.length ? groupes.flatMap(([, libelle, xs]) => [titre(libelle, `${xs.length}`), el('ul', { class: 'chef-liste' }, xs.map((l) => ligneListe(l, nav)))])
+      : [el('p', { class: 'sante-ligne' }, 'Aucune ligne retenue par les combinaisons du backtest.')]),
+    el('p', { class: 'chef-petit' }, `Conviction : ${Object.entries(NIVEAUX_CONVICTION).map(([k, v]) => `${k} = ${v}`).join(' ; ')}. Elle repose sur le backtest, pas sur la note.`),
+  ];
+}
+
+function ongletMouvements(chef) {
+  const ms = chef.liste?.mouvements ?? [];
+  return [titre('Entrées et sorties du mois', moisFr(chef.liste?.mois)),
+    ms.length ? el('ul', { class: 'chef-texte chef-mouvements' }, ms.map((m) => el('li', { class: `chef-mouvement--${m.sens === 'sortie' ? 'sortie' : 'entree'}` }, `${dateFr(m.date)} · ${m.texte}`)))
+      : el('p', { class: 'chef-petit' }, 'Aucune entrée ni sortie ce mois-ci.'),
+    el('p', { class: 'chef-petit' }, 'Aucune entrée en cours de mois : la liste n’est révisée qu’au rééquilibrage mensuel. Entre deux, seules sorties : excès ou tendance cassée pour un pari pays, sortie de la combinaison confirmée 5 jours de suite pour les autres.')];
+}
+
+/* ------------------------------------------------------------------ contexte : notes du chef d'orchestre, sans verdict */
+
+const CONTEXTES = { pays: 'Pays', secteurs: 'Secteurs', matieres: 'Matières premières et or', obligations: 'Obligations et liquidités', entreprises: 'Entreprises' };
+let contexteActif = 'pays';
+
+function lignesContexte(chef, k) {
+  if (k === 'matieres') return [...(chef.or ? [chef.or] : []), ...(chef.matieres ?? [])];
+  if (k === 'obligations') return [...(chef.obligations ?? []), ...(chef.liquidites ?? [])];
+  if (k === 'pays') return paysSansClassement(chef.pays);
+  return chef[k] ?? [];
+}
+
+function ligneContexte(l, nav) {
+  return el('li', {}, el('button', { class: 'chef-ligne chef-ligne--compacte', type: 'button', onclick: () => nav.ouvrir({ type: 'investir', id: `o-${l.id}` }) },
+    el('div', { class: 'chef-ligne-tete' }, el('strong', { class: 'chef-ligne-nom' }, l.nom), badgeScore(l.score), el('small', { class: 'chef-petit' }, ' contexte'))));
+}
+
+/** Puces de filtre ; `choisir` redessine le contenu sans quitter l'onglet. */
+function puces(options, actif, choisir) {
+  return el('div', { class: 'ini-onglets chef-filtre', role: 'group' }, options.map(([cle, libelle, n]) => el('button', {
+    class: `ini-onglet${cle === actif ? ' est-actif' : ''}`, type: 'button', 'aria-pressed': String(cle === actif), onclick: () => choisir(cle),
+  }, libelle, n != null ? el('small', {}, ` ${n}`) : null)));
+}
+
+function ongletContexte(chef, nav) {
+  const conteneur = el('div', {});
+  const rendre = () => {
+    const xs = lignesContexte(chef, contexteActif);
+    conteneur.replaceChildren(
+      puces(Object.entries(CONTEXTES).map(([k, v]) => [k, v, lignesContexte(chef, k).length]), contexteActif, (k) => { contexteActif = k; rendre(); }),
+      xs.length ? el('ul', { class: 'chef-liste' }, xs.map((l) => ligneContexte(l, nav))) : el('p', { class: 'chef-petit' }, 'Aucune donnée.'));
+  };
+  rendre();
+  return [titre('Contexte', `notes du chef d’orchestre : ${MENTION_PAYS}`),
+    el('p', { class: 'chef-avertissement' }, `Ces notes ne servent pas à décider : le backtest les juge non prédictives. Elles ne portent plus de verdict « Renforcer » ou « Alléger ». Seule la liste d’investissement est investie.`),
+    conteneur];
+}
+
 export function ecranInvestir(chef, nav, id) {
   const entete = el('header', { class: 'chef-entete' },
-    el('div', { class: 'fiche-surtitre' }, 'Chef d’orchestre · tous les agents réunis'),
+    el('div', { class: 'fiche-surtitre' }, 'Chef d’orchestre · liste issue du backtest'),
     el('h2', { class: 'fiche-titre' }, 'Où investir'),
     chef ? el('p', { class: 'chef-regime' },
       el('span', { class: `synthese-palier risque-palier--${(chef.regime?.palier ?? 'inconnu').toLowerCase()}` }, `Risque : ${chef.regime?.palier ?? 'n. d.'}`), ' ',
-      `Cycle mondial : ${chef.regime?.phase_monde ?? 'n. d.'} · analyse du ${dateFr(chef.date)}`,
-      chef.mode === 'leger' && chef.declencheurs?.length ? ` · mise à jour légère (${chef.declencheurs.join(' ; ')})` : null) : null,
-    el('button', { class: 'bouton', type: 'button', onclick: () => nav.ouvrir({ type: 'fiabilite-chef' }) }, '📈 Fiabilité du chef d’orchestre'));
+      `Cycle mondial : ${chef.regime?.phase_monde ?? 'n. d.'} · analyse du ${dateFr(chef.date)}`) : null);
   if (!chef) return [entete, el('p', { class: 'sante-ligne' }, 'Données du chef d’orchestre indisponibles (data/chef.json introuvable). Lancer l’agent depuis l’onglet Actions.')];
   if (id?.startsWith('o-')) {
-    const l = toutes(chef).find((x) => x.id === id.slice(2));
-    if (l) return ficheOpportunite(l, chef, nav);
+    const cle = id.slice(2);
+    const l = (chef.liste?.lignes ?? []).find((x) => x.id === cle);
+    if (l) return ficheListe(l, chef, nav);
+    const o = toutes(chef).find((x) => x.id === cle);
+    if (o) return ficheOpportunite(o, chef, nav);
   }
-  const onglet = ONGLETS_INVESTIR[id] ? id : 'panorama';
-  let corps;
-  if (onglet === 'panorama') corps = ongletPanorama(chef, nav);
-  else if (onglet === 'tendances') corps = ongletTendances(chef, nav);
-  else if (onglet === 'pays') {
-    corps = [titre('Pays', `${chef.pays?.length ?? 0} pays suivis, par ordre alphabétique`),
-      el('p', { class: 'chef-avertissement' }, `Notes et verdicts pays : ${MENTION_PAYS}. Ils ne servent plus à classer les pays ; seuls les paris pays (tendance) sont investis.`),
-      liste(paysSansClassement(chef.pays), nav)];
-  } else if (onglet === 'paris') corps = blocParisPays(chef);
-  else if (onglet === 'matieres') {
-    corps = [...blocSelectionsMatieres(chef), titre('Or', 'valeur refuge, traité à part'), liste(chef.or ? [chef.or] : [], nav),
-      titre('Matières premières', 'agent matières premières, horizon 3 à 12 mois'), liste(chef.matieres, nav)];
-  } else if (onglet === 'obligations') {
-    corps = [titre('Obligations d’État', 'États-Unis et zone euro, courtes et longues'), liste(chef.obligations, nav),
-      titre('Liquidités', 'rendement monétaire réel = taux court − inflation'), liste(chef.liquidites, nav)];
-  } else if (onglet === 'secteurs') {
-    corps = ongletSecteurs(chef, nav);
-  } else if (onglet === 'entreprises') {
-    corps = [...blocSelectionsEntreprises(chef, nav), titre('Entreprises analysées par le chef d’orchestre', 'score et verdict'), ...ongletEntreprises(chef, nav)];
-  } else corps = ongletAllocation(chef, nav);
+  const onglet = ONGLETS_INVESTIR[id] ? id : 'liste';
+  const corps = onglet === 'mouvements' ? ongletMouvements(chef) : onglet === 'contexte' ? ongletContexte(chef, nav) : ongletListe(chef, nav);
   return [
     entete,
     barreOnglets(onglet, nav),
-    chef.concentrations?.length ? el('div', { class: 'chef-avertissement' }, chef.concentrations.map((c) => el('p', {}, `⚠ ${c.texte}`))) : null,
     ...corps,
     blocEntrees(chef),
     mention(),
@@ -333,151 +369,69 @@ function blocEntrees(chef) {
   return el('details', { class: 'chef-entrees' },
     el('summary', {}, 'Données utilisées (fraîcheur et santé des agents)'),
     el('ul', {}, (chef.entrees ?? []).map((e) => el('li', { class: e.etat !== 'à jour' || e.degrade ? 'chef-entree--alerte' : '' },
-      `${e.libelle} : ${e.etat}${e.age_h != null ? ` (${nombre(e.age_h, 0)} h)` : ''}${e.degrade ? ' · agent dégradé' : ''} · poids ${nombre((e.coef ?? 0) * 100, 0)} %`))),
-    el('p', { class: 'chef-petit' }, chef.methode ?? ''));
-}
-
-/* ------------------------------------------------------------------ panorama */
-
-/** Ligne compacte du panorama : nom, score, verdict, conviction, justification ; ouvre la fiche. */
-function lignePanorama(x, nav, raison) {
-  return el('li', {}, el('button', { class: `chef-ligne chef-ligne--compacte ${classeVerdict(x.verdict)}`, type: 'button', onclick: () => nav.ouvrir({ type: 'investir', id: `o-${x.id}` }) },
-    el('div', { class: 'chef-ligne-tete' }, el('strong', { class: 'chef-ligne-nom' }, x.nom), badgeScore(x.score), fleche(x.fleche), pastilleVerdict(x.verdict), pastilleConviction(x.conviction)),
-    !raison && x.a_surveiller ? el('div', { class: 'chef-petit chef-attente' }, 'À surveiller : objection à lever ou tendance en excès (voir la fiche).') : null,
-    raison ? el('div', { class: 'chef-petit chef-attente' }, raison) : null,
-    !raison && x.argument ? el('div', { class: 'chef-petit' }, `+ ${resume(x.argument, 140)}`) : null,
-    !raison && x.contre ? el('div', { class: 'chef-petit' }, `− ${resume(x.contre, 140)}`) : null));
-}
-
-function blocSelectionsEntreprises(chef, nav, n) {
-  const e = chef.selections?.entreprises;
-  if (!e) return [titre('Entreprises retenues par le backtest'), el('p', { class: 'chef-petit' }, 'Sélections pas encore calculées (prochaine analyse complète).')];
-  const xs = n ? e.retenues.slice(0, n) : e.retenues;
-  return [titre('Entreprises retenues par le backtest', `${e.retenues.length} sociétés sur ${e.univers} : meilleurs 30 % sur chaque signal d’une combinaison « Prometteuse »`),
-    el('p', { class: 'chef-petit' }, (e.combinaisons ?? []).map((c) => `${c.libelle} : ${c.retenues}`).join(' · ')),
-    xs.length ? el('ul', { class: 'chef-liste' }, xs.map((x) => el('li', {}, el('button', { class: 'chef-ligne chef-ligne--compacte', type: 'button', onclick: () => nav.ouvrir({ type: 'entreprise', id: x.ticker }) },
-      el('div', { class: 'chef-ligne-tete' }, el('strong', { class: 'chef-ligne-nom' }, x.nom), el('span', { class: 'chef-petit' }, ` ${x.ticker} · ${x.secteur_nom ?? ''}`)),
-      el('div', { class: 'chef-petit' }, `${(x.combinaisons_libelles ?? []).join(' ; ')} — ${Object.entries(x.percentiles ?? {}).map(([k, v]) => `${SIGNAUX[k] ?? k} ${nombre(v, 0)}e percentile`).join(', ')}`))))) :
-      el('p', { class: 'chef-petit' }, 'Aucune société ne remplit une combinaison aujourd’hui.'),
-    n && e.retenues.length > n ? el('button', { class: 'bouton', type: 'button', onclick: () => nav.ouvrir({ type: 'investir', id: 'entreprises' }) }, `Voir les ${e.retenues.length} sociétés`) : null];
-}
-
-function blocSelectionsMatieres(chef) {
-  const m = chef.selections?.matieres;
-  if (!m) return [];
-  return [titre('Matières premières retenues par le backtest', 'Niveau historique + Positionnement CFTC : meilleurs 30 % sur les deux'),
-    m.retenues?.length ? el('ul', { class: 'chef-texte' }, m.retenues.map((x) => el('li', {}, el('strong', {}, x.nom), ` — ${x.texte}`)))
-      : el('p', { class: 'chef-petit' }, 'Aucune matière première ne remplit la combinaison aujourd’hui.')];
-}
-
-function blocParisPays(chef) {
-  const { candidats, aRevendre, regle } = lignesParisPays(chef);
-  return [titre('Paris pays', 'ETF pays, 15 % du portefeuille démo au plus'),
-    el('p', { class: 'chef-petit' }, regle ?? ''),
-    aRevendre.length ? el('ul', { class: 'chef-texte' }, aRevendre.map((x) => el('li', { class: 'chef-entree--alerte' },
-      el('strong', {}, `${x.nom} (${x.symbole}) — à revendre`), ` : ${(x.raisons_sortie ?? []).join(' ; ')}`))) : null,
-    candidats.length ? el('ul', { class: 'chef-texte' }, candidats.map((x) => el('li', {},
-      el('strong', {}, `${x.nom} (${x.symbole})`), x.detenu ? ' · détenu' : '',
-      ` — tendance saine, force relative ${x.force_relative != null ? nombre(x.force_relative, 0) : 'n. d.'}e percentile, valorisation ${x.valorisation_note != null ? nombre(x.valorisation_note, 0) : 'n. d.'}/100`)))
-      : el('p', { class: 'chef-petit' }, 'Aucun pays en tendance haussière et saine avec une valorisation non tendue.'),
-    el('p', { class: 'chef-petit' }, `Notes et verdicts pays : ${MENTION_PAYS}. Les paris ne reposent que sur la tendance.`)];
-}
-
-function ongletPanorama(chef, nav) {
-  const p = chef.panorama;
-  if (!p) return [el('p', { class: 'sante-ligne' }, 'Panorama pas encore calculé (prochaine analyse complète).')];
-  const bloc = (t, sous, xs, vide) => [titre(t, sous), xs?.length ? el('ul', { class: 'chef-liste' }, xs.map((x) => lignePanorama(x, nav))) : el('p', { class: 'chef-petit' }, vide ?? 'Aucune donnée.')];
-  return [
-    ...blocSelectionsEntreprises(chef, nav, 8),
-    ...blocSelectionsMatieres(chef),
-    ...blocParisPays(chef),
-    ...bloc('Top 5', 'verdict positif au-dessus du seuil, sans objection à lever (hors pays)', p.top, 'Aucune opportunité à verdict positif sans objection à lever.'),
-    ...bloc('Secteurs', 'top 3, une zone par secteur', p.secteurs),
-    ...bloc('Matières premières', 'top 3', p.matieres),
-    ...bloc('Or', 'valeur refuge', p.or ? [p.or] : []),
-    ...bloc('Obligations et liquidités', 'position sur chaque ligne', [...(p.obligations ?? []), ...(p.liquidites ?? [])]),
-    ...bloc('Entreprises', p.entreprises_bilan?.texte, p.entreprises),
-    titre('À surveiller', 'proches du seuil, ou bien notées avec une objection à lever'),
-    p.a_surveiller?.length ? el('ul', { class: 'chef-liste' }, p.a_surveiller.map((x) => lignePanorama(x, nav, x.raison))) : el('p', { class: 'chef-petit' }, 'Rien de proche du seuil.'),
-    chef.exclues?.length ? el('p', { class: 'chef-petit' }, `Écartées (holdings, sociétés d’investissement, fonds, BDC, SPAC : la décote sur l’actif net n’est pas mesurable avec des sources gratuites) : ${chef.exclues.map((x) => x.nom).join(', ')}.`) : null,
-  ];
-}
-
-/* ------------------------------------------------------------------ tendances fortes */
-
-const CATEGORIES_TENDANCE = { pays: 'Pays', secteurs: 'Secteurs', matieres: 'Matières premières et or', entreprises: 'Entreprises' };
-
-/** Tendances fortes regroupées par catégorie : saines d'abord (force relative décroissante), puis en excès. */
-export function groupesTendances(tf = []) {
-  const g = {};
-  for (const x of tf) (g[x.categorie] ??= []).push(x);
-  for (const l of Object.values(g)) l.sort((a, b) => (a.saine === b.saine ? (b.force_relative ?? 0) - (a.force_relative ?? 0) : a.saine ? -1 : 1));
-  return Object.keys(CATEGORIES_TENDANCE).filter((k) => g[k]?.length).map((k) => [k, g[k]]);
-}
-
-function ligneTendance(x, nav) {
-  return el('li', {}, el('button', { class: `chef-ligne chef-ligne--compacte ${x.saine ? 'chef-tendance--saine' : 'chef-tendance--exces'}`, type: 'button', onclick: () => nav.ouvrir({ type: 'investir', id: `o-${x.id}` }) },
-    el('div', { class: 'chef-ligne-tete' }, el('strong', { class: 'chef-ligne-nom' }, x.nom), x.symbole ? el('small', { class: 'mono' }, ` ${x.symbole}`) : null, pastilleVerdict(x.verdict)),
-    el('div', { class: 'chef-petit' }, `12 mois hors dernier mois ${signeFr(x.perf_12_1, 1)} % · force relative ${nombre(x.force_relative, 0)}e percentile${x.rang ? ` (${x.rang}e sur ${x.sur})` : ''}${x.perf_1m != null ? ` · 1 mois ${signeFr(x.perf_1m, 1)} %` : ''}`),
-    el('div', { class: 'chef-petit' }, x.niveau_invalidation != null
-      ? `Tendance invalidée sous ${nombre(x.niveau_invalidation, 2)} (moyenne 200 jours), soit ${signeFr(-(x.distance_invalidation_pct ?? 0), 1)} % · cours ${nombre(x.cours, 2)} le ${dateFr(x.date)}${x.stop_suiveur != null ? ` · stop suiveur du trader ${nombre(x.stop_suiveur, 2)}` : ''}`
-      : 'Niveau d’invalidation non calculable.'),
-    x.exces?.length ? el('div', { class: 'chef-petit chef-attente' }, `En excès : ${x.exces.map((e) => e.split(' : ')[0]).join(' ; ')}`) : null));
-}
-
-function ongletTendances(chef, nav) {
-  const groupes = groupesTendances(chef.tendances_fortes);
-  return [
-    titre('Tendances fortes', 'premier tiers de force relative dans la catégorie, tendance intacte'),
-    el('p', { class: 'chef-petit' }, 'Tendance intacte : performance sur 12 mois hors dernier mois positive et cours au-dessus de sa moyenne mobile 200 jours. '
-      + 'Une forte hausse est un signal positif, sauf si elle s’accompagne d’un excès (valorisation tendue, positionnement encombré, accélération parabolique) : la ligne passe alors dans « À surveiller ». '
-      + 'Seuils fixés par le backtest (data/backtest/tendance-2026-11.md).'),
-    ...(groupes.length ? groupes.flatMap(([k, xs]) => [titre(CATEGORIES_TENDANCE[k], `${xs.length} ligne${xs.length > 1 ? 's' : ''}`),
-      el('ul', { class: 'chef-liste' }, xs.map((x) => ligneTendance(x, nav)))]) : [el('p', { class: 'sante-ligne' }, 'Aucune tendance forte pour l’instant (ou analyse complète pas encore faite avec le suivi de tendance).')]),
-  ];
+      `${e.libelle} : ${e.etat}${e.age_h != null ? ` (${nombre(e.age_h, 0)} h)` : ''}${e.degrade ? ' · agent dégradé' : ''} · poids ${nombre((e.coef ?? 0) * 100, 0)} %`))));
 }
 
 function blocSuiviTendance(st) {
   const inv = st.invalidation ?? {};
   return el('section', {}, titre('Suivi de tendance', st.forte ? (st.exces?.length ? 'tendance forte, mais en excès' : 'tendance forte et saine') : st.positive ? 'tendance positive' : 'pas de tendance positive'),
     el('ul', { class: 'chef-texte' },
-      el('li', {}, `Performance sur 12 mois hors dernier mois : ${signeFr(st.perf_12_1, 1)} %${st.perf_1m != null ? ` ; sur 1 mois : ${signeFr(st.perf_1m, 1)} %` : ''}${st.vol_mensuelle != null ? ` (volatilité mensuelle habituelle ${nombre(st.vol_mensuelle, 1)} %)` : ''}`),
+      el('li', {}, `Performance sur 12 mois hors dernier mois : ${signeFr(st.perf_12_1, 1)} %${st.perf_1m != null ? ` ; sur 1 mois : ${signeFr(st.perf_1m, 1)} %` : ''}`),
       el('li', {}, `Cours ${nombre(st.cours, 2)} le ${dateFr(st.date)}, ${st.au_dessus_mm200 ? 'au-dessus' : 'en dessous'} de la moyenne 200 jours (${nombre(st.mm200, 2)}${inv.ecart_mm200_pct != null ? `, écart ${signeFr(inv.ecart_mm200_pct, 1)} %` : ''})`),
       st.force_relative != null ? el('li', {}, `Force relative : ${nombre(st.force_relative, 0)}e percentile (${st.rang}e sur ${st.sur})`) : null,
-      st.forte ? el('li', {}, `Tendance invalidée sous ${nombre(inv.mm200, 2)} (moyenne 200 jours) ; stop suiveur à ${nombre(inv.stop_suiveur, 2)} (−15 % du plus haut sur 12 mois)`) : null,
       ...(st.exces ?? []).map((x) => el('li', { class: 'chef-objection--serieuse' }, `Excès : ${x}`))));
 }
 
-/* ------------------------------------------------------------------ fiche détaillée */
+/* ------------------------------------------------------------------ fiches */
 
 function lienSource(l, nav) {
-  if (l.type === 'pays') return el('button', { class: 'bouton', type: 'button', onclick: () => nav.ouvrirPays(l.cle) }, 'Voir la fiche pays');
-  if (l.type === 'matieres' || l.type === 'or') return el('button', { class: 'bouton', type: 'button', onclick: () => nav.ouvrir({ type: 'matieres', id: l.cle }) }, 'Voir la fiche matière première');
-  if (l.type === 'entreprises' && nav.entrepriseExiste?.(l.cle)) return el('button', { class: 'bouton', type: 'button', onclick: () => nav.ouvrirEntreprise(l.cle) }, 'Voir la fiche entreprise');
-  if (l.type === 'secteurs') return el('button', { class: 'bouton', type: 'button', onclick: () => { zoneSecteurs = l.zone_secteur ?? 'monde'; nav.ouvrir({ type: 'investir', id: 'secteurs' }); } }, 'Voir les secteurs de la zone');
-  if (l.type === 'obligations' || l.type === 'liquidites') return el('button', { class: 'bouton', type: 'button', onclick: () => nav.ouvrir({ type: 'macro' }) }, 'Voir la vue macro');
+  const type = l.type ?? l.categorie;
+  if (type === 'pays') return el('button', { class: 'bouton', type: 'button', onclick: () => nav.ouvrirPays(l.cle) }, 'Voir la fiche pays');
+  if (type === 'matieres' || type === 'or') return el('button', { class: 'bouton', type: 'button', onclick: () => nav.ouvrir({ type: 'matieres', id: l.cle }) }, 'Voir la fiche matière première');
+  const t = l.ticker ?? l.cle;
+  if (type === 'entreprises' && nav.entrepriseExiste?.(t)) return el('button', { class: 'bouton', type: 'button', onclick: () => nav.ouvrirEntreprise(t) }, 'Voir la fiche entreprise');
+  if (type === 'obligations' || type === 'liquidites') return el('button', { class: 'bouton', type: 'button', onclick: () => nav.ouvrir({ type: 'macro' }) }, 'Voir la vue macro');
   return null;
 }
 
-function ficheOpportunite(l, chef, nav) {
-  const familles = Object.entries(l.familles ?? {}).sort((a, b) => (l.poids_effectifs?.[b[0]] ?? 0) - (l.poids_effectifs?.[a[0]] ?? 0));
+/** Ligne de la liste : pourquoi elle est retenue, son résultat au backtest, depuis quand, ce qui la ferait sortir. */
+function ficheListe(l, chef, nav) {
+  const ctx = toutes(chef).find((x) => x.id === l.id || (l.categorie === 'entreprises' && x.type === 'entreprises' && (x.cle === l.ticker || x.symbole === l.symbole)));
   return [
     el('header', { class: 'chef-entete' },
-      el('div', { class: 'fiche-surtitre' }, `${TYPES[l.type] ?? l.type}${l.provenances?.length ? ` · ${l.provenances.join(', ')}` : ''}${l.type === 'secteurs' ? ` · ${l.nb_societes} sociétés analysées${l.symbole ? ` · ETF ${l.symbole}` : ''}${l.etf_approche ? ` (${l.etf_approche})` : ''}` : ''}`),
+      el('div', { class: 'fiche-surtitre' }, `Liste d’investissement · ${CATEGORIES_LISTE[l.categorie] ?? l.categorie}${l.symbole ? ` · ${l.symbole}` : ''}`),
       el('h2', { class: 'fiche-titre' }, l.nom),
-      el('div', { class: 'chef-ligne-tete' }, badgeScore(l.score), fleche(l.fleche), pastilleVerdict(l.verdict), pastilleConviction(l.conviction)),
-      el('p', { class: 'chef-petit' }, `Verdict depuis le ${dateFr(l.depuis)}${l.score_precedent != null ? ` · score précédent ${nombre(l.score_precedent)}/100` : ''}${l.qualite != null ? ` · qualité des données ${nombre(l.qualite * 100)} %` : ''}`),
-      el('div', { class: 'chef-actions' }, lienSource(l, nav), el('button', { class: 'bouton', type: 'button', onclick: () => nav.ouvrir({ type: 'investir', id: l.type === 'or' ? 'matieres' : l.type === 'liquidites' ? 'obligations' : l.type }) }, '‹ Retour à la liste'))),
-    l.type === 'pays' ? el('p', { class: 'chef-avertissement' }, `Score et verdict pays : ${MENTION_PAYS}. Seuls les paris pays (tendance) sont investis.`) : null,
-    l.changement ? el('p', { class: 'chef-changement' }, l.changement.explication) : null,
-    l.en_attente ? el('p', { class: 'chef-changement chef-attente' }, l.en_attente.texte) : null,
-    l.plafond ? el('p', { class: 'chef-changement' }, l.plafond) : null,
+      el('div', { class: 'chef-ligne-tete' }, pastilleConviction(l.conviction), el('small', { class: 'chef-petit' }, ` ${NIVEAUX_CONVICTION[l.conviction] ?? ''}`)),
+      el('div', { class: 'chef-actions' }, lienSource(l, nav), el('button', { class: 'bouton', type: 'button', onclick: () => nav.ouvrir({ type: 'investir' }) }, '‹ Retour à la liste'))),
+    l.alerte_sortie ? el('p', { class: 'chef-changement chef-attente' }, `⚠ ${l.alerte_sortie}`) : null,
+    el('section', {}, titre('Combinaison(s) qui la retiennent'), el('ul', { class: 'chef-texte' }, (l.combinaisons_libelles ?? []).map((c) => el('li', {}, c))),
+      l.detail ? el('p', { class: 'chef-petit' }, l.detail) : null),
+    el('section', {}, titre('Résultat au backtest', 'hors échantillon'), el('ul', { class: 'chef-texte' }, (l.backtest ?? []).map((b) => el('li', {}, texteBacktest(b))))),
+    el('section', {}, titre('Dans la liste depuis'), el('p', {}, dateFr(l.date_entree))),
+    el('section', {}, titre('Ce qui la ferait sortir'), el('p', {}, majuscule(l.sortie_si))),
+    ctx?.score != null ? el('section', {}, titre('Note du chef d’orchestre', MENTION_PAYS),
+      el('p', {}, badgeScore(ctx.score), ' ', el('button', { class: 'lien', type: 'button', onclick: () => nav.ouvrir({ type: 'investir', id: `o-${ctx.id}` }) }, 'détail des signaux'))) : null,
+    mention(),
+  ];
+}
+
+/** Fiche de contexte : note et familles de signaux, sans verdict (non prédictif d'après le backtest). */
+function ficheOpportunite(l, chef, nav) {
+  const familles = Object.entries(l.familles ?? {}).sort((a, b) => (l.poids_effectifs?.[b[0]] ?? 0) - (l.poids_effectifs?.[a[0]] ?? 0));
+  const dansListe = (chef.liste?.lignes ?? []).find((x) => x.id === l.id || (l.type === 'entreprises' && x.ticker === l.cle));
+  return [
+    el('header', { class: 'chef-entete' },
+      el('div', { class: 'fiche-surtitre' }, `${TYPES[l.type] ?? l.type} · contexte`),
+      el('h2', { class: 'fiche-titre' }, l.nom),
+      el('div', { class: 'chef-ligne-tete' }, badgeScore(l.score), el('small', { class: 'chef-petit' }, ` Note : ${MENTION_PAYS}`)),
+      el('div', { class: 'chef-actions' }, lienSource(l, nav), el('button', { class: 'bouton', type: 'button', onclick: () => nav.ouvrir({ type: 'investir', id: 'contexte' }) }, '‹ Contexte'))),
+    el('p', { class: 'chef-avertissement' }, dansListe ? `Dans la liste d’investissement (${NIVEAUX_CONVICTION[dansListe.conviction] ?? ''}) : c’est la liste, pas cette note, qui décide.`
+      : 'Hors de la liste d’investissement. La note ci-dessous est un contexte, non prédictif d’après le backtest.'),
     l.suivi_tendance ? blocSuiviTendance(l.suivi_tendance) : null,
-    el('section', {}, titre('Conviction', l.conviction), el('ul', { class: 'chef-texte' }, (l.conviction_raisons ?? []).map((r) => el('li', {}, r)))),
-    el('section', {}, titre('Familles de signaux', 'score /100 · poids effectif dans le score'),
+    el('section', {}, titre('Familles de signaux', 'score /100 · poids effectif dans la note'),
       el('ul', { class: 'chef-familles' }, familles.map(([cle, f]) => el('li', {},
         el('div', { class: 'chef-famille-tete' }, el('strong', {}, f.libelle), badgeScore(f.note),
-          el('small', {}, `poids ${nombre(l.poids_effectifs?.[cle] ?? 0, 0)} %${f.percentile_classe != null ? ` · percentile ${nombre(f.percentile_classe, 0)} dans la classe` : ''}${f.coef < 0.95 ? ` · fiabilité ${nombre(f.coef * 100, 0)} %` : ''}`)),
+          el('small', {}, `poids ${nombre(l.poids_effectifs?.[cle] ?? 0, 0)} %${f.percentile_classe != null ? ` · percentile ${nombre(f.percentile_classe, 0)} dans la classe` : ''}`)),
         el('div', { class: 'chef-barre' }, el('span', { class: classeScore(f.note), style: { width: `${Math.max(2, f.note)}%` } })),
         el('div', { class: 'chef-petit' }, f.texte),
         el('div', { class: 'chef-source' }, `Source : ${f.source}`)))),
@@ -485,93 +439,9 @@ function ficheOpportunite(l, chef, nav) {
     el('section', {}, titre('Arguments pour'), el('ul', { class: 'chef-texte chef-pour' }, (l.pour ?? []).length ? l.pour.map((a) => el('li', {}, `${a.famille} (${nombre(a.note)}/100) : ${texteArgument(l, a)}`)) : el('li', {}, 'Aucun argument nettement favorable.'))),
     el('section', {}, titre('Arguments contre'), el('ul', { class: 'chef-texte chef-contre' }, (l.contre ?? []).length ? l.contre.map((a) => el('li', {}, `${a.famille} (${nombre(a.note)}/100) : ${texteArgument(l, a)}`)) : el('li', {}, 'Aucun argument nettement défavorable.'))),
     el('section', {}, titre('Objections du contradicteur', 'agent risque, 7 derniers jours'),
-      l.objections?.length ? el('ul', { class: 'chef-texte' }, l.objections.map((o) => el('li', { class: o.serieuse ? 'chef-objection--serieuse' : '' },
-        `${dateFr(o.date)} · « ${o.ajustement} »${o.serieuse ? ' (retenue : conviction abaissée)' : ''} — ${o.objection}`, el('div', { class: 'chef-source' }, `Signal : ${o.signal}`)))) : el('p', { class: 'chef-petit' }, 'Aucune objection.')),
-    el('section', {}, titre('Ce qui pourrait me donner tort'), el('ul', { class: 'chef-texte' }, (l.donner_tort ?? []).map((x) => el('li', {}, x)))),
-    l.societes?.length ? el('section', {}, titre('Meilleures sociétés du pays', 'agent entreprises'),
-      el('ul', { class: 'chef-texte' }, l.societes.map((s) => el('li', {},
-        nav.entrepriseExiste?.(s.ticker) ? el('button', { class: 'lien', type: 'button', onclick: () => nav.ouvrirEntreprise(s.ticker) }, s.nom ?? s.ticker) : (s.nom ?? s.ticker),
-        ` (${s.ticker}) · note ${s.note ?? 'n. d.'}/100 · ${s.recommandation ?? ''}`)))) : null,
+      l.objections?.length ? el('ul', { class: 'chef-texte' }, l.objections.map((o) => el('li', {}, `${dateFr(o.date)} · « ${o.ajustement} » — ${o.objection}`))) : el('p', { class: 'chef-petit' }, 'Aucune objection.')),
     mention(),
   ];
-}
-
-/* ------------------------------------------------------------------ allocation */
-
-/* ------------------------------------------------------------------ secteurs et filtres */
-
-let zoneSecteurs = 'monde';
-let filtreSecteur = 'tous';
-
-/** Puces de filtre (zone, secteur) ; `choisir` redessine le contenu sans quitter l'onglet. */
-function puces(options, actif, choisir) {
-  return el('div', { class: 'ini-onglets chef-filtre', role: 'group' }, options.map(([cle, libelle, n]) => el('button', {
-    class: `ini-onglet${cle === actif ? ' est-actif' : ''}`, type: 'button', 'aria-pressed': String(cle === actif), onclick: () => choisir(cle),
-  }, libelle, n != null ? el('small', {}, ` ${n}`) : null)));
-}
-
-function ongletSecteurs(chef, nav) {
-  const zones = chef.zones_secteurs ?? { monde: 'Monde' };
-  const conteneur = el('div', {});
-  const rendre = () => {
-    const lignes = (chef.secteurs ?? []).filter((l) => l.zone_secteur === zoneSecteurs).sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
-    conteneur.replaceChildren(
-      puces(Object.entries(zones).map(([k, v]) => [k, v, (chef.secteurs ?? []).filter((l) => l.zone_secteur === k).length]), zoneSecteurs, (k) => { zoneSecteurs = k; rendre(); }),
-      lignes.length ? liste(lignes, nav) : el('p', { class: 'chef-petit' }, 'Pas assez de sociétés analysées dans cette zone pour noter les secteurs.'),
-    );
-  };
-  rendre();
-  return [titre('Secteurs', '11 secteurs GICS ; signaux agrégés des sociétés, ETF sectoriels, cycle, initiés, risque'), conteneur,
-    el('p', { class: 'chef-petit' }, 'Momentum et flux : ETF sectoriels (XLK… aux États-Unis, iShares Global… dans le monde, iShares STOXX Europe 600 en Europe, secteurs ICB approchés). Émergents : pas d’ETF sectoriel exploitable, momentum tiré des sociétés.')];
-}
-
-function ongletEntreprises(chef, nav) {
-  const conteneur = el('div', {});
-  const rendre = () => {
-    const toutes = chef.entreprises ?? [];
-    const secteurs = [...new Set(toutes.map((l) => l.secteur_nom).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'fr'));
-    const lignes = filtreSecteur === 'tous' ? toutes : toutes.filter((l) => l.secteur_nom === filtreSecteur);
-    conteneur.replaceChildren(
-      puces([['tous', 'Tous les secteurs', toutes.length], ...secteurs.map((s) => [s, s, toutes.filter((l) => l.secteur_nom === s).length])], filtreSecteur, (k) => { filtreSecteur = k; rendre(); }),
-      liste(lignes, nav),
-    );
-  };
-  rendre();
-  return [titre('Entreprises', 'pépites, qualité à prix raisonnable, liste de surveillance, meilleures sociétés des pays attractifs et de chaque secteur'), conteneur];
-}
-
-let profilActif = 'equilibre';
-
-function ongletAllocation(chef, nav) {
-  const a = chef.allocation;
-  if (!a?.profils) return [el('p', { class: 'sante-ligne' }, 'Allocation pas encore calculée (analyse complète de 7 h 15 UTC).')];
-  const conteneur = el('div', {});
-  const rendre = () => {
-    const p = a.profils[profilActif] ?? Object.values(a.profils)[0];
-    const total = Object.values(p.classes ?? {}).reduce((s, v) => s + v, 0) || 1;
-    conteneur.replaceChildren(...[
-      el('div', { class: 'ini-onglets' }, Object.entries(a.profils).map(([cle, x]) => el('button', {
-        class: `ini-onglet${cle === profilActif ? ' est-actif' : ''}`, type: 'button', onclick: () => { profilActif = cle; rendre(); },
-      }, x.libelle))),
-      el('div', { class: 'chef-classes' }, Object.entries(p.classes ?? {}).sort((x, y) => y[1] - x[1]).map(([c, v]) => el('span', {
-        class: `chef-classe chef-classe--${c}`, style: { flexGrow: String(v / total) }, title: `${p.classes_libelles?.[c] ?? c} : ${nombre(v, 1)} %`,
-      }, `${nombre(v, 0)} %`))),
-      el('p', { class: 'chef-repartition' }, Object.entries(p.classes ?? {}).sort((x, y) => y[1] - x[1]).map(([c, v]) => el('span', {},
-        el('span', { class: `chef-pastille chef-classe--${c}` }), `${p.classes_libelles?.[c] ?? c} ${nombre(v, 1)} %`))),
-      el('p', { class: 'chef-petit' }, `Cœur ${nombre(100 - (p.satellite_pct ?? 0), 0)} % · satellites ${nombre(p.satellite_pct ?? 0, 0)} % (convictions fortes) · liquidités minimales au palier « ${a.palier} » : ${a.liquidites_min} %`),
-      p.avertissements?.length ? el('div', { class: 'chef-avertissement' }, p.avertissements.map((x) => el('p', {}, `⚠ ${x}`))) : null,
-      el('table', { class: 'chef-table' },
-        el('thead', {}, el('tr', {}, ['Ligne', 'Poche', 'Poids', 'Variation', 'Justification'].map((t) => el('th', {}, t)))),
-        el('tbody', {}, p.lignes.map((x) => el('tr', { class: x.poche === 'sortie' ? 'chef-sortie' : '' },
-          el('td', {}, el('button', { class: 'lien', type: 'button', onclick: () => nav.ouvrir({ type: 'investir', id: `o-${x.id}` }) }, x.nom)),
-          el('td', {}, x.poche), el('td', { class: 'mono' }, `${nombre(x.poids, 1)} %`),
-          el('td', { class: 'mono' }, x.variation == null ? 'nouvelle' : `${x.variation > 0 ? '+' : x.variation < 0 ? '−' : ''}${nombre(Math.abs(x.variation), 1)} pt`),
-          el('td', { class: 'chef-petit' }, x.justification))))),
-      el('p', { class: 'chef-petit' }, `Contraintes : ${a.contraintes?.max_pays} % par pays, ${a.contraintes?.max_secteur} % par secteur, ${a.contraintes?.max_theme} % par thème, ${a.contraintes?.max_ligne} % par ligne ; écart minimal de ${a.contraintes?.rotation_seuil} pt pour modifier une ligne. Base du futur agent trader démo.`),
-    ].filter(Boolean));
-  };
-  rendre();
-  return [titre('Allocation modèle', 'indicative, cœur-satellite'), conteneur];
 }
 
 /* ------------------------------------------------------------------ fiabilité */

@@ -253,6 +253,9 @@ def secteurs_distincts(lignes: list[dict], n: int) -> list[dict]:
     return res
 
 
+LIB_CAT = {"entreprises": "Entreprise", "matieres": "Matière première", "pays": "Pari pays"}
+
+
 def ent_(x) -> str:
     return ent(x)
 
@@ -261,43 +264,45 @@ def _liste_courte(items: list[dict], n: int) -> str:
     return ", ".join(f"{x['nom']} ({x['verdict'].lower()}, {ent(x['score'])}/100{', à surveiller' if x.get('a_surveiller') else ''})" for x in items[:n])
 
 
+def _noms(lignes: list[dict], n: int = 6) -> str:
+    return ", ".join(f"{l['nom']} ({l['nb_combinaisons']} comb.)" if l.get("nb_combinaisons", 1) > 1 else l["nom"] for l in lignes[:n]) + (
+        f" et {len(lignes) - n} autre(s)" if len(lignes) > n else "")
+
+
 def briefing_regles(ctx: dict) -> dict:
+    """Briefing par règles : seule la liste d'investissement (sélections du dernier recalibrage validé) est présentée ;
+    les notes et verdicts issus du score, non prédictifs d'après le backtest, n'y figurent plus."""
     f = Faits()
-    pano = ctx["panorama"]
     pal = ctx["palier"]
     mondial = ctx["risque_mondial"]
     phase = ctx["phase_monde"]
+    li = ctx.get("liste") or {}
+    lignes = li.get("lignes") or []
+    par = {k: [l for l in lignes if l["categorie"] == k] for k in ("entreprises", "matieres", "pays")}
     i_pal = f.ajouter(f"Palier de risque mondial « {pal} » (score de stress {fr(mondial.get('score'), 0)}/100)", "agent risque")
     i_phase = f.ajouter(f"Phase du cycle mondial : « {phase or 'n. d.'} »", "agent macro")
-    i_pays = [f.ajouter(f"Pays : {x['nom']} « {x['verdict']} », conviction {x['conviction']}, {ent(x['score'])}/100", "chef d'orchestre") for x in pano["pays"][:3]]
-    i_mat = [f.ajouter(f"Matière première : {x['nom']} « {x['verdict']} », conviction {x['conviction']}, {ent(x['score'])}/100", "chef d'orchestre") for x in pano["matieres"]]
-    i_or = [f.ajouter(f"Or : « {pano['or']['verdict']} », {ent(pano['or']['score'])}/100", "chef d'orchestre")] if pano.get("or") else []
-    i_obl = [f.ajouter(f"{x['nom']} : « {x['verdict']} », {ent(x['score'])}/100", "chef d'orchestre") for x in pano["obligations"] + pano["liquidites"]]
-    i_sec = [f.ajouter(f"Secteur : {x['nom']} « {x['verdict']} », conviction {x['conviction']}, {ent(x['score'])}/100", "chef d'orchestre") for x in pano.get("secteurs", [])]
-    b = pano["entreprises_bilan"]
-    i_ent = [f.ajouter(f"Entreprises : {b['texte']}", "chef d'orchestre")] + [
-        f.ajouter(f"Entreprise : {x['nom']} « {x['verdict']} », conviction {x['conviction']}, {ent(x['score'])}/100", "chef d'orchestre") for x in pano["entreprises"][:3]]
-    chg = ctx["changements"]
-    i_chg = [f.ajouter(c["texte"], "chef d'orchestre") for c in chg[:8]]
+    i_liste = f.ajouter(f"Liste d'investissement : {len(lignes)} ligne(s) (révisée le {date_fr(li.get('revise_le')) if li.get('revise_le') else 'n. d.'})", "chef d'orchestre")
+    i_cat = {k: [f.ajouter(f"{LIB_CAT[k]} : {l['nom']}, retenue par {' ; '.join(l['combinaisons_libelles'])}", "chef d'orchestre (sélections du backtest)")
+                 for l in xs] for k, xs in par.items()}
+    fortes = [l for l in lignes if l.get("nb_combinaisons", 1) >= 2]
+    mvts = [m for m in li.get("mouvements") or []]
+    i_mvt = [f.ajouter(m["texte"], "chef d'orchestre") for m in mvts[:10]]
     vig = ctx["vigilance"]
     i_vig = [f.ajouter(v, "chef d'orchestre") for v in vig[:6]]
-    obl_pos = [x for x in pano["obligations"] + pano["liquidites"] if DIRECTION.get(x["verdict"]) == 1]
-    obl_neg = [x for x in pano["obligations"] + pano["liquidites"] if DIRECTION.get(x["verdict"]) == -1]
-    texte_obl = "Obligations et liquidités : " + ("; ".join(
-        x for x in (("à privilégier : " + _liste_courte(obl_pos, 3)) if obl_pos else None,
-                    ("à alléger : " + ", ".join(x["nom"] for x in obl_neg)) if obl_neg else None) if x) or "positions neutres") + "."
     essentiel = [
-        {"texte": f"Risque mondial « {pal} » (stress {fr(mondial.get('score'), 0)}/100) ; cycle mondial en « {phase or 'n. d.'} ».", "faits": [i_pal, i_phase]},
-        {"texte": "Pays (contexte économique, non prédictif d'après le backtest) : " + (_liste_courte(pano["pays"], 3) or "aucune donnée") + ".", "faits": i_pays},
-        {"texte": "Matières premières : " + (_liste_courte(pano["matieres"], 3) or "aucune donnée")
-         + (f" ; or : {pano['or']['verdict'].lower()} ({ent(pano['or']['score'])}/100)" if pano.get("or") else "") + ".", "faits": i_mat + i_or},
-        {"texte": texte_obl, "faits": i_obl},
-        {"texte": "Secteurs : " + (_liste_courte(pano.get("secteurs", []), 3) or "aucune donnée")
-         + f" ; entreprises : {b['nombre']} retenues sur {b['secteurs']} secteurs et {b['pays']} pays, dont " + (_liste_courte(pano["entreprises"], 2) or "aucune") + ".",
-         "faits": i_sec + i_ent},
+        {"texte": f"Risque mondial « {pal} » (stress {fr(mondial.get('score'), 0)}/100) ; cycle mondial en « {phase or 'n. d.'} » (contexte).", "faits": [i_pal, i_phase]},
+        {"texte": f"Liste d'investissement : {len(lignes)} ligne(s) issues du dernier recalibrage validé, révisée une fois par mois"
+                  + (f" (le {date_fr(li['revise_le'])})" if li.get("revise_le") else "") + ".", "faits": [i_liste]},
+        {"texte": "Entreprises : " + (_noms(par["entreprises"]) or "aucune retenue") + ".", "faits": i_cat["entreprises"][:6]},
+        {"texte": "Matières premières : " + (_noms(par["matieres"]) or "aucune retenue") + " ; paris pays : " + (_noms(par["pays"]) or "aucun") + ".",
+         "faits": i_cat["matieres"][:6] + i_cat["pays"][:3]},
+        {"texte": ("Convictions les plus fortes (2 ou 3 combinaisons) : " + _noms(fortes, 5) + ".") if fortes
+         else "Aucune ligne retenue par plusieurs combinaisons : convictions faibles.", "faits": [i_liste]},
+        {"texte": ("Entrées et sorties du mois : " + " ; ".join(m["texte"] for m in mvts[:4]) + ("…" if len(mvts) > 4 else "") + ".") if mvts
+         else "Aucune entrée ni sortie ce mois-ci.", "faits": i_mvt[:4] or [i_liste]},
     ]
     return {"essentiel": essentiel, "vigilance": [{"texte": v, "faits": [i]} for v, i in zip(vig, i_vig)],
-            "faits": f.liste, "faits_changements": i_chg, "mode": "règles"}
+            "faits": f.liste, "faits_changements": i_mvt, "mode": "règles"}
 
 
 # ------------------------------------------------------------------ Gemini
@@ -329,9 +334,10 @@ def consigne(regles: dict, sc: dict) -> str:
         "sur un ton froid et factuel, sans euphorie ni alarmisme, en distinguant les faits des interprétations. "
         "N'utilise QUE les faits fournis : chaque phrase cite au moins un fait par son id entre crochets, par exemple [F2], et ne contient "
         "aucun chiffre absent des faits cités. Signale une donnée manquante au lieu de l'inventer. "
-        "« L'essentiel » résume le panorama PAR CATÉGORIE (1 : risque et cycle ; 2 : pays ; 3 : matières premières et or ; "
-        "4 : obligations et liquidités ; 5 : secteurs et entreprises), sans mettre en avant une seule société.\n"
-        "Réponds uniquement en JSON : {\"essentiel\": [{\"texte\": \"…\", \"faits\": [\"F1\"]}, … exactement 5 phrases], "
+        "« L'essentiel » ne présente QUE la liste d'investissement (sélections du backtest), jamais de note ni de verdict issus d'un score : "
+        "1 : risque et cycle (contexte) ; 2 : la liste et sa révision mensuelle ; 3 : entreprises retenues ; 4 : matières premières et paris pays ; "
+        "5 : convictions (nombre de combinaisons) ; 6 : entrées et sorties du mois.\n"
+        "Réponds uniquement en JSON : {\"essentiel\": [{\"texte\": \"…\", \"faits\": [\"F1\"]}, … exactement 6 phrases], "
         "\"vigilance\": [{\"texte\": \"…\", \"faits\": [\"F7\"]}]}\n\n"
         + json.dumps({"faits": regles["faits"], "scenarios": sc}, ensure_ascii=False)
     )
@@ -358,7 +364,7 @@ def briefing_gemini(regles: dict, sc: dict, quotas, cfg: dict, cle: str, poster,
             else:
                 res["supprimees"].append(f"{rub} : {raison}")
         if len(ok) >= mini:
-            res[rub] = ok[:5]
+            res[rub] = ok[:6]
         else:
             res[rub] = regles[rub]
             res.setdefault("rubriques_regles", []).append(rub)
@@ -375,28 +381,18 @@ def briefing_markdown(b: dict) -> str:
          f"palier de risque « {b['palier']} » · cycle mondial « {b.get('phase_monde') or 'n. d.'} »", "",
          "## L'essentiel", ""]
     l += [f"- {x['texte']}" for x in b["essentiel"]]
-    pano = b["panorama"]
-
-    def tableau(titre, items, avec_argument=True):
-        lignes = ["", f"### {titre}", "", "| Opportunité | Verdict | Conviction | Score | Justification |", "|---|---|---|---|---|"]
-        for x in items:
-            just = x.get("argument") or ""
-            if x.get("contre"):
-                just += f" — à surveiller : {x['contre']}"
-            lignes.append(f"| {x['nom']} | {x['verdict']} | {x['conviction']} | {ent(x['score'])}/100 | {just if avec_argument else ''} |")
-        if not items:
-            lignes.append("| Aucune donnée | | | | |")
-        return lignes
-    l += ["", "## Où investir : panorama"]
-    l += tableau("Top 5 (au plus une ligne par catégorie, puis deux)", pano["top"])
-    l += tableau("Pays — contexte économique, non prédictif d'après le backtest (pas de classement)", pano["pays"])
-    l += tableau("Secteurs (top 3, une zone par secteur)", pano.get("secteurs", []))
-    l += tableau("Matières premières (top 3)", pano["matieres"])
-    l += tableau("Or (valeur refuge)", [pano["or"]] if pano.get("or") else [])
-    l += tableau("Obligations et liquidités", pano["obligations"] + pano["liquidites"])
-    l += tableau(f"Entreprises ({pano['entreprises_bilan']['texte']})", pano["entreprises"])
-    l += ["", "### À surveiller", ""] + ([f"- {x['nom']} ({x['verdict'].lower()}) : {x['raison']}" for x in pano["a_surveiller"]] or ["- Rien de proche du seuil."])
-    l += ["", "## Ce qui a changé depuis hier", ""] + ([f"- {c['texte']}" for c in b["changements"]] or ["- Aucun verdict modifié."])
+    li = b.get("liste") or {}
+    l += ["", "## Où investir : la liste", "",
+          (li.get("regle") or ""), "",
+          "| Ligne | Catégorie | Combinaison(s) | Conviction | Backtest (écart / indice, gagnants) | Entrée | Ce qui la ferait sortir |",
+          "|---|---|---|---|---|---|---|"]
+    for x in li.get("lignes") or []:
+        bt = " ; ".join(f"{fr(r.get('ecart_indice_pct'), 1, True)} pt/an, {ent(r.get('gagnants_pct'))} %" for r in x.get("backtest") or [])
+        l.append(f"| {x['nom']} | {x['categorie']} | {' ; '.join(x['combinaisons_libelles'])} | {x['conviction']} ({x['nb_combinaisons']}) | {bt} | "
+                 f"{date_fr(x['date_entree'])} | {x['sortie_si']} |")
+    if not li.get("lignes"):
+        l.append("| Aucune ligne | | | | | | |")
+    l += ["", "## Entrées et sorties du mois", ""] + ([f"- {date_fr(m['date'])} · {m['texte']}" for m in b.get("mouvements") or []] or ["- Aucune."])
     l += ["", "## Points de vigilance", ""] + ([f"- {v['texte']}" for v in b["vigilance"]] or ["- Aucun."])
     for cle, nom in (("central", "Scénario central"), ("alternatif", "Scénario alternatif")):
         s = b["scenarios"][cle]
@@ -439,7 +435,7 @@ def alertes(signaux: dict[str, list[dict]], revues: list[dict], changements: lis
             cands.append((imp, s.get("date") or "", agent, s, note))
     for c in changements:
         if c.get("important"):
-            cands.append((2, c["date"], "chef", {"type": "verdict_chef", "cle": c["id"], "titre": c["texte"], "explication": c.get("explication", ""),
+            cands.append((2, c["date"], "chef", {"type": c.get("type", "verdict_chef"), "cle": c["id"], "titre": c["texte"], "explication": c.get("explication", ""),
                                                   "pays": [c["pays"]] if c.get("pays") else []}, None))
     cands.sort(key=lambda x: (x[0], x[1]), reverse=True)
     # Diversité : d'abord un signal par agent et par type, puis au plus deux par agent ; titres en double écartés

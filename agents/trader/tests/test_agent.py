@@ -254,6 +254,29 @@ class TestVerificationMensuelle(BaseTrader):
         self.assertTrue(tenues <= retenues, "toujours retenues par leur combinaison : gardées")
 
 
+class TestListeUnique(BaseTrader):
+    """Le trader n'achète que dans la liste unique du chef d'orchestre ; une sortie de liste en cours de mois est vendue."""
+    GARDER = ["selection-S01", "selection-S05", "selection-S06", "selection-S07", "selection-S08", "matiere-palladium", "pays-JP"]
+
+    def test_achats_limites_a_la_liste(self):
+        r = self.lancer(LUNDI_MATIN, "decision", modifs={("liste", None): {"garder": self.GARDER}})
+        symboles = {l["symbole"] for l in r["decision"]["cibles"]["lignes"]}
+        self.assertTrue(symboles)
+        self.assertTrue(symboles <= {"S01", "S05", "S06", "S07", "S08", "PALL", "EWJ"} | {s["symbole"] for s in self.config["supports"].get("matiere-palladium", [])},
+                        symboles)
+        self.assertNotIn("S02", symboles)
+
+    def test_sortie_de_liste_en_cours_de_mois(self):
+        self.investir(modifs={("liste", None): {"garder": self.GARDER}})
+        self.assertIn("S05", lire(self.data / "trader" / "etat.json")["positions"])
+        garder = [i for i in self.GARDER if i != "selection-S05"]
+        r = self.lancer(LUNDI_MATIN + timedelta(days=2, hours=1), modifs={("liste", None): {"garder": garder, "sorties": ["selection-S05"]}})
+        vente = [o for o in r["imposes"] if o["symbole"] == "S05"]
+        self.assertEqual([o["motif"] for o in vente], ["sortie de la liste"])
+        self.assertIn("confirmée 5 jours de suite", vente[0]["raison"]["texte"])
+        self.assertFalse([o for o in r["imposes"] if o["symbole"] in ("S01", "S06")], "les autres lignes de la liste restent")
+
+
 class TestParisPays(BaseTrader):
     def test_sortie_des_qu_un_exces_se_declenche_et_journal(self):
         self.investir()
