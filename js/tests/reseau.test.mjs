@@ -174,3 +174,13 @@ test('aRetenir (ancienne sortie, sans liste unique) : sélections par score, par
   assert.equal(vide.entreprises.total, 0);
   assert.equal(vide.alerte, null);
 });
+
+test('calculerReseau : teinte propre de chaque agent (format #rrggbb), null sinon', () => {
+  const config = {
+    centre: { ...CONFIG.centre, couleur: '#00E5FF' },
+    agents: [{ ...CONFIG.agents[0], couleur: '#ff3fd2' }, { ...CONFIG.agents[1], couleur: 'bleu' }, { ...CONFIG.agents[2] }],
+  };
+  const r = calculerReseau(config, { sources: {} });
+  assert.equal(r.centre.couleur, '#00e5ff');
+  assert.deepEqual(r.agents.map((a) => a.couleur), ['#ff3fd2', null, null]);
+});
