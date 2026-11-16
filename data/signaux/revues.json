@@ -1,13 +1,181 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-15T23:03:52Z",
+    "genere_le": "2026-11-16T02:24:57Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "geopolitique|hausse_score|MX|2026-11-16",
+      "revu_le": "2026-11-16T02:24:22Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "MX",
+        "date": "2026-11-16",
+        "importance": "moyenne",
+        "titre": "Mexique : score de risque géopolitique 36/100, +22 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|GB|2026-11-16",
+      "revu_le": "2026-11-16T02:24:22Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "GB",
+        "date": "2026-11-16",
+        "importance": "moyenne",
+        "titre": "Royaume-Uni : score de risque géopolitique 37/100, +18 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|DE|2026-11-16",
+      "revu_le": "2026-11-16T02:24:22Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "DE",
+        "date": "2026-11-16",
+        "importance": "moyenne",
+        "titre": "Allemagne : score de risque géopolitique 21/100, +13 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|CH|2026-11-16",
+      "revu_le": "2026-11-16T02:24:22Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "CH",
+        "date": "2026-11-16",
+        "importance": "moyenne",
+        "titre": "Suisse : score de risque géopolitique 36/100, +13 pts sur 7 jours"
+      },
+      "objection": "Malgré la hausse du score de risque, la Suisse dispose de réserves de 13,1 mois et d'une dette limitée à 38 % du PIB [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Suisse : réserves de 13,1 mois, dette de 38 % du PIB",
+          "source": "FMI, Banque mondiale"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "CH": {
+          "objection": "Objections spécifiques : Suisse dispose d'amortisseurs (réserves de 13,1 mois d'importations, dette publique de 38 % du PIB) [F1].",
+          "ajustement": "maintenir"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "geopolitique|hausse_score|VN|2026-11-16",
+      "revu_le": "2026-11-16T02:24:22Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "VN",
+        "date": "2026-11-16",
+        "importance": "moyenne",
+        "titre": "Vietnam : score de risque géopolitique 14/100, +11 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|SG|2026-11-16",
+      "revu_le": "2026-11-16T02:24:22Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "SG",
+        "date": "2026-11-16",
+        "importance": "moyenne",
+        "titre": "Singapour : score de risque géopolitique 15/100, +13 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|TR|2026-11-16",
+      "revu_le": "2026-11-16T02:24:22Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "TR",
+        "date": "2026-11-16",
+        "importance": "moyenne",
+        "titre": "Turquie : score de risque géopolitique 34/100, +13 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|AE|2026-11-16",
+      "revu_le": "2026-11-16T02:24:22Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "AE",
+        "date": "2026-11-16",
+        "importance": "moyenne",
+        "titre": "Émirats arabes unis : score de risque géopolitique 15/100, +10 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
     {
       "id": "geopolitique|evenement_grave|theme-evt-c7116d7979c9|2026-11-15",
       "revu_le": "2026-11-15T23:01:44Z",
@@ -18,44 +186,6 @@
         "date": "2026-11-15",
         "importance": "haute",
         "titre": "Événement de gravité 4 : Frappes israéliennes dans la bande de Gaza"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|MX|2026-11-15",
-      "revu_le": "2026-11-15T02:08:49Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "MX",
-        "date": "2026-11-15",
-        "importance": "moyenne",
-        "titre": "Mexique : score de risque géopolitique 38/100, +22 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|GB|2026-11-15",
-      "revu_le": "2026-11-15T02:08:49Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "GB",
-        "date": "2026-11-15",
-        "importance": "moyenne",
-        "titre": "Royaume-Uni : score de risque géopolitique 36/100, +18 pts sur 7 jours"
       },
       "objection": "Pas d'objection spécifique.",
       "faits": [],
@@ -94,82 +224,6 @@
         "date": "2026-11-15",
         "importance": "moyenne",
         "titre": "Chine : score de risque géopolitique 55/100, +12 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|VN|2026-11-15",
-      "revu_le": "2026-11-15T02:08:49Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "VN",
-        "date": "2026-11-15",
-        "importance": "moyenne",
-        "titre": "Vietnam : score de risque géopolitique 14/100, +10 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|SG|2026-11-15",
-      "revu_le": "2026-11-15T02:08:49Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "SG",
-        "date": "2026-11-15",
-        "importance": "moyenne",
-        "titre": "Singapour : score de risque géopolitique 15/100, +12 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|AE|2026-11-15",
-      "revu_le": "2026-11-15T02:08:49Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "AE",
-        "date": "2026-11-15",
-        "importance": "moyenne",
-        "titre": "Émirats arabes unis : score de risque géopolitique 18/100, +14 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|TR|2026-11-15",
-      "revu_le": "2026-11-15T02:08:49Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "TR",
-        "date": "2026-11-15",
-        "importance": "moyenne",
-        "titre": "Turquie : score de risque géopolitique 35/100, +14 pts sur 7 jours"
       },
       "objection": "Pas d'objection spécifique.",
       "faits": [],
@@ -4256,1116 +4310,6 @@
         "date": "2026-11-10",
         "importance": "haute",
         "titre": "Événement de gravité 4 : Poursuite des négociations de cessez-le-feu et de la situation à Gaza"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|nouvelle_pepite|BKNG|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "nouvelle_pepite",
-        "cle": "BKNG",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "Booking Holdings Inc. entre dans la liste « Qualité à prix raisonnable »"
-      },
-      "objection": "L'entrée dans la liste est nuancée par un cours en baisse de −23,0 % sur 3 mois et de −16,5 % sur 12 mois, malgré une hausse de +4,1 % sur 6 mois [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Booking Holdings Inc. : cours −23,0 % sur 3 mois, +4,1 % sur 6 mois, −16,5 % sur 12 mois",
-          "source": "agent entreprises (fiche)"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|nouvelle_pepite|ADBE|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "nouvelle_pepite",
-        "cle": "ADBE",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "Adobe Inc. entre dans la liste « Qualité à prix raisonnable »"
-      },
-      "objection": "Le dossier présente un piège de valeur possible avec une décote marquée, souligné par un momentum de −27,4 % [F1, F2].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Adobe Inc. : momentum 12 mois −27,4 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "Adobe Inc. : piège de valeur possible : décote marquée associée à un cours ou à un bénéfice en recul (revue critique)",
-          "source": "agent entreprises (data/pepites.json)"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1",
-        "F2"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|nouvelle_pepite|GD|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "nouvelle_pepite",
-        "cle": "GD",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "General Dynamics Corporation entre dans la liste « Qualité à prix raisonnable »"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|guidance_relevee|CEG|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_relevee",
-        "cle": "CEG",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "Constellation Energy Corporation : guidance relevée (09/11/2026)"
-      },
-      "objection": "Malgré la guidance relevée, la valeur affiche un momentum de −22,5 % et une croissance du bénéfice de −38,1 % [F2, F3]. De plus, les créances progressent de 14,8 % pour un CA en baisse de −3,8 %, tandis que le M-score de Beneish de −1,34 signale une manipulation potentielle des résultats [F5, F6].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Constellation Energy Corporation : PER vs secteur +35,6 % (PER 28,2 ; médiane du secteur 20,8)",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "Constellation Energy Corporation : momentum 12 mois −22,5 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F3",
-          "texte": "Constellation Energy Corporation : croissance du bénéfice −38,1 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F4",
-          "texte": "Constellation Energy Corporation : conversion du bénéfice en cash de 55,5 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F5",
-          "texte": "Constellation Energy Corporation : alerte « Hausse anormale des créances » : créances en hausse de 14,8 % pour un CA en hausse de −3,8 %",
-          "source": "agent entreprises (fiche)"
-        },
-        {
-          "id": "F6",
-          "texte": "Constellation Energy Corporation : alerte « M-score de Beneish suspect » : M-score de −1,34, au-dessus du seuil de détection : manipulation des résultats possible, à vérifier dans le rapport annuel",
-          "source": "agent entreprises (fiche)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F2",
-        "F3",
-        "F5",
-        "F6"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|guidance_relevee|FERG|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_relevee",
-        "cle": "FERG",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "Ferguson Enterprises Inc. : guidance relevée (09/11/2026)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|nouvelle_pepite|PAYX|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "nouvelle_pepite",
-        "cle": "PAYX",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "Paychex, Inc. entre dans la liste « Qualité à prix raisonnable »"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|guidance_relevee|SGI|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_relevee",
-        "cle": "SGI",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "Somnigroup International Inc. : guidance relevée (09/11/2026)"
-      },
-      "objection": "La hausse de la guidance s'accompagne d'un endettement élevé avec une dette nette sur EBITDA de 6,6× et une couverture des intérêts limitée à 2,8× [F2, F3]. Le titre subit également une forte dilution avec une hausse des actions de 20,9 % sur un an et un momentum de −26,7 % [F4, F6].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Somnigroup International Inc. : PER vs secteur +60,6 % (PER 28,6 ; médiane du secteur 17,8)",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "Somnigroup International Inc. : dette nette / EBITDA de 6,6×",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F3",
-          "texte": "Somnigroup International Inc. : couverture des intérêts de 2,8×",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F4",
-          "texte": "Somnigroup International Inc. : momentum 12 mois −26,7 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F5",
-          "texte": "Somnigroup International Inc. : croissance du CA +51,6 % (tendance sur 3 ans : +15,0 % par an)",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F6",
-          "texte": "Somnigroup International Inc. : alerte « Dilution forte » : nombre d'actions en hausse de 20,9 % sur un an",
-          "source": "agent entreprises (fiche)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F2",
-        "F3",
-        "F4",
-        "F6"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|nouvelle_pepite|HCLTECH.NS|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "nouvelle_pepite",
-        "cle": "HCLTECH.NS",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "HCL Technologies Limited entre dans la liste « Qualité à prix raisonnable »"
-      },
-      "objection": "Malgré des fondamentaux solides, un piège de valeur reste possible en raison d'une décote marquée associée à un recul du cours ou du bénéfice [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "HCL Technologies Limited : piège de valeur possible : décote marquée associée à un cours ou à un bénéfice en recul (revue critique)",
-          "source": "agent entreprises (data/pepites.json)"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|guidance_relevee|QLYS|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_relevee",
-        "cle": "QLYS",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "Qualys, Inc. : guidance relevée (09/11/2026)"
-      },
-      "objection": "Malgré cette révision à la hausse, la valorisation en VE/EBITDA dépasse le secteur de +41,5 % [F1], ce qui limite le potentiel de soutien boursier.",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Qualys, Inc. : VE/EBITDA vs secteur +41,5 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|nouvelle_pepite|EXLS|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "nouvelle_pepite",
-        "cle": "EXLS",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "ExlService Holdings, Inc. entre dans la liste « Pépites »"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|guidance_relevee|HIMS|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_relevee",
-        "cle": "HIMS",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "Hims & Hers Health, Inc. : guidance relevée (09/11/2026)"
-      },
-      "objection": "Malgré la croissance, la dette nette sur EBITDA atteint 3,4× [F2] et le momentum sur 12 mois est de −44,1 % [F3]. De plus, le M-score de Beneish est suspect à −0,25, signalant une manipulation possible des résultats [F6].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Hims & Hers Health, Inc. : VE/EBITDA vs secteur +97,9 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "Hims & Hers Health, Inc. : dette nette / EBITDA de 3,4×",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F3",
-          "texte": "Hims & Hers Health, Inc. : momentum 12 mois −44,1 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F4",
-          "texte": "Hims & Hers Health, Inc. : croissance du CA +59,0 % (tendance sur 3 ans : +64,5 % par an)",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F5",
-          "texte": "Hims & Hers Health, Inc. : conversion du bénéfice en cash de 44,7 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F6",
-          "texte": "Hims & Hers Health, Inc. : alerte « M-score de Beneish suspect » : M-score de −0,25, au-dessus du seuil de détection : manipulation des résultats possible, à vérifier dans le rapport annuel",
-          "source": "agent entreprises (fiche)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F2",
-        "F3",
-        "F6"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|guidance_relevee|GEF|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_relevee",
-        "cle": "GEF",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "Greif, Inc. : guidance relevée (06/11/2026)"
-      },
-      "objection": "Cette hausse des investissements intervient alors que la dette nette sur EBITDA s'établit déjà à 4,8× [F1] et que la croissance du bénéfice recule de −25,2 % [F3].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Greif, Inc. : dette nette / EBITDA de 4,8×",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "Greif, Inc. : cours −15,5 % sur 3 mois, +11,8 % sur 6 mois, +29,5 % sur 12 mois",
-          "source": "agent entreprises (fiche)"
-        },
-        {
-          "id": "F3",
-          "texte": "Greif, Inc. : croissance du bénéfice −25,2 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F4",
-          "texte": "Greif, Inc. : conversion du bénéfice en cash de 61,1 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1",
-        "F3"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|guidance_relevee|VSAT|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_relevee",
-        "cle": "VSAT",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "Viasat, Inc. : guidance relevée (05/11/2026)"
-      },
-      "objection": "L'accroissement des dépenses d'investissement pèse sur une structure financière déjà fragilisée par une couverture des intérêts limitée à 0,3× [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Viasat, Inc. : couverture des intérêts de 0,3×",
-          "source": "agent entreprises (data/entreprises.json)"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|guidance_relevee|TDC|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_relevee",
-        "cle": "TDC",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "Teradata Corporation : guidance relevée (05/11/2026)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|guidance_relevee|VCEL|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_relevee",
-        "cle": "VCEL",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "Vericel Corporation : guidance relevée (05/11/2026)"
-      },
-      "objection": "Malgré la révision à la hausse, le PER de Vericel Corporation dépasse de 319,6 % la médiane du secteur avec un PER de 123,0 [F1]. De plus, les créances progressent anormalement de 37,9 % alors que le chiffre d'affaires n'augmente que de 16,5 % [F2].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Vericel Corporation : PER vs secteur +319,6 % (PER 123,0 ; médiane du secteur 29,3)",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "Vericel Corporation : alerte « Hausse anormale des créances » : créances en hausse de 37,9 % pour un CA en hausse de 16,5 %",
-          "source": "agent entreprises (fiche)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1",
-        "F2"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|guidance_abaissee|KOP|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_abaissee",
-        "cle": "KOP",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "Koppers Holdings Inc. : guidance abaissée (06/11/2026)"
-      },
-      "objection": "La baisse de la guidance s'accompagne d'une contraction du chiffre d'affaires de 10,2 % [F4] et d'une dette nette sur EBITDA s'établissant à 4,5× [F1]. Le cours de l'action subit également une chute de 41,9 % sur 3 mois [F3].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Koppers Holdings Inc. : dette nette / EBITDA de 4,5×",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "Koppers Holdings Inc. : couverture des intérêts de 3,3×",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F3",
-          "texte": "Koppers Holdings Inc. : cours −41,9 % sur 3 mois, −31,6 % sur 6 mois, +10,9 % sur 12 mois",
-          "source": "agent entreprises (fiche)"
-        },
-        {
-          "id": "F4",
-          "texte": "Koppers Holdings Inc. : croissance du CA −10,2 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1",
-        "F3",
-        "F4"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|guidance_abaissee|TAP|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_abaissee",
-        "cle": "TAP",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "Molson Coors Beverage Company : guidance abaissée (05/11/2026)"
-      },
-      "objection": "La dégradation de la guidance reflète une croissance du bénéfice en recul de 290,6 % [F2]. Cette situation s'inscrit avec un ratio de dette nette sur EBITDA négatif [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Molson Coors Beverage Company : dette nette / EBITDA de EBITDA négatif",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "Molson Coors Beverage Company : croissance du bénéfice −290,6 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1",
-        "F2"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|guidance_abaissee|CWST|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_abaissee",
-        "cle": "CWST",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "Casella Waste Systems, Inc. : guidance abaissée (09/11/2026)"
-      },
-      "objection": "Le resserrement de la guidance intervient dans un contexte où la croissance du bénéfice chute de 41,9 % [F3]. La couverture des intérêts se limite à 1,5× [F2] pour un PER de 1087,6 supérieur de 4187,0 % à la médiane du secteur [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Casella Waste Systems, Inc. : PER vs secteur +4187,0 % (PER 1087,6 ; médiane du secteur 25,4)",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "Casella Waste Systems, Inc. : couverture des intérêts de 1,5×",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F3",
-          "texte": "Casella Waste Systems, Inc. : croissance du bénéfice −41,9 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1",
-        "F2",
-        "F3"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|guidance_relevee|TMDX|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_relevee",
-        "cle": "TMDX",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "TransMedics Group, Inc. : guidance relevée (05/11/2026)"
-      },
-      "objection": "Objections spécifiques : cours à −21,3 % sur 12 mois : le marché ne valide pas la qualité affichée [F1] ; bénéfice en hausse de 437 % sur un exercice, difficilement reproductible [F2].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "TransMedics Group, Inc. : momentum 12 mois −21,3 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "TransMedics Group, Inc. : croissance du bénéfice +436,6 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|guidance_relevee|DCH|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_relevee",
-        "cle": "DCH",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "Dauch Corporation : guidance relevée (06/11/2026)"
-      },
-      "objection": "Objections spécifiques : dette nette de 5,2× l'EBITDA [F1] ; couverture des intérêts de 1,2× seulement [F2] ; cours à −29,8 % sur 12 mois : le marché ne valide pas la qualité affichée [F3] ; bénéfice en baisse de 158 % [F4].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Dauch Corporation : dette nette / EBITDA de 5,2×",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "Dauch Corporation : couverture des intérêts de 1,2×",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F3",
-          "texte": "Dauch Corporation : momentum 12 mois −29,8 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F4",
-          "texte": "Dauch Corporation : croissance du bénéfice −158,3 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|guidance_relevee|UNIT|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_relevee",
-        "cle": "UNIT",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "Uniti Group Inc. : guidance relevée (09/11/2026)"
-      },
-      "objection": "Objections spécifiques : dette nette de 4,1× l'EBITDA [F1] ; couverture des intérêts de 0,8× seulement [F2] ; cours à −32,2 % sur 12 mois : le marché ne valide pas la qualité affichée [F3] ; bénéfice en hausse de 1 329 % sur un exercice, difficilement reproductible [F4] ; bénéfice converti en cash à −35,2 % seulement [F5] ; signal d'alerte comptable : bénéfice peu converti en cash (flux d'exploitation égal à 27 % du résultat net) [F6] ; signal d'alerte comptable : hausse anormale des créances (créances en hausse de 597,1 % pour un CA en hausse de 91,5 %) [F7].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Uniti Group Inc. : dette nette / EBITDA de 4,1×",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "Uniti Group Inc. : couverture des intérêts de 0,8×",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F3",
-          "texte": "Uniti Group Inc. : momentum 12 mois −32,2 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F4",
-          "texte": "Uniti Group Inc. : croissance du bénéfice +1329,0 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F5",
-          "texte": "Uniti Group Inc. : conversion du bénéfice en cash de −35,2 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F6",
-          "texte": "Uniti Group Inc. : alerte « Bénéfice peu converti en cash » : flux d'exploitation égal à 27 % du résultat net",
-          "source": "agent entreprises (fiche)"
-        },
-        {
-          "id": "F7",
-          "texte": "Uniti Group Inc. : alerte « Hausse anormale des créances » : créances en hausse de 597,1 % pour un CA en hausse de 91,5 %",
-          "source": "agent entreprises (fiche)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|guidance_abaissee|TDS|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_abaissee",
-        "cle": "TDS",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "Telephone and Data Systems, Inc. : guidance abaissée (06/11/2026)"
-      },
-      "objection": "Objections spécifiques : couverture des intérêts de −0,6× seulement [F1] ; cours à −21,7 % sur 6 mois [F2] ; chiffre d'affaires en baisse de 17 % [F3] ; signal d'alerte comptable : hausse anormale des créances (créances en hausse de 20,3 % pour un CA en hausse de −17,4 %) [F4].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Telephone and Data Systems, Inc. : couverture des intérêts de −0,6×",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "Telephone and Data Systems, Inc. : cours +0,6 % sur 3 mois, −21,7 % sur 6 mois, −9,8 % sur 12 mois",
-          "source": "agent entreprises (fiche)"
-        },
-        {
-          "id": "F3",
-          "texte": "Telephone and Data Systems, Inc. : croissance du CA −17,4 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F4",
-          "texte": "Telephone and Data Systems, Inc. : alerte « Hausse anormale des créances » : créances en hausse de 20,3 % pour un CA en hausse de −17,4 %",
-          "source": "agent entreprises (fiche)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|guidance_relevee|VNT|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_relevee",
-        "cle": "VNT",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "Vontier Corporation : guidance relevée (05/11/2026)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|guidance_relevee|AAON|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_relevee",
-        "cle": "AAON",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "AAON, Inc. : guidance relevée (09/11/2026)"
-      },
-      "objection": "Objections spécifiques : valorisation supérieure de 28 % à la médiane du secteur (PER 32,5 ; médiane du secteur 25,4) [F1] ; cours à −40,2 % sur 12 mois : le marché ne valide pas la qualité affichée [F2] ; bénéfice en baisse de 36 % [F3] ; bénéfice converti en cash à −189,9 % seulement [F4] ; signal d'alerte comptable : bénéfice peu converti en cash (flux d'exploitation égal à 0 % du résultat net) [F5] ; signal d'alerte comptable : hausse anormale des créances (créances en hausse de 113,2 % pour un CA en hausse de 20,1 %) [F6].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "AAON, Inc. : PER vs secteur +28,3 % (PER 32,5 ; médiane du secteur 25,4)",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "AAON, Inc. : momentum 12 mois −40,2 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F3",
-          "texte": "AAON, Inc. : croissance du bénéfice −36,2 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F4",
-          "texte": "AAON, Inc. : conversion du bénéfice en cash de −189,9 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F5",
-          "texte": "AAON, Inc. : alerte « Bénéfice peu converti en cash » : flux d'exploitation égal à 0 % du résultat net",
-          "source": "agent entreprises (fiche)"
-        },
-        {
-          "id": "F6",
-          "texte": "AAON, Inc. : alerte « Hausse anormale des créances » : créances en hausse de 113,2 % pour un CA en hausse de 20,1 %",
-          "source": "agent entreprises (fiche)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|guidance_relevee|TGTX|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_relevee",
-        "cle": "TGTX",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "TG Therapeutics, Inc. : guidance relevée (09/11/2026)"
-      },
-      "objection": "Objections spécifiques : VE/EBITDA supérieur de 306 % à la médiane du secteur [F1] ; bénéfice en hausse de 1 812 % sur un exercice, difficilement reproductible [F2] ; bénéfice converti en cash à −5,6 % seulement [F3] ; signal d'alerte comptable : bénéfice peu converti en cash (flux d'exploitation égal à −6 % du résultat net) [F4] ; signal d'alerte comptable : hausse anormale des créances (créances en hausse de 136,6 % pour un CA en hausse de 87,3 %) [F5].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "TG Therapeutics, Inc. : VE/EBITDA vs secteur +305,8 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "TG Therapeutics, Inc. : croissance du bénéfice +1812,4 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F3",
-          "texte": "TG Therapeutics, Inc. : conversion du bénéfice en cash de −5,6 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F4",
-          "texte": "TG Therapeutics, Inc. : alerte « Bénéfice peu converti en cash » : flux d'exploitation égal à −6 % du résultat net",
-          "source": "agent entreprises (fiche)"
-        },
-        {
-          "id": "F5",
-          "texte": "TG Therapeutics, Inc. : alerte « Hausse anormale des créances » : créances en hausse de 136,6 % pour un CA en hausse de 87,3 %",
-          "source": "agent entreprises (fiche)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|guidance_abaissee|TFX|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_abaissee",
-        "cle": "TFX",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "Teleflex Incorporated : guidance abaissée (05/11/2026)"
-      },
-      "objection": "Objections spécifiques : VE/EBITDA supérieur de 56 % à la médiane du secteur [F1] ; dette nette de 7,8× l'EBITDA [F2] ; couverture des intérêts de 2,6× seulement [F3] ; bénéfice en baisse de 1 400 % [F4] ; signal d'alerte comptable : hausse anormale des créances (créances en hausse de 52,4 % pour un CA en hausse de 17,2 %) [F5].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Teleflex Incorporated : VE/EBITDA vs secteur +55,8 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "Teleflex Incorporated : dette nette / EBITDA de 7,8×",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F3",
-          "texte": "Teleflex Incorporated : couverture des intérêts de 2,6×",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F4",
-          "texte": "Teleflex Incorporated : croissance du bénéfice −1399,8 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F5",
-          "texte": "Teleflex Incorporated : alerte « Hausse anormale des créances » : créances en hausse de 52,4 % pour un CA en hausse de 17,2 %",
-          "source": "agent entreprises (fiche)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|guidance_relevee|RDNT|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_relevee",
-        "cle": "RDNT",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "RadNet, Inc. : guidance relevée (09/11/2026)"
-      },
-      "objection": "Objections spécifiques : dette nette de 3,5× l'EBITDA [F1] ; couverture des intérêts de 1,2× seulement [F2] ; bénéfice en baisse de 768 % [F3].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "RadNet, Inc. : dette nette / EBITDA de 3,5×",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "RadNet, Inc. : couverture des intérêts de 1,2×",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F3",
-          "texte": "RadNet, Inc. : croissance du bénéfice −767,8 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|guidance_relevee|ATMU|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_relevee",
-        "cle": "ATMU",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "Atmus Filtration Technologies Inc. : guidance relevée (06/11/2026)"
-      },
-      "objection": "Objections spécifiques : signal d'alerte comptable : hausse anormale des créances (créances en hausse de 25,9 % pour un CA en hausse de 5,7 %) [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Atmus Filtration Technologies Inc. : alerte « Hausse anormale des créances » : créances en hausse de 25,9 % pour un CA en hausse de 5,7 %",
-          "source": "agent entreprises (fiche)"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "règles",
-      "confiance": "faible",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|guidance_relevee|DK|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_relevee",
-        "cle": "DK",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "Delek US Holdings, Inc. : guidance relevée (06/11/2026)"
-      },
-      "objection": "Objections spécifiques : valorisation supérieure de 21 % à la médiane du secteur (PER 17,5 ; médiane du secteur 14,5) [F1] ; dette nette de 3,4× l'EBITDA [F2] ; couverture des intérêts de 0,9× seulement [F3].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Delek US Holdings, Inc. : PER vs secteur +21,0 % (PER 17,5 ; médiane du secteur 14,5)",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "Delek US Holdings, Inc. : dette nette / EBITDA de 3,4×",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F3",
-          "texte": "Delek US Holdings, Inc. : couverture des intérêts de 0,9×",
-          "source": "agent entreprises (data/entreprises.json)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|guidance_abaissee|TILE|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_abaissee",
-        "cle": "TILE",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "Interface, Inc. : guidance abaissée (06/11/2026)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|guidance_relevee|UAA|2026-11-09",
-      "revu_le": "2026-11-10T01:29:40Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_relevee",
-        "cle": "UAA",
-        "date": "2026-11-09",
-        "importance": "moyenne",
-        "titre": "Under Armour, Inc. : guidance relevée (06/11/2026)"
-      },
-      "objection": "Objections spécifiques : VE/EBITDA supérieur de 194 % à la médiane du secteur [F1] ; dette nette de 22,0× l'EBITDA [F2] ; bénéfice en baisse de 146 % [F3].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Under Armour, Inc. : VE/EBITDA vs secteur +194,4 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "Under Armour, Inc. : dette nette / EBITDA de 22,0×",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F3",
-          "texte": "Under Armour, Inc. : croissance du bénéfice −146,3 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "matieres_premieres|changement_verdict|gaz_us|2026-11-09",
-      "revu_le": "2026-11-09T23:01:49Z",
-      "signal": {
-        "agent": "matieres_premieres",
-        "type": "changement_verdict",
-        "cle": "gaz_us",
-        "date": "2026-11-09",
-        "importance": "forte",
-        "titre": "Gaz naturel américain : passage de « Neutre » à « Surpondérer »"
       },
       "objection": "Pas d'objection spécifique.",
       "faits": [],
