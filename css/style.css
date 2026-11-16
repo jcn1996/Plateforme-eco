@@ -2017,7 +2017,7 @@ body.accueil-actif .alertes { display: none !important; }
 .reseau-zone[data-mode="2d"] .reseau-noeud { touch-action: manipulation; }
 .reseau-noeud:focus-visible { outline: 2px solid var(--cyan); outline-offset: 0; }
 .reseau-noeud.est-loin { visibility: hidden; }
-/* Libellés toujours face à l'écran, 11 px au moins, jamais superposés (séparés en JavaScript) */
+/* Libellés en texte HTML superposé (jamais en texture), toujours face à l'écran, 12 px au moins, jamais superposés (séparés en JavaScript) */
 .reseau-libelle {
   position: absolute; left: 0; top: 0;
   display: flex; flex-direction: column; align-items: center;
@@ -2030,8 +2030,8 @@ body.accueil-actif .alertes { display: none !important; }
   transition: opacity 0.35s ease;
 }
 .reseau-nom { font-family: var(--police-titre); font-size: 12px; font-weight: 600; color: #eafcff; letter-spacing: 0.02em; }
-.reseau-info { font-family: var(--police-mono); font-size: 11px; color: var(--texte-2); }
-.reseau-etat { font-size: 11px; font-weight: 600; }
+.reseau-info { font-family: var(--police-mono); font-size: 12px; color: var(--texte-2); }
+.reseau-etat { font-size: 12px; font-weight: 600; }
 .reseau-pastille-degrade { color: var(--orange); }
 .reseau-noeud--degrade .reseau-etat { color: var(--orange); font-weight: 500; opacity: 0.85; }
 .reseau-noeud--panne .reseau-etat { color: var(--rouge); }
@@ -2050,7 +2050,7 @@ body.accueil-actif .alertes { display: none !important; }
 }
 .reseau-legende li { display: flex; align-items: center; gap: 5px; }
 .reseau-trait { flex: none; width: 26px; height: 8px; }
-.reseau-trait line { stroke: var(--cyan); }
+.reseau-trait line { stroke: #d8ecff; } /* chaque agent a sa teinte : la légende ne montre que la forme du trait */
 .reseau-trait--degrade line { stroke: var(--orange); }
 .reseau-trait--panne line { stroke: var(--rouge); }
 .reseau-mode { margin-top: 4px; text-align: center; font-size: 11px; color: var(--texte-3); }

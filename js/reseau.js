@@ -136,6 +136,7 @@ export function calculerReseau(config, { sources = {}, sante = {}, entrees = [] 
     const etat = etatAgent({ statutJournal: s.statut, journal: s.journal, entrees: (a.entrees ?? []).map((c) => parCle.get(c)).filter(Boolean) });
     return {
       cle: a.cle, nom: a.nom, role: a.role ?? null, centre,
+      couleur: /^#[0-9a-f]{6}$/i.test(a.couleur ?? '') ? a.couleur.toLowerCase() : null,
       poids: centre ? 'decision' : (a.poids === 'decision' ? 'decision' : 'contexte'),
       sens: a.sens === 'depuis_centre' ? 'depuis_centre' : 'vers_centre',
       route: a.route ?? null, action: a.action ?? null, description: a.description ?? '',
