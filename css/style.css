@@ -1929,6 +1929,10 @@ body.menu-ouvert { overflow: hidden; }
 .mpf-actions-ligne .bouton { width: 30px; min-height: 30px; padding: 0; }
 .mpf-pastille { display: inline-block; margin: 3px 0 1px; padding: 1px 7px; border-radius: 999px; font-size: 10.5px; }
 .mpf-pastille--ambre { border: 1px solid rgba(255, 181, 71, 0.5); color: var(--orange); }
+.mpf-pastille--bouton { background: none; font: inherit; font-size: 10.5px; cursor: pointer; }
+.mpf-pastille--bouton:hover, .mpf-pastille--bouton:focus-visible { background: rgba(255, 181, 71, 0.12); }
+.mpf-pastille--bouton::after { content: ' ›'; }
+.mpf-option { color: var(--texte-2); }
 .mpf-alertes, .mpf-liste, .mpf-crible, .mpf-signaux { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 6px; font-size: 12.5px; }
 .mpf-alerte { padding: 6px 9px; border-radius: 8px; border-left: 3px solid var(--orange); background: rgba(255, 181, 71, 0.07); color: var(--texte-2); }
 .mpf-alerte--forte { border-left-color: var(--rouge); background: rgba(255, 77, 106, 0.08); }

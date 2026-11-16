@@ -11,6 +11,7 @@ Ce dossier contient de quoi créer un **second dépôt GitHub, PRIVÉ**, qui ré
 Interactive Brokers (Flex Web Service) ─┐
 eToro (API officielle, clés « Read ») ──┼─► workflow quotidien du dépôt PRIVÉ
                                         │     · positions + cours sur 1 an (Yahoo)
+                                        │     · secteur et pays des actions (Yahoo, symbole seul)
                                         │     · chiffrement AES-256-GCM (PBKDF2-SHA-256, 600 000 itérations)
                                         │       avec VOTRE mot de passe (secret GitHub)
                                         └─► branche « synchro » : portefeuilles.chiffre.json (illisible sans le mot de passe)
@@ -53,7 +54,9 @@ eToro (API officielle, clés « Read ») ──┼─► workflow quotidien du d
 3. Section **Activity Flex Query**, bouton **+** (Create).
 4. Nom : `Positions appli`.
 5. Sections à cocher :
-   - **Open Positions** — Options : **Summary** ; champs : *Account ID, Currency, FX Rate To Base, Asset Class, Sub Category, Symbol, Description, ISIN, Listing Exchange, Quantity, Mark Price, Position Value, Cost Basis Price, Level Of Detail* (ou « Select All »).
+   - **Open Positions** — Options : **Summary** ; champs : *Account ID, Currency, FX Rate To Base, Asset Class, Sub Category, Symbol, Description, ISIN, Listing Exchange, Quantity, Mark Price, Position Value, Cost Basis Price, Cost Basis Money, Level Of Detail*, **Multiplier**, et pour les options *Underlying Symbol, Expiry, Strike, Put/Call* (ou « Select All »).
+     - **Ajoutez le champ Multiplier** à une requête existante (Flex Queries › icône crayon de la requête › Open Positions) : sans lui, le script suppose **100** pour une option (contrat standard sur actions américaines) ; un contrat d'une autre taille (mini-options, options sur indices ou contrats européens) aurait alors un prix de revient faux.
+     - *Cost Basis Money* sert de secours quand *Cost Basis Price* est vide (certaines lignes transférées ou issues d'opérations sur titres) : prix de revient = Cost Basis Money ÷ (quantité × multiplicateur). Si les deux sont vides, l'appli affiche « prix de revient inconnu ».
    - **Cash Report** (facultatif, pour les liquidités) — champs *Currency, Ending Cash*.
    - **Account Information** — champ *Currency* (devise de base).
 6. Delivery Configuration : **Format XML**, **Period : Last Business Day**.
@@ -72,6 +75,8 @@ eToro (API officielle, clés « Read ») ──┼─► workflow quotidien du d
 
 > Conseil : réglez la devise de base du compte IBKR en **EUR** (Settings › Account Settings › Base Currency). Les valeurs publiées sont exprimées dans la devise de base.
 
+**Options** (Asset Class `OPT`) : publiées avec le type « option », le multiplicateur du contrat, le sous-jacent, l'échéance, le prix d'exercice et le sens (call ou put). Leur valeur (Position Value) inclut déjà le multiplicateur ; l'appli multiplie quantité × multiplicateur × prix de revient pour le coût, d'où un gain juste en euros et en %. Elles forment la catégorie « Options » de la répartition (ni pays ni secteur) et ne sont jamais rattachées à la fiche du sous-jacent. Si les champs *Underlying Symbol, Expiry, Strike, Put/Call* manquent, le script les lit dans le symbole OCC (`AAPL  261218C00200000`) ou la description (`AAPL 18DEC26 200 C`).
+
 ## 4. eToro : clés de l'API officielle (lecture seule)
 
 eToro propose une API publique officielle qui donne accès au portefeuille réel (`GET /api/v1/trading/info/real/pnl` sur `public-api.etoro.com`, positions copiées incluses). Vérifié le 10/11/2026 dans la documentation (api-portal.etoro.com). L'API demande deux clés :
@@ -88,6 +93,18 @@ eToro propose une API publique officielle qui donne accès au portefeuille réel
 Notes :
 - Les positions à effet de levier (CFD) sont signalées ; leur « valeur » est le montant investi plus la plus-value latente.
 - Le script accepte les deux casses de champs que la documentation mélange (`instrumentID` / `instrumentId`). Si eToro modifie son format, le workflow l'indique (« eToro : … ») sans bloquer IBKR.
+- **Symboles** : ceux d'eToro sont convertis vers ceux de Yahoo Finance, utilisés par les fiches de l'appli :
+  - classes d'actions : `GOOG` → `GOOGL`, `BRK.B` → `BRK-B`… ;
+  - suffixes de place : `.ZU` → `.SW` (Zurich), `.NV` → `.AS` (Amsterdam), `.LSB` → `.LS` (Lisbonne), `.ASX` → `.AX` ; `.L`, `.PA`, `.DE`, `.MI`, `.MC`, `.AS`, `.HK` (complété à 4 chiffres : `700.HK` → `0700.HK`), `.ST`, `.CO`, `.OL`, `.HE`, `.BR` sont conservés ;
+  - cryptoactifs (Bitcoin `BTC` et les autres) : `BTC-USD`, classés « Cryptoactifs ».
+
+  L'appli applique la même conversion aux lignes déjà synchronisées.
+
+## Secteur et pays des actions sans fiche
+
+Pour chaque action détenue, le script demande à Yahoo Finance son secteur et son pays (`yfinance`, **seul le symbole est envoyé**, jamais une quantité ni un montant). L'appli s'en sert uniquement pour les actions sans fiche (introduction en Bourse récente, petite capitalisation hors univers) : elles sont alors classées sans saisie. Option `--sans-profils` pour désactiver ces requêtes.
+
+Les lignes qui restent non classées portent l'étiquette **« catégorie à saisir »** : touchez-la pour choisir catégorie, secteur et pays. Ce choix est mémorisé sur l'appareil (IndexedDB) et réappliqué à chaque synchronisation, même si la ligne disparaît puis revient.
 
 ## 5. Premier lancement
 
@@ -128,7 +145,7 @@ pip install -r requirements.txt
 python -m unittest discover -s outils/synchro-portefeuilles -t outils/synchro-portefeuilles
 ```
 
-Les tests utilisent des relevés **fictifs** (`tests/ibkr_fictif.xml`, `tests/etoro_fictif.json`). Le fichier `js/tests/donnees/synchro-exemple.chiffre.json` (contenu fictif, mot de passe `exemple-fictif-ne-pas-utiliser`) vérifie que l'appli déchiffre bien ce que produit le script.
+Les tests utilisent des relevés **fictifs** (`tests/ibkr_fictif.xml`, `tests/etoro_fictif.json`) : une option (call avec champs Flex, put vendu sans multiplicateur), une ligne sans Cost Basis Price, une sans aucun prix de revient, `GOOG`, `ZURN.ZU`, `FIG` (secteur et pays par une réponse Yahoo simulée, sans réseau) et `BTC`. Le fichier `js/tests/donnees/synchro-exemple.chiffre.json` (contenu fictif, mot de passe `exemple-fictif-ne-pas-utiliser`) vérifie que l'appli déchiffre bien ce que produit le script.
 
 ## En cas de problème
 
@@ -136,6 +153,8 @@ Les tests utilisent des relevés **fictifs** (`tests/ibkr_fictif.xml`, `tests/et
 | --- | --- |
 | `IBKR : demande refusée (code 1012…)` | jeton expiré : régénérez-le (étape 3) |
 | `IBKR : demande refusée (code 1014…)` | Query ID invalide |
+| Appli : option avec un gain aberrant (×100 ou ÷100) | champ **Multiplier** absent de la requête Flex et contrat non standard : ajoutez-le (étape 3) |
+| Appli : « prix de revient inconnu » | Cost Basis Price et Cost Basis Money vides dans le relevé IBKR (ajoutez Cost Basis Money à la requête) |
 | `eToro : HTTP 401/403` | clés erronées, expirées ou sans droit « Read » sur l'environnement **Real** |
 | Appli : « Accès refusé par GitHub » | jeton expiré ou sans accès « Contents : Read-only » au dépôt |
 | Appli : « Mot de passe incorrect » | mot de passe différent du secret `PORTEFEUILLE_MOT_DE_PASSE` |

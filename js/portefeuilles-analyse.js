@@ -28,6 +28,7 @@ export const CLASSES = {
   matieres: 'Matières premières',
   immobilier: 'Immobilier',
   crypto: 'Cryptoactifs',
+  options: 'Options',
   liquidites: 'Liquidités',
   diversifie: 'Diversifié',
 };
@@ -39,6 +40,7 @@ export const TYPES_LIGNE = {
   obligation: 'Obligation',
   liquidites: 'Liquidités',
   crypto: 'Cryptoactif',
+  option: 'Option',
   autre: 'Autre',
 };
 
@@ -122,6 +124,68 @@ const somme = (l) => l.reduce((s, x) => s + x, 0);
 const arrondi = (v, d = 1) => (v == null || !Number.isFinite(v) ? null : Math.round(v * 10 ** d) / 10 ** d);
 export const symboleLigne = (l) => (l.ticker || '').toUpperCase() || null;
 
+/* ------------------------------- Symboles des courtiers ------------------------------- */
+
+/** Classes d'actions : cotation suivie par l'appli (GOOG → GOOGL). */
+const CLASSES_ACTIONS = {
+  GOOG: 'GOOGL', 'BRK.B': 'BRK-B', 'BRK.A': 'BRK-B', 'BRK-A': 'BRK-B', 'BF.B': 'BF-B', FOX: 'FOXA', NWS: 'NWSA', UA: 'UAA',
+  LBTYK: 'LBTYA', LBTYB: 'LBTYA', 'LEN.B': 'LEN', 'HEI.A': 'HEI',
+};
+/** Suffixe de place eToro → suffixe Yahoo Finance (celui des fiches de l'appli). */
+const SUFFIXES_ETORO = {
+  ZU: '.SW', NV: '.AS', LSB: '.LS', ASX: '.AX', TYO: '.T', SG: '.SI',
+  SW: '.SW', L: '.L', PA: '.PA', DE: '.DE', MI: '.MI', MC: '.MC', AS: '.AS', BR: '.BR', LS: '.LS', HE: '.HE', ST: '.ST',
+  CO: '.CO', OL: '.OL', VI: '.VI', IR: '.IR', HK: '.HK', AX: '.AX', TO: '.TO', T: '.T',
+};
+/** Cryptoactifs reconnus par leur symbole (eToro : BTC, ETH… ; Yahoo : BTC-USD). */
+export const CRYPTOS = new Set([
+  'BTC', 'ETH', 'XRP', 'SOL', 'ADA', 'DOGE', 'DOT', 'LTC', 'BCH', 'LINK', 'XLM', 'TRX', 'AVAX', 'MATIC', 'POL', 'SHIB', 'UNI',
+  'ATOM', 'ETC', 'XTZ', 'EOS', 'ALGO', 'AAVE', 'NEAR', 'BNB', 'SUI', 'APT', 'ARB', 'FIL', 'HBAR', 'ICP', 'MANA',
+  'XMR', 'DASH', 'ZEC', 'MIOTA', 'NEO', 'MKR', 'CRV', 'GRT', 'PEPE', 'USDC', 'USDT', 'RENDER', 'INJ',
+]);
+
+/** Symbole de cryptoactif (BTC, BTC-USD, BTCUSD) → racine (BTC), sinon null. */
+export function racineCrypto(sym) {
+  const s = String(sym ?? '').toUpperCase().replace(/[-/]?USD$/, '');
+  return CRYPTOS.has(s) ? s : null;
+}
+
+/** Symbole d'un courtier (eToro notamment) → symbole Yahoo des fiches : GOOG → GOOGL, ZURN.ZU → ZURN.SW, 700.HK → 0700.HK. */
+export function normaliserSymbole(sym) {
+  const s = String(sym ?? '').trim().toUpperCase();
+  if (!s) return null;
+  if (CLASSES_ACTIONS[s]) return CLASSES_ACTIONS[s];
+  const m = s.match(/^(.+)\.([A-Z]{1,3})$/);
+  if (!m) return s;
+  const [, racine, place] = m;
+  if (['A', 'B', 'C'].includes(place) && /^[A-Z]+$/.test(racine)) return `${racine}-${place}`; // BRK.B → BRK-B
+  const suffixe = SUFFIXES_ETORO[place];
+  if (suffixe == null) return s;
+  return `${suffixe === '.HK' && /^\d+$/.test(racine) ? racine.padStart(4, '0') : racine}${suffixe}`;
+}
+
+/** Société suivie par l'agent entreprises pour un symbole (tel quel, sinon normalisé). */
+export function entrepriseDe(sym, entrepriseParTicker) {
+  if (!sym || !entrepriseParTicker) return null;
+  return entrepriseParTicker.get(sym) ?? entrepriseParTicker.get(normaliserSymbole(sym)) ?? null;
+}
+
+/** Multiplicateur du contrat (options : 100 par défaut ; sinon 1). */
+export const multiplicateurLigne = (l) => Number(l.multiplicateur) || (l.type === 'option' ? 100 : 1);
+
+/** « Call MSFT · échéance 18 déc. 2026 · exercice 450 USD · ×100 » */
+export function descriptionOption(l) {
+  if (l.type !== 'option') return null;
+  const o = l.option ?? {};
+  const echeance = o.echeance ? new Date(`${o.echeance}T12:00:00Z`).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }) : null;
+  return [
+    `${o.sens === 'put' ? 'Put' : o.sens === 'call' ? 'Call' : 'Option'}${o.sous_jacent ? ` ${o.sous_jacent}` : ''}`,
+    echeance ? `échéance ${echeance}` : null,
+    o.prix_exercice != null ? `exercice ${String(o.prix_exercice).replace('.', ',')}${l.devise ? ` ${l.devise}` : ''}` : null,
+    `×${multiplicateurLigne(l)}`,
+  ].filter(Boolean).join(' · ');
+}
+
 /** Devise de cotation déduite du suffixe Yahoo (MC.PA → EUR, AAPL → USD). */
 const DEVISES_SUFFIXE = {
   PA: 'EUR', AS: 'EUR', DE: 'EUR', F: 'EUR', MI: 'EUR', MC: 'EUR', BR: 'EUR', LS: 'EUR', HE: 'EUR', VI: 'EUR', IR: 'EUR',
@@ -139,7 +203,7 @@ export function deviseSymbole(sym) {
 /** Devise de cotation d'une ligne : saisie, sinon fiche de l'agent, sinon suffixe du ticker. */
 export function deviseLigne(ligne, refs) {
   const sym = symboleLigne(ligne);
-  const e = sym ? refs.entrepriseParTicker.get(sym) : null;
+  const e = entrepriseDe(sym, refs.entrepriseParTicker);
   const fiche = e ? refs.fiches?.[e.ticker] : null;
   return ligne.devise || fiche?.devise_cours || deviseSymbole(sym) || 'EUR';
 }
@@ -176,8 +240,9 @@ export function construireReferences({ entreprises = [], pays = [], chef = null,
 export function profilLigne(ligne, refs) {
   const sym = symboleLigne(ligne);
   const cat = ligne.categorie ?? {};
-  const e = sym ? refs.entrepriseParTicker.get(sym) : null;
-  const opp = sym ? refs.opportuniteParSymbole.get(sym) : null;
+  const option = ligne.type === 'option';
+  const e = option ? null : entrepriseDe(sym, refs.entrepriseParTicker);
+  const opp = sym && !option ? (refs.opportuniteParSymbole.get(sym) ?? refs.opportuniteParSymbole.get(normaliserSymbole(sym))) : null;
   const fiche = e ? refs.fiches?.[e.ticker] : null;
   const themes = new Set(cat.themes ?? []);
   for (const t of opp?.themes ?? []) if (THEMES_CHEF[t]) themes.add(THEMES_CHEF[t]);
@@ -194,7 +259,9 @@ export function profilLigne(ligne, refs) {
     const dev = ligne.devise || 'EUR';
     return { classe: 'liquidites', pays: {}, secteur: null, devises: { [dev]: 100 }, themes: [], source: 'saisie' };
   }
-  if (ligne.type === 'crypto') return { classe: 'crypto', pays: {}, secteur: null, devises: { USD: 100 }, themes: [...themes], source: 'saisie' };
+  if (ligne.type === 'crypto' || (ligne.type !== 'fonds' && !e && racineCrypto(sym))) return { classe: 'crypto', pays: {}, secteur: null, devises: { USD: 100 }, themes: [...themes], source: 'saisie' };
+  // Options : catégorie à part (ni pays ni secteur : l'exposition réelle dépend du delta)
+  if (option) return { classe: 'options', pays: {}, secteur: null, devises: { [normaliserDevise(ligne.devise || 'USD')]: 100 }, themes: [], source: 'option' };
 
   // Action suivie par l'agent entreprises
   if (e && ligne.type !== 'fonds') {
@@ -234,6 +301,20 @@ export function profilLigne(ligne, refs) {
     };
   }
 
+  // Action sans fiche : secteur et pays publiés par Yahoo Finance (fournis par la synchronisation)
+  const pub = ligne.profil_public;
+  if (pub && (pub.secteur || pub.pays) && !Object.keys(cat).length && ligne.type === 'action') {
+    return {
+      classe: 'actions',
+      pays: pub.pays ? { [pub.pays]: 100 } : {},
+      secteur: pub.secteur ?? null,
+      devises: { [normaliserDevise(deviseLigne(ligne, refs))]: 100 },
+      themes: [...themes],
+      source: pub.source ?? 'Yahoo Finance',
+      opportunite: opp,
+    };
+  }
+
   // Fonds, ETF ou titre non reconnu : catégorie saisie à la main
   const zone = ZONES[cat.zone];
   const pays = zone ? { ...zone.pays } : cat.zone && /^[A-Z]{2}$/.test(cat.zone) ? { [cat.zone]: 100 } : {};
@@ -268,8 +349,8 @@ export function dernierCours(sym, refs) {
   if (serie?.length) candidats.push({ cours: serie[serie.length - 1][1], date: serie[serie.length - 1][0], devise: null, source: 'séries des agents' });
   const opp = refs.opportuniteParSymbole.get(sym);
   if (opp?.cours != null) candidats.push({ cours: opp.cours, date: opp.date_cours, devise: opp.devise ?? null, source: 'chef d’orchestre' });
-  const e = refs.entrepriseParTicker.get(sym);
-  const fiche = e && e.ticker === sym ? refs.fiches?.[e.ticker] : null;
+  const e = entrepriseDe(sym, refs.entrepriseParTicker);
+  const fiche = e && (e.ticker === sym || e.ticker === normaliserSymbole(sym)) ? refs.fiches?.[e.ticker] : null;
   if (fiche?.recommandation?.cours != null) candidats.push({ cours: fiche.recommandation.cours, date: fiche.recommandation.date_cours, devise: fiche.recommandation.devise, source: 'agent entreprises' });
   if (!candidats.length) return null;
   candidats.sort((a, b) => String(b.date ?? '').localeCompare(String(a.date ?? '')));
@@ -297,27 +378,36 @@ export function enEuros(montant, devise, eurusd) {
 export function valeurLigne(ligne, refs) {
   const sym = symboleLigne(ligne);
   const devise = deviseLigne(ligne, refs);
-  const c = ligne.quantite != null && ligne.type !== 'fonds' ? dernierCours(sym, refs) : null;
+  const mult = multiplicateurLigne(ligne);
+  const c = ligne.quantite != null && !['fonds', 'option'].includes(ligne.type) ? dernierCours(sym, refs) : null;
   if (c && (!ligne.date_valeur || String(c.date ?? '') > ligne.date_valeur)) {
-    const v = enEuros(ligne.quantite * c.cours, c.devise ?? devise, refs.eurusd);
+    const v = enEuros(ligne.quantite * mult * c.cours, c.devise ?? devise, refs.eurusd);
     if (v != null) return { valeur: v, source: `${c.source}, cours du ${c.date}`, date: c.date };
   }
   if (ligne.valeur != null) return { valeur: ligne.valeur, source: ligne.source_valeur ?? 'valeur du courtier', date: ligne.date_valeur ?? null };
   if (ligne.quantite != null && ligne.cours != null) {
-    const v = enEuros(ligne.quantite * ligne.cours, devise, refs.eurusd);
+    const v = enEuros(ligne.quantite * mult * ligne.cours, devise, refs.eurusd);
     if (v != null) return { valeur: v, source: 'quantité × cours saisi', date: ligne.date_valeur ?? null };
   }
   if (ligne.quantite != null && ligne.prix_revient != null) {
-    const v = enEuros(ligne.quantite * ligne.prix_revient, devise, refs.eurusd);
+    const v = enEuros(ligne.quantite * mult * ligne.prix_revient, devise, refs.eurusd);
     if (v != null) return { valeur: v, source: 'prix de revient (aucun cours connu)', date: null };
   }
   return { valeur: null, source: 'valeur inconnue', date: null };
 }
 
-/** Coût d'acquisition en euros (quantité × prix de revient), si calculable. */
+/**
+ * Coût d'acquisition en euros (quantité × multiplicateur × prix de revient), si calculable.
+ * Devise non convertible (CAD, CHF…) : taux implicite du courtier (valeur en euros ÷ quantité × cours).
+ */
 export function coutLigne(ligne, refs) {
   if (ligne.quantite == null || ligne.prix_revient == null) return null;
-  return enEuros(ligne.quantite * ligne.prix_revient, deviseLigne(ligne, refs), refs.eurusd);
+  const local = ligne.quantite * multiplicateurLigne(ligne) * ligne.prix_revient;
+  const v = enEuros(local, deviseLigne(ligne, refs), refs.eurusd);
+  if (v != null) return v;
+  const valeurLocale = ligne.cours ? ligne.quantite * multiplicateurLigne(ligne) * ligne.cours : null;
+  if (ligne.valeur != null && valeurLocale) return local * (ligne.valeur / valeurLocale);
+  return null;
 }
 
 /** Lignes enrichies (valeur, poids, profil) d'un ou plusieurs portefeuilles. */
