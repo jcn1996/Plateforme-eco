@@ -1,13 +1,61 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-17T13:31:57Z",
+    "genere_le": "2026-11-17T14:32:04Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "geopolitique|evenement_grave|theme-evt-b1c94eedc048|2026-11-17",
+      "revu_le": "2026-11-17T14:31:41Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "evenement_grave",
+        "cle": "theme-evt-b1c94eedc048",
+        "date": "2026-11-17",
+        "importance": "haute",
+        "titre": "Événement de gravité 4 : Offensive des Houthis et frappes en Arabie saoudite et au Yémen"
+      },
+      "objection": "Malgré l'offensive, l'ETF KSA affiche une hausse de +0,3 % depuis la veille du signal [F1]. Cette apparente robustesse s'inscrit dans un contexte où le VIX a reculé de 0,1 point depuis la veille [F3], masquant la vulnérabilité structurelle liée au niveau d'endettement à 35 % du PIB [F2].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "ETF KSA (Arabie saoudite) : +0,3 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, KSA"
+        },
+        {
+          "id": "F2",
+          "texte": "Arabie saoudite : réserves de 15,6 mois, dette de 35 % du PIB",
+          "source": "FMI, Banque mondiale"
+        },
+        {
+          "id": "F3",
+          "texte": "VIX : −0,1 pts depuis la veille du signal (16/11/2026)",
+          "source": "Yahoo Finance via yfinance, ^VIX",
+          "contexte": true
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "SA": {
+          "objection": "Objections spécifiques : le marché ne confirme pas pour Arabie saoudite (ETF KSA à +0,3 % depuis la veille du signal) [F1] ; Arabie saoudite dispose d'amortisseurs (réserves de 15,6 mois d'importations, dette publique de 35 % du PIB) [F2].",
+          "ajustement": "abaisser"
+        }
+      },
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2",
+        "F3"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
     {
       "id": "inities|achats_groupes|ADIG|2026-11-17",
       "revu_le": "2026-11-17T07:31:43Z",
@@ -3733,63 +3781,6 @@
       "methode": "règles",
       "confiance": "moyen",
       "version_regles": 3
-    },
-    {
-      "id": "geopolitique|evenement_grave|evt-c959673e6e2e|2026-11-11",
-      "revu_le": "2026-11-11T14:31:33Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "evenement_grave",
-        "cle": "evt-c959673e6e2e",
-        "date": "2026-11-11",
-        "importance": "haute",
-        "titre": "Événement de gravité 4 : Poursuite des frappes aériennes entre forces saoudiennes et houthistes"
-      },
-      "objection": "Malgré les frappes, l'ETF KSA progresse de 1,3 % [F2] et le pays dispose de réserves de 15,6 mois pour une dette de 35 % du PIB [F3], tandis que le VIX baisse de 1,2 pt [F4].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "ETF SPY (États-Unis) : +1,0 % depuis la veille du signal",
-          "source": "Yahoo Finance via yfinance, SPY"
-        },
-        {
-          "id": "F2",
-          "texte": "ETF KSA (Arabie saoudite) : +1,3 % depuis la veille du signal",
-          "source": "Yahoo Finance via yfinance, KSA"
-        },
-        {
-          "id": "F3",
-          "texte": "Arabie saoudite : réserves de 15,6 mois, dette de 35 % du PIB",
-          "source": "FMI, Banque mondiale"
-        },
-        {
-          "id": "F4",
-          "texte": "VIX : −1,2 pts depuis la veille du signal (10/11/2026)",
-          "source": "Yahoo Finance via yfinance, ^VIX",
-          "contexte": true
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "US": {
-          "objection": "Objections spécifiques : le marché ne confirme pas pour États-Unis (ETF SPY à +1,0 % depuis la veille du signal) [F1].",
-          "ajustement": "abaisser"
-        },
-        "SA": {
-          "objection": "Objections spécifiques : le marché ne confirme pas pour Arabie saoudite (ETF KSA à +1,3 % depuis la veille du signal) [F2] ; Arabie saoudite dispose d'amortisseurs (réserves de 15,6 mois d'importations, dette publique de 35 % du PIB) [F3].",
-          "ajustement": "abaisser"
-        }
-      },
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F2",
-        "F3",
-        "F4"
-      ],
-      "modele": "gemini-3.5-flash-lite"
     },
     {
       "id": "inities|achats_groupes|DTI|2026-11-11",
