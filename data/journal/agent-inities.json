@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genere_le": "2026-11-16T16:23:14Z",
+    "genere_le": "2026-11-17T06:49:20Z",
     "source": "agent-inities",
     "version_agent": "1.0",
     "description": "État des sources et signaux, à chaque exécution",
@@ -9,8 +9,8 @@
       "libelle": "Agent initiés",
       "ordre": 9,
       "workflow": "agent-inities.yml",
-      "derniere_execution": "2026-11-16T16:23:14Z",
-      "prochaine_prevue": "2026-11-17T06:35:00Z",
+      "derniere_execution": "2026-11-17T06:49:20Z",
+      "prochaine_prevue": "2026-11-18T06:35:00Z",
       "intervalle_min": 1440,
       "planning": {
         "crons": [
@@ -19,26 +19,56 @@
         ],
         "fuseau": "UTC"
       },
-      "sources_total": 8,
-      "sources_ok": 8,
+      "sources_total": 14,
+      "sources_ok": 14,
       "sources": [
         {
           "nom": "SEC EDGAR, correspondance ticker ↔ CIK",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-16T16:23:14Z"
+          "derniere_donnee_valide": "2026-11-17T06:49:20Z"
+        },
+        {
+          "nom": "SEC EDGAR, index quotidiens des dépôts",
+          "etat": "ok",
+          "detail": null,
+          "derniere_donnee_valide": "2026-11-17T06:49:20Z"
+        },
+        {
+          "nom": "SEC EDGAR, formulaires 4 (dirigeants)",
+          "etat": "ok",
+          "detail": null,
+          "derniere_donnee_valide": "2026-11-17T06:49:20Z"
+        },
+        {
+          "nom": "SEC EDGAR, formulaires 13D (activistes)",
+          "etat": "ok",
+          "detail": null,
+          "derniere_donnee_valide": "2026-11-17T06:49:20Z"
+        },
+        {
+          "nom": "AMF, base BDIF : déclarations des dirigeants",
+          "etat": "ok",
+          "detail": null,
+          "derniere_donnee_valide": "2026-11-17T06:49:20Z"
+        },
+        {
+          "nom": "BaFin, base des « Directors' Dealings »",
+          "etat": "ok",
+          "detail": null,
+          "derniere_donnee_valide": "2026-11-17T06:49:20Z"
         },
         {
           "nom": "NSE (Inde), déclarations SAST (franchissements de 5 %)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-16T16:23:14Z"
+          "derniere_donnee_valide": "2026-11-17T06:49:20Z"
         },
         {
           "nom": "NSE (Inde), répartition de l'actionnariat (actionnaires de plus de 1 %)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-16T16:23:14Z"
+          "derniere_donnee_valide": "2026-11-17T06:49:20Z"
         },
         {
           "nom": "DART (Corée), déclarations de participation (clé DART_API_KEY)",
@@ -57,25 +87,31 @@
           "etat": "ok",
           "detail": null,
           "secondaire": true,
-          "derniere_donnee_valide": "2026-11-16T16:23:14Z"
+          "derniere_donnee_valide": "2026-11-17T06:49:20Z"
         },
         {
           "nom": "AMF, base BDIF : franchissements de seuil",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-16T16:23:14Z"
+          "derniere_donnee_valide": "2026-11-17T06:49:20Z"
         },
         {
           "nom": "SEC EDGAR, rapports 13F (super-investisseurs)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-16T16:23:14Z"
+          "derniere_donnee_valide": "2026-11-17T06:49:20Z"
+        },
+        {
+          "nom": "OpenFIGI (CUSIP → ticker des 13F)",
+          "etat": "ok",
+          "detail": null,
+          "derniere_donnee_valide": "2026-11-17T06:49:20Z"
         },
         {
           "nom": "Chambre des représentants, déclarations de transactions",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-16T16:23:14Z"
+          "derniere_donnee_valide": "2026-11-17T06:49:20Z"
         },
         {
           "nom": "Sénat, déclarations de transactions (efdsearch)",
@@ -87,14 +123,30 @@
           "nom": "Yahoo Finance via yfinance (cours sur 6 mois des sociétés achetées)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-16T16:23:14Z"
+          "derniere_donnee_valide": "2026-11-17T06:49:20Z"
         }
       ],
       "degrade": false,
       "raisons": [],
+      "raisons_depuis": {},
       "references": {
         "SEC EDGAR, correspondance ticker ↔ CIK": [
           "sec_tickers"
+        ],
+        "SEC EDGAR, index quotidiens des dépôts": [
+          "edgar_index"
+        ],
+        "SEC EDGAR, formulaires 4 (dirigeants)": [
+          "edgar_form4"
+        ],
+        "SEC EDGAR, formulaires 13D (activistes)": [
+          "edgar_13d"
+        ],
+        "AMF, base BDIF : déclarations des dirigeants": [
+          "amf_dirigeants"
+        ],
+        "BaFin, base des « Directors' Dealings »": [
+          "bafin"
         ],
         "NSE (Inde), déclarations SAST (franchissements de 5 %)": [
           "nse_sast"
@@ -107,6 +159,9 @@
         ],
         "SEC EDGAR, rapports 13F (super-investisseurs)": [
           "edgar_13f"
+        ],
+        "OpenFIGI (CUSIP → ticker des 13F)": [
+          "openfigi"
         ],
         "Chambre des représentants, déclarations de transactions": [
           "chambre"
@@ -3065,10 +3120,192 @@
           }
         }
       }
+    },
+    {
+      "genere_le": "2026-11-17T06:49:20Z",
+      "mode": "complet",
+      "etat_des_sources": {
+        "sec_tickers": "ok",
+        "edgar_index": "ok",
+        "edgar_form4": "ok",
+        "edgar_13d": "ok",
+        "amf_dirigeants": "ok",
+        "bafin": "ok",
+        "nse_sast": "ok",
+        "nse_actionnariat": "ok",
+        "dart": "non configurée",
+        "edinet": "non configurée",
+        "kap": "ok",
+        "amf_seuils": "ok",
+        "edgar_13f": "ok",
+        "openfigi": "ok",
+        "chambre": "ok",
+        "senat": "non configurée",
+        "yahoo_cours": "ok"
+      },
+      "achats_retenus": 108,
+      "signaux": [
+        "ADI Global Distribution Inc : 5 dirigeants achètent sur le marché en 30 jours (score 100/100)",
+        "HawkEye 360, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 78/100)",
+        "Forgent Power Solutions, Inc. : 4 dirigeants achètent sur le marché en 30 jours (score 95/100)",
+        "Keel Infrastructure Corp. : 3 dirigeants achètent sur le marché en 30 jours (score 89/100)",
+        "Angel Oak Mortgage REIT, Inc. : 4 dirigeants achètent sur le marché en 30 jours (score 73/100)",
+        "Neostellar Capital Corp. : 3 dirigeants achètent sur le marché en 30 jours (score 82/100)",
+        "Perspective Therapeutics, Inc. : 5 dirigeants achètent sur le marché en 30 jours (score 95/100)",
+        "Bill Ackman (Pershing Square Inc.) ouvre une position dans PERSHING SQUARE INC (33,5 % du portefeuille, T3 2026)",
+        "Bill Ackman (Pershing Square Inc.) ouvre une position dans INTERCONTINENTAL EXCHANGE IN (3,3 % du portefeuille, T3 2026)",
+        "Bill Ackman (Pershing Square Inc.) ouvre une position dans ALCON AG (3,1 % du portefeuille, T3 2026)",
+        "David Tepper (Appaloosa LP) ouvre une position dans ORACLE CORP (2,3 % du portefeuille, T3 2026)",
+        "David Tepper (Appaloosa LP) ouvre une position dans APPLIED MATLS INC (1,5 % du portefeuille, T3 2026)",
+        "David Einhorn (DME Capital Management, LP (Greenlight)) ouvre une position dans CENTURY ALUM CO (2,3 % du portefeuille, T3 2026)",
+        "David Einhorn (DME Capital Management, LP (Greenlight)) ouvre une position dans TEVA PHARMACEUTICAL INDS LTD (2,0 % du portefeuille, T3 2026)",
+        "David Einhorn (DME Capital Management, LP (Greenlight)) ouvre une position dans SL GREEN RLTY CORP (1,5 % du portefeuille, T3 2026)",
+        "David Einhorn (DME Capital Management, LP (Greenlight)) ouvre une position dans ADI GLOBAL DISTR INC (1,3 % du portefeuille, T3 2026)",
+        "David Einhorn (DME Capital Management, LP (Greenlight)) ouvre une position dans BIO RAD LABS INC (1,1 % du portefeuille, T3 2026)",
+        "Daniel Loeb (Third Point LLC) ouvre une position dans META PLATFORMS INC (10,5 % du portefeuille, T3 2026)",
+        "Daniel Loeb (Third Point LLC) ouvre une position dans UNUM GROUP (9,7 % du portefeuille, T3 2026)",
+        "Daniel Loeb (Third Point LLC) ouvre une position dans NVIDIA CORPORATION (7,5 % du portefeuille, T3 2026)",
+        "Daniel Loeb (Third Point LLC) ouvre une position dans MICROSOFT CORP (5,1 % du portefeuille, T3 2026)",
+        "Daniel Loeb (Third Point LLC) ouvre une position dans LIBERTY MEDIA CORP DEL (3,0 % du portefeuille, T3 2026)",
+        "Daniel Loeb (Third Point LLC) ouvre une position dans CASEYS GEN STORES INC (2,5 % du portefeuille, T3 2026)",
+        "Daniel Loeb (Third Point LLC) ouvre une position dans BANK OF AMER CORP (2,4 % du portefeuille, T3 2026)",
+        "H PARTNERS MANAGEMENT, LLC déclare 7,2 % de Six Flags Entertainment Corporation/NEW (13D, intention d'influencer)",
+        "UNIVEST SECURITIES, LLC déclare 10,7 % de AQUABOUNTY TECHNOLOGIES INC (13D, intention d'influencer)",
+        "Young Pharmaceuticals, Inc. déclare 5,2 % de Azitra, Inc. (13D, intention d'influencer)",
+        "Chia Teck Lim déclare 41,5 % de CBL International Ltd (13D, intention d'influencer)",
+        "Jacobs Private Equity II, LLC déclare 10,3 % de CKX LANDS, INC. (13D, intention d'influencer)"
+      ],
+      "recherche_hors_us": {
+        "noms_cherches": {
+          "pabrai": [
+            "Pabrai",
+            "Dalal Street, LLC",
+            "Dalal Street LLC",
+            "Dhandho India Zero Fee Fund",
+            "Dhandho",
+            "파브라이",
+            "パブライ"
+          ],
+          "buffett": [
+            "Berkshire Hathaway",
+            "National Indemnity"
+          ],
+          "li-lu": [
+            "Himalaya Capital"
+          ],
+          "ackman": [
+            "Pershing Square"
+          ],
+          "klarman": [
+            "Baupost"
+          ],
+          "tepper": [
+            "Appaloosa"
+          ],
+          "burry": [
+            "Scion Asset Management"
+          ],
+          "einhorn": [
+            "Greenlight Capital",
+            "DME Capital",
+            "Greenlight Masters"
+          ],
+          "loeb": [
+            "Third Point"
+          ],
+          "akre": [
+            "Akre Capital"
+          ],
+          "gayner": [
+            "Markel"
+          ],
+          "berkowitz": [
+            "Fairholme"
+          ],
+          "tweedy": [
+            "Tweedy, Browne",
+            "Tweedy Browne"
+          ],
+          "pzena": [
+            "Pzena"
+          ],
+          "marks": [
+            "Oaktree Capital"
+          ]
+        },
+        "sources": {
+          "nse_sast": {
+            "source": "NSE, déclarations SAST (franchissements de 5 %, nom de l'acquéreur)",
+            "etat": "ok",
+            "periodes": [
+              "2026-10-28",
+              "2026-11-17"
+            ],
+            "documents_examines": 145,
+            "trouves": [],
+            "detail": null,
+            "nb_periodes": 1
+          },
+          "nse_actionnariat": {
+            "source": "NSE, répartition trimestrielle de l'actionnariat (actionnaires de plus de 1 %)",
+            "etat": "ok",
+            "periodes": [
+              "2026-11-14",
+              "2026-11-17"
+            ],
+            "documents_examines": 0,
+            "trouves": [],
+            "detail": "164 société(s) suivie(s) (repérées par SAST : 4) ; 0 nouvelle(s) répartition(s) lue(s)",
+            "nb_periodes": 1
+          },
+          "dart": {
+            "source": "DART (Corée), déclarations de participation (règle des 5 %)",
+            "etat": "non configurée",
+            "periodes": null,
+            "documents_examines": 0,
+            "trouves": [],
+            "detail": "clé non configurée (secret DART_API_KEY absent) : aucune recherche",
+            "nb_periodes": 0
+          },
+          "edinet": {
+            "source": "EDINET (Japon), déclarations de grands actionnaires (5 %)",
+            "etat": "non configurée",
+            "periodes": null,
+            "documents_examines": 0,
+            "trouves": [],
+            "detail": "clé non configurée (secret EDINET_API_KEY absent) : aucune recherche",
+            "nb_periodes": 0
+          },
+          "kap": {
+            "source": "KAP (Turquie), notifications « Pay Alım Satım Bildirimi » (source secondaire)",
+            "etat": "ok",
+            "periodes": [
+              "2026-08-05",
+              "2026-11-17"
+            ],
+            "documents_examines": 50,
+            "trouves": [],
+            "detail": null,
+            "nb_periodes": 20
+          },
+          "amf_seuils": {
+            "source": "AMF, franchissements de seuil",
+            "etat": "ok",
+            "periodes": [
+              "2026-11-07",
+              "2026-11-17"
+            ],
+            "documents_examines": 0,
+            "trouves": [],
+            "detail": null,
+            "nb_periodes": 1
+          }
+        }
+      }
     }
   ],
-  "derniere_execution": "2026-11-16T16:23:14Z",
-  "prochaine_prevue": "2026-11-17T06:35:00Z",
+  "derniere_execution": "2026-11-17T06:49:20Z",
+  "prochaine_prevue": "2026-11-18T06:35:00Z",
   "intervalle_min": 1440,
   "planning": {
     "crons": [
