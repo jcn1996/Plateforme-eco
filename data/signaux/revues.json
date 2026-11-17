@@ -1,13 +1,54 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-17T23:02:39Z",
+    "genere_le": "2026-11-17T23:51:26Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "entreprises|guidance_abaissee|SR|2026-11-17",
+      "revu_le": "2026-11-17T23:51:13Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_abaissee",
+        "cle": "SR",
+        "date": "2026-11-17",
+        "importance": "moyenne",
+        "titre": "Spire Inc. : guidance abaissée (17/11/2026)"
+      },
+      "objection": "La baisse de guidance s'accompagne d'une conversion négative du bénéfice en cash de −126,8 % [F3] et d'un levier net de 6,2× [F1], fragilisant la capacité à honorer un service de la dette couvert à seulement 2,6× [F2].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Spire Inc. : dette nette / EBITDA de 6,2×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "Spire Inc. : couverture des intérêts de 2,6×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F3",
+          "texte": "Spire Inc. : conversion du bénéfice en cash de −126,8 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2",
+        "F3"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
     {
       "id": "geopolitique|evenement_grave|theme-evt-b1c94eedc048|2026-11-17",
       "revu_le": "2026-11-17T14:31:41Z",
