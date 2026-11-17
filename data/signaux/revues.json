@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-17T00:47:31Z",
+    "genere_le": "2026-11-17T04:49:15Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
@@ -216,6 +216,41 @@
       "methode": "règles",
       "confiance": "moyen",
       "version_regles": 3
+    },
+    {
+      "id": "pays|entrees_inhabituelles|PL|2026-11-16",
+      "revu_le": "2026-11-17T04:48:19Z",
+      "signal": {
+        "agent": "pays",
+        "type": "entrees_inhabituelles",
+        "cle": "PL",
+        "date": "2026-11-16",
+        "importance": "forte",
+        "titre": "Pologne : entrées inhabituelles sur l'ETF EPOL"
+      },
+      "objection": "Cet afflux massif de 111,6 M$ intervient alors que le zloty subit une dépréciation de 7,6 % contre le dollar sur trois mois et une volatilité à un mois de 8,2 % [F1]. Cette configuration expose l'actif à un risque de retournement rapide en cas de sortie soudaine des capitaux.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Pologne : PLN : volatilité à 1 mois de 8,2 %, −7,6 % contre le dollar sur 3 mois",
+          "source": "Yahoo Finance via yfinance, PLN=X (devise suivie par l'agent pays)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "PL": {
+          "objection": "Objections spécifiques : devise à −7,6 % contre le dollar sur 3 mois (volatilité à 1 mois de 8,2 %) [F1].",
+          "ajustement": "maintenir"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
     },
     {
       "id": "entreprises|nouvelle_pepite|ACGL|2026-11-16",
@@ -829,41 +864,6 @@
       "modele": "gemini-3.5-flash-lite"
     },
     {
-      "id": "pays|entrees_inhabituelles|PL|2026-11-13",
-      "revu_le": "2026-11-14T23:01:47Z",
-      "signal": {
-        "agent": "pays",
-        "type": "entrees_inhabituelles",
-        "cle": "PL",
-        "date": "2026-11-13",
-        "importance": "forte",
-        "titre": "Pologne : entrées inhabituelles sur l'ETF EPOL"
-      },
-      "objection": "Cet afflux doit être nuancé au regard de la devise, qui enregistre une volatilité à 1 mois de 8,3 % et un recul de −6,6 % contre le dollar sur 3 mois [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Pologne : PLN : volatilité à 1 mois de 8,3 %, −6,6 % contre le dollar sur 3 mois",
-          "source": "Yahoo Finance via yfinance, PLN=X (devise suivie par l'agent pays)"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "PL": {
-          "objection": "Objections spécifiques : devise à −6,6 % contre le dollar sur 3 mois (volatilité à 1 mois de 8,3 %) [F1].",
-          "ajustement": "maintenir"
-        }
-      },
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
       "id": "pays|entrees_inhabituelles|NL|2026-11-13",
       "revu_le": "2026-11-14T23:01:47Z",
       "signal": {
@@ -1467,41 +1467,6 @@
       "methode": "règles",
       "confiance": "moyen",
       "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|CL|2026-11-12",
-      "revu_le": "2026-11-17T00:47:20Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "CL",
-        "date": "2026-11-12",
-        "importance": "moyenne",
-        "titre": "Chili : score de risque géopolitique 24/100, +14 pts sur 7 jours"
-      },
-      "objection": "La baisse de l'ETF ECH de −1,7 % depuis la veille du signal [F1] reste modérée au regard de la volatilité habituelle des marchés émergents. Cette correction ponctuelle n'altère pas fondamentalement la robustesse macroéconomique du pays.",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "ETF ECH (Chili) : −1,7 % depuis la veille du signal",
-          "source": "Yahoo Finance via yfinance, ECH"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "CL": {
-          "objection": "Objections spécifiques : le marché ne confirme pas pour Chili (ETF ECH à −1,7 % depuis la veille du signal) [F1].",
-          "ajustement": "abaisser"
-        }
-      },
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
     },
     {
       "id": "pays|inversion_flux|US|2026-11-12",
