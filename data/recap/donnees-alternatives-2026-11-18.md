@@ -15,7 +15,7 @@ Indicateurs avancés de l'activité réelle. Aucune conclusion n'est tirée d'un
 - Corée du Sud : pas de score (1 indicateur à jour : au moins 2 sont nécessaires pour conclure)
 - Pays-Bas : pas de score (1 indicateur à jour : au moins 2 sont nécessaires pour conclure)
 - Taïwan : pas de score (1 indicateur à jour : au moins 2 sont nécessaires pour conclure)
-- **États-Unis** : « ralentissement », score 39/100, confiance moyen
+- **États-Unis** : « stable », score 42/100, confiance élevé
 
 ## Indicateurs mondiaux
 
@@ -27,8 +27,8 @@ Indicateurs avancés de l'activité réelle. Aucune conclusion n'est tirée d'un
 - Fret conteneurs (Drewry WCI) : +119,7 % sur 12 mois. (donnée du 12/11/2026)
 - Fret vrac sec (Baltic Dry, approximation) : +54,2 % sur 12 mois, −8,7 % sur 1 mois, écart à la tendance +15,2 %, percentile 64 de l'historique. (donnée du 17/11/2026)
 - Tonnage du transport routier : −1,6 % sur 12 mois, −0,3 % sur 1 mois, écart à la tendance −0,6 %, percentile 18 de l'historique. (donnée du 01/08/2026)
-- Passagers contrôlés dans les aéroports : −0,2 % sur 12 mois, −6,3 % sur 1 mois, écart à la tendance −2,2 %, percentile 26 de l'historique. (donnée du 16/11/2026)
-- Mises en chantier de logements : −7,4 % sur 12 mois, −5,2 % sur 1 mois, écart à la tendance −3,9 %, percentile 18 de l'historique. (donnée du 01/09/2026)
+- Passagers contrôlés dans les aéroports : −0,1 % sur 12 mois, −6,7 % sur 1 mois, écart à la tendance −2,5 %, percentile 31 de l'historique. (donnée du 17/11/2026)
+- Mises en chantier de logements : +2,8 % sur 12 mois, +9,9 % sur 1 mois, écart à la tendance −6,3 %, percentile 55 de l'historique. (donnée du 01/10/2026)
 - Expéditions de ciment : +2,9 % sur 12 mois, −2,0 % sur 1 mois. (donnée du 01/08/2026)
 
 ## Signaux détectés aujourd'hui
