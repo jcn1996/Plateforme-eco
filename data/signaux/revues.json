@@ -1,13 +1,197 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-18T23:02:43Z",
+    "genere_le": "2026-11-18T23:23:33Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "entreprises|guidance_relevee|PANW|2026-11-18",
+      "revu_le": "2026-11-18T23:23:14Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_relevee",
+        "cle": "PANW",
+        "date": "2026-11-18",
+        "importance": "moyenne",
+        "titre": "Palo Alto Networks, Inc. : guidance relevée (18/11/2026)"
+      },
+      "objection": "Malgré la guidance, la croissance du bénéfice s'établit à -72,9 % [F2], combinée à une dilution forte avec le nombre d'actions en hausse de 22,0 % sur un an [F3]. De plus, le PER atteint 906,2, soit un écart de +2819,5 % par rapport à la médiane du secteur [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Palo Alto Networks, Inc. : PER vs secteur +2819,5 % (PER 906,2 ; médiane du secteur 31,0)",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "Palo Alto Networks, Inc. : croissance du bénéfice −72,9 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F3",
+          "texte": "Palo Alto Networks, Inc. : alerte « Dilution forte » : nombre d'actions en hausse de 22,0 % sur un an",
+          "source": "agent entreprises (fiche)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2",
+        "F3"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|guidance_relevee|LOW|2026-11-18",
+      "revu_le": "2026-11-18T23:23:14Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_relevee",
+        "cle": "LOW",
+        "date": "2026-11-18",
+        "importance": "moyenne",
+        "titre": "Lowe's Companies, Inc. : guidance relevée (18/11/2026)"
+      },
+      "objection": "Cette révision à la hausse intervient avec une dette nette sur EBITDA de 3,5× [F1]. S'ajoute une alerte de manipulation des résultats possible avec un M-score de Beneish suspect de 8,81 [F2].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Lowe's Companies, Inc. : dette nette / EBITDA de 3,5×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "Lowe's Companies, Inc. : alerte « M-score de Beneish suspect » : M-score de 8,81, au-dessus du seuil de détection : manipulation des résultats possible, à vérifier dans le rapport annuel",
+          "source": "agent entreprises (fiche)"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|guidance_relevee|TGT|2026-11-18",
+      "revu_le": "2026-11-18T23:23:14Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_relevee",
+        "cle": "TGT",
+        "date": "2026-11-18",
+        "importance": "moyenne",
+        "titre": "Target Corporation : guidance relevée (18/11/2026)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "entreprises|guidance_relevee|P|2026-11-18",
+      "revu_le": "2026-11-18T23:23:14Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_relevee",
+        "cle": "P",
+        "date": "2026-11-18",
+        "importance": "moyenne",
+        "titre": "Everpure, Inc. : guidance relevée (18/11/2026)"
+      },
+      "objection": "La valorisation présente un PER de 132,5, soit un écart de +327,0 % face à la médiane du secteur [F1]. L'activité montre également une hausse anormale des créances de 38,8 % pour un CA en hausse de 15,6 % [F2].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Everpure, Inc. : PER vs secteur +327,0 % (PER 132,5 ; médiane du secteur 31,0)",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "Everpure, Inc. : alerte « Hausse anormale des créances » : créances en hausse de 38,8 % pour un CA en hausse de 15,6 %",
+          "source": "agent entreprises (fiche)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|EQT|2026-11-18",
+      "revu_le": "2026-11-18T23:23:14Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "EQT",
+        "date": "2026-11-18",
+        "importance": "moyenne",
+        "titre": "EQT Corporation entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "La croissance du bénéfice affichée est de +784,4 % [F1], confirmant la solidité actuelle du dossier sans contradiction majeure dans les faits disponibles.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "EQT Corporation : croissance du bénéfice +784,4 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|GFNORTEO.MX|2026-11-18",
+      "revu_le": "2026-11-18T23:23:14Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "GFNORTEO.MX",
+        "date": "2026-11-18",
+        "importance": "moyenne",
+        "titre": "Grupo Financiero Banorte, S.A.B. de C.V. entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Objections spécifiques : cotée en MXN, devise à −10,1 % contre le dollar sur 3 mois [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Mexique : MXN : volatilité à 1 mois de 13,4 %, −10,1 % contre le dollar sur 3 mois",
+          "source": "Yahoo Finance via yfinance, MXN=X (devise suivie par l'agent pays)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "règles",
+      "confiance": "faible",
+      "version_regles": 3
+    },
     {
       "id": "geopolitique|mesure_officielle|evt-e121370455ee|2026-11-18",
       "revu_le": "2026-11-18T10:31:46Z",
@@ -1521,25 +1705,6 @@
         "F1"
       ],
       "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|nouvelle_pepite|ACGL|2026-11-16",
-      "revu_le": "2026-11-17T00:47:20Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "nouvelle_pepite",
-        "cle": "ACGL",
-        "date": "2026-11-16",
-        "importance": "moyenne",
-        "titre": "Arch Capital Group Ltd. entre dans la liste « Qualité à prix raisonnable »"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
     },
     {
       "id": "matieres_premieres|changement_verdict|wti|2026-11-16",
