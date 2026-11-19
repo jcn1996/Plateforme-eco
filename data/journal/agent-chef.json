@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genere_le": "2026-11-19T12:01:56Z",
+    "genere_le": "2026-11-19T13:01:47Z",
     "source": "agent-chef",
     "version_agent": "1.0",
     "description": "Entrées, recalcul, changements de verdict, alertes et briefing, à chaque exécution",
@@ -9,8 +9,8 @@
       "libelle": "Chef d'orchestre",
       "ordre": 10,
       "workflow": "agent-chef.yml",
-      "derniere_execution": "2026-11-19T12:01:56Z",
-      "prochaine_prevue": "2026-11-19T12:50:00Z",
+      "derniere_execution": "2026-11-19T13:01:47Z",
+      "prochaine_prevue": "2026-11-19T13:50:00Z",
       "intervalle_min": 60,
       "planning": {
         "crons": [
@@ -20,92 +20,80 @@
         ],
         "fuseau": "UTC"
       },
-      "sources_total": 14,
-      "sources_ok": 14,
+      "sources_total": 12,
+      "sources_ok": 12,
       "sources": [
-        {
-          "nom": "Yahoo Finance (cours des ETF sectoriels)",
-          "etat": "ok",
-          "detail": "33/33 ETF sectoriels",
-          "derniere_donnee_valide": "2026-11-19T12:01:56Z"
-        },
-        {
-          "nom": "Émetteurs et Yahoo Finance (flux des ETF sectoriels : SSGA, iShares)",
-          "etat": "ok",
-          "detail": "ssga : 11, ishares : 11, yahoo_parts : 15",
-          "derniere_donnee_valide": "2026-11-19T12:01:56Z"
-        },
         {
           "nom": "Agent pays (data/pays.json)",
           "etat": "ok",
-          "detail": "dégradé (6 h) ; agent dégradé : pèse moins",
+          "detail": "dégradé (7 h) ; agent dégradé : pèse moins",
           "derniere_donnee_valide": "2026-11-19T06:20:06Z"
         },
         {
           "nom": "Agent macro (data/macro.json)",
           "etat": "ok",
-          "detail": "à jour (5 h)",
+          "detail": "à jour (6 h)",
           "derniere_donnee_valide": "2026-11-19T06:46:53Z"
         },
         {
           "nom": "Agent marchés (data/marches.json)",
           "etat": "ok",
           "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-19T11:46:10Z"
+          "derniere_donnee_valide": "2026-11-19T12:57:30Z"
         },
         {
           "nom": "Agent risque (data/risque.json)",
           "etat": "ok",
           "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-19T11:31:47Z"
+          "derniere_donnee_valide": "2026-11-19T12:31:32Z"
         },
         {
           "nom": "Agent géopolitique (data/geopolitique.json)",
           "etat": "ok",
           "detail": "à jour (1 h)",
-          "derniere_donnee_valide": "2026-11-19T11:28:32Z"
+          "derniere_donnee_valide": "2026-11-19T12:16:40Z"
         },
         {
           "nom": "Agent matières premières (data/matieres_premieres.json)",
           "etat": "ok",
-          "detail": "à jour (9 h)",
+          "detail": "à jour (10 h)",
           "derniere_donnee_valide": "2026-11-19T03:27:32Z"
         },
         {
           "nom": "Agent entreprises (data/entreprises.json)",
           "etat": "ok",
-          "detail": "à jour (8 h)",
+          "detail": "à jour (9 h)",
           "derniere_donnee_valide": "2026-11-19T04:03:11Z"
         },
         {
           "nom": "Agent entreprises (pépites) (data/pepites.json)",
           "etat": "ok",
-          "detail": "à jour (8 h)",
+          "detail": "à jour (9 h)",
           "derniere_donnee_valide": "2026-11-19T04:03:11Z"
         },
         {
           "nom": "Agent initiés (data/inities.json)",
           "etat": "ok",
-          "detail": "à jour (5 h)",
+          "detail": "à jour (6 h)",
           "derniere_donnee_valide": "2026-11-19T06:50:10Z"
         },
         {
           "nom": "Analyses à la demande (data/analyses/index.json)",
           "etat": "ok",
-          "detail": "à jour (382 h)",
+          "detail": "à jour (383 h)",
           "derniere_donnee_valide": "2026-11-03T13:35:53Z"
         },
         {
           "nom": "Contradicteur (agent risque) (data/signaux/revues.json)",
           "etat": "ok",
           "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-19T11:34:10Z"
+          "derniere_donnee_valide": "2026-11-19T12:31:48Z"
         },
         {
           "nom": "Gemini (rédaction du briefing)",
           "etat": "ok",
           "detail": "briefing rédigé par gemini-3.6-flash",
-          "derniere_donnee_valide": "2026-11-19T12:01:56Z"
+          "derniere_donnee_valide": "2026-11-19T13:01:47Z"
         }
       ],
       "degrade": false,
@@ -10669,10 +10657,74 @@
         "analyses": "à jour",
         "revues": "à jour"
       }
+    },
+    {
+      "genere_le": "2026-11-19T13:01:47Z",
+      "mode": "leger",
+      "recalcul": false,
+      "declencheurs": [],
+      "palier": "Vigilance",
+      "opportunites": 162,
+      "changements": [],
+      "alertes": 4,
+      "alertes_ecartees": [
+        "entreprises · Independence Realty Trust, Inc. : estimations de BPA −15,1 % sur 30 jours : fonds, véhicule de crédit, holding ou SPAC",
+        "entreprises · Blackstone Mortgage Trust, Inc. : estimations de BPA −11,1 % sur 30 jours : fonds, véhicule de crédit, holding ou SPAC",
+        "inities · NeuroPace Inc : 3 dirigeants achètent sur le marché en 30 jours (score 82/100) : société hors de l'univers analysé ou sans note",
+        "inities · UMH PROPERTIES, INC. : 3 dirigeants achètent sur le marché en 30 jours (score 72/100) : société hors de l'univers analysé ou sans note",
+        "inities · Suncrete, Inc. : 5 dirigeants achètent sur le marché en 30 jours (score 76/100) : société hors de l'univers analysé ou sans note",
+        "inities · Stereotaxis, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 60/100) : société hors de l'univers analysé ou sans note",
+        "inities · Once Upon a Farm, PBC : 4 dirigeants achètent sur le marché en 30 jours (score 76/100) : société hors de l'univers analysé ou sans note",
+        "inities · EquipmentShare.com Inc : 3 dirigeants achètent sur le marché en 30 jours (score 95/100) : société hors de l'univers analysé ou sans note",
+        "inities · Starwood Property Trust, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 84/ : fonds, véhicule de crédit, holding ou SPAC",
+        "inities · WINDWARD BIO GROUP AG : 3 dirigeants achètent sur le marché en 30 jours (score 72/100) : société hors de l'univers analysé ou sans note",
+        "inities · OPAL Fuels Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 82/100) : société hors de l'univers analysé ou sans note",
+        "inities · Dragonstone Metals Ltd déclare 86,4 % de Stateside Critical Minerals Corp. (13D, intention : société hors de l'univers analysé ou sans note",
+        "inities · STEINWERT KENT A déclare 5,4 % de FARMERS &amp; MERCHANTS BANCORP (13D, intention d'influe : société hors de l'univers analysé ou sans note",
+        "inities · Cattan Ezra Jack déclare 25,0 % de NextNRG, Inc. (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
+        "inities · DraftKings Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 89/100) : société hors de l'univers analysé ou sans note",
+        "inities · Lineage Cell Therapeutics, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 9 : société hors de l'univers analysé ou sans note",
+        "inities · NATURAL GAS SERVICES GROUP INC : 3 dirigeants achètent sur le marché en 30 jours (score 82 : société hors de l'univers analysé ou sans note",
+        "inities · DEEP FISSION, INC. : 4 dirigeants achètent sur le marché en 30 jours (score 95/100) : société hors de l'univers analysé ou sans note",
+        "inities · InspireMD, Inc. : 5 dirigeants achètent sur le marché en 30 jours (score 82/100) : société hors de l'univers analysé ou sans note",
+        "inities · ITG, Inc./DE/ : 5 dirigeants achètent sur le marché en 30 jours (score 95/100) : société hors de l'univers analysé ou sans note"
+      ],
+      "exclues": [],
+      "coherence_retrogradees": [],
+      "raison_briefing_regles": null,
+      "briefing": null,
+      "reprise_redaction": null,
+      "gemini": {
+        "appels": 0,
+        "reussites": 0,
+        "quota_atteint": false,
+        "rejets": [],
+        "erreurs": []
+      },
+      "suivi": {
+        "ajoutes": null,
+        "mesures": null,
+        "en_attente": null,
+        "total": 275,
+        "erreur": null
+      },
+      "entrees": {
+        "pays": "dégradé (dégradé)",
+        "macro": "à jour",
+        "marches": "à jour",
+        "risque": "à jour",
+        "geopolitique": "à jour",
+        "matieres_premieres": "à jour",
+        "entreprises": "à jour",
+        "pepites": "à jour",
+        "inities": "à jour",
+        "analyses": "à jour",
+        "revues": "à jour"
+      }
     }
   ],
-  "derniere_execution": "2026-11-19T12:01:56Z",
-  "prochaine_prevue": "2026-11-19T12:50:00Z",
+  "derniere_execution": "2026-11-19T13:01:47Z",
+  "prochaine_prevue": "2026-11-19T13:50:00Z",
   "intervalle_min": 60,
   "planning": {
     "crons": [
