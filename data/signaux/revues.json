@@ -1,13 +1,305 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-19T03:52:33Z",
+    "genere_le": "2026-11-19T07:31:52Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "inities|achats_groupes|NPCE|2026-11-19",
+      "revu_le": "2026-11-19T07:31:40Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "NPCE",
+        "date": "2026-11-19",
+        "importance": "forte",
+        "titre": "NeuroPace Inc : 3 dirigeants achètent sur le marché en 30 jours (score 82/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|UMH|2026-11-19",
+      "revu_le": "2026-11-19T07:31:40Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "UMH",
+        "date": "2026-11-19",
+        "importance": "moyenne",
+        "titre": "UMH PROPERTIES, INC. : 3 dirigeants achètent sur le marché en 30 jours (score 72/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|RMIX|2026-11-19",
+      "revu_le": "2026-11-19T07:31:40Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "RMIX",
+        "date": "2026-11-19",
+        "importance": "moyenne",
+        "titre": "Suncrete, Inc. : 5 dirigeants achètent sur le marché en 30 jours (score 76/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|BA|2026-11-19",
+      "revu_le": "2026-11-19T07:31:40Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "BA",
+        "date": "2026-11-19",
+        "importance": "forte",
+        "titre": "The Boeing Company : 3 dirigeants achètent sur le marché en 30 jours (score 82/100)"
+      },
+      "objection": "Malgré ces achats, le cours accuse un recul de 26,7 % sur 3 mois [F4] et la conversion du bénéfice en cash s'établit à -84,4 % [F6].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "The Boeing Company : PER vs secteur +143,5 % (PER 59,9 ; médiane du secteur 24,6)",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "The Boeing Company : dette nette / EBITDA de 3,4×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F3",
+          "texte": "The Boeing Company : couverture des intérêts de −2,0×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F4",
+          "texte": "The Boeing Company : cours −26,7 % sur 3 mois, −26,7 % sur 6 mois, −14,1 % sur 12 mois",
+          "source": "agent entreprises (fiche)"
+        },
+        {
+          "id": "F5",
+          "texte": "The Boeing Company : croissance du bénéfice +118,8 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F6",
+          "texte": "The Boeing Company : conversion du bénéfice en cash de −84,4 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F7",
+          "texte": "The Boeing Company : alerte « Bénéfice peu converti en cash » : flux d'exploitation égal à 48 % du résultat net",
+          "source": "agent entreprises (fiche)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F4",
+        "F6"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "inities|achats_groupes|STXS|2026-11-19",
+      "revu_le": "2026-11-19T07:31:40Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "STXS",
+        "date": "2026-11-19",
+        "importance": "moyenne",
+        "titre": "Stereotaxis, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 60/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|OFRM|2026-11-19",
+      "revu_le": "2026-11-19T07:31:40Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "OFRM",
+        "date": "2026-11-19",
+        "importance": "moyenne",
+        "titre": "Once Upon a Farm, PBC : 4 dirigeants achètent sur le marché en 30 jours (score 76/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|EQPT|2026-11-19",
+      "revu_le": "2026-11-19T07:31:40Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "EQPT",
+        "date": "2026-11-19",
+        "importance": "forte",
+        "titre": "EquipmentShare.com Inc : 3 dirigeants achètent sur le marché en 30 jours (score 95/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|STWD|2026-11-19",
+      "revu_le": "2026-11-19T07:31:40Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "STWD",
+        "date": "2026-11-19",
+        "importance": "forte",
+        "titre": "Starwood Property Trust, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 84/100)"
+      },
+      "objection": "Ce signal intervient dans un contexte de momentum à 12 mois de -28,2 % [F1], combiné à une alerte de dilution forte avec une hausse des actions de 9,8 % sur un an [F3].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Starwood Property Trust, Inc. : momentum 12 mois −28,2 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "Starwood Property Trust, Inc. : croissance du CA +91,7 % (tendance sur 3 ans : +8,4 % par an)",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F3",
+          "texte": "Starwood Property Trust, Inc. : alerte « Dilution forte » : nombre d'actions en hausse de 9,8 % sur un an",
+          "source": "agent entreprises (fiche)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F3"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "inities|achats_groupes|WWB|2026-11-19",
+      "revu_le": "2026-11-19T07:31:40Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "WWB",
+        "date": "2026-11-19",
+        "importance": "moyenne",
+        "titre": "WINDWARD BIO GROUP AG : 3 dirigeants achètent sur le marché en 30 jours (score 72/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|OPAL|2026-11-19",
+      "revu_le": "2026-11-19T07:31:40Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "OPAL",
+        "date": "2026-11-19",
+        "importance": "forte",
+        "titre": "OPAL Fuels Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 82/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|nouveau_13d|TRIP|2026-11-19",
+      "revu_le": "2026-11-19T07:31:40Z",
+      "signal": {
+        "agent": "inities",
+        "type": "nouveau_13d",
+        "cle": "TRIP",
+        "date": "2026-11-19",
+        "importance": "moyenne",
+        "titre": "Pale Fire Capital SE déclare 7,4 % de TripAdvisor, Inc. (13D, intention d'influencer)"
+      },
+      "objection": "Cette déclaration d'intention intervient alors que le momentum sur 12 mois s'effondre à -50,1 % [F2], avec une couverture des intérêts limitée à 1,9× [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Tripadvisor, Inc. : couverture des intérêts de 1,9×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "Tripadvisor, Inc. : momentum 12 mois −50,1 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F3",
+          "texte": "Tripadvisor, Inc. : croissance du bénéfice +700,0 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
     {
       "id": "geopolitique|hausse_score|CA|2026-11-19",
       "revu_le": "2026-11-19T03:51:52Z",
@@ -1858,25 +2150,6 @@
         "date": "2026-11-14",
         "importance": "moyenne",
         "titre": "Seth Klarman (Baupost Group LLC) ouvre une position dans SITEONE LANDSCAPE SUPPLY INC (2,2 % du portefeuille, T3 2026)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|evenement_grave|evt-d40435d5b052|2026-11-14",
-      "revu_le": "2026-11-14T23:01:47Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "evenement_grave",
-        "cle": "evt-d40435d5b052",
-        "date": "2026-11-14",
-        "importance": "haute",
-        "titre": "Événement de gravité 4 : Tensions sur l'Iran entre déclarations de Trump et requêtes de Netanyahu"
       },
       "objection": "Pas d'objection spécifique.",
       "faits": [],
