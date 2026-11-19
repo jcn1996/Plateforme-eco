@@ -1,13 +1,189 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-19T23:03:03Z",
+    "genere_le": "2026-11-19T23:34:52Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "geopolitique|hausse_score|AE|2026-11-19",
+      "revu_le": "2026-11-19T23:34:20Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "AE",
+        "date": "2026-11-19",
+        "importance": "moyenne",
+        "titre": "Émirats arabes unis : score de risque géopolitique 30/100, +17 pts sur 7 jours"
+      },
+      "objection": "La baisse de l'ETF UAE de −1,5 % depuis la veille du signal tempère la portée de cette hausse géopolitique [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "ETF UAE (Émirats arabes unis) : −1,5 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, UAE"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "AE": {
+          "objection": "Objections spécifiques : le marché ne confirme pas pour Émirats arabes unis (ETF UAE à −1,5 % depuis la veille du signal) [F1].",
+          "ajustement": "abaisser"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|guidance_relevee|WMT|2026-11-19",
+      "revu_le": "2026-11-19T23:34:20Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_relevee",
+        "cle": "WMT",
+        "date": "2026-11-19",
+        "importance": "moyenne",
+        "titre": "Walmart Inc. : guidance relevée (19/11/2026)"
+      },
+      "objection": "Le PER de Walmart Inc. s'établit à 45,4, soit +89,8 % par rapport à la médiane du secteur à 23,9, pour une conversion du bénéfice en cash de 68,2 % [F1, F2].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Walmart Inc. : PER vs secteur +89,8 % (PER 45,4 ; médiane du secteur 23,9)",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "Walmart Inc. : conversion du bénéfice en cash de 68,2 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|guidance_relevee|INTU|2026-11-19",
+      "revu_le": "2026-11-19T23:34:20Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_relevee",
+        "cle": "INTU",
+        "date": "2026-11-19",
+        "importance": "moyenne",
+        "titre": "Intuit Inc. : guidance relevée (19/11/2026)"
+      },
+      "objection": "Cette révision à la hausse intervient malgré un momentum sur 12 mois négatif de −51,7 % pour Intuit Inc. [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Intuit Inc. : momentum 12 mois −51,7 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|guidance_relevee|ROST|2026-11-19",
+      "revu_le": "2026-11-19T23:34:20Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_relevee",
+        "cle": "ROST",
+        "date": "2026-11-19",
+        "importance": "moyenne",
+        "titre": "Ross Stores, Inc. : guidance relevée (19/11/2026)"
+      },
+      "objection": "Ross Stores, Inc. présente un PER de 26,5, soit une surévaluation de +56,6 % par rapport à la médiane du secteur établie à 16,9 [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Ross Stores, Inc. : PER vs secteur +56,6 % (PER 26,5 ; médiane du secteur 16,9)",
+          "source": "agent entreprises (data/entreprises.json)"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|guidance_abaissee|GAP|2026-11-19",
+      "revu_le": "2026-11-19T23:34:20Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_abaissee",
+        "cle": "GAP",
+        "date": "2026-11-19",
+        "importance": "moyenne",
+        "titre": "The Gap, Inc. : guidance abaissée (19/11/2026)"
+      },
+      "objection": "La baisse continue du cours de l'action de −17,5 % sur 6 mois et −17,6 % sur 12 mois fragilise la position boursière de l'entreprise face à la révision de sa guidance [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "The Gap, Inc. : cours −3,7 % sur 3 mois, −17,5 % sur 6 mois, −17,6 % sur 12 mois",
+          "source": "agent entreprises (fiche)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|guidance_relevee|BBWI|2026-11-19",
+      "revu_le": "2026-11-19T23:34:20Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_relevee",
+        "cle": "BBWI",
+        "date": "2026-11-19",
+        "importance": "moyenne",
+        "titre": "Bath & Body Works, Inc. : guidance relevée (19/11/2026)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
     {
       "id": "matieres_premieres|changement_verdict|or|2026-11-19",
       "revu_le": "2026-11-19T23:01:48Z",
@@ -924,25 +1100,6 @@
         "date": "2026-11-18",
         "importance": "moyenne",
         "titre": "Taïwan : score de risque géopolitique 35/100, +26 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|AE|2026-11-18",
-      "revu_le": "2026-11-18T03:52:34Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "AE",
-        "date": "2026-11-18",
-        "importance": "moyenne",
-        "titre": "Émirats arabes unis : score de risque géopolitique 12/100, +10 pts sur 7 jours"
       },
       "objection": "Pas d'objection spécifique.",
       "faits": [],
