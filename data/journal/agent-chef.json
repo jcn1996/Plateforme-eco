@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genere_le": "2026-11-19T17:01:49Z",
+    "genere_le": "2026-11-19T17:43:23Z",
     "source": "agent-chef",
     "version_agent": "1.0",
     "description": "Entrées, recalcul, changements de verdict, alertes et briefing, à chaque exécution",
@@ -9,7 +9,7 @@
       "libelle": "Chef d'orchestre",
       "ordre": 10,
       "workflow": "agent-chef.yml",
-      "derniere_execution": "2026-11-19T17:01:49Z",
+      "derniere_execution": "2026-11-19T17:43:23Z",
       "prochaine_prevue": "2026-11-19T17:50:00Z",
       "intervalle_min": 60,
       "planning": {
@@ -26,32 +26,32 @@
         {
           "nom": "Agent pays (data/pays.json)",
           "etat": "ok",
-          "detail": "dégradé (1 h) ; agent dégradé : pèse moins",
+          "detail": "dégradé (2 h) ; agent dégradé : pèse moins",
           "derniere_donnee_valide": "2026-11-19T15:42:06Z"
         },
         {
           "nom": "Agent macro (data/macro.json)",
           "etat": "ok",
-          "detail": "à jour (1 h)",
+          "detail": "à jour (2 h)",
           "derniere_donnee_valide": "2026-11-19T16:01:59Z"
         },
         {
           "nom": "Agent marchés (data/marches.json)",
           "etat": "ok",
           "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-19T16:46:20Z"
+          "derniere_donnee_valide": "2026-11-19T17:31:27Z"
         },
         {
           "nom": "Agent risque (data/risque.json)",
           "etat": "ok",
           "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-19T16:32:20Z"
+          "derniere_donnee_valide": "2026-11-19T17:31:36Z"
         },
         {
           "nom": "Agent géopolitique (data/geopolitique.json)",
           "etat": "ok",
-          "detail": "à jour (1 h)",
-          "derniere_donnee_valide": "2026-11-19T16:16:36Z"
+          "detail": "à jour (0 h)",
+          "derniere_donnee_valide": "2026-11-19T17:16:43Z"
         },
         {
           "nom": "Agent matières premières (data/matieres_premieres.json)",
@@ -62,37 +62,37 @@
         {
           "nom": "Agent entreprises (data/entreprises.json)",
           "etat": "ok",
-          "detail": "à jour (13 h)",
+          "detail": "à jour (14 h)",
           "derniere_donnee_valide": "2026-11-19T04:03:11Z"
         },
         {
           "nom": "Agent entreprises (pépites) (data/pepites.json)",
           "etat": "ok",
-          "detail": "à jour (13 h)",
+          "detail": "à jour (14 h)",
           "derniere_donnee_valide": "2026-11-19T04:03:11Z"
         },
         {
           "nom": "Agent initiés (data/inities.json)",
           "etat": "ok",
-          "detail": "à jour (1 h)",
+          "detail": "à jour (2 h)",
           "derniere_donnee_valide": "2026-11-19T16:02:27Z"
         },
         {
           "nom": "Analyses à la demande (data/analyses/index.json)",
           "etat": "ok",
-          "detail": "à jour (387 h)",
+          "detail": "à jour (388 h)",
           "derniere_donnee_valide": "2026-11-03T13:35:53Z"
         },
         {
           "nom": "Contradicteur (agent risque) (data/signaux/revues.json)",
           "etat": "ok",
           "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-19T16:32:35Z"
+          "derniere_donnee_valide": "2026-11-19T17:31:46Z"
         },
         {
           "nom": "Gemini (rédaction du briefing)",
           "etat": "information",
-          "detail": "rédaction par règles : Gemini indisponible sur toute la chaîne de modèles : gemini-flash-latest : HTTP 503 : { \"error\": { \"code\": 503, \"message\": \"This model is currently experiencing high demand. | gemini-3.5-flash-lite : HTTP 503 : { \"error\": { \"code\": 503, \"message\": \"This model is currently experiencing high deman (tentative 2 sur 3) ; nouvelle tentative vers 17:31 UTC",
+          "detail": "rédaction par règles : Gemini indisponible sur toute la chaîne de modèles : gemini-flash-latest : réseau : ReadTimeout: HTTPSConnectionPool(host='generativelanguage.googleapis.com', port=443): Rea | gemini-3.5-flash-lite : HTTP 503 : { \"error\": { \"code\": 503, \"message\": \"This model is currently experiencing high deman (tentative 3 sur 3) ; plus de nouvelle tentative aujourd'hui",
           "derniere_donnee_valide": null
         }
       ],
@@ -11068,9 +11068,73 @@
         "analyses": "à jour",
         "revues": "à jour"
       }
+    },
+    {
+      "genere_le": "2026-11-19T17:43:23Z",
+      "mode": "leger",
+      "recalcul": false,
+      "declencheurs": [],
+      "palier": "Vigilance",
+      "opportunites": 162,
+      "changements": [],
+      "alertes": 4,
+      "alertes_ecartees": [
+        "entreprises · Independence Realty Trust, Inc. : estimations de BPA −15,1 % sur 30 jours : fonds, véhicule de crédit, holding ou SPAC",
+        "entreprises · Blackstone Mortgage Trust, Inc. : estimations de BPA −11,1 % sur 30 jours : fonds, véhicule de crédit, holding ou SPAC",
+        "inities · NeuroPace Inc : 3 dirigeants achètent sur le marché en 30 jours (score 82/100) : société hors de l'univers analysé ou sans note",
+        "inities · UMH PROPERTIES, INC. : 3 dirigeants achètent sur le marché en 30 jours (score 72/100) : société hors de l'univers analysé ou sans note",
+        "inities · Suncrete, Inc. : 5 dirigeants achètent sur le marché en 30 jours (score 76/100) : société hors de l'univers analysé ou sans note",
+        "inities · Stereotaxis, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 60/100) : société hors de l'univers analysé ou sans note",
+        "inities · Once Upon a Farm, PBC : 4 dirigeants achètent sur le marché en 30 jours (score 76/100) : société hors de l'univers analysé ou sans note",
+        "inities · EquipmentShare.com Inc : 3 dirigeants achètent sur le marché en 30 jours (score 95/100) : société hors de l'univers analysé ou sans note",
+        "inities · Starwood Property Trust, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 84/ : fonds, véhicule de crédit, holding ou SPAC",
+        "inities · WINDWARD BIO GROUP AG : 3 dirigeants achètent sur le marché en 30 jours (score 72/100) : société hors de l'univers analysé ou sans note",
+        "inities · OPAL Fuels Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 82/100) : société hors de l'univers analysé ou sans note",
+        "inities · Dragonstone Metals Ltd déclare 86,4 % de Stateside Critical Minerals Corp. (13D, intention : société hors de l'univers analysé ou sans note",
+        "inities · STEINWERT KENT A déclare 5,4 % de FARMERS &amp; MERCHANTS BANCORP (13D, intention d'influe : société hors de l'univers analysé ou sans note",
+        "inities · Cattan Ezra Jack déclare 25,0 % de NextNRG, Inc. (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
+        "inities · DraftKings Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 89/100) : société hors de l'univers analysé ou sans note",
+        "inities · Lineage Cell Therapeutics, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 9 : société hors de l'univers analysé ou sans note",
+        "inities · NATURAL GAS SERVICES GROUP INC : 3 dirigeants achètent sur le marché en 30 jours (score 82 : société hors de l'univers analysé ou sans note",
+        "inities · DEEP FISSION, INC. : 4 dirigeants achètent sur le marché en 30 jours (score 95/100) : société hors de l'univers analysé ou sans note",
+        "inities · InspireMD, Inc. : 5 dirigeants achètent sur le marché en 30 jours (score 82/100) : société hors de l'univers analysé ou sans note",
+        "inities · ITG, Inc./DE/ : 5 dirigeants achètent sur le marché en 30 jours (score 95/100) : société hors de l'univers analysé ou sans note"
+      ],
+      "exclues": [],
+      "coherence_retrogradees": [],
+      "raison_briefing_regles": null,
+      "briefing": null,
+      "reprise_redaction": "rédaction par règles maintenue : Gemini indisponible sur toute la chaîne de modèles : gemini-flash-latest : réseau : ReadTimeout: HTTPSConnectionPool(host='generativelanguage.googleapis.com', port=443): Rea | gemini-3.5-flash-lite : HTTP 503 : { \"error\": { \"code\": 503, \"message\": \"This model is currently experiencing high deman ; plus de nouvelle tentative aujourd'hui",
+      "gemini": {
+        "appels": 0,
+        "reussites": 0,
+        "quota_atteint": false,
+        "rejets": [],
+        "erreurs": []
+      },
+      "suivi": {
+        "ajoutes": null,
+        "mesures": null,
+        "en_attente": null,
+        "total": 275,
+        "erreur": null
+      },
+      "entrees": {
+        "pays": "dégradé (dégradé)",
+        "macro": "à jour",
+        "marches": "à jour",
+        "risque": "à jour",
+        "geopolitique": "à jour",
+        "matieres_premieres": "à jour",
+        "entreprises": "à jour",
+        "pepites": "à jour",
+        "inities": "à jour",
+        "analyses": "à jour",
+        "revues": "à jour"
+      }
     }
   ],
-  "derniere_execution": "2026-11-19T17:01:49Z",
+  "derniere_execution": "2026-11-19T17:43:23Z",
   "prochaine_prevue": "2026-11-19T17:50:00Z",
   "intervalle_min": 60,
   "planning": {
