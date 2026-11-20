@@ -27,3 +27,21 @@ test('mois en clair', () => {
   assert.equal(moisFr('2026-12'), 'décembre 2026');
   assert.equal(moisFr(null), 'n. d.');
 });
+
+test('fiche lisible : 5 blocs de la fiche du chef, repli sans rien inventer pour une ancienne sortie', async () => {
+  const { contenuFiche } = await import('../chef.js');
+  const l = { id: 'selection-A', nom: 'Alpha', conviction: 'forte', fiche: {
+    entete: { verdict: 'Cash abondant ; réserve : bilan fragile.', poids_texte: '6,7 % du portefeuille démo', conviction_texte: 'conviction forte (3 combinaisons)' },
+    pour: ['Le cash-flow disponible représente 16,9 % de la valeur en Bourse par an.'], contre: ['Z-score d’Altman de −1,07.'],
+    momentum: { mot: 'défavorable', texte: '3 mois −2,3 % · 6 mois −0,8 % · 12 mois −27,3 %', contradiction: 'Le momentum contredit le dossier.' },
+    sortie: 'Sortie si…', base_statistique: { combinaisons: [{ combinaison: 'X', ecart_indice_pct: 2.2 }] } } };
+  const c = contenuFiche(l);
+  assert.equal(c.verdict, 'Cash abondant ; réserve : bilan fragile.');
+  assert.equal(c.momentum.mot, 'défavorable');
+  assert.ok(c.momentum.contradiction);
+  assert.equal(c.base.combinaisons.length, 1);
+  const ancien = contenuFiche({ nom: 'B', combinaisons_libelles: ['Niveau historique + Positionnement CFTC'], sortie_si: 'x' });
+  assert.match(ancien.verdict, /Niveau historique/);
+  assert.equal(ancien.momentum.mot, 'inconnu');
+  assert.deepEqual(ancien.contre, ['Donnée manquante.']);
+});

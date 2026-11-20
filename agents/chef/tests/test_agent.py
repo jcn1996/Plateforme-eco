@@ -118,6 +118,12 @@ class TestExecutionComplete(BaseChef):
             self.assertIn(l["conviction"], ("forte", "moyenne", "faible"))
             self.assertTrue(l["backtest"] and l["backtest"][0]["ecart_indice_pct"] is not None, l["id"])
             self.assertTrue(l["sortie_si"] and l["date_entree"])
+            # fiche lisible en 5 blocs (construite par règles)
+            f = l["fiche"]
+            self.assertLessEqual(len(f["entete"]["verdict"].split()), 20)
+            self.assertTrue(1 <= len(f["pour"]) <= 3 and 1 <= len(f["contre"]) <= 3)
+            self.assertIn(f["momentum"]["mot"], ("favorable", "neutre", "défavorable", "inconnu"))
+            self.assertTrue(f["sortie"] and f["base_statistique"]["combinaisons"])
         self.assertNotIn("verdict", d["synthese"]["top3"][0])
         # alertes : plus de changements de verdict, seulement les entrées et sorties de la liste
         self.assertFalse([a for a in lire(self.data / "alertes.json")["donnees"] if (a.get("id") or "").startswith("chef-verdict_chef")])
@@ -785,6 +791,8 @@ class TestSecteurs(BaseChef):
         self.assertEqual(len({x["nom"].split(" — ")[0] for x in p["secteurs"]}), len(p["secteurs"]))
         md = (self.data / "chef" / "briefing-2026-11-07.md").read_text(encoding="utf-8")
         self.assertIn("## Où investir : la liste", md)
+        self.assertIn("- **Verdict** :", md)
+        self.assertIn("- **Momentum** : momentum", md)
         self.assertIn("## Entrées et sorties du mois", md)
         self.assertNotIn("Top 5", md)
         lignes = {l["id"]: l for l in r["lignes"]}

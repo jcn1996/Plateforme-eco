@@ -37,6 +37,7 @@ from . import moteur as M
 from . import suivi as S
 from . import synthese as Y
 from . import secteurs as SE
+from . import fiches as FI
 from . import liste as LI
 from . import selections as SEL
 from . import tendance as TD
@@ -308,6 +309,8 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "com
         # Liste unique (révision mensuelle, sorties confirmées) : seule liste affichée et seule source des achats du trader
         liste, etat["liste"] = LI.mettre_a_jour(etat.get("liste"), selections, jour, config, LI.resultats_backtest(data, config["liste"]),
                                                 LI.symboles_detenus(data))
+        # Fiches lisibles (5 blocs, construites par règles) : copie des lignes, l'état de la liste n'est pas alourdi
+        liste = {**liste, "lignes": FI.construire(liste["lignes"], ctx, pays, series_t, data, config)}
         anciennes = {l["id"]: l for t in TYPES for l in (prec_donnees.get(t) or [])}
         if prec_donnees.get("or"):
             anciennes["or"] = prec_donnees["or"]
