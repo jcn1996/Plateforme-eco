@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genere_le": "2026-11-20T00:34:16Z",
+    "genere_le": "2026-11-20T07:46:06Z",
     "source": "agent-trader",
     "version_agent": "1.0",
     "description": "Ordres exécutés, ordres imposés, décisions et attentes de l'agent trader (démo), à chaque exécution",
@@ -9,9 +9,9 @@
       "libelle": "Agent trader (démo)",
       "ordre": 11,
       "workflow": "agent-trader.yml",
-      "derniere_execution": "2026-11-20T00:34:16Z",
-      "prochaine_prevue": "2026-11-20T07:33:00Z",
-      "intervalle_min": 628,
+      "derniere_execution": "2026-11-20T07:46:06Z",
+      "prochaine_prevue": "2026-11-20T08:05:00Z",
+      "intervalle_min": 32,
       "planning": {
         "crons": [
           "33 7 * * 1-5",
@@ -25,26 +25,26 @@
         {
           "nom": "Chef d'orchestre (data/chef.json)",
           "etat": "ok",
-          "detail": "1 h",
-          "derniere_donnee_valide": "2026-11-19T23:54:55Z"
+          "detail": "0 h",
+          "derniere_donnee_valide": "2026-11-20T07:31:32Z"
         },
         {
           "nom": "Agent risque (palier) (data/risque.json)",
           "etat": "ok",
-          "detail": "1 h",
-          "derniere_donnee_valide": "2026-11-19T23:34:20Z"
+          "detail": "0 h",
+          "derniere_donnee_valide": "2026-11-20T07:31:25Z"
         },
         {
           "nom": "Agent marchés (indice de référence, EUR/USD ; facultatif)",
           "etat": "ok",
           "detail": "à jour",
-          "derniere_donnee_valide": "2026-11-20T00:16:15Z"
+          "derniere_donnee_valide": "2026-11-20T07:31:31Z"
         },
         {
           "nom": "Yahoo Finance via yfinance (cours, change, exécution)",
           "etat": "ok",
           "detail": "15 position(s) valorisée(s)",
-          "derniere_donnee_valide": "2026-11-20T00:34:16Z"
+          "derniere_donnee_valide": "2026-11-20T07:46:06Z"
         }
       ],
       "degrade": false,
@@ -2555,11 +2555,27 @@
         "cours": 795
       },
       "erreur_observation": null
+    },
+    {
+      "genere_le": "2026-11-20T07:46:06Z",
+      "mode": "decision",
+      "valeur": 94724.02,
+      "liquidites_pct": 5.44,
+      "palier": "Vigilance",
+      "executees": [],
+      "annulees": [],
+      "ordres_imposes": [],
+      "decision": "Vérification du 20/11/2026 : pas de rééquilibrage (vérification mensuelle, déjà faite en 2026-11) ; les paris pays sont contrôlés à chaque exécution.",
+      "attente": null,
+      "ordres_en_attente": 0,
+      "cours_manquants": [],
+      "observation": null,
+      "erreur_observation": null
     }
   ],
-  "derniere_execution": "2026-11-20T00:34:16Z",
-  "prochaine_prevue": "2026-11-20T07:33:00Z",
-  "intervalle_min": 628,
+  "derniere_execution": "2026-11-20T07:46:06Z",
+  "prochaine_prevue": "2026-11-20T08:05:00Z",
+  "intervalle_min": 32,
   "planning": {
     "crons": [
       "33 7 * * 1-5",
