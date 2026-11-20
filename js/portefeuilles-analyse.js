@@ -785,3 +785,82 @@ export function performance(enrichi, refs, reference, historique = []) {
   }
   return res;
 }
+
+/* ------------------------------- Face à la liste d'investissement ------------------------------- */
+
+const TECH = 'Information Technology';
+const cleSecteur = (s) => String(s ?? '').replace(/’/g, '\'').toLowerCase();
+
+/**
+ * Mes portefeuilles face à la liste unique du chef d'orchestre (calcul sur l'appareil, rien n'est envoyé) :
+ * lignes détenues dans la liste, lignes de la liste absentes, lignes détenues hors liste (avec leur verdict de contexte
+ * s'il existe), concentration par pays, par secteur et part de la tech américaine, comparées au portefeuille démo.
+ * Un support coté autrement que la ligne de la liste (ETF de matière première, ETF pays) est rapproché par le
+ * portefeuille démo (même identifiant de ligne). Constat seulement : aucune instruction d'achat ou de vente.
+ */
+export function faceALaListe(enrichi, chef, demo, nomsPays = {}) {
+  const lignes = chef?.liste?.lignes ?? [];
+  const parSym = new Map();
+  const ajouterSym = (s, l) => { const n = normaliserSymbole(s); if (n) parSym.set(n, l); };
+  for (const l of lignes) { ajouterSym(l.symbole, l); ajouterSym(l.ticker, l); }
+  for (const p of demo?.positions ?? []) {
+    const l = lignes.find((x) => x.id === p.ligne_id || (x.symbole && x.symbole === p.symbole));
+    if (l) ajouterSym(p.symbole, l);
+  }
+  const dans = []; const hors = []; const vus = new Set();
+  for (const x of enrichi.lignes) {
+    if (x.ligne.type === 'option') continue;
+    const sym = normaliserSymbole(symboleLigne(x.ligne));
+    const l = sym ? parSym.get(sym) : null;
+    if (l) {
+      dans.push({ nom: x.ligne.nom || sym, symbole: sym, poids: arrondi(x.poids, 1), ligne: l.nom, id: l.id, categorie: l.categorie, conviction: l.conviction });
+      vus.add(l.id);
+    } else {
+      const opp = x.profil?.opportunite;
+      hors.push({ nom: x.ligne.nom || sym || 'ligne sans ticker', symbole: sym, poids: arrondi(x.poids, 1),
+        verdict_contexte: opp?.verdict ?? null, score: opp?.score ?? null, contexte: opp ? opp.nom : null });
+    }
+  }
+  const absentes = lignes.filter((l) => !vus.has(l.id))
+    .map((l) => ({ id: l.id, nom: l.nom, symbole: l.symbole, categorie: l.categorie, conviction: l.conviction }));
+
+  // Concentration : mes portefeuilles (valeur totale) contre le portefeuille démo
+  const exp = expositions(enrichi, nomsPays);
+  let techUS = 0;
+  for (const x of enrichi.lignes) {
+    const p = x.profil;
+    if (!x.poids || p?.secteur !== TECH) continue;
+    const total = somme(Object.values(p.pays ?? {}));
+    techUS += total ? (x.poids * (p.pays.US ?? 0)) / total : 0;
+  }
+  const demoPays = {}; const demoSecteurs = {}; let demoTech = 0;
+  for (const p of demo?.positions ?? []) {
+    const w = p.poids ?? 0;
+    if (!w) continue;
+    const pays = p.pays ? (nomsPays[p.pays] ?? p.pays) : (p.classe === 'matieres' ? 'Monde (matières premières)' : 'Non classé');
+    demoPays[pays] = (demoPays[pays] ?? 0) + w;
+    if (p.secteur) demoSecteurs[p.secteur] = (demoSecteurs[p.secteur] ?? 0) + w;
+    if (p.pays === 'US' && /technolog/i.test(p.secteur ?? '')) demoTech += w;
+  }
+  const comparer = (mien, autre) => {
+    const cles = new Map();
+    for (const x of mien) cles.set(cleSecteur(x.libelle), { libelle: x.libelle, moi: x.pct, demo: 0 });
+    for (const [lib, pct] of Object.entries(autre)) {
+      const k = cleSecteur(lib);
+      const e = cles.get(k) ?? { libelle: lib, moi: 0, demo: 0 };
+      e.demo = arrondi((e.demo ?? 0) + pct, 1);
+      cles.set(k, e);
+    }
+    return [...cles.values()].map((e) => ({ ...e, moi: arrondi(e.moi, 1) }))
+      .sort((a, b) => Math.max(b.moi, b.demo) - Math.max(a.moi, a.demo)).slice(0, 6);
+  };
+  return {
+    dans, absentes, hors,
+    concentration: {
+      pays: comparer(exp.pays.filter((x) => x.cle !== 'non_classe'), demoPays),
+      secteurs: comparer(exp.secteurs.filter((x) => x.cle !== 'non_classe'), demoSecteurs),
+      tech_us: { moi: arrondi(techUS, 1), demo: arrondi(demoTech, 1) },
+    },
+    liste_disponible: lignes.length > 0,
+  };
+}

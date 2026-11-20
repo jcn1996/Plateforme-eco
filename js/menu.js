@@ -37,6 +37,7 @@ export const SECTIONS_MENU = [
   { titre: 'Suivi', entrees: [
     { libelle: 'Mes portefeuilles', detail: 'vos portefeuilles réels, sur cet appareil uniquement', route: { type: 'mes-portefeuilles' } },
     { libelle: 'Portefeuille démo', detail: 'agent trader, 100 000 € virtuels', route: { type: 'portefeuille' } },
+    { libelle: 'Bilan du mois', detail: 'démo, MSCI World, momentum seul, liste, signaux', route: { type: 'bilan' } },
     { libelle: 'Fiabilité du chef d’orchestre', detail: 'performance des verdicts', route: { type: 'fiabilite-chef' } },
     { libelle: 'Fiabilité des recommandations', detail: 'analyses à la demande', route: { type: 'fiabilite' } },
     { libelle: 'Backtest', detail: 'quels signaux sont vraiment prédictifs', route: { type: 'backtest' } },

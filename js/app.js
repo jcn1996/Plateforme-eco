@@ -40,6 +40,7 @@ import {
 } from './chef.js';
 import { ecranBacktest, chargerBacktest, chargerRecalibrages, etatPullRequest, alerteRecalibrage } from './backtest.js';
 import { ecranObservation, chargerObservation } from './observation.js';
+import { ecranBilan, chargerBilan } from './bilan.js';
 import { creerAccueil } from './accueil.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -98,6 +99,7 @@ let backtest; // résultats du backtest des règles (data/backtest/resultats.jso
 let recalibrages = []; // historique des recalibrages de la méthode (data/backtest/recalibrages.json)
 const etatsPR = {}; // état sur GitHub des pull requests de recalibrage en attente (lien → « ouverte », « fusionnée », « fermée »)
 let observation; // signaux en observation (data/observation.json) : undefined = pas encore lu
+let bilan; // bilan du mois (data/bilan/) : undefined = pas encore lu
 let analyses = { liste: [] }; // analyses à la demande (data/analyses/index.json)
 let enCours; // demandes d'analyse en cours (issues ouvertes) : undefined = pas encore lues, null = GitHub injoignable
 let recommandations; // historique des recommandations : undefined = pas encore lu
@@ -580,6 +582,7 @@ function filAriane(route) {
     case 'fiabilite-chef': return [racine, { libelle: 'Où investir', route: { type: 'investir' } }, { libelle: 'Fiabilité', route }];
     case 'backtest': return [racine, { libelle: 'Backtest', route }];
     case 'observation': return [racine, { libelle: 'Signaux en observation', route }];
+    case 'bilan': return [racine, { libelle: 'Bilan du mois', route }];
     case 'analyses': return [racine, { libelle: 'Mes analyses', route }];
     case 'fiabilite': return [racine, { libelle: 'Mes analyses', route: { type: 'analyses' } }, { libelle: 'Fiabilité', route }];
     case 'analyse': {
@@ -606,7 +609,7 @@ function routeValide(route) {
   switch (route.type) {
     case 'accueil': return !route.id || (accueil?.agentExiste(route.id) ?? false);
     case 'globe': case 'portefeuille': case 'mes-portefeuilles': case 'classement': case 'comparaison': case 'mes-alertes': case 'sante': case 'macro': case 'geopolitique': case 'risque': case 'pepites':
-    case 'analyses': case 'fiabilite': case 'matieres': case 'inities': case 'investir': case 'fiabilite-chef': case 'alternatives': case 'backtest': case 'observation': return true;
+    case 'analyses': case 'fiabilite': case 'matieres': case 'inities': case 'investir': case 'fiabilite-chef': case 'alternatives': case 'backtest': case 'observation': case 'bilan': return true;
     case 'analyse': return Boolean(route.id);
     case 'pays': return d.paysParCode.has(route.id);
     case 'secteur': return d.secteurParId.has(route.id);
@@ -710,6 +713,7 @@ function afficher(route) {
     'fiabilite-chef': { section: '#ecran-fiabilite-chef', contenu: '#fiabilite-chef-contenu', titre: 'Fiabilité du chef d’orchestre', rendu: () => ecranFiabiliteChef(suiviChef, navigateurPanneau) },
     backtest: { section: '#ecran-backtest', contenu: '#backtest-contenu', titre: 'Backtest', rendu: () => ecranBacktest(backtest, recalibrages, etatsPR) },
     observation: { section: '#ecran-observation', contenu: '#observation-contenu', titre: 'Signaux en observation', rendu: () => ecranObservation(observation, navigateurPanneau) },
+    bilan: { section: '#ecran-bilan', contenu: '#bilan-contenu', titre: 'Bilan du mois', rendu: () => ecranBilan(bilan, navigateurPanneau) },
   };
   // Données lues à l'ouverture de l'écran, puis nouveau rendu s'il est toujours affiché
   if (route.type === 'analyses') {
@@ -758,6 +762,12 @@ function afficher(route) {
       if (routeActuelle.type === 'backtest') $('#backtest-contenu').replaceChildren(...ecranBacktest(backtest, recalibrages, etatsPR).filter(Boolean));
     });
   }
+  if (route.type === 'bilan' && (bilan === undefined || (route.id && route.id !== bilan?.courant))) {
+    chargerBilan(route.id).then((b) => {
+      bilan = b;
+      if (routeActuelle.type === 'bilan') $('#bilan-contenu').replaceChildren(...ecranBilan(bilan, navigateurPanneau).filter(Boolean));
+    });
+  }
   if (route.type === 'observation' && observation === undefined) {
     chargerObservation().then((o) => {
       observation = o;
@@ -804,7 +814,7 @@ function afficher(route) {
 
 /** Le globe ne se dessine que s'il est visible (économie de batterie). */
 function majActiviteGlobe() {
-  const masque = ['accueil', 'portefeuille', 'mes-portefeuilles', 'classement', 'comparaison', 'mes-alertes', 'sante', 'macro', 'geopolitique', 'risque', 'pepites', 'analyses', 'fiabilite', 'matieres', 'inities', 'investir', 'fiabilite-chef', 'alternatives', 'backtest', 'observation'].includes(routeActuelle.type)
+  const masque = ['accueil', 'portefeuille', 'mes-portefeuilles', 'classement', 'comparaison', 'mes-alertes', 'sante', 'macro', 'geopolitique', 'risque', 'pepites', 'analyses', 'fiabilite', 'matieres', 'inities', 'investir', 'fiabilite-chef', 'alternatives', 'backtest', 'observation', 'bilan'].includes(routeActuelle.type)
     || (dom.panneau.classList.contains('est-ouvert') && etatPanneau === 'plein' && !estLarge());
   globe?.definirActif(!masque);
 }

@@ -25,7 +25,7 @@ import { chiffrer, dechiffrer, estEnveloppe } from './portefeuilles-chiffrement.
 import { lireFichier, detecterColonnes, construireLignes, correspondanceSuffisante, CHAMPS, isinValide } from './portefeuilles-import.js';
 import {
   MENTION_ANALYSE, CLASSES, TYPES_LIGNE, ZONES, SECTEURS, THEMES, construireReferences, enrichir, expositions, correlations,
-  crible, coherence, decorrelation, performance, symboleLigne, entrepriseDe, descriptionOption,
+  crible, decorrelation, performance, symboleLigne, entrepriseDe, descriptionOption, faceALaListe,
 } from './portefeuilles-analyse.js';
 import { portefeuillesExemple } from './portefeuilles-exemple.js';
 
@@ -37,7 +37,7 @@ const ONGLETS = {
   expositions: 'Expositions',
   correlation: 'Corrélation',
   crible: 'Crible des agents',
-  chef: 'Chef d’orchestre',
+  chef: 'Face à la liste',
   performance: 'Performance',
 };
 
@@ -244,7 +244,7 @@ function contenuOnglet(enrichi, refs, pf) {
     case 'expositions': return ongletExpositions(enrichi);
     case 'correlation': return ongletCorrelation(enrichi, refs);
     case 'crible': return ongletCrible(enrichi, refs);
-    case 'chef': return ongletChef(enrichi, refs);
+    case 'chef': return ongletChef(enrichi);
     case 'performance': return ongletPerformance(enrichi, refs, pf);
     default: return ongletPositions(enrichi, pf);
   }
@@ -486,26 +486,39 @@ function ongletCrible(enrichi, refs) {
 
 /* ============================== Onglet Chef d'orchestre ============================== */
 
-function ongletChef(enrichi, refs) {
+const CATEGORIES_LISTE = { entreprises: 'entreprise', matieres: 'matière première', pays: 'pari pays' };
+
+function ongletChef(enrichi) {
   if (!ctx.d.chef) return el('section', { class: 'carte' }, el('p', { class: 'chef-petit' }, 'Chef d’orchestre indisponible pour le moment.'));
-  const exp = expositions(enrichi, {});
-  const co = coherence(enrichi, refs, exp);
+  const noms = Object.fromEntries((ctx.d.pays ?? []).map((p) => [p.code, p.nom]));
+  const r = faceALaListe(enrichi, ctx.d.chef, ctx.d.portefeuille, noms);
   const ouvrir = (id) => ctx.nav.ouvrir({ type: 'investir', id: `o-${id}` });
-  return el('div', { class: 'mpf-pile' },
-    el('section', { class: 'carte' },
-      titreSection('Positions sur des opportunités « Alléger » ou « Éviter »'),
-      co.a_alleger.length ? el('ul', { class: 'mpf-liste' }, co.a_alleger.map((x) => el('li', { class: 'mpf-alerte mpf-alerte--forte' },
-        `${x.nom} (${nombre(x.poids, 1)} % de la vue) : « ${x.verdict} », conviction ${x.conviction}, score ${nombre(x.score, 0)}/100${x.raison ? ` ; point faible : ${x.raison}` : ''}.`)))
-        : el('p', { class: 'chef-petit' }, 'Aucune ligne reconnue sur une opportunité « Alléger » ou « Éviter ».'),
-    ),
-    el('section', { class: 'carte' },
-      titreSection('Opportunités « Renforcer » absentes du portefeuille', 'pays déjà représentés à plus de 3 % exclus'),
-      co.absentes.length ? el('ul', { class: 'mpf-liste' }, co.absentes.map((o) => el('li', {},
-        el('button', { class: 'lien', type: 'button', onclick: () => ouvrir(o.id) }, o.nom),
-        el('span', { class: 'mpf-sous' }, ` ${o.verdict} (conviction ${o.conviction}, ${nombre(o.score, 0)}/100)${o.symbole ? ` · ${o.symbole}` : ''}${o.exposition_actuelle ? ` · exposition actuelle ${nombre(o.exposition_actuelle, 1)} %` : ''}`))))
-        : el('p', { class: 'chef-petit' }, 'Toutes les opportunités « Renforcer » sont déjà représentées.'),
-      el('p', { class: 'chef-petit' }, 'Rapprochement par ticker (sociétés, ETF pays et sectoriels, or, matières) : un fonds sans ticker n’est pas rapproché.'),
-    ),
+  const pct = (x) => `${nombre(x ?? 0, 1)} %`;
+  const tableau = (titre, rangs) => el('table', { class: 'chef-table mpf-face' },
+    el('thead', {}, el('tr', {}, [titre, 'Mes portefeuilles', 'Portefeuille démo'].map((t) => el('th', {}, t)))),
+    el('tbody', {}, rangs.map((x) => el('tr', {}, el('td', {}, x.libelle), el('td', { class: 'mono' }, pct(x.moi)), el('td', { class: 'mono' }, pct(x.demo))))));
+  return el('section', { class: 'carte mpf-face-liste' },
+    titreSection('Mes portefeuilles face à la liste', 'calculé sur cet appareil : vos positions ne quittent jamais le téléphone'),
+    !r.liste_disponible ? el('p', { class: 'chef-petit' }, 'Liste d’investissement du chef d’orchestre pas encore disponible.') : null,
+    el('h4', { class: 'mpf-sous-titre' }, `Lignes détenues qui sont dans la liste (${r.dans.length})`),
+    r.dans.length ? el('ul', { class: 'mpf-liste' }, r.dans.map((x) => el('li', {},
+      el('button', { class: 'lien', type: 'button', onclick: () => ouvrir(x.id) }, x.nom),
+      el('span', { class: 'mpf-sous' }, ` ${pct(x.poids)} de la vue · ${CATEGORIES_LISTE[x.categorie] ?? x.categorie} de la liste, conviction ${x.conviction}`))))
+      : el('p', { class: 'chef-petit' }, 'Aucune ligne détenue ne figure dans la liste.'),
+    el('h4', { class: 'mpf-sous-titre' }, `Lignes de la liste absentes de mes portefeuilles (${r.absentes.length})`),
+    r.absentes.length ? el('ul', { class: 'mpf-liste' }, r.absentes.map((x) => el('li', {},
+      el('button', { class: 'lien', type: 'button', onclick: () => ouvrir(x.id) }, x.nom),
+      el('span', { class: 'mpf-sous' }, ` ${x.symbole ?? ''} · ${CATEGORIES_LISTE[x.categorie] ?? x.categorie}, conviction ${x.conviction}`))))
+      : el('p', { class: 'chef-petit' }, 'Toutes les lignes de la liste sont détenues.'),
+    el('h4', { class: 'mpf-sous-titre' }, `Lignes détenues hors liste (${r.hors.length})`),
+    r.hors.length ? el('ul', { class: 'mpf-liste' }, r.hors.map((x) => el('li', {}, `${x.nom}`,
+      el('span', { class: 'mpf-sous' }, ` ${pct(x.poids)} de la vue · ${x.verdict_contexte ? `verdict de contexte « ${x.verdict_contexte} »${x.score != null ? ` (${nombre(x.score, 0)}/100)` : ''}, non prédictif d’après le backtest` : 'pas de verdict de contexte'}`))))
+      : el('p', { class: 'chef-petit' }, 'Aucune ligne hors liste.'),
+    el('h4', { class: 'mpf-sous-titre' }, 'Concentration'),
+    el('p', { class: 'chef-petit' }, `Part de la tech américaine : ${pct(r.concentration.tech_us.moi)} dans mes portefeuilles, ${pct(r.concentration.tech_us.demo)} dans le portefeuille démo.`),
+    tableau('Pays', r.concentration.pays),
+    tableau('Secteur', r.concentration.secteurs),
+    el('p', { class: 'chef-petit' }, 'Constat seulement, sans instruction d’achat ni de vente. Rapprochement par ticker ; un fonds sans ticker n’est pas rapproché. Le portefeuille démo est fictif.'),
   );
 }
 

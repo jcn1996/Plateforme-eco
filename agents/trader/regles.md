@@ -33,6 +33,7 @@ Au premier rééquilibrage de la nouvelle méthode, **toutes les lignes qui ne r
 
 - **Jamais à un cours passé** : un ordre est exécuté au premier cours disponible *après* l'heure de sa décision (ouverture de la première barre de 5 minutes de Yahoo Finance ; à défaut, ouverture de la première séance qui suit le jour de la décision). Les décisions de 7 h 33 UTC sont donc exécutées à l'ouverture des marchés concernés. Ordres non exécutés au bout de 5 jours : expirés.
 - **Ventes avant achats** ; achats limités aux liquidités disponibles (produit estimé des ventes compris).
+- **Complément d'exécution** : un achat réduit faute de liquidités au moment de son exécution (les ventes sur une place asiatique, par exemple, ne s'exécutent qu'à l'ouverture de leur marché, dans la nuit) est noté (`etat.json` → `complements`) et complété dès que les liquidités le permettent, au-dessus du tampon de 1 % et une fois les ventes en attente exécutées, jusqu'à la cible du rééquilibrage (motif « complément d'exécution »). Ce n'est pas un rééquilibrage : seule la part non exécutée de l'ordre décidé est rachetée. Cas réel : UNG, acheté le 16/11/2026 pour 3 768 € (3,8 %) au lieu de 8 %, parce que le produit des ventes de 5108.T et 688235.SS (environ 5 150 €) n'était pas encore encaissé à 14 h 30 UTC ; complété à la première exécution suivant la mise en service. Contrôle publié : `ecarts_aux_cibles` (lignes à plus d'un point de leur cible, `methode.tolerance_cible_points`), affiché dans l'écran « Portefeuille démo ».
 - **Frais** : 0,1 % du montant de chaque ordre (`execution.frais_pct`).
 - **Écart achat/vente estimé** (`execution.ecart_achat_vente_pct`) : 0,04 % pour les grands ETF, 0,10 % pour les autres ETF, 0,06 % pour les actions américaines, 0,12 % européennes, 0,20 % asiatiques développées, 0,35 % émergentes ; la moitié est payée à chaque achat et à chaque vente.
 - **Quantités entières** : un achat inférieur au prix d'une part est annulé et noté.
@@ -42,8 +43,14 @@ Au premier rééquilibrage de la nouvelle méthode, **toutes les lignes qui ne r
 ## 4. Suivi de performance
 
 - Valeur et historique quotidien, performance depuis le départ, sur 1 mois et sur 3 mois ; **référence** : MSCI World en euros (ETF URTH ÷ EUR/USD).
+- **Étiquettes de poche** : une position héritée de l'ancienne méthode mais retenue par la méthode actuelle prend la poche de sa ligne cible (CNX : « satellite » → « entreprises » ; EWW, EPOL, COLO : « cœur » → « pays »), à chaque exécution et à chaque achat. L'historique n'est pas réécrit : la valeur passe d'une poche à l'autre comme un flux (sortie de l'ancienne, entrée dans la nouvelle), pour que la performance par poche reste juste, et le changement est journalisé (`etat.json` → `reetiquetages`, publié dans `portefeuille.json`).
 - **Performance séparée de chaque poche** (entreprises, matières premières, ETF pays) depuis le changement de méthode, chacune contre le MSCI World (étalon, non détenu) : indice chaîné jour par jour, net des achats et des ventes (achats comptés en début de journée, ventes en fin de journée), frais compris.
 - Ratio de Sharpe (taux sans risque 2 %), volatilité, perte maximale ; taux de réussite des opérations clôturées, gain moyen et perte moyenne ; attribution par poche et par classe d'actifs.
+
+## 4 bis. Portefeuille « momentum seul » et bilan du mois
+
+- **Momentum seul** (`agents/trader/bilan.py`) : étalon suivi depuis le 16/11/2026, rien n'est acheté. À chaque début de mois, les 20 % de sociétés les plus fortes sur 12 mois hors dernier mois, à parts égales, dans l'univers du backtest (sociétés américaines non financières, hors immobilier et holdings, d'au moins 2 Md$) ; cours hebdomadaires des fiches de l'agent entreprises, sans dividendes ni frais (`etat.json` → `momentum_seul`).
+- **Bilan du mois** : à la première exécution du trader de chaque mois (en pratique le 1er, ou le premier jour ouvré), `data/bilan/AAAA-MM.json` pour le mois écoulé : performance du portefeuille démo, du MSCI World (en euros) et du momentum seul sur le mois et depuis le 16/11/2026 ; entrées et sorties de la liste du chef d'orchestre ; part des signaux en observation qui battent le MSCI World à 1 mois. Écran « Bilan du mois » (lien depuis l'accueil, Menu → Suivi). Une valeur manquante est publiée à null.
 
 ## 5. Signaux en observation
 

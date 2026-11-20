@@ -161,6 +161,7 @@ export function creerAccueil({ section, sources = {}, chargeurs = {}, contexte, 
         el('h3', {}, 'Alerte du jour'),
         r.alerte ? lien(r.alerte.titre, r.alerte.route) : el('p', { class: 'a-retenir-vide' }, 'Aucune alerte aujourd’hui.')),
       el('button', { class: 'bouton bouton--accent a-retenir-detail', type: 'button', onclick: () => naviguer({ type: 'investir' }) }, 'Voir le détail'),
+      el('button', { class: 'bouton a-retenir-bilan', type: 'button', onclick: () => naviguer({ type: 'bilan' }) }, '📅 Bilan du mois'),
     );
     carte.replaceChildren(bascule, chef ? corps : el('p', { class: 'a-retenir-vide' }, 'Sélections du chef d’orchestre indisponibles.'));
   }

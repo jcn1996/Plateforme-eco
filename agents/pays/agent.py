@@ -37,6 +37,7 @@ from ..commun.journal import journal
 from ..commun.series import serie_graphique
 from ..commun.sortie import ecrire_json, enveloppe, lire_json, maintenant_iso
 from . import croisement, flux_etf, notation, recap, textes
+from .sources_flux import MARQUE_MANQUANTE
 from .croisement import LIBELLES_NIVEAUX, date_periode
 from .sources import SOURCES, FournisseurReel, FournisseurTest
 
@@ -900,6 +901,9 @@ def sources_sante(etats: dict, echecs: list, journal_existant: dict | None) -> l
             res.append({"nom": nom, "etat": "partielle", "detail": "aucune donnée reçue" if etat == "vide" else etat})
         elif "absente" in etat:  # clé d'API non fournie : source volontairement ignorée
             res.append({"nom": nom, "etat": "non configurée", "detail": etat.removeprefix("erreur : ")})
+        elif MARQUE_MANQUANTE in etat:  # source bloquée sans contournement possible : déclarée manquante, sans dégrader l'agent
+            res.append({"nom": nom, "etat": "information", "derniere_donnee_valide": dernier_ok(nom),
+                        "detail": "source déclarée manquante : " + etat.removeprefix("erreur : ")})
         else:
             res.append({"nom": nom, "etat": "échec", "derniere_donnee_valide": dernier_ok(nom),
                         "detail": etat.removeprefix("erreur : ")})
@@ -928,8 +932,9 @@ def indicateurs_sante(donnees: list) -> dict:
             if not sources:
                 continue
             res[f"{p['nom']} · {ind.get('libelle', '?')}"] = {
-                "valides": [s["source"] for s in sources if s.get("statut") not in ("rejetée", "échec")],
-                "configurees": [s["source"] for s in sources],
+                "valides": [s["source"] for s in sources if s.get("statut") not in ("rejetée", "échec", "manquante")],
+                # une source déclarée manquante (bloquée, sans contournement) n'est plus attendue : pas de dégradation
+                "configurees": [s["source"] for s in sources if s.get("statut") != "manquante"],
             }
     return res
 

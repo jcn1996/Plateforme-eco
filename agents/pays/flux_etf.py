@@ -51,7 +51,7 @@ def choisir_releve(etf: str, emetteur: str, src: dict, config_flux: dict, aujour
         donnees = src.get(f"flux_{cle}")
         if donnees is None:
             detail = str((etats or {}).get(f"flux_{cle}") or "").removeprefix("erreur : ")
-            sources.append({"source": cle, "nom": nom, "statut": "échec",
+            sources.append({"source": cle, "nom": nom, "statut": "manquante" if "déclarées manquantes" in detail else "échec",
                             "raison": f"source indisponible lors de cette exécution{' : ' + detail[:220] if detail else ''}"})
             continue
         r = donnees.get(etf)
@@ -299,7 +299,7 @@ def indicateur(etf: str | None, emetteur: str | None, choix: dict | None, serie:
     if not choisie:
         jours = periodes["1s"]["jours_disponibles"] if "1s" in periodes else 0
         if (choix or {}).get("verification") == "aucune_source" and (aujourdhui - fin).days >= 1:
-            pannes = " ; ".join(f"{COURTS.get(x['source'], x['source'])} : {x.get('raison')}" for x in sources if x.get("statut") == "échec")
+            pannes = " ; ".join(f"{COURTS.get(x['source'], x['source'])} : {x.get('raison')}" for x in sources if x.get("statut") in ("échec", "manquante"))
             return {**commun, "valeur": None, "note": None, "disponible": False, "periode_valeur": None,
                     "raison": f"aucune source disponible depuis le relevé du {serie[-1]['date']} ({pannes or 'sources en échec'}) : "
                               "flux déclarés manquants"}
