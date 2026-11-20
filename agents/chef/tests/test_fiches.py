@@ -28,7 +28,7 @@ class TestFiches(unittest.TestCase):
         self.assertLessEqual(len(f["entete"]["verdict"].split()), FI.MOTS_VERDICT)
         self.assertTrue(1 <= len(f["pour"]) <= 3)
         self.assertTrue(1 <= len(f["contre"]) <= 3)
-        self.assertIn(f["momentum"]["mot"], ("favorable", "neutre", "défavorable", "inconnu"))
+        self.assertIn(f["momentum"]["mot"], ("favorable", "neutre", "défavorable", "défavorable (retournement récent)", "inconnu"))
         self.assertTrue(f["sortie"])
         for k in ("verdict", "pour", "contre", "momentum"):
             self.assertTrue(f["courte"][k])
@@ -96,6 +96,22 @@ class TestFiches(unittest.TestCase):
         self.assertEqual(FI.mot_momentum(-8, 23, 28), "neutre")
         self.assertEqual(FI.mot_momentum(None, None, None), "inconnu")
         self.assertIsNone(FI.perf_serie([["2026-11-01", 10]], 3))
+
+    def test_retournement_recent(self):
+        # Cas Dana : −22 % sur 3 mois, −29 % sur 6 mois, +21 % sur 12 mois
+        self.assertEqual(FI.mot_momentum(-22, -29, 21), "défavorable (retournement récent)")
+        self.assertEqual(FI.mot_momentum(-16, 5, 30), "défavorable (retournement récent)")   # seuil franchi sur 3 mois seulement
+        self.assertEqual(FI.mot_momentum(2, -20, 15), "défavorable (retournement récent)")   # ou sur 6 mois
+        self.assertEqual(FI.mot_momentum(-20, 2, -5), "défavorable (retournement récent)")   # 12 mois légèrement négatif
+        self.assertEqual(FI.mot_momentum(-14, -14, 25), "neutre")                             # −15 % non atteint
+        self.assertEqual(FI.mot_momentum(-26, -33, -33), "défavorable")                       # baisse durable : pas un retournement
+        # Effets : contradiction avec le dossier signalée, réserve dans le verdict, version courte
+        l = dict(LIGNE_E, nom="Dana", symbole="DAN", ticker="DAN")
+        f = FI.fiche_entreprise(l, dict(FICHE, momentum={"m3": -22.0, "m6": -29.0, "m12": 21.0}), 7.1, self.ct)
+        self.assertEqual(f["momentum"]["mot"], "défavorable (retournement récent)")
+        self.assertIn("contredit le dossier", f["momentum"]["contradiction"])
+        self.assertIn("cours en baisse", f["entete"]["verdict"])
+        self.assertIn("momentum défavorable (retournement récent)", f["courte"]["momentum"])
 
 
 if __name__ == "__main__":

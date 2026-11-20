@@ -272,7 +272,7 @@ export function texteBacktest(b) {
   return `${b?.combinaison ?? 'Combinaison'} : ${ecart}, ${gagnants} (hors échantillon)`;
 }
 
-const MOTS_MOMENTUM = { favorable: 'favorable', neutre: 'neutre', 'défavorable': 'défavorable', inconnu: 'inconnu' };
+const MOTS_MOMENTUM = { favorable: 'favorable', neutre: 'neutre', 'défavorable': 'défavorable', 'défavorable (retournement récent)': 'défavorable (retournement récent)', inconnu: 'inconnu' };
 
 /**
  * Contenu lisible d'une ligne de la liste : la fiche en 5 blocs construite par le chef d'orchestre (agents/chef/fiches.py) ;
@@ -308,7 +308,7 @@ function blocFiche(l, nav, detail = false) {
     l.alerte_sortie ? el('p', { class: 'chef-petit chef-attente' }, `⚠ ${l.alerte_sortie}`) : null,
     bloc('Pourquoi investir', el('ul', { class: 'chef-texte chef-pour' }, c.pour.map((x) => el('li', {}, x)))),
     bloc('Pourquoi pas', el('ul', { class: 'chef-texte chef-contre' }, c.contre.map((x) => el('li', {}, x)))),
-    bloc('Momentum', el('p', {}, el('span', { class: `chef-momentum chef-momentum--${c.momentum.mot === 'défavorable' ? 'defavorable' : c.momentum.mot}` }, c.momentum.mot), ` ${c.momentum.texte}`),
+    bloc('Momentum', el('p', {}, el('span', { class: `chef-momentum chef-momentum--${c.momentum.mot.startsWith('défavorable') ? 'defavorable' : c.momentum.mot}` }, c.momentum.mot), ` ${c.momentum.texte}`),
       c.momentum.contradiction ? el('p', { class: 'chef-petit chef-attente' }, c.momentum.contradiction) : null),
     bloc('Ce qui ferait sortir', el('p', {}, c.sortie)),
     el('details', { class: 'chef-fiche-base' }, el('summary', {}, 'Base statistique (backtest)'),

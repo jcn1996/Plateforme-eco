@@ -8,7 +8,8 @@ Cinq blocs, plus la base statistique (repliée dans l'appli) :
 1. en-tête : nom, symbole, conviction, poids dans le portefeuille démo, phrase-verdict (20 mots au plus) ;
 2. pourquoi investir : 3 points au plus, chacun avec un chiffre concret en langage courant (jamais un percentile seul) ;
 3. pourquoi pas : 1 à 3 points (contre-scénario, alertes, dette, dilution, Z-score d'Altman…) ;
-4. momentum : favorable, neutre ou défavorable, performances à 3, 6 et 12 mois ; contradiction avec le dossier signalée ;
+4. momentum : favorable, neutre ou défavorable — « défavorable (retournement récent) » si la baisse dépasse 15 % sur 3 ou
+   6 mois malgré un 12 mois positif —, performances à 3, 6 et 12 mois ; contradiction avec le dossier signalée ;
 5. ce qui ferait sortir : une phrase.
 Version courte pour le briefing : verdict, un « pour », un « contre », le momentum.
 """
@@ -21,6 +22,12 @@ from ..commun.sortie import lire_json
 from ..risque.calculs import fr
 
 MOTS_VERDICT = 20
+SEUIL_RETOURNEMENT = -15  # % sur 3 ou 6 mois
+RETOURNEMENT = "défavorable (retournement récent)"
+
+
+def est_defavorable(mot: str) -> bool:
+    return mot.startswith("défavorable")
 CONVICTIONS = {"forte": "conviction forte (3 combinaisons)", "moyenne": "conviction moyenne (2 combinaisons)",
                "faible": "conviction faible (1 combinaison)"}
 INCONNU = "donnée manquante"
@@ -83,12 +90,16 @@ def perf_serie(serie, mois: int) -> float | None:
 
 
 def mot_momentum(m3, m6, m12) -> str:
-    """Favorable / neutre / défavorable, d'après les performances à 3, 6 et 12 mois (12 mois prépondérant)."""
+    """Favorable / neutre / défavorable, d'après les performances à 3, 6 et 12 mois (12 mois prépondérant).
+    Une baisse de plus de 15 % sur 3 ou 6 mois l'emporte, même si le 12 mois est positif : « défavorable (retournement
+    récent) » ; une baisse déjà durable (règle de base défavorable) reste « défavorable »."""
     connus = [x for x in (m3, m6, m12) if x is not None]
     if not connus:
         return "inconnu"
     if (m12 is not None and m12 <= -10) or (len(connus) == 3 and all(x < 0 for x in connus)):
         return "défavorable"
+    if any(x is not None and x < SEUIL_RETOURNEMENT for x in (m3, m6)):
+        return RETOURNEMENT
     if (m12 is not None and m12 >= 10 and (m3 is None or m3 > -5)) or (len(connus) == 3 and all(x > 0 for x in connus)):
         return "favorable"
     return "neutre"
@@ -98,7 +109,7 @@ def momentum(m3, m6, m12, contradiction: str) -> dict:
     mot = mot_momentum(m3, m6, m12)
     texte = f"3 mois {_pct(m3)} · 6 mois {_pct(m6)} · 12 mois {_pct(m12)}"
     return {"mot": mot, "m3": m3, "m6": m6, "m12": m12, "texte": texte,
-            "contradiction": contradiction if mot == "défavorable" else None}
+            "contradiction": contradiction if est_defavorable(mot) else None}
 
 
 # ------------------------------------------------------------------ entreprises
@@ -175,7 +186,7 @@ def fiche_entreprise(l: dict, f: dict | None, poids, cfg_tendance: dict) -> dict
     mom = momentum(m.get("m3"), m.get("m6"), m.get("m12"),
                    "Le momentum contredit le dossier : le cours baisse alors que les critères comptables retenus sont favorables. "
                    "Le backtest ne garantit pas un rebond.")
-    verdict = phrase_verdict([p[1] for p in pour], [c[1] for c in contre], mom["mot"] == "défavorable", "cours en baisse",
+    verdict = phrase_verdict([p[1] for p in pour], [c[1] for c in contre], est_defavorable(mom["mot"]), "cours en baisse",
                              "Retenue par le backtest, comptes détaillés manquants")
     signaux = {"fcf_yield": "rendement du cash-flow", "goodwill_actif": "poids du goodwill", "mscore": "M-score",
                "conversion_cash": "conversion du bénéfice en cash"}
@@ -264,7 +275,7 @@ def fiche_pays(l: dict, o: dict | None, p: dict | None, serie, poids, cfg_tendan
         contre.append(("scenario", None, t))
     mom = momentum(perf_serie(serie, 3), perf_serie(serie, 6), perf_serie(serie, 12),
                    "Le momentum contredit le dossier : un pari pays repose sur la tendance, qui faiblit ; la sortie est proche.")
-    verdict = phrase_verdict([x[1] for x in pour], [x[1] for x in contre], mom["mot"] == "défavorable", "tendance qui faiblit",
+    verdict = phrase_verdict([x[1] for x in pour], [x[1] for x in contre], est_defavorable(mom["mot"]), "tendance qui faiblit",
                              "Pari de tendance, détail manquant")
     ct = cfg_tendance
     sortie = (f"Sortie dès que le cours passe sous sa moyenne 200 jours ({fr(inv.get('mm200'), 2)}), que la hausse sur 12 mois devient négative, "

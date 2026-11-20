@@ -122,7 +122,7 @@ class TestExecutionComplete(BaseChef):
             f = l["fiche"]
             self.assertLessEqual(len(f["entete"]["verdict"].split()), 20)
             self.assertTrue(1 <= len(f["pour"]) <= 3 and 1 <= len(f["contre"]) <= 3)
-            self.assertIn(f["momentum"]["mot"], ("favorable", "neutre", "défavorable", "inconnu"))
+            self.assertIn(f["momentum"]["mot"], ("favorable", "neutre", "défavorable", "défavorable (retournement récent)", "inconnu"))
             self.assertTrue(f["sortie"] and f["base_statistique"]["combinaisons"])
         self.assertNotIn("verdict", d["synthese"]["top3"][0])
         # alertes : plus de changements de verdict, seulement les entrées et sorties de la liste
