@@ -159,6 +159,26 @@ def executer_ordres(etat: dict, f, maintenant: datetime, config: dict) -> tuple[
     return executees, annulees, erreur
 
 
+POCHES_METHODE = ("entreprises", "matieres", "pays")
+
+
+def reetiqueter_position(etat: dict, p: dict, poche: str, ligne_id: str | None, le: str, raison: str) -> None:
+    """Change la poche d'une position héritée (ex. « satellite » → « entreprises ») sans toucher à l'historique : la valeur
+    passe d'une poche à l'autre comme un flux (sortie de l'ancienne, entrée dans la nouvelle) pour que le suivi par poche
+    reste juste, et le changement est journalisé (etat → reetiquetages)."""
+    ancienne = p.get("poche")
+    valeur = p.get("valeur_eur") or (p.get("quantite", 0) * (p.get("dernier_cours_eur") or p.get("prix_revient_eur") or 0))
+    if valeur:
+        noter_flux(etat, le, ancienne, -valeur)
+        noter_flux(etat, le, poche, valeur)
+    etat.setdefault("reetiquetages", []).append({"le": le, "symbole": p["symbole"], "de": ancienne, "vers": poche,
+                                                 "ligne_id_avant": p.get("ligne_id"), "ligne_id": ligne_id or p.get("ligne_id"),
+                                                 "valeur_eur": round(valeur, 2), "raison": raison})
+    p["poche"] = poche
+    if ligne_id:
+        p["ligne_id"] = ligne_id
+
+
 def noter_flux(etat: dict, le: str, poche: str | None, montant: float) -> None:
     """Flux d'une poche le jour de l'opération (achat : argent entré dans la poche, frais compris ; vente : produit net sorti),
     pour mesurer la performance de chaque poche indépendamment des apports et retraits."""
@@ -194,6 +214,8 @@ def _acheter(etat: dict, o: dict, b: dict, taux: dict, config: dict) -> dict | N
     etat["frais_total"] = etat.get("frais_total", 0.0) + fr_
     etat["ecarts_total"] = etat.get("ecarts_total", 0.0) + ecart_eur
     p = etat["positions"].get(o["symbole"])
+    if p is not None and o.get("poche") in POCHES_METHODE and p.get("poche") != o["poche"]:
+        reetiqueter_position(etat, p, o["poche"], o.get("ligne_id"), b["le"], "achat dans la poche de la méthode actuelle")
     if p is None:
         p = {"symbole": o["symbole"], "nom": o["nom"], "ligne_id": o.get("ligne_id"), "poche": o.get("poche"), "classe": o.get("classe"),
              "type": o.get("type"), "pays": o.get("pays"), "secteur": o.get("secteur"), "themes": o.get("themes") or [], "devise": o["devise"],
@@ -211,6 +233,13 @@ def _acheter(etat: dict, o: dict, b: dict, taux: dict, config: dict) -> dict | N
     p["dernier_cours_eur"] = en_euros(b["prix"], o["devise"], taux)
     p["dernier_achat_le"] = b["le"]
     noter_flux(etat, b["le"], p.get("poche"), cout + fr_)
+    # Achat réduit faute de liquidités (ventes pas encore exécutées, par exemple sur une place asiatique) : le manque est
+    # noté et complété dès que les liquidités le permettent (S.completer_entrees), sans attendre le rééquilibrage suivant
+    manque = o["montant_eur"] - (cout + fr_)
+    cible = (o.get("raison") or {}).get("cible_pct")
+    if cible and manque > config["methode"]["reequilibrage"]["ordre_min_eur"] and montant < o["montant_eur"] - 1:
+        etat.setdefault("complements", {})[o["symbole"]] = {"cible_pct": cible, "manque_eur": round(manque, 2), "le": b["le"], "ordre": o["id"],
+                                                            "raison": "liquidités insuffisantes à l'exécution (ventes pas encore exécutées)"}
     return _operation(etat, o, b, taux, quantite=q, prix_local=round(prix_local, 6), prix_eur=round(prix_eur, 6), montant_eur=round(cout, 2),
                       frais_eur=round(fr_, 2), ecart_eur=round(ecart_eur, 2))
 

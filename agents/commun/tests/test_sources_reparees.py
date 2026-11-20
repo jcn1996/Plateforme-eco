@@ -57,6 +57,30 @@ class TestSources(unittest.TestCase):
         self.assertIn("aucune source disponible depuis le relevé du 2026-11-06", ind["raison"])
         self.assertIn("flux déclarés manquants", ind["raison"])
 
+    def test_global_x_bloque_sans_degrader_l_agent_pays(self):
+        import json
+        from datetime import datetime, timezone
+        from pathlib import Path
+        from agents.commun.sante import bloc_sante
+        from agents.pays import flux_etf
+        from agents.pays.agent import indicateurs_sante, sources_sante
+        from agents.pays.sources_flux import diagnostic_blocage
+        cfg = json.loads((Path(__file__).resolve().parents[2] / "pays" / "config.json").read_text(encoding="utf-8"))["flux_etf"]
+        etats = {"flux_globalx": "erreur : ARGT : " + diagnostic_blocage("HTTP 429", "Vercel Security Checkpoint"), "flux_yahoo_parts": "ok"}
+        choix = flux_etf.choisir_releve("ARGT", "globalx", {"flux_yahoo_parts": {}}, cfg, date(2026, 11, 20), etats)
+        self.assertEqual(choix["sources"][0]["statut"], "manquante")
+        donnees = [{"nom": "Argentine", "detail": {"flux_etrangers": {"libelle": "Flux étrangers", "sources": choix["sources"]}}}]
+        ind = indicateurs_sante(donnees)
+        self.assertNotIn("globalx", ind["Argentine · Flux étrangers"]["configurees"])
+        sources = sources_sante(etats, [], None)
+        gx = next(x for x in sources if x["nom"] == "flux_globalx")
+        self.assertEqual(gx["etat"], "information")
+        self.assertIn("déclarée manquante", gx["detail"])
+        precedent = {"references": {"Argentine · Flux étrangers": ["globalx"]}}  # Global X était valide avant le blocage
+        b = bloc_sante("pays", "Agent pays", 1, "x.yml", sources, datetime(2026, 11, 20, 6, 30, tzinfo=timezone.utc), precedent,
+                       crons=["11 6 * * *"], indicateurs=ind)
+        self.assertFalse(b["degrade"], b["raisons"])
+
 
 if __name__ == "__main__":
     unittest.main()

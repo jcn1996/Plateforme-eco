@@ -300,6 +300,113 @@ def generer_ordres(c: dict, etat: dict, valo: dict, config: dict, maintenant: da
     return ventes + achats, notes, arbitrages
 
 
+def iso_utc(t: datetime) -> str:
+    return t.replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
+# ------------------------------------------------------------------ étiquettes de poche et compléments d'exécution
+
+def cibles_en_cours(etat: dict) -> dict[str, dict]:
+    """Cibles du dernier rééquilibrage (symbole → {poche, cible, ligne_id})."""
+    lignes = (((etat.get("derniere_decision") or {}).get("cibles") or {}).get("lignes")) or []
+    return {l["symbole"]: l for l in lignes if l.get("symbole")}
+
+
+def reetiqueter(etat: dict, maintenant: datetime) -> list[dict]:
+    """Positions héritées de l'ancienne méthode mais retenues par la méthode actuelle (ex. CNX « satellite », EWW « cœur ») :
+    réétiquetées dans la poche de leur ligne cible (entreprises, matières, pays). Historique intact : la valeur change de
+    poche comme un flux, et le changement est journalisé."""
+    from .portefeuille import reetiqueter_position
+    cibles = cibles_en_cours(etat)
+    faits = []
+    for s, p in etat["positions"].items():
+        c = cibles.get(s)
+        if not c or c.get("poche") not in POCHES or p.get("poche") == c["poche"]:
+            continue
+        reetiqueter_position(etat, p, c["poche"], c.get("ligne_id"), iso_utc(maintenant), "ligne retenue par la méthode actuelle (liste du chef d'orchestre)")
+        faits.append(etat["reetiquetages"][-1])
+    return faits
+
+
+def detecter_complements(etat: dict, operations: list[dict], valo: dict, config: dict) -> None:
+    """Achats d'entrée du dernier rééquilibrage exécutés en dessous de leur cible faute de liquidités (avant que le
+    complément d'exécution existe) : manque noté une fois (ex. UNG le 16/11/2026, 3,8 % pour une cible de 8 %)."""
+    mois = etat.get("dernier_reequilibrage")
+    if not mois or etat.get("complements_verifies") == mois:
+        return
+    cibles = cibles_en_cours(etat)
+    histo = etat.get("historique") or {}
+    tol = config["methode"]["tolerance_cible_points"]
+    for op in operations:
+        r = op.get("raison") or {}
+        if op.get("sens") != "achat" or not str(op.get("date", "")).startswith(mois) or not str(op.get("motif", "")).startswith("entrée"):
+            continue
+        s = op["symbole"]
+        if s not in etat["positions"] or s not in cibles or not r.get("cible_pct"):
+            continue
+        valeur = (histo.get(op["date"][:10]) or {}).get("portefeuille") or valo["valeur"]
+        obtenu = op.get("montant_eur", 0) / valeur * 100 if valeur else 0
+        if r["cible_pct"] - obtenu > tol:
+            etat.setdefault("complements", {}).setdefault(s, {"cible_pct": r["cible_pct"], "manque_eur": round((r["cible_pct"] - obtenu) / 100 * valeur, 2),
+                                                             "le": op["date"], "ordre": op.get("id"),
+                                                             "raison": "achat d'entrée exécuté en dessous de sa cible faute de liquidités"})
+    etat["complements_verifies"] = mois
+
+
+def completer_entrees(etat: dict, valo: dict, operations: list[dict], config: dict, maintenant: datetime) -> list[dict]:
+    """Complète un achat d'entrée réduit faute de liquidités dès qu'elles sont disponibles (au-dessus du tampon), jusqu'à la
+    cible du rééquilibrage. Ce n'est pas un rééquilibrage : seule la part non exécutée de l'ordre décidé est rachetée."""
+    detecter_complements(etat, operations, valo, config)
+    comp = etat.get("complements") or {}
+    if not comp:
+        return []
+    cm = config["methode"]
+    val = valo["valeur"] or 0
+    attente = {o["symbole"] for o in etat.get("ordres", []) if o.get("statut") == "en attente"}
+    achats_attente = sum(o["montant_eur"] for o in etat.get("ordres", []) if o.get("statut") == "en attente" and o["sens"] == "achat")
+    dispo = valo["liquidites"] - cm["tampon_liquidites_pct"] / 100 * val - achats_attente
+    if any(o["sens"] == "vente" for o in etat.get("ordres", []) if o.get("statut") == "en attente"):
+        return []  # ventes encore en attente : leur produit arrivera à leur exécution
+    ordres = []
+    for s, c in sorted(comp.items()):
+        p = etat["positions"].get(s)
+        if p is None or s not in cibles_en_cours(etat):
+            comp.pop(s, None)
+            continue
+        if s in attente:
+            continue
+        poids = (p.get("valeur_eur") or 0) / val * 100 if val else 0
+        manque = min(c["cible_pct"], cm["ligne_max"]) - poids
+        if manque <= cm["tolerance_cible_points"] / 2:
+            comp.pop(s, None)
+            continue
+        montant = min(manque / 100 * val, dispo)
+        if montant < cm["reequilibrage"]["ordre_min_eur"]:
+            continue
+        e = {"poche": p["poche"], "classe": p.get("classe"), "support": {"symbole": s, "nom": p["nom"], "devise": p["devise"]},
+             "ligne": {"id": p.get("ligne_id"), "nom": p["nom"], "type": p.get("type")}}
+        ordres.append(_ordre(etat, "achat", e, maintenant, config, montant=montant, motif="complément d'exécution",
+                             texte=(f"Complément d'exécution de {p['nom']} : poids {fr(poids, 1)} % pour une cible de {fr(c['cible_pct'], 1)} % "
+                                    f"(achat d'entrée réduit le {str(c['le'])[:10]} : {c['raison']})."), cible=c["cible_pct"], actuel=poids))
+        dispo -= montant
+        comp.pop(s, None)
+    for o in ordres:
+        o.pop("_montant", None)
+    return ordres
+
+
+def ecarts_aux_cibles(etat: dict, valo: dict, tolerance: float) -> list[dict]:
+    """Lignes dont le poids s'écarte de la cible du dernier rééquilibrage de plus de `tolerance` points."""
+    val = valo["valeur"] or 0
+    res = []
+    for s, c in cibles_en_cours(etat).items():
+        p = etat["positions"].get(s)
+        poids = (p.get("valeur_eur") or 0) / val * 100 if p and val else 0.0
+        if abs(poids - c["cible"]) > tolerance:
+            res.append({"symbole": s, "nom": c.get("nom"), "poids": round(poids, 2), "cible": c["cible"], "ecart": round(poids - c["cible"], 2)})
+    return res
+
+
 # ------------------------------------------------------------------ contrôles à chaque exécution : paris pays
 
 def controler_liste(etat: dict, chef: dict | None, config: dict, maintenant: datetime) -> list[dict]:

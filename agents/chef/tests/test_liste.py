@@ -86,6 +86,9 @@ class TestListe(unittest.TestCase):
         li, etat = self.maj(etat, selections([entreprise("A"), entreprise("B", 3)], [matiere("cuivre")], [pays("PL")]), "2026-12-01")
         self.assertEqual({l["id"] for l in li["lignes"]}, {"selection-A", "selection-B", "matiere-cuivre", "pays-PL"})
         self.assertTrue(all(m["date"].startswith("2026-12") for m in li["mouvements"]), "journal du mois seulement")
+        # le journal du mois écoulé reste publié pour le bilan mensuel
+        self.assertEqual(li["mois_precedent"]["mois"], "2026-11")
+        self.assertEqual([m["id"] for m in li["mois_precedent"]["mouvements"]], ["selection-A"])
 
     def test_sortie_confirmee_cinq_jours_de_suite(self):
         sel = selections([entreprise("A"), entreprise("B")])

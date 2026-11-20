@@ -29,6 +29,7 @@ SSGA = "https://www.ssga.com"
 VANECK_HISTO = "https://www.vaneck.com/us/en/investments/{slug}/downloads/fundhistoprices/"
 GLOBALX = "https://www.globalxetfs.com"
 GLOBALX_PAUSE_S = 5  # Global X limite le rythme des requêtes : une page de fonds toutes les 5 s au plus
+MARQUE_MANQUANTE = "déclarées manquantes"  # présent dans le diagnostic d'une source bloquée sans contournement
 BLOCAGE_ANTI_ROBOTS = ("Security Checkpoint", "Vercel Security", "cf-challenge", "captcha")
 NAVIGATEUR = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
 

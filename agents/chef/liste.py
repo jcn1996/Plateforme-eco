@@ -171,6 +171,8 @@ def mettre_a_jour(etat: dict | None, selections: dict | None, jour: str, config:
     etat = dict(etat or {})
     mois = jour[:7]
     lignes = {l["id"]: dict(l) for l in etat.get("lignes") or []}
+    if etat.get("mois") and etat["mois"] != mois:  # nouveau mois : journal du mois écoulé gardé pour le bilan mensuel
+        etat["mois_precedent"] = {"mois": etat["mois"], "mouvements": [m for m in etat.get("mouvements") or [] if m["date"][:7] == etat["mois"]]}
     mouvements = [m for m in etat.get("mouvements") or [] if m["date"][:7] == mois]
     if selections:
         cands = candidats(selections, config, bt)
@@ -230,7 +232,7 @@ def mettre_a_jour(etat: dict | None, selections: dict | None, jour: str, config:
              "par_categorie": {k: sum(1 for l in publiees if l["categorie"] == k) for k in CATEGORIES},
              "top3": [{"id": l["id"], "nom": l["nom"], "categorie": l["categorie"], "conviction": l["conviction"],
                        "nb_combinaisons": l["nb_combinaisons"], "combinaisons_libelles": l["combinaisons_libelles"]} for l in top3],
-             "mouvements": list(reversed(mouvements)), "source_backtest": bt.get("jour"),
+             "mouvements": list(reversed(mouvements)), "mois_precedent": etat.get("mois_precedent"), "source_backtest": bt.get("jour"),
              "regle": (f"Liste unique issue du dernier recalibrage validé (les mêmes sélections que le trader), {cl['max_lignes']} lignes au plus : "
                        "entreprises, matières premières, paris pays. Révisée une fois par mois, au rééquilibrage ; entre deux, aucune entrée, "
                        f"et seules sorties : excès ou tendance cassée pour un pari pays, sortie de la combinaison confirmée {cl['jours_confirmation']} jours "

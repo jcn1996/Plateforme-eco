@@ -34,6 +34,7 @@ from ..commun.sortie import ecrire_json, enveloppe, lire_json
 from ..risque.calculs import date_fr, fr
 from . import performance as F
 from . import portefeuille as P
+from . import bilan as BI
 from . import observation as OB
 from . import strategie as S
 
@@ -406,7 +407,9 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "hor
     suivre_paris(etat, executees, indice)
 
     # 3. contrôles de risque
+    S.reetiqueter(etat, maintenant)  # lignes héritées : poche de la méthode actuelle
     nouveaux = S.controler_paris_pays(etat, chef, config, maintenant) + S.controler_liste(etat, chef, config, maintenant)
+    nouveaux += S.completer_entrees(etat, valo, operations, config, maintenant)  # achats réduits faute de liquidités
     etat.setdefault("ordres", []).extend(nouveaux)
     for o in nouveaux:
         LOG.info("Ordre imposé : %s %s — %s", o["sens"], o["symbole"], o["motif"])
@@ -443,9 +446,22 @@ def executer(f, config: dict, data: Path, maintenant: datetime, mode: str = "hor
         err_obs = f"{type(e).__name__}: {str(e)[:150]}"
         LOG.warning("Signaux en observation non mis à jour : %s", err_obs)
 
+    # 5 bis. portefeuille « momentum seul » (étalon) et bilan du mois (première exécution de chaque mois)
+    try:
+        BI.suivre_momentum(etat, data, BI.config_selections(RACINE), jour)
+        chemin_bilan = BI.ecrire_bilan_si_du(etat, data, chef or (chef_obj or {}).get("donnees"),
+                                             (lire_json(data / "observation.json") or {}).get("donnees"), maintenant)
+        if chemin_bilan:
+            LOG.info("Bilan du mois écrit : %s", chemin_bilan)
+    except Exception as e:  # noqa: BLE001 — l'étalon et le bilan ne bloquent jamais le portefeuille
+        LOG.warning("Momentum seul ou bilan du mois non mis à jour : %s", f"{type(e).__name__}: {str(e)[:150]}")
+
     # 6. sorties
     stats = F.statistiques(etat, operations, config)
     donnees = sortie(etat, valo, stats, operations, chef or (chef_obj or {}).get("donnees"), palier, config, maintenant, etat.get("attente"), indice_source)
+    donnees["ecarts_cibles"] = S.ecarts_aux_cibles(etat, valo, config["methode"]["tolerance_cible_points"])
+    donnees["reetiquetages"] = (etat.get("reetiquetages") or [])[-20:]
+    donnees["complements_en_cours"] = etat.get("complements") or {}
     precedent = lire_json(data / "portefeuille.json") or {}
     objet = enveloppe(donnees, "agent-trader", fictif=False, version_agent=VERSION_AGENT, demo=True,
                       mise_a_jour_precedente=(precedent.get("meta") or {}).get("genere_le"),

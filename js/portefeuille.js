@@ -217,6 +217,9 @@ function carteRepartition(pf) {
     barre(r.poches ?? [], 'pf-poche--'),
     el('p', { class: 'chef-repartition' }, (r.poches ?? []).map((x) => el('span', {}, el('span', { class: `chef-pastille pf-poche--${x.cle}` }), `${x.libelle} ${nombre(x.pct, 1)} %`))),
     cibles ? el('p', { class: 'chef-petit' }, `Cibles du dernier rééquilibrage : entreprises ${nombre(cibles.entreprises ?? 0, 1)} % (70 à 85 %), matières premières ${nombre(cibles.matieres ?? 0, 1)} % (20 % au plus), ETF pays ${nombre(cibles.pays ?? 0, 1)} % (15 % au plus), liquidités ${nombre(cibles.liquidites ?? 0, 1)} %.`) : null,
+    cibles ? el('p', { class: 'chef-petit' }, (pf.ecarts_cibles ?? []).length
+      ? `Écarts aux cibles de plus d’un point : ${pf.ecarts_cibles.map((x) => `${x.nom ?? x.symbole} ${nombre(x.poids, 1)} % pour ${nombre(x.cible, 1)} %`).join(' ; ')}${Object.keys(pf.complements_en_cours ?? {}).length ? ' (complément d’exécution prévu dès que les liquidités le permettent)' : ''}.`
+      : 'Chaque ligne est à sa cible du dernier rééquilibrage, à un point près.') : null,
     el('div', { class: 'fiche-surtitre' }, 'Classes d’actifs'),
     barre(r.classes ?? [], 'chef-classe--'),
     el('p', { class: 'chef-repartition' }, (r.classes ?? []).map((x) => el('span', {}, el('span', { class: `chef-pastille chef-classe--${x.cle}` }), `${x.libelle} ${nombre(x.pct, 1)} %`))),
