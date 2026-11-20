@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-19T23:34:52Z",
+    "genere_le": "2026-11-20T03:45:25Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
@@ -9,37 +9,157 @@
   },
   "donnees": [
     {
-      "id": "geopolitique|hausse_score|AE|2026-11-19",
-      "revu_le": "2026-11-19T23:34:20Z",
+      "id": "matieres_premieres|retournement_courbe|aluminium|2026-11-20",
+      "revu_le": "2026-11-20T03:44:34Z",
+      "signal": {
+        "agent": "matieres_premieres",
+        "type": "retournement_courbe",
+        "cle": "aluminium",
+        "date": "2026-11-20",
+        "importance": "moyenne",
+        "titre": "Aluminium : la courbe passe de contango à backwardation"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|CA|2026-11-20",
+      "revu_le": "2026-11-20T03:44:34Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "CA",
+        "date": "2026-11-20",
+        "importance": "moyenne",
+        "titre": "Canada : score de risque géopolitique 52/100, +19 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|DE|2026-11-20",
+      "revu_le": "2026-11-20T03:44:34Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "DE",
+        "date": "2026-11-20",
+        "importance": "moyenne",
+        "titre": "Allemagne : score de risque géopolitique 28/100, +15 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|JP|2026-11-20",
+      "revu_le": "2026-11-20T03:44:34Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "JP",
+        "date": "2026-11-20",
+        "importance": "moyenne",
+        "titre": "Japon : score de risque géopolitique 26/100, +10 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|AU|2026-11-20",
+      "revu_le": "2026-11-20T03:44:34Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "AU",
+        "date": "2026-11-20",
+        "importance": "moyenne",
+        "titre": "Australie : score de risque géopolitique 32/100, +16 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|AE|2026-11-20",
+      "revu_le": "2026-11-20T03:44:34Z",
       "signal": {
         "agent": "geopolitique",
         "type": "hausse_score",
         "cle": "AE",
+        "date": "2026-11-20",
+        "importance": "moyenne",
+        "titre": "Émirats arabes unis : score de risque géopolitique 30/100, +15 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "pays|sorties_inhabituelles|VN|2026-11-19",
+      "revu_le": "2026-11-20T03:44:34Z",
+      "signal": {
+        "agent": "pays",
+        "type": "sorties_inhabituelles",
+        "cle": "VN",
         "date": "2026-11-19",
         "importance": "moyenne",
-        "titre": "Émirats arabes unis : score de risque géopolitique 30/100, +17 pts sur 7 jours"
+        "titre": "Vietnam : sorties inhabituelles sur l'ETF VNM"
       },
-      "objection": "La baisse de l'ETF UAE de −1,5 % depuis la veille du signal tempère la portée de cette hausse géopolitique [F1].",
+      "objection": "Les réserves nationales limitées à 2,1 mois d'importations [F1] exposent le pays aux tensions que traduisent ces retraits sur l'ETF VNM, déjà en baisse de 17,3 % par rapport à son sommet annuel [F2].",
       "faits": [
         {
           "id": "F1",
-          "texte": "ETF UAE (Émirats arabes unis) : −1,5 % depuis la veille du signal",
-          "source": "Yahoo Finance via yfinance, UAE"
+          "texte": "Vietnam : réserves de 2,1 mois d'importations",
+          "source": "Banque mondiale (FI.RES.TOTL.MO)"
+        },
+        {
+          "id": "F2",
+          "texte": "Vietnam : ETF VNM à −17,3 % de son plus haut sur 12 mois, volatilité à 3 mois de 17,2 %",
+          "source": "Yahoo Finance via yfinance, ETF VNM"
         }
       ],
       "ajustement": "abaisser",
       "specifique": true,
       "methode": "gemini",
       "par_entite": {
-        "AE": {
-          "objection": "Objections spécifiques : le marché ne confirme pas pour Émirats arabes unis (ETF UAE à −1,5 % depuis la veille du signal) [F1].",
+        "VN": {
+          "objection": "Objections spécifiques : réserves de change de 2,1 mois d'importations seulement [F1] ; ETF VNM à −17,3 % de son plus haut sur 12 mois [F2].",
           "ajustement": "abaisser"
         }
       },
-      "confiance": "faible",
+      "confiance": "moyen",
       "version_regles": 3,
       "faits_cites": [
-        "F1"
+        "F1",
+        "F2"
       ],
       "modele": "gemini-3.5-flash-lite"
     },
@@ -194,25 +314,6 @@
         "date": "2026-11-19",
         "importance": "forte",
         "titre": "Or : passage de « Neutre » à « Sous-pondérer »"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "matieres_premieres|retournement_courbe|aluminium|2026-11-19",
-      "revu_le": "2026-11-19T23:01:48Z",
-      "signal": {
-        "agent": "matieres_premieres",
-        "type": "retournement_courbe",
-        "cle": "aluminium",
-        "date": "2026-11-19",
-        "importance": "moyenne",
-        "titre": "Aluminium : la courbe passe de backwardation à contango"
       },
       "objection": "Pas d'objection spécifique.",
       "faits": [],
@@ -553,63 +654,6 @@
       "modele": "gemini-3.5-flash-lite"
     },
     {
-      "id": "geopolitique|hausse_score|CA|2026-11-19",
-      "revu_le": "2026-11-19T03:51:52Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "CA",
-        "date": "2026-11-19",
-        "importance": "moyenne",
-        "titre": "Canada : score de risque géopolitique 53/100, +10 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|DE|2026-11-19",
-      "revu_le": "2026-11-19T03:51:52Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "DE",
-        "date": "2026-11-19",
-        "importance": "moyenne",
-        "titre": "Allemagne : score de risque géopolitique 33/100, +19 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|AU|2026-11-19",
-      "revu_le": "2026-11-19T03:51:52Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "AU",
-        "date": "2026-11-19",
-        "importance": "moyenne",
-        "titre": "Australie : score de risque géopolitique 33/100, +17 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
       "id": "geopolitique|hausse_score|VN|2026-11-19",
       "revu_le": "2026-11-19T03:51:52Z",
       "signal": {
@@ -638,25 +682,6 @@
         "date": "2026-11-19",
         "importance": "moyenne",
         "titre": "Turquie : score de risque géopolitique 42/100, +19 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|JP|2026-11-19",
-      "revu_le": "2026-11-19T03:51:52Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "JP",
-        "date": "2026-11-19",
-        "importance": "moyenne",
-        "titre": "Japon : score de risque géopolitique 26/100, +10 pts sur 7 jours"
       },
       "objection": "Pas d'objection spécifique.",
       "faits": [],
@@ -1119,25 +1144,6 @@
         "date": "2026-11-17",
         "importance": "moyenne",
         "titre": "Italie : score de risque géopolitique 14/100, +10 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|SE|2026-11-17",
-      "revu_le": "2026-11-19T17:31:36Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "SE",
-        "date": "2026-11-17",
-        "importance": "moyenne",
-        "titre": "Suède : score de risque géopolitique 12/100, +10 pts sur 7 jours"
       },
       "objection": "Pas d'objection spécifique.",
       "faits": [],
@@ -2468,652 +2474,6 @@
         "date": "2026-11-14",
         "importance": "forte",
         "titre": "Gaz européen (TTF) : passage de « Neutre (biais positif) » à « Neutre »"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "pays|sorties_inhabituelles|TW|2026-11-13",
-      "revu_le": "2026-11-14T23:01:47Z",
-      "signal": {
-        "agent": "pays",
-        "type": "sorties_inhabituelles",
-        "cle": "TW",
-        "date": "2026-11-13",
-        "importance": "forte",
-        "titre": "Taïwan : sorties inhabituelles sur l'ETF EWT"
-      },
-      "objection": "Les sorties sur l'ETF EWT s'inscrivent dans un contexte où l'ETF est déjà à −17,5 % de son plus haut sur 12 mois, avec une volatilité à 3 mois de 42,1 % [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Taïwan : ETF EWT à −17,5 % de son plus haut sur 12 mois, volatilité à 3 mois de 42,1 %",
-          "source": "Yahoo Finance via yfinance, ETF EWT"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "TW": {
-          "objection": "Objections spécifiques : ETF EWT à −17,5 % de son plus haut sur 12 mois [F1].",
-          "ajustement": "maintenir"
-        }
-      },
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "pays|entrees_inhabituelles|TR|2026-11-13",
-      "revu_le": "2026-11-14T23:01:47Z",
-      "signal": {
-        "agent": "pays",
-        "type": "entrees_inhabituelles",
-        "cle": "TR",
-        "date": "2026-11-13",
-        "importance": "forte",
-        "titre": "Turquie : entrées inhabituelles sur l'ETF TUR"
-      },
-      "objection": "Ces entrées interviennent alors que l'inflation atteint 29,7 % pour une cible de 5,0 % [F1] et que l'ETF TUR se trouve à −25,5 % de son plus haut sur 12 mois avec une volatilité de 31,3 % [F2].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Turquie : inflation à 29,7 %, cible de 5,0 %",
-          "source": "agent pays / FMI"
-        },
-        {
-          "id": "F2",
-          "texte": "Turquie : ETF TUR à −25,5 % de son plus haut sur 12 mois, volatilité à 3 mois de 31,3 %",
-          "source": "Yahoo Finance via yfinance, ETF TUR"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "TR": {
-          "objection": "Objections spécifiques : inflation à 29,7 % pour une cible de 5,0 % [F1] ; ETF TUR à −25,5 % de son plus haut sur 12 mois [F2].",
-          "ajustement": "abaisser"
-        }
-      },
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1",
-        "F2"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "pays|sorties_inhabituelles|SG|2026-11-13",
-      "revu_le": "2026-11-14T23:01:47Z",
-      "signal": {
-        "agent": "pays",
-        "type": "sorties_inhabituelles",
-        "cle": "SG",
-        "date": "2026-11-13",
-        "importance": "forte",
-        "titre": "Singapour : sorties inhabituelles sur l'ETF EWS"
-      },
-      "objection": "Ces sorties de capitaux pèsent sur une économie caractérisée par une dette publique de 166 % du PIB [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Singapour : dette publique de 166 % du PIB",
-          "source": "FMI (GGXWDG_NGDP)"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "SG": {
-          "objection": "Objections spécifiques : Singapour : dette publique de 166 % du PIB [F1].",
-          "ajustement": "maintenir"
-        }
-      },
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "pays|entrees_inhabituelles|SE|2026-11-13",
-      "revu_le": "2026-11-14T23:01:47Z",
-      "signal": {
-        "agent": "pays",
-        "type": "entrees_inhabituelles",
-        "cle": "SE",
-        "date": "2026-11-13",
-        "importance": "forte",
-        "titre": "Suède : entrées inhabituelles sur l'ETF EWD"
-      },
-      "objection": "Cet afflux massif contraste avec des réserves limitées à 2,2 mois d'importations [F1] et une devise affichant une volatilité à 1 mois de 8,4 % ainsi qu'une baisse de −5,3 % contre le dollar sur 3 mois [F2].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Suède : réserves de 2,2 mois d'importations",
-          "source": "Banque mondiale (FI.RES.TOTL.MO)"
-        },
-        {
-          "id": "F2",
-          "texte": "Suède : SEK : volatilité à 1 mois de 8,4 %, −5,3 % contre le dollar sur 3 mois",
-          "source": "Yahoo Finance via yfinance, SEK=X (devise suivie par l'agent pays)"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "SE": {
-          "objection": "Objections spécifiques : réserves de change de 2,2 mois d'importations seulement [F1] ; devise à −5,3 % contre le dollar sur 3 mois (volatilité à 1 mois de 8,4 %) [F2].",
-          "ajustement": "abaisser"
-        }
-      },
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1",
-        "F2"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "pays|entrees_inhabituelles|NL|2026-11-13",
-      "revu_le": "2026-11-14T23:01:47Z",
-      "signal": {
-        "agent": "pays",
-        "type": "entrees_inhabituelles",
-        "cle": "NL",
-        "date": "2026-11-13",
-        "importance": "forte",
-        "titre": "Pays-Bas : entrées inhabituelles sur l'ETF EWN"
-      },
-      "objection": "Cette entrée de capitaux intervient alors que le pays dispose de réserves restreintes à 1,0 mois d'importations [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Pays-Bas : réserves de 1,0 mois d'importations",
-          "source": "Banque mondiale (FI.RES.TOTL.MO)"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "NL": {
-          "objection": "Objections spécifiques : réserves de change de 1,0 mois d'importations seulement [F1].",
-          "ajustement": "abaisser"
-        }
-      },
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "pays|sorties_inhabituelles|IT|2026-11-13",
-      "revu_le": "2026-11-14T23:01:47Z",
-      "signal": {
-        "agent": "pays",
-        "type": "sorties_inhabituelles",
-        "cle": "IT",
-        "date": "2026-11-13",
-        "importance": "forte",
-        "titre": "Italie : sorties inhabituelles sur l'ETF EWI"
-      },
-      "objection": "Ces retraits surviennent dans un contexte de vulnérabilité marqué par une dette publique de 138 % du PIB [F1] et une inflation à 5,6 % éloignée de la cible de 2,0 % [F2].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Italie : dette publique de 138 % du PIB",
-          "source": "FMI (GGXWDG_NGDP)"
-        },
-        {
-          "id": "F2",
-          "texte": "Italie : inflation à 5,6 %, cible de 2,0 %",
-          "source": "agent pays / FMI"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "IT": {
-          "objection": "Objections spécifiques : Italie : dette publique de 138 % du PIB [F1] ; inflation à 5,6 % pour une cible de 2,0 % [F2].",
-          "ajustement": "abaisser"
-        }
-      },
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1",
-        "F2"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "pays|entrees_inhabituelles|IN|2026-11-13",
-      "revu_le": "2026-11-14T23:01:47Z",
-      "signal": {
-        "agent": "pays",
-        "type": "entrees_inhabituelles",
-        "cle": "IN",
-        "date": "2026-11-13",
-        "importance": "forte",
-        "titre": "Inde : entrées inhabituelles sur l'ETF INDA"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "pays|entrees_inhabituelles|ID|2026-11-13",
-      "revu_le": "2026-11-14T23:01:47Z",
-      "signal": {
-        "agent": "pays",
-        "type": "entrees_inhabituelles",
-        "cle": "ID",
-        "date": "2026-11-13",
-        "importance": "forte",
-        "titre": "Indonésie : entrées inhabituelles sur l'ETF EIDO"
-      },
-      "objection": "Cet afflux intervient alors que l'ETF EIDO se trouve à −43,8 % de son plus haut sur 12 mois avec une volatilité à 3 mois de 42,4 % [F2]. L'IDR affiche quant à elle une volatilité à 1 mois de 25,0 % et une baisse de −2,3 % contre le dollar sur 3 mois [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Indonésie : IDR : volatilité à 1 mois de 25,0 %, −2,3 % contre le dollar sur 3 mois",
-          "source": "Yahoo Finance via yfinance, IDR=X (devise suivie par l'agent pays)"
-        },
-        {
-          "id": "F2",
-          "texte": "Indonésie : ETF EIDO à −43,8 % de son plus haut sur 12 mois, volatilité à 3 mois de 42,4 %",
-          "source": "Yahoo Finance via yfinance, ETF EIDO"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "ID": {
-          "objection": "Objections spécifiques : devise à −2,3 % contre le dollar sur 3 mois (volatilité à 1 mois de 25,0 %) [F1] ; ETF EIDO à −43,8 % de son plus haut sur 12 mois [F2].",
-          "ajustement": "abaisser"
-        }
-      },
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1",
-        "F2"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "pays|sorties_inhabituelles|CL|2026-11-13",
-      "revu_le": "2026-11-14T23:01:47Z",
-      "signal": {
-        "agent": "pays",
-        "type": "sorties_inhabituelles",
-        "cle": "CL",
-        "date": "2026-11-13",
-        "importance": "forte",
-        "titre": "Chili : sorties inhabituelles sur l'ETF ECH"
-      },
-      "objection": "Ces sorties massives coïncident avec un ETF ECH situé à −23,8 % de son plus haut sur 12 mois et une volatilité à 3 mois de 22,7 % [F2]. Le CLP enregistre également une baisse de −8,0 % contre le dollar sur 3 mois et une volatilité à 1 mois de 21,4 % [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Chili : CLP : volatilité à 1 mois de 21,4 %, −8,0 % contre le dollar sur 3 mois",
-          "source": "Yahoo Finance via yfinance, CLP=X (devise suivie par l'agent pays)"
-        },
-        {
-          "id": "F2",
-          "texte": "Chili : ETF ECH à −23,8 % de son plus haut sur 12 mois, volatilité à 3 mois de 22,7 %",
-          "source": "Yahoo Finance via yfinance, ETF ECH"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "CL": {
-          "objection": "Objections spécifiques : devise à −8,0 % contre le dollar sur 3 mois (volatilité à 1 mois de 21,4 %) [F1] ; ETF ECH à −23,8 % de son plus haut sur 12 mois [F2].",
-          "ajustement": "abaisser"
-        }
-      },
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1",
-        "F2"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "pays|sorties_inhabituelles|BR|2026-11-13",
-      "revu_le": "2026-11-14T23:01:47Z",
-      "signal": {
-        "agent": "pays",
-        "type": "sorties_inhabituelles",
-        "cle": "BR",
-        "date": "2026-11-13",
-        "importance": "moyenne",
-        "titre": "Brésil : sorties inhabituelles sur l'ETF EWZ"
-      },
-      "objection": "Ces retraits surviennent dans un contexte de dette publique s'élevant à 97 % du PIB [F1]. L'ETF EWZ est à −26,0 % de son plus haut sur 12 mois avec une volatilité à 3 mois de 55,6 %, tandis que le BRL baisse de −7,8 % contre le dollar sur 3 mois [F2, F3].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Brésil : dette publique de 97 % du PIB",
-          "source": "FMI (GGXWDG_NGDP)"
-        },
-        {
-          "id": "F2",
-          "texte": "Brésil : BRL : volatilité à 1 mois de 29,6 %, −7,8 % contre le dollar sur 3 mois",
-          "source": "Yahoo Finance via yfinance, BRL=X (devise suivie par l'agent pays)"
-        },
-        {
-          "id": "F3",
-          "texte": "Brésil : ETF EWZ à −26,0 % de son plus haut sur 12 mois, volatilité à 3 mois de 55,6 %",
-          "source": "Yahoo Finance via yfinance, ETF EWZ"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "BR": {
-          "objection": "Objections spécifiques : Brésil : dette publique de 97 % du PIB [F1] ; devise à −7,8 % contre le dollar sur 3 mois (volatilité à 1 mois de 29,6 %) [F2] ; ETF EWZ à −26,0 % de son plus haut sur 12 mois [F3].",
-          "ajustement": "abaisser"
-        }
-      },
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1",
-        "F2",
-        "F3"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "pays|entrees_inhabituelles|AU|2026-11-13",
-      "revu_le": "2026-11-14T23:01:47Z",
-      "signal": {
-        "agent": "pays",
-        "type": "entrees_inhabituelles",
-        "cle": "AU",
-        "date": "2026-11-13",
-        "importance": "moyenne",
-        "titre": "Australie : entrées inhabituelles sur l'ETF EWA"
-      },
-      "objection": "Cet afflux doit être nuancé par des réserves nationales limitées à 1,6 mois d'importations [F2]. Le pays présente par ailleurs un solde courant de −3,1 % du PIB [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Australie : solde courant de −3,1 % du PIB",
-          "source": "FMI (BCA_NGDPD)"
-        },
-        {
-          "id": "F2",
-          "texte": "Australie : réserves de 1,6 mois d'importations",
-          "source": "Banque mondiale (FI.RES.TOTL.MO)"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "AU": {
-          "objection": "Objections spécifiques : déficit courant de 3,1 % du PIB [F1] ; réserves de change de 1,6 mois d'importations seulement [F2].",
-          "ajustement": "abaisser"
-        }
-      },
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1",
-        "F2"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "pays|entrees_inhabituelles|AE|2026-11-13",
-      "revu_le": "2026-11-14T23:01:47Z",
-      "signal": {
-        "agent": "pays",
-        "type": "entrees_inhabituelles",
-        "cle": "AE",
-        "date": "2026-11-13",
-        "importance": "moyenne",
-        "titre": "Émirats arabes unis : entrées inhabituelles sur l'ETF UAE"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|evenement_grave|theme-evt-471d58831fea|2026-11-13",
-      "revu_le": "2026-11-13T15:21:28Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "evenement_grave",
-        "cle": "theme-evt-471d58831fea",
-        "date": "2026-11-13",
-        "importance": "haute",
-        "titre": "Événement de gravité 4 : Frappes israéliennes dans la bande de Gaza"
-      },
-      "objection": "Malgré l'événement, l'ETF TUR progresse de +0,2 % depuis la veille du signal [F1]. Cette stabilité s'inscrit dans un contexte de volatilité modérée avec le VIX en hausse de +0,9 pts [F2].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "ETF TUR (Turquie) : +0,2 % depuis la veille du signal",
-          "source": "Yahoo Finance via yfinance, TUR"
-        },
-        {
-          "id": "F2",
-          "texte": "VIX : +0,9 pts depuis la veille du signal (12/11/2026)",
-          "source": "Yahoo Finance via yfinance, ^VIX",
-          "contexte": true
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "TR": {
-          "objection": "Objections spécifiques : le marché ne confirme pas pour Turquie (ETF TUR à +0,2 % depuis la veille du signal) [F1].",
-          "ajustement": "abaisser"
-        }
-      },
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1",
-        "F2"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "geopolitique|mesure_officielle|evt-feb49b87e2d1|2026-11-13",
-      "revu_le": "2026-11-13T10:31:31Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "mesure_officielle",
-        "cle": "evt-feb49b87e2d1",
-        "date": "2026-11-13",
-        "importance": "moyenne",
-        "titre": "Sanctions (source officielle) : Publication des licences générales web 55F et 115D du règlement sur les sanctions relatives aux activités étrangères nuisibles de la Russie"
-      },
-      "objection": "Les réserves de 13,1 mois et la dette de 38 % du PIB [F1] ne prémunissent pas la Suisse contre les impacts sectoriels induits par ces licences russes.",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Suisse : réserves de 13,1 mois, dette de 38 % du PIB",
-          "source": "FMI, Banque mondiale"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "CH": {
-          "objection": "Objections spécifiques : Suisse dispose d'amortisseurs (réserves de 13,1 mois d'importations, dette publique de 38 % du PIB) [F1].",
-          "ajustement": "maintenir"
-        }
-      },
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "inities|achats_groupes|LRMR|2026-11-13",
-      "revu_le": "2026-11-13T07:31:36Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "LRMR",
-        "date": "2026-11-13",
-        "importance": "forte",
-        "titre": "Larimar Therapeutics, Inc. : 6 dirigeants achètent sur le marché en 30 jours (score 95/100)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|achats_groupes|MP|2026-11-13",
-      "revu_le": "2026-11-13T07:31:36Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "MP",
-        "date": "2026-11-13",
-        "importance": "forte",
-        "titre": "MP Materials Corp. : 3 dirigeants achètent sur le marché en 30 jours (score 91/100)"
-      },
-      "objection": "Malgré ces achats, le VE/EBITDA dépasse le secteur de +15191,9 % [F1] et la couverture des intérêts s'établit à −4,6× [F2]. De plus, la croissance du bénéfice recule de −31,3 % [F4] tandis que les stocks progressent de 59,0 % pour un CA en hausse de 10,1 % [F6].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "MP Materials Corp. : VE/EBITDA vs secteur +15191,9 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "MP Materials Corp. : couverture des intérêts de −4,6×",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F3",
-          "texte": "MP Materials Corp. : momentum 12 mois −37,3 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F4",
-          "texte": "MP Materials Corp. : croissance du bénéfice −31,3 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F5",
-          "texte": "MP Materials Corp. : alerte « Dilution forte » : nombre d'actions en hausse de 8,7 % sur un an",
-          "source": "agent entreprises (fiche)"
-        },
-        {
-          "id": "F6",
-          "texte": "MP Materials Corp. : alerte « Hausse anormale des stocks » : stocks en hausse de 59,0 % pour un CA en hausse de 10,1 %",
-          "source": "agent entreprises (fiche)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1",
-        "F2",
-        "F4",
-        "F6"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "inities|achats_groupes|DOX|2026-11-13",
-      "revu_le": "2026-11-13T07:31:36Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "DOX",
-        "date": "2026-11-13",
-        "importance": "moyenne",
-        "titre": "AMDOCS LTD : 3 dirigeants achètent sur le marché en 30 jours (score 79/100)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|achats_groupes|PHIO|2026-11-13",
-      "revu_le": "2026-11-13T07:31:36Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "PHIO",
-        "date": "2026-11-13",
-        "importance": "forte",
-        "titre": "Phio Pharmaceuticals Corp. : 3 dirigeants achètent sur le marché en 30 jours (score 89/100)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|achats_groupes|GSM|2026-11-13",
-      "revu_le": "2026-11-13T07:31:36Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "GSM",
-        "date": "2026-11-13",
-        "importance": "forte",
-        "titre": "Ferroglobe PLC : 5 dirigeants achètent sur le marché en 30 jours (score 89/100)"
       },
       "objection": "Pas d'objection spécifique.",
       "faits": [],
