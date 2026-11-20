@@ -45,3 +45,9 @@ test('fiche lisible : 5 blocs de la fiche du chef, repli sans rien inventer pour
   assert.equal(ancien.momentum.mot, 'inconnu');
   assert.deepEqual(ancien.contre, ['Donnée manquante.']);
 });
+
+test('momentum « défavorable (retournement récent) » reconnu par l’appli', async () => {
+  const { contenuFiche } = await import('../chef.js');
+  const c = contenuFiche({ nom: 'Dana', fiche: { entete: {}, pour: [], contre: [], momentum: { mot: 'défavorable (retournement récent)', texte: '3 mois −22 %', contradiction: 'x' } } });
+  assert.equal(c.momentum.mot, 'défavorable (retournement récent)');
+});
