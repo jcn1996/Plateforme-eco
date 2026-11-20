@@ -1,13 +1,143 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-20T03:45:25Z",
+    "genere_le": "2026-11-20T07:31:43Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "inities|achats_groupes|OBK|2026-11-20",
+      "revu_le": "2026-11-20T07:31:25Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "OBK",
+        "date": "2026-11-20",
+        "importance": "moyenne",
+        "titre": "Origin Bancorp, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 70/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|TGEN|2026-11-20",
+      "revu_le": "2026-11-20T07:31:25Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "TGEN",
+        "date": "2026-11-20",
+        "importance": "moyenne",
+        "titre": "TECOGEN INC. : 3 dirigeants achètent sur le marché en 30 jours (score 76/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|PAL|2026-11-20",
+      "revu_le": "2026-11-20T07:31:25Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "PAL",
+        "date": "2026-11-20",
+        "importance": "moyenne",
+        "titre": "Proficient Auto Logistics, Inc : 4 dirigeants achètent sur le marché en 30 jours (score 72/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|TLSI|2026-11-20",
+      "revu_le": "2026-11-20T07:31:25Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "TLSI",
+        "date": "2026-11-20",
+        "importance": "moyenne",
+        "titre": "TriSalus Life Sciences, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 76/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|evenement_grave|evt-803326e62b0c|2026-11-20",
+      "revu_le": "2026-11-20T07:31:25Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "evenement_grave",
+        "cle": "evt-803326e62b0c",
+        "date": "2026-11-20",
+        "importance": "haute",
+        "titre": "Événement de gravité 4 : L'Iran accuse les États-Unis de préparer une invasion terrestre"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|INTU|2026-11-20",
+      "revu_le": "2026-11-20T07:31:25Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "INTU",
+        "date": "2026-11-20",
+        "importance": "moyenne",
+        "titre": "Intuit Inc. entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Malgré de solides fondamentaux, le dossier présente un momentum de 12 mois à −51,7 % [F1], suggérant un risque de piège de valeur avec une décote marquée associée à un cours ou un bénéfice en recul [F2].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Intuit Inc. : momentum 12 mois −51,7 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "Intuit Inc. : piège de valeur possible : décote marquée associée à un cours ou à un bénéfice en recul (revue critique)",
+          "source": "agent entreprises (data/pepites.json)"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
     {
       "id": "matieres_premieres|retournement_courbe|aluminium|2026-11-20",
       "revu_le": "2026-11-20T03:44:34Z",
@@ -849,35 +979,6 @@
       "faits_cites": [
         "F1",
         "F2"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|nouvelle_pepite|EQT|2026-11-18",
-      "revu_le": "2026-11-18T23:23:14Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "nouvelle_pepite",
-        "cle": "EQT",
-        "date": "2026-11-18",
-        "importance": "moyenne",
-        "titre": "EQT Corporation entre dans la liste « Qualité à prix raisonnable »"
-      },
-      "objection": "La croissance du bénéfice affichée est de +784,4 % [F1], confirmant la solidité actuelle du dossier sans contradiction majeure dans les faits disponibles.",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "EQT Corporation : croissance du bénéfice +784,4 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
       ],
       "modele": "gemini-3.5-flash-lite"
     },
@@ -2183,25 +2284,6 @@
         "date": "2026-11-16",
         "importance": "moyenne",
         "titre": "Sanctions (source officielle) : Le Royaume-Uni et l'Union européenne renforcent les sanctions contre la Russie"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|CN|2026-11-15",
-      "revu_le": "2026-11-19T03:51:52Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "CN",
-        "date": "2026-11-15",
-        "importance": "moyenne",
-        "titre": "Chine : score de risque géopolitique 55/100, +12 pts sur 7 jours"
       },
       "objection": "Pas d'objection spécifique.",
       "faits": [],
