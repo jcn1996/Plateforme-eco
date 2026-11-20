@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genere_le": "2026-11-20T17:01:42Z",
+    "genere_le": "2026-11-20T17:21:32Z",
     "source": "agent-chef",
     "version_agent": "1.0",
     "description": "Entrées, recalcul, changements de verdict, alertes et briefing, à chaque exécution",
@@ -9,7 +9,7 @@
       "libelle": "Chef d'orchestre",
       "ordre": 10,
       "workflow": "agent-chef.yml",
-      "derniere_execution": "2026-11-20T17:01:42Z",
+      "derniere_execution": "2026-11-20T17:21:32Z",
       "prochaine_prevue": "2026-11-20T17:50:00Z",
       "intervalle_min": 60,
       "planning": {
@@ -20,21 +20,9 @@
         ],
         "fuseau": "UTC"
       },
-      "sources_total": 14,
-      "sources_ok": 14,
+      "sources_total": 12,
+      "sources_ok": 12,
       "sources": [
-        {
-          "nom": "Yahoo Finance (cours des ETF sectoriels)",
-          "etat": "ok",
-          "detail": "33/33 ETF sectoriels",
-          "derniere_donnee_valide": "2026-11-20T17:01:42Z"
-        },
-        {
-          "nom": "Émetteurs et Yahoo Finance (flux des ETF sectoriels : SSGA, iShares)",
-          "etat": "ok",
-          "detail": "ssga : 11, ishares : 11, yahoo_parts : 15",
-          "derniere_donnee_valide": "2026-11-20T17:01:42Z"
-        },
         {
           "nom": "Agent pays (data/pays.json)",
           "etat": "ok",
@@ -44,19 +32,19 @@
         {
           "nom": "Agent macro (data/macro.json)",
           "etat": "ok",
-          "detail": "dégradé (1 h) ; agent dégradé : pèse moins",
+          "detail": "dégradé (2 h) ; agent dégradé : pèse moins",
           "derniere_donnee_valide": "2026-11-20T15:44:20Z"
         },
         {
           "nom": "Agent marchés (data/marches.json)",
           "etat": "ok",
           "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-20T16:46:17Z"
+          "derniere_donnee_valide": "2026-11-20T17:16:14Z"
         },
         {
           "nom": "Agent risque (data/risque.json)",
           "etat": "ok",
-          "detail": "à jour (0 h)",
+          "detail": "à jour (1 h)",
           "derniere_donnee_valide": "2026-11-20T16:31:37Z"
         },
         {
@@ -86,26 +74,26 @@
         {
           "nom": "Agent initiés (data/inities.json)",
           "etat": "ok",
-          "detail": "à jour (1 h)",
+          "detail": "à jour (2 h)",
           "derniere_donnee_valide": "2026-11-20T15:47:01Z"
         },
         {
           "nom": "Analyses à la demande (data/analyses/index.json)",
           "etat": "ok",
-          "detail": "à jour (411 h)",
+          "detail": "à jour (412 h)",
           "derniere_donnee_valide": "2026-11-03T13:35:53Z"
         },
         {
           "nom": "Contradicteur (agent risque) (data/signaux/revues.json)",
           "etat": "ok",
-          "detail": "à jour (0 h)",
+          "detail": "à jour (1 h)",
           "derniere_donnee_valide": "2026-11-20T16:31:54Z"
         },
         {
           "nom": "Gemini (rédaction du briefing)",
           "etat": "ok",
           "detail": "briefing rédigé par gemini-3.5-flash-lite",
-          "derniere_donnee_valide": "2026-11-20T17:01:42Z"
+          "derniere_donnee_valide": "2026-11-20T17:21:32Z"
         }
       ],
       "degrade": false,
@@ -12329,9 +12317,73 @@
         "analyses": "à jour",
         "revues": "à jour"
       }
+    },
+    {
+      "genere_le": "2026-11-20T17:21:32Z",
+      "mode": "leger",
+      "recalcul": false,
+      "declencheurs": [],
+      "palier": "Vigilance",
+      "opportunites": 161,
+      "changements": [],
+      "alertes": 4,
+      "alertes_ecartees": [
+        "entreprises · Independence Realty Trust, Inc. : estimations de BPA −15,1 % sur 30 jours : fonds, véhicule de crédit, holding ou SPAC",
+        "inities · Origin Bancorp, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 70/100) : société hors de l'univers analysé ou sans note",
+        "inities · TECOGEN INC. : 3 dirigeants achètent sur le marché en 30 jours (score 76/100) : société hors de l'univers analysé ou sans note",
+        "inities · Proficient Auto Logistics, Inc : 4 dirigeants achètent sur le marché en 30 jours (score 72 : société hors de l'univers analysé ou sans note",
+        "inities · TriSalus Life Sciences, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 76/1 : société hors de l'univers analysé ou sans note",
+        "inities · Estate of Alvin Libin déclare 10,1 % de RILEY EXPLORATION PERMIAN, INC. (13D, intention d' : société hors de l'univers analysé ou sans note",
+        "inities · CARRONADE CAPITAL MANAGEMENT, LP déclare 5,8 % de Brookdale Senior Living Inc. (13D, inten : société hors de l'univers analysé ou sans note",
+        "inities · NeuroPace Inc : 3 dirigeants achètent sur le marché en 30 jours (score 82/100) : société hors de l'univers analysé ou sans note",
+        "inities · UMH PROPERTIES, INC. : 3 dirigeants achètent sur le marché en 30 jours (score 72/100) : société hors de l'univers analysé ou sans note",
+        "inities · Suncrete, Inc. : 5 dirigeants achètent sur le marché en 30 jours (score 76/100) : société hors de l'univers analysé ou sans note",
+        "inities · Stereotaxis, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 60/100) : société hors de l'univers analysé ou sans note",
+        "inities · Once Upon a Farm, PBC : 4 dirigeants achètent sur le marché en 30 jours (score 76/100) : société hors de l'univers analysé ou sans note",
+        "inities · EquipmentShare.com Inc : 3 dirigeants achètent sur le marché en 30 jours (score 95/100) : société hors de l'univers analysé ou sans note",
+        "inities · Starwood Property Trust, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 84/ : fonds, véhicule de crédit, holding ou SPAC",
+        "inities · WINDWARD BIO GROUP AG : 3 dirigeants achètent sur le marché en 30 jours (score 72/100) : société hors de l'univers analysé ou sans note",
+        "inities · OPAL Fuels Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 82/100) : société hors de l'univers analysé ou sans note",
+        "inities · Dragonstone Metals Ltd déclare 86,4 % de Stateside Critical Minerals Corp. (13D, intention : société hors de l'univers analysé ou sans note",
+        "inities · STEINWERT KENT A déclare 5,4 % de FARMERS &amp; MERCHANTS BANCORP (13D, intention d'influe : société hors de l'univers analysé ou sans note",
+        "inities · Cattan Ezra Jack déclare 25,0 % de NextNRG, Inc. (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
+        "inities · DraftKings Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 89/100) : société hors de l'univers analysé ou sans note"
+      ],
+      "exclues": [],
+      "coherence_retrogradees": [],
+      "raison_briefing_regles": null,
+      "briefing": null,
+      "reprise_redaction": null,
+      "gemini": {
+        "appels": 0,
+        "reussites": 0,
+        "quota_atteint": false,
+        "rejets": [],
+        "erreurs": []
+      },
+      "suivi": {
+        "ajoutes": null,
+        "mesures": null,
+        "en_attente": null,
+        "total": 278,
+        "erreur": null
+      },
+      "entrees": {
+        "pays": "dégradé (dégradé)",
+        "macro": "dégradé (dégradé)",
+        "marches": "à jour",
+        "risque": "à jour",
+        "geopolitique": "à jour",
+        "matieres_premieres": "à jour",
+        "entreprises": "à jour",
+        "pepites": "à jour",
+        "inities": "à jour",
+        "analyses": "à jour",
+        "revues": "à jour"
+      }
     }
   ],
-  "derniere_execution": "2026-11-20T17:01:42Z",
+  "derniere_execution": "2026-11-20T17:21:32Z",
   "prochaine_prevue": "2026-11-20T17:50:00Z",
   "intervalle_min": 60,
   "planning": {
