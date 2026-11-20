@@ -384,14 +384,18 @@ def briefing_markdown(b: dict) -> str:
     li = b.get("liste") or {}
     l += ["", "## Où investir : la liste", "",
           (li.get("regle") or ""), "",
-          "| Ligne | Catégorie | Combinaison(s) | Conviction | Backtest (écart / indice, gagnants) | Entrée | Ce qui la ferait sortir |",
-          "|---|---|---|---|---|---|---|"]
+          ]
     for x in li.get("lignes") or []:
-        bt = " ; ".join(f"{fr(r.get('ecart_indice_pct'), 1, True)} pt/an, {ent(r.get('gagnants_pct'))} %" for r in x.get("backtest") or [])
-        l.append(f"| {x['nom']} | {x['categorie']} | {' ; '.join(x['combinaisons_libelles'])} | {x['conviction']} ({x['nb_combinaisons']}) | {bt} | "
-                 f"{date_fr(x['date_entree'])} | {x['sortie_si']} |")
+        c = (x.get("fiche") or {}).get("courte")
+        e = (x.get("fiche") or {}).get("entete") or {}
+        l.append(f"### {x['nom']}{' (' + x['symbole'] + ')' if x.get('symbole') else ''} — {e.get('conviction_texte') or x['conviction']}"
+                 + (f", {e['poids_texte']}" if e.get("poids_texte") else ""))
+        if c:
+            l += ["", f"- **Verdict** : {c['verdict']}", f"- **Pour** : {c['pour']}", f"- **Contre** : {c['contre']}", f"- **Momentum** : {c['momentum']}", ""]
+        else:
+            l += ["", f"- Retenue par : {' ; '.join(x.get('combinaisons_libelles') or [])} (fiche non disponible).", ""]
     if not li.get("lignes"):
-        l.append("| Aucune ligne | | | | | | |")
+        l.append("Aucune ligne dans la liste.")
     l += ["", "## Entrées et sorties du mois", ""] + ([f"- {date_fr(m['date'])} · {m['texte']}" for m in b.get("mouvements") or []] or ["- Aucune."])
     l += ["", "## Points de vigilance", ""] + ([f"- {v['texte']}" for v in b["vigilance"]] or ["- Aucun."])
     for cle, nom in (("central", "Scénario central"), ("alternatif", "Scénario alternatif")):

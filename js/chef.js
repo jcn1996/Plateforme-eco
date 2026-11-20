@@ -215,10 +215,15 @@ function briefingComplet(b, aller) {
   return el('div', { class: 'chef-briefing' },
     el('p', { class: 'chef-briefing-tete' }, `Briefing du ${dateFr(b.date)} · rédaction : ${b.mode === 'gemini' ? 'Gemini (affirmations vérifiées contre les données)' : 'règles'}`),
     section('L’essentiel', liste((b.essentiel ?? []).map((x) => x.texte))),
-    section('Où investir : la liste', b.liste?.lignes?.length ? el('ol', {}, b.liste.lignes.map((x) => el('li', {},
-      el('button', { class: 'lien', type: 'button', onclick: () => aller({ type: 'investir', id: `o-${x.id}` }) }, x.nom), ' ',
-      pastilleConviction(x.conviction), el('div', { class: 'chef-petit' }, `${CATEGORIES_LISTE[x.categorie] ?? ''} · ${(x.combinaisons_libelles ?? []).join(' ; ')}`))))
-      : el('p', {}, 'Liste vide.')),
+    section('Où investir : la liste', b.liste?.lignes?.length ? el('ol', {}, b.liste.lignes.map((x) => {
+      const c = contenuFiche(x);
+      return el('li', {},
+        el('button', { class: 'lien', type: 'button', onclick: () => aller({ type: 'investir', id: `o-${x.id}` }) }, x.nom), ' ', pastilleConviction(x.conviction),
+        el('div', { class: 'chef-petit' }, c.verdict),
+        el('div', { class: 'chef-petit' }, `+ ${c.pour[0] ?? 'donnée manquante'}`),
+        el('div', { class: 'chef-petit' }, `− ${c.contre[0] ?? 'donnée manquante'}`),
+        el('div', { class: 'chef-petit' }, `Momentum ${c.momentum.mot} : ${c.momentum.texte}${c.momentum.contradiction ? ' — contredit le dossier' : ''}`));
+    })) : el('p', {}, 'Liste vide.')),
     section('Entrées et sorties du mois', liste((b.mouvements ?? []).length ? b.mouvements.map((m) => `${dateFr(m.date)} · ${m.texte}`) : ['Aucune entrée ni sortie ce mois-ci.'])),
     section('Points de vigilance', liste(b.vigilance?.length ? b.vigilance.map((v) => v.texte) : ['Aucun.'])),
     ...['central', 'alternatif'].map((k) => {
@@ -246,7 +251,6 @@ function signeFr(x, d = 1) {
   return x == null ? 'n. d.' : `${x > 0 ? '+' : x < 0 ? '−' : ''}${nombre(Math.abs(x), d)}`;
 }
 
-const majuscule = (t) => (t ? t[0].toUpperCase() + t.slice(1) : 'n. d.');
 const MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
 /** « 2026-12 » → « décembre 2026 ». */
 export const moisFr = (m) => (m ? `${MOIS[Number(m.slice(5, 7)) - 1] ?? m.slice(5, 7)} ${m.slice(0, 4)}` : 'n. d.');
@@ -268,15 +272,54 @@ export function texteBacktest(b) {
   return `${b?.combinaison ?? 'Combinaison'} : ${ecart}, ${gagnants} (hors échantillon)`;
 }
 
+const MOTS_MOMENTUM = { favorable: 'favorable', neutre: 'neutre', 'défavorable': 'défavorable', inconnu: 'inconnu' };
+
+/**
+ * Contenu lisible d'une ligne de la liste : la fiche en 5 blocs construite par le chef d'orchestre (agents/chef/fiches.py) ;
+ * à défaut (ancienne sortie), un repli tiré des champs de la ligne, sans rien inventer.
+ */
+export function contenuFiche(l) {
+  const f = l?.fiche;
+  if (f) {
+    return {
+      verdict: f.entete?.verdict ?? '', poids: f.entete?.poids_texte ?? 'poids dans le portefeuille démo inconnu',
+      conviction: f.entete?.conviction_texte ?? l.conviction, pour: f.pour ?? [], contre: f.contre ?? [],
+      momentum: { mot: MOTS_MOMENTUM[f.momentum?.mot] ?? 'inconnu', texte: f.momentum?.texte ?? 'performances : donnée manquante', contradiction: f.momentum?.contradiction ?? null },
+      sortie: f.sortie ?? l.sortie_si ?? 'donnée manquante', base: f.base_statistique ?? {}, manque: f.manque ?? null,
+    };
+  }
+  return {
+    verdict: `Retenue par ${(l?.combinaisons_libelles ?? []).join(' ; ') || 'le backtest'}.`, poids: 'poids dans le portefeuille démo inconnu',
+    conviction: l?.conviction, pour: ['Fiche détaillée pas encore calculée (prochaine analyse complète).'], contre: ['Donnée manquante.'],
+    momentum: { mot: 'inconnu', texte: 'performances : donnée manquante', contradiction: null },
+    sortie: l?.sortie_si ?? 'donnée manquante', base: { combinaisons: l?.backtest ?? [], date_entree: l?.date_entree, detail: l?.detail }, manque: 'fiche absente',
+  };
+}
+
+function blocFiche(l, nav, detail = false) {
+  const c = contenuFiche(l);
+  const bloc = (titreBloc, ...enfants) => el('section', { class: 'chef-fiche-bloc' }, el('h4', {}, titreBloc), ...enfants);
+  return el('article', { class: `chef-fiche chef-liste--${l.categorie}` },
+    el('header', { class: 'chef-fiche-tete' },
+      el('div', { class: 'chef-ligne-tete' }, el('strong', { class: 'chef-ligne-nom' }, l.nom), l.symbole ? el('small', { class: 'mono' }, ` ${l.symbole}`) : null,
+        pastilleConviction(l.conviction)),
+      el('div', { class: 'chef-petit' }, `${c.conviction ?? ''} · ${c.poids}`),
+      el('p', { class: 'chef-fiche-verdict' }, c.verdict)),
+    l.alerte_sortie ? el('p', { class: 'chef-petit chef-attente' }, `⚠ ${l.alerte_sortie}`) : null,
+    bloc('Pourquoi investir', el('ul', { class: 'chef-texte chef-pour' }, c.pour.map((x) => el('li', {}, x)))),
+    bloc('Pourquoi pas', el('ul', { class: 'chef-texte chef-contre' }, c.contre.map((x) => el('li', {}, x)))),
+    bloc('Momentum', el('p', {}, el('span', { class: `chef-momentum chef-momentum--${c.momentum.mot === 'défavorable' ? 'defavorable' : c.momentum.mot}` }, c.momentum.mot), ` ${c.momentum.texte}`),
+      c.momentum.contradiction ? el('p', { class: 'chef-petit chef-attente' }, c.momentum.contradiction) : null),
+    bloc('Ce qui ferait sortir', el('p', {}, c.sortie)),
+    el('details', { class: 'chef-fiche-base' }, el('summary', {}, 'Base statistique (backtest)'),
+      el('ul', { class: 'chef-texte chef-backtest' }, (c.base.combinaisons ?? []).map((b) => el('li', {}, texteBacktest(b)))),
+      el('p', { class: 'chef-petit' }, `Dans la liste depuis le ${dateFr(c.base.date_entree ?? l.date_entree)}${c.base.detail ? ` · ${c.base.detail}` : ''}`),
+      c.manque ? el('p', { class: 'chef-petit' }, `Donnée manquante : ${c.manque}.`) : null),
+    detail ? null : el('button', { class: 'bouton bouton--petit', type: 'button', onclick: () => nav.ouvrir({ type: 'investir', id: `o-${l.id}` }) }, 'Ouvrir la fiche'));
+}
+
 function ligneListe(l, nav) {
-  return el('li', {}, el('button', { class: `chef-ligne chef-liste-ligne chef-liste--${l.categorie}`, type: 'button', onclick: () => nav.ouvrir({ type: 'investir', id: `o-${l.id}` }) },
-    el('div', { class: 'chef-ligne-tete' }, el('strong', { class: 'chef-ligne-nom' }, l.nom), l.symbole ? el('small', { class: 'mono' }, ` ${l.symbole}`) : null,
-      pastilleConviction(l.conviction)),
-    el('div', { class: 'chef-petit' }, `Retenue par : ${(l.combinaisons_libelles ?? []).join(' ; ')}${l.detail ? ` — ${l.detail}` : ''}`),
-    el('ul', { class: 'chef-texte chef-backtest' }, (l.backtest ?? []).map((b) => el('li', {}, texteBacktest(b)))),
-    el('div', { class: 'chef-petit' }, `Dans la liste depuis le ${dateFr(l.date_entree)}`),
-    el('div', { class: 'chef-petit' }, `Ce qui la ferait sortir : ${l.sortie_si ?? 'n. d.'}`),
-    l.alerte_sortie ? el('div', { class: 'chef-petit chef-attente' }, `⚠ ${l.alerte_sortie}`) : null));
+  return el('li', {}, blocFiche(l, nav));
 }
 
 function ongletListe(chef, nav) {
@@ -403,12 +446,7 @@ function ficheListe(l, chef, nav) {
       el('h2', { class: 'fiche-titre' }, l.nom),
       el('div', { class: 'chef-ligne-tete' }, pastilleConviction(l.conviction), el('small', { class: 'chef-petit' }, ` ${NIVEAUX_CONVICTION[l.conviction] ?? ''}`)),
       el('div', { class: 'chef-actions' }, lienSource(l, nav), el('button', { class: 'bouton', type: 'button', onclick: () => nav.ouvrir({ type: 'investir' }) }, '‹ Retour à la liste'))),
-    l.alerte_sortie ? el('p', { class: 'chef-changement chef-attente' }, `⚠ ${l.alerte_sortie}`) : null,
-    el('section', {}, titre('Combinaison(s) qui la retiennent'), el('ul', { class: 'chef-texte' }, (l.combinaisons_libelles ?? []).map((c) => el('li', {}, c))),
-      l.detail ? el('p', { class: 'chef-petit' }, l.detail) : null),
-    el('section', {}, titre('Résultat au backtest', 'hors échantillon'), el('ul', { class: 'chef-texte' }, (l.backtest ?? []).map((b) => el('li', {}, texteBacktest(b))))),
-    el('section', {}, titre('Dans la liste depuis'), el('p', {}, dateFr(l.date_entree))),
-    el('section', {}, titre('Ce qui la ferait sortir'), el('p', {}, majuscule(l.sortie_si))),
+    blocFiche(l, nav, true),
     ctx?.score != null ? el('section', {}, titre('Note du chef d’orchestre', MENTION_PAYS),
       el('p', {}, badgeScore(ctx.score), ' ', el('button', { class: 'lien', type: 'button', onclick: () => nav.ouvrir({ type: 'investir', id: `o-${ctx.id}` }) }, 'détail des signaux'))) : null,
     mention(),
