@@ -1,13 +1,13 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-21T00:16:53Z",
+    "genere_le": "2026-11-21T01:16:44Z",
     "source": "agent-geopolitique",
     "fictif": false,
     "version_agent": "1.0",
-    "mise_a_jour_precedente": "2026-11-20T23:16:54Z",
+    "mise_a_jour_precedente": "2026-11-21T00:16:53Z",
     "etat_des_sources": {
-      "GDELT, API DOC 2.0 (articles par thème)": "échec",
+      "GDELT, API DOC 2.0 (articles par thème)": "ok",
       "GDELT 2.0, fichiers d'événements géolocalisés (15 min)": "ok",
       "Federal Register (API)": "ok",
       "OFAC, actions récentes (Trésor américain)": "ok",
@@ -43,6 +43,232 @@
     "mode_ia": "gemini",
     "avertissement_ia": null,
     "evenements": [
+      {
+        "id": "theme-evt-774117620112",
+        "titre": "Offensive des Houthis et frappes en Arabie saoudite et au Yémen",
+        "titre_origine": "Les Houthis revendiquent des frappes contre l’oléoduc Est-Ouest saoudien et Aramco",
+        "categorie": "conflit",
+        "titre_langue": null,
+        "mention": null,
+        "categorie_libelle": "Conflit armé",
+        "pays": [
+          "YE",
+          "SA"
+        ],
+        "pays_noms": [
+          "Yémen",
+          "Arabie saoudite"
+        ],
+        "mondial": false,
+        "pays_suivis": [
+          "SA"
+        ],
+        "lieux": [],
+        "lieux_noms": [],
+        "theme": true,
+        "chronologie": [
+          {
+            "id": "evt-774117620112",
+            "date": "2026-11-19T23:58:40Z",
+            "titre": "Frappes aériennes attribuées à l'Arabie saoudite au Yémen",
+            "gravite": 4,
+            "resume": "Des frappes aériennes attribuées à l'Arabie saoudite près de Sanaa ont fait plusieurs dizaines de morts selon les rebelles houthis.",
+            "nb_sources": 12,
+            "source": "https://www.aljazeera.com/news/liveblog/2026/11/19/iran-war-live-houthis-escalate-attacks-on-saudi-capital?traffic_source=rss"
+          },
+          {
+            "id": "evt-b1c94eedc048",
+            "date": "2026-11-21T00:00:06Z",
+            "titre": "Offensive des Houthis et tensions régionales en Arabie saoudite et au Yémen",
+            "gravite": 4,
+            "resume": "Les forces houthis mènent des offensives terrestres et des frappes de missiles et de drones ciblant des infrastructures stratégiques, notamment dans le détroit de Bab el-Mandeb, à Aden et en Arabie saoudite.",
+            "nb_sources": 12,
+            "source": "https://www.aljazeera.com/news/liveblog/2026/11/21/iran-war-live-saudi-led-coalition-repels-houthi-missiles?traffic_source=rss"
+          }
+        ],
+        "regions": [
+          "moyen_orient"
+        ],
+        "gravite": 4,
+        "gravite_regles": 4,
+        "note_gravite": null,
+        "ia": true,
+        "modele": "gemini-3.5-flash-lite",
+        "analyse_le": "2026-11-16T03:16:52Z",
+        "resume": [
+          {
+            "texte": "Les forces houthis mènent des offensives terrestres et des frappes de missiles et de drones ciblant des infrastructures stratégiques, notamment dans le détroit de Bab el-Mandeb, à Aden et en Arabie saoudite.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMitgFBVV95cUxQQ0RZV291VTlPTmpXRDl0MzhFeVQ4TnFTM0NERUR4d213dXRjTTM5bk0zZHdWU3dmSlctakRMX0VDQ2U5R3d4ZmxkODh4cGJZZDQ1ZXZIVDFCVVd5Z2VtVExvUER2QlEtbHJOS2FpZnZTWFp4WFRkR1J4a1RKeTN2YVJqRTU4bFRJYWd2T2VDcHpBcUNoUXJSa1dZenkzamVrU1ViSjVrUW5FS252OUhJdjY4ZkhnZw?oc=5",
+              "https://www.aljazeera.com/news/2026/11/15/saudi-led-coalition-intercepts-two-missiles-two-drones-in-riyadh?traffic_source=rss",
+              "https://news.google.com/rss/articles/CBMipwFBVV95cUxQWkgwdjVXeFJ4clJ5MFdGRHVjdEVjU3dfU21vMDN1UkVqZHIwWTVhbFY5dkJkUUlHRTM3UXNPZXIzak5reVRmOVM3ZUFfLWR1d0JuZGVENGJQUG9ueHc2d3pVNHd4QTFHTHFqbVBwanJrWHo3ZGlwdXpVVWxHT3NfYVBPRnFkYVA2WndIWWl1MHZLYWNjN2VoSS0xY05semhKYnZWMzdCRQ?oc=5",
+              "https://news.google.com/rss/articles/CBMiiwJBVV95cUxOZWwxRjlHN2FYcGV0ZXo1YkhRQVI1YlJvTF96MEMxVlhfaFAzSVVrclVwUkNwSVB3SVRJOWxMUkp4WHdpbEc4bDJlRWhELUltQnhPZUFKS1NoQmwycjFIODM4SzBDSU1iS1JfYjFYUWhCY2ZMMlFXRFFQRzJqcW9aOVZla3p5VzRlMzdIdXRtcVZRVkEtVU9sQmg3SmxGWGZnV251N3ZSRUlqY2JId3htZ1luWmhmeGM2elphLU9wbG1WLVYwNXRJc3lSS3EwXzZaVmRnNnpteURaWHc4YURIUDVHSFVNNkh0OWZWN2JNMGU4VjFOcDlkWVNfb1EwVF9UQjJ4ZGVGTHZycnM?oc=5"
+            ]
+          },
+          {
+            "texte": "L'Arabie saoudite fait face à une escalade des rivalités régionales et intercepte des projectiles, tandis que des réactions internationales sont envisagées.",
+            "sources": [
+              "https://www.lemonde.fr/international/article/2026/11/15/l-arabie-saoudite-un-royaume-pris-en-etau-entre-deux-guerres-deborde-par-l-escalade-des-rivalites-regionales_6810988_3210.html",
+              "https://www.aljazeera.com/news/2026/11/15/saudi-led-coalition-intercepts-two-missiles-two-drones-in-riyadh?traffic_source=rss",
+              "https://news.google.com/rss/articles/CBMihgJBVV95cUxNa0lGTU9Ga19adU9kb19UR0VpTUx3ZmZUT25JQW1YTzRNRERGclFWN09oWkNtR0UwbkhXN1hFT1lVUDFyb3c5SXYwcnMwa0x4UG1YNUtUTUVMNDdEbmY5VzZjcXFyM05xVzFZMEdRWG9idFNGdDRKZ0g0WXduTTl1d0NMNFh4YjhHVjJod3N5ZGpCUUtqeG5hS1FaWEZDbnFTNmJocFJ4RjlWWjZCUG00MWVnc3VtcmJmLUlMX2VkVnJySnNQSWpCMkRXOVpuRllVWEN5ZTlwY3VNQlJYLTA3cXFvcDN5Ynp2aFFIVVBZdTZqME5uTUtkaktPN3RjLXVkSzlDQ0lR?oc=5"
+            ]
+          }
+        ],
+        "actifs": [
+          {
+            "actif": "pétrole",
+            "sens": "hausse",
+            "texte": "Les attaques répétées contre les infrastructures pétrolières et les oléoducs saoudiens font craindre des perturbations de l'approvisionnement énergétique.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMipwFBVV95cUxQWkgwdjVXeFJ4clJ5MFdGRHVjdEVjU3dfU21vMDN1UkVqZHIwWTVhbFY5dkJkUUlHRTM3UXNPZXIzak5reVRmOVM3ZUFfLWR1d0JuZGVENGJQUG9ueHc2d3pVNHd4QTFHTHFqbVBwanJrWHo3ZGlwdXpVVWxHT3NfYVBPRnFkYVA2WndIWWl1MHZLYWNjN2VoSS0xY05semhKYnZWMzdCRQ?oc=5",
+              "https://news.google.com/rss/articles/CBMiywFBVV95cUxPNkNfR1M5ZExSLU5NcEw2dEdHc0UxcUZXbXNRU015WHhucWF5ZUZuS1FiSHdweWJ6dm5Cb0pHZG0tQTd0aHpCZEIzTGhzVVZnUWFHNUdQU2ZLNGVwSVRrRzhXUFowQlNOYnZ6cS12OWpwVWIyODdzODdHZWF5ZkdiYWtwNWhPWFRwVFBtcmFKTVYyektBZlNLNW0tQnNoQmI1YXRRU1VMQm9hMzhOYzdkdWlsZWJ2S3VtNWtzN0pSREFjQkpWSVFHejNYVQ?oc=5",
+              "https://news.google.com/rss/articles/CBMiYEFVX3lxTFB6Wk1UQXhHZ2wyQzJESlBrUnNtVHptVUxKaERkRkwxYnlaUkx6UGRvaEdLQVNwN1JLRDNxUkgyVzhncEw2SjZDYU53QlR0WXo0aGZYSjZOa1owOEt5UWdsTQ?oc=5"
+            ]
+          }
+        ],
+        "horizon": "semaines",
+        "confiance": "élevée",
+        "contre": [
+          {
+            "texte": "Une capacité d'interception efficace des missiles et une absence de dommage structurel majeur sur la production pétrolière pourraient limiter la pression sur les prix.",
+            "sources": [
+              "https://www.aljazeera.com/news/2026/11/15/saudi-led-coalition-intercepts-two-missiles-two-drones-in-riyadh?traffic_source=rss"
+            ]
+          }
+        ],
+        "sources_independantes": 7,
+        "sources": [
+          {
+            "titre": "Iran war live: Saudi-led coalition downs Houthi missiles",
+            "url": "https://www.aljazeera.com/news/liveblog/2026/11/21/iran-war-live-saudi-led-coalition-repels-houthi-missiles?traffic_source=rss",
+            "domaine": "aljazeera.com",
+            "date": "2026-11-21T00:00:06Z",
+            "officiel": false,
+            "source": "Al Jazeera (RSS)"
+          },
+          {
+            "titre": "Des frappes aériennes menées par la coalition dirigée par l'Arabie saoudite ciblent le port d'Hodeidah; les Houthis menacent de représailles.",
+            "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxNNFM1WjN3eFlXc3BiNDl6Z2w2OTFBRkR4UVRKWTZKbjBYUFN1dlRwQ1FESEVqdTM0RE9qNGNYMlVBRlFLZ3JkOUlkTXJKQV9hcVJKVFFOWTRoYzM0cm4wcmFkYmJLcU1FMW8tQWN5WnBtNUZPVE5sbFBNZTlpc1FKVnRPYzNLaHVpS2UxV2Z4clRaTEZhOHMzV3Zic1otQQ?oc=5",
+            "domaine": "vietnam.vn",
+            "date": "2026-11-20T23:38:27Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Guerre au Moyen-Orient: palestinien tué en Cisjordanie; frappes au Yémen… Le bilan du vendredi 20 novembre",
+            "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxNbmoyZFNfdG9wVXB6UERjRTRQOHAtQkZGN3lza0J4OGJldDRMVHJTbURaVTBvWkZ4NGVJY2N2RklpNERrYzNYTjB2NmlxMHNkbE84YVpZTjlTbkZmeHdYVlJMbXlVcThWTXJLaTh5WDB0aF9LcGV1eVUzc0YteFkzRWM4eVNOQldodnV0VnZXNjlMb1JwdXRpZ1ZMNU5kTTVwZUozcmcwS1ozb2d5aHEtd0xTYUdfNVZ6Ui0xeXlBVEk?oc=5",
+            "domaine": "la-croix.com",
+            "date": "2026-11-20T12:56:14Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Conflit Etat-Unis – Iran: Echange de frappes et navires attaqués",
+            "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxOcHl4dmJocUNmUHdtdG1pWWdDbW5MZnJvdkFlVWZoR3RBTjlQWDlueHNNU3pVZUN1T0tUSWFvbnlySmJKdUk5cEo5LVAzT05tRUE2RUlCOUVOVG5LZVlUXzdSdFJPSGc4RHh4MjdSYi05R2ZWRGxUR2FwakVTZWhaWmw2MGw5akpP?oc=5",
+            "domaine": "elwatan.dz",
+            "date": "2026-11-19T09:06:42Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Arabie saoudite: le quartier financier de Riyad de nouveau attaqué, la tour du fonds souverain endommagée",
+            "url": "https://www.lemonde.fr/international/article/2026/11/19/arabie-saoudite-le-quartier-financier-de-riyad-de-nouveau-attaque-la-tour-du-fonds-souverain-endommagee_6813250_3210.html",
+            "domaine": "lemonde.fr",
+            "date": "2026-11-19T07:23:48Z",
+            "officiel": false,
+            "source": "Le Monde, international (RSS)"
+          },
+          {
+            "titre": "Le ton monte entre le Yemen et l’Arabie saoudite, les capitales Sanaa et Riyad visées par des frappes",
+            "url": "https://news.google.com/rss/articles/CBMikwJBVV95cUxPbGNNUWJmMC11QmxUbHFBMTF2UkZNZURVb2Fac0FUd29WSnBxckFQcWJlcWdyTmNyMll0QV9sa2tUTVN5SXVjT2V5SWZSQTk2Q054Mks0YjRLREV4bTZET05jeGJvcjdOTFpHZ1RjOFk2bElZclRzXzczM0JZTVg3SDZwRzYtcHMwa2VSaGhwUE1jS25TWjdGQnEyalp6NlFTYUw4QlU2VGZjNDI2eExkdlppdmNSZ1FqczVXazZmVTRfNUxHZTdqQkU1d3Yyam9MTWFpSGFzbmZaX2pJeVdqNWJEMUV5UndzdVJtQXhQZHJnQUI2ZzJJbllYLUFKRE0wWlNSU00wdlpKNjdSajJaV3ZCWQ?oc=5",
+            "domaine": "leparisien.fr",
+            "date": "2026-11-19T03:36:36Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Conflit au Moyen-Orient | Des pays du Golfe attaqués après des frappes américaines contre une île iranienne",
+            "url": "https://news.google.com/rss/articles/CBMigAJBVV95cUxPTDYxVHlwWlpQanNpaVJfeG43ei1JXzVYeXA4N0dKR0dOdTNhM3ZYV2xiQTdoaEhsQWlVdGN6M3lWbWx4VFA2QjhpR0pHVll2ZlhqS2g5RlRaYk84VERfMjhLaTJWbXhmemN4TmphaDZkTzdCUXVQenFDSGdWLUJCWlRqX3hqUFpnQWVNS0pHQmZETkMtVmpWU3dYMEx2M1BoYVF6Vmp2RlVfVzlYZkVSclpKb3JKWnhjQzdVQlZucnJTa2Rhd0IzODBUWHhuTmp2dy1fRWNiWmtuZ2N4QWlaNGVTSTNWeXU0TFltLTBGUEo4SC1kZVhEd1lDUmtkb3I5?oc=5",
+            "domaine": "lapresse.ca",
+            "date": "2026-11-18T20:11:11Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Guerre au Moyen-Orient: plusieurs pays du Golfe attaqués après les frappes américaines sur l'île de Qeshm en Iran",
+            "url": "https://news.google.com/rss/articles/CBMi-gFBVV95cUxQLUhnMXAzNk93enJ5cF9OWWZCWVB5UDk5VVI2cmItWjU5QjZ6b0tGYmxNNjJwMnloZG1SS3lCQnRRcUdEZlNoWkdTMnZ2bXN5UWVvbFcyZ1BPVXdhTFdOcWtzUi01NXhRUXdRVnp2dDFDbGNTeWdpcFc4ODRXM3pQSVV5X20wSFlBdFhEUG9zWHdueGl0RmVnZWlIcjFLejRyUEJGWGVfUFJqZ2gyemljZFNObkdtXzUtMDc2YTBsV25Mc0xhUzUycWFxWFhFNEs1SFQzTmg5S1lzU3pGcHVkeXB2TENUT1p4ZEw4ZFM0bjk4OWFWQ01fT1RB?oc=5",
+            "domaine": "tv5monde.com",
+            "date": "2026-11-18T06:07:00Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Saudi-led coalition intercepts Houthi missile near Riyadh after 2022 ceasefire",
+            "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxQdTdNcmJVVFJJaUxxYmhFM2tId3dCanJyQmQ4T2ctSXNIRVFta1ZWN0VNWlhMdlRZanJRV2JyalQ5Tm80ZXNzM1VHdE05bFlMSURvcmZMdzkySUVIZy1sX0NQZWNZUVhfM0lIbW5NVkU3OGxtYl9TZ054SG9IZXhnNTNWQ3FvNXFWeXMyWDBUSWItLXdVdUczcjd4Z0V5eFphUjhtMExUQ0F2NERKWFg1S3hlc19hSlJQcGwxOF82Y3o?oc=5",
+            "domaine": "newsbytesapp.com",
+            "date": "2026-11-18T05:29:13Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
+            "titre": "Forte explosion entendue à Riyad, le royaume dit avoir intercepté un tir de missile des Houthis",
+            "url": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxPTDlneVk1enAzOVdERlRFVktGdm1aSjhtN3lxYXV4TnQteFpnU2RoM19UQ0tNSkNOTGN4eEFDVG1QdGR2UlZ6SnFra1dld3JSVG5nY0JnckpMczY3eUJuVmJIWEhOTmNTNzBjN3RjcEg1VE5hN2FfRjNEaGpJck1WVDNPcFIyWXF6a0hKbWNuTWRsNmxuUUpYcVNzUjBiNFpObUtqVU5aN1NvckNtS2tFc21aWHJaQW5wZHZneHNvdHlmSDZuSkhaRzdRV2Zpbkc0M1E?oc=5",
+            "domaine": "france24.com",
+            "date": "2026-11-18T01:47:38Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Les Houthis revendiquent des frappes contre l'oléoduc Est-Ouest saoudien et Aramco",
+            "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxQWkgwdjVXeFJ4clJ5MFdGRHVjdEVjU3dfU21vMDN1UkVqZHIwWTVhbFY5dkJkUUlHRTM3UXNPZXIzak5reVRmOVM3ZUFfLWR1d0JuZGVENGJQUG9ueHc2d3pVNHd4QTFHTHFqbVBwanJrWHo3ZGlwdXpVVWxHT3NfYVBPRnFkYVA2WndIWWl1MHZLYWNjN2VoSS0xY05semhKYnZWMzdCRQ?oc=5",
+            "domaine": "energynews.pro",
+            "date": "2026-11-13T12:19:25Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Les Houthis revendiquent des frappes contre l’oléoduc Est-Ouest saoudien et Aramco",
+            "url": "https://news.google.com/rss/articles/CBMiywFBVV95cUxPNkNfR1M5ZExSLU5NcEw2dEdHc0UxcUZXbXNRU015WHhucWF5ZUZuS1FiSHdweWJ6dm5Cb0pHZG0tQTd0aHpCZEIzTGhzVVZnUWFHNUdQU2ZLNGVwSVRrRzhXUFowQlNOYnZ6cS12OWpwVWIyODdzODdHZWF5ZkdiYWtwNWhPWFRwVFBtcmFKTVYyektBZlNLNW0tQnNoQmI1YXRRU1VMQm9hMzhOYzdkdWlsZWJ2S3VtNWtzN0pSREFjQkpWSVFHejNYVQ?oc=5",
+            "domaine": "connaissancedesenergies.org",
+            "date": "2026-11-12T20:35:20Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Iran war live: Houthis escalate attacks on Saudi capital",
+            "url": "https://www.aljazeera.com/news/liveblog/2026/11/19/iran-war-live-houthis-escalate-attacks-on-saudi-capital?traffic_source=rss",
+            "domaine": "aljazeera.com",
+            "date": "2026-11-19T23:58:40Z",
+            "officiel": false,
+            "source": "Al Jazeera (RSS)"
+          },
+          {
+            "titre": "Iraq compromises with a militia, rebels say airstrikes kill 15 in Yemen, and other Mideast news",
+            "url": "https://news.google.com/rss/articles/CBMi2wFBVV95cUxORHFSYzJtcFY1MlRkSGp0cWFNRklkU2tHYlhYUWNDcmJYYUlRSkxxR0FOc3RJMFBKcEtnQ29DOGV5dUh2bGtWeUQzWWdvVTVhd0hBendhVUNDUHZYOW1rRG9UbTBNVUhuc2FQX1Vka1M3dVloTW1xdW5TQ0RIVVVsaG5hTk11Tm5BMy1XM21wcmFoQ3FIWkk4RlE5TXhIU3Rrb1lQT2xEcUVsYkxlRzJseDNjX1ZvUUxoUDJjN2ZsNFYtdkxPOS01S3E2MWhPWlNPT0RkWnV5eFpRaUXSAeABQVVfeXFMT2d2LW52Y3JvbFRfQllNWkl5OGhCRlB0Mmd5ZnFZakNqSkJTZ1NfTlJhZ2JYTUYzdXNZaDE5RTBEYmYyVFBWRy1MTU1SQ1JneTl0RTRSZThqSnZIY05WLTc5SmRSejVOcXpiY2pjSzNHa0dwcVUyT3NsclloRFV1bFlxd1BrWkVQbmJKMnJ1SFg1YU5UbVZ5NDlYX2xoWWRBTzdKd0hMMEJZRUpwQ0UtZW5KZFNxZEdvRnpNSm1CUWlTUWNQQ0V6SDIwWWxtYzVYZUtqQVlfNlQwUFBmeU51b0M?oc=5",
+            "domaine": "wreg.com",
+            "date": "2026-11-19T16:22:27Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
+            "titre": "Iraq compromises with militia, rebels say airstrikes kill 15 in Yemen, and other Mideast news",
+            "url": "https://news.google.com/rss/articles/CBMiywFBVV95cUxQSWswQ0p5UkVHcmNJM0Q5b0kzU2ZoUWk2aUdpTW02Nl85eDdHbXJwb3pXNXc2cU1mZHRoNVZ4b2hTSXJnMGVkb1l6TUd0aTItR1did0pmRTF2WDQzMVBlWGxZbnR0M1ptZmpVNGhJWHBIUG5RTS1KQ3M3NGR4dVVabEY4Tlpuem9fSmtFX0xFVkxwckdMa0lxY0RrYmx1b21CakQwZ3VNN2pQMnBwRHczS3hNUUw5cFVMTmJsemlCZzV0WU9wQ3JTQy1MSdIB0AFBVV95cUxQdVVxZ2szbkE2Slg2akgxSHhXMldFak80RXVtdGNhYW5nRWNpSlJTVzdqQzhxNVhSZGp0WGVUaG5xczdpdzRuVnp2d2ZBRkNBMmE5Z2Z1a2UxVV9IcVBsV2xXekM3eVdQekZJcnFfVGRoUXlEejBxVDlmZFRoYjhLdHl2ZDM4UEF1RFBueWQtbF9nejBGUmZVN2RVTDFrMkNIQ05YdlcwZlV5QWJZdEdGNlo3YkhzSC1ySmpoS0FHRkM2dllab0Y0Z2h3RXhlU2VM?oc=5",
+            "domaine": "wkbn.com",
+            "date": "2026-11-19T16:22:27Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          }
+        ],
+        "nb_articles": 80,
+        "nb_domaines": 25,
+        "officiel": false,
+        "premier": "2026-11-06T14:47:14Z",
+        "dernier": "2026-11-21T00:00:06Z",
+        "tonalite_gdelt": -3.13,
+        "score_selection": 13.4,
+        "theme_confirme": true,
+        "nb_evenements": 2
+      },
       {
         "id": "theme-evt-471d58831fea",
         "titre": "Poursuite des opérations militaires israéliennes dans la bande de Gaza",
@@ -208,6 +434,14 @@
             "source": "Google Actualités : conflits (anglais)"
           },
           {
+            "titre": "UPDATE - Palestinian killed, 13 injured in Israeli attacks across Gaza despite ceasefire",
+            "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxOUFdaS1J5VWd4UVVjX2FYa29pWmFKMGxvQ0NULXVLeHFNZ1ViR0h0cU02TlE1SzJUc3NuVkJiMlI1WGJxSGxVQ2d0X2tMQ0J0eVlJY3dWdTRTWV80cGY0VVRjT2x1VU1Ubm45OURTbFptNVNWZFlTVksxaEFLbmZWbDJrLTNGQVFibmducDh3Y3VVdlZSMURTcF9wYmtRQ1dNY213TDU5SGhxeE9vaTBHT05XeFRZMWVOOC1uOXAtaTZVVk3SAcMBQVVfeXFMTlBXWktSeVVneFFVY19hWGtvaVphSjBsb0NDVC11S3hxTWdVYkdIdHFNNk5RNUsyVHNzblZCYjJSNVhicUhsVUNndF9rTENCdHlZSWN3VnU0U1lfNHBmNFVUY09sdVVNVG5uOTlEU2xabTVTVmRZU1ZLMWhBS25mVmwyay0zRkFRYm5nbnA4d2N1VXZWUjFEU3BfcGJrUUNXTWNtd0w1OUhocXhPb2kwR09OV3hUWTFlTjgtbjlwLWk2VVZN?oc=5",
+            "domaine": "usmuslims.com",
+            "date": "2026-11-20T14:52:29Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
             "titre": "Saudi enemy aircraft launch airstrike on Taiz Governorate",
             "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE9vRy1MaVRHNWVVRVNILVZlb3NMOXFiS09FQ1BJUTlxbzhyVnU0MG9xSlRWZ2VsUHp4NWM4S2RYLXBReTFwcmpjZjFhcmxSYjg?oc=5",
             "domaine": "saba.ye",
@@ -240,14 +474,6 @@
             "source": "Google Actualités : conflits (anglais)"
           },
           {
-            "titre": "Sri Lanka Calls for the Preservation of the Ceasefire in Gaza",
-            "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxNZnY4SlJaRnBfN182NER0Zi1lZWZfeld5dllVUS1PNnUxRUZLMGJodkx2TzJ4UzNqN3NWZ1dfVWhDeWg0UjNqc093RlBDdmlBdnhFYlcxa1pSd3JkMDgzVV9EOEZGeTg0S25XVDhKYXN0bjNVMmVqU0pPblczYW1WWTlmMkwxVGVubVlrMDg2dEEzNkwtX2RxT3dRcGVMcVk?oc=5",
-            "domaine": "colombogazette.com",
-            "date": "2026-11-20T03:42:38Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
             "titre": "Melania Trump évoque le cessez-le-feu d’Oleshky lors de la première de sa série",
             "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxQVmtneFhRd1hzeWhma3RqRU5WdXQ3ZDc3eFVZNEJkdGgzR0hUakpVTVQ4YnRwbWVLZjh3VUhZY0hZakFuWGtrTXM3N1M2UkZEcjJ6c3lCdmZOXzdmUWt0cExELTFJbFdveHdXSGduNnAxcHFCdG01ZWU0T01NTHNxRk1ZbmlWNXYtWERqbzlIcnpFZXpfRmc?oc=5",
             "domaine": "mezha.net",
@@ -273,7 +499,7 @@
           }
         ],
         "nb_articles": 131,
-        "nb_domaines": 25,
+        "nb_domaines": 23,
         "officiel": false,
         "premier": "2026-11-02T22:47:32Z",
         "dernier": "2026-11-20T23:56:47Z",
@@ -281,232 +507,6 @@
         "score_selection": 12.05,
         "theme_confirme": true,
         "nb_evenements": 4
-      },
-      {
-        "id": "theme-evt-774117620112",
-        "titre": "Offensive des Houthis et frappes en Arabie saoudite et au Yémen",
-        "titre_origine": "Les Houthis revendiquent des frappes contre l’oléoduc Est-Ouest saoudien et Aramco",
-        "categorie": "conflit",
-        "titre_langue": null,
-        "mention": null,
-        "categorie_libelle": "Conflit armé",
-        "pays": [
-          "YE",
-          "SA"
-        ],
-        "pays_noms": [
-          "Yémen",
-          "Arabie saoudite"
-        ],
-        "mondial": false,
-        "pays_suivis": [
-          "SA"
-        ],
-        "lieux": [],
-        "lieux_noms": [],
-        "theme": true,
-        "chronologie": [
-          {
-            "id": "evt-774117620112",
-            "date": "2026-11-19T23:58:40Z",
-            "titre": "Frappes aériennes attribuées à l'Arabie saoudite au Yémen",
-            "gravite": 4,
-            "resume": "Des frappes aériennes attribuées à l'Arabie saoudite près de Sanaa ont fait plusieurs dizaines de morts selon les rebelles houthis.",
-            "nb_sources": 12,
-            "source": "https://www.aljazeera.com/news/liveblog/2026/11/19/iran-war-live-houthis-escalate-attacks-on-saudi-capital?traffic_source=rss"
-          },
-          {
-            "id": "evt-b1c94eedc048",
-            "date": "2026-11-20T23:38:27Z",
-            "titre": "Offensive des Houthis et tensions régionales en Arabie saoudite et au Yémen",
-            "gravite": 4,
-            "resume": "Les forces houthis mènent des offensives terrestres et des frappes de missiles et de drones ciblant des infrastructures stratégiques, notamment dans le détroit de Bab el-Mandeb, à Aden et en Arabie saoudite.",
-            "nb_sources": 12,
-            "source": "https://news.google.com/rss/articles/CBMingFBVV95cUxNNFM1WjN3eFlXc3BiNDl6Z2w2OTFBRkR4UVRKWTZKbjBYUFN1dlRwQ1FESEVqdTM0RE9qNGNYMlVBRlFLZ3JkOUlkTXJKQV9hcVJKVFFOWTRoYzM0cm4wcmFkYmJLcU1FMW8tQWN5WnBtNUZPVE5sbFBNZTlpc1FKVnRPYzNLaHVpS2UxV2Z4clRaTEZhOHMzV3Zic1otQQ?oc=5"
-          }
-        ],
-        "regions": [
-          "moyen_orient"
-        ],
-        "gravite": 4,
-        "gravite_regles": 4,
-        "note_gravite": null,
-        "ia": true,
-        "modele": "gemini-3.5-flash-lite",
-        "analyse_le": "2026-11-16T03:16:52Z",
-        "resume": [
-          {
-            "texte": "Les forces houthis mènent des offensives terrestres et des frappes de missiles et de drones ciblant des infrastructures stratégiques, notamment dans le détroit de Bab el-Mandeb, à Aden et en Arabie saoudite.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMitgFBVV95cUxQQ0RZV291VTlPTmpXRDl0MzhFeVQ4TnFTM0NERUR4d213dXRjTTM5bk0zZHdWU3dmSlctakRMX0VDQ2U5R3d4ZmxkODh4cGJZZDQ1ZXZIVDFCVVd5Z2VtVExvUER2QlEtbHJOS2FpZnZTWFp4WFRkR1J4a1RKeTN2YVJqRTU4bFRJYWd2T2VDcHpBcUNoUXJSa1dZenkzamVrU1ViSjVrUW5FS252OUhJdjY4ZkhnZw?oc=5",
-              "https://www.aljazeera.com/news/2026/11/15/saudi-led-coalition-intercepts-two-missiles-two-drones-in-riyadh?traffic_source=rss",
-              "https://news.google.com/rss/articles/CBMipwFBVV95cUxQWkgwdjVXeFJ4clJ5MFdGRHVjdEVjU3dfU21vMDN1UkVqZHIwWTVhbFY5dkJkUUlHRTM3UXNPZXIzak5reVRmOVM3ZUFfLWR1d0JuZGVENGJQUG9ueHc2d3pVNHd4QTFHTHFqbVBwanJrWHo3ZGlwdXpVVWxHT3NfYVBPRnFkYVA2WndIWWl1MHZLYWNjN2VoSS0xY05semhKYnZWMzdCRQ?oc=5",
-              "https://news.google.com/rss/articles/CBMiiwJBVV95cUxOZWwxRjlHN2FYcGV0ZXo1YkhRQVI1YlJvTF96MEMxVlhfaFAzSVVrclVwUkNwSVB3SVRJOWxMUkp4WHdpbEc4bDJlRWhELUltQnhPZUFKS1NoQmwycjFIODM4SzBDSU1iS1JfYjFYUWhCY2ZMMlFXRFFQRzJqcW9aOVZla3p5VzRlMzdIdXRtcVZRVkEtVU9sQmg3SmxGWGZnV251N3ZSRUlqY2JId3htZ1luWmhmeGM2elphLU9wbG1WLVYwNXRJc3lSS3EwXzZaVmRnNnpteURaWHc4YURIUDVHSFVNNkh0OWZWN2JNMGU4VjFOcDlkWVNfb1EwVF9UQjJ4ZGVGTHZycnM?oc=5"
-            ]
-          },
-          {
-            "texte": "L'Arabie saoudite fait face à une escalade des rivalités régionales et intercepte des projectiles, tandis que des réactions internationales sont envisagées.",
-            "sources": [
-              "https://www.lemonde.fr/international/article/2026/11/15/l-arabie-saoudite-un-royaume-pris-en-etau-entre-deux-guerres-deborde-par-l-escalade-des-rivalites-regionales_6810988_3210.html",
-              "https://www.aljazeera.com/news/2026/11/15/saudi-led-coalition-intercepts-two-missiles-two-drones-in-riyadh?traffic_source=rss",
-              "https://news.google.com/rss/articles/CBMihgJBVV95cUxNa0lGTU9Ga19adU9kb19UR0VpTUx3ZmZUT25JQW1YTzRNRERGclFWN09oWkNtR0UwbkhXN1hFT1lVUDFyb3c5SXYwcnMwa0x4UG1YNUtUTUVMNDdEbmY5VzZjcXFyM05xVzFZMEdRWG9idFNGdDRKZ0g0WXduTTl1d0NMNFh4YjhHVjJod3N5ZGpCUUtqeG5hS1FaWEZDbnFTNmJocFJ4RjlWWjZCUG00MWVnc3VtcmJmLUlMX2VkVnJySnNQSWpCMkRXOVpuRllVWEN5ZTlwY3VNQlJYLTA3cXFvcDN5Ynp2aFFIVVBZdTZqME5uTUtkaktPN3RjLXVkSzlDQ0lR?oc=5"
-            ]
-          }
-        ],
-        "actifs": [
-          {
-            "actif": "pétrole",
-            "sens": "hausse",
-            "texte": "Les attaques répétées contre les infrastructures pétrolières et les oléoducs saoudiens font craindre des perturbations de l'approvisionnement énergétique.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMipwFBVV95cUxQWkgwdjVXeFJ4clJ5MFdGRHVjdEVjU3dfU21vMDN1UkVqZHIwWTVhbFY5dkJkUUlHRTM3UXNPZXIzak5reVRmOVM3ZUFfLWR1d0JuZGVENGJQUG9ueHc2d3pVNHd4QTFHTHFqbVBwanJrWHo3ZGlwdXpVVWxHT3NfYVBPRnFkYVA2WndIWWl1MHZLYWNjN2VoSS0xY05semhKYnZWMzdCRQ?oc=5",
-              "https://news.google.com/rss/articles/CBMiywFBVV95cUxPNkNfR1M5ZExSLU5NcEw2dEdHc0UxcUZXbXNRU015WHhucWF5ZUZuS1FiSHdweWJ6dm5Cb0pHZG0tQTd0aHpCZEIzTGhzVVZnUWFHNUdQU2ZLNGVwSVRrRzhXUFowQlNOYnZ6cS12OWpwVWIyODdzODdHZWF5ZkdiYWtwNWhPWFRwVFBtcmFKTVYyektBZlNLNW0tQnNoQmI1YXRRU1VMQm9hMzhOYzdkdWlsZWJ2S3VtNWtzN0pSREFjQkpWSVFHejNYVQ?oc=5",
-              "https://news.google.com/rss/articles/CBMiYEFVX3lxTFB6Wk1UQXhHZ2wyQzJESlBrUnNtVHptVUxKaERkRkwxYnlaUkx6UGRvaEdLQVNwN1JLRDNxUkgyVzhncEw2SjZDYU53QlR0WXo0aGZYSjZOa1owOEt5UWdsTQ?oc=5"
-            ]
-          }
-        ],
-        "horizon": "semaines",
-        "confiance": "élevée",
-        "contre": [
-          {
-            "texte": "Une capacité d'interception efficace des missiles et une absence de dommage structurel majeur sur la production pétrolière pourraient limiter la pression sur les prix.",
-            "sources": [
-              "https://www.aljazeera.com/news/2026/11/15/saudi-led-coalition-intercepts-two-missiles-two-drones-in-riyadh?traffic_source=rss"
-            ]
-          }
-        ],
-        "sources_independantes": 7,
-        "sources": [
-          {
-            "titre": "Des frappes aériennes menées par la coalition dirigée par l'Arabie saoudite ciblent le port d'Hodeidah; les Houthis menacent de représailles.",
-            "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxNNFM1WjN3eFlXc3BiNDl6Z2w2OTFBRkR4UVRKWTZKbjBYUFN1dlRwQ1FESEVqdTM0RE9qNGNYMlVBRlFLZ3JkOUlkTXJKQV9hcVJKVFFOWTRoYzM0cm4wcmFkYmJLcU1FMW8tQWN5WnBtNUZPVE5sbFBNZTlpc1FKVnRPYzNLaHVpS2UxV2Z4clRaTEZhOHMzV3Zic1otQQ?oc=5",
-            "domaine": "vietnam.vn",
-            "date": "2026-11-20T23:38:27Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Guerre au Moyen-Orient: palestinien tué en Cisjordanie; frappes au Yémen… Le bilan du vendredi 20 novembre",
-            "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxNbmoyZFNfdG9wVXB6UERjRTRQOHAtQkZGN3lza0J4OGJldDRMVHJTbURaVTBvWkZ4NGVJY2N2RklpNERrYzNYTjB2NmlxMHNkbE84YVpZTjlTbkZmeHdYVlJMbXlVcThWTXJLaTh5WDB0aF9LcGV1eVUzc0YteFkzRWM4eVNOQldodnV0VnZXNjlMb1JwdXRpZ1ZMNU5kTTVwZUozcmcwS1ozb2d5aHEtd0xTYUdfNVZ6Ui0xeXlBVEk?oc=5",
-            "domaine": "la-croix.com",
-            "date": "2026-11-20T12:56:14Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Conflit Etat-Unis – Iran: Echange de frappes et navires attaqués",
-            "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxOcHl4dmJocUNmUHdtdG1pWWdDbW5MZnJvdkFlVWZoR3RBTjlQWDlueHNNU3pVZUN1T0tUSWFvbnlySmJKdUk5cEo5LVAzT05tRUE2RUlCOUVOVG5LZVlUXzdSdFJPSGc4RHh4MjdSYi05R2ZWRGxUR2FwakVTZWhaWmw2MGw5akpP?oc=5",
-            "domaine": "elwatan.dz",
-            "date": "2026-11-19T09:06:42Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Saudi-led coalition intercepts Houthi missiles targeting Riyadh and south",
-            "url": "https://www.aljazeera.com/news/2026/11/19/saudi-led-coalition-intercepts-houthi-missiles-targeting-riyadh-and-south?traffic_source=rss",
-            "domaine": "aljazeera.com",
-            "date": "2026-11-19T08:19:17Z",
-            "officiel": false,
-            "source": "Al Jazeera (RSS)"
-          },
-          {
-            "titre": "Arabie saoudite: le quartier financier de Riyad de nouveau attaqué, la tour du fonds souverain endommagée",
-            "url": "https://www.lemonde.fr/international/article/2026/11/19/arabie-saoudite-le-quartier-financier-de-riyad-de-nouveau-attaque-la-tour-du-fonds-souverain-endommagee_6813250_3210.html",
-            "domaine": "lemonde.fr",
-            "date": "2026-11-19T07:23:48Z",
-            "officiel": false,
-            "source": "Le Monde, international (RSS)"
-          },
-          {
-            "titre": "Le ton monte entre le Yemen et l’Arabie saoudite, les capitales Sanaa et Riyad visées par des frappes",
-            "url": "https://news.google.com/rss/articles/CBMikwJBVV95cUxPbGNNUWJmMC11QmxUbHFBMTF2UkZNZURVb2Fac0FUd29WSnBxckFQcWJlcWdyTmNyMll0QV9sa2tUTVN5SXVjT2V5SWZSQTk2Q054Mks0YjRLREV4bTZET05jeGJvcjdOTFpHZ1RjOFk2bElZclRzXzczM0JZTVg3SDZwRzYtcHMwa2VSaGhwUE1jS25TWjdGQnEyalp6NlFTYUw4QlU2VGZjNDI2eExkdlppdmNSZ1FqczVXazZmVTRfNUxHZTdqQkU1d3Yyam9MTWFpSGFzbmZaX2pJeVdqNWJEMUV5UndzdVJtQXhQZHJnQUI2ZzJJbllYLUFKRE0wWlNSU00wdlpKNjdSajJaV3ZCWQ?oc=5",
-            "domaine": "leparisien.fr",
-            "date": "2026-11-19T03:36:36Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Conflit au Moyen-Orient | Des pays du Golfe attaqués après des frappes américaines contre une île iranienne",
-            "url": "https://news.google.com/rss/articles/CBMigAJBVV95cUxPTDYxVHlwWlpQanNpaVJfeG43ei1JXzVYeXA4N0dKR0dOdTNhM3ZYV2xiQTdoaEhsQWlVdGN6M3lWbWx4VFA2QjhpR0pHVll2ZlhqS2g5RlRaYk84VERfMjhLaTJWbXhmemN4TmphaDZkTzdCUXVQenFDSGdWLUJCWlRqX3hqUFpnQWVNS0pHQmZETkMtVmpWU3dYMEx2M1BoYVF6Vmp2RlVfVzlYZkVSclpKb3JKWnhjQzdVQlZucnJTa2Rhd0IzODBUWHhuTmp2dy1fRWNiWmtuZ2N4QWlaNGVTSTNWeXU0TFltLTBGUEo4SC1kZVhEd1lDUmtkb3I5?oc=5",
-            "domaine": "lapresse.ca",
-            "date": "2026-11-18T20:11:11Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Guerre au Moyen-Orient: plusieurs pays du Golfe attaqués après les frappes américaines sur l'île de Qeshm en Iran",
-            "url": "https://news.google.com/rss/articles/CBMi-gFBVV95cUxQLUhnMXAzNk93enJ5cF9OWWZCWVB5UDk5VVI2cmItWjU5QjZ6b0tGYmxNNjJwMnloZG1SS3lCQnRRcUdEZlNoWkdTMnZ2bXN5UWVvbFcyZ1BPVXdhTFdOcWtzUi01NXhRUXdRVnp2dDFDbGNTeWdpcFc4ODRXM3pQSVV5X20wSFlBdFhEUG9zWHdueGl0RmVnZWlIcjFLejRyUEJGWGVfUFJqZ2gyemljZFNObkdtXzUtMDc2YTBsV25Mc0xhUzUycWFxWFhFNEs1SFQzTmg5S1lzU3pGcHVkeXB2TENUT1p4ZEw4ZFM0bjk4OWFWQ01fT1RB?oc=5",
-            "domaine": "tv5monde.com",
-            "date": "2026-11-18T06:07:00Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Saudi-led coalition intercepts Houthi missile near Riyadh after 2022 ceasefire",
-            "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxQdTdNcmJVVFJJaUxxYmhFM2tId3dCanJyQmQ4T2ctSXNIRVFta1ZWN0VNWlhMdlRZanJRV2JyalQ5Tm80ZXNzM1VHdE05bFlMSURvcmZMdzkySUVIZy1sX0NQZWNZUVhfM0lIbW5NVkU3OGxtYl9TZ054SG9IZXhnNTNWQ3FvNXFWeXMyWDBUSWItLXdVdUczcjd4Z0V5eFphUjhtMExUQ0F2NERKWFg1S3hlc19hSlJQcGwxOF82Y3o?oc=5",
-            "domaine": "newsbytesapp.com",
-            "date": "2026-11-18T05:29:13Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "Forte explosion entendue à Riyad, le royaume dit avoir intercepté un tir de missile des Houthis",
-            "url": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxPTDlneVk1enAzOVdERlRFVktGdm1aSjhtN3lxYXV4TnQteFpnU2RoM19UQ0tNSkNOTGN4eEFDVG1QdGR2UlZ6SnFra1dld3JSVG5nY0JnckpMczY3eUJuVmJIWEhOTmNTNzBjN3RjcEg1VE5hN2FfRjNEaGpJck1WVDNPcFIyWXF6a0hKbWNuTWRsNmxuUUpYcVNzUjBiNFpObUtqVU5aN1NvckNtS2tFc21aWHJaQW5wZHZneHNvdHlmSDZuSkhaRzdRV2Zpbkc0M1E?oc=5",
-            "domaine": "france24.com",
-            "date": "2026-11-18T01:47:38Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Les Houthis revendiquent des frappes contre l'oléoduc Est-Ouest saoudien et Aramco",
-            "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxQWkgwdjVXeFJ4clJ5MFdGRHVjdEVjU3dfU21vMDN1UkVqZHIwWTVhbFY5dkJkUUlHRTM3UXNPZXIzak5reVRmOVM3ZUFfLWR1d0JuZGVENGJQUG9ueHc2d3pVNHd4QTFHTHFqbVBwanJrWHo3ZGlwdXpVVWxHT3NfYVBPRnFkYVA2WndIWWl1MHZLYWNjN2VoSS0xY05semhKYnZWMzdCRQ?oc=5",
-            "domaine": "energynews.pro",
-            "date": "2026-11-13T12:19:25Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Les Houthis revendiquent des frappes contre l’oléoduc Est-Ouest saoudien et Aramco",
-            "url": "https://news.google.com/rss/articles/CBMiywFBVV95cUxPNkNfR1M5ZExSLU5NcEw2dEdHc0UxcUZXbXNRU015WHhucWF5ZUZuS1FiSHdweWJ6dm5Cb0pHZG0tQTd0aHpCZEIzTGhzVVZnUWFHNUdQU2ZLNGVwSVRrRzhXUFowQlNOYnZ6cS12OWpwVWIyODdzODdHZWF5ZkdiYWtwNWhPWFRwVFBtcmFKTVYyektBZlNLNW0tQnNoQmI1YXRRU1VMQm9hMzhOYzdkdWlsZWJ2S3VtNWtzN0pSREFjQkpWSVFHejNYVQ?oc=5",
-            "domaine": "connaissancedesenergies.org",
-            "date": "2026-11-12T20:35:20Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Iran war live: Houthis escalate attacks on Saudi capital",
-            "url": "https://www.aljazeera.com/news/liveblog/2026/11/19/iran-war-live-houthis-escalate-attacks-on-saudi-capital?traffic_source=rss",
-            "domaine": "aljazeera.com",
-            "date": "2026-11-19T23:58:40Z",
-            "officiel": false,
-            "source": "Al Jazeera (RSS)"
-          },
-          {
-            "titre": "Iraq compromises with a militia, rebels say airstrikes kill 15 in Yemen, and other Mideast news",
-            "url": "https://news.google.com/rss/articles/CBMi2wFBVV95cUxORHFSYzJtcFY1MlRkSGp0cWFNRklkU2tHYlhYUWNDcmJYYUlRSkxxR0FOc3RJMFBKcEtnQ29DOGV5dUh2bGtWeUQzWWdvVTVhd0hBendhVUNDUHZYOW1rRG9UbTBNVUhuc2FQX1Vka1M3dVloTW1xdW5TQ0RIVVVsaG5hTk11Tm5BMy1XM21wcmFoQ3FIWkk4RlE5TXhIU3Rrb1lQT2xEcUVsYkxlRzJseDNjX1ZvUUxoUDJjN2ZsNFYtdkxPOS01S3E2MWhPWlNPT0RkWnV5eFpRaUXSAeABQVVfeXFMT2d2LW52Y3JvbFRfQllNWkl5OGhCRlB0Mmd5ZnFZakNqSkJTZ1NfTlJhZ2JYTUYzdXNZaDE5RTBEYmYyVFBWRy1MTU1SQ1JneTl0RTRSZThqSnZIY05WLTc5SmRSejVOcXpiY2pjSzNHa0dwcVUyT3NsclloRFV1bFlxd1BrWkVQbmJKMnJ1SFg1YU5UbVZ5NDlYX2xoWWRBTzdKd0hMMEJZRUpwQ0UtZW5KZFNxZEdvRnpNSm1CUWlTUWNQQ0V6SDIwWWxtYzVYZUtqQVlfNlQwUFBmeU51b0M?oc=5",
-            "domaine": "wreg.com",
-            "date": "2026-11-19T16:22:27Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "Iraq compromises with militia, rebels say airstrikes kill 15 in Yemen, and other Mideast news",
-            "url": "https://news.google.com/rss/articles/CBMiywFBVV95cUxQSWswQ0p5UkVHcmNJM0Q5b0kzU2ZoUWk2aUdpTW02Nl85eDdHbXJwb3pXNXc2cU1mZHRoNVZ4b2hTSXJnMGVkb1l6TUd0aTItR1did0pmRTF2WDQzMVBlWGxZbnR0M1ptZmpVNGhJWHBIUG5RTS1KQ3M3NGR4dVVabEY4Tlpuem9fSmtFX0xFVkxwckdMa0lxY0RrYmx1b21CakQwZ3VNN2pQMnBwRHczS3hNUUw5cFVMTmJsemlCZzV0WU9wQ3JTQy1MSdIB0AFBVV95cUxQdVVxZ2szbkE2Slg2akgxSHhXMldFak80RXVtdGNhYW5nRWNpSlJTVzdqQzhxNVhSZGp0WGVUaG5xczdpdzRuVnp2d2ZBRkNBMmE5Z2Z1a2UxVV9IcVBsV2xXekM3eVdQekZJcnFfVGRoUXlEejBxVDlmZFRoYjhLdHl2ZDM4UEF1RFBueWQtbF9nejBGUmZVN2RVTDFrMkNIQ05YdlcwZlV5QWJZdEdGNlo3YkhzSC1ySmpoS0FHRkM2dllab0Y0Z2h3RXhlU2VM?oc=5",
-            "domaine": "wkbn.com",
-            "date": "2026-11-19T16:22:27Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          }
-        ],
-        "nb_articles": 80,
-        "nb_domaines": 25,
-        "officiel": false,
-        "premier": "2026-11-06T14:47:14Z",
-        "dernier": "2026-11-20T23:38:27Z",
-        "tonalite_gdelt": -3.16,
-        "score_selection": 13.4,
-        "theme_confirme": true,
-        "nb_evenements": 2
       },
       {
         "id": "evt-0c81dddb3429",
@@ -1290,8 +1290,360 @@
         "officiel": false,
         "premier": "2026-11-17T10:36:12Z",
         "dernier": "2026-11-18T10:34:29Z",
-        "tonalite_gdelt": -1.03,
+        "tonalite_gdelt": -1.07,
         "score_selection": 8.17
+      },
+      {
+        "id": "theme-evt-70c39494ede1",
+        "titre": "Débats sur le maintien des droits de douane aux États-Unis",
+        "titre_origine": "Whitmer urges Trump administration to end food tariffs, reimburse Michigan families",
+        "categorie": "commerce",
+        "titre_langue": null,
+        "mention": null,
+        "categorie_libelle": "Commerce et droits de douane",
+        "pays": [
+          "US"
+        ],
+        "pays_noms": [
+          "États-Unis"
+        ],
+        "mondial": false,
+        "pays_suivis": [
+          "US"
+        ],
+        "lieux": [],
+        "lieux_noms": [],
+        "theme": true,
+        "chronologie": [
+          {
+            "id": "evt-70c39494ede1",
+            "date": "2026-11-20T16:06:27Z",
+            "titre": "Appels au Congrès américain pour exempter les consommateurs des droits de douane",
+            "gravite": 2,
+            "resume": "Des acteurs économiques et politiques aux États-Unis expriment des inquiétudes quant à l'impact inflationniste de nouveaux droits de douane.",
+            "nb_sources": 12,
+            "source": "https://news.google.com/rss/articles/CBMisgFBVV95cUxOWm1tYy02SzkxMlV2aU03WkFqRHNvd2ZPMW56LVJ5dzh2Z2M4Q3ZpY09JbzJaVjNXS1ppaVVXak5jVTc1SXZ0enhoM2s1Vm54X2VZRHpLaWNIaXZ1d3hyRjVTXzFIUXVzZkV0b2JoRGIyVFNmU1F4dG4zeEw4UnhPdjJzNDFpYnBrS0g2VjhuLU5vNjVZX0dyOEp5NkJRNkdXdmF3TTVMZnZ5RTlCU2E3UEZ3?oc=5"
+          },
+          {
+            "id": "evt-66c8cd956a20",
+            "date": "2026-11-20T18:34:04Z",
+            "titre": "Les États-Unis maintiennent les droits de douane malgré les élections",
+            "gravite": 3,
+            "resume": "Les résultats des élections de mi-mandat aux États-Unis ne modifient pas la politique tarifaire en vigueur.",
+            "nb_sources": 12,
+            "source": "https://news.google.com/rss/articles/CBMikwFBVV95cUxPbzhDREowemFSSmVFcUg5VUdaZ1dXaFg4enZoZGVDQ2lQZ1FGMGhlWVRkX1A5Ulh0eHBLaVIxajduQzVMdGFQcXdHQXlSektFczJCMVhJRHZCNFpMYjFkRDVYTjRBSkJoVU1TWGUycDVyOXRfOUtvRHRGWWE0clphOGJLRFA3YUppVGVocjJCNG9XZjQ?oc=5"
+          },
+          {
+            "id": "evt-ec6d7e090588",
+            "date": "2026-11-21T00:57:14Z",
+            "titre": "Contestation judiciaire et opposition politique aux droits de douane américains",
+            "gravite": 3,
+            "resume": "Des recours juridiques et des demandes d'annulation ciblent les droits de douane de 50 % imposés par les États-Unis sur les produits canadiens.",
+            "nb_sources": 12,
+            "source": "https://news.google.com/rss/articles/CBMipwFBVV95cUxOQ1ExUFB5b0FIenBjWWZVekF3U2E5ZXJDMEwzdjlIUmJiek1BM1duWmpBWUdybDk5b05XR3dMUFg3NjZhYllvaWlOZk9lSUNibUdBUlJ4NFhnaS1ueHFIbW9oWjRZa0JBakNGUHRvdlU0WnN6UHliQlV0Z29fNFZJZFg3UWF4ZDFobnUtQVpBaGw5QnpmclBLeWdxcUhWdE5RSWhxVXdhZw?oc=5"
+          }
+        ],
+        "regions": [
+          "amerique_nord"
+        ],
+        "gravite": 3,
+        "gravite_regles": 2,
+        "note_gravite": null,
+        "ia": true,
+        "modele": "gemini-3.5-flash-lite",
+        "analyse_le": "2026-11-20T13:16:33Z",
+        "resume": [
+          {
+            "texte": "Des recours juridiques et des demandes d'annulation ciblent les droits de douane de 50 % imposés par les États-Unis sur les produits canadiens.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMigwFBVV95cUxOZjluU3I2MW84cENIcGRFbDdaVjRkUUV4Q2tLUkI2MDJrMzJ3aWE2N2pyZ080bTY2WTdJM1JVNVBBNF9ZMXpLRFlHNjJtZ1phcUt4bmxxLXRyTkxFbHVMVEZrTkJMdWNTelM0TEFNZTlNUVVkbVFvOThuQ1pUc0pqdENaNA?oc=5",
+              "https://news.google.com/rss/articles/CBMisAFBVV95cUxQUE5zX0VGYk45MXhYeVB3ejMyNURXckRtb0wtd0pKamtyN1EyMTk2SWYyb1R0ZG9vMkd5emIwY1plR2dkbVNDYTZzQVRpZ1ZYSm5RWHczQ19PN3JQM25tR2Y2SjF0emg1MEJCTWpuSTJJMlVWOHRTYjg2QmY3eEFyejBoVG9DdEtMR2RGckhCQnVkc3FyYWVRSmhWaHp5Z3dGRjRIeUd3RDFQcDQxb25YaA?oc=5",
+              "https://news.google.com/rss/articles/CBMijAJBVV95cUxPNXZ3UkpwTjRabjU5SUh2eU44TDVPdlZNdlB1US14eU4tSzRobFFNcGN1dk1xbWpCcjJHbG9EeXBJVkNLTk45WEQxbmZMZkdITVdLVjR1MFdsVFRjYkh3U2JtSUJfVktsaDA1Q1JJNXJwYmxlOTJtbWdMOVdPRHlQSS1NYlhJT1doYUt5YjFTYkc1eTd1WU5WMVVpbGFMWTlJaU15eGNjRlpwQktTLVM5ajZXMU0xWWdTM3lvVDlVMV9sNmFsRVBPTUtoSXhsQVpDdHJCM3ktRS1rSmZYS1ZqQm96YTdTWW9hUk9VclpJWlUtdnNBRGNOTkxZb3pFYVU4aFZfSzlhSEpRLWNE?oc=5"
+            ]
+          },
+          {
+            "texte": "Les discussions commerciales entre les Philippines et les États-unis intègrent également la question tarifaire et l'accès aux marchés énergétiques et alimentaires.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMi1AFBVV95cUxNcTFvRVJvX3p3TzVCQzc1MnEwNWh5RDlGX0VuS2F1R3VnNnkyTG9RdzdVaDlVREV6LUR0RUtWc0k0NTRHOUU3MVJxQTVycGhUUFRUaE0tdm92emZlN3NQTVp2WFhRTGwyRmZuWWhBc3VjSWk2U016b1dMV3NIaFo3MzB6aExNX0pnUkxrQTVsVFN6YmpJYXY2bEdnWExURl83Snc2Z1d6Y3BLZDlER1A1Wk1TQXVsRldkWnNueEFnVkdWeFYxUzB1N3prUjh1NTBMU1hHSA?oc=5"
+            ]
+          }
+        ],
+        "actifs": [
+          {
+            "actif": "agriculture",
+            "sens": "baisse",
+            "texte": "Les surtaxes douanières pénalisent les importateurs de produits alimentaires et pèsent sur les coûts d'approvisionnement.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMisAFBVV95cUxQUE5zX0VGYk45MXhYeVB3ejMyNURXckRtb0wtd0pKamtyN1EyMTk2SWYyb1R0ZG9vMkd5emIwY1plR2dkbVNDYTZzQVRpZ1ZYSm5RWHczQ19PN3JQM25tR2Y2SjF0emg1MEJCTWpuSTJJMlVWOHRTYjg2QmY3eEFyejBoVG9DdEtMR2RGckhCQnVkc3FyYWVRSmhWaHp5Z3dGRjRIeUd3RDFQcDQxb25YaA?oc=5",
+              "https://news.google.com/rss/articles/CBMi1AFBVV95cUxNRmhaakZqYndadng0NWFoekFVWFNlNE9HWnV1dXlsMGZySm5xU3BUR2tGNjVUR0JyQ1pzblNmLXUzbHlMQlpqNXBRRXVQdUZreHl0SkdZWDE2THoxc19lSEZ1TjRycU1WR05GTEN2NmRaeUhOMlB3QkdzczI0QkZuSzFQTVh2Rkx4RFNwWFR4dGJVY0pOWF9XeF9IZ1dEbEhpVUFGeDVrdWpNNTRkZnFjdExabUpoYkZXOE1wOXNRa0NaZ0hmRUhvMTBMYzRteWNPdlV1OQ?oc=5"
+            ]
+          }
+        ],
+        "horizon": "mois",
+        "confiance": "élevée",
+        "contre": [
+          {
+            "texte": "Une décision de justice rapide pourrait suspendre l'application de ces taxes et modifier la trajectoire des coûts pour les entreprises.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMijAJBVV95cUxPNXZ3UkpwTjRabjU5SUh2eU44TDVPdlZNdlB1US14eU4tSzRobFFNcGN1dk1xbWpCcjJHbG9EeXBJVkNLTk45WEQxbmZMZkdITVdLVjR1MFdsVFRjYkh3U2JtSUJfVktsaDA1Q1JJNXJwYmxlOTJtbWdMOVdPRHlQSS1NYlhJT1doYUt5YjFTYkc1eTd1WU5WMVVpbGFMWTlJaU15eGNjRlpwQktTLVM5ajZXMU0xWWdTM3lvVDlVMV9sNmFsRVBPTUtoSXhsQVpDdHJCM3ktRS1rSmZYS1ZqQm96YTdTWW9hUk9VclpJWlUtdnNBRGNOTkxZb3pFYVU4aFZfSzlhSEpRLWNE?oc=5"
+            ]
+          }
+        ],
+        "sources_independantes": 5,
+        "sources": [
+          {
+            "titre": "Marcos says PH-US trade talks cover tariffs, expanded food and energy access",
+            "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxOQ1ExUFB5b0FIenBjWWZVekF3U2E5ZXJDMEwzdjlIUmJiek1BM1duWmpBWUdybDk5b05XR3dMUFg3NjZhYllvaWlOZk9lSUNibUdBUlJ4NFhnaS1ueHFIbW9oWjRZa0JBakNGUHRvdlU0WnN6UHliQlV0Z29fNFZJZFg3UWF4ZDFobnUtQVpBaGw5QnpmclBLeWdxcUhWdE5RSWhxVXdhZw?oc=5",
+            "domaine": "thechronicle.com.ph",
+            "date": "2026-11-21T00:57:14Z",
+            "officiel": false,
+            "source": "Google Actualités : droits de douane (anglais)"
+          },
+          {
+            "titre": "Trade deal with US a response to tariffs—Marcos",
+            "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQbmFOX1lCY3Jmc3lQNVlweUdjZVZVMFFLYm5vMll3S0VnZDRfMGIzZDYwTElPenVwM1h1UG4yVkNCVktNbTlXbzBVZWQwaTJSb1M2Q2k2MHN2N09VTlF5ME5qNS1NQ1BIWnhTem9BRm9ZRlI5Wlp3RkRhb0RQUlZFSg?oc=5",
+            "domaine": "mb.com.ph",
+            "date": "2026-11-20T15:18:01Z",
+            "officiel": false,
+            "source": "Google Actualités : droits de douane (anglais)"
+          },
+          {
+            "titre": "Food manufacturers are paying a high price for Ottawa’s trade war",
+            "url": "https://news.google.com/rss/articles/CBMikgFBVV95cUxOS2V1akF5azVfTDVzbjctUlQ5QTVLT3pldERnNG5jUFAyWTBiZWpvSkF6YnRpZFRfOGdhZm5QMm4xYUhDR0pKS0R6RVFJM2pRclRrZF92SHdSOUZFc296bXNfbV9ZR0dFenJZNDExREJVZUI1T0FJNEpvRkctQjd4V1BzWFR0XzYzR0M4el9tV0Z1QQ?oc=5",
+            "domaine": "sk.ca",
+            "date": "2026-11-20T14:47:28Z",
+            "officiel": false,
+            "source": "Google Actualités : droits de douane (anglais)"
+          },
+          {
+            "titre": "Marcos: PH-US trade deal covers tariffs, wider access to US food, energy",
+            "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxOLUNkal9mOWhlVnJyRnlYQnhLM3pvUGg5YVlsYS04Q3dyVDNRT2s5TnZROERhbmpZNFA5bGh4ejlTX2Yzc0h2VjdkR2QteUdvNkFxb3FUblBJZ0NnNmR2NTVZb09kVGx6bFczS3M3Y3Z4Zi1rTEhUaDVvaEhmN0lhMVdpN2JENkwzcWZrWmdXOGtGeGJwajU4TTN0OXZ4SzFSR0E?oc=5",
+            "domaine": "pna.gov.ph",
+            "date": "2026-11-20T11:51:00Z",
+            "officiel": false,
+            "source": "Google Actualités : droits de douane (anglais)"
+          },
+          {
+            "titre": "Marcos: PH-US trade deal covers tariffs, wider access to US food, energy SHENZHEN, China – President Ferdinand R. Marcos Jr. on Friday said the Philippines-US trade discussions cover both the tariff issue and a separate initiative to expand Philippine acce",
+            "url": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxNcTFvRVJvX3p3TzVCQzc1MnEwNWh5RDlGX0VuS2F1R3VnNnkyTG9RdzdVaDlVREV6LUR0RUtWc0k0NTRHOUU3MVJxQTVycGhUUFRUaE0tdm92emZlN3NQTVp2WFhRTGwyRmZuWWhBc3VjSWk2U016b1dMV3NIaFo3MzB6aExNX0pnUkxrQTVsVFN6YmpJYXY2bEdnWExURl83Snc2Z1d6Y3BLZDlER1A1Wk1TQXVsRldkWnNueEFnVkdWeFYxUzB1N3prUjh1NTBMU1hHSA?oc=5",
+            "domaine": "facebook.com",
+            "date": "2026-11-20T11:45:04Z",
+            "officiel": false,
+            "source": "Google Actualités : droits de douane (anglais)"
+          },
+          {
+            "titre": "Mark Wiseman warns Trump's 50% tariffs are freezing business investment as Canada's borrowing costs climb",
+            "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxOZjluU3I2MW84cENIcGRFbDdaVjRkUUV4Q2tLUkI2MDJrMzJ3aWE2N2pyZ080bTY2WTdJM1JVNVBBNF9ZMXpLRFlHNjJtZ1phcUt4bmxxLXRyTkxFbHVMVEZrTkJMdWNTelM0TEFNZTlNUVVkbVFvOThuQ1pUc0pqdENaNA?oc=5",
+            "domaine": "yahoo.com",
+            "date": "2026-11-20T11:30:00Z",
+            "officiel": false,
+            "source": "Google Actualités : droits de douane (anglais)"
+          },
+          {
+            "titre": "Canada makes case for U.S. trade deal sooner rather than later in private meeting",
+            "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxNdm5WVE9URVo2WXVHZ3luV1RMU05GVlU1ay01S2pRYUJVNWlHeWw3clVnNVRxX0RnMmZCNUw4Ui1TbVdadGsxbm9UT2UtNFQ0OGgxdTVRWFhOYWJhbDdtZU9SNVY1Z0U0T21iM0Q1Q0pUT1Z0ZWptdmd6OHFGVVYtd1Uxb1MxenVWZmFGNWh0WGJheW5adURDR0hkOUwxZ1NSVkQxM1FRZnFiTUJ0aHZPdUZpV0JrTVZ0MV9XbXFNdzFZZFRVT2ltWWJhRVM?oc=5",
+            "domaine": "ctvnews.ca",
+            "date": "2026-11-20T00:38:00Z",
+            "officiel": false,
+            "source": "Google Actualités : droits de douane (anglais)"
+          },
+          {
+            "titre": "Companies are spending Trump's tariff refunds on bonuses – not reimbursing shoppers: report",
+            "url": "https://news.google.com/rss/articles/CBMixgFBVV95cUxPZXI1OXhmeXF6SmVGbXE4UE9IMXN3WUwyTlhVV2VJZEsxeFBEdFB3SC04dElYYTdHSnliVVJ6UjI2X21CdDA1NnV2bHJVbm5qU3M1UnNjLW9RTTVpdXZOWjhiam56TUZndTZsRzNGMkptLTVScjRZRzJQX2tVM2ZweU9EVE9aTU1ENzVuUFZPcmttdm9zbmN0cF8tMF9raGpKOHNpM3drWnlHa1NpODVZV2x3UnlvLTFGNXcwZHNiZUZaMWRZY1E?oc=5",
+            "domaine": "nypost.com",
+            "date": "2026-11-18T18:06:00Z",
+            "officiel": false,
+            "source": "Google Actualités : droits de douane (anglais)"
+          },
+          {
+            "titre": "Hoover’s Philip Zelikow, Robert Zoellick File Amicus Brief Against Canada Tariffs",
+            "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxQT29ybmMwXzVyY1BPQnI3d1Voem1DLU9DTzh5Qjh0LTNIQkxQWm14ZEVFZDlvX09wcVg1X2hjSGc0SEd2ZmU1WGZtbzhiRFRSWXNfMXd6MlZZVDliMFFnTHk5aVUtNVhOTGtDYmhHZUZsVXlVMlBmRVFVNDBndTR1QmtyS3JHZ25NbVZtNEVuVjhxOGlueFlmMkJ4ekxZal81UTVJTg?oc=5",
+            "domaine": "hoover.org",
+            "date": "2026-11-18T01:21:06Z",
+            "officiel": false,
+            "source": "Google Actualités : droits de douane (anglais)"
+          },
+          {
+            "titre": "A $40M Tariff Bill Pushes New Jersey Food Importer to Sue Trump Over Canada Duties",
+            "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxQUE5zX0VGYk45MXhYeVB3ejMyNURXckRtb0wtd0pKamtyN1EyMTk2SWYyb1R0ZG9vMkd5emIwY1plR2dkbVNDYTZzQVRpZ1ZYSm5RWHczQ19PN3JQM25tR2Y2SjF0emg1MEJCTWpuSTJJMlVWOHRTYjg2QmY3eEFyejBoVG9DdEtMR2RGckhCQnVkc3FyYWVRSmhWaHp5Z3dGRjRIeUd3RDFQcDQxb25YaA?oc=5",
+            "domaine": "hoodline.com",
+            "date": "2026-11-16T18:59:20Z",
+            "officiel": false,
+            "source": "Google Actualités : droits de douane (anglais)"
+          },
+          {
+            "titre": "A New Jersey food importer files a lawsuit challenging Trump's 50% tariffs on Canadian goods",
+            "url": "https://news.google.com/rss/articles/CBMijAJBVV95cUxPNXZ3UkpwTjRabjU5SUh2eU44TDVPdlZNdlB1US14eU4tSzRobFFNcGN1dk1xbWpCcjJHbG9EeXBJVkNLTk45WEQxbmZMZkdITVdLVjR1MFdsVFRjYkh3U2JtSUJfVktsaDA1Q1JJNXJwYmxlOTJtbWdMOVdPRHlQSS1NYlhJT1doYUt5YjFTYkc1eTd1WU5WMVVpbGFMWTlJaU15eGNjRlpwQktTLVM5ajZXMU0xWWdTM3lvVDlVMV9sNmFsRVBPTUtoSXhsQVpDdHJCM3ktRS1rSmZYS1ZqQm96YTdTWW9hUk9VclpJWlUtdnNBRGNOTkxZb3pFYVU4aFZfSzlhSEpRLWNE?oc=5",
+            "domaine": "rutlandherald.com",
+            "date": "2026-11-15T08:44:32Z",
+            "officiel": false,
+            "source": "Google Actualités : droits de douane (anglais)"
+          },
+          {
+            "titre": "Our Amicus Brief in Case Challenging Trump's Section 338 Tariffs Against Canada",
+            "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxOU2ZiYVEwbkhMUmQzVWRLUFdwQTFJeTg2cmxVTUhkMEt0LVE2dWNjdzdYWjY0V3RTaF9PMmJvcndPdlhta0U0VnMwVWVlaEhNaVNzTmxicENCcUZCbWJEdG41VDdJdHZvMGNNdFZNdWlEWlBIaWxzSWhFVEhHV0gzXzZNRWtleGR1eFhTdm4wcXNudUVLbDR4Mlc1ajZrOHIwV1ROTHNXOA?oc=5",
+            "domaine": "inkl.com",
+            "date": "2026-11-14T15:45:43Z",
+            "officiel": false,
+            "source": "Google Actualités : droits de douane (anglais)"
+          },
+          {
+            "titre": "Whitmer Says She Warned Trump on Tariffs",
+            "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxPbzhDREowemFSSmVFcUg5VUdaZ1dXaFg4enZoZGVDQ2lQZ1FGMGhlWVRkX1A5Ulh0eHBLaVIxajduQzVMdGFQcXdHQXlSektFczJCMVhJRHZCNFpMYjFkRDVYTjRBSkJoVU1TWGUycDVyOXRfOUtvRHRGWWE0clphOGJLRFA3YUppVGVocjJCNG9XZjQ?oc=5",
+            "domaine": "wisevoter.com",
+            "date": "2026-11-20T18:34:04Z",
+            "officiel": false,
+            "source": "Google Actualités : droits de douane (anglais)"
+          },
+          {
+            "titre": "U.S. Trade Representative Says “Section 301 Probe to Be Wrapped Up by Year-End”... Concerns Over Additional Tariffs and Investment Pressure on South Korea",
+            "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE1pR1YyRXdDOGZlejJkaGt5QzFRQ2xKeE55dG5GazM2Vy1INHhjaE92MjJldWNNOUYwSGdpc3ltN2xqNWJ1OFRVS1o0Wm1ZN05MQXN4ZDRVZGo?oc=5",
+            "domaine": "fnnews.com",
+            "date": "2026-11-20T16:42:11Z",
+            "officiel": false,
+            "source": "Google Actualités : droits de douane (anglais)"
+          },
+          {
+            "titre": "US to complete trade probe by year-end, raising tariff questions for Korea",
+            "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxONnl0Vk84YXRDd3VCMUJXZllOeUlzN21aT0pocDBLMWl5Ulo5QkFsYkxBSnVfMFcza1ZnY2lwdTM1Vkk5WGRQczBxM19kZTFNbXF0ZzRLMWlPTjY4NXN2cWE2czZHSHYzcWwxbTNTZFNmb2hPd2l0aFpjZDRpYlo4S0JnTFpISm400gGcAUFVX3lxTE1NMVo1dXRQMnNwTVdHeVVYQ25vQVVzWUxQUTB1eklYS3hPbE9hd0dQVUdJLTIycS1VVENQTzUtOWg4Q0RPN1dMa3NwWHBPVUZsdXZqaDFOV1ZKdHBHM0ZOZVpHb0x5UUNuYV94ck1BWlQyQVZiZS1qX19DUTV2Qm9nQkdSQ0VpeU5TTjlYR2JUa1Y2Y21tYk1CUUZMMQ?oc=5",
+            "domaine": "chosun.com",
+            "date": "2026-11-20T15:54:00Z",
+            "officiel": false,
+            "source": "Google Actualités : droits de douane (anglais)"
+          }
+        ],
+        "nb_articles": 120,
+        "nb_domaines": 32,
+        "officiel": false,
+        "premier": "2026-11-02T20:12:55Z",
+        "dernier": "2026-11-21T00:57:14Z",
+        "tonalite_gdelt": -2.17,
+        "score_selection": 13.28,
+        "theme_confirme": true,
+        "nb_evenements": 3
+      },
+      {
+        "id": "evt-247464adf771",
+        "titre": "Au sommet en Chine, Trump qualifie Poutine de mon ami malgré la guerre en Ukraine",
+        "titre_origine": "At China summit, Trump calls Putin my friend amid Ukraine war",
+        "categorie": "conflit",
+        "titre_langue": "anglais",
+        "mention": null,
+        "categorie_libelle": "Conflit armé",
+        "pays": [
+          "RU",
+          "US"
+        ],
+        "pays_noms": [
+          "Russie",
+          "États-Unis"
+        ],
+        "mondial": false,
+        "pays_suivis": [
+          "US"
+        ],
+        "lieux": [
+          "PL",
+          "UA",
+          "CN"
+        ],
+        "lieux_noms": [
+          "Pologne",
+          "Ukraine",
+          "Chine"
+        ],
+        "theme": false,
+        "chronologie": [],
+        "regions": [
+          "amerique_nord",
+          "europe"
+        ],
+        "gravite": 3,
+        "gravite_regles": 3,
+        "note_gravite": "ramené à 3 : distribution cible (au plus 5 événements en 4 sur 24 h)",
+        "ia": true,
+        "modele": "gemini-3.5-flash-lite",
+        "analyse_le": "2026-11-21T01:16:44Z",
+        "resume": [
+          {
+            "texte": "La Russie a mené une frappe aérienne en Ukraine touchant des infrastructures énergétiques et des ponts, tandis que deux missiles et un drone russes ont atteint le territoire polonais, qualifié de violation par l'OTAN.",
+            "sources": [
+              "https://www.hngn.com/articles/273901/20261120/two-russian-missiles-drone-land-poland-nato-calls-it-violation.htm",
+              "https://news.google.com/rss/articles/CBMiWEFVX3lxTFA5UWcyZ3Vtd1VYcTdCOElzRjJSV2Q5S3BILTBTbXhQaENtYkVMdnN2ZmY0SjJUQzVrc0E1U29FNXo2T0xYc1BfSWY4Vm93STZfVDRqcjcwamM?oc=5"
+            ]
+          },
+          {
+            "texte": "Ces événements surviennent peu de temps après un sommet trilatéral réunissant les États-Unis, la Chine et la Russie.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMiWEFVX3lxTFA5UWcyZ3Vtd1VYcTdCOElzRjJSV2Q5S3BILTBTbXhQaENtYkVMdnN2ZmY0SjJUQzVrc0E1U29FNXo2T0xYc1BfSWY4Vm93STZfVDRqcjcwamM?oc=5",
+              "https://abcnews.com/International/china-summit-trump-calls-putin-friend-amid-ukraine/story?id=138282642"
+            ]
+          }
+        ],
+        "actifs": [
+          {
+            "actif": "pétrole",
+            "sens": "hausse",
+            "texte": "L'intensification des frappes sur les infrastructures énergétiques ukrainiennes et l'implication de la Pologne font craindre des perturbations de l'approvisionnement.",
+            "sources": [
+              "https://www.hngn.com/articles/273901/20261120/two-russian-missiles-drone-land-poland-nato-calls-it-violation.htm",
+              "https://news.google.com/rss/articles/CBMiWEFVX3lxTFA5UWcyZ3Vtd1VYcTdCOElzRjJSV2Q5S3BILTBTbXhQaENtYkVMdnN2ZmY0SjJUQzVrc0E1U29FNXo2T0xYc1BfSWY4Vm93STZfVDRqcjcwamM?oc=5"
+            ]
+          },
+          {
+            "actif": "défense",
+            "sens": "hausse",
+            "texte": "L'extension des incidents militaires aux pays frontaliers de l'OTAN renforce la perspective de budgets de défense accrus.",
+            "sources": [
+              "https://www.hngn.com/articles/273901/20261120/two-russian-missiles-drone-land-poland-nato-calls-it-violation.htm"
+            ]
+          }
+        ],
+        "horizon": "semaines",
+        "confiance": "élevée",
+        "contre": [
+          {
+            "texte": "Une désescalade rapide et une reconnaissance d'une erreur technique par la Russie pourraient limiter la réaction des marchés.",
+            "sources": [
+              "https://www.hngn.com/articles/273901/20261120/two-russian-missiles-drone-land-poland-nato-calls-it-violation.htm"
+            ]
+          }
+        ],
+        "sources_independantes": 3,
+        "sources": [
+          {
+            "titre": "Two Russian Missiles and a Drone Land in Poland as NATO Calls It a Violation",
+            "url": "https://www.hngn.com/articles/273901/20261120/two-russian-missiles-drone-land-poland-nato-calls-it-violation.htm",
+            "domaine": "hngn.com",
+            "date": "2026-11-21T00:30:00Z",
+            "officiel": false,
+            "source": "GDELT DOC 2.0"
+          },
+          {
+            "titre": "Russia Launches Massive Airstrike on Ukraine With 110 Missiles and 400 Drones Shortly After U.S.-China-Russia Summit; Kyiv Bridges and Energy Grid Hit",
+            "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTFA5UWcyZ3Vtd1VYcTdCOElzRjJSV2Q5S3BILTBTbXhQaENtYkVMdnN2ZmY0SjJUQzVrc0E1U29FNXo2T0xYc1BfSWY4Vm93STZfVDRqcjcwamM?oc=5",
+            "domaine": "fnnews.com",
+            "date": "2026-11-20T15:03:41Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
+            "titre": "At China summit, Trump calls Putin my friend amid Ukraine war",
+            "url": "https://abcnews.com/International/china-summit-trump-calls-putin-friend-amid-ukraine/story?id=138282642",
+            "domaine": "abcnews.com",
+            "date": "2026-11-20T00:45:00Z",
+            "officiel": false,
+            "source": "GDELT DOC 2.0"
+          }
+        ],
+        "nb_articles": 3,
+        "nb_domaines": 3,
+        "officiel": false,
+        "premier": "2026-11-20T00:45:00Z",
+        "dernier": "2026-11-21T00:30:00Z",
+        "tonalite_gdelt": -2.17,
+        "score_selection": 9.5,
+        "titre_traduit": true
       },
       {
         "id": "evt-6a7e702c31c0",
@@ -1470,7 +1822,7 @@
         "officiel": true,
         "premier": "2026-11-03T10:10:21Z",
         "dernier": "2026-11-20T22:32:00Z",
-        "tonalite_gdelt": -1.47,
+        "tonalite_gdelt": -1.46,
         "score_selection": 17.31
       },
       {
@@ -1653,7 +2005,7 @@
         "officiel": true,
         "premier": "2026-11-03T23:33:23Z",
         "dernier": "2026-11-20T21:57:47Z",
-        "tonalite_gdelt": -1.29,
+        "tonalite_gdelt": -1.27,
         "score_selection": 17.79
       },
       {
@@ -1835,7 +2187,7 @@
         "officiel": true,
         "premier": "2026-11-03T08:36:26Z",
         "dernier": "2026-11-20T20:14:40Z",
-        "tonalite_gdelt": -1.09,
+        "tonalite_gdelt": -1.04,
         "score_selection": 17.67,
         "titre_traduit": true
       },
@@ -1960,237 +2312,8 @@
         "officiel": false,
         "premier": "2026-11-20T12:56:48Z",
         "dernier": "2026-11-20T19:30:07Z",
-        "tonalite_gdelt": -3.29,
+        "tonalite_gdelt": -3.33,
         "score_selection": 6.14
-      },
-      {
-        "id": "theme-evt-ec6d7e090588",
-        "titre": "Débats sur le maintien des droits de douane aux États-Unis",
-        "titre_origine": "Democrats will try to roll back Medicaid cuts, stop tariffs, Oregon US Sen. Ron Wyden says",
-        "categorie": "commerce",
-        "titre_langue": null,
-        "mention": null,
-        "categorie_libelle": "Commerce et droits de douane",
-        "pays": [
-          "US"
-        ],
-        "pays_noms": [
-          "États-Unis"
-        ],
-        "mondial": false,
-        "pays_suivis": [
-          "US"
-        ],
-        "lieux": [],
-        "lieux_noms": [],
-        "theme": true,
-        "chronologie": [
-          {
-            "id": "evt-ec6d7e090588",
-            "date": "2026-11-20T15:18:01Z",
-            "titre": "Contestation judiciaire et opposition politique aux droits de douane américains",
-            "gravite": 3,
-            "resume": "Des recours juridiques et des demandes d'annulation ciblent les droits de douane de 50 % imposés par les États-Unis sur les produits canadiens.",
-            "nb_sources": 12,
-            "source": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQbmFOX1lCY3Jmc3lQNVlweUdjZVZVMFFLYm5vMll3S0VnZDRfMGIzZDYwTElPenVwM1h1UG4yVkNCVktNbTlXbzBVZWQwaTJSb1M2Q2k2MHN2N09VTlF5ME5qNS1NQ1BIWnhTem9BRm9ZRlI5Wlp3RkRhb0RQUlZFSg?oc=5"
-          },
-          {
-            "id": "evt-70c39494ede1",
-            "date": "2026-11-20T16:06:27Z",
-            "titre": "Appels au Congrès américain pour exempter les consommateurs des droits de douane",
-            "gravite": 2,
-            "resume": "Des acteurs économiques et politiques aux États-Unis expriment des inquiétudes quant à l'impact inflationniste de nouveaux droits de douane.",
-            "nb_sources": 12,
-            "source": "https://news.google.com/rss/articles/CBMisgFBVV95cUxOWm1tYy02SzkxMlV2aU03WkFqRHNvd2ZPMW56LVJ5dzh2Z2M4Q3ZpY09JbzJaVjNXS1ppaVVXak5jVTc1SXZ0enhoM2s1Vm54X2VZRHpLaWNIaXZ1d3hyRjVTXzFIUXVzZkV0b2JoRGIyVFNmU1F4dG4zeEw4UnhPdjJzNDFpYnBrS0g2VjhuLU5vNjVZX0dyOEp5NkJRNkdXdmF3TTVMZnZ5RTlCU2E3UEZ3?oc=5"
-          },
-          {
-            "id": "evt-66c8cd956a20",
-            "date": "2026-11-20T18:34:04Z",
-            "titre": "Les États-Unis maintiennent les droits de douane malgré les élections",
-            "gravite": 3,
-            "resume": "Les résultats des élections de mi-mandat aux États-Unis ne modifient pas la politique tarifaire en vigueur.",
-            "nb_sources": 12,
-            "source": "https://news.google.com/rss/articles/CBMikwFBVV95cUxPbzhDREowemFSSmVFcUg5VUdaZ1dXaFg4enZoZGVDQ2lQZ1FGMGhlWVRkX1A5Ulh0eHBLaVIxajduQzVMdGFQcXdHQXlSektFczJCMVhJRHZCNFpMYjFkRDVYTjRBSkJoVU1TWGUycDVyOXRfOUtvRHRGWWE0clphOGJLRFA3YUppVGVocjJCNG9XZjQ?oc=5"
-          }
-        ],
-        "regions": [
-          "amerique_nord"
-        ],
-        "gravite": 3,
-        "gravite_regles": 2,
-        "note_gravite": null,
-        "ia": true,
-        "modele": "gemini-3.5-flash-lite",
-        "analyse_le": "2026-11-08T21:16:45Z",
-        "resume": [
-          {
-            "texte": "Les résultats des élections de mi-mandat aux États-Unis ne modifient pas la politique tarifaire en vigueur.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMiggFBVV95cUxNb3hRVlc4QjB2Z0hmcElhMTM1eF9GTjRHQ0VmZzNoNzVIcmE3UVpqaDRLSTBqcExzb1QtazdyVkdnYnBqN0p0ZGFPcEwwTnhtM3FyWDVZTExtd3Bhb0ZyeGdOcFE2aWZHOVdYRlE0T090TTFtaERzclhFNW11SWIwT3hR?oc=5",
-              "https://news.google.com/rss/articles/CBMihgFBVV95cUxOYnVjTWZuQVlzaFZxSXR5OFBBZHdQNnBlNDJPMDY1YV9zNmhzVlFOaFFvM2tzaVBDYlBNSUJ1VnVpXzNvMGFGVFA4Y2oyTVlXT05GTUVkSHJrMy1HSGY3VFRoc3ZUTkc1alpRNzktYl81M2JEV0RQRW9fZ3JoWGkyOFEtalI1UQ?oc=5"
-            ]
-          },
-          {
-            "texte": "L'administration confirme le maintien de taxes élevées afin d'encourager la production industrielle locale.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMihAFBVV95cUxOQTNJZVN3VFFnLXc4Ry1QS2UtcHd3dDYwUVhQWlI3cUc4VUZUakpMSWdfMlRDeHk2X2VnN2hyUTl3Q3AxUnQxRmFJSkYxQW9MTHJiY24tVWRaT0p1NTJNa3RzbDZjU0p4c1NWazZMNGJQcUt2QVhEV0lINE9ra1VBNEM3dzg?oc=5",
-              "https://news.google.com/rss/articles/CBMidkFVX3lxTE50NmltdTNQMDNCMVZkWi1iTGJUWkFaTDZzLVlaVFczNk5MSmRDbmRTbjBYWU5QZV9QUDFFSzEwNDNBX2FDZ3pCazFhTzhGVVZ4QXlCcXpKRk8xc0tuLUZuNlkxbGhBNWhkdXhROWZKZ2NhNHdTM0E?oc=5"
-            ]
-          }
-        ],
-        "actifs": [
-          {
-            "actif": "actions",
-            "sens": "baisse",
-            "texte": "L'incertitude liée au maintien des droits de douane pèse sur les marchés financiers.",
-            "sources": [
-              "https://abcnews.com/Business/wireStory/high-flying-ai-stocks-tariff-hit-alcohol-companies-137938660",
-              "https://www.nvdaily.com/associated_press_national/from-high-flying-ai-stocks-to-tariff-hit-alcohol-companies-the-midterms-shook-up-wall/article_47c0ae4b-6079-5863-8d8a-28761a1271f9.html"
-            ]
-          }
-        ],
-        "horizon": "semaines",
-        "confiance": "élevée",
-        "contre": [
-          {
-            "texte": "Une pression politique accrue pourrait contraindre le gouvernement à infléchir sa politique commerciale.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMiigFBVV95cUxNTTlPWVM2SzF4RmJ1Ry1oX2NOMWc0MGJQREpBLTE5OEZ2RnVDT2JtZFZXR1JYWDRka19hUWkzTWJCR1ZrNVQ3R0RTUEFOcDJVSXJnWE54YjFlOUR6RkVUWTNiYWJweWsxQUI2TmpGWTdFZmtOc1VnVllRdWM1ajlhbjg5UXkxZ3Vid3c?oc=5"
-            ]
-          }
-        ],
-        "sources_independantes": 6,
-        "sources": [
-          {
-            "titre": "Whitmer Says She Warned Trump on Tariffs",
-            "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxPbzhDREowemFSSmVFcUg5VUdaZ1dXaFg4enZoZGVDQ2lQZ1FGMGhlWVRkX1A5Ulh0eHBLaVIxajduQzVMdGFQcXdHQXlSektFczJCMVhJRHZCNFpMYjFkRDVYTjRBSkJoVU1TWGUycDVyOXRfOUtvRHRGWWE0clphOGJLRFA3YUppVGVocjJCNG9XZjQ?oc=5",
-            "domaine": "wisevoter.com",
-            "date": "2026-11-20T18:34:04Z",
-            "officiel": false,
-            "source": "Google Actualités : droits de douane (anglais)"
-          },
-          {
-            "titre": "U.S. Trade Representative Says “Section 301 Probe to Be Wrapped Up by Year-End”... Concerns Over Additional Tariffs and Investment Pressure on South Korea",
-            "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE1pR1YyRXdDOGZlejJkaGt5QzFRQ2xKeE55dG5GazM2Vy1INHhjaE92MjJldWNNOUYwSGdpc3ltN2xqNWJ1OFRVS1o0Wm1ZN05MQXN4ZDRVZGo?oc=5",
-            "domaine": "fnnews.com",
-            "date": "2026-11-20T16:42:11Z",
-            "officiel": false,
-            "source": "Google Actualités : droits de douane (anglais)"
-          },
-          {
-            "titre": "US to complete trade probe by year-end, raising tariff questions for Korea",
-            "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxONnl0Vk84YXRDd3VCMUJXZllOeUlzN21aT0pocDBLMWl5Ulo5QkFsYkxBSnVfMFcza1ZnY2lwdTM1Vkk5WGRQczBxM19kZTFNbXF0ZzRLMWlPTjY4NXN2cWE2czZHSHYzcWwxbTNTZFNmb2hPd2l0aFpjZDRpYlo4S0JnTFpISm400gGcAUFVX3lxTE1NMVo1dXRQMnNwTVdHeVVYQ25vQVVzWUxQUTB1eklYS3hPbE9hd0dQVUdJLTIycS1VVENQTzUtOWg4Q0RPN1dMa3NwWHBPVUZsdXZqaDFOV1ZKdHBHM0ZOZVpHb0x5UUNuYV94ck1BWlQyQVZiZS1qX19DUTV2Qm9nQkdSQ0VpeU5TTjlYR2JUa1Y2Y21tYk1CUUZMMQ?oc=5",
-            "domaine": "chosun.com",
-            "date": "2026-11-20T15:54:00Z",
-            "officiel": false,
-            "source": "Google Actualités : droits de douane (anglais)"
-          },
-          {
-            "titre": "Trump's Midterm Wipeout Wasn't About Tariffs. Saagar Enjeti Says It Was About Loyalty",
-            "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE5Ra0E5TFZ4Zk1vbHFVbGtsY29zeWVpRnhEMFFIb2JlN0wza2Z3TVNXR19fY09fdWVDMFRBYXJ0VXdYclQ3a29JWlZXSFQtYzVhM21kN044dWxqa0U?oc=5",
-            "domaine": "biggo.com",
-            "date": "2026-11-19T17:08:00Z",
-            "officiel": false,
-            "source": "Google Actualités : droits de douane (anglais)"
-          },
-          {
-            "titre": "Bill Clinton Says Trump Told Him on a Golf Course 24 Years Ago That Tariffs Would Let America 'Stop Payin",
-            "url": "https://news.google.com/rss/articles/CBMihwJBVV95cUxNZjAtSldvRGttbTR4Z2ROSnV0Z29kY3JEblV0el9TcWtSN2I2MERPZENyQmlHeXE0M0VTQjlOaTczYjRPOVUybGVCM0VFY3NaUHFDVWxNcG5TQ3Iwb3ZKM0dEa3NYRU1sMWNvMHVtcFNyUWZzQU9zVW5VSDRzQV9ObVBXTjU3LXdONnlDM2xRalpCYTB1SW5wcy1PemhvNDVIaGRDTDN5VHdpSEU2b1k2MEU5d01oMllZNUlabl9tNWNldlNUdnJlNGU2WGZzTmxBUHJqY3hiTnRjbGhKMVM1UVZVVm5WYzNxSXJveFJQRHNZcVFFZUhMNFpEMmctd2NHNk15VG5WSQ?oc=5",
-            "domaine": "benzinga.com",
-            "date": "2026-11-19T03:15:05Z",
-            "officiel": false,
-            "source": "Google Actualités : droits de douane (anglais)"
-          },
-          {
-            "titre": "Iran sees Trump weakened by midterm rout, hardens war demands",
-            "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTFBITjhKRWl1bC1SYWF6UUVfTGFtdjZldVlpcUswVDZMS1h6YWdaZ3NlOXlnSVlWaWIyeFpnSGw2Qy1jN2xHNGp1QmhwRnJvaVJHSWtwc1dR?oc=5",
-            "domaine": "ynetnews.com",
-            "date": "2026-11-18T05:37:59Z",
-            "officiel": false,
-            "source": "Google Actualités : élections (anglais)"
-          },
-          {
-            "titre": "Trump in Manila: Security, tariffs top agenda",
-            "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxNV0ZXaDhOYnhiaF9QS1pteFhpVkFFWTB5Ykt1ajJ6REFJa2kyR2ltai1NeGJzcUQzdk1uMjFkcVl6TXNYSDNwOU1qbkh1NFJQOE8ySk5RVVB2SzItUUdSTVh0R0N1bFNiNHFJSU9KSW94RG5NQW5ZV2xoX0xhTV9wVmtTTWlEblpKdUlzR1RvTEJ0MlXSAZMBQVVfeXFMTVdGV2g4TmJ4YmhfUEtabXhYaVZBRVkweWJLdWoyekRBSWtpMkdpbWotTXhic3FEM3ZNbjIxZHFZek1zWEgzcDlNam5IdTRSUDhPMkpOUVVQdksyLVFHUk1YdEdDdWxTYjRxSUlPSklveERuTUFuWVdsaF9MYU1fcFZrU01pRG5aSnVJc0dUb0xCdDJV?oc=5",
-            "domaine": "inquirer.net",
-            "date": "2026-11-18T04:16:48Z",
-            "officiel": false,
-            "source": "Google Actualités : droits de douane (anglais)"
-          },
-          {
-            "titre": "China, security, tariffs: Trump’s three days in an anxious Asia",
-            "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxNdHU2NFpoWnN1U29SMVNxMmZQNXZLLWhFR3Z3MWg1d1Zlb0xjZ0JLcFRHcGZTajRVVGpzRVBWNExoWjZWem5GeEJMdkQ4S2pzVEtfTmdONU05MkRrd2RzaVRMbXE0RXA4UFgwS3NYTjVjcm9kS3BUYVhZLUU4X3RYR19BOFA3b3FUYkZnY3hkbE9XekFxeXN3NndqLWtRa05HbzUw?oc=5",
-            "domaine": "thetimes.com",
-            "date": "2026-11-16T15:42:48Z",
-            "officiel": false,
-            "source": "Google Actualités : droits de douane (anglais)"
-          },
-          {
-            "titre": "Lula: Brazil seeks new partners in response to US tariffs",
-            "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxOSllQdU5wQzF1UXlOMHJ2OTVVdUdDTXlvQ3hRaGNYWTdBTTEzcEYwY3NJd1FtZWFvVVpjU2J5aTB6bllUVUtzMElhTUlxRXdUdlh4c0pJd05ZSkdoRHlHTmZsRWR2cHRnby1pYlk5aEppY3lsSVA4Vkt4YWRlWUpwUFRncWJhT1p4WTYwUVFFRnA2bWRJMnZndndkYThyd3BqY1VFRQ?oc=5",
-            "domaine": "breakingthenews.net",
-            "date": "2026-11-15T08:19:00Z",
-            "officiel": false,
-            "source": "Google Actualités : droits de douane (anglais)"
-          },
-          {
-            "titre": "After the Midterm Rout, Can Trump Change Course Without Giving Up Tariffs?",
-            "url": "https://news.google.com/rss/articles/CBMimgFBVV95cUxQTnJmWmFsVWxKdlZUNEFKaUhjOTJLVXViWXg1YTdxTlctUlhFUTY5NDFNMFdsZ2RyeDhxV1ZUNlVwRlU5ZklBQ1MwNm9nUlJObjlvSjYwUnNoYVhPVGFlQmdVcVdySmc2V3h6NTFiRjBTU0c1QmpqOEZKX3ZtNmhjZlE2d3FfX2QyTU9oRmdwYUM4MXlIWG9uT1lB?oc=5",
-            "domaine": "wita.org",
-            "date": "2026-11-13T14:38:07Z",
-            "officiel": false,
-            "source": "Google Actualités : droits de douane (anglais)"
-          },
-          {
-            "titre": "US Treasuries set for worst week since Trump’s ‘liberation day’",
-            "url": "https://www.ft.com/content/7bebace2-dc87-410a-ae29-ffd9f3176def?syn-25a6b1a6=1",
-            "domaine": "ft.com",
-            "date": "2026-11-13T10:57:36Z",
-            "officiel": false,
-            "source": "Financial Times, monde (RSS)"
-          },
-          {
-            "titre": "Trump's White House Refuses to Retreat on Tariffs Despite Republican Midterm Defeat, Declares ‘We Are Just Getting Started’",
-            "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxOd2ktR0dKVEc5Mlc5bUZnWWpUN3AteFRUWl9FZjJNaEJ0VjRTeVNxaGxMQl9heHRyak1MWjB0MXR0RUl5WEhrdnlsTFdNTklSV3JuMWN1VzlXYlNvcmpNSzEzd28wWHJ3Vkp5Wi1DMW5TdUVucGdSM3dHeTNJOHVDYzhiREE1alR4ZnBfMmN0MVBFUEtoQjRqRFZDbGZRS3ha?oc=5",
-            "domaine": "yahoo.com",
-            "date": "2026-11-12T20:30:08Z",
-            "officiel": false,
-            "source": "Google Actualités : droits de douane (anglais)"
-          },
-          {
-            "titre": "Whitmer talks about conversations with Trump regarding tariffs",
-            "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxOWm1tYy02SzkxMlV2aU03WkFqRHNvd2ZPMW56LVJ5dzh2Z2M4Q3ZpY09JbzJaVjNXS1ppaVVXak5jVTc1SXZ0enhoM2s1Vm54X2VZRHpLaWNIaXZ1d3hyRjVTXzFIUXVzZkV0b2JoRGIyVFNmU1F4dG4zeEw4UnhPdjJzNDFpYnBrS0g2VjhuLU5vNjVZX0dyOEp5NkJRNkdXdmF3TTVMZnZ5RTlCU2E3UEZ3?oc=5",
-            "domaine": "audacy.com",
-            "date": "2026-11-20T16:06:27Z",
-            "officiel": false,
-            "source": "Google Actualités : droits de douane (anglais)"
-          },
-          {
-            "titre": "US Shoe Prices Climb 2.1% as Tariffs and Oil Bite",
-            "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxQUUZ6VTNWMTZ2VEJFZHRzaGlNTmlJeHBpWHI4NGQ5a2NzMVZGNE0zY3p0T1ZScDFxM1pXbTE4RnVnZDdfRHhNdHRfV21ObFhNTG5uQXdobXJkVnBMOWNsZmtIQjRmRDdEOGw5MkhoZkttVktzTU5BWFdFSjJCNmc5VjhZM0s5UQ?oc=5",
-            "domaine": "wisevoter.com",
-            "date": "2026-11-20T07:53:15Z",
-            "officiel": false,
-            "source": "Google Actualités : droits de douane (anglais)"
-          },
-          {
-            "titre": "Canadian negotiators dispel idea Canada can just play for time in trade talks with Trump",
-            "url": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxOVE5uZjV5RlkwVFAydUZNaGdsNEJSNE02aVFyS3VyYkZQQzJWTFJJUk1jZTlyVzdsajV2a0tIM3IxUUlIZ0VqR3o1ZzR0YnprbklMOWk2QWZiamhMNGlHdG5vbTlscnRGRG96R1NwU0twS0RKSXdtczRQNGJsZXVEZnpxX2VMRlRIRHhERmllV2c0R2hQTXNOc3BFQlY5UFRBTWFHbnl5VDBmQlFnSDFXOTlJbFROZ0VBYmVQSThTMmhkMTdvcGFTcW9sa2xNVWx0LUE?oc=5",
-            "domaine": "bnnbloomberg.ca",
-            "date": "2026-11-20T00:38:00Z",
-            "officiel": false,
-            "source": "Google Actualités : droits de douane (anglais)"
-          }
-        ],
-        "nb_articles": 120,
-        "nb_domaines": 32,
-        "officiel": false,
-        "premier": "2026-11-02T20:12:55Z",
-        "dernier": "2026-11-20T18:34:04Z",
-        "tonalite_gdelt": -2.17,
-        "score_selection": 14.9,
-        "theme_confirme": true,
-        "nb_evenements": 3
       },
       {
         "id": "evt-82d1003040cc",
@@ -2334,7 +2457,7 @@
         "officiel": false,
         "premier": "2026-11-17T07:58:54Z",
         "dernier": "2026-11-20T16:37:18Z",
-        "tonalite_gdelt": -1.48,
+        "tonalite_gdelt": -1.53,
         "score_selection": 10.84
       },
       {
@@ -2522,7 +2645,7 @@
         "officiel": false,
         "premier": "2026-11-17T04:08:00Z",
         "dernier": "2026-11-20T13:25:00Z",
-        "tonalite_gdelt": -1.48,
+        "tonalite_gdelt": -1.53,
         "score_selection": 14.11
       },
       {
@@ -2874,7 +2997,7 @@
         "officiel": false,
         "premier": "2026-11-05T12:32:35Z",
         "dernier": "2026-11-20T13:00:06Z",
-        "tonalite_gdelt": -1.29,
+        "tonalite_gdelt": -1.27,
         "score_selection": 14.67
       },
       {
@@ -3048,174 +3171,8 @@
         "officiel": false,
         "premier": "2026-11-19T12:24:27Z",
         "dernier": "2026-11-20T11:58:56Z",
-        "tonalite_gdelt": 1.14,
+        "tonalite_gdelt": 1.24,
         "score_selection": 7.11
-      },
-      {
-        "id": "evt-45d3a4f264b4",
-        "titre": "Le Conseil de paix met en garde contre la situation à Gaza",
-        "titre_origine": "Le Conseil de la paix craint un effondrement du cessez-le-feu à Gaza",
-        "categorie": "conflit",
-        "titre_langue": null,
-        "mention": null,
-        "categorie_libelle": "Conflit armé",
-        "pays": [
-          "IL",
-          "PS"
-        ],
-        "pays_noms": [
-          "Israël",
-          "Territoires palestiniens"
-        ],
-        "mondial": false,
-        "pays_suivis": [],
-        "lieux": [],
-        "lieux_noms": [],
-        "theme": false,
-        "chronologie": [],
-        "regions": [
-          "moyen_orient"
-        ],
-        "gravite": 3,
-        "gravite_regles": 2,
-        "note_gravite": null,
-        "ia": true,
-        "modele": "gemini-3.5-flash-lite",
-        "analyse_le": "2026-11-18T20:24:04Z",
-        "resume": [
-          {
-            "texte": "Le Conseil de paix impute à Israël et au Hamas la responsabilité de compromettre le cessez-le-feu en cours.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMivwFBVV95cUxQb1BxWGVOTmFVLXNIRGo3eFVyTkRHV2RTUVVockhIaDV3dWhsRTBkeDY1TThWbERVTjFQbDk1OHBtUzFJOTZDSTF5RzR0emRQTmU2NUQtemswMFpQWnFNdE5PUVlzX1h1SktONERrdnFsMklOUEFzc1dNU1FlSFU2QXI2c1pYVnFfbFhnQ2RQazQtNFRxaVZsTGQ0cnExQXdHSFROMkQ3UnIxZFYxWnl0Szg2MXFfYnBNWC01b3htVQ?oc=5",
-              "https://news.google.com/rss/articles/CBMiwgFBVV95cUxQY3NfT1BCSlJnRzBSUUtBWUxhZ25WUGpFNnZjMkZrQzFla3l2ZkF5Y0FrSk5NME1KZ0tWLUlQOEdhUTB2MWRjelZqRDJmbmxJTy0wazl6c0dFSGo5VVM3WmRDVWlISGhqQXg5bkZqS3NGNGMySk1LMl9ONHdUN0JUUjFfZ3F3aHJXZ0k4cW1uM3UxeFdJeTNkVU1sR2hxYTQwSl9yVXQ4dmRRREkwMnoyWGU3WEp4a25mZGpnSlg5Zm5uUdIBxwFBVV95cUxPTFdUUTB2NU4taWh4NkQ0NUluQkpIc2VaVi11anU1T1ZjbDAwd0hJZHpmUDAtZ1kzQWZkcnNoeGZnSFFxYjdGWDhWRFA5aGFlcjJKYllfVnNYRmRxOVZSc0pCbml0aG5DZ1U3MGcyM3JPMXRRRlVmN0FubGRCRVg2SVJiZ18waWJvUmNUelEzaVhGN1ljcVQ0OC1hZll5RU12cGJ1cmFhUlhzcGtCNXc0dWJnOTFvaFV3WVlDY09zQTREbDRYeEdV?oc=5"
-            ]
-          },
-          {
-            "texte": "Cette instance internationale exprime de fortes craintes quant à un effondrement imminent de l'accord de cessation des hostilités.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMirAFBVV95cUxNN2FGTkszZnp1NkpGYkFFQzhfSGtNMzdwc2dMV3RxVEdYLXhJTnFvdEszTnlUNGttMlZQZTdOWnJuVFFVUEg5b1c1ZDBEQ2VVcUZnczRqUFpWV0RWNzYtWWZycTdENFNfckQweE5RLW1ZNXk0T0NJX054TkNjUmRPSGVubzFUa3JRN1E3SXpSTm9Fc2JRUFNxbGFKTlRXaTRDSklBOVhQNzEzMk94?oc=5",
-              "https://news.google.com/rss/articles/CBMiogFBVV95cUxOVVVUS1M2QVhDMThfYk5aZ0tsVmItNkxDTk5SaHY3X0k0QmtIbmI1VXRvRE5xdVk0RzFfd3JOenZVSFRFVjF5TWY0VWNPUzZmdngzcUtleDNiNlYyNU5pbzMyRUN3V0tYZVVFN0ZTUVZTNXRBdWUzUlRoZGhYLXA1QW1zdHJ1VkxZczdxUktnMEJJU1JaNS1aVG41SXg3LU82QXc?oc=5"
-            ]
-          }
-        ],
-        "actifs": [
-          {
-            "actif": "pétrole",
-            "sens": "hausse",
-            "texte": "Les tensions géopolitiques persistantes au Moyen-Orient maintiennent une prime de risque sur les prix du brut.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMiogFBVV95cUxOVVVUS1M2QVhDMThfYk5aZ0tsVmItNkxDTk5SaHY3X0k0QmtIbmI1VXRvRE5xdVk0RzFfd3JOenZVSFRFVjF5TWY0VWNPUzZmdngzcUtleDNiNlYyNU5pbzMyRUN3V0tYZVVFN0ZTUVZTNXRBdWUzUlRoZGhYLXA1QW1zdHJ1VkxZczdxUktnMEJJU1JaNS1aVG41SXg3LU82QXc?oc=5"
-            ]
-          }
-        ],
-        "horizon": "semaines",
-        "confiance": "moyenne",
-        "contre": [
-          {
-            "texte": "La reprise effective des négociations pourrait stabiliser la situation et dissiper les craintes d'un conflit ouvert.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMivwFBVV95cUxQb1BxWGVOTmFVLXNIRGo3eFVyTkRHV2RTUVVockhIaDV3dWhsRTBkeDY1TThWbERVTjFQbDk1OHBtUzFJOTZDSTF5RzR0emRQTmU2NUQtemswMFpQWnFNdE5PUVlzX1h1SktONERrdnFsMklOUEFzc1dNU1FlSFU2QXI2c1pYVnFfbFhnQ2RQazQtNFRxaVZsTGQ0cnExQXdHSFROMkQ3UnIxZFYxWnl0Szg2MXFfYnBNWC01b3htVQ?oc=5"
-            ]
-          }
-        ],
-        "sources_independantes": 4,
-        "sources": [
-          {
-            "titre": "Al-Thawabta: Le rapport du « Conseil de la paix » sur Gaza offre à l'ennemi israélien une couverture pour continuer à saper le cessez-le-feu",
-            "url": "https://news.google.com/rss/articles/CBMiSkFVX3lxTFBicUlweFMwYzQ4UDJJUENVSTJzb19UTDc0WGlWZlhZVHYwQ3pXelRLbkp1ZENDQkFlel9vZUJtbnZOaWpISWpkNnhR?oc=5",
-            "domaine": "saba.ye",
-            "date": "2026-11-20T10:27:22Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Gaza: le Conseil de paix accuse Israël et le Hamas de compromettre le cessez-le-feu",
-            "url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxQb1BxWGVOTmFVLXNIRGo3eFVyTkRHV2RTUVVockhIaDV3dWhsRTBkeDY1TThWbERVTjFQbDk1OHBtUzFJOTZDSTF5RzR0emRQTmU2NUQtemswMFpQWnFNdE5PUVlzX1h1SktONERrdnFsMklOUEFzc1dNU1FlSFU2QXI2c1pYVnFfbFhnQ2RQazQtNFRxaVZsTGQ0cnExQXdHSFROMkQ3UnIxZFYxWnl0Szg2MXFfYnBNWC01b3htVQ?oc=5",
-            "domaine": "media-j.com",
-            "date": "2026-11-18T19:44:19Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Le Conseil de paix renvoie dos à dos Israël et le Hamas, accusés de menacer le cessez-le-feu",
-            "url": "https://news.google.com/rss/articles/CBMi6gFBVV95cUxOQVc1aWt5WDBfWTh4ZHF3OWM0VDFQbGUyY0lveGNfdTJGZEdqdmN4X0lGRFdpRDVjMmF1M1ZqOTJCSFlDMloyeHM3d29wSnNKTmxFV1R2YWNQQUotNVNNdjVpbnpzb24xbGJTbFpmZ1hrSjhtM0RSYjhzVDIyb1RKVFdTV0hqOXNGVXFKR1huM0wxUlBjSE84NGNNeTNGVnltdUIyYXhQbUxNTnV5US1tYjJQY0pZeFZmUlRHanp4OTFCVG5NY2ZlV0FIR09VWFEwMVJlSF85NEZGNU9jZVVMMHIyMFhBd21hUXc?oc=5",
-            "domaine": "i24news.tv",
-            "date": "2026-11-18T14:45:45Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Conseil de Paix: Israël et le Hamas responsables de l’échec à mettre un terme à la guerre à Gaza",
-            "url": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxQY3NfT1BCSlJnRzBSUUtBWUxhZ25WUGpFNnZjMkZrQzFla3l2ZkF5Y0FrSk5NME1KZ0tWLUlQOEdhUTB2MWRjelZqRDJmbmxJTy0wazl6c0dFSGo5VVM3WmRDVWlISGhqQXg5bkZqS3NGNGMySk1LMl9ONHdUN0JUUjFfZ3F3aHJXZ0k4cW1uM3UxeFdJeTNkVU1sR2hxYTQwSl9yVXQ4dmRRREkwMnoyWGU3WEp4a25mZGpnSlg5Zm5uUdIBxwFBVV95cUxPTFdUUTB2NU4taWh4NkQ0NUluQkpIc2VaVi11anU1T1ZjbDAwd0hJZHpmUDAtZ1kzQWZkcnNoeGZnSFFxYjdGWDhWRFA5aGFlcjJKYllfVnNYRmRxOVZSc0pCbml0aG5DZ1U3MGcyM3JPMXRRRlVmN0FubGRCRVg2SVJiZ18waWJvUmNUelEzaVhGN1ljcVQ0OC1hZll5RU12cGJ1cmFhUlhzcGtCNXc0dWJnOTFvaFV3WVlDY09zQTREbDRYeEdV?oc=5",
-            "domaine": "timesofisrael.com",
-            "date": "2026-11-18T13:34:16Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Le Conseil pour la paix avertit que le cessez-le-feu à Gaza risque de s’effondrer",
-            "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxNN2FGTkszZnp1NkpGYkFFQzhfSGtNMzdwc2dMV3RxVEdYLXhJTnFvdEszTnlUNGttMlZQZTdOWnJuVFFVUEg5b1c1ZDBEQ2VVcUZnczRqUFpWV0RWNzYtWWZycTdENFNfckQweE5RLW1ZNXk0T0NJX054TkNjUmRPSGVubzFUa3JRN1E3SXpSTm9Fc2JRUFNxbGFKTlRXaTRDSklBOVhQNzEzMk94?oc=5",
-            "domaine": "africanmanager.com",
-            "date": "2026-11-18T12:01:31Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Gaza: le Conseil de paix met en garde contre l’effondrement du cessez-le-feu‏",
-            "url": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE1tN1FvQTRVQktuT2lXLWtIZF96LXBUNkpOUm1tOTg2ZG9vaEdwOEtzUW9qV0tLTjFTYjlGSloyWHBLckJDaWZzVTJDYUw2UlQ5?oc=5",
-            "domaine": "sana.sy",
-            "date": "2026-11-18T11:39:52Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Le Conseil de la paix craint un effondrement du cessez-le-feu à Gaza",
-            "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxOVVVUS1M2QVhDMThfYk5aZ0tsVmItNkxDTk5SaHY3X0k0QmtIbmI1VXRvRE5xdVk0RzFfd3JOenZVSFRFVjF5TWY0VWNPUzZmdngzcUtleDNiNlYyNU5pbzMyRUN3V0tYZVVFN0ZTUVZTNXRBdWUzUlRoZGhYLXA1QW1zdHJ1VkxZczdxUktnMEJJU1JaNS1aVG41SXg3LU82QXc?oc=5",
-            "domaine": "radio-canada.ca",
-            "date": "2026-11-18T02:15:13Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Le Conseil de la paix craint un effondrement du cessez-le-feu à Gaza",
-            "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxNTlhaYkdiUy1KbUdmTHM3TU5HNzVsXzR1TkRiWlZudVo0OVVaSi1wcENnb1FnOGhBUTdiQlpDRk1aeVJjUmZLSF9iT3ZIWmoycHN6b2J2OWZneTBvUFcySHlBdG42RVpHMkpkT0ZkeXQ0MnBuNTlqM1JqOVNHWkNPOEJFSlpPWk4wa0NkS1dmTQ?oc=5",
-            "domaine": "yahoo.com",
-            "date": "2026-11-18T00:42:37Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Le Conseil de la paix craint un effondrement du cessez-le-feu à Gaza",
-            "url": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxPczFYU29kcnBjWmZmNWgyX041Qm00U3hDQThJVjNWc3pJd1FCY2hzTWNEcGU2VjlIZkYyYzJDNGVvTm94czY2QWswUXJaVnByNUJueGlqYjBvWDBLUk1qeTN1c0lKWk40YXFhQVFMSG1DVzlySmhGMEEwTkp1SUx6a1lhRFBNeTlFY3ZHWWtSRml5bjlQM2l1TXNvQ1VRMWFyaEdPa2RTeUM4Zk5jc2MzWV9oUGRQV0pGU1BaMTZxeTY3TExNbzdmR0dlMlhGSmpJUDBPTA?oc=5",
-            "domaine": "latribune.ca",
-            "date": "2026-11-17T19:11:00Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Le Conseil de la paix craint un effondrement du cessez-le-feu à Gaza",
-            "url": "https://news.google.com/rss/articles/CBMi3gFBVV95cUxOYnFFNmFoZUFEamQ3Z1l4dXZ1UFRCbGJ0OExTOWYxeUNDTGlhLXZESmZxaTdKVWNpbURzQzctcWZzMk15UHBkMGRGdTFmREE2QnlPbC1reEswampRa05wNTh2aUVoaG5OMkI0cFVDZDBWdTNjdDBKNlhHOVI2NWdWNnJxYVc2alRoeEw5VlFKbGM2cFIyR0hrbmZGR2pxQUhHbDNIVzM4RW8zendtNnlFX0c4Sm9Sb1h1T1BibnVTdUJOcXdRbV9aeFVuQ2hRSHlYbVY0NHgzZjFrMVI4dnc?oc=5",
-            "domaine": "noovo.info",
-            "date": "2026-11-17T19:08:00Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          },
-          {
-            "titre": "Gaza | Le Conseil de la paix craint un effondrement du cessez-le-feu",
-            "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxOZ2Nic2s4V040Q0lpNUl5T1VJVTNHNUYtd2JrcjFjVGs1ajZwc3FfclVJX2tCVXFvODV4NXRIMnlkOTlJZmJPRXlYWVhQVE1TWUxNQnlQbzZSaFQ5anM2U3FvZXNkdDludFZvalBLY2lYd3lmcERUOG94em9DelVPNGM0cXBSNHV5Nk1iNWsyd1FjN1lHLVhpQncxQ04wV1pjT29vRzNhT204QmRsY1dwVFJtLTFBdDQwT2lHcFJRaThnMkp5QTFpdmltek0?oc=5",
-            "domaine": "lapresse.ca",
-            "date": "2026-11-17T15:41:22Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (français)"
-          }
-        ],
-        "nb_articles": 11,
-        "nb_domaines": 8,
-        "officiel": false,
-        "premier": "2026-11-17T15:41:22Z",
-        "dernier": "2026-11-20T10:27:22Z",
-        "tonalite_gdelt": null,
-        "score_selection": 6.34
       },
       {
         "id": "evt-803326e62b0c",
@@ -3365,6 +3322,111 @@
         "dernier": "2026-11-20T05:51:09Z",
         "tonalite_gdelt": -2.17,
         "score_selection": 7.84
+      },
+      {
+        "id": "evt-ff9ac7bb28f5",
+        "titre": "Le Pentagone évalue le coût du conflit avec l'Iran",
+        "titre_origine": "Iran war costs surpass $48B as lawmakers demand details on base damage",
+        "categorie": "conflit",
+        "titre_langue": null,
+        "mention": null,
+        "categorie_libelle": "Conflit armé",
+        "pays": [
+          "US",
+          "IR"
+        ],
+        "pays_noms": [
+          "États-Unis",
+          "Iran"
+        ],
+        "mondial": false,
+        "pays_suivis": [
+          "US"
+        ],
+        "lieux": [],
+        "lieux_noms": [],
+        "theme": false,
+        "chronologie": [],
+        "regions": [
+          "amerique_nord",
+          "moyen_orient"
+        ],
+        "gravite": 3,
+        "gravite_regles": 2,
+        "note_gravite": "gravité 4 proposée par Gemini, ramenée à 3 (repères : base conflit : 2)",
+        "ia": true,
+        "modele": "gemini-3.5-flash-lite",
+        "analyse_le": "2026-11-20T03:16:47Z",
+        "resume": [
+          {
+            "texte": "Le Pentagone a évalué le coût du conflit avec l'Iran à plus de 48 milliards de dollars, hors dégâts sur les bases.",
+            "sources": [
+              "https://www.ky3.com/2026/11/20/pentagon-puts-iran-war-cost-483-billion-excluding-base-damage/",
+              "https://www.wdio.com/top-stories/iran-war-costs-surpass-48b-as-lawmakers-demand-unreleased-estimates-on-base-damage/"
+            ]
+          },
+          {
+            "texte": "Des parlementaires américains exigent la publication des estimations non divulguées concernant les dommages subis par les infrastructures militaires.",
+            "sources": [
+              "https://www.wdio.com/top-stories/iran-war-costs-surpass-48b-as-lawmakers-demand-unreleased-estimates-on-base-damage/",
+              "https://www.pilotonline.com/2026/11/19/iran-war-costs-billions/"
+            ]
+          }
+        ],
+        "actifs": [
+          {
+            "actif": "défense",
+            "sens": "hausse",
+            "texte": "Les dépenses militaires accrues et les besoins de renouvellement du matériel soutiennent le secteur de la défense.",
+            "sources": [
+              "https://www.ky3.com/2026/11/20/pentagon-puts-iran-war-cost-483-billion-excluding-base-damage/"
+            ]
+          }
+        ],
+        "horizon": "mois",
+        "confiance": "élevée",
+        "contre": [
+          {
+            "texte": "Une réduction des crédits votée par le Congrès pourrait limiter l'impact financier à long terme.",
+            "sources": [
+              "https://www.wdio.com/top-stories/iran-war-costs-surpass-48b-as-lawmakers-demand-unreleased-estimates-on-base-damage/"
+            ]
+          }
+        ],
+        "sources_independantes": 3,
+        "sources": [
+          {
+            "titre": "Pentagon puts Iran war cost at $48. 3 billion, excluding base damage",
+            "url": "https://www.ky3.com/2026/11/20/pentagon-puts-iran-war-cost-483-billion-excluding-base-damage/",
+            "domaine": "ky3.com",
+            "date": "2026-11-20T00:45:00Z",
+            "officiel": false,
+            "source": "GDELT DOC 2.0"
+          },
+          {
+            "titre": "Iran war costs surpass $48B as lawmakers demand unreleased estimates on base damage",
+            "url": "https://www.wdio.com/top-stories/iran-war-costs-surpass-48b-as-lawmakers-demand-unreleased-estimates-on-base-damage/",
+            "domaine": "wdio.com",
+            "date": "2026-11-20T00:45:00Z",
+            "officiel": false,
+            "source": "GDELT DOC 2.0"
+          },
+          {
+            "titre": "Iran war costs surpass $48B as lawmakers demand details on base damage",
+            "url": "https://www.pilotonline.com/2026/11/19/iran-war-costs-billions/",
+            "domaine": "pilotonline.com",
+            "date": "2026-11-20T00:15:00Z",
+            "officiel": false,
+            "source": "GDELT DOC 2.0"
+          }
+        ],
+        "nb_articles": 3,
+        "nb_domaines": 3,
+        "officiel": false,
+        "premier": "2026-11-20T00:15:00Z",
+        "dernier": "2026-11-20T00:45:00Z",
+        "tonalite_gdelt": -2.17,
+        "score_selection": 6.5
       },
       {
         "id": "evt-975e822508aa",
@@ -3773,7 +3835,7 @@
         "officiel": false,
         "premier": "2026-11-16T08:25:00Z",
         "dernier": "2026-11-19T17:00:54Z",
-        "tonalite_gdelt": -0.6,
+        "tonalite_gdelt": -0.64,
         "score_selection": 10.4,
         "theme_confirme": true,
         "nb_evenements": 2
@@ -4235,7 +4297,7 @@
         "officiel": false,
         "premier": "2026-11-16T16:54:07Z",
         "dernier": "2026-11-18T17:30:00Z",
-        "tonalite_gdelt": -1.29,
+        "tonalite_gdelt": -1.27,
         "score_selection": 7.0
       },
       {
@@ -4614,7 +4676,7 @@
         "officiel": false,
         "premier": "2026-11-16T01:02:00Z",
         "dernier": "2026-11-17T17:21:11Z",
-        "tonalite_gdelt": -0.51,
+        "tonalite_gdelt": -0.49,
         "score_selection": 9.67,
         "theme_confirme": true,
         "nb_evenements": 2
@@ -4754,7 +4816,7 @@
         "officiel": false,
         "premier": "2026-11-15T12:32:21Z",
         "dernier": "2026-11-16T19:19:21Z",
-        "tonalite_gdelt": -3.16,
+        "tonalite_gdelt": -3.13,
         "score_selection": 6.67
       },
       {
@@ -4931,7 +4993,7 @@
         "officiel": false,
         "premier": "2026-11-10T05:31:40Z",
         "dernier": "2026-11-16T18:35:45Z",
-        "tonalite_gdelt": -1.29,
+        "tonalite_gdelt": -1.27,
         "score_selection": 14.14
       },
       {
@@ -5094,7 +5156,7 @@
         "officiel": false,
         "premier": "2026-11-12T21:35:00Z",
         "dernier": "2026-11-14T09:50:00Z",
-        "tonalite_gdelt": -3.16,
+        "tonalite_gdelt": -3.13,
         "score_selection": 8.42
       },
       {
@@ -5139,7 +5201,7 @@
           },
           {
             "id": "evt-f7a1968f92cb",
-            "date": "2026-11-20T23:54:00Z",
+            "date": "2026-11-21T00:34:51Z",
             "titre": "Résultats des élections de mi-mandat et locales aux États-Unis",
             "gravite": 2,
             "resume": "Les résultats des élections de mi-mandat et des scrutins locaux se déroulent dans plusieurs États américains, incluant la Californie, le Nevada et le Dakota du Sud.",
@@ -5324,14 +5386,250 @@
           }
         ],
         "nb_articles": 120,
-        "nb_domaines": 27,
+        "nb_domaines": 26,
         "officiel": true,
         "premier": "2026-11-02T00:25:12Z",
-        "dernier": "2026-11-20T23:54:00Z",
+        "dernier": "2026-11-21T00:34:51Z",
         "tonalite_gdelt": -2.17,
-        "score_selection": 15.14,
+        "score_selection": 15.28,
         "theme_confirme": true,
         "nb_evenements": 3
+      },
+      {
+        "id": "theme-evt-98fddb85990a",
+        "titre": "Pourparlers diplomatiques entre les États-Unis, la Russie et l'Ukraine",
+        "titre_origine": "Germany, France, UK, Ukraine urge Russia to agree to winter energy ceasefire",
+        "categorie": "diplomatie",
+        "titre_langue": null,
+        "mention": null,
+        "categorie_libelle": "Diplomatie et sommets",
+        "pays": [
+          "RU",
+          "UA",
+          "US",
+          "FR",
+          "DE"
+        ],
+        "pays_noms": [
+          "Russie",
+          "Ukraine",
+          "États-Unis",
+          "France",
+          "Allemagne"
+        ],
+        "mondial": false,
+        "pays_suivis": [
+          "US",
+          "FR",
+          "DE"
+        ],
+        "lieux": [
+          "AE"
+        ],
+        "lieux_noms": [
+          "Émirats arabes unis"
+        ],
+        "theme": true,
+        "chronologie": [
+          {
+            "id": "evt-98fddb85990a",
+            "date": "2026-11-20T22:45:51Z",
+            "titre": "Des délégations russes et ukrainiennes attendues à la Maison-Blanche",
+            "gravite": 2,
+            "resume": "Des responsables russes et ukrainiens se rendent à la Maison-Blanche pour des discussions à la suite d'un cessez-le-feu humanitaire temporaire.",
+            "nb_sources": 12,
+            "source": "https://news.google.com/rss/articles/CBMihgFBVV95cUxPYjl6QkpxM3ZnRjZ3MDIxaFFCTHduclVFT2xHdlB0d01YVGZ1bl85TzJzS3RPcjg3M3BQbEdiVncyQlc5MlZveDg0SkhsLWtpR1h5MXdFNzJ1cnhiOGJvbmFReVZsLXFlbldRN3N1YjI0dWVoSEdlTTlhUExPUUV5X0drS2JNQQ?oc=5"
+          },
+          {
+            "id": "evt-646dd36f97c7",
+            "date": "2026-11-21T00:30:00Z",
+            "titre": "Ouverture des pourparlers trilatéraques entre les États-Unis, la Russie et l'Ukraine",
+            "gravite": 2,
+            "resume": "Des négociations médiées par les États-Unis pour mettre fin au conflit entre la Russie et l'Ukraine ont démarrées à Abou Dabi avec la participation des trois pays.",
+            "nb_sources": 12,
+            "source": "https://www.dailymail.com/news/article-16310391/Trump-Ukraine-peace-deal-January.html"
+          }
+        ],
+        "regions": [
+          "amerique_nord",
+          "europe"
+        ],
+        "gravite": 2,
+        "gravite_regles": 1,
+        "note_gravite": "gravité 4 proposée par Gemini, ramenée à 2 (repères : base diplomatie : 1)",
+        "ia": true,
+        "modele": "gemini-3.5-flash-lite",
+        "analyse_le": "2026-11-10T11:16:21Z",
+        "resume": [
+          {
+            "texte": "Des négociations médiées par les États-Unis pour mettre fin au conflit entre la Russie et l'Ukraine ont démarrées à Abou Dabi avec la participation des trois pays.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMidkFVX3lxTFBTMVQyQVdJaG5fZmtRMENRcFBfcmN2bVJFdnJKRy12QmlPZEZoSThoZDBGRnBkTGxMY3ZmVTZDN3BQZkdrSWdJa1RQUElKbnNZYmo0S3VTX1JweVRqajBIM0lKa0hJcDQzVWM3N0lCYXpNOG9Td2c?oc=5",
+              "https://www.theguardian.com/world/live/2026/nov/10/ukraine-russia-war-us-talks-abu-dhabi-europe-latest-news-updates"
+            ]
+          },
+          {
+            "texte": "La Russie rejette l'option d'un cessez-le-feu temporaire tandis que la France et l'Europe conditionnent de futures discussions de sécurité à un arrêt des combats.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMiZEFVX3lxTFB6VksyS1l5VzZqdDZmempTMnEtZ0FVMzlKblpDZUFGb0pmWWJRc2pnWGVhTGZLRHVmaVZ6X01EWXM4TG9sVEdlMVdnSnF0bVg5cDAwQnVSN2dyZFNtbU5CZExNQ3U?oc=5",
+              "https://news.google.com/rss/articles/CBMiwgFBVV95cUxNZkhfUE5OWDZaSlpYY2lGOFRnMkNTV0o5ZEhoLUg3ampGeTQwQU5VMFFLcV95UUR6VDRtM1lOdHNsVkQ1R0lBa2txdXZyUWJuTFdGRVg2Sk5qX21rakdheXlnUHNXSnJSemNIZzRQajVjU2xDNERNTzdSTzZkZzlWb1JVZHpCT3FvdUhRRmxfQXhIckc3a2tjMGxaV1dlUUJudnlJaFFNcnB5OFhVUkVfN1lqMzNCVzZGTDh0N3h1MERGdw?oc=5",
+              "https://news.google.com/rss/articles/CBMi1AFBVV95cUxPd201UHRHeFFxSVBFbzNuUmhiWlp1dXRqSjhZV2p1UHlubHE3VDVhRnJYZlpTcDZfTll3QmJETDJBUFI1d0RrVWdKS2NkMERIOVZtMnFLYnBNbG92dnB5aTZTZGgzSUVvMDliRFByRlI0eWFqcjRDVTA3dTlWcXRqVHNwa2ZjeGVCa2hvQTN0X29lWmdwMmk2OENMeXNMQVk4bl9SYzMtb3NJYVZsRURUMHRXeEFfZGpKenFZOUs3UU5TeVBLcERSOVpPNDVZYjFVSVljRw?oc=5"
+            ]
+          }
+        ],
+        "actifs": [
+          {
+            "actif": "pétrole",
+            "sens": "incertain",
+            "texte": "L'incertitude liée aux négociations diplomatiques maintient la volatilité des cours de l'énergie sans orientation claire.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMidkFVX3lxTFBTMVQyQVdJaG5fZmtRMENRcFBfcmN2bVJFdnJKRy12QmlPZEZoSThoZDBGRnBkTGxMY3ZmVTZDN3BQZkdrSWdJa1RQUElKbnNZYmo0S3VTX1JweVRqajBIM0lKa0hJcDQzVWM3N0lCYXpNOG9Td2c?oc=5",
+              "https://news.google.com/rss/articles/CBMiwgFBVV95cUxNZkhfUE5OWDZaSlpYY2lGOFRnMkNTV0o5ZEhoLUg3ampGeTQwQU5VMFFLcV95UUR6VDRtM1lOdHNsVkQ1R0lBa2txdXZyUWJuTFdGRVg2Sk5qX21rakdheXlnUHNXSnJSemNIZzRQajVjU2xDNERNTzdSTzZkZzlWb1JVZHpCT3FvdUhRRmxfQXhIckc3a2tjMGxaV1dlUUJudnlJaFFNcnB5OFhVUkVfN1lqMzNCVzZGTDh0N3h1MERGdw?oc=5"
+            ]
+          }
+        ],
+        "horizon": "semaines",
+        "confiance": "moyenne",
+        "contre": [
+          {
+            "texte": "Un accord rapide et inattendu sur un cessez-le-feu pourrait accentuer la baisse des prix du pétrole.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMiwgFBVV95cUxNZkhfUE5OWDZaSlpYY2lGOFRnMkNTV0o5ZEhoLUg3ampGeTQwQU5VMFFLcV95UUR6VDRtM1lOdHNsVkQ1R0lBa2txdXZyUWJuTFdGRVg2Sk5qX21rakdheXlnUHNXSnJSemNIZzRQajVjU2xDNERNTzdSTzZkZzlWb1JVZHpCT3FvdUhRRmxfQXhIckc3a2tjMGxaV1dlUUJudnlJaFFNcnB5OFhVUkVfN1lqMzNCVzZGTDh0N3h1MERGdw?oc=5"
+            ]
+          }
+        ],
+        "sources_independantes": 5,
+        "sources": [
+          {
+            "titre": "Donald Trump wants Ukraine peace deal by January as he brands Russian missile strike on Poland mistake",
+            "url": "https://www.dailymail.com/news/article-16310391/Trump-Ukraine-peace-deal-January.html",
+            "domaine": "dailymail.com",
+            "date": "2026-11-21T00:30:00Z",
+            "officiel": false,
+            "source": "GDELT DOC 2.0"
+          },
+          {
+            "titre": "Trump cites good talks with Putin on Ukraine, holds back on security guarantees",
+            "url": "https://www.internazionale.it/ultime-notizie-reuters/2026/11/20/trump-says-he-putin-had-very-good-talks-on-ukraine",
+            "domaine": "internazionale.it",
+            "date": "2026-11-20T21:45:00Z",
+            "officiel": false,
+            "source": "GDELT DOC 2.0"
+          },
+          {
+            "titre": "US, Qatar Discuss Restoring Iran Ceasefire, Restarting Nuclear Talks",
+            "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE1wQkxkNDVueTdTXzNiZi04bmdKNXRfX2UwOC11LTlTQUUzYmJ6ai1RXzRMODZNeUJkdHZtVEp2a1BrNUpaRGRBdkxIN1JSVWpYN3luQQ?oc=5",
+            "domaine": "bloomingbit.io",
+            "date": "2026-11-20T19:14:21Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
+            "titre": "Did Melania Trump's Russia-Ukraine Ceasefire Push Actually Work?",
+            "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxOYWVHWmpHWmVSd0o1QWtfTGZGeUh4QjRBa3lOX0dQeXZveUdHSUtuUU9VSlZKbWVkNjdYRmdROVRzM2R6Wm5UVndLSG5BQm5QMjBNanlZZW51c3JfOUFDN0xBcmY1S3BNUzhJbTRWZnduYUlLZkozNGFHbUMxXzY4LTljNW4zdw?oc=5",
+            "domaine": "newsweek.com",
+            "date": "2026-11-20T18:18:00Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
+            "titre": "Trump says Putin based timing of Ukraine invasion on Trump being out of office",
+            "url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxNOU9OWHVfazRaM0QwOV9kVFV0Vk9ZaWFMZ2tlZXRSV3RfMlZSME9OMTlBQnp5OENRXzNMM29tcThNVjFJbVlvMnZHbkNhcHozWVlfTXUyZ0pVeHA5YVpjMXEwY2tVYTlYWFlDNkRWQXhTWENmZTVxZXFtbVVWSEhKNkN4TE5rRjJQNmcwTTJtWjd6ZFZwN0tXQXNXUWNHVGdXcEdIVkV3eDJEZG5kOXc?oc=5",
+            "domaine": "washingtontimes.com",
+            "date": "2026-11-20T18:09:26Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
+            "titre": "Germany, France, UK, Ukraine Urge Russia To Accept Winter Energy Ceasefire",
+            "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxPZXEyN1ZjWXZEMUV4WlQ4NE9XcUdlQVJ4aVVUbnNYMXptX0lUU1BWZmRwY2R5ZDlYLWdwQmZvWXYzaWFnX2E4TzZoa0dvR0tZRFltLW9GcDctUENRVHNCbHBQYXJMczNNRHE4bDZlbDRsNWxGNHhJdzNBQ0ZSMnVSVWd6RkFBOGxtUUlpZ2dSeW9PSnRZS2dGZnFpNA?oc=5",
+            "domaine": "tvcnews.tv",
+            "date": "2026-11-20T17:20:00Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
+            "titre": "Trump seeks Ukraine peace deal before January",
+            "url": "https://www.ft.com/content/6c1b8a64-35f9-4aba-8605-45a4abdce6b8?syn-25a6b1a6=1",
+            "domaine": "ft.com",
+            "date": "2026-11-20T16:17:15Z",
+            "officiel": false,
+            "source": "Financial Times, monde (RSS)"
+          },
+          {
+            "titre": "Melania Trump's Ukraine ceasefire effort helps save 800 lives",
+            "url": "https://news.google.com/rss/articles/CBMikgFBVV95cUxNSmI1d1Y2MFl3SG82bzJlZHhRYW1fb3h5R2NaR2RIN0JqZWRPS2lyc0QybXZzZjltVGI1cTRncEREXzREdlRhMjdqZzNnamgzSmpCVjRkcVlJOEI1d1VUYkRWWVYzZUFZWGNsLXo0M2tDeDZ6V1F1dzFxVFdhVFVtc0U4VE95M25FWHhOcHM5bVFfZw?oc=5",
+            "domaine": "yahoo.com",
+            "date": "2026-11-20T15:50:39Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
+            "titre": "Melania Trump's Ukraine ceasefire effort helps save 800 lives",
+            "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTFA1anZCc1JWZndELWtINW5BS2g4VWgyVzAwV0NndGV2b1ljYnBOVk5sRGlESGpBR0dNWlNOMGdQd3VDeG5iREZYM25zYWp4bXo0WGctVThn?oc=5",
+            "domaine": "foxnews.com",
+            "date": "2026-11-20T15:50:39Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
+            "titre": "No major agreement possible without a ceasefire in Ukraine",
+            "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxOM1pkUWxBMElxYS0wVWlTMjJzUlZ4VHhtcjRSLXE2OGpFZmNLSzFZeUNPcE1pS1hyQUNoNWxNbEpUcGNiM19VSi14R1E5cWRhdTdwZGVyYTR3VEJTSHJycExjbzhKZEE1ZE1Pc1A4UktZYlQ0VXE1NEs3dW9ESFFKaHhHdmh2c2hvR1BkdVQ3OWlNaUE?oc=5",
+            "domaine": "todaypress.tv",
+            "date": "2026-11-20T15:33:04Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
+            "titre": "Canada's Carney calls out Russia's brutal invasion of Ukraine to Putin's face",
+            "url": "https://news.google.com/rss/articles/CBMixAFBVV95cUxNZmgxcS04ZkJTTjhNRVowQkhDX212RnFzYmR4N25HSFFSdFp5UU80ZHJyc1hOTW94M0doVng0bU5OQ1dtTUNGN1h0LUc4NHFkODN3X0s2ZXp4NHNuRTlBZ1p6ME9Ib1BwTGdRUHJKN2lDa1BGblVnQm9EQ2kySVBRY3BOeXRQVHByQWZXRjR2SXB0cEh4SUdWMnJhQTdZWWdFVHZ3NUxKcGVKUldqTnlTaHZxOHFfSG9NNHY3Z0ZRZENKR1Nj0gHKAUFVX3lxTE5USWd2Z1VVeGNSX2tJNGRBNUFvQmU5M3Y5TThaT21wS1lGV1NMTWV5TzZVUW02UHVxNWZNbUgtU3ZTTlJpRmlhV0lRZjA3WmwtRlo2TVhvM25iVTZMMXpJb2g4ak5OZ2c0ZVo3N0RGM0VBOWRITlAzT0FuTUxOVG1jXzN2SHhVX29JRFlzb2x3cmxZXzFkTGNjdTZfZ3J2RGFwcEtiOU5ydHRKRVpNVHM3Y2Y4WlRVR2xYeWN4R05SYl9nbW1iUy1JSmc?oc=5",
+            "domaine": "tag24.com",
+            "date": "2026-11-20T14:23:20Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
+            "titre": "Invasion de l'Ukraine - Frappes russes: Paris demande une réunion du Conseil de sécurité de l'ONU",
+            "url": "https://news.google.com/rss/articles/CBMigAJBVV95cUxQQkhDLW1TTXlFd0lONUN1UnZjME5sQjIzSzB3OW12QkRHNXl2U0tTbGVQZDlTWmxSZXJyaFBpZFdMNmVzMWlFQlVSVGR3RUpDbFRIbUJNVFBfSFNRaWJ5WUdRaElKR2I1Mlk4Ym9yQ1htZDJBTm13NW81TVphMEU0bWRSTFdFVDdXMHMwNVp4Y3FNOU9BZWxfQ0xsT3BSNy1kVWJpU1ZQOU4xdnZEenpuRHQ1QjM2b19KbUN2blRrWjRCQjlVN2dvRS1kUC03MmMyTTFyVFdRb0xEUld5UGl5aXdybWYwbEpERlRLY1JqQW9MMkt4OFpnMXQ0dFctbXpO?oc=5",
+            "domaine": "dhnet.be",
+            "date": "2026-11-20T12:34:00Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Melania Trump Speaks About Oleshky Ceasefire at Series Premiere",
+            "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxPYjl6QkpxM3ZnRjZ3MDIxaFFCTHduclVFT2xHdlB0d01YVGZ1bl85TzJzS3RPcjg3M3BQbEdiVncyQlc5MlZveDg0SkhsLWtpR1h5MXdFNzJ1cnhiOGJvbmFReVZsLXFlbldRN3N1YjI0dWVoSEdlTTlhUExPUUV5X0drS2JNQQ?oc=5",
+            "domaine": "mezha.net",
+            "date": "2026-11-20T22:45:51Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
+            "titre": "Melania Trump details hands-on role in Ukraine ceasefire that evacuated nearly 800 civilians",
+            "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxNN1N3MjdhLXpDSnVQdzJUQTBmNWFmTVFHUXZwMS05Q3BIRkdsc1oxQzVaTlkwTDh1N3Y3SHplUFU2Uk9INHN2UFZrNktDRGNTVmpaLUJtdkJRaVlaenJzbUFKb0s1TDlqcm5sd0hTd2gzemFqRnBIMVpRamxyRDdzTTFxdjRkajBnS0F4M2hJTW12LVJfbmN5S1ZKTG5iZDlSRXB0bktONU5vcURsZzBMc1VCYXTSAboBQVVfeXFMT0lfSFFXRmlaaHFCLUlTTGtYbHl5aEpJQzdpWldweEI1WWo5ZnQ2TVlJSWRGdEpEY05sNHM2UGFWTnF0b0lYZUFOQ1Q3aHhidWJZU1BGSFlfbFN4RnZiczA2V1BNbGhPZ1F0cmt5cHdJSHZHVVplOEVjaDZuT0laRG5FQ0JGSUN3a25ocU91UmUydU41RWdrelZORlk2ekhpOTZPazM2RFZmdUVrOHVwWVRlQ3h4WVRNVHV3?oc=5",
+            "domaine": "foxnews.com",
+            "date": "2026-11-20T17:48:14Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          },
+          {
+            "titre": "Putin proposes second humanitarian ceasefire — is it a trap?",
+            "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxQU1FBcThqUG1TUkU1b0x5OHUzQ3NuR3BtMG1VSDhSSkVrTEY5RVZYNHN2eXFNek1kTVl4TEFMTk5QaDRObGc4VUMtWGxUNWpOUDlCcVlVem4wYjBibEJMU1dRN3Q4eDBJQno0ME5GX0ZUaWE0a3Q1V0t0VFhHNlBQQUZQbk5QcnJsMjk1UzdrTlpMN3EzYXUwQnpDYzlaaEU2alNlbElYOFdtb1XSAasBQVVfeXFMT1RhX3BtcEFPZTNMSG9EUFNmSnVLMTA1Tmh0cWZjWEc4YndVbGxMeExkNUI0MHlaVUt2RWdTb2JQdmlvelV1Wk1hdlFHN0M2VGxnREFtMThWY1pVWDZGVGVhLXBZLWE1aUs3UkdlYmlGR2RkNXpfLVJFazdWUkoxVy1jclhkX2hpVnVvVjVTSk94ZUY1WDZOWVpmR1ZqS0hhaFlDa0tENHdQUG53?oc=5",
+            "domaine": "dw.com",
+            "date": "2026-11-19T21:31:03Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (anglais)"
+          }
+        ],
+        "nb_articles": 80,
+        "nb_domaines": 32,
+        "officiel": false,
+        "premier": "2026-11-02T22:31:33Z",
+        "dernier": "2026-11-21T00:30:00Z",
+        "tonalite_gdelt": -1.32,
+        "score_selection": 15.59,
+        "theme_confirme": true,
+        "nb_evenements": 2
       },
       {
         "id": "evt-4a87273a286c",
@@ -5406,6 +5704,14 @@
         "sources_independantes": 4,
         "sources": [
           {
+            "titre": "U.S. senator says Canada should make interim tariff agreement, let Congress 'legislate' long-term deal",
+            "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxNYV9NcS1WUXhwczVEUVBWQjdpc3YtTXU1WEFqTlFzbThRb3VKRlJLWG91Z05iSzFDRE9SbDI0aGVWbm83UzhyZG1xMWZPWmJWcGJnYmJISXdack5KY21lbGU5aFNkSHVOSzlKZ0wtTDhSSmpsazFjOGxqQkZvUXF4eWNGVkFBeW9seXNfaEp5UXlvTG5EUFE?oc=5",
+            "domaine": "cbc.ca",
+            "date": "2026-11-21T00:25:00Z",
+            "officiel": false,
+            "source": "Google Actualités : droits de douane (anglais)"
+          },
+          {
             "titre": "US trade war spurs Canada to further diversify its lumber market",
             "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTFAyd1JCWDdNNm1hSkRtLVc0ckRYclBYa3BObDBkRC1reDVaYXlwLVRCd0QxdURkTEVTb0tBOWVjRzRoWFROVzdrWURXVU9hQTk2OVFzOVZ2NlZsWlplTGpGbdIBXEFVX3lxTE5DVTNrZ01DVlJkdmJ4THotRVdGUzVDNXFVZ2FIUkFqZU5WMzhld18xSm01SkF0eDJHc1ozb3ZzNTVtSjR6VG5mbkgtcEFaMFFpck92d0hTcGR6RkZG?oc=5",
             "domaine": "modernghana.com",
@@ -5430,17 +5736,17 @@
             "source": "GDELT DOC 2.0"
           },
           {
-            "titre": "Trump says he's working on a 'fair' trade deal with Canada",
-            "url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxQbnhUTGphX2ZKNEFtY1lycnBybW13Y1lRZ2JZWGZDT1J1NHBuT2FWSDI3MGVvSnExb0dVRndtaW55MldUWHc0TVNDM05paGJkbXJXZ1NGMV8tZGlydy1JT1lDOFljLUw0V1FrakFPOW5FdHRIUFdxUzZMOHNsWkNhOW9FR2wyeF9fanc?oc=5",
-            "domaine": "cbc.ca",
-            "date": "2026-11-20T21:07:45Z",
+            "titre": "Trump says Canada feeling 'emboldened' but he's seeking a 'fair' trade deal",
+            "url": "https://news.google.com/rss/articles/CBMiugFBVV95cUxQTDd3U0ZnOXlFNDk4RU1FR2JvLVpIcWM1Z2lmdU1YX1oxdHN1WnFsa2VKSXhSQVdSaG1jTnJKNmk1elhaV3M2T1o3OFUzYUFITkZjVHRUVzdnQkVNcG0zdlI0UklfRWhZWlpKY1EtYm5yT3BxNDNoWGl2Vk9haFhJb2lZaTJldHA3SmYxT0ZGbjZ3SmU3ZEFNOEVzUm83Wnp0cnRlWTZvRF9iR29OVjBSMEtPYjNadHpIalE?oc=5",
+            "domaine": "bnnbloomberg.ca",
+            "date": "2026-11-20T20:47:43Z",
             "officiel": false,
             "source": "Google Actualités : droits de douane (anglais)"
           },
           {
             "titre": "Trump says Canada feeling 'emboldened' but he's seeking a 'fair' trade deal",
-            "url": "https://news.google.com/rss/articles/CBMiugFBVV95cUxQTDd3U0ZnOXlFNDk4RU1FR2JvLVpIcWM1Z2lmdU1YX1oxdHN1WnFsa2VKSXhSQVdSaG1jTnJKNmk1elhaV3M2T1o3OFUzYUFITkZjVHRUVzdnQkVNcG0zdlI0UklfRWhZWlpKY1EtYm5yT3BxNDNoWGl2Vk9haFhJb2lZaTJldHA3SmYxT0ZGbjZ3SmU3ZEFNOEVzUm83Wnp0cnRlWTZvRF9iR29OVjBSMEtPYjNadHpIalE?oc=5",
-            "domaine": "bnnbloomberg.ca",
+            "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxPckl3Z250NHRXSU42dWFVb2FKTWx0LUU5bkZJbDQzeFJwZ3BBSWgwbG5aaVhZb0hyUXlvRWRZcWZjZ1diZG9xSFBqd3J4SVJmRFh4Q3YwQ09lSERxbThLYWZYRUtFSHMzdnAyY1M4dEFfdWZLZGV0eW8wdGtQNEc5b1dveDVTRUdKSGVTX251b0NlOHl2OXp1QmFnZjZJSHV2MGdFUnVSWGQwY29FQ2xFa3RwYllZWVRuMnBEU1JFcDM?oc=5",
+            "domaine": "ctvnews.ca",
             "date": "2026-11-20T20:47:43Z",
             "officiel": false,
             "source": "Google Actualités : droits de douane (anglais)"
@@ -5492,23 +5798,15 @@
             "date": "2026-11-20T19:30:59Z",
             "officiel": false,
             "source": "Google Actualités : droits de douane (anglais)"
-          },
-          {
-            "titre": "Ford rouvre une usine au Canada malgré les droits de douane américains",
-            "url": "https://news.google.com/rss/articles/CBMiygFBVV95cUxQOW5iRm5fSkhhNG50eWpKbVh2VktTaE1WUEg4aHFESlVTYlNMbEh2bWt5SUhqcjZZY3NZQ21LbldsdWRpWVlVZVRVNkZaX3ZJMUJPM2R5eWMwQWM5V0tHWGxzZXJZRUVEejRrZ1g5MDAyeTU5Ul9uYkdlTmw2WU16WFhpNzZPc3FGaWM3MTV3ZGdRSzE0S1EwbUtVdk03S01GNUwwUEl5WUlYa0EwQ3dtelBHQjJFOEp1YjBjSmpiamNVUVNwdzdjZEtR?oc=5",
-            "domaine": "zonebourse.com",
-            "date": "2026-11-20T19:28:15Z",
-            "officiel": false,
-            "source": "Google Actualités : droits de douane (français)"
           }
         ],
         "nb_articles": 40,
-        "nb_domaines": 27,
+        "nb_domaines": 24,
         "officiel": false,
         "premier": "2026-11-02T19:41:33Z",
-        "dernier": "2026-11-20T23:30:00Z",
-        "tonalite_gdelt": -1.7,
-        "score_selection": 15.11
+        "dernier": "2026-11-21T00:25:00Z",
+        "tonalite_gdelt": -1.72,
+        "score_selection": 14.79
       },
       {
         "id": "theme-evt-93a47ecd4895",
@@ -5729,245 +6027,12 @@
           }
         ],
         "nb_articles": 52,
-        "nb_domaines": 31,
+        "nb_domaines": 30,
         "officiel": false,
         "premier": "2026-11-02T19:59:01Z",
         "dernier": "2026-11-20T23:28:15Z",
-        "tonalite_gdelt": -2.06,
-        "score_selection": 15.5,
-        "theme_confirme": true,
-        "nb_evenements": 2
-      },
-      {
-        "id": "theme-evt-646dd36f97c7",
-        "titre": "Pourparlers diplomatiques entre les États-Unis, la Russie et l'Ukraine",
-        "titre_origine": "Trump's Board of Peace faults Israel and Hamas for failure to end Gaza war",
-        "categorie": "diplomatie",
-        "titre_langue": null,
-        "mention": null,
-        "categorie_libelle": "Diplomatie et sommets",
-        "pays": [
-          "RU",
-          "UA",
-          "US",
-          "FR",
-          "DE"
-        ],
-        "pays_noms": [
-          "Russie",
-          "Ukraine",
-          "États-Unis",
-          "France",
-          "Allemagne"
-        ],
-        "mondial": false,
-        "pays_suivis": [
-          "US",
-          "FR",
-          "DE"
-        ],
-        "lieux": [
-          "AE"
-        ],
-        "lieux_noms": [
-          "Émirats arabes unis"
-        ],
-        "theme": true,
-        "chronologie": [
-          {
-            "id": "evt-646dd36f97c7",
-            "date": "2026-11-20T21:45:00Z",
-            "titre": "Ouverture des pourparlers trilatéraques entre les États-Unis, la Russie et l'Ukraine",
-            "gravite": 2,
-            "resume": "Des négociations médiées par les États-Unis pour mettre fin au conflit entre la Russie et l'Ukraine ont démarrées à Abou Dabi avec la participation des trois pays.",
-            "nb_sources": 12,
-            "source": "https://www.internazionale.it/ultime-notizie-reuters/2026/11/20/trump-says-he-putin-had-very-good-talks-on-ukraine"
-          },
-          {
-            "id": "evt-98fddb85990a",
-            "date": "2026-11-20T22:45:51Z",
-            "titre": "Des délégations russes et ukrainiennes attendues à la Maison-Blanche",
-            "gravite": 2,
-            "resume": "Des responsables russes et ukrainiens se rendent à la Maison-Blanche pour des discussions à la suite d'un cessez-le-feu humanitaire temporaire.",
-            "nb_sources": 12,
-            "source": "https://news.google.com/rss/articles/CBMihgFBVV95cUxPYjl6QkpxM3ZnRjZ3MDIxaFFCTHduclVFT2xHdlB0d01YVGZ1bl85TzJzS3RPcjg3M3BQbEdiVncyQlc5MlZveDg0SkhsLWtpR1h5MXdFNzJ1cnhiOGJvbmFReVZsLXFlbldRN3N1YjI0dWVoSEdlTTlhUExPUUV5X0drS2JNQQ?oc=5"
-          }
-        ],
-        "regions": [
-          "europe"
-        ],
-        "gravite": 2,
-        "gravite_regles": 1,
-        "note_gravite": "gravité 3 proposée par Gemini, ramenée à 2 (repères : base diplomatie : 1)",
-        "ia": true,
-        "modele": "gemini-3.5-flash-lite",
-        "analyse_le": "2026-11-04T10:16:49Z",
-        "resume": [
-          {
-            "texte": "Des responsables russes et ukrainiens se rendent à la Maison-Blanche pour des discussions à la suite d'un cessez-le-feu humanitaire temporaire.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMitAFBVV95cUxOVmp4aDJuZk94c1o5LTExN2syejd3WTlPQzVIanZEWDU1NTVkZGFIdS1YZmc4cWl0NEFUTFk3cW8xNGM4Rk9zUlB1WjFoZWJSVTBQXzBRcDNaSW11TzA2SFJqV1lFV2E2ZEJ4R0hJMExFMXJ2OUpxRmlrLS03NThOYTZWOGxGT2lWOXVOM25iMDRrcTFpU3ktQm5mZ0RBTDhVNVZxdHp4NWxKWTVybVVxbG5pbTQ?oc=5",
-              "https://news.google.com/rss/articles/CBMitAFBVV95cUxQZUZrcXE2RzVvdkNRdHhVSWtKdjVtRmNVVFVuSEVHMHRIMzhzNW5ZVWFWVkFZSFlEMEpURUNId1NtU1FDaDdLM3o1c3RsQk5EbW5jZmstRXJHUVRNUHd0cW45MXlodDFSampBaFFyMUJMdXVBWnktMS05NFRmazREeFdmMGxocWRFdlF1LW1HeWVnZUw0VFZpMHNoODVYN0VOMF9lY1Ffay1XUXExRm84SGg2MFI?oc=5"
-            ]
-          },
-          {
-            "texte": "Ces pourparlers sont organisés sous l'égide de Melania Trump après une mission humanitaire conjointe.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMixAFBVV95cUxOWTY5ZUpTUi1YSU1nR0dQNEZ0X3ZfM1FucHlUSkhEdWllMEJVQmQtdFNKTVROM1BSbHU4c2xaNENsYTh0Nms1VnYxeUV0aTlYMlBObjdSeEJWOS1IcnZOb25QR1ktc2ExaFpXVGp5bDlLenBwckxyYjZaMGt4YVg3ZFNxaE0xc3hISTlaRXVBWVJ4QUxKM0p3Z1c1Y2ZSUm1rZExpRkQ4c294LWI0aXpEVjVMWWR3azI5dEZoMjd2Z2R5UjVQ?oc=5",
-              "https://news.google.com/rss/articles/CBMikgFBVV95cUxNamN4b2xvbmJVOEFlV3F2T0E0M2d5am8xUVAwLVJQTUZlNlhIWWJhWk11NGF0ZW1KLVVua1NCWkt4UVdlT05oY3pBQWhaWllxdXo5bkM2ZVpudmNzS3h1czBsNUQwNjlhaGRKdkEzX2JNWks4S29LUDF5ZkNOY1hkVWVGUGd6VDhURUJNLTBIakdvQQ?oc=5"
-            ]
-          }
-        ],
-        "actifs": [
-          {
-            "actif": "pétrole",
-            "sens": "incertain",
-            "texte": "L'ouverture de pourparlers diplomatiques crée une incertitude sur la persistance des perturbations de l'approvisionnement énergétique.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMitAFBVV95cUxOVmp4aDJuZk94c1o5LTExN2syejd3WTlPQzVIanZEWDU1NTVkZGFIdS1YZmc4cWl0NEFUTFk3cW8xNGM4Rk9zUlB1WjFoZWJSVTBQXzBRcDNaSW11TzA2SFJqV1lFV2E2ZEJ4R0hJMExFMXJ2OUpxRmlrLS03NThOYTZWOGxGT2lWOXVOM25iMDRrcTFpU3ktQm5mZ0RBTDhVNVZxdHp4NWxKWTVybVVxbG5pbTQ?oc=5"
-            ]
-          }
-        ],
-        "horizon": "semaines",
-        "confiance": "moyenne",
-        "contre": [
-          {
-            "texte": "La reprise rapide des hostilités militaires entre les belligérants pourrait invalider cette perspective de négociation.",
-            "sources": [
-              "https://news.google.com/rss/articles/CBMipAFBVV95cUxOTDJxbHN5OE9nSjA4Z1JoVlNNRWFZeVdiMGJYdVB2RmhRSTd0UVNXejNDMmNBa0o5NS13bUl1YklRT1MyUXFISmpTa0h4RjkzaHMwZ05obWhEcm42MTZJMmRYNkhCRDVETDBVN1RKYk1WOTFDUXBENFJWbi1GTjctcGhMSkJSaVkzLUM0LThCVDVidUxva0FqOXoxdlVPQm9VZmh5MtIBoAFBVV95cUxOVDc4VXNIcUdKUFIzOXBHOGhZRDc3VkhJWUdEend5WURucUNKQkl0YmRtSHpIX3FSWUkxZXBmbTJFdnRKLTBVLU56VU02R0lEcF90eFFtbjBTVVNBcVRGclVRMjZ3NUtzU2dQRFdhWnBCdjR4bVQwMXE5MlgwWmxmNzhFWGsyRm4wWDFPYTRoLTRtSUtjLW5KNjBLOVpJSURo?oc=5"
-            ]
-          }
-        ],
-        "sources_independantes": 5,
-        "sources": [
-          {
-            "titre": "Melania Trump Speaks About Oleshky Ceasefire at Series Premiere",
-            "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxPYjl6QkpxM3ZnRjZ3MDIxaFFCTHduclVFT2xHdlB0d01YVGZ1bl85TzJzS3RPcjg3M3BQbEdiVncyQlc5MlZveDg0SkhsLWtpR1h5MXdFNzJ1cnhiOGJvbmFReVZsLXFlbldRN3N1YjI0dWVoSEdlTTlhUExPUUV5X0drS2JNQQ?oc=5",
-            "domaine": "mezha.net",
-            "date": "2026-11-20T22:45:51Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "Melania Trump details hands-on role in Ukraine ceasefire that evacuated nearly 800 civilians",
-            "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxNN1N3MjdhLXpDSnVQdzJUQTBmNWFmTVFHUXZwMS05Q3BIRkdsc1oxQzVaTlkwTDh1N3Y3SHplUFU2Uk9INHN2UFZrNktDRGNTVmpaLUJtdkJRaVlaenJzbUFKb0s1TDlqcm5sd0hTd2gzemFqRnBIMVpRamxyRDdzTTFxdjRkajBnS0F4M2hJTW12LVJfbmN5S1ZKTG5iZDlSRXB0bktONU5vcURsZzBMc1VCYXTSAboBQVVfeXFMT0lfSFFXRmlaaHFCLUlTTGtYbHl5aEpJQzdpWldweEI1WWo5ZnQ2TVlJSWRGdEpEY05sNHM2UGFWTnF0b0lYZUFOQ1Q3aHhidWJZU1BGSFlfbFN4RnZiczA2V1BNbGhPZ1F0cmt5cHdJSHZHVVplOEVjaDZuT0laRG5FQ0JGSUN3a25ocU91UmUydU41RWdrelZORlk2ekhpOTZPazM2RFZmdUVrOHVwWVRlQ3h4WVRNVHV3?oc=5",
-            "domaine": "foxnews.com",
-            "date": "2026-11-20T17:48:14Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "Putin proposes second humanitarian ceasefire — is it a trap?",
-            "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxQU1FBcThqUG1TUkU1b0x5OHUzQ3NuR3BtMG1VSDhSSkVrTEY5RVZYNHN2eXFNek1kTVl4TEFMTk5QaDRObGc4VUMtWGxUNWpOUDlCcVlVem4wYjBibEJMU1dRN3Q4eDBJQno0ME5GX0ZUaWE0a3Q1V0t0VFhHNlBQQUZQbk5QcnJsMjk1UzdrTlpMN3EzYXUwQnpDYzlaaEU2alNlbElYOFdtb1XSAasBQVVfeXFMT1RhX3BtcEFPZTNMSG9EUFNmSnVLMTA1Tmh0cWZjWEc4YndVbGxMeExkNUI0MHlaVUt2RWdTb2JQdmlvelV1Wk1hdlFHN0M2VGxnREFtMThWY1pVWDZGVGVhLXBZLWE1aUs3UkdlYmlGR2RkNXpfLVJFazdWUkoxVy1jclhkX2hpVnVvVjVTSk94ZUY1WDZOWVpmR1ZqS0hhaFlDa0tENHdQUG53?oc=5",
-            "domaine": "dw.com",
-            "date": "2026-11-19T21:31:03Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "After bridge attack by Ukraine, Putin says he will not negotiate ceasefire, vows retaliation",
-            "url": "https://news.google.com/rss/articles/CBMizgFBVV95cUxQVjliektNTmkyR3RhQkphZEhnc3ZmZWg5VWJjTDBDUDhQbmFQX3pDQmZRZU54b0dERnBXczdwTDRnWUNnZ2d1U0lIUnN4cGpSOHFrdHNYeGFrNng5RmJZMV9LNzdMUmpIb3RrNWdVa0VnNnBKLWZLWWFrZC0wVEVvdk1qZXpxVDVsaGF1M1UtLUtMaDU5S2ZYem5YMVY3SDRuS0MyaC1ELWZ5NkUxNUFzZ2RVRFIzZThvR0R4eFdscGVFMUZOM0NaRzdJTWRYUdIB2wFBVV95cUxOX1lCeE1YcXZMeXRiRG5ReURubjR5emlqZC1fUFR6bFg1VDBONXRYR0QxcTFsME00dWtqdnZxaGY4OWgzbzRMSldrSG1oT2EzcldkaEdSRm42eVEtUTBzQnZzcWdzdEZHaVBBeXB3ZlgxZHZYRVlNQXJ4Zmpqd0VleFVRWGp0bGJmdzAxdUpjelZNYXAtQTVfcGNRSWJSRld0VmZyd2dlV1dITVMzSmI5MzFNY0FGUTQ0MzUyUjVNdndJOXdBRGpnMGROaV9oNDV0NkNLOTJPVXBFUDQ?oc=5",
-            "domaine": "deccanherald.com",
-            "date": "2026-11-19T17:10:48Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "Putin rules out ceasefire talks after Ukrainian strikes on Kerch Bridge, threatens retaliation",
-            "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxQTGJnZXk5SW1IQkFjN0JWbVZmTllwbzZBLXp1R2RRMTBpVXVfOGx2WmVyczhQVkVQQXpfaWNHQTd6dkFrM05aQlBlNXlnYVF0cE9HOHY3VGlPSi1EZnZ2V1BoUGVRcGVEN1dfRlBycENJLUlDRnQ1Z0hGbktVczU3M0hTR0tuSnFpTTJGRWNaM3hQcFVXNzM5bWNZZGVGTm5POS1SeXBLeHN4ZzdlUlVfS285VDVlZlE1d1FkY2YtcHhzX2Q4blg40gHMAUFVX3lxTE9SVTI2Tm80SjdLeTd2ZW8tSXNuRGg3X2laTnBKdmFXX0M4cDNZT2lXeEM3aXZueXpaVlBwY2lORTFGMnM1UUdaNHhHLVFyaHZCVTQ5MlB3REV1U2Yta3Z1S0pTTmlFbllfdTNzYnI1RlYxZmJXUGNMZHpZbXphTE43c05JY21fNjlONU9Ub3h1T1hTV3dKbTBXZTZoMFJMOEx4LVZfQkNraUhWX3h6WVFuWHZjbS1tWExHOFZkNkZ6VG44NnVuN2FQQ3JRUw?oc=5",
-            "domaine": "hromadske.ua",
-            "date": "2026-11-19T13:40:00Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "Putin says he will not agree to ceasefire with Ukraine following attack on Crimean Bridge",
-            "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxNNXpQTF9yYXRvbXNVeGRlWWl0SVhRMDcwZ3hqcmlVSUxQODQ0bmNVOWlvVUlPMC1kdGJhZVhKNnROUThQaGZpbEZ1MjBaQ2ZQM2xjaGZBbUdZMmlfMXd0NmNSeTJKMkJ4dmdjUUFiV0k3R3c2c0dvejB5UmhSWXAyNnRiTXJjeVU1cVNnUzBSX0VGdE5NR2NuaERHQVNaMzRVUmdNTTJnRGJZV3hDMDlHbjEyU1VLdUMwanhqdGFYV25ZTGhBQy1r?oc=5",
-            "domaine": "apa.az",
-            "date": "2026-11-19T12:39:00Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "Drone attacks nearly halve Russia's November oil refining, despite Trump's 'ceasefire,' sources say",
-            "url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxNdzFzUEZnWTltVk9BTXBkN0lVc0JkZTJ0WFRjQmRwdDE3Q0QydHVmZFhfVUtJbE91NUx1bWVyODJxT2E0YUFzZDh4bTN3SndjVWhxdnZHZlduVEZ1Z0lTMlZmU0xrcEpEaGRnbFNNaTNMYTZRTVBiY29DTkg4cnNkal9hT1ZBci1NQkE?oc=5",
-            "domaine": "jpost.com",
-            "date": "2026-11-18T15:38:30Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "Trump-appointed council says Israel and Hamas are failing to meet ceasefire commitments",
-            "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxQVXdKS3ZYRk9mZHdNQXlZS3pTQlE5djNYRkV3b3RMYUdMRVAyTm9JWkU1dkd2M0wwU1BZRTh4ZHZLZU5GYUk4cUs4ejBmSjNjQzFlaHlSZFBpUm5qVlk0XzZCLUZBWWNpQ2xBY1dKZ1NUUDZ4ei0zbWxja2pyQXVKU0k1OHVWTnNKQTBNMGhsNXVDVVAybGdVYk5qQnB3NXVUeE1MZVRfLW1zaG5KLXpNUVNrMVdTYmNpSm9KazE3cUJEcmM?oc=5",
-            "domaine": "cphpost.dk",
-            "date": "2026-11-18T14:56:22Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "Trump’s Board of Peace faults Israel and Hamas for failure to end Gaza war",
-            "url": "https://news.google.com/rss/articles/CBMizwFBVV95cUxQWTRIeXBObGhtTU5RUFFpd1hXekFwVm03TEVlZUhfT2JKODMySTBIdzhSWTBnb2JnVE9WdEpwYkxkWEctOEdfSmVvSVlzUFZZVmZsUWxVcFhGODBaaDlBaDA0dm1kMDU5aEFOMjFUc0NBb1EyS3Z6M252ZEFYUFNLTGhsbE1QWTVHVFFhajhFOEVEcVZRMGhiVFIzX25xeUUwclNkcG5DMlc1SnRHSnRyb0w0d1BZaENuRy1fYnk1cDJUNFNPdl8wbm1xRXdLSTA?oc=5",
-            "domaine": "freemalaysiatoday.com",
-            "date": "2026-11-18T12:43:45Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "Trump's Board of Peace faults Israel and Hamas for failure to end Gaza war",
-            "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxOTUo2UWtYUkdWbUFwMVlzSHJwTVNrZlhyMzVuVnk3YVFXLW9mN1g5ZU44SmpMZG9kUUc1NFhacHEwbFJBN0lTQUdaMzFmNXNyd0RQaHNsaG9vY1lNRHRzV2pqV1dmT0Q0dXdWVDdORjZCVDczU2NueUdWaVZNd01GSXdBa05pQ0E1ZmkwRWFENXdlckFVLUdHVUFSNmhwa29oU1gyS0NJaTU1S2dJa3U5VmtKWQ?oc=5",
-            "domaine": "reuters.com",
-            "date": "2026-11-18T12:36:03Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "Trump's Board of Peace faults Israel and Hamas for failure to end Gaza war",
-            "url": "https://news.google.com/rss/articles/CBMiywFBVV95cUxQUzJZcTZqY1RzRUw4QTJVRXRWRmNTM2NtTUhtalFoTnZFNHBsSGpST1hfdk9HQkxzYTBreW9jRkJjMVk3M25UQklkbWZNZ1JtNFRSSHJXWmpKVV94MnhlUWx2MWZuV1hGUUZrSWRYYXBHY1M4YUlvQWxXYXpmRnhpUnlRZGVrd1JjZ1FKUmI3bFdLOVRPejdJajVHbnduVXBGN01fcGY1TzhNMmNMNUxROTJMcmxyeTQzREFqRHlaM05EaEZ4RDlILTFNSQ?oc=5",
-            "domaine": "straitstimes.com",
-            "date": "2026-11-18T11:25:00Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "Oil Falls After Lebanon and Israel Agree to Ceasefire",
-            "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxPeWdNNFhOakNzanM4OEJDMDJ0SnFnYTNzb2hjV3VjVzdua0VXWS1maXZqNnBOX0h3WEdwb2I4NGRDSllZMlBjalQ2OE95NDFKUGdDWGZjbWNNX0tPaVN1OVRMWVlWNlB1OURmRS1Nc2tEc0JDV1Z3b25aRm5WeGlsYmlhR19DaGxGUC0wSA?oc=5",
-            "domaine": "energynow.com",
-            "date": "2026-11-17T22:49:32Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "Trump cites good talks with Putin on Ukraine, holds back on security guarantees",
-            "url": "https://www.internazionale.it/ultime-notizie-reuters/2026/11/20/trump-says-he-putin-had-very-good-talks-on-ukraine",
-            "domaine": "internazionale.it",
-            "date": "2026-11-20T21:45:00Z",
-            "officiel": false,
-            "source": "GDELT DOC 2.0"
-          },
-          {
-            "titre": "US, Qatar Discuss Restoring Iran Ceasefire, Restarting Nuclear Talks",
-            "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE1wQkxkNDVueTdTXzNiZi04bmdKNXRfX2UwOC11LTlTQUUzYmJ6ai1RXzRMODZNeUJkdHZtVEp2a1BrNUpaRGRBdkxIN1JSVWpYN3luQQ?oc=5",
-            "domaine": "bloomingbit.io",
-            "date": "2026-11-20T19:14:21Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          },
-          {
-            "titre": "Did Melania Trump's Russia-Ukraine Ceasefire Push Actually Work?",
-            "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxOYWVHWmpHWmVSd0o1QWtfTGZGeUh4QjRBa3lOX0dQeXZveUdHSUtuUU9VSlZKbWVkNjdYRmdROVRzM2R6Wm5UVndLSG5BQm5QMjBNanlZZW51c3JfOUFDN0xBcmY1S3BNUzhJbTRWZnduYUlLZkozNGFHbUMxXzY4LTljNW4zdw?oc=5",
-            "domaine": "newsweek.com",
-            "date": "2026-11-20T18:18:00Z",
-            "officiel": false,
-            "source": "Google Actualités : conflits (anglais)"
-          }
-        ],
-        "nb_articles": 80,
-        "nb_domaines": 32,
-        "officiel": false,
-        "premier": "2026-11-02T22:31:33Z",
-        "dernier": "2026-11-20T22:45:51Z",
-        "tonalite_gdelt": null,
-        "score_selection": 15.31,
+        "tonalite_gdelt": -2.04,
+        "score_selection": 15.41,
         "theme_confirme": true,
         "nb_evenements": 2
       },
@@ -6150,7 +6215,7 @@
         "officiel": true,
         "premier": "2026-11-13T20:02:41Z",
         "dernier": "2026-11-20T19:30:00Z",
-        "tonalite_gdelt": -1.34,
+        "tonalite_gdelt": -1.33,
         "score_selection": 17.14
       },
       {
@@ -6625,7 +6690,7 @@
         "officiel": true,
         "premier": "2026-11-15T23:21:14Z",
         "dernier": "2026-11-20T17:57:10Z",
-        "tonalite_gdelt": -1.47,
+        "tonalite_gdelt": -1.46,
         "score_selection": 6.67,
         "theme_confirme": true,
         "nb_evenements": 2
@@ -6972,7 +7037,7 @@
         "officiel": false,
         "premier": "2026-11-06T15:11:00Z",
         "dernier": "2026-11-20T16:00:00Z",
-        "tonalite_gdelt": -1.84,
+        "tonalite_gdelt": -1.83,
         "score_selection": 7.17
       },
       {
@@ -7156,6 +7221,172 @@
         "score_selection": 13.0
       },
       {
+        "id": "evt-45d3a4f264b4",
+        "titre": "Le Conseil de paix met en garde contre la situation à Gaza",
+        "titre_origine": "Le Conseil de la paix craint un effondrement du cessez-le-feu à Gaza",
+        "categorie": "conflit",
+        "titre_langue": null,
+        "mention": null,
+        "categorie_libelle": "Conflit armé",
+        "pays": [
+          "IL",
+          "PS"
+        ],
+        "pays_noms": [
+          "Israël",
+          "Territoires palestiniens"
+        ],
+        "mondial": false,
+        "pays_suivis": [],
+        "lieux": [],
+        "lieux_noms": [],
+        "theme": false,
+        "chronologie": [],
+        "regions": [
+          "moyen_orient"
+        ],
+        "gravite": 2,
+        "gravite_regles": 2,
+        "note_gravite": "ramené à 2 : distribution cible (au plus 12 événements en 3 sur 24 h)",
+        "ia": true,
+        "modele": "gemini-3.5-flash-lite",
+        "analyse_le": "2026-11-18T20:24:04Z",
+        "resume": [
+          {
+            "texte": "Le Conseil de paix impute à Israël et au Hamas la responsabilité de compromettre le cessez-le-feu en cours.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMivwFBVV95cUxQb1BxWGVOTmFVLXNIRGo3eFVyTkRHV2RTUVVockhIaDV3dWhsRTBkeDY1TThWbERVTjFQbDk1OHBtUzFJOTZDSTF5RzR0emRQTmU2NUQtemswMFpQWnFNdE5PUVlzX1h1SktONERrdnFsMklOUEFzc1dNU1FlSFU2QXI2c1pYVnFfbFhnQ2RQazQtNFRxaVZsTGQ0cnExQXdHSFROMkQ3UnIxZFYxWnl0Szg2MXFfYnBNWC01b3htVQ?oc=5",
+              "https://news.google.com/rss/articles/CBMiwgFBVV95cUxQY3NfT1BCSlJnRzBSUUtBWUxhZ25WUGpFNnZjMkZrQzFla3l2ZkF5Y0FrSk5NME1KZ0tWLUlQOEdhUTB2MWRjelZqRDJmbmxJTy0wazl6c0dFSGo5VVM3WmRDVWlISGhqQXg5bkZqS3NGNGMySk1LMl9ONHdUN0JUUjFfZ3F3aHJXZ0k4cW1uM3UxeFdJeTNkVU1sR2hxYTQwSl9yVXQ4dmRRREkwMnoyWGU3WEp4a25mZGpnSlg5Zm5uUdIBxwFBVV95cUxPTFdUUTB2NU4taWh4NkQ0NUluQkpIc2VaVi11anU1T1ZjbDAwd0hJZHpmUDAtZ1kzQWZkcnNoeGZnSFFxYjdGWDhWRFA5aGFlcjJKYllfVnNYRmRxOVZSc0pCbml0aG5DZ1U3MGcyM3JPMXRRRlVmN0FubGRCRVg2SVJiZ18waWJvUmNUelEzaVhGN1ljcVQ0OC1hZll5RU12cGJ1cmFhUlhzcGtCNXc0dWJnOTFvaFV3WVlDY09zQTREbDRYeEdV?oc=5"
+            ]
+          },
+          {
+            "texte": "Cette instance internationale exprime de fortes craintes quant à un effondrement imminent de l'accord de cessation des hostilités.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMirAFBVV95cUxNN2FGTkszZnp1NkpGYkFFQzhfSGtNMzdwc2dMV3RxVEdYLXhJTnFvdEszTnlUNGttMlZQZTdOWnJuVFFVUEg5b1c1ZDBEQ2VVcUZnczRqUFpWV0RWNzYtWWZycTdENFNfckQweE5RLW1ZNXk0T0NJX054TkNjUmRPSGVubzFUa3JRN1E3SXpSTm9Fc2JRUFNxbGFKTlRXaTRDSklBOVhQNzEzMk94?oc=5",
+              "https://news.google.com/rss/articles/CBMiogFBVV95cUxOVVVUS1M2QVhDMThfYk5aZ0tsVmItNkxDTk5SaHY3X0k0QmtIbmI1VXRvRE5xdVk0RzFfd3JOenZVSFRFVjF5TWY0VWNPUzZmdngzcUtleDNiNlYyNU5pbzMyRUN3V0tYZVVFN0ZTUVZTNXRBdWUzUlRoZGhYLXA1QW1zdHJ1VkxZczdxUktnMEJJU1JaNS1aVG41SXg3LU82QXc?oc=5"
+            ]
+          }
+        ],
+        "actifs": [
+          {
+            "actif": "pétrole",
+            "sens": "hausse",
+            "texte": "Les tensions géopolitiques persistantes au Moyen-Orient maintiennent une prime de risque sur les prix du brut.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMiogFBVV95cUxOVVVUS1M2QVhDMThfYk5aZ0tsVmItNkxDTk5SaHY3X0k0QmtIbmI1VXRvRE5xdVk0RzFfd3JOenZVSFRFVjF5TWY0VWNPUzZmdngzcUtleDNiNlYyNU5pbzMyRUN3V0tYZVVFN0ZTUVZTNXRBdWUzUlRoZGhYLXA1QW1zdHJ1VkxZczdxUktnMEJJU1JaNS1aVG41SXg3LU82QXc?oc=5"
+            ]
+          }
+        ],
+        "horizon": "semaines",
+        "confiance": "moyenne",
+        "contre": [
+          {
+            "texte": "La reprise effective des négociations pourrait stabiliser la situation et dissiper les craintes d'un conflit ouvert.",
+            "sources": [
+              "https://news.google.com/rss/articles/CBMivwFBVV95cUxQb1BxWGVOTmFVLXNIRGo3eFVyTkRHV2RTUVVockhIaDV3dWhsRTBkeDY1TThWbERVTjFQbDk1OHBtUzFJOTZDSTF5RzR0emRQTmU2NUQtemswMFpQWnFNdE5PUVlzX1h1SktONERrdnFsMklOUEFzc1dNU1FlSFU2QXI2c1pYVnFfbFhnQ2RQazQtNFRxaVZsTGQ0cnExQXdHSFROMkQ3UnIxZFYxWnl0Szg2MXFfYnBNWC01b3htVQ?oc=5"
+            ]
+          }
+        ],
+        "sources_independantes": 4,
+        "sources": [
+          {
+            "titre": "Al-Thawabta: Le rapport du « Conseil de la paix » sur Gaza offre à l'ennemi israélien une couverture pour continuer à saper le cessez-le-feu",
+            "url": "https://news.google.com/rss/articles/CBMiSkFVX3lxTFBicUlweFMwYzQ4UDJJUENVSTJzb19UTDc0WGlWZlhZVHYwQ3pXelRLbkp1ZENDQkFlel9vZUJtbnZOaWpISWpkNnhR?oc=5",
+            "domaine": "saba.ye",
+            "date": "2026-11-20T10:27:22Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Gaza: le Conseil de paix accuse Israël et le Hamas de compromettre le cessez-le-feu",
+            "url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxQb1BxWGVOTmFVLXNIRGo3eFVyTkRHV2RTUVVockhIaDV3dWhsRTBkeDY1TThWbERVTjFQbDk1OHBtUzFJOTZDSTF5RzR0emRQTmU2NUQtemswMFpQWnFNdE5PUVlzX1h1SktONERrdnFsMklOUEFzc1dNU1FlSFU2QXI2c1pYVnFfbFhnQ2RQazQtNFRxaVZsTGQ0cnExQXdHSFROMkQ3UnIxZFYxWnl0Szg2MXFfYnBNWC01b3htVQ?oc=5",
+            "domaine": "media-j.com",
+            "date": "2026-11-18T19:44:19Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Le Conseil de paix renvoie dos à dos Israël et le Hamas, accusés de menacer le cessez-le-feu",
+            "url": "https://news.google.com/rss/articles/CBMi6gFBVV95cUxOQVc1aWt5WDBfWTh4ZHF3OWM0VDFQbGUyY0lveGNfdTJGZEdqdmN4X0lGRFdpRDVjMmF1M1ZqOTJCSFlDMloyeHM3d29wSnNKTmxFV1R2YWNQQUotNVNNdjVpbnpzb24xbGJTbFpmZ1hrSjhtM0RSYjhzVDIyb1RKVFdTV0hqOXNGVXFKR1huM0wxUlBjSE84NGNNeTNGVnltdUIyYXhQbUxNTnV5US1tYjJQY0pZeFZmUlRHanp4OTFCVG5NY2ZlV0FIR09VWFEwMVJlSF85NEZGNU9jZVVMMHIyMFhBd21hUXc?oc=5",
+            "domaine": "i24news.tv",
+            "date": "2026-11-18T14:45:45Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Conseil de Paix: Israël et le Hamas responsables de l’échec à mettre un terme à la guerre à Gaza",
+            "url": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxQY3NfT1BCSlJnRzBSUUtBWUxhZ25WUGpFNnZjMkZrQzFla3l2ZkF5Y0FrSk5NME1KZ0tWLUlQOEdhUTB2MWRjelZqRDJmbmxJTy0wazl6c0dFSGo5VVM3WmRDVWlISGhqQXg5bkZqS3NGNGMySk1LMl9ONHdUN0JUUjFfZ3F3aHJXZ0k4cW1uM3UxeFdJeTNkVU1sR2hxYTQwSl9yVXQ4dmRRREkwMnoyWGU3WEp4a25mZGpnSlg5Zm5uUdIBxwFBVV95cUxPTFdUUTB2NU4taWh4NkQ0NUluQkpIc2VaVi11anU1T1ZjbDAwd0hJZHpmUDAtZ1kzQWZkcnNoeGZnSFFxYjdGWDhWRFA5aGFlcjJKYllfVnNYRmRxOVZSc0pCbml0aG5DZ1U3MGcyM3JPMXRRRlVmN0FubGRCRVg2SVJiZ18waWJvUmNUelEzaVhGN1ljcVQ0OC1hZll5RU12cGJ1cmFhUlhzcGtCNXc0dWJnOTFvaFV3WVlDY09zQTREbDRYeEdV?oc=5",
+            "domaine": "timesofisrael.com",
+            "date": "2026-11-18T13:34:16Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Le Conseil pour la paix avertit que le cessez-le-feu à Gaza risque de s’effondrer",
+            "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxNN2FGTkszZnp1NkpGYkFFQzhfSGtNMzdwc2dMV3RxVEdYLXhJTnFvdEszTnlUNGttMlZQZTdOWnJuVFFVUEg5b1c1ZDBEQ2VVcUZnczRqUFpWV0RWNzYtWWZycTdENFNfckQweE5RLW1ZNXk0T0NJX054TkNjUmRPSGVubzFUa3JRN1E3SXpSTm9Fc2JRUFNxbGFKTlRXaTRDSklBOVhQNzEzMk94?oc=5",
+            "domaine": "africanmanager.com",
+            "date": "2026-11-18T12:01:31Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Gaza: le Conseil de paix met en garde contre l’effondrement du cessez-le-feu‏",
+            "url": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE1tN1FvQTRVQktuT2lXLWtIZF96LXBUNkpOUm1tOTg2ZG9vaEdwOEtzUW9qV0tLTjFTYjlGSloyWHBLckJDaWZzVTJDYUw2UlQ5?oc=5",
+            "domaine": "sana.sy",
+            "date": "2026-11-18T11:39:52Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Le Conseil de la paix craint un effondrement du cessez-le-feu à Gaza",
+            "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxOVVVUS1M2QVhDMThfYk5aZ0tsVmItNkxDTk5SaHY3X0k0QmtIbmI1VXRvRE5xdVk0RzFfd3JOenZVSFRFVjF5TWY0VWNPUzZmdngzcUtleDNiNlYyNU5pbzMyRUN3V0tYZVVFN0ZTUVZTNXRBdWUzUlRoZGhYLXA1QW1zdHJ1VkxZczdxUktnMEJJU1JaNS1aVG41SXg3LU82QXc?oc=5",
+            "domaine": "radio-canada.ca",
+            "date": "2026-11-18T02:15:13Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Le Conseil de la paix craint un effondrement du cessez-le-feu à Gaza",
+            "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxNTlhaYkdiUy1KbUdmTHM3TU5HNzVsXzR1TkRiWlZudVo0OVVaSi1wcENnb1FnOGhBUTdiQlpDRk1aeVJjUmZLSF9iT3ZIWmoycHN6b2J2OWZneTBvUFcySHlBdG42RVpHMkpkT0ZkeXQ0MnBuNTlqM1JqOVNHWkNPOEJFSlpPWk4wa0NkS1dmTQ?oc=5",
+            "domaine": "yahoo.com",
+            "date": "2026-11-18T00:42:37Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Le Conseil de la paix craint un effondrement du cessez-le-feu à Gaza",
+            "url": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxPczFYU29kcnBjWmZmNWgyX041Qm00U3hDQThJVjNWc3pJd1FCY2hzTWNEcGU2VjlIZkYyYzJDNGVvTm94czY2QWswUXJaVnByNUJueGlqYjBvWDBLUk1qeTN1c0lKWk40YXFhQVFMSG1DVzlySmhGMEEwTkp1SUx6a1lhRFBNeTlFY3ZHWWtSRml5bjlQM2l1TXNvQ1VRMWFyaEdPa2RTeUM4Zk5jc2MzWV9oUGRQV0pGU1BaMTZxeTY3TExNbzdmR0dlMlhGSmpJUDBPTA?oc=5",
+            "domaine": "latribune.ca",
+            "date": "2026-11-17T19:11:00Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Le Conseil de la paix craint un effondrement du cessez-le-feu à Gaza",
+            "url": "https://news.google.com/rss/articles/CBMi3gFBVV95cUxOYnFFNmFoZUFEamQ3Z1l4dXZ1UFRCbGJ0OExTOWYxeUNDTGlhLXZESmZxaTdKVWNpbURzQzctcWZzMk15UHBkMGRGdTFmREE2QnlPbC1reEswampRa05wNTh2aUVoaG5OMkI0cFVDZDBWdTNjdDBKNlhHOVI2NWdWNnJxYVc2alRoeEw5VlFKbGM2cFIyR0hrbmZGR2pxQUhHbDNIVzM4RW8zendtNnlFX0c4Sm9Sb1h1T1BibnVTdUJOcXdRbV9aeFVuQ2hRSHlYbVY0NHgzZjFrMVI4dnc?oc=5",
+            "domaine": "noovo.info",
+            "date": "2026-11-17T19:08:00Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          },
+          {
+            "titre": "Gaza | Le Conseil de la paix craint un effondrement du cessez-le-feu",
+            "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxOZ2Nic2s4V040Q0lpNUl5T1VJVTNHNUYtd2JrcjFjVGs1ajZwc3FfclVJX2tCVXFvODV4NXRIMnlkOTlJZmJPRXlYWVhQVE1TWUxNQnlQbzZSaFQ5anM2U3FvZXNkdDludFZvalBLY2lYd3lmcERUOG94em9DelVPNGM0cXBSNHV5Nk1iNWsyd1FjN1lHLVhpQncxQ04wV1pjT29vRzNhT204QmRsY1dwVFJtLTFBdDQwT2lHcFJRaThnMkp5QTFpdmltek0?oc=5",
+            "domaine": "lapresse.ca",
+            "date": "2026-11-17T15:41:22Z",
+            "officiel": false,
+            "source": "Google Actualités : conflits (français)"
+          }
+        ],
+        "nb_articles": 11,
+        "nb_domaines": 8,
+        "officiel": false,
+        "premier": "2026-11-17T15:41:22Z",
+        "dernier": "2026-11-20T10:27:22Z",
+        "tonalite_gdelt": null,
+        "score_selection": 6.34
+      },
+      {
         "id": "evt-093d51ad8ced",
         "titre": "Le Canada évoque des tensions commerciales avec les États-Unis et la Chine",
         "titre_origine": "LeBlanc gives update on U.S. trade talks to Canada-U.S. advisory committee",
@@ -7331,113 +7562,8 @@
         "officiel": false,
         "premier": "2026-11-14T06:45:40Z",
         "dernier": "2026-11-20T03:01:00Z",
-        "tonalite_gdelt": -1.13,
+        "tonalite_gdelt": -1.15,
         "score_selection": 10.5
-      },
-      {
-        "id": "evt-ff9ac7bb28f5",
-        "titre": "Le Pentagone évalue le coût du conflit avec l'Iran",
-        "titre_origine": "Iran war costs surpass $48B as lawmakers demand details on base damage",
-        "categorie": "conflit",
-        "titre_langue": null,
-        "mention": null,
-        "categorie_libelle": "Conflit armé",
-        "pays": [
-          "US",
-          "IR"
-        ],
-        "pays_noms": [
-          "États-Unis",
-          "Iran"
-        ],
-        "mondial": false,
-        "pays_suivis": [
-          "US"
-        ],
-        "lieux": [],
-        "lieux_noms": [],
-        "theme": false,
-        "chronologie": [],
-        "regions": [
-          "amerique_nord",
-          "moyen_orient"
-        ],
-        "gravite": 2,
-        "gravite_regles": 2,
-        "note_gravite": "gravité 4 proposée par Gemini, ramenée à 3 (repères : base conflit : 2) ; ramené à 2 : distribution cible (au plus 12 événements en 3 sur 24 h)",
-        "ia": true,
-        "modele": "gemini-3.5-flash-lite",
-        "analyse_le": "2026-11-20T03:16:47Z",
-        "resume": [
-          {
-            "texte": "Le Pentagone a évalué le coût du conflit avec l'Iran à plus de 48 milliards de dollars, hors dégâts sur les bases.",
-            "sources": [
-              "https://www.ky3.com/2026/11/20/pentagon-puts-iran-war-cost-483-billion-excluding-base-damage/",
-              "https://www.wdio.com/top-stories/iran-war-costs-surpass-48b-as-lawmakers-demand-unreleased-estimates-on-base-damage/"
-            ]
-          },
-          {
-            "texte": "Des parlementaires américains exigent la publication des estimations non divulguées concernant les dommages subis par les infrastructures militaires.",
-            "sources": [
-              "https://www.wdio.com/top-stories/iran-war-costs-surpass-48b-as-lawmakers-demand-unreleased-estimates-on-base-damage/",
-              "https://www.pilotonline.com/2026/11/19/iran-war-costs-billions/"
-            ]
-          }
-        ],
-        "actifs": [
-          {
-            "actif": "défense",
-            "sens": "hausse",
-            "texte": "Les dépenses militaires accrues et les besoins de renouvellement du matériel soutiennent le secteur de la défense.",
-            "sources": [
-              "https://www.ky3.com/2026/11/20/pentagon-puts-iran-war-cost-483-billion-excluding-base-damage/"
-            ]
-          }
-        ],
-        "horizon": "mois",
-        "confiance": "élevée",
-        "contre": [
-          {
-            "texte": "Une réduction des crédits votée par le Congrès pourrait limiter l'impact financier à long terme.",
-            "sources": [
-              "https://www.wdio.com/top-stories/iran-war-costs-surpass-48b-as-lawmakers-demand-unreleased-estimates-on-base-damage/"
-            ]
-          }
-        ],
-        "sources_independantes": 3,
-        "sources": [
-          {
-            "titre": "Pentagon puts Iran war cost at $48. 3 billion, excluding base damage",
-            "url": "https://www.ky3.com/2026/11/20/pentagon-puts-iran-war-cost-483-billion-excluding-base-damage/",
-            "domaine": "ky3.com",
-            "date": "2026-11-20T00:45:00Z",
-            "officiel": false,
-            "source": "GDELT DOC 2.0"
-          },
-          {
-            "titre": "Iran war costs surpass $48B as lawmakers demand unreleased estimates on base damage",
-            "url": "https://www.wdio.com/top-stories/iran-war-costs-surpass-48b-as-lawmakers-demand-unreleased-estimates-on-base-damage/",
-            "domaine": "wdio.com",
-            "date": "2026-11-20T00:45:00Z",
-            "officiel": false,
-            "source": "GDELT DOC 2.0"
-          },
-          {
-            "titre": "Iran war costs surpass $48B as lawmakers demand details on base damage",
-            "url": "https://www.pilotonline.com/2026/11/19/iran-war-costs-billions/",
-            "domaine": "pilotonline.com",
-            "date": "2026-11-20T00:15:00Z",
-            "officiel": false,
-            "source": "GDELT DOC 2.0"
-          }
-        ],
-        "nb_articles": 3,
-        "nb_domaines": 3,
-        "officiel": false,
-        "premier": "2026-11-20T00:15:00Z",
-        "dernier": "2026-11-20T00:45:00Z",
-        "tonalite_gdelt": -2.17,
-        "score_selection": 6.5
       },
       {
         "id": "evt-60f3dd463db0",
@@ -7834,7 +7960,7 @@
         "officiel": false,
         "premier": "2026-11-18T03:23:00Z",
         "dernier": "2026-11-19T10:59:21Z",
-        "tonalite_gdelt": 0.34,
+        "tonalite_gdelt": 0.35,
         "score_selection": 6.14,
         "titre_traduit": true
       },
@@ -7976,7 +8102,7 @@
         "officiel": false,
         "premier": "2026-11-18T04:55:05Z",
         "dernier": "2026-11-18T18:02:19Z",
-        "tonalite_gdelt": -2.64,
+        "tonalite_gdelt": -2.61,
         "score_selection": 7.5
       },
       {
@@ -8130,7 +8256,7 @@
         "officiel": false,
         "premier": "2026-11-17T17:54:52Z",
         "dernier": "2026-11-18T10:56:29Z",
-        "tonalite_gdelt": -1.47,
+        "tonalite_gdelt": -1.46,
         "score_selection": 9.64
       },
       {
@@ -8542,7 +8668,7 @@
         "officiel": false,
         "premier": "2026-11-16T16:38:33Z",
         "dernier": "2026-11-17T19:00:56Z",
-        "tonalite_gdelt": -0.8,
+        "tonalite_gdelt": -0.89,
         "score_selection": 6.67
       },
       {
@@ -8658,7 +8784,7 @@
         "officiel": false,
         "premier": "2026-11-15T20:00:00Z",
         "dernier": "2026-11-16T16:53:30Z",
-        "tonalite_gdelt": -1.29,
+        "tonalite_gdelt": -1.27,
         "score_selection": 7.0
       },
       {
@@ -8943,7 +9069,7 @@
         "officiel": false,
         "premier": "2026-11-12T05:00:21Z",
         "dernier": "2026-11-15T07:58:40Z",
-        "tonalite_gdelt": -0.94,
+        "tonalite_gdelt": -0.92,
         "score_selection": 8.61
       },
       {
@@ -9066,7 +9192,7 @@
         "officiel": false,
         "premier": "2026-11-12T03:32:45Z",
         "dernier": "2026-11-14T16:32:51Z",
-        "tonalite_gdelt": -1.48,
+        "tonalite_gdelt": -1.53,
         "score_selection": 8.17
       },
       {
@@ -9248,6 +9374,146 @@
         "dernier": "2026-11-14T15:49:47Z",
         "tonalite_gdelt": null,
         "score_selection": 6.92
+      },
+      {
+        "id": "evt-9d62b57310d3",
+        "titre": "Trump departs for ASEAN on summit with Xi and Putin",
+        "titre_origine": "Trump departs for ASEAN on summit with Xi and Putin",
+        "categorie": "diplomatie",
+        "titre_langue": "anglais",
+        "mention": "non traduit",
+        "categorie_libelle": "Diplomatie et sommets",
+        "pays": [
+          "US",
+          "RU"
+        ],
+        "pays_noms": [
+          "États-Unis",
+          "Russie"
+        ],
+        "mondial": false,
+        "pays_suivis": [
+          "US"
+        ],
+        "lieux": [
+          "CN"
+        ],
+        "lieux_noms": [
+          "Chine"
+        ],
+        "theme": false,
+        "chronologie": [],
+        "regions": [
+          "amerique_nord",
+          "europe"
+        ],
+        "gravite": 1,
+        "gravite_regles": 1,
+        "note_gravite": null,
+        "ia": true,
+        "modele": "gemini-3.5-flash-lite",
+        "analyse_le": "2026-11-19T21:16:23Z",
+        "resume": [
+          {
+            "texte": "Les dirigeants américain et russe se sont rencontrés et salués en marge du sommet de l'APEC organisé en Chine.",
+            "sources": [
+              "https://www.independent.co.uk/news/world/americas/us-politics/trump-putin-china-apec-summit-xi-shenzhen-b3087695.html"
+            ]
+          },
+          {
+            "texte": "Cette réunion trilatérale officieuse a acaparé l'attention médiatique et diplomatique de l'événement.",
+            "sources": [
+              "https://www.dw.com/en/xi-trump-putin-summit-what-did-it-achieve/a-79996668?maca=en-rss-en-world-4025-rdf",
+              "https://www.aljazeera.com/video/newsfeed/2026/11/19/trump-and-putin-hijacked-china-summit?traffic_source=rss"
+            ]
+          }
+        ],
+        "actifs": [
+          {
+            "actif": "actions",
+            "sens": "incertain",
+            "texte": "Les discussions au sommet de l'APEC n'ont pas encore généré de réorientation politique mesurable sur les marchés.",
+            "sources": [
+              "https://www.dw.com/en/xi-trump-putin-summit-what-did-it-achieve/a-79996668?maca=en-rss-en-world-4025-rdf"
+            ]
+          }
+        ],
+        "horizon": "jours",
+        "confiance": "moyenne",
+        "contre": [
+          {
+            "texte": "Les échanges informels pourraient déboucher ultérieurement sur des accords bilatéraux inattendus.",
+            "sources": [
+              "https://www.dw.com/en/xi-trump-putin-summit-what-did-it-achieve/a-79996668?maca=en-rss-en-world-4025-rdf"
+            ]
+          }
+        ],
+        "sources_independantes": 3,
+        "sources": [
+          {
+            "titre": "Trump calling Putin my friend at APEC summit sparks backlash – NBC Los Angeles",
+            "url": "https://www.nbclosangeles.com/news/national-international/trump-friend-greeting-putin-causes-alarm-europe-ukraine/3973513/",
+            "domaine": "nbclosangeles.com",
+            "date": "2026-11-21T00:30:00Z",
+            "officiel": false,
+            "source": "GDELT DOC 2.0"
+          },
+          {
+            "titre": "At summit, Trump, Putin, Xi agreed on one goal — removing limits on themselves",
+            "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxOVmxlSlJsM1liV1JydEdsSXNpaUQyMjFqT2VXNFhrb1k4TmlYYWhIeGl2TVlxd2lNOWVqMWFnUzUtSDlKRWtjWWJuazF5RjFpV0JReHFkMzNIOGp3U1JhS3lIOWdZOFJ5cmhEeEUzY29sbmdTeGxZN1FmQWQtbTJFVjBDMjA1WVltN3FFbmFqcC1VZUc1UkowbDFKX2NmNW8yak04VDFyMUlzRWpTVmU1QQ?oc=5",
+            "domaine": "washingtonpost.com",
+            "date": "2026-11-20T01:50:32Z",
+            "officiel": false,
+            "source": "Google Actualités : sanctions (anglais)"
+          },
+          {
+            "titre": "Trump, Xi, Putin Release Peace Declaration From Unprecedented Summit",
+            "url": "https://www.algemeiner.com/2026/11/19/trump-xi-putin-release-peace-declaration-unprecedented-summit/",
+            "domaine": "algemeiner.com",
+            "date": "2026-11-20T00:15:00Z",
+            "officiel": false,
+            "source": "GDELT DOC 2.0"
+          },
+          {
+            "titre": "Trump greets Putin at Apec summit: Who is he? He my friend",
+            "url": "https://www.independent.co.uk/news/world/americas/us-politics/trump-putin-china-apec-summit-xi-shenzhen-b3087695.html",
+            "domaine": "independent.co.uk",
+            "date": "2026-11-19T19:30:00Z",
+            "officiel": false,
+            "source": "GDELT DOC 2.0"
+          },
+          {
+            "titre": "Xi-Trump-Putin summit: What did it achieve?",
+            "url": "https://www.dw.com/en/xi-trump-putin-summit-what-did-it-achieve/a-79996668?maca=en-rss-en-world-4025-rdf",
+            "domaine": "dw.com",
+            "date": "2026-11-19T17:52:00Z",
+            "officiel": false,
+            "source": "Deutsche Welle, monde (RSS)"
+          },
+          {
+            "titre": "Trump and Putin ‘hijacked’ China summit",
+            "url": "https://www.aljazeera.com/video/newsfeed/2026/11/19/trump-and-putin-hijacked-china-summit?traffic_source=rss",
+            "domaine": "aljazeera.com",
+            "date": "2026-11-19T17:02:22Z",
+            "officiel": false,
+            "source": "Al Jazeera (RSS)"
+          },
+          {
+            "titre": "Trump-Xi Summit: Will China Buy More American Soybeans?",
+            "url": "https://news.google.com/rss/articles/CBMifkFVX3lxTFBrZE9aeUZYaXlxbVdyTHhNQVJLeHBRcThraTEtdVFoZ2h4Vm16WWdROC1iS2RZczlJdmJ1aGNkUW5qZGtrbFpodlkyVmlUdTFjbXhZVzlnWkM3SGZQcTZERnJrOEgxbXc1YkJJR3h0NWZPRWdnampaa3FhVDdLUQ?oc=5",
+            "domaine": "agrolatam.com",
+            "date": "2026-11-19T12:06:49Z",
+            "officiel": false,
+            "source": "Google Actualités : droits de douane (anglais)"
+          }
+        ],
+        "nb_articles": 15,
+        "nb_domaines": 7,
+        "officiel": false,
+        "premier": "2026-11-15T09:49:43Z",
+        "dernier": "2026-11-21T00:30:00Z",
+        "tonalite_gdelt": -2.17,
+        "score_selection": 10.0
       },
       {
         "id": "evt-301eef70fe1e",
@@ -9518,7 +9784,7 @@
         "officiel": false,
         "premier": "2026-11-20T18:52:27Z",
         "dernier": "2026-11-20T20:45:26Z",
-        "tonalite_gdelt": -1.84,
+        "tonalite_gdelt": -1.83,
         "score_selection": 6.14
       },
       {
@@ -9952,140 +10218,8 @@
         "officiel": false,
         "premier": "2026-11-19T09:38:59Z",
         "dernier": "2026-11-20T14:00:04Z",
-        "tonalite_gdelt": -1.84,
+        "tonalite_gdelt": -1.83,
         "score_selection": 7.0
-      },
-      {
-        "id": "evt-9d62b57310d3",
-        "titre": "Trump departs for ASEAN on summit with Xi and Putin",
-        "titre_origine": "Trump departs for ASEAN on summit with Xi and Putin",
-        "categorie": "diplomatie",
-        "titre_langue": "anglais",
-        "mention": "non traduit",
-        "categorie_libelle": "Diplomatie et sommets",
-        "pays": [
-          "US",
-          "RU"
-        ],
-        "pays_noms": [
-          "États-Unis",
-          "Russie"
-        ],
-        "mondial": false,
-        "pays_suivis": [
-          "US"
-        ],
-        "lieux": [
-          "CN"
-        ],
-        "lieux_noms": [
-          "Chine"
-        ],
-        "theme": false,
-        "chronologie": [],
-        "regions": [
-          "amerique_nord",
-          "europe"
-        ],
-        "gravite": 1,
-        "gravite_regles": 1,
-        "note_gravite": null,
-        "ia": true,
-        "modele": "gemini-3.5-flash-lite",
-        "analyse_le": "2026-11-19T21:16:23Z",
-        "resume": [
-          {
-            "texte": "Les dirigeants américain et russe se sont rencontrés et salués en marge du sommet de l'APEC organisé en Chine.",
-            "sources": [
-              "https://www.independent.co.uk/news/world/americas/us-politics/trump-putin-china-apec-summit-xi-shenzhen-b3087695.html"
-            ]
-          },
-          {
-            "texte": "Cette réunion trilatérale officieuse a acaparé l'attention médiatique et diplomatique de l'événement.",
-            "sources": [
-              "https://www.dw.com/en/xi-trump-putin-summit-what-did-it-achieve/a-79996668?maca=en-rss-en-world-4025-rdf",
-              "https://www.aljazeera.com/video/newsfeed/2026/11/19/trump-and-putin-hijacked-china-summit?traffic_source=rss"
-            ]
-          }
-        ],
-        "actifs": [
-          {
-            "actif": "actions",
-            "sens": "incertain",
-            "texte": "Les discussions au sommet de l'APEC n'ont pas encore généré de réorientation politique mesurable sur les marchés.",
-            "sources": [
-              "https://www.dw.com/en/xi-trump-putin-summit-what-did-it-achieve/a-79996668?maca=en-rss-en-world-4025-rdf"
-            ]
-          }
-        ],
-        "horizon": "jours",
-        "confiance": "moyenne",
-        "contre": [
-          {
-            "texte": "Les échanges informels pourraient déboucher ultérieurement sur des accords bilatéraux inattendus.",
-            "sources": [
-              "https://www.dw.com/en/xi-trump-putin-summit-what-did-it-achieve/a-79996668?maca=en-rss-en-world-4025-rdf"
-            ]
-          }
-        ],
-        "sources_independantes": 3,
-        "sources": [
-          {
-            "titre": "At summit, Trump, Putin, Xi agreed on one goal — removing limits on themselves",
-            "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxOVmxlSlJsM1liV1JydEdsSXNpaUQyMjFqT2VXNFhrb1k4TmlYYWhIeGl2TVlxd2lNOWVqMWFnUzUtSDlKRWtjWWJuazF5RjFpV0JReHFkMzNIOGp3U1JhS3lIOWdZOFJ5cmhEeEUzY29sbmdTeGxZN1FmQWQtbTJFVjBDMjA1WVltN3FFbmFqcC1VZUc1UkowbDFKX2NmNW8yak04VDFyMUlzRWpTVmU1QQ?oc=5",
-            "domaine": "washingtonpost.com",
-            "date": "2026-11-20T01:50:32Z",
-            "officiel": false,
-            "source": "Google Actualités : sanctions (anglais)"
-          },
-          {
-            "titre": "Trump, Xi, Putin Release Peace Declaration From Unprecedented Summit",
-            "url": "https://www.algemeiner.com/2026/11/19/trump-xi-putin-release-peace-declaration-unprecedented-summit/",
-            "domaine": "algemeiner.com",
-            "date": "2026-11-20T00:15:00Z",
-            "officiel": false,
-            "source": "GDELT DOC 2.0"
-          },
-          {
-            "titre": "Trump greets Putin at Apec summit: Who is he? He my friend",
-            "url": "https://www.independent.co.uk/news/world/americas/us-politics/trump-putin-china-apec-summit-xi-shenzhen-b3087695.html",
-            "domaine": "independent.co.uk",
-            "date": "2026-11-19T19:30:00Z",
-            "officiel": false,
-            "source": "GDELT DOC 2.0"
-          },
-          {
-            "titre": "Xi-Trump-Putin summit: What did it achieve?",
-            "url": "https://www.dw.com/en/xi-trump-putin-summit-what-did-it-achieve/a-79996668?maca=en-rss-en-world-4025-rdf",
-            "domaine": "dw.com",
-            "date": "2026-11-19T17:52:00Z",
-            "officiel": false,
-            "source": "Deutsche Welle, monde (RSS)"
-          },
-          {
-            "titre": "Trump and Putin ‘hijacked’ China summit",
-            "url": "https://www.aljazeera.com/video/newsfeed/2026/11/19/trump-and-putin-hijacked-china-summit?traffic_source=rss",
-            "domaine": "aljazeera.com",
-            "date": "2026-11-19T17:02:22Z",
-            "officiel": false,
-            "source": "Al Jazeera (RSS)"
-          },
-          {
-            "titre": "Trump-Xi Summit: Will China Buy More American Soybeans?",
-            "url": "https://news.google.com/rss/articles/CBMifkFVX3lxTFBrZE9aeUZYaXlxbVdyTHhNQVJLeHBRcThraTEtdVFoZ2h4Vm16WWdROC1iS2RZczlJdmJ1aGNkUW5qZGtrbFpodlkyVmlUdTFjbXhZVzlnWkM3SGZQcTZERnJrOEgxbXc1YkJJR3h0NWZPRWdnampaa3FhVDdLUQ?oc=5",
-            "domaine": "agrolatam.com",
-            "date": "2026-11-19T12:06:49Z",
-            "officiel": false,
-            "source": "Google Actualités : droits de douane (anglais)"
-          }
-        ],
-        "nb_articles": 14,
-        "nb_domaines": 6,
-        "officiel": false,
-        "premier": "2026-11-15T09:49:43Z",
-        "dernier": "2026-11-20T01:50:32Z",
-        "tonalite_gdelt": -2.17,
-        "score_selection": 9.61
       },
       {
         "id": "evt-bf1b52248997",
@@ -10185,7 +10319,7 @@
         "officiel": false,
         "premier": "2026-11-17T11:18:26Z",
         "dernier": "2026-11-19T19:30:00Z",
-        "tonalite_gdelt": -0.41,
+        "tonalite_gdelt": -0.38,
         "score_selection": 6.5
       },
       {
@@ -10437,7 +10571,7 @@
         "officiel": true,
         "premier": "2026-11-14T16:51:40Z",
         "dernier": "2026-11-19T16:21:16Z",
-        "tonalite_gdelt": -1.84,
+        "tonalite_gdelt": -1.83,
         "score_selection": 9.5
       },
       {
@@ -10702,7 +10836,7 @@
         "officiel": true,
         "premier": "2026-11-18T12:00:00Z",
         "dernier": "2026-11-18T12:00:00Z",
-        "tonalite_gdelt": -1.45,
+        "tonalite_gdelt": -1.48,
         "score_selection": 9.5
       },
       {
@@ -10999,7 +11133,7 @@
         "officiel": false,
         "premier": "2026-11-12T22:00:00Z",
         "dernier": "2026-11-17T05:00:25Z",
-        "tonalite_gdelt": -1.47,
+        "tonalite_gdelt": -1.46,
         "score_selection": 10.34
       },
       {
@@ -11164,7 +11298,7 @@
         "officiel": false,
         "premier": "2026-11-12T08:41:21Z",
         "dernier": "2026-11-14T07:04:05Z",
-        "tonalite_gdelt": -1.84,
+        "tonalite_gdelt": -1.83,
         "score_selection": 9.84
       }
     ],
@@ -11175,20 +11309,31 @@
         "variation_7j": 5,
         "composantes": {
           "evenements": 100.0,
-          "tonalite": 29.4,
-          "tendance": 54.7
+          "tonalite": 29.5,
+          "tendance": 53.8
         },
         "tonalite_gdelt": -2.17,
-        "evenements_14j": 38,
+        "evenements_14j": 39,
         "composantes_manquantes": [],
         "nom": "États-Unis",
         "region": "amerique_nord",
         "derniers_evenements": [
           {
+            "id": "theme-evt-70c39494ede1",
+            "titre": "Débats sur le maintien des droits de douane aux États-Unis",
+            "gravite": 3,
+            "date": "2026-11-21T00:57:14Z",
+            "categorie_libelle": "Commerce et droits de douane",
+            "titre_langue": null,
+            "mention": null,
+            "resume": "Des recours juridiques et des demandes d'annulation ciblent les droits de douane de 50 % imposés par les États-Unis sur les produits canadiens.",
+            "source": "https://news.google.com/rss/articles/CBMipwFBVV95cUxOQ1ExUFB5b0FIenBjWWZVekF3U2E5ZXJDMEwzdjlIUmJiek1BM1duWmpBWUdybDk5b05XR3dMUFg3NjZhYllvaWlOZk9lSUNibUdBUlJ4NFhnaS1ueHFIbW9oWjRZa0JBakNGUHRvdlU0WnN6UHliQlV0Z29fNFZJZFg3UWF4ZDFobnUtQVpBaGw5QnpmclBLeWdxcUhWdE5RSWhxVXdhZw?oc=5"
+          },
+          {
             "id": "theme-evt-d7010a592e52",
             "titre": "Résultats et suivi des élections de mi-mandat aux États-Unis",
             "gravite": 2,
-            "date": "2026-11-20T23:54:00Z",
+            "date": "2026-11-21T00:34:51Z",
             "categorie_libelle": "Élections",
             "titre_langue": null,
             "mention": null,
@@ -11196,26 +11341,15 @@
             "source": "https://www.consilium.europa.eu/en/press/press-releases/2026/11/10/statement-on-today-s-meeting-in-abu-dhabi-between-the-eu-france-germany-italy-united-kingdom-ukraine-united-states-and-nato/"
           },
           {
-            "id": "evt-4a87273a286c",
-            "titre": "Élections de mi-mandat aux États-Unis sur fond de guerres commerciales",
-            "gravite": 2,
-            "date": "2026-11-20T23:30:00Z",
-            "categorie_libelle": "Élections",
-            "titre_langue": null,
+            "id": "evt-247464adf771",
+            "titre": "Au sommet en Chine, Trump qualifie Poutine de mon ami malgré la guerre en Ukraine",
+            "gravite": 3,
+            "date": "2026-11-21T00:30:00Z",
+            "categorie_libelle": "Conflit armé",
+            "titre_langue": "anglais",
             "mention": null,
-            "resume": "Les élections de mi-mandat aux États-Unis ont été marquées par des débats intenses autour des droits de douane et des relations commerciales avec le Canada, l'Inde et d'autres partenaires internationaux.",
-            "source": "https://news.google.com/rss/articles/CBMiYEFVX3lxTFAyd1JCWDdNNm1hSkRtLVc0ckRYclBYa3BObDBkRC1reDVaYXlwLVRCd0QxdURkTEVTb0tBOWVjRzRoWFROVzdrWURXVU9hQTk2OVFzOVZ2NlZsWlplTGpGbdIBXEFVX3lxTE5DVTNrZ01DVlJkdmJ4THotRVdGUzVDNXFVZ2FIUkFqZU5WMzhld18xSm01SkF0eDJHc1ozb3ZzNTVtSjR6VG5mbkgtcEFaMFFpck92d0hTcGR6RkZG?oc=5"
-          },
-          {
-            "id": "theme-evt-646dd36f97c7",
-            "titre": "Pourparlers diplomatiques entre les États-Unis, la Russie et l'Ukraine",
-            "gravite": 2,
-            "date": "2026-11-20T22:45:51Z",
-            "categorie_libelle": "Diplomatie et sommets",
-            "titre_langue": null,
-            "mention": null,
-            "resume": "Des responsables russes et ukrainiens se rendent à la Maison-Blanche pour des discussions à la suite d'un cessez-le-feu humanitaire temporaire.",
-            "source": "https://news.google.com/rss/articles/CBMihgFBVV95cUxPYjl6QkpxM3ZnRjZ3MDIxaFFCTHduclVFT2xHdlB0d01YVGZ1bl85TzJzS3RPcjg3M3BQbEdiVncyQlc5MlZveDg0SkhsLWtpR1h5MXdFNzJ1cnhiOGJvbmFReVZsLXFlbldRN3N1YjI0dWVoSEdlTTlhUExPUUV5X0drS2JNQQ?oc=5"
+            "resume": "La Russie a mené une frappe aérienne en Ukraine touchant des infrastructures énergétiques et des ponts, tandis que deux missiles et un drone russes ont atteint le territoire polonais, qualifié de violation par l'OTAN.",
+            "source": "https://www.hngn.com/articles/273901/20261120/two-russian-missiles-drone-land-poland-nato-calls-it-violation.htm"
           }
         ]
       },
@@ -11224,11 +11358,11 @@
         "niveau": "modéré",
         "variation_7j": 14,
         "composantes": {
-          "evenements": 78.0,
-          "tonalite": 12.9,
-          "tendance": 51.6
+          "evenements": 77.7,
+          "tonalite": 12.6,
+          "tendance": 53.3
         },
-        "tonalite_gdelt": -0.8,
+        "tonalite_gdelt": -0.89,
         "evenements_14j": 9,
         "composantes_manquantes": [],
         "nom": "Canada",
@@ -11238,12 +11372,12 @@
             "id": "evt-4a87273a286c",
             "titre": "Élections de mi-mandat aux États-Unis sur fond de guerres commerciales",
             "gravite": 2,
-            "date": "2026-11-20T23:30:00Z",
+            "date": "2026-11-21T00:25:00Z",
             "categorie_libelle": "Élections",
             "titre_langue": null,
             "mention": null,
             "resume": "Les élections de mi-mandat aux États-Unis ont été marquées par des débats intenses autour des droits de douane et des relations commerciales avec le Canada, l'Inde et d'autres partenaires internationaux.",
-            "source": "https://news.google.com/rss/articles/CBMiYEFVX3lxTFAyd1JCWDdNNm1hSkRtLVc0ckRYclBYa3BObDBkRC1reDVaYXlwLVRCd0QxdURkTEVTb0tBOWVjRzRoWFROVzdrWURXVU9hQTk2OVFzOVZ2NlZsWlplTGpGbdIBXEFVX3lxTE5DVTNrZ01DVlJkdmJ4THotRVdGUzVDNXFVZ2FIUkFqZU5WMzhld18xSm01SkF0eDJHc1ozb3ZzNTVtSjR6VG5mbkgtcEFaMFFpck92d0hTcGR6RkZG?oc=5"
+            "source": "https://news.google.com/rss/articles/CBMilgFBVV95cUxNYV9NcS1WUXhwczVEUVBWQjdpc3YtTXU1WEFqTlFzbThRb3VKRlJLWG91Z05iSzFDRE9SbDI0aGVWbm83UzhyZG1xMWZPWmJWcGJnYmJISXdack5KY21lbGU5aFNkSHVOSzlKZ0wtTDhSSmpsazFjOGxqQkZvUXF4eWNGVkFBeW9seXNfaEp5UXlvTG5EUFE?oc=5"
           },
           {
             "id": "evt-82d1003040cc",
@@ -11275,10 +11409,10 @@
         "variation_7j": -20,
         "composantes": {
           "evenements": 2.2,
-          "tonalite": 24.7,
-          "tendance": 47.4
+          "tonalite": 25.1,
+          "tendance": 46.8
         },
-        "tonalite_gdelt": -1.38,
+        "tonalite_gdelt": -1.39,
         "evenements_14j": 1,
         "composantes_manquantes": [],
         "nom": "Mexique",
@@ -11298,13 +11432,13 @@
         ]
       },
       "BR": {
-        "score": 14,
+        "score": 15,
         "niveau": "faible",
-        "variation_7j": 1,
+        "variation_7j": 2,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 14.9,
-          "tendance": 45.7
+          "tonalite": 15.8,
+          "tendance": 51.0
         },
         "tonalite_gdelt": -1.56,
         "evenements_14j": 0,
@@ -11334,11 +11468,11 @@
         "niveau": "modéré",
         "variation_7j": 13,
         "composantes": {
-          "evenements": 66.4,
-          "tonalite": 22.0,
-          "tendance": 46.5
+          "evenements": 66.1,
+          "tonalite": 21.8,
+          "tendance": 46.6
         },
-        "tonalite_gdelt": -1.47,
+        "tonalite_gdelt": -1.46,
         "evenements_14j": 8,
         "composantes_manquantes": [],
         "nom": "Royaume-Uni",
@@ -11385,25 +11519,25 @@
         "variation_7j": 1,
         "composantes": {
           "evenements": 34.1,
-          "tonalite": 26.5,
-          "tendance": 47.0
+          "tonalite": 26.4,
+          "tendance": 46.3
         },
-        "tonalite_gdelt": -1.84,
+        "tonalite_gdelt": -1.83,
         "evenements_14j": 6,
         "composantes_manquantes": [],
         "nom": "France",
         "region": "europe",
         "derniers_evenements": [
           {
-            "id": "theme-evt-646dd36f97c7",
+            "id": "theme-evt-98fddb85990a",
             "titre": "Pourparlers diplomatiques entre les États-Unis, la Russie et l'Ukraine",
             "gravite": 2,
-            "date": "2026-11-20T22:45:51Z",
+            "date": "2026-11-21T00:30:00Z",
             "categorie_libelle": "Diplomatie et sommets",
             "titre_langue": null,
             "mention": null,
-            "resume": "Des responsables russes et ukrainiens se rendent à la Maison-Blanche pour des discussions à la suite d'un cessez-le-feu humanitaire temporaire.",
-            "source": "https://news.google.com/rss/articles/CBMihgFBVV95cUxPYjl6QkpxM3ZnRjZ3MDIxaFFCTHduclVFT2xHdlB0d01YVGZ1bl85TzJzS3RPcjg3M3BQbEdiVncyQlc5MlZveDg0SkhsLWtpR1h5MXdFNzJ1cnhiOGJvbmFReVZsLXFlbldRN3N1YjI0dWVoSEdlTTlhUExPUUV5X0drS2JNQQ?oc=5"
+            "resume": "Des négociations médiées par les États-Unis pour mettre fin au conflit entre la Russie et l'Ukraine ont démarrées à Abou Dabi avec la participation des trois pays.",
+            "source": "https://www.dailymail.com/news/article-16310391/Trump-Ukraine-peace-deal-January.html"
           },
           {
             "id": "evt-f61f5ea28d31",
@@ -11435,25 +11569,25 @@
         "variation_7j": 18,
         "composantes": {
           "evenements": 39.9,
-          "tonalite": 6.4,
-          "tendance": 49.8
+          "tonalite": 6.6,
+          "tendance": 51.3
         },
-        "tonalite_gdelt": 0.1,
+        "tonalite_gdelt": 0.03,
         "evenements_14j": 2,
         "composantes_manquantes": [],
         "nom": "Allemagne",
         "region": "europe",
         "derniers_evenements": [
           {
-            "id": "theme-evt-646dd36f97c7",
+            "id": "theme-evt-98fddb85990a",
             "titre": "Pourparlers diplomatiques entre les États-Unis, la Russie et l'Ukraine",
             "gravite": 2,
-            "date": "2026-11-20T22:45:51Z",
+            "date": "2026-11-21T00:30:00Z",
             "categorie_libelle": "Diplomatie et sommets",
             "titre_langue": null,
             "mention": null,
-            "resume": "Des responsables russes et ukrainiens se rendent à la Maison-Blanche pour des discussions à la suite d'un cessez-le-feu humanitaire temporaire.",
-            "source": "https://news.google.com/rss/articles/CBMihgFBVV95cUxPYjl6QkpxM3ZnRjZ3MDIxaFFCTHduclVFT2xHdlB0d01YVGZ1bl85TzJzS3RPcjg3M3BQbEdiVncyQlc5MlZveDg0SkhsLWtpR1h5MXdFNzJ1cnhiOGJvbmFReVZsLXFlbldRN3N1YjI0dWVoSEdlTTlhUExPUUV5X0drS2JNQQ?oc=5"
+            "resume": "Des négociations médiées par les États-Unis pour mettre fin au conflit entre la Russie et l'Ukraine ont démarrées à Abou Dabi avec la participation des trois pays.",
+            "source": "https://www.dailymail.com/news/article-16310391/Trump-Ukraine-peace-deal-January.html"
           },
           {
             "id": "evt-ff3f4cd78636",
@@ -11473,11 +11607,11 @@
         "niveau": "faible",
         "variation_7j": -1,
         "composantes": {
-          "evenements": 29.3,
-          "tonalite": 12.3,
-          "tendance": 45.7
+          "evenements": 29.0,
+          "tonalite": 11.9,
+          "tendance": 44.7
         },
-        "tonalite_gdelt": -1.09,
+        "tonalite_gdelt": -1.04,
         "evenements_14j": 1,
         "composantes_manquantes": [],
         "nom": "Suisse",
@@ -11501,11 +11635,11 @@
         "niveau": "élevé",
         "variation_7j": 6,
         "composantes": {
-          "evenements": 74.3,
-          "tonalite": 55.5,
+          "evenements": 74.0,
+          "tonalite": 54.6,
           "tendance": 53.2
         },
-        "tonalite_gdelt": -3.16,
+        "tonalite_gdelt": -3.13,
         "evenements_14j": 4,
         "composantes_manquantes": [],
         "nom": "Arabie saoudite",
@@ -11515,12 +11649,12 @@
             "id": "theme-evt-774117620112",
             "titre": "Offensive des Houthis et frappes en Arabie saoudite et au Yémen",
             "gravite": 4,
-            "date": "2026-11-20T23:38:27Z",
+            "date": "2026-11-21T00:00:06Z",
             "categorie_libelle": "Conflit armé",
             "titre_langue": null,
             "mention": null,
             "resume": "Les forces houthis mènent des offensives terrestres et des frappes de missiles et de drones ciblant des infrastructures stratégiques, notamment dans le détroit de Bab el-Mandeb, à Aden et en Arabie saoudite.",
-            "source": "https://news.google.com/rss/articles/CBMingFBVV95cUxNNFM1WjN3eFlXc3BiNDl6Z2w2OTFBRkR4UVRKWTZKbjBYUFN1dlRwQ1FESEVqdTM0RE9qNGNYMlVBRlFLZ3JkOUlkTXJKQV9hcVJKVFFOWTRoYzM0cm4wcmFkYmJLcU1FMW8tQWN5WnBtNUZPVE5sbFBNZTlpc1FKVnRPYzNLaHVpS2UxV2Z4clRaTEZhOHMzV3Zic1otQQ?oc=5"
+            "source": "https://www.aljazeera.com/news/liveblog/2026/11/21/iran-war-live-saudi-led-coalition-repels-houthi-missiles?traffic_source=rss"
           },
           {
             "id": "evt-a646b3e34143",
@@ -11552,7 +11686,7 @@
         "variation_7j": 8,
         "composantes": {
           "evenements": 14.7,
-          "tonalite": 42.3,
+          "tonalite": 42.2,
           "tendance": 57.5
         },
         "tonalite_gdelt": -2.66,
@@ -11565,12 +11699,12 @@
             "id": "evt-4a87273a286c",
             "titre": "Élections de mi-mandat aux États-Unis sur fond de guerres commerciales",
             "gravite": 2,
-            "date": "2026-11-20T23:30:00Z",
+            "date": "2026-11-21T00:25:00Z",
             "categorie_libelle": "Élections",
             "titre_langue": null,
             "mention": null,
             "resume": "Les élections de mi-mandat aux États-Unis ont été marquées par des débats intenses autour des droits de douane et des relations commerciales avec le Canada, l'Inde et d'autres partenaires internationaux.",
-            "source": "https://news.google.com/rss/articles/CBMiYEFVX3lxTFAyd1JCWDdNNm1hSkRtLVc0ckRYclBYa3BObDBkRC1reDVaYXlwLVRCd0QxdURkTEVTb0tBOWVjRzRoWFROVzdrWURXVU9hQTk2OVFzOVZ2NlZsWlplTGpGbdIBXEFVX3lxTE5DVTNrZ01DVlJkdmJ4THotRVdGUzVDNXFVZ2FIUkFqZU5WMzhld18xSm01SkF0eDJHc1ozb3ZzNTVtSjR6VG5mbkgtcEFaMFFpck92d0hTcGR6RkZG?oc=5"
+            "source": "https://news.google.com/rss/articles/CBMilgFBVV95cUxNYV9NcS1WUXhwczVEUVBWQjdpc3YtTXU1WEFqTlFzbThRb3VKRlJLWG91Z05iSzFDRE9SbDI0aGVWbm83UzhyZG1xMWZPWmJWcGJnYmJISXdack5KY21lbGU5aFNkSHVOSzlKZ0wtTDhSSmpsazFjOGxqQkZvUXF4eWNGVkFBeW9seXNfaEp5UXlvTG5EUFE?oc=5"
           }
         ]
       },
@@ -11579,11 +11713,11 @@
         "niveau": "faible",
         "variation_7j": -5,
         "composantes": {
-          "evenements": 31.1,
-          "tonalite": 19.1,
-          "tendance": 49.7
+          "evenements": 30.9,
+          "tonalite": 18.6,
+          "tendance": 49.3
         },
-        "tonalite_gdelt": -1.17,
+        "tonalite_gdelt": -1.14,
         "evenements_14j": 3,
         "composantes_manquantes": [],
         "nom": "Inde",
@@ -11593,12 +11727,12 @@
             "id": "evt-4a87273a286c",
             "titre": "Élections de mi-mandat aux États-Unis sur fond de guerres commerciales",
             "gravite": 2,
-            "date": "2026-11-20T23:30:00Z",
+            "date": "2026-11-21T00:25:00Z",
             "categorie_libelle": "Élections",
             "titre_langue": null,
             "mention": null,
             "resume": "Les élections de mi-mandat aux États-Unis ont été marquées par des débats intenses autour des droits de douane et des relations commerciales avec le Canada, l'Inde et d'autres partenaires internationaux.",
-            "source": "https://news.google.com/rss/articles/CBMiYEFVX3lxTFAyd1JCWDdNNm1hSkRtLVc0ckRYclBYa3BObDBkRC1reDVaYXlwLVRCd0QxdURkTEVTb0tBOWVjRzRoWFROVzdrWURXVU9hQTk2OVFzOVZ2NlZsWlplTGpGbdIBXEFVX3lxTE5DVTNrZ01DVlJkdmJ4THotRVdGUzVDNXFVZ2FIUkFqZU5WMzhld18xSm01SkF0eDJHc1ozb3ZzNTVtSjR6VG5mbkgtcEFaMFFpck92d0hTcGR6RkZG?oc=5"
+            "source": "https://news.google.com/rss/articles/CBMilgFBVV95cUxNYV9NcS1WUXhwczVEUVBWQjdpc3YtTXU1WEFqTlFzbThRb3VKRlJLWG91Z05iSzFDRE9SbDI0aGVWbm83UzhyZG1xMWZPWmJWcGJnYmJISXdack5KY21lbGU5aFNkSHVOSzlKZ0wtTDhSSmpsazFjOGxqQkZvUXF4eWNGVkFBeW9seXNfaEp5UXlvTG5EUFE?oc=5"
           },
           {
             "id": "theme-evt-357ebcebe6d7",
@@ -11618,11 +11752,11 @@
         "niveau": "modéré",
         "variation_7j": 1,
         "composantes": {
-          "evenements": 82.0,
+          "evenements": 81.7,
           "tonalite": 6.1,
-          "tendance": 65.0
+          "tendance": 64.4
         },
-        "tonalite_gdelt": -0.41,
+        "tonalite_gdelt": -0.38,
         "evenements_14j": 10,
         "composantes_manquantes": [],
         "nom": "Chine",
@@ -11669,10 +11803,10 @@
         "variation_7j": 2,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 7.5,
-          "tendance": 53.9
+          "tonalite": 8.0,
+          "tendance": 54.9
         },
-        "tonalite_gdelt": -0.69,
+        "tonalite_gdelt": -0.74,
         "evenements_14j": 0,
         "composantes_manquantes": [],
         "nom": "Corée du Sud",
@@ -11684,9 +11818,9 @@
         "niveau": "faible",
         "variation_7j": 8,
         "composantes": {
-          "evenements": 19.2,
-          "tonalite": 12.6,
-          "tendance": 55.0
+          "evenements": 19.0,
+          "tonalite": 12.2,
+          "tendance": 53.6
         },
         "tonalite_gdelt": -0.37,
         "evenements_14j": 2,
@@ -11712,11 +11846,11 @@
         "niveau": "modéré",
         "variation_7j": 18,
         "composantes": {
-          "evenements": 32.2,
-          "tonalite": 31.5,
+          "evenements": 32.0,
+          "tonalite": 31.1,
           "tendance": 52.3
         },
-        "tonalite_gdelt": -2.64,
+        "tonalite_gdelt": -2.61,
         "evenements_14j": 3,
         "composantes_manquantes": [],
         "nom": "Australie",
@@ -11747,15 +11881,15 @@
         ]
       },
       "IT": {
-        "score": 20,
+        "score": 19,
         "niveau": "faible",
-        "variation_7j": 8,
+        "variation_7j": 7,
         "composantes": {
-          "evenements": 14.2,
-          "tonalite": 14.9,
-          "tendance": 41.0
+          "evenements": 14.0,
+          "tonalite": 14.5,
+          "tendance": 39.3
         },
-        "tonalite_gdelt": -0.51,
+        "tonalite_gdelt": -0.49,
         "evenements_14j": 1,
         "composantes_manquantes": [],
         "nom": "Italie",
@@ -11780,8 +11914,8 @@
         "variation_7j": -10,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 22.9,
-          "tendance": 40.8
+          "tonalite": 22.7,
+          "tendance": 40.0
         },
         "tonalite_gdelt": -1.39,
         "evenements_14j": 0,
@@ -11796,10 +11930,10 @@
         "variation_7j": 2,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 23.6,
-          "tendance": 42.9
+          "tonalite": 23.1,
+          "tendance": 44.1
         },
-        "tonalite_gdelt": -2.25,
+        "tonalite_gdelt": -2.22,
         "evenements_14j": 0,
         "composantes_manquantes": [],
         "nom": "Pays-Bas",
@@ -11823,15 +11957,15 @@
         "derniers_evenements": []
       },
       "PL": {
-        "score": 51,
+        "score": 50,
         "niveau": "modéré",
-        "variation_7j": 32,
+        "variation_7j": 31,
         "composantes": {
-          "evenements": 45.7,
-          "tonalite": 62.1,
-          "tendance": 45.3
+          "evenements": 45.4,
+          "tonalite": 61.9,
+          "tendance": 45.0
         },
-        "tonalite_gdelt": -3.29,
+        "tonalite_gdelt": -3.33,
         "evenements_14j": 1,
         "composantes_manquantes": [],
         "nom": "Pologne",
@@ -11855,11 +11989,11 @@
         "niveau": "faible",
         "variation_7j": 7,
         "composantes": {
-          "evenements": 19.2,
-          "tonalite": 21.8,
+          "evenements": 19.0,
+          "tonalite": 21.5,
           "tendance": 44.6
         },
-        "tonalite_gdelt": -1.25,
+        "tonalite_gdelt": -1.23,
         "evenements_14j": 2,
         "composantes_manquantes": [],
         "nom": "Taïwan",
@@ -11879,15 +12013,15 @@
         ]
       },
       "ID": {
-        "score": 14,
+        "score": 13,
         "niveau": "faible",
-        "variation_7j": 2,
+        "variation_7j": 1,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 11.7,
-          "tendance": 51.2
+          "tonalite": 11.3,
+          "tendance": 48.7
         },
-        "tonalite_gdelt": -0.69,
+        "tonalite_gdelt": -0.66,
         "evenements_14j": 0,
         "composantes_manquantes": [],
         "nom": "Indonésie",
@@ -11899,7 +12033,7 @@
         "niveau": "faible",
         "variation_7j": 5,
         "composantes": {
-          "evenements": 19.2,
+          "evenements": 19.0,
           "tonalite": 0.0,
           "tendance": 49.4
         },
@@ -11927,11 +12061,11 @@
         "niveau": "faible",
         "variation_7j": 0,
         "composantes": {
-          "evenements": 10.6,
-          "tonalite": 7.3,
+          "evenements": 10.5,
+          "tonalite": 7.0,
           "tendance": 49.6
         },
-        "tonalite_gdelt": 0.34,
+        "tonalite_gdelt": 0.35,
         "evenements_14j": 1,
         "composantes_manquantes": [],
         "nom": "Singapour",
@@ -11956,10 +12090,10 @@
         "variation_7j": -2,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 5.8,
-          "tendance": 43.1
+          "tonalite": 5.5,
+          "tendance": 43.9
         },
-        "tonalite_gdelt": 0.72,
+        "tonalite_gdelt": 0.78,
         "evenements_14j": 0,
         "composantes_manquantes": [],
         "nom": "Thaïlande",
@@ -11973,7 +12107,7 @@
         "composantes": {
           "evenements": 0.0,
           "tonalite": 3.4,
-          "tendance": 36.0
+          "tendance": 32.9
         },
         "tonalite_gdelt": -0.64,
         "evenements_14j": 0,
@@ -11989,7 +12123,7 @@
         "composantes": {
           "evenements": 0.0,
           "tonalite": 42.6,
-          "tendance": 46.0
+          "tendance": 44.5
         },
         "tonalite_gdelt": -3.15,
         "evenements_14j": 0,
@@ -12003,11 +12137,11 @@
         "niveau": "faible",
         "variation_7j": 5,
         "composantes": {
-          "evenements": 27.4,
-          "tonalite": 3.0,
+          "evenements": 27.1,
+          "tonalite": 2.6,
           "tendance": 46.7
         },
-        "tonalite_gdelt": 1.14,
+        "tonalite_gdelt": 1.24,
         "evenements_14j": 1,
         "composantes_manquantes": [],
         "nom": "Émirats arabes unis",
@@ -12031,11 +12165,11 @@
         "niveau": "modéré",
         "variation_7j": 1,
         "composantes": {
-          "evenements": 43.6,
-          "tonalite": 9.6,
+          "evenements": 43.3,
+          "tonalite": 9.1,
           "tendance": 52.5
         },
-        "tonalite_gdelt": -0.8,
+        "tonalite_gdelt": -0.75,
         "evenements_14j": 3,
         "composantes_manquantes": [],
         "nom": "Turquie",
@@ -12060,10 +12194,10 @@
         "variation_7j": 0,
         "composantes": {
           "evenements": 0.0,
-          "tonalite": 12.3,
-          "tendance": 42.7
+          "tonalite": 12.0,
+          "tendance": 39.8
         },
-        "tonalite_gdelt": -0.64,
+        "tonalite_gdelt": -0.58,
         "evenements_14j": 0,
         "composantes_manquantes": [],
         "nom": "Égypte",
@@ -12300,7 +12434,7 @@
     },
     "quota_ia": {
       "jour": "2026-11-20",
-      "appels": 40,
+      "appels": 42,
       "quota_jour": 825,
       "modeles": [
         {
@@ -12313,7 +12447,7 @@
         },
         {
           "modele": "gemini-3.5-flash-lite",
-          "appels": 34,
+          "appels": 36,
           "limite_jour": 800,
           "limite_minute": 12,
           "epuise": false,
