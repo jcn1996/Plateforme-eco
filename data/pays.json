@@ -1,10 +1,10 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-21T06:19:46Z",
+    "genere_le": "2026-11-21T14:35:49Z",
     "source": "agent-pays",
     "fictif": false,
-    "mise_a_jour_precedente": "2026-11-20T15:22:58Z",
+    "mise_a_jour_precedente": "2026-11-21T06:19:46Z",
     "version_agent": "1.2",
     "sources": {
       "source nationale officielle": [
@@ -52,6 +52,11 @@
       "bce_change": "ok",
       "yahoo_cours": "ok",
       "yahoo_per": "ok",
+      "flux_globalx": "erreur : ARGT : requêtes automatiques bloquées par la protection anti-robots du site (page « Security Checkpoint », HTTP 429) ; pas de contournement : parts en circulati",
+      "flux_ishares": "ok",
+      "flux_ssga": "ok",
+      "flux_vaneck": "ok",
+      "flux_yahoo_parts": "partiel (11/30)",
       "bm_croissance": "ok",
       "bm_inflation": "ok",
       "bm_solde_courant": "ok",
@@ -66,12 +71,7 @@
       "national_dbnomics_INSEE_IPC-2025_M.IPC.SO.00.00.GLISSEMENT_ANNUEL.ENSEMBLE.FE.POURCENT.BRUT.2025.FALSE": "ok",
       "national_dbnomics_DESTATIS_61111BM001_DG.PREIS1": "ok",
       "national_dbnomics_STATJP_CPIm_001": "ok",
-      "textes": "règles (pas de clé GEMINI_API_KEY ou rédaction refusée)",
-      "flux_globalx": "erreur : ARGT : requêtes automatiques bloquées par la protection anti-robots du site (page « Security Checkpoint », HTTP 429) ; pas de contournement : parts en circulati",
-      "flux_ishares": "ok",
-      "flux_ssga": "ok",
-      "flux_vaneck": "ok",
-      "flux_yahoo_parts": "partiel (21/30)"
+      "textes": "règles (pas de clé GEMINI_API_KEY ou rédaction refusée)"
     },
     "ponderations": {
       "croissance_pib": 0.2,
@@ -88,7 +88,7 @@
       "AE",
       "EG"
     ],
-    "flux_etf_mis_a_jour_le": "2026-11-21T09:39:06Z"
+    "flux_etf_mis_a_jour_le": "2026-11-21T14:35:49Z"
   },
   "donnees": [
     {
@@ -1240,10 +1240,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWC",
-              "valeur": 94.8,
-              "date": "2026-11-20",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWC"
             }
           ],
           "verification": "source_unique",
@@ -2131,14 +2129,14 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours BRL=X",
               "niveau": "marche",
-              "valeur": -12.48,
-              "date": "2026-11-20",
+              "valeur": -12.09,
+              "date": "2026-11-21",
               "statut": "concorde",
-              "ecart": 0.41
+              "ecart": 0.79
             }
           ],
           "verification": "concordant",
-          "ecart_max": 0.41,
+          "ecart_max": 0.79,
           "devise": "BRL",
           "note": 3,
           "confirmee": "valeur inhabituelle mais confirmée par une seconde source (Yahoo Finance via yfinance)",
@@ -2972,7 +2970,7 @@
               "nom": "Yahoo Finance via yfinance, cours GBPUSD=X",
               "niveau": "marche",
               "valeur": -4.08,
-              "date": "2026-11-20",
+              "date": "2026-11-21",
               "statut": "concorde",
               "ecart": 0.19
             }
@@ -3048,10 +3046,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWU",
-              "valeur": 67.8,
-              "date": "2026-11-20",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWU"
             }
           ],
           "verification": "source_unique",
@@ -3555,10 +3551,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWQ",
-              "valeur": 28.8,
-              "date": "2026-11-20",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWQ"
             }
           ],
           "verification": "source_unique",
@@ -6894,10 +6888,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWY",
-              "valeur": 75.6,
-              "date": "2026-11-20",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWY"
             }
           ],
           "verification": "source_unique",
@@ -7374,10 +7366,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWJ",
-              "valeur": 227.85,
-              "date": "2026-11-20",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWJ"
             }
           ],
           "verification": "source_unique",
@@ -7849,10 +7839,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWA",
-              "valeur": 63.6,
-              "date": "2026-11-20",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWA"
             }
           ],
           "verification": "source_unique",
@@ -8345,10 +8333,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWI",
-              "valeur": 8.55,
-              "date": "2026-11-20",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWI"
             }
           ],
           "verification": "source_unique",
@@ -9787,10 +9773,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWD",
-              "valeur": 7.65,
-              "date": "2026-11-20",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWD"
             }
           ],
           "verification": "source_unique",
@@ -10667,10 +10651,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWT",
-              "valeur": 85.0,
-              "date": "2026-11-20",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWT"
             }
           ],
           "verification": "source_unique",
@@ -12233,10 +12215,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWS",
-              "valeur": 24.7,
-              "date": "2026-11-20",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWS"
             }
           ],
           "verification": "source_unique",
@@ -12825,7 +12805,7 @@
       ],
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 2,1 % en 2026 selon l'OCDE ; inflation à 4,2 % pour une cible de 3,0 %.",
-        "politique_monetaire_et_risques": "Taux réel de +0,3 pt (banque centrale aux taux stables) ; devise à −9,1 % contre le dollar sur 3 mois ; solde courant de −1,2 % du PIB.",
+        "politique_monetaire_et_risques": "Taux réel de +0,3 pt (banque centrale aux taux stables) ; devise à −9,8 % contre le dollar sur 3 mois ; solde courant de −1,2 % du PIB.",
         "marches": "Marché à −6,7 % sur 12 mois (ETF en dollars) ; PER inférieur de 12 % à la médiane des pays suivis ; sorties nettes sur l'ETF ECH de 2,6 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
@@ -13035,9 +13015,9 @@
       "detail": {
         "devise_3m": {
           "libelle": "Devise sur 3 mois",
-          "valeur": -9.13,
+          "valeur": -9.77,
           "unite": "%",
-          "date": "2026-11-20",
+          "date": "2026-11-21",
           "source": "Yahoo Finance via yfinance, cours CLP=X",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -13047,19 +13027,19 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours CLP=X",
               "niveau": "marche",
-              "valeur": -9.13,
-              "date": "2026-11-20",
+              "valeur": -9.77,
+              "date": "2026-11-21",
               "statut": "retenue"
             }
           ],
           "verification": "source_unique",
           "ecart_max": null,
           "devise": "CLP",
-          "note": 18,
+          "note": 16,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -9.55,
-            "note": 17,
+            "valeur": -9.13,
+            "note": 18,
             "date": "2026-11-20"
           }
         },
