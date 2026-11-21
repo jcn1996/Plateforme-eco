@@ -1,5 +1,5 @@
 {
-  "jour": "2026-11-14",
+  "jour": "2026-11-21",
   "propositions": [
     {
       "agent": "pays",
@@ -17,18 +17,18 @@
         "activite_reelle": 0.1
       },
       "propose": {
-        "croissance_pib": 0.173,
-        "indicateur_avance": 0.13,
-        "inflation": 0.302,
-        "taux_reel": 0.13,
-        "valorisation": 0.13,
-        "momentum": 0.135,
+        "croissance_pib": 0.2,
+        "indicateur_avance": 0.125,
+        "inflation": 0.294,
+        "taux_reel": 0.125,
+        "valorisation": 0.125,
+        "momentum": 0.131,
         "activite_reelle": 0.1
       },
       "retenue": false,
-      "raison": "pas d'amélioration hors échantillon (IC -0,060 → -0,063, écart après frais -0,3 → -1,6 %/an) : pondérations actuelles conservées",
+      "raison": "pas d'amélioration hors échantillon (IC -0,037 → -0,046, écart après frais +0,8 → -1,2 %/an) : pondérations actuelles conservées",
       "detail": {
-        "croissance_pib": "IC d'apprentissage -0,082 → facteur 0,50",
+        "croissance_pib": "non testé ou données insuffisantes : poids inchangé",
         "indicateur_avance": "IC d'apprentissage -0,162 → facteur 0,50",
         "inflation": "IC d'apprentissage +0,038 → facteur 0,88",
         "taux_reel": "IC d'apprentissage -0,069 → facteur 0,50",
@@ -36,17 +36,17 @@
         "momentum": "IC d'apprentissage +0,002 → facteur 0,52"
       },
       "note_actuelle": {
-        "ic_verification": -0.0597,
-        "t_verification": -1.32,
-        "ecart_net_verification_pct": -0.32,
-        "ic_apprentissage": -0.0796,
+        "ic_verification": -0.0367,
+        "t_verification": -0.66,
+        "ecart_net_verification_pct": 0.75,
+        "ic_apprentissage": -0.0411,
         "verdict": "Supprimer"
       },
       "note_recalibree": {
-        "ic_verification": -0.0627,
-        "t_verification": -1.36,
-        "ecart_net_verification_pct": -1.59,
-        "ic_apprentissage": -0.0619,
+        "ic_verification": -0.0458,
+        "t_verification": -0.9,
+        "ecart_net_verification_pct": -1.21,
+        "ic_apprentissage": -0.0275,
         "verdict": "Supprimer"
       }
     },
@@ -78,133 +78,26 @@
         "resultats": 10
       },
       "retenue": false,
-      "raison": "pas d'amélioration hors échantillon (IC -0,031 → -0,026, écart après frais +0,1 → -0,6 %/an) : pondérations actuelles conservées",
+      "raison": "pas d'amélioration hors échantillon (IC -0,014 → -0,015, écart après frais +3,6 → +2,4 %/an) : pondérations actuelles conservées",
       "detail": {
-        "fondamentaux": "IC d'apprentissage -0,127 → facteur 0,50",
+        "fondamentaux": "IC d'apprentissage -0,063 → facteur 0,50",
         "valorisation": "IC d'apprentissage -0,006 → facteur 0,50",
         "tendance": "IC d'apprentissage +0,002 → facteur 0,52",
         "cycle": "IC d'apprentissage -0,058 → facteur 0,50"
       },
       "note_actuelle": {
-        "ic_verification": -0.0311,
-        "t_verification": -0.7,
-        "ecart_net_verification_pct": 0.1,
-        "ic_apprentissage": -0.0833,
+        "ic_verification": -0.0139,
+        "t_verification": -0.28,
+        "ecart_net_verification_pct": 3.6,
+        "ic_apprentissage": -0.0575,
         "verdict": "Supprimer"
       },
       "note_recalibree": {
-        "ic_verification": -0.0265,
-        "t_verification": -0.6,
-        "ecart_net_verification_pct": -0.56,
-        "ic_apprentissage": -0.0865,
+        "ic_verification": -0.0153,
+        "t_verification": -0.34,
+        "ecart_net_verification_pct": 2.42,
+        "ic_apprentissage": -0.0436,
         "verdict": "Supprimer"
-      }
-    },
-    {
-      "agent": "entreprises",
-      "fichier": "agents/entreprises/config.json",
-      "chemin": [
-        "ponderations"
-      ],
-      "actuel": {
-        "croissance_ca": 0.07,
-        "croissance_benefice": 0.06,
-        "marge_op": 0.06,
-        "conversion_cash": 0.05,
-        "dette_ebitda": 0.05,
-        "couverture_interets": 0.03,
-        "roic": 0.06,
-        "per_secteur": 0.06,
-        "ev_ebitda_secteur": 0.04,
-        "momentum_12m": 0.06,
-        "fscore": 0.06,
-        "fcf_yield": 0.05,
-        "benefices_normalises": 0.03,
-        "roic_wacc": 0.05,
-        "regularite": 0.04,
-        "rendement_actionnaire": 0.03,
-        "altman_z": 0.04,
-        "mscore": 0.02,
-        "goodwill_actif": 0.02,
-        "current_ratio": 0.02,
-        "marge_brute": 0.03,
-        "cycle_cash": 0.02,
-        "capex_amortissements": 0.01,
-        "intensite_rd": 0.01,
-        "detention_dirigeants": 0.02,
-        "evolution_actions": 0.01
-      },
-      "propose": {
-        "croissance_ca": 0.054,
-        "croissance_benefice": 0.046,
-        "marge_op": 0.046,
-        "conversion_cash": 0.08,
-        "dette_ebitda": 0.046,
-        "couverture_interets": 0.023,
-        "roic": 0.051,
-        "per_secteur": 0.046,
-        "ev_ebitda_secteur": 0.031,
-        "momentum_12m": 0.046,
-        "fscore": 0.049,
-        "fcf_yield": 0.061,
-        "benefices_normalises": 0.037,
-        "roic_wacc": 0.043,
-        "regularite": 0.048,
-        "rendement_actionnaire": 0.062,
-        "altman_z": 0.031,
-        "mscore": 0.046,
-        "goodwill_actif": 0.028,
-        "current_ratio": 0.017,
-        "marge_brute": 0.032,
-        "cycle_cash": 0.021,
-        "capex_amortissements": 0.01,
-        "intensite_rd": 0.01,
-        "detention_dirigeants": 0.02,
-        "evolution_actions": 0.016
-      },
-      "retenue": false,
-      "raison": "pas d'amélioration hors échantillon (IC +0,022 → +0,022, écart après frais -2,9 → -3,1 %/an) : pondérations actuelles conservées",
-      "detail": {
-        "croissance_ca": "IC d'apprentissage -0,034 → facteur 0,50",
-        "croissance_benefice": "IC d'apprentissage -0,053 → facteur 0,50",
-        "marge_op": "IC d'apprentissage -0,034 → facteur 0,50",
-        "conversion_cash": "IC d'apprentissage +0,050 → facteur 1,00",
-        "dette_ebitda": "IC d'apprentissage +0,010 → facteur 0,60",
-        "couverture_interets": "IC d'apprentissage -0,015 → facteur 0,50",
-        "roic": "IC d'apprentissage +0,005 → facteur 0,55",
-        "per_secteur": "IC d'apprentissage -0,008 → facteur 0,50",
-        "ev_ebitda_secteur": "IC d'apprentissage -0,012 → facteur 0,50",
-        "momentum_12m": "IC d'apprentissage -0,007 → facteur 0,50",
-        "fscore": "IC d'apprentissage +0,003 → facteur 0,53",
-        "fcf_yield": "IC d'apprentissage +0,028 → facteur 0,78",
-        "benefices_normalises": "IC d'apprentissage +0,031 → facteur 0,81",
-        "roic_wacc": "IC d'apprentissage +0,006 → facteur 0,56",
-        "regularite": "IC d'apprentissage +0,027 → facteur 0,77",
-        "rendement_actionnaire": "IC d'apprentissage +0,084 → facteur 1,34",
-        "altman_z": "IC d'apprentissage +0,000 → facteur 0,50",
-        "mscore": "IC d'apprentissage +0,097 → facteur 1,47",
-        "goodwill_actif": "IC d'apprentissage +0,040 → facteur 0,90",
-        "current_ratio": "IC d'apprentissage +0,006 → facteur 0,56",
-        "marge_brute": "IC d'apprentissage +0,019 → facteur 0,69",
-        "cycle_cash": "IC d'apprentissage +0,017 → facteur 0,67",
-        "capex_amortissements": "IC d'apprentissage +0,017 → facteur 0,67",
-        "intensite_rd": "IC d'apprentissage +0,016 → facteur 0,66",
-        "detention_dirigeants": "non testé ou données insuffisantes : poids inchangé",
-        "evolution_actions": "IC d'apprentissage +0,056 → facteur 1,05"
-      },
-      "note_actuelle": {
-        "ic_verification": 0.0225,
-        "t_verification": 0.72,
-        "ecart_net_verification_pct": -2.88,
-        "ic_apprentissage": 0.0058,
-        "verdict": "Alléger"
-      },
-      "note_recalibree": {
-        "ic_verification": 0.0222,
-        "t_verification": 0.68,
-        "ecart_net_verification_pct": -3.13,
-        "ic_apprentissage": 0.0263,
-        "verdict": "Alléger"
       }
     },
     {
@@ -227,35 +120,35 @@
       },
       "propose": {
         "tendance": 4,
-        "courbe": 2,
+        "courbe": 1,
         "stocks": 0,
-        "positionnement": 18,
+        "positionnement": 17,
         "macro": 30,
         "geopolitique": 10,
         "flux": 15,
-        "niveau": 21
+        "niveau": 23
       },
       "retenue": false,
-      "raison": "hors échantillon, IC -0,001 → +0,038 et écart après frais +10,7 → +12,6 %/an ; non proposée : ces pondérations ont déjà été recalibrées par le backtest de 2026-11 (proposition appliquée), pas de nouveau réglage sur presque les mêmes données avant 6 mois",
+      "raison": "hors échantillon, IC -0,003 → +0,040 et écart après frais +11,7 → +12,9 %/an ; non proposée : ces pondérations ont déjà été recalibrées par le backtest de 2026-11 (proposition appliquée), pas de nouveau réglage sur presque les mêmes données avant 6 mois",
       "detail": {
-        "tendance": "IC d'apprentissage -0,065 → facteur 0,50",
-        "courbe": "IC d'apprentissage +0,011 → facteur 0,61",
+        "tendance": "IC d'apprentissage -0,062 → facteur 0,50",
+        "courbe": "IC d'apprentissage -0,017 → facteur 0,50",
         "stocks": "non testé ou données insuffisantes : poids inchangé",
-        "positionnement": "IC d'apprentissage +0,066 → facteur 1,16",
-        "niveau": "IC d'apprentissage +0,119 → facteur 1,50"
+        "positionnement": "IC d'apprentissage +0,053 → facteur 1,03",
+        "niveau": "IC d'apprentissage +0,128 → facteur 1,50"
       },
       "note_actuelle": {
-        "ic_verification": -0.0008,
-        "t_verification": -0.02,
-        "ecart_net_verification_pct": 10.65,
-        "ic_apprentissage": 0.0175,
-        "verdict": "Supprimer"
+        "ic_verification": -0.0027,
+        "t_verification": -0.06,
+        "ecart_net_verification_pct": 11.7,
+        "ic_apprentissage": 0.0228,
+        "verdict": "Alléger"
       },
       "note_recalibree": {
-        "ic_verification": 0.0384,
-        "t_verification": 0.84,
-        "ecart_net_verification_pct": 12.62,
-        "ic_apprentissage": 0.025,
+        "ic_verification": 0.0399,
+        "t_verification": 0.85,
+        "ecart_net_verification_pct": 12.92,
+        "ic_apprentissage": 0.0327,
         "verdict": "Alléger"
       },
       "deja_recalibree_le": "2026-11"
@@ -280,35 +173,35 @@
       },
       "propose": {
         "tendance": 6,
-        "courbe": 7,
+        "courbe": 6,
         "stocks": 10,
-        "positionnement": 23,
+        "positionnement": 22,
         "macro": 20,
         "geopolitique": 5,
         "flux": 5,
-        "niveau": 24
+        "niveau": 26
       },
       "retenue": false,
-      "raison": "hors échantillon, IC -0,001 → +0,038 et écart après frais +10,7 → +12,6 %/an ; non proposée : ces pondérations ont déjà été recalibrées par le backtest de 2026-11 (proposition appliquée), pas de nouveau réglage sur presque les mêmes données avant 6 mois",
+      "raison": "hors échantillon, IC -0,003 → +0,040 et écart après frais +11,7 → +12,9 %/an ; non proposée : ces pondérations ont déjà été recalibrées par le backtest de 2026-11 (proposition appliquée), pas de nouveau réglage sur presque les mêmes données avant 6 mois",
       "detail": {
-        "tendance": "IC d'apprentissage -0,065 → facteur 0,50",
-        "courbe": "IC d'apprentissage +0,011 → facteur 0,61",
+        "tendance": "IC d'apprentissage -0,062 → facteur 0,50",
+        "courbe": "IC d'apprentissage -0,017 → facteur 0,50",
         "stocks": "non testé ou données insuffisantes : poids inchangé",
-        "positionnement": "IC d'apprentissage +0,066 → facteur 1,16",
-        "niveau": "IC d'apprentissage +0,119 → facteur 1,50"
+        "positionnement": "IC d'apprentissage +0,053 → facteur 1,03",
+        "niveau": "IC d'apprentissage +0,128 → facteur 1,50"
       },
       "note_actuelle": {
-        "ic_verification": -0.0008,
-        "t_verification": -0.02,
-        "ecart_net_verification_pct": 10.65,
-        "ic_apprentissage": 0.0175,
-        "verdict": "Supprimer"
+        "ic_verification": -0.0027,
+        "t_verification": -0.06,
+        "ecart_net_verification_pct": 11.7,
+        "ic_apprentissage": 0.0228,
+        "verdict": "Alléger"
       },
       "note_recalibree": {
-        "ic_verification": 0.0384,
-        "t_verification": 0.84,
-        "ecart_net_verification_pct": 12.62,
-        "ic_apprentissage": 0.025,
+        "ic_verification": 0.0399,
+        "t_verification": 0.85,
+        "ecart_net_verification_pct": 12.92,
+        "ic_apprentissage": 0.0327,
         "verdict": "Alléger"
       },
       "deja_recalibree_le": "2026-11"
@@ -332,36 +225,36 @@
         "niveau": 10
       },
       "propose": {
-        "tendance": 5,
-        "courbe": 10,
+        "tendance": 6,
+        "courbe": 9,
         "stocks": 25,
-        "positionnement": 19,
+        "positionnement": 18,
         "macro": 10,
         "geopolitique": 10,
         "flux": 5,
-        "niveau": 16
+        "niveau": 17
       },
       "retenue": false,
-      "raison": "hors échantillon, IC -0,001 → +0,038 et écart après frais +10,7 → +12,6 %/an ; non proposée : ces pondérations ont déjà été recalibrées par le backtest de 2026-11 (proposition appliquée), pas de nouveau réglage sur presque les mêmes données avant 6 mois",
+      "raison": "hors échantillon, IC -0,003 → +0,040 et écart après frais +11,7 → +12,9 %/an ; non proposée : ces pondérations ont déjà été recalibrées par le backtest de 2026-11 (proposition appliquée), pas de nouveau réglage sur presque les mêmes données avant 6 mois",
       "detail": {
-        "tendance": "IC d'apprentissage -0,065 → facteur 0,50",
-        "courbe": "IC d'apprentissage +0,011 → facteur 0,61",
+        "tendance": "IC d'apprentissage -0,062 → facteur 0,50",
+        "courbe": "IC d'apprentissage -0,017 → facteur 0,50",
         "stocks": "non testé ou données insuffisantes : poids inchangé",
-        "positionnement": "IC d'apprentissage +0,066 → facteur 1,16",
-        "niveau": "IC d'apprentissage +0,119 → facteur 1,50"
+        "positionnement": "IC d'apprentissage +0,053 → facteur 1,03",
+        "niveau": "IC d'apprentissage +0,128 → facteur 1,50"
       },
       "note_actuelle": {
-        "ic_verification": -0.0008,
-        "t_verification": -0.02,
-        "ecart_net_verification_pct": 10.65,
-        "ic_apprentissage": 0.0175,
-        "verdict": "Supprimer"
+        "ic_verification": -0.0027,
+        "t_verification": -0.06,
+        "ecart_net_verification_pct": 11.7,
+        "ic_apprentissage": 0.0228,
+        "verdict": "Alléger"
       },
       "note_recalibree": {
-        "ic_verification": 0.0384,
-        "t_verification": 0.84,
-        "ecart_net_verification_pct": 12.62,
-        "ic_apprentissage": 0.025,
+        "ic_verification": 0.0399,
+        "t_verification": 0.85,
+        "ecart_net_verification_pct": 12.92,
+        "ic_apprentissage": 0.0327,
         "verdict": "Alléger"
       },
       "deja_recalibree_le": "2026-11"
@@ -386,40 +279,53 @@
       },
       "propose": {
         "tendance": 4,
-        "courbe": 6,
+        "courbe": 5,
         "stocks": 25,
-        "positionnement": 22,
+        "positionnement": 21,
         "macro": 5,
         "geopolitique": 10,
         "flux": 5,
-        "niveau": 23
+        "niveau": 25
       },
       "retenue": false,
-      "raison": "hors échantillon, IC -0,001 → +0,038 et écart après frais +10,7 → +12,6 %/an ; non proposée : ces pondérations ont déjà été recalibrées par le backtest de 2026-11 (proposition appliquée), pas de nouveau réglage sur presque les mêmes données avant 6 mois",
+      "raison": "hors échantillon, IC -0,003 → +0,040 et écart après frais +11,7 → +12,9 %/an ; non proposée : ces pondérations ont déjà été recalibrées par le backtest de 2026-11 (proposition appliquée), pas de nouveau réglage sur presque les mêmes données avant 6 mois",
       "detail": {
-        "tendance": "IC d'apprentissage -0,065 → facteur 0,50",
-        "courbe": "IC d'apprentissage +0,011 → facteur 0,61",
+        "tendance": "IC d'apprentissage -0,062 → facteur 0,50",
+        "courbe": "IC d'apprentissage -0,017 → facteur 0,50",
         "stocks": "non testé ou données insuffisantes : poids inchangé",
-        "positionnement": "IC d'apprentissage +0,066 → facteur 1,16",
-        "niveau": "IC d'apprentissage +0,119 → facteur 1,50"
+        "positionnement": "IC d'apprentissage +0,053 → facteur 1,03",
+        "niveau": "IC d'apprentissage +0,128 → facteur 1,50"
       },
       "note_actuelle": {
-        "ic_verification": -0.0008,
-        "t_verification": -0.02,
-        "ecart_net_verification_pct": 10.65,
-        "ic_apprentissage": 0.0175,
-        "verdict": "Supprimer"
+        "ic_verification": -0.0027,
+        "t_verification": -0.06,
+        "ecart_net_verification_pct": 11.7,
+        "ic_apprentissage": 0.0228,
+        "verdict": "Alléger"
       },
       "note_recalibree": {
-        "ic_verification": 0.0384,
-        "t_verification": 0.84,
-        "ecart_net_verification_pct": 12.62,
-        "ic_apprentissage": 0.025,
+        "ic_verification": 0.0399,
+        "t_verification": 0.85,
+        "ecart_net_verification_pct": 12.92,
+        "ic_apprentissage": 0.0327,
         "verdict": "Alléger"
       },
       "deja_recalibree_le": "2026-11"
     }
   ],
   "a_valider": false,
-  "mention": "Proposition seulement : rien n'est appliqué sans validation dans une pull request séparée."
+  "mention": "Proposition seulement : rien n'est appliqué sans validation dans une pull request séparée.",
+  "recalibrage": {
+    "texte": "Recalibrage du mois : rien à modifier",
+    "changements": [],
+    "refus": [
+      "entreprises : combinaisons non évaluées ce mois-ci (lot non calculé)"
+    ],
+    "effets": {},
+    "verdicts": {
+      "matieres": {
+        "niveau+positionnement": "Prometteuse (non significative)"
+      }
+    }
+  }
 }

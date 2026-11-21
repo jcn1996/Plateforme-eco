@@ -5,7 +5,7 @@
       "libelle": "Backtest des règles",
       "ordre": 20,
       "workflow": "backtest.yml",
-      "derniere_execution": "2026-11-14T17:21:24Z",
+      "derniere_execution": "2026-11-21T18:12:22Z",
       "prochaine_prevue": "2026-12-03T04:17:00Z",
       "intervalle_min": 43200,
       "planning": {
@@ -14,72 +14,77 @@
         ],
         "fuseau": "UTC"
       },
-      "sources_total": 9,
-      "sources_ok": 9,
+      "sources_total": 8,
+      "sources_ok": 6,
       "sources": [
         {
           "nom": "FRED (CSV public)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-14T17:21:24Z"
+          "derniere_donnee_valide": "2026-11-21T18:12:22Z"
         },
         {
           "nom": "Yahoo Finance (yfinance)",
-          "etat": "ok",
-          "detail": null,
-          "derniere_donnee_valide": "2026-11-14T17:21:24Z"
+          "etat": "partielle",
+          "detail": "BZ=F : 'BZ=F'",
+          "derniere_donnee_valide": "2026-11-21T18:12:22Z"
         },
         {
           "nom": "OCDE (indicateur avancé)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-14T17:21:24Z"
+          "derniere_donnee_valide": "2026-11-21T18:12:22Z"
         },
         {
           "nom": "OCDE (inflation)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-14T17:21:24Z"
+          "derniere_donnee_valide": "2026-11-21T18:12:22Z"
         },
         {
           "nom": "BRI (taux directeurs)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-14T17:21:24Z"
+          "derniere_donnee_valide": "2026-11-21T18:12:22Z"
         },
         {
           "nom": "FMI (croissance du PIB)",
-          "etat": "ok",
-          "detail": null,
-          "derniere_donnee_valide": "2026-11-14T17:21:24Z"
-        },
-        {
-          "nom": "SEC (XBRL companyfacts)",
-          "etat": "ok",
-          "detail": null,
+          "etat": "échec",
+          "detail": "https://www.imf.org/external/datamapper/api/v1/NGDP_RPCH : HTTP 404",
           "derniere_donnee_valide": "2026-11-14T17:21:24Z"
         },
         {
           "nom": "CFTC (Commitments of Traders)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-14T17:21:24Z"
+          "derniere_donnee_valide": "2026-11-21T18:12:22Z"
         },
         {
           "nom": "EIA (fichiers historiques)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-14T17:21:24Z"
+          "derniere_donnee_valide": "2026-11-21T18:12:22Z"
         }
       ],
-      "degrade": false,
-      "raisons": []
+      "degrade": true,
+      "raisons": [
+        "Yahoo Finance (yfinance) : partielle",
+        "FMI (croissance du PIB) : échec",
+        "lot entreprises non calculé",
+        "lot tendance non calculé"
+      ],
+      "raisons_depuis": {
+        "Yahoo Finance (yfinance)": "2026-11-21T18:12:22Z",
+        "FMI (croissance du PIB)": "2026-11-21T18:12:22Z",
+        "lot entreprises non calculé": "2026-11-21T18:12:22Z",
+        "lot tendance non calculé": "2026-11-21T18:12:22Z"
+      }
     },
     "source": "agent-backtest",
     "description": "Backtest mensuel des règles de notation"
   },
   "donnees": [],
-  "derniere_execution": "2026-11-14T17:21:24Z",
+  "derniere_execution": "2026-11-21T18:12:22Z",
   "prochaine_prevue": "2026-12-03T04:17:00Z",
   "intervalle_min": 43200,
   "planning": {
