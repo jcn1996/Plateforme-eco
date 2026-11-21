@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-20T23:02:24Z",
+    "genere_le": "2026-11-21T03:30:56Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
@@ -9,15 +9,15 @@
   },
   "donnees": [
     {
-      "id": "geopolitique|hausse_score|PL|2026-11-20",
-      "revu_le": "2026-11-20T20:31:31Z",
+      "id": "geopolitique|hausse_score|CA|2026-11-21",
+      "revu_le": "2026-11-21T03:30:12Z",
       "signal": {
         "agent": "geopolitique",
         "type": "hausse_score",
-        "cle": "PL",
-        "date": "2026-11-20",
+        "cle": "CA",
+        "date": "2026-11-21",
         "importance": "moyenne",
-        "titre": "Pologne : score de risque géopolitique 43/100, +22 pts sur 7 jours"
+        "titre": "Canada : score de risque géopolitique 53/100, +14 pts sur 7 jours"
       },
       "objection": "Pas d'objection spécifique.",
       "faits": [],
@@ -25,6 +25,126 @@
       "specifique": false,
       "methode": "règles",
       "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|GB|2026-11-21",
+      "revu_le": "2026-11-21T03:30:12Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "GB",
+        "date": "2026-11-21",
+        "importance": "moyenne",
+        "titre": "Royaume-Uni : score de risque géopolitique 49/100, +13 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|DE|2026-11-21",
+      "revu_le": "2026-11-21T03:30:12Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "DE",
+        "date": "2026-11-21",
+        "importance": "moyenne",
+        "titre": "Allemagne : score de risque géopolitique 32/100, +18 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|AU|2026-11-21",
+      "revu_le": "2026-11-21T03:30:12Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "AU",
+        "date": "2026-11-21",
+        "importance": "moyenne",
+        "titre": "Australie : score de risque géopolitique 36/100, +18 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|PL|2026-11-21",
+      "revu_le": "2026-11-21T03:30:12Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "PL",
+        "date": "2026-11-21",
+        "importance": "moyenne",
+        "titre": "Pologne : score de risque géopolitique 51/100, +32 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|ACGL|2026-11-20",
+      "revu_le": "2026-11-21T03:30:12Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "ACGL",
+        "date": "2026-11-20",
+        "importance": "moyenne",
+        "titre": "Arch Capital Group Ltd. entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "entreprises|guidance_relevee|BJ|2026-11-20",
+      "revu_le": "2026-11-21T03:30:12Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_relevee",
+        "cle": "BJ",
+        "date": "2026-11-20",
+        "importance": "moyenne",
+        "titre": "BJ's Wholesale Club Holdings, Inc. : guidance relevée (20/11/2026)"
+      },
+      "objection": "Objections spécifiques : bénéfice converti en cash à 56,7 % seulement [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "BJ's Wholesale Club Holdings, Inc. : conversion du bénéfice en cash de 56,7 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "règles",
+      "confiance": "faible",
       "version_regles": 3
     },
     {
@@ -177,44 +297,6 @@
       "version_regles": 3
     },
     {
-      "id": "geopolitique|hausse_score|CA|2026-11-20",
-      "revu_le": "2026-11-20T03:44:34Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "CA",
-        "date": "2026-11-20",
-        "importance": "moyenne",
-        "titre": "Canada : score de risque géopolitique 52/100, +19 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|DE|2026-11-20",
-      "revu_le": "2026-11-20T03:44:34Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "DE",
-        "date": "2026-11-20",
-        "importance": "moyenne",
-        "titre": "Allemagne : score de risque géopolitique 28/100, +15 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
       "id": "geopolitique|hausse_score|JP|2026-11-20",
       "revu_le": "2026-11-20T03:44:34Z",
       "signal": {
@@ -224,25 +306,6 @@
         "date": "2026-11-20",
         "importance": "moyenne",
         "titre": "Japon : score de risque géopolitique 26/100, +10 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|AU|2026-11-20",
-      "revu_le": "2026-11-20T03:44:34Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "AU",
-        "date": "2026-11-20",
-        "importance": "moyenne",
-        "titre": "Australie : score de risque géopolitique 32/100, +16 pts sur 7 jours"
       },
       "objection": "Pas d'objection spécifique.",
       "faits": [],
@@ -841,56 +904,6 @@
       "version_regles": 3
     },
     {
-      "id": "geopolitique|hausse_score|GB|2026-11-18",
-      "revu_le": "2026-11-20T11:31:30Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "GB",
-        "date": "2026-11-18",
-        "importance": "moyenne",
-        "titre": "Royaume-Uni : score de risque géopolitique 43/100, +26 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|SG|2026-11-18",
-      "revu_le": "2026-11-19T11:31:47Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "SG",
-        "date": "2026-11-18",
-        "importance": "moyenne",
-        "titre": "Singapour : score de risque géopolitique 15/100, +10 pts sur 7 jours"
-      },
-      "objection": "Objections spécifiques : le marché ne confirme pas pour Singapour (ETF EWS à −1,2 % depuis la veille du signal) [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "ETF EWS (Singapour) : −1,2 % depuis la veille du signal",
-          "source": "Yahoo Finance via yfinance, EWS"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "règles",
-      "par_entite": {
-        "SG": {
-          "objection": "Objections spécifiques : le marché ne confirme pas pour Singapour (ETF EWS à −1,2 % depuis la veille du signal) [F1].",
-          "ajustement": "abaisser"
-        }
-      },
-      "confiance": "faible",
-      "version_regles": 3
-    },
-    {
       "id": "entreprises|guidance_relevee|PANW|2026-11-18",
       "revu_le": "2026-11-18T23:23:14Z",
       "signal": {
@@ -1019,31 +1032,6 @@
         "F2"
       ],
       "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|nouvelle_pepite|GFNORTEO.MX|2026-11-18",
-      "revu_le": "2026-11-18T23:23:14Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "nouvelle_pepite",
-        "cle": "GFNORTEO.MX",
-        "date": "2026-11-18",
-        "importance": "moyenne",
-        "titre": "Grupo Financiero Banorte, S.A.B. de C.V. entre dans la liste « Qualité à prix raisonnable »"
-      },
-      "objection": "Objections spécifiques : cotée en MXN, devise à −10,1 % contre le dollar sur 3 mois [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Mexique : MXN : volatilité à 1 mois de 13,4 %, −10,1 % contre le dollar sur 3 mois",
-          "source": "Yahoo Finance via yfinance, MXN=X (devise suivie par l'agent pays)"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "règles",
-      "confiance": "faible",
-      "version_regles": 3
     },
     {
       "id": "geopolitique|mesure_officielle|evt-e121370455ee|2026-11-18",
@@ -2332,6 +2320,25 @@
       "version_regles": 3
     },
     {
+      "id": "geopolitique|hausse_score|FR|2026-11-15",
+      "revu_le": "2026-11-21T03:30:12Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "FR",
+        "date": "2026-11-15",
+        "importance": "moyenne",
+        "titre": "France : score de risque géopolitique 32/100, +10 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
       "id": "geopolitique|evenement_grave|theme-evt-c7116d7979c9|2026-11-15",
       "revu_le": "2026-11-15T23:01:44Z",
       "signal": {
@@ -2341,259 +2348,6 @@
         "date": "2026-11-15",
         "importance": "haute",
         "titre": "Événement de gravité 4 : Frappes israéliennes dans la bande de Gaza"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|achats_groupes|ALT|2026-11-14",
-      "revu_le": "2026-11-14T23:01:47Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "ALT",
-        "date": "2026-11-14",
-        "importance": "forte",
-        "titre": "Altimmune, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 89/100)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|achats_groupes|BW|2026-11-14",
-      "revu_le": "2026-11-14T23:01:47Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "BW",
-        "date": "2026-11-14",
-        "importance": "forte",
-        "titre": "Babcock & Wilcox Enterprises, Inc. : 4 dirigeants achètent sur le marché en 30 jours (score 95/100)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|achats_groupes|KGS|2026-11-14",
-      "revu_le": "2026-11-14T23:01:47Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "KGS",
-        "date": "2026-11-14",
-        "importance": "forte",
-        "titre": "Kodiak Gas Services, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 87/100)"
-      },
-      "objection": "Malgré ces achats d'initiés, l'entreprise supporte une dette nette sur EBITDA de 4,4× [F2] et une couverture des intérêts limitée à 2,1× [F3].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Kodiak Gas Services, Inc. : PER vs secteur +92,3 % (PER 27,5 ; médiane du secteur 14,3)",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "Kodiak Gas Services, Inc. : dette nette / EBITDA de 4,4×",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F3",
-          "texte": "Kodiak Gas Services, Inc. : couverture des intérêts de 2,1×",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F4",
-          "texte": "Kodiak Gas Services, Inc. : cours −31,1 % sur 3 mois, −38,3 % sur 6 mois, +37,2 % sur 12 mois",
-          "source": "agent entreprises (fiche)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F2",
-        "F3"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "inities|achats_groupes|HPP|2026-11-14",
-      "revu_le": "2026-11-14T23:01:47Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "HPP",
-        "date": "2026-11-14",
-        "importance": "forte",
-        "titre": "Hudson Pacific Properties, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 95/100)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|achats_groupes|FF|2026-11-14",
-      "revu_le": "2026-11-14T23:01:47Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "FF",
-        "date": "2026-11-14",
-        "importance": "forte",
-        "titre": "FutureFuel Corp. : 4 dirigeants achètent sur le marché en 30 jours (score 95/100)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|achats_groupes|CSQR|2026-11-14",
-      "revu_le": "2026-11-14T23:01:47Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "CSQR",
-        "date": "2026-11-14",
-        "importance": "forte",
-        "titre": "Csquare, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 95/100)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|nouvelle_position_super_investisseur|HONA|2026-11-14",
-      "revu_le": "2026-11-14T23:01:47Z",
-      "signal": {
-        "agent": "inities",
-        "type": "nouvelle_position_super_investisseur",
-        "cle": "HONA",
-        "date": "2026-11-14",
-        "importance": "moyenne",
-        "titre": "Seth Klarman (Baupost Group LLC) ouvre une position dans HONEYWELL AEROSPACE INC (3,5 % du portefeuille, T3 2026)"
-      },
-      "objection": "Cette nouvelle position intervient alors que la croissance du bénéfice affiche un recul de -36,8 % [F3] et que le PER dépasse la médiane du secteur de 108,3 % [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Honeywell Aerospace Inc. : PER vs secteur +108,3 % (PER 52,8 ; médiane du secteur 25,3)",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "Honeywell Aerospace Inc. : couverture des intérêts de 4,0×",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F3",
-          "texte": "Honeywell Aerospace Inc. : croissance du bénéfice −36,8 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1",
-        "F3"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "inities|nouvelle_position_super_investisseur|SITE|2026-11-14",
-      "revu_le": "2026-11-14T23:01:47Z",
-      "signal": {
-        "agent": "inities",
-        "type": "nouvelle_position_super_investisseur",
-        "cle": "SITE",
-        "date": "2026-11-14",
-        "importance": "moyenne",
-        "titre": "Seth Klarman (Baupost Group LLC) ouvre une position dans SITEONE LANDSCAPE SUPPLY INC (2,2 % du portefeuille, T3 2026)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|alerte_comptable|SIE.DE|2026-11-14",
-      "revu_le": "2026-11-14T23:01:47Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "alerte_comptable",
-        "cle": "SIE.DE",
-        "date": "2026-11-14",
-        "importance": "moyenne",
-        "titre": "Siemens Aktiengesellschaft : hausse anormale des créances"
-      },
-      "objection": "Malgré la hausse des créances, la conversion du bénéfice en cash atteint 142,5 % [F1] et le F-score s'établit à 8/9 [F2].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Siemens Aktiengesellschaft : conversion du bénéfice en cash de 142,5 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "Siemens Aktiengesellschaft : F-score de 8/9",
-          "source": "agent entreprises (data/entreprises.json)"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1",
-        "F2"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "matieres_premieres|changement_verdict|gaz_europe|2026-11-14",
-      "revu_le": "2026-11-14T02:41:59Z",
-      "signal": {
-        "agent": "matieres_premieres",
-        "type": "changement_verdict",
-        "cle": "gaz_europe",
-        "date": "2026-11-14",
-        "importance": "forte",
-        "titre": "Gaz européen (TTF) : passage de « Neutre (biais positif) » à « Neutre »"
       },
       "objection": "Pas d'objection spécifique.",
       "faits": [],
