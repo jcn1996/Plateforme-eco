@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genere_le": "2026-11-20T23:25:07Z",
+    "genere_le": "2026-11-21T07:31:51Z",
     "source": "agent-chef",
     "version_agent": "1.0",
     "description": "Entrées, recalcul, changements de verdict, alertes et briefing, à chaque exécution",
@@ -9,9 +9,9 @@
       "libelle": "Chef d'orchestre",
       "ordre": 10,
       "workflow": "agent-chef.yml",
-      "derniere_execution": "2026-11-20T23:25:07Z",
-      "prochaine_prevue": "2026-11-21T07:15:00Z",
-      "intervalle_min": 565,
+      "derniere_execution": "2026-11-21T07:31:51Z",
+      "prochaine_prevue": "2026-11-21T07:45:00Z",
+      "intervalle_min": 30,
       "planning": {
         "crons": [
           "15 7 * * *",
@@ -20,80 +20,104 @@
         ],
         "fuseau": "UTC"
       },
-      "sources_total": 12,
-      "sources_ok": 12,
+      "sources_total": 15,
+      "sources_ok": 15,
       "sources": [
+        {
+          "nom": "Yahoo Finance (cours des ETF sectoriels)",
+          "etat": "ok",
+          "detail": "33/33 ETF sectoriels",
+          "derniere_donnee_valide": "2026-11-21T07:31:51Z"
+        },
+        {
+          "nom": "Émetteurs et Yahoo Finance (flux des ETF sectoriels : SSGA, iShares)",
+          "etat": "ok",
+          "detail": "ssga : 11, ishares : 11, yahoo_parts : 15",
+          "derniere_donnee_valide": "2026-11-21T07:31:51Z"
+        },
         {
           "nom": "Agent pays (data/pays.json)",
           "etat": "ok",
-          "detail": "dégradé (8 h) ; agent dégradé : pèse moins",
-          "derniere_donnee_valide": "2026-11-20T15:22:58Z"
+          "detail": "dégradé (1 h) ; agent dégradé : pèse moins",
+          "derniere_donnee_valide": "2026-11-21T06:19:46Z"
         },
         {
           "nom": "Agent macro (data/macro.json)",
           "etat": "ok",
-          "detail": "dégradé (8 h) ; agent dégradé : pèse moins",
-          "derniere_donnee_valide": "2026-11-20T15:44:20Z"
+          "detail": "dégradé (1 h) ; agent dégradé : pèse moins",
+          "derniere_donnee_valide": "2026-11-21T06:46:39Z"
         },
         {
           "nom": "Agent marchés (data/marches.json)",
           "etat": "ok",
           "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-20T23:16:32Z"
+          "derniere_donnee_valide": "2026-11-21T07:16:21Z"
         },
         {
           "nom": "Agent risque (data/risque.json)",
           "etat": "ok",
-          "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-20T23:01:34Z"
+          "detail": "à jour (4 h)",
+          "derniere_donnee_valide": "2026-11-21T03:30:12Z"
         },
         {
           "nom": "Agent géopolitique (data/geopolitique.json)",
           "etat": "ok",
           "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-20T23:16:54Z"
+          "derniere_donnee_valide": "2026-11-21T07:16:50Z"
         },
         {
           "nom": "Agent matières premières (data/matieres_premieres.json)",
           "etat": "ok",
-          "detail": "à jour (1 h)",
-          "derniere_donnee_valide": "2026-11-20T22:31:53Z"
+          "detail": "à jour (4 h)",
+          "derniere_donnee_valide": "2026-11-21T03:13:27Z"
         },
         {
           "nom": "Agent entreprises (data/entreprises.json)",
           "etat": "ok",
-          "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-20T23:07:55Z"
+          "detail": "à jour (3 h)",
+          "derniere_donnee_valide": "2026-11-21T04:20:37Z"
         },
         {
           "nom": "Agent entreprises (pépites) (data/pepites.json)",
           "etat": "ok",
-          "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-20T23:07:55Z"
+          "detail": "à jour (3 h)",
+          "derniere_donnee_valide": "2026-11-21T04:20:38Z"
         },
         {
           "nom": "Agent initiés (data/inities.json)",
           "etat": "ok",
-          "detail": "à jour (8 h)",
-          "derniere_donnee_valide": "2026-11-20T15:47:01Z"
+          "detail": "à jour (1 h)",
+          "derniere_donnee_valide": "2026-11-21T06:50:50Z"
         },
         {
           "nom": "Analyses à la demande (data/analyses/index.json)",
           "etat": "ok",
-          "detail": "à jour (418 h)",
+          "detail": "à jour (426 h)",
           "derniere_donnee_valide": "2026-11-03T13:35:53Z"
         },
         {
           "nom": "Contradicteur (agent risque) (data/signaux/revues.json)",
           "etat": "ok",
-          "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-20T23:02:24Z"
+          "detail": "à jour (4 h)",
+          "derniere_donnee_valide": "2026-11-21T03:30:56Z"
         },
         {
           "nom": "Gemini (rédaction du briefing)",
           "etat": "ok",
-          "detail": "briefing rédigé par gemini-3.5-flash-lite",
-          "derniere_donnee_valide": "2026-11-20T23:25:07Z"
+          "detail": "briefing rédigé par gemini-3.5-flash-lite ; 10/16 appels aujourd'hui (budget propre au chef d'orchestre)",
+          "derniere_donnee_valide": "2026-11-21T07:31:51Z"
+        },
+        {
+          "nom": "Google Drive (dépôt du briefing, facultatif)",
+          "etat": "non configurée",
+          "detail": "secrets GOOGLE_SERVICE_ACCOUNT_JSON et DRIVE_FOLDER_ID absents : dépôt ignoré",
+          "derniere_donnee_valide": null
+        },
+        {
+          "nom": "Yahoo Finance (suivi de performance des verdicts)",
+          "etat": "ok",
+          "detail": "0 mesure(s) ; 0 verdict(s) arrivé(s) à échéance",
+          "derniere_donnee_valide": "2026-11-21T07:31:51Z"
         }
       ],
       "degrade": false,
@@ -103,80 +127,6 @@
     }
   },
   "donnees": [
-    {
-      "genere_le": "2026-11-08T18:07:01Z",
-      "mode": "complet",
-      "recalcul": true,
-      "declencheurs": [],
-      "palier": "Vigilance",
-      "opportunites": 171,
-      "changements": [],
-      "alertes": 4,
-      "alertes_ecartees": [
-        "inities · Saba Capital Management, L.P. déclare 5,2 % de Invesco Senior Income Trust (13D, intention : fonds, véhicule de crédit, holding ou SPAC",
-        "inities · Strickland Paul déclare 2,7 % de SDR Drone, Inc. (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
-        "inities · Main Street Capital CORP déclare plus de 5 % de MSC INCOME FUND, INC. (13D, intention d'in : fonds, véhicule de crédit, holding ou SPAC",
-        "inities · Matador Resources Co : 4 dirigeants achètent sur le marché en 30 jours (score 76/100) : société hors de l'univers analysé ou sans note",
-        "inities · Carlyle Credit Solutions : 3 dirigeants achètent sur le marché en 30 jours (score 82/100) : fonds, véhicule de crédit, holding ou SPAC",
-        "inities · UPBOUND GROUP, INC. : 4 dirigeants achètent sur le marché en 30 jours (score 82/100) : société hors de l'univers analysé ou sans note",
-        "inities · Universities Superannuation Scheme Ltd as sole corporate trustee for Universities Superann : fonds, véhicule de crédit, holding ou SPAC",
-        "inities · Akretive Holdings LLC déclare 15,9 % de cbdMD, Inc. (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
-        "inities · Nant Capital, LLC déclare 20,0 % de Peraso Inc. (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
-        "inities · BHAV Partners II LLC déclare 28,2 % de BHAV Acquisition Corp II (13D, intention d'influenc : fonds, véhicule de crédit, holding ou SPAC",
-        "inities · Third Point LLC déclare 100,0 % de Third Point Private Capital Income Fund (13D, intention : déclaration interne (le gestionnaire déclare détenir son propre véhicule)",
-        "inities · MJG Polo LLC déclare 45,2 % de Stark Focus Group, Inc. (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
-        "inities · ORBIMED ADVISORS LLC déclare 12,3 % de Aspen Neuroscience, Inc. (13D, intention d'influenc : société hors de l'univers analysé ou sans note",
-        "inities · HELU CARLOS SLIM déclare 4,0 % de BRASKEM SA (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
-        "inities · Adler Bo Niclas déclare 48,8 % de VISIUM TECHNOLOGIES, INC. (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
-        "inities · RA CAPITAL MANAGEMENT, L.P. déclare 14,6 % de Bambusa Therapeutics, Inc. (13D, intention d : société hors de l'univers analysé ou sans note",
-        "inities · Zhang Zack déclare 56,1 % de AIFU INC. (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
-        "inities · Mangrove Coast Investment Ltd déclare 48,0 % de X Financial (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
-        "inities · AMTD Group Inc. déclare 95,7 % de The Generation Essentials Group (13D, intention d'influe : société hors de l'univers analysé ou sans note",
-        "inities · Manieu Alexandre Weinstein déclare 50,0 % de GAUZY LTD (13D, intention d'influencer) : société hors de l'univers analysé ou sans note"
-      ],
-      "exclues": [
-        "Bajaj Finserv Ltd.",
-        "China International Capital Corporation Limited",
-        "Equitable Holdings, Inc.",
-        "Investor AB (publ)",
-        "ORIX Corporation",
-        "Partners Group Holding AG",
-        "SEI Investments Company",
-        "Voya Financial, Inc.",
-        "Vylor Inc.",
-        "Yuanta Financial Holding Co., Ltd."
-      ],
-      "coherence_retrogradees": [],
-      "raison_briefing_regles": "clé GEMINI_API_KEY absente (secret non transmis à l'agent, ou exécution de test)",
-      "briefing": "règles",
-      "gemini": {
-        "appels": 0,
-        "reussites": 0,
-        "quota_atteint": false,
-        "rejets": [],
-        "erreurs": []
-      },
-      "suivi": {
-        "ajoutes": 33,
-        "mesures": 0,
-        "en_attente": 0,
-        "total": 182,
-        "erreur": null
-      },
-      "entrees": {
-        "pays": "à jour",
-        "macro": "à jour",
-        "marches": "à jour",
-        "risque": "à jour",
-        "geopolitique": "à jour",
-        "matieres_premieres": "à jour",
-        "entreprises": "périmée",
-        "pepites": "périmée",
-        "inities": "à jour",
-        "analyses": "à jour",
-        "revues": "à jour"
-      }
-    },
     {
       "genere_le": "2026-11-08T20:26:11Z",
       "mode": "complet",
@@ -12439,11 +12389,99 @@
         "analyses": "à jour",
         "revues": "à jour"
       }
+    },
+    {
+      "genere_le": "2026-11-21T07:31:51Z",
+      "mode": "complet",
+      "recalcul": true,
+      "declencheurs": [],
+      "palier": "Vigilance",
+      "opportunites": 163,
+      "changements": [
+        "Énergie — États-Unis : « Renforcer fortement » → « Renforcer »",
+        "Vietnam Prosperity Joint Stock Commercial Bank : « Renforcer » → « Neutre »"
+      ],
+      "alertes": 4,
+      "alertes_ecartees": [
+        "entreprises · Yuanta Financial Holding Co., Ltd. : BPA publié +61,0 % par rapport à l'estimation : holding, fonds, BDC ou SPAC",
+        "inities · AEON Biopharma, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 83/100) : société hors de l'univers analysé ou sans note",
+        "inities · CorMedix Inc. : 4 dirigeants achètent sur le marché en 30 jours (score 83/100) : société hors de l'univers analysé ou sans note",
+        "inities · Contango Silver & Gold Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 89/10 : société hors de l'univers analysé ou sans note",
+        "inities · PicS N.V. : 3 dirigeants achètent sur le marché en 30 jours (score 72/100) : société hors de l'univers analysé ou sans note",
+        "inities · SEIDMAN LAWRENCE B déclare 5,4 % de CSB Financial Inc. (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
+        "inities · EGAN KEVIN déclare 7,9 % de SRX Global Inc. (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
+        "inities · Saba Capital Management, L.P. déclare 7,6 % de Destiny Tech100 Inc. (13D, intention d'infl : société hors de l'univers analysé ou sans note",
+        "inities · Saba Capital Management, L.P. déclare 5,1 % de Virtus Total Return Fund Inc. (13D, intenti : fonds, véhicule de crédit, holding ou SPAC",
+        "inities · Proximity Labs déclare 6,3 % de SVRN, Inc. (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
+        "inities · GBH Inc./ON déclare 29,9 % de Versa Bancorp (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
+        "inities · Noveau Jumpstar Ltd déclare 15,2 % de NIP Group Inc. (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
+        "inities · Xu Jin Justing déclare 26,5 % de Jinxin Technology Holding Co (13D, intention d'influencer : société hors de l'univers analysé ou sans note",
+        "inities · Origin Bancorp, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 70/100) : société hors de l'univers analysé ou sans note",
+        "inities · TECOGEN INC. : 3 dirigeants achètent sur le marché en 30 jours (score 76/100) : société hors de l'univers analysé ou sans note",
+        "inities · Proficient Auto Logistics, Inc : 4 dirigeants achètent sur le marché en 30 jours (score 72 : société hors de l'univers analysé ou sans note",
+        "inities · TriSalus Life Sciences, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 76/1 : société hors de l'univers analysé ou sans note",
+        "inities · Estate of Alvin Libin déclare 10,1 % de RILEY EXPLORATION PERMIAN, INC. (13D, intention d' : société hors de l'univers analysé ou sans note",
+        "inities · CARRONADE CAPITAL MANAGEMENT, LP déclare 5,8 % de Brookdale Senior Living Inc. (13D, inten : société hors de l'univers analysé ou sans note",
+        "inities · NeuroPace Inc : 3 dirigeants achètent sur le marché en 30 jours (score 82/100) : société hors de l'univers analysé ou sans note"
+      ],
+      "exclues": [
+        "Azimut Holding S.p.A.",
+        "Bajaj Finserv Ltd.",
+        "China International Capital Corporation Limited",
+        "Equitable Holdings, Inc.",
+        "Georgia Capital PLC",
+        "Hilltop Holdings Inc.",
+        "Investor AB (publ)",
+        "ORIX Corporation",
+        "Partners Group Holding AG",
+        "Patria Investments Limited",
+        "SEI Investments Company",
+        "Victory Capital Holdings, Inc.",
+        "Virtus Investment Partners, Inc.",
+        "Vontobel Holding AG",
+        "Voya Financial, Inc.",
+        "Vylor Inc.",
+        "Wendel",
+        "Yuanta Financial Holding Co., Ltd."
+      ],
+      "coherence_retrogradees": [],
+      "raison_briefing_regles": null,
+      "briefing": "gemini",
+      "reprise_redaction": null,
+      "gemini": {
+        "appels": 3,
+        "reussites": 1,
+        "quota_atteint": false,
+        "rejets": [],
+        "erreurs": [
+          "gemini-flash-latest : réseau : ReadTimeout: HTTPSConnectionPool(host='generativelanguage.googleapis.com', port=443): Read timed out. (read timeout=90) (après 2 essais)"
+        ]
+      },
+      "suivi": {
+        "ajoutes": 4,
+        "mesures": 0,
+        "en_attente": 0,
+        "total": 282,
+        "erreur": null
+      },
+      "entrees": {
+        "pays": "dégradé (dégradé)",
+        "macro": "dégradé (dégradé)",
+        "marches": "à jour",
+        "risque": "à jour",
+        "geopolitique": "à jour",
+        "matieres_premieres": "à jour",
+        "entreprises": "à jour",
+        "pepites": "à jour",
+        "inities": "à jour",
+        "analyses": "à jour",
+        "revues": "à jour"
+      }
     }
   ],
-  "derniere_execution": "2026-11-20T23:25:07Z",
-  "prochaine_prevue": "2026-11-21T07:15:00Z",
-  "intervalle_min": 565,
+  "derniere_execution": "2026-11-21T07:31:51Z",
+  "prochaine_prevue": "2026-11-21T07:45:00Z",
+  "intervalle_min": 30,
   "planning": {
     "crons": [
       "15 7 * * *",
