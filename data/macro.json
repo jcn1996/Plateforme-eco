@@ -1,11 +1,11 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-22T06:46:46Z",
+    "genere_le": "2026-11-22T14:52:33Z",
     "source": "agent-macro",
     "fictif": false,
     "version_agent": "1.0",
-    "mise_a_jour_precedente": "2026-11-21T14:55:30Z",
+    "mise_a_jour_precedente": "2026-11-22T06:46:46Z",
     "etat_des_sources": {
       "FRED, écart 10 ans − 2 ans (T10Y2Y)": "ok",
       "FRED, écart 10 ans − 3 mois (T10Y3M)": "ok",
@@ -22,8 +22,8 @@
       "BCE Data Portal, courbe AAA de la zone euro, 10 ans": "ok",
       "BCE Data Portal, courbe AAA de la zone euro, 2 ans": "ok",
       "BRI, taux directeurs quotidiens (WS_CBPOL)": "ok",
-      "FMI, World Economic Outlook, croissance (NGDP_RPCH)": "erreur : https://www.imf.org/external/datamapper/api/v1/NGDP_RPCH : HTTP 404",
-      "FMI, World Economic Outlook, inflation (PCPIPCH)": "erreur : https://www.imf.org/external/datamapper/api/v1/PCPIPCH : HTTP 404",
+      "FMI, World Economic Outlook, croissance (NGDP_RPCH)": "ok",
+      "FMI, World Economic Outlook, inflation (PCPIPCH)": "ok",
       "OCDE, indicateur avancé (DF_CLI)": "ok",
       "OCDE, prix à la consommation (DF_PRICES_C2018_ALL et DF_PRICES_ALL)": "ok",
       "Eurostat, IPCH de la zone euro (prc_hicp_minr)": "ok",
@@ -53,11 +53,11 @@
           },
           "croissance": {
             "direction": "ralentit",
-            "concordants": 2,
+            "concordants": 3,
             "votes": [
               -1,
               -1,
-              0
+              -1
             ],
             "cli": 100.08,
             "cli_3m": -0.17
@@ -68,7 +68,7 @@
             "votes": [
               -1,
               -1,
-              0
+              1
             ],
             "valeur": 4.06,
             "variation_3m": -0.27
@@ -100,11 +100,11 @@
             ],
             [
               "2026-03",
-              "Reprise"
+              "Surchauffe"
             ],
             [
               "2026-04",
-              "Surchauffe"
+              "Ralentissement inflationniste"
             ],
             [
               "2026-05",
@@ -128,15 +128,22 @@
           "changement_en_cours": null,
           "cle": "monde",
           "nom": "Monde",
-          "texte": "Monde : phase « Expansion sans inflation » depuis août 2026 (précédente : « Ralentissement inflationniste »). Indicateur avancé de l'OCDE (G20) à 100,1, −0,17 pt sur 3 mois ; inflation à 4,1 %, −0,3 pt sur 3 mois (août 2026).",
+          "texte": "Monde : phase « Expansion sans inflation » depuis août 2026 (précédente : « Ralentissement inflationniste »). Indicateur avancé de l'OCDE (G20) à 100,1, −0,17 pt sur 3 mois ; inflation à 4,1 %, −0,3 pt sur 3 mois (août 2026). Le FMI prévoit 3,1 % de croissance en 2026 contre 3,5 % en 2025, et 4,7 % d'inflation contre 4,1 %.",
           "confiance": "moyen",
           "contre_scenario": [
             "Une remontée de l'indicateur avancé (G20) sur 3 mois, confirmée par un second signal, ferait passer la croissance en accélération.",
-            "Une remontée de l'inflation sur 3 mois, confirmée par un second signal, changerait la phase."
+            "Une remontée de l'inflation sur 3 mois, confirmée par un second signal, changerait la phase.",
+            "Signal discordant sur la inflation : prévision du FMI."
           ],
           "fmi": {
-            "croissance": null,
-            "inflation": null,
+            "croissance": [
+              3.5,
+              3.1
+            ],
+            "inflation": [
+              4.1,
+              4.7
+            ],
             "annees": [
               2025,
               2026
@@ -173,12 +180,12 @@
             "cli_3m": 0.21
           },
           "inflation": {
-            "direction": "ralentit",
-            "concordants": 1,
+            "direction": "accélère",
+            "concordants": 2,
             "votes": [
               1,
               -1,
-              0
+              1
             ],
             "valeur": 3.74,
             "variation_3m": 0.21
@@ -206,7 +213,7 @@
             ],
             [
               "2026-03",
-              "Reprise"
+              "Surchauffe"
             ],
             [
               "2026-04",
@@ -230,31 +237,30 @@
             ],
             [
               "2026-09",
-              "Reprise"
+              "Surchauffe"
             ]
           ],
-          "phase_brute": "Reprise",
+          "phase_brute": "Surchauffe",
           "confirmation_v": 1,
-          "changement_en_cours": {
-            "vers": "Reprise",
-            "depuis": "2026-11-20",
-            "jours": 2,
-            "jours_requis": 21,
-            "signaux_concordants": false,
-            "texte": "Changement de phase en cours de confirmation : « Reprise » observée depuis le 20/11/2026 (2 jours sur 21 requis, deux signaux concordants pas encore réunis) ; la phase publiée reste « Surchauffe »."
-          },
+          "changement_en_cours": null,
           "cle": "etats_unis",
           "nom": "États-Unis",
-          "texte": "États-Unis : phase « Surchauffe » depuis septembre 2026 (précédente : « Reprise »). Indicateur avancé de l'OCDE (États-Unis) à 100,9, +0,21 pt sur 3 mois ; inflation à 3,7 %, +0,2 pt sur 3 mois (septembre 2026). Changement de phase en cours de confirmation : « Reprise » observée depuis le 20/11/2026 (2 jours sur 21 requis, deux signaux concordants pas encore réunis) ; la phase publiée reste « Surchauffe ».",
-          "confiance": "faible",
+          "texte": "États-Unis : phase « Surchauffe » depuis septembre 2026 (précédente : « Reprise »). Indicateur avancé de l'OCDE (États-Unis) à 100,9, +0,21 pt sur 3 mois ; inflation à 3,7 %, +0,2 pt sur 3 mois (septembre 2026). Le FMI prévoit 2,3 % de croissance en 2026 contre 2,3 % en 2025, et 3,6 % d'inflation contre 2,7 %.",
+          "confiance": "moyen",
           "contre_scenario": [
             "Un recul de l'indicateur avancé (États-Unis) sur 3 mois, confirmé par un second signal, ferait passer la croissance en ralentissement.",
-            "Une remontée de l'inflation sur 3 mois, confirmée par un second signal, changerait la phase.",
-            "Signal discordant sur la inflation : variation sur 3 mois."
+            "Un repli de l'inflation sur 3 mois, confirmé par un second signal, changerait la phase.",
+            "Signal discordant sur la inflation : variation sur 3 mois, un mois plus tôt."
           ],
           "fmi": {
-            "croissance": null,
-            "inflation": null,
+            "croissance": [
+              2.3,
+              2.3
+            ],
+            "inflation": [
+              2.7,
+              3.6
+            ],
             "annees": [
               2025,
               2026
@@ -292,11 +298,11 @@
           },
           "inflation": {
             "direction": "accélère",
-            "concordants": 2,
+            "concordants": 3,
             "votes": [
               1,
               1,
-              0
+              1
             ],
             "valeur": 4.0,
             "variation_3m": 1.1
@@ -320,7 +326,7 @@
             ],
             [
               "2026-03",
-              "Reprise"
+              "Surchauffe"
             ],
             [
               "2026-04",
@@ -356,7 +362,7 @@
           "changement_en_cours": null,
           "cle": "zone_euro",
           "nom": "Zone euro",
-          "texte": "Zone euro : phase « Ralentissement inflationniste » depuis avril 2026 (précédente : « Surchauffe »). Indicateur avancé de l'OCDE (moyenne Allemagne, France, Italie, Espagne) à 100,3, +0,09 pt sur 3 mois ; inflation à 4,0 %, +1,1 pt sur 3 mois (octobre 2026).",
+          "texte": "Zone euro : phase « Ralentissement inflationniste » depuis avril 2026 (précédente : « Surchauffe »). Indicateur avancé de l'OCDE (moyenne Allemagne, France, Italie, Espagne) à 100,3, +0,09 pt sur 3 mois ; inflation à 4,0 %, +1,1 pt sur 3 mois (octobre 2026). Le FMI prévoit 1,1 % de croissance en 2026 contre 1,2 % en 2025, et 3,1 % d'inflation contre 2,1 %.",
           "confiance": "faible",
           "contre_scenario": [
             "Une remontée de l'indicateur avancé (moyenne Allemagne, France, Italie, Espagne) sur 3 mois, confirmée par un second signal, ferait passer la croissance en accélération.",
@@ -364,8 +370,14 @@
             "Signal discordant sur la croissance : variation sur 3 mois."
           ],
           "fmi": {
-            "croissance": null,
-            "inflation": null,
+            "croissance": [
+              1.2,
+              1.1
+            ],
+            "inflation": [
+              2.1,
+              3.1
+            ],
             "annees": [
               2025,
               2026
@@ -392,11 +404,11 @@
           },
           "croissance": {
             "direction": "ralentit",
-            "concordants": 2,
+            "concordants": 3,
             "votes": [
               -1,
               -1,
-              0
+              -1
             ],
             "cli": 97.38,
             "cli_3m": -0.91
@@ -407,7 +419,7 @@
             "votes": [
               0,
               -1,
-              0
+              1
             ],
             "valeur": 0.9,
             "variation_3m": -0.1
@@ -415,7 +427,7 @@
           "historique": [
             [
               "2025-10",
-              "Expansion sans inflation"
+              "Ralentissement inflationniste"
             ],
             [
               "2025-11",
@@ -467,15 +479,22 @@
           "changement_en_cours": null,
           "cle": "chine",
           "nom": "Chine",
-          "texte": "Chine : phase « Expansion sans inflation » depuis août 2026 (précédente : « Ralentissement inflationniste »). Indicateur avancé de l'OCDE (Chine) à 97,4, −0,91 pt sur 3 mois ; inflation à 0,9 %, −0,1 pt sur 3 mois (septembre 2026).",
+          "texte": "Chine : phase « Expansion sans inflation » depuis août 2026 (précédente : « Ralentissement inflationniste »). Indicateur avancé de l'OCDE (Chine) à 97,4, −0,91 pt sur 3 mois ; inflation à 0,9 %, −0,1 pt sur 3 mois (septembre 2026). Le FMI prévoit 4,5 % de croissance en 2026 contre 5,0 % en 2025, et 1,0 % d'inflation contre 0,0 %.",
           "confiance": "faible",
           "contre_scenario": [
             "Une remontée de l'indicateur avancé (Chine) sur 3 mois, confirmée par un second signal, ferait passer la croissance en accélération.",
-            "Une remontée de l'inflation sur 3 mois, confirmée par un second signal, changerait la phase."
+            "Une remontée de l'inflation sur 3 mois, confirmée par un second signal, changerait la phase.",
+            "Signal discordant sur la inflation : prévision du FMI."
           ],
           "fmi": {
-            "croissance": null,
-            "inflation": null,
+            "croissance": [
+              5,
+              4.5
+            ],
+            "inflation": [
+              0,
+              1
+            ],
             "annees": [
               2025,
               2026
@@ -506,7 +525,7 @@
             "votes": [
               0,
               1,
-              0
+              -1
             ],
             "cli": 100.23,
             "cli_3m": 0.02
@@ -517,7 +536,7 @@
             "votes": [
               1,
               1,
-              0
+              -1
             ],
             "valeur": 2.1,
             "variation_3m": 0.5
@@ -577,15 +596,23 @@
           "changement_en_cours": null,
           "cle": "japon",
           "nom": "Japon",
-          "texte": "Japon : phase « Surchauffe » depuis juin 2026 (précédente : « Reprise »). Indicateur avancé de l'OCDE (Japon) à 100,2, +0,02 pt sur 3 mois ; inflation à 2,1 %, +0,5 pt sur 3 mois (septembre 2026).",
+          "texte": "Japon : phase « Surchauffe » depuis juin 2026 (précédente : « Reprise »). Indicateur avancé de l'OCDE (Japon) à 100,2, +0,02 pt sur 3 mois ; inflation à 2,1 %, +0,5 pt sur 3 mois (septembre 2026). Le FMI prévoit 0,7 % de croissance en 2026 contre 1,2 % en 2025, et 2,0 % d'inflation contre 3,2 %.",
           "confiance": "faible",
           "contre_scenario": [
             "Un recul de l'indicateur avancé (Japon) sur 3 mois, confirmé par un second signal, ferait passer la croissance en ralentissement.",
-            "Un repli de l'inflation sur 3 mois, confirmé par un second signal, changerait la phase."
+            "Un repli de l'inflation sur 3 mois, confirmé par un second signal, changerait la phase.",
+            "Signal discordant sur la croissance : prévision du FMI.",
+            "Signal discordant sur la inflation : prévision du FMI."
           ],
           "fmi": {
-            "croissance": null,
-            "inflation": null,
+            "croissance": [
+              1.2,
+              0.7
+            ],
+            "inflation": [
+              3.2,
+              2
+            ],
             "annees": [
               2025,
               2026
@@ -612,11 +639,11 @@
           },
           "croissance": {
             "direction": "ralentit",
-            "concordants": 2,
+            "concordants": 3,
             "votes": [
               -1,
               -1,
-              0
+              -1
             ],
             "cli": 100.9,
             "cli_3m": -0.13
@@ -627,7 +654,7 @@
             "votes": [
               -1,
               -1,
-              0
+              1
             ],
             "valeur": 4.46,
             "variation_3m": -0.24
@@ -639,15 +666,15 @@
             ],
             [
               "2025-11",
-              "Reprise"
+              "Surchauffe"
             ],
             [
               "2025-12",
-              "Reprise"
+              "Surchauffe"
             ],
             [
               "2026-01",
-              "Reprise"
+              "Surchauffe"
             ],
             [
               "2026-02",
@@ -663,7 +690,7 @@
             ],
             [
               "2026-05",
-              "Surchauffe"
+              "Ralentissement inflationniste"
             ],
             [
               "2026-06",
@@ -687,15 +714,22 @@
           "changement_en_cours": null,
           "cle": "emergents",
           "nom": "Émergents",
-          "texte": "Émergents : phase « Expansion sans inflation » depuis août 2026 (précédente : « Ralentissement inflationniste »). Indicateur avancé de l'OCDE (moyenne Brésil, Inde, Indonésie, Mexique, Afrique du Sud, Turquie) à 100,9, −0,13 pt sur 3 mois ; inflation à 4,5 %, −0,2 pt sur 3 mois (septembre 2026).",
+          "texte": "Émergents : phase « Expansion sans inflation » depuis août 2026 (précédente : « Ralentissement inflationniste »). Indicateur avancé de l'OCDE (moyenne Brésil, Inde, Indonésie, Mexique, Afrique du Sud, Turquie) à 100,9, −0,13 pt sur 3 mois ; inflation à 4,5 %, −0,2 pt sur 3 mois (septembre 2026). Le FMI prévoit 3,7 % de croissance en 2026 contre 4,5 % en 2025, et 5,7 % d'inflation contre 5,2 %.",
           "confiance": "moyen",
           "contre_scenario": [
             "Une remontée de l'indicateur avancé (moyenne Brésil, Inde, Indonésie, Mexique, Afrique du Sud, Turquie) sur 3 mois, confirmée par un second signal, ferait passer la croissance en accélération.",
-            "Une remontée de l'inflation sur 3 mois, confirmée par un second signal, changerait la phase."
+            "Une remontée de l'inflation sur 3 mois, confirmée par un second signal, changerait la phase.",
+            "Signal discordant sur la inflation : prévision du FMI."
           ],
           "fmi": {
-            "croissance": null,
-            "inflation": null,
+            "croissance": [
+              4.5,
+              3.7
+            ],
+            "inflation": [
+              5.2,
+              5.7
+            ],
             "annees": [
               2025,
               2026
@@ -798,7 +832,7 @@
         "nom": "Fed",
         "pays": "États-Unis",
         "taux": 3.875,
-        "date": "2026-11-21",
+        "date": "2026-11-22",
         "source": "Réserve fédérale via FRED, milieu de la fourchette cible (DFEDTARL, DFEDTARU)",
         "dernier_mouvement": {
           "date": "2026-09-17",
@@ -1932,7 +1966,7 @@
         "passe": {
           "valeur": 0.14,
           "taux_directeur": 3.875,
-          "date_taux": "2026-11-21",
+          "date_taux": "2026-11-22",
           "inflation": 3.74,
           "date_inflation": "2026-09",
           "variation_12m": -0.82,
@@ -2023,11 +2057,12 @@
     "contre_scenario": [
       "Une remontée de l'indicateur avancé (G20) sur 3 mois, confirmée par un second signal, ferait passer la croissance en accélération.",
       "Une remontée de l'inflation sur 3 mois, confirmée par un second signal, changerait la phase.",
+      "Signal discordant sur la inflation : prévision du FMI.",
       "Un déclenchement de la règle de Sahm (0,5 pt) ou une nouvelle inversion de la courbe 10 ans − 3 mois contredirait une lecture favorable du cycle américain."
     ],
     "lectures_pays": {
       "US": {
-        "texte": "Fourchette cible de la Fed à 3,75–4,00 % (21/11/2026), dernier mouvement : hausse de 0,25 pt le 17/09/2026 ; inchangé sur 12 mois. Indicateur avancé de l'OCDE à 101,0 (octobre 2026), en hausse sur 3 mois et au-dessus de sa tendance de long terme (100) ; cycle américain : phase « Surchauffe ».",
+        "texte": "Fourchette cible de la Fed à 3,75–4,00 % (22/11/2026), dernier mouvement : hausse de 0,25 pt le 17/09/2026 ; inchangé sur 12 mois. Indicateur avancé de l'OCDE à 101,0 (octobre 2026), en hausse sur 3 mois et au-dessus de sa tendance de long terme (100) ; cycle américain : phase « Surchauffe ».",
         "date": "2026-11-22",
         "sources": [
           "Réserve fédérale via FRED, milieu de la fourchette cible (DFEDTARL, DFEDTARU)",
