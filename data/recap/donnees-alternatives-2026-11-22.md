@@ -33,7 +33,7 @@ Indicateurs avancés de l'activité réelle. Aucune conclusion n'est tirée d'un
 
 ## Signaux détectés aujourd'hui
 
-- aucun
+- [faible] Arch Capital Group Ltd. : attention du public en forte hausse (+106 %)
 
 ## Sources de secours utilisées
 
