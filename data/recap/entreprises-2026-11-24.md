@@ -2,47 +2,57 @@
 
 - Sociétés analysées : 2973
 - Comptes vérifiés avec une source officielle : 1741
-- Écarts entre source officielle et Yahoo : 192
-- Sociétés remplissant tous les critères : 75 ; retenues : 10 pépites (300 M$ à 20 Md$, peu suivies) et 16 en « qualité à prix raisonnable » ; au plus 3 par secteur
+- Écarts entre source officielle et Yahoo : 191
+- Sociétés remplissant tous les critères : 73 ; retenues : 10 pépites (300 M$ à 20 Md$, peu suivies) et 17 en « qualité à prix raisonnable » ; au plus 3 par secteur
 
 ## Pépites candidates
 
-- [pépite] TBC Bank Group PLC (TBCG.L, GB) : 79/100, ajustement de contexte +1.9 — Dossier solide sur les comptes ; points forts : roe : 22,6 %, coût / revenu : 39,7 %.
-- [pépite] Pan African Resources PLC (PAF.L, GB) : 79/100, ajustement de contexte +1.9 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 47,4 %, f-score de piotroski : 9/9.
+- [pépite] TBC Bank Group PLC (TBCG.L, GB) : 79/100, ajustement de contexte +1.8 — Dossier solide sur les comptes ; points forts : roe : 22,6 %, coût / revenu : 39,7 %.
+- [pépite] Pan African Resources PLC (PAF.L, GB) : 79/100, ajustement de contexte +1.8 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 47,4 %, f-score de piotroski : 9/9.
 - [pépite] Consun Pharmaceutical Group Limited (1681.HK, CN) : 79/100, ajustement de contexte +1.6 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 33,7 %, dette nette / ebitda : trésorerie nette.
 - [pépite] Enova International, Inc. (ENVA, US) : 80/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : croissance du bénéfice : +47,2 %, roe : 23,1 %.
 - [pépite] Federated Hermes, Inc. (FHI, US) : 77/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : roe : 33,7 %, croissance du bénéfice : +57,1 %.
-- [pépite] Mueller Industries, Inc. (MLI, US) : 76/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : dette nette / ebitda : trésorerie nette, couverture des intérêts : pas de charge d'intérêts ; point faible : momentum 12 mois : −1,2 %.
+- [pépite] Mueller Industries, Inc. (MLI, US) : 76/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : dette nette / ebitda : trésorerie nette, couverture des intérêts : pas de charge d'intérêts ; point faible : momentum 12 mois : −1,5 %.
 - [pépite] Adeia Inc. (ADEA, US) : 75/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 45,0 %, croissance du bénéfice : +71,9 %.
 - [pépite] ExlService Holdings, Inc. (EXLS, US) : 74/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : couverture des intérêts : 17,8×, dette nette / ebitda : 0,2×.
-- [pépite] Volution Group plc (FAN.L, GB) : 70/100, ajustement de contexte +1.9 — Dossier solide sur les comptes ; points forts : croissance du bénéfice : +50,6 %, conversion du bénéfice en cash : 158,6 % ; point faible : momentum 12 mois : −0,6 %.
-- [pépite] Simcere Pharmaceutical Group Limited (2096.HK, CN) : 68/100, ajustement de contexte +1.6 — Dossier solide sur les comptes ; points forts : dette nette / ebitda : trésorerie nette, croissance du bénéfice : +86,2 % ; point faible : momentum 12 mois : −22,4 %.
-- [QPR] Apple Inc. (AAPL.BA, AR) : 83/100, ajustement de contexte -0.0 — Dossier solide sur les comptes ; points forts : f-score de piotroski : 9/9, marge opérationnelle : 33,0 %.
+- [pépite] Volution Group plc (FAN.L, GB) : 70/100, ajustement de contexte +1.8 — Dossier solide sur les comptes ; points forts : croissance du bénéfice : +50,6 %, conversion du bénéfice en cash : 158,6 %.
+- [pépite] Simcere Pharmaceutical Group Limited (2096.HK, CN) : 68/100, ajustement de contexte +1.6 — Dossier solide sur les comptes ; points forts : dette nette / ebitda : trésorerie nette, croissance du bénéfice : +86,2 % ; point faible : momentum 12 mois : −22,7 %.
+- [QPR] Apple Inc. (AAPL.BA, AR) : 83/100, ajustement de contexte -0.1 — Dossier solide sur les comptes ; points forts : f-score de piotroski : 9/9, marge opérationnelle : 33,0 %.
 - [QPR] Emaar Properties PJSC (EMAAR.AE, AE) : 80/100, ajustement de contexte +1.0 — Dossier solide sur les comptes ; points forts : croissance du ca : +39,6 %, marge opérationnelle : 45,5 %.
-- [QPR] Nongfu Spring Co., Ltd. (9633.HK, CN) : 78/100, ajustement de contexte +1.6 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 38,6 %, couverture des intérêts : pas de charge d'intérêts ; point faible : momentum 12 mois : −6,7 %.
-- [QPR] MS&AD Insurance Group Holdings, Inc. (8725.T, JP) : 77/100, ajustement de contexte +0.8 — Dossier solide sur les comptes ; points forts : per vs secteur : −35,8 %, momentum 12 mois : +57,8 %.
+- [QPR] Nongfu Spring Co., Ltd. (9633.HK, CN) : 78/100, ajustement de contexte +1.6 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 38,6 %, couverture des intérêts : pas de charge d'intérêts ; point faible : momentum 12 mois : −6,2 %.
+- [QPR] MS&AD Insurance Group Holdings, Inc. (8725.T, JP) : 77/100, ajustement de contexte +1.0 — Dossier solide sur les comptes ; points forts : per vs secteur : −35,6 %, momentum 12 mois : +57,2 %.
 - [QPR] HCL Technologies Limited (HCLTECH.NS, IN) : 76/100, ajustement de contexte +1.7 — Dossier solide sur les comptes ; points forts : dette nette / ebitda : trésorerie nette, couverture des intérêts : 47,0× ; point faible : momentum 12 mois : −11,2 %.
-- [QPR] Adobe Inc. (ADBE, US) : 77/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 36,6 %, couverture des intérêts : 33,1× ; point faible : momentum 12 mois : −30,9 %.
-- [QPR] Prudential plc (PRU.L, GB) : 75/100, ajustement de contexte +1.9 — Dossier solide sur les comptes ; points forts : croissance du ca : +69,0 %, croissance du bénéfice : +74,1 % ; point faible : momentum 12 mois : −11,2 %.
-- [QPR] Vodacom Group Limited (VOD.JO, ZA) : 74/100, ajustement de contexte +2.2 — Dossier solide sur les comptes ; points forts : conversion du bénéfice en cash : 158,7 %, marge opérationnelle : 23,8 %.
-- [QPR] Arch Capital Group Ltd. (ACGL, US) : 75/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : per vs secteur : −34,2 %, croissance du ca : +17,7 %.
-- [QPR] NEXT plc (NXT.L, GB) : 73/100, ajustement de contexte +1.9 — Dossier solide sur les comptes ; points forts : roic : 38,9 %, f-score de piotroski : 8/9 ; point faible : ve/ebitda vs secteur : +37,3 %.
+- [QPR] Adobe Inc. (ADBE, US) : 77/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 36,6 %, couverture des intérêts : 33,1× ; point faible : momentum 12 mois : −27,2 %.
+- [QPR] Prudential plc (PRU.L, GB) : 75/100, ajustement de contexte +1.8 — Dossier solide sur les comptes ; points forts : croissance du ca : +69,0 %, croissance du bénéfice : +74,1 % ; point faible : momentum 12 mois : −10,2 %.
+- [QPR] Vodacom Group Limited (VOD.JO, ZA) : 74/100, ajustement de contexte +2.1 — Dossier solide sur les comptes ; points forts : conversion du bénéfice en cash : 158,7 %, marge opérationnelle : 23,8 %.
+- [QPR] Grupo Financiero Banorte, S.A.B. de C.V. (GFNORTEO.MX, MX) : 73/100, ajustement de contexte +2.4 — Dossier solide sur les comptes ; points forts : roe : 23,6 %, croissance du ca : +13,5 %.
+- [QPR] NEXT plc (NXT.L, GB) : 73/100, ajustement de contexte +1.8 — Dossier solide sur les comptes ; points forts : roic : 38,9 %, f-score de piotroski : 8/9 ; point faible : ve/ebitda vs secteur : +33,7 %.
 - [QPR] Paychex, Inc. (PAYX, US) : 73/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 39,8 %, conversion du bénéfice en cash : 131,9 %.
-- [QPR] Tencent Holdings Limited (0700.HK, CN) : 70/100, ajustement de contexte +1.6 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 33,1 %, dette nette / ebitda : trésorerie nette ; point faible : momentum 12 mois : −44,5 %.
+- [QPR] Tencent Holdings Limited (0700.HK, CN) : 70/100, ajustement de contexte +1.6 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 33,1 %, dette nette / ebitda : trésorerie nette ; point faible : momentum 12 mois : −44,7 %.
 - [QPR] Midea Group Co., Ltd. (000333.SZ, CN) : 70/100, ajustement de contexte +1.6 — Dossier solide sur les comptes ; points forts : couverture des intérêts : 20,9×, dette nette / ebitda : trésorerie nette.
-- [QPR] Booking Holdings Inc. (BKNG, US) : 70/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 34,5 %, roic : 55,8 % ; point faible : momentum 12 mois : −23,3 %.
+- [QPR] Booking Holdings Inc. (BKNG, US) : 70/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 34,5 %, roic : 55,8 % ; point faible : momentum 12 mois : −24,1 %.
 - [QPR] General Dynamics Corporation (GD, US) : 68/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : f-score de piotroski : 8/9, couverture des intérêts : 13,3×.
-- [QPR] Japan Tobacco Inc. (2914.T, JP) : 65/100, ajustement de contexte +0.8 — Dossier solide sur les comptes ; points forts : croissance du bénéfice : +184,6 %, marge opérationnelle : 24,6 % ; point faible : momentum 12 mois : −2,6 %.
+- [QPR] Japan Tobacco Inc. (2914.T, JP) : 65/100, ajustement de contexte +1.0 — Dossier solide sur les comptes ; points forts : croissance du bénéfice : +184,6 %, marge opérationnelle : 24,6 % ; point faible : momentum 12 mois : −3,0 %.
+- [QPR] EQT Corporation (EQT, US) : 65/100, ajustement de contexte +0.2 — Dossier solide sur les comptes ; points forts : marge opérationnelle : 36,1 %, croissance du ca : +60,0 % ; point faible : momentum 12 mois : −13,2 %.
 
 ## Signaux du jour
 
-- [moyenne] CrowdStrike Holdings, Inc. : guidance relevée (23/11/2026)
-- [moyenne] Hewlett Packard Enterprise Company : guidance relevée (23/11/2026)
-- [faible] Central Garden & Pet Company : BPA publié +31,6 % par rapport à l'estimation
-- [faible] DigitalOcean Holdings, Inc. : estimations de BPA +10,0 % sur 30 jours
-- [faible] CNO Financial Group, Inc. : estimations de BPA +10,6 % sur 30 jours
-- [faible] Stewart Information Services Corporation : estimations de BPA −10,3 % sur 30 jours
-- [faible] Vallourec S.A. : estimations de BPA −10,8 % sur 30 jours
+- [faible] Hewlett Packard Enterprise Company : estimations de BPA +11,4 % sur 30 jours
+- [moyenne] Workday, Inc. : guidance relevée (24/11/2026)
+- [moyenne] EQT Corporation entre dans la liste « Qualité à prix raisonnable »
+- [faible] Dollar Tree, Inc. : BPA publié +25,4 % par rapport à l'estimation
+- [moyenne] The J. M. Smucker Company : guidance relevée (24/11/2026)
+- [faible] The J. M. Smucker Company : BPA publié +24,8 % par rapport à l'estimation
+- [faible] DICK'S Sporting Goods, Inc. : BPA publié +37,6 % par rapport à l'estimation
+- [moyenne] Grupo Financiero Banorte, S.A.B. de C.V. entre dans la liste « Qualité à prix raisonnable »
+- [faible] Petróleo Brasileiro S.A. - Petrobras : estimations de BPA +14,2 % sur 30 jours
+- [faible] Promotora y Operadora de Infraestructura, S. A. B. de C. V. : estimations de BPA +14,8 % sur 30 jours
+- [faible] Delta Electronics (Thailand) Public Company Limited : estimations de BPA −10,2 % sur 30 jours
+- [faible] Amrize AG : estimations de BPA −10,0 % sur 30 jours
+- [faible] Korean Airlines Co.,Ltd. : estimations de BPA +53,2 % sur 30 jours
+- [faible] THK Co., Ltd. : estimations de BPA +11,2 % sur 30 jours
+- [faible] Keymed Biosciences Inc. : estimations de BPA +18,4 % sur 30 jours
+- [faible] Arch Capital Group Ltd. sort des pépites candidates
 
 ## Sources
 
