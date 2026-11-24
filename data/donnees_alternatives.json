@@ -1,17 +1,17 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-24T05:50:52Z",
+    "genere_le": "2026-11-24T16:25:58Z",
     "source": "agent-donnees-alternatives",
     "fictif": false,
     "version_agent": "1.0",
-    "mise_a_jour_precedente": "2026-11-23T16:28:28Z",
+    "mise_a_jour_precedente": "2026-11-24T05:50:52Z",
     "etat_des_sources": {
       "camions_de": "ok",
       "camions_us": "ok",
       "fret_vrac": "ok",
       "fret_conteneurs": "ok",
-      "ciment_cn": "secours",
+      "ciment_cn": "erreur : https://api.db.nomics.world/v22/series/NBS/M_A02090Y/A02090Y01 : ReadTimeout: HTTPSConnectionPool(host='api.db.nomics.world', port=443): Read timed out. (read t",
       "ciment_us": "ok",
       "mises_en_chantier_us": "ok",
       "exportations_kr": "ok",
@@ -39,7 +39,7 @@
       "offres_emploi_es": "ok",
       "offres_emploi_nl": "ok",
       "attention_wikipedia": "ok",
-      "attention_trends": "ok"
+      "attention_trends": "erreur : 1 échec(s)"
     }
   },
   "donnees": {
@@ -1248,20 +1248,20 @@
         "mention": "approximation : l'indice Baltic Dry n'est pas diffusé gratuitement ; l'ETF BDRY porte des contrats à terme sur le fret vrac",
         "categorie_nom": "Transport et industrie",
         "mention_proxy": true,
-        "valeur": 12.664,
-        "date": "2026-11-23",
-        "variation_1m": -5.01,
-        "variation_12m": 50.09,
-        "ecart_tendance": 14.91,
-        "ecart_saisonnier": 23.47,
+        "valeur": 13.016,
+        "date": "2026-11-24",
+        "variation_1m": -4.17,
+        "variation_12m": 49.24,
+        "ecart_tendance": 14.93,
+        "ecart_saisonnier": 23.57,
         "percentile_12m": 63.9,
         "percentile_tendance": 62.3,
         "note": 63.3,
         "methode_note": "percentiles",
         "historique_mois": 73,
-        "age_jours": 1,
+        "age_jours": 0,
         "perimee": false,
-        "lecture": "Fret vrac sec (Baltic Dry, approximation) : +50,1 % sur 12 mois, −5,0 % sur 1 mois, écart à la tendance +14,9 %, percentile 64 de l'historique.",
+        "lecture": "Fret vrac sec (Baltic Dry, approximation) : +49,2 % sur 12 mois, −4,2 % sur 1 mois, écart à la tendance +14,9 %, percentile 64 de l'historique.",
         "serie": [
           [
             "2024-11-29",
@@ -1680,8 +1680,8 @@
             12.506
           ],
           [
-            "2026-11-23",
-            12.664
+            "2026-11-24",
+            12.84
           ]
         ],
         "etat_source": "ok",
@@ -1750,64 +1750,12 @@
         "mention": "janvier et février sont publiés ensemble (pas de valeur mensuelle séparée)",
         "categorie_nom": "Construction",
         "mention_proxy": false,
-        "valeur": 14416.359,
-        "date": "2025-12-01",
-        "variation_1m": -6.59,
-        "variation_12m": null,
-        "ecart_tendance": null,
-        "ecart_saisonnier": null,
-        "percentile_12m": null,
-        "percentile_tendance": null,
-        "note": 10.0,
-        "methode_note": "échelle fixe (historique court)",
-        "historique_mois": 10,
-        "age_jours": 358,
-        "perimee": true,
-        "lecture": "Production de ciment : −6,6 % sur 1 mois. Dernière donnée disponible : décembre 2025 (358 jours) ; trop ancienne, exclue du score.",
-        "serie": [
-          [
-            "2025-03-01",
-            15787.452
-          ],
-          [
-            "2025-04-01",
-            16529.6
-          ],
-          [
-            "2025-05-01",
-            16499.7
-          ],
-          [
-            "2025-06-01",
-            15547.335
-          ],
-          [
-            "2025-07-01",
-            14557.31
-          ],
-          [
-            "2025-08-01",
-            14801.634
-          ],
-          [
-            "2025-09-01",
-            15444.212
-          ],
-          [
-            "2025-10-01",
-            14774.8
-          ],
-          [
-            "2025-11-01",
-            15434.2
-          ],
-          [
-            "2025-12-01",
-            14416.359
-          ]
-        ],
-        "etat_source": "secours",
-        "detail_source": "secours : DBnomics (copie de la base du Bureau national des statistiques) (source principale indisponible : https://data.stats.gov.cn/easyquery.htm : HTTP 403)"
+        "note": null,
+        "valeur": null,
+        "date": null,
+        "serie": [],
+        "lecture": "Production de ciment : source indisponible (erreur : https://api.db.nomics.world/v22/series/NBS/M_A02090Y/A02090Y01 : ReadTimeout: HTTPSConnectionPool(host='api.db.nomics.world', port=443): Read timed out. (read t).",
+        "etat_source": "erreur : https://api.db.nomics.world/v22/series/NBS/M_A02090Y/A02090Y01 : ReadTimeout: HTTPSConnectionPool(host='api.db.nomics.world', port=443): Read timed out. (read t"
       },
       {
         "cle": "ciment_us",
@@ -3400,12 +3348,12 @@
         "mention": "très sensible aux températures",
         "categorie_nom": "Énergie",
         "mention_proxy": false,
-        "valeur": 11045214.0,
+        "valeur": 10968974.0,
         "date": "2026-11-23",
-        "variation_1m": -3.84,
-        "variation_12m": 1.4,
-        "ecart_tendance": -3.91,
-        "ecart_saisonnier": -2.71,
+        "variation_1m": -3.86,
+        "variation_12m": 1.38,
+        "ecart_tendance": -3.92,
+        "ecart_saisonnier": -2.73,
         "percentile_12m": 37.8,
         "percentile_tendance": 32.4,
         "note": 35.6,
@@ -3413,7 +3361,7 @@
         "historique_mois": 49,
         "age_jours": 1,
         "perimee": false,
-        "lecture": "Demande d'électricité : +1,4 % sur 12 mois, −3,8 % sur 1 mois, écart à la tendance −3,9 %, percentile 38 de l'historique.",
+        "lecture": "Demande d'électricité : +1,4 % sur 12 mois, −3,9 % sur 1 mois, écart à la tendance −3,9 %, percentile 38 de l'historique.",
         "serie": [
           [
             "2024-11-24",
@@ -3829,15 +3777,15 @@
           ],
           [
             "2026-11-15",
-            10771580.143
+            10771560.857
           ],
           [
             "2026-11-22",
-            10918814.571
+            10922686.429
           ],
           [
             "2026-11-23",
-            11045214.0
+            10968974.0
           ]
         ],
         "etat_source": "ok",
@@ -3855,20 +3803,20 @@
         "mention": "reflète surtout la consommation de services (voyages)",
         "categorie_nom": "Mobilité",
         "mention_proxy": false,
-        "valeur": 2631412.0,
-        "date": "2026-11-22",
-        "variation_1m": -7.62,
-        "variation_12m": 0.31,
-        "ecart_tendance": -2.04,
-        "ecart_saisonnier": -0.28,
+        "valeur": 2563673.0,
+        "date": "2026-11-23",
+        "variation_1m": -7.7,
+        "variation_12m": 0.35,
+        "ecart_tendance": -1.96,
+        "ecart_saisonnier": 0.05,
         "percentile_12m": 45.7,
         "percentile_tendance": 31.4,
         "note": 40.0,
         "methode_note": "percentiles",
         "historique_mois": 47,
-        "age_jours": 2,
+        "age_jours": 1,
         "perimee": false,
-        "lecture": "Passagers contrôlés dans les aéroports : +0,3 % sur 12 mois, −7,6 % sur 1 mois, écart à la tendance −2,0 %, percentile 46 de l'historique.",
+        "lecture": "Passagers contrôlés dans les aéroports : +0,3 % sur 12 mois, −7,7 % sur 1 mois, écart à la tendance −2,0 %, percentile 46 de l'historique.",
         "serie": [
           [
             "2024-11-24",
@@ -4289,6 +4237,10 @@
           [
             "2026-11-22",
             2455750.0
+          ],
+          [
+            "2026-11-23",
+            2563673.0
           ]
         ],
         "etat_source": "ok",
@@ -8322,7 +8274,6 @@
       "camions_de",
       "exportations_kr",
       "exportations_tw",
-      "ciment_cn",
       "electricite_cn",
       "fret_conteneurs",
       "fret_vrac",
@@ -8347,29 +8298,22 @@
         "ancienne": true
       },
       {
-        "ticker": "FAN.L",
-        "nom": "Volution Group plc",
-        "pays": "GB",
+        "ticker": "9633.HK",
+        "nom": "Nongfu Spring Co., Ltd.",
+        "pays": "CN",
         "liste": "pepites",
-        "trends": {
-          "variation_pct": 144.0,
-          "niveau_recent": 4.4
+        "wikipedia": {
+          "article": "Nongfu Spring",
+          "vues_30j": 2619,
+          "variation_pct": 36.7
         },
         "tendance": "en hausse",
-        "variation_moyenne_pct": 144.0,
-        "signal": true
-      },
-      {
-        "ticker": "EXLS",
-        "nom": "ExlService Holdings, Inc.",
-        "pays": "US",
-        "liste": "pepites",
+        "variation_moyenne_pct": 36.7,
         "trends": {
-          "variation_pct": 34.7,
-          "niveau_recent": 7.1
+          "variation_pct": -31.3,
+          "niveau_recent": 4.5,
+          "ancienne": true
         },
-        "tendance": "en hausse",
-        "variation_moyenne_pct": 34.7,
         "signal": false
       },
       {
@@ -8446,24 +8390,6 @@
           "niveau_recent": 80.6,
           "ancienne": true
         },
-        "signal": false
-      },
-      {
-        "ticker": "9633.HK",
-        "nom": "Nongfu Spring Co., Ltd.",
-        "pays": "CN",
-        "liste": "pepites",
-        "wikipedia": {
-          "article": "Nongfu Spring",
-          "vues_30j": 2619,
-          "variation_pct": 36.7
-        },
-        "trends": {
-          "variation_pct": -31.3,
-          "niveau_recent": 4.5
-        },
-        "tendance": "stable",
-        "variation_moyenne_pct": 2.7,
         "signal": false
       },
       {
@@ -8609,12 +8535,13 @@
           "vues_30j": 68216,
           "variation_pct": -15.0
         },
+        "tendance": "stable",
+        "variation_moyenne_pct": -15.0,
         "trends": {
           "variation_pct": -22.6,
-          "niveau_recent": 37.7
+          "niveau_recent": 37.7,
+          "ancienne": true
         },
-        "tendance": "stable",
-        "variation_moyenne_pct": -18.8,
         "signal": false
       },
       {
@@ -8634,45 +8561,6 @@
           "niveau_recent": 6.0,
           "ancienne": true
         },
-        "signal": false
-      },
-      {
-        "ticker": "ADEA",
-        "nom": "Adeia Inc.",
-        "pays": "US",
-        "liste": "pepites",
-        "trends": {
-          "variation_pct": -21.4,
-          "niveau_recent": 19.9
-        },
-        "tendance": "stable",
-        "variation_moyenne_pct": -21.4,
-        "signal": false
-      },
-      {
-        "ticker": "EMAAR.AE",
-        "nom": "Emaar Properties PJSC",
-        "pays": "AE",
-        "liste": "pepites",
-        "trends": {
-          "variation_pct": -70.0,
-          "niveau_recent": 0.5
-        },
-        "tendance": "en baisse",
-        "variation_moyenne_pct": -70.0,
-        "signal": false
-      },
-      {
-        "ticker": "2096.HK",
-        "nom": "Simcere Pharmaceutical Group Limited",
-        "pays": "CN",
-        "liste": "pepites",
-        "trends": {
-          "variation_pct": -100.0,
-          "niveau_recent": 0
-        },
-        "tendance": "en baisse",
-        "variation_moyenne_pct": -100.0,
         "signal": false
       }
     ],
