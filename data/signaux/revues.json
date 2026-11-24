@@ -1,13 +1,385 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-24T06:26:32Z",
+    "genere_le": "2026-11-24T07:31:51Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "inities|achats_groupes|CCAP|2026-11-24",
+      "revu_le": "2026-11-24T07:31:26Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "CCAP",
+        "date": "2026-11-24",
+        "importance": "forte",
+        "titre": "Crescent Capital BDC, Inc. : 4 dirigeants achètent sur le marché en 30 jours (score 82/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|BULL|2026-11-24",
+      "revu_le": "2026-11-24T07:31:26Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "BULL",
+        "date": "2026-11-24",
+        "importance": "moyenne",
+        "titre": "Webull Corp : 3 dirigeants achètent sur le marché en 30 jours (score 78/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|GNL|2026-11-24",
+      "revu_le": "2026-11-24T07:31:26Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "GNL",
+        "date": "2026-11-24",
+        "importance": "forte",
+        "titre": "Global Net Lease, Inc. : 7 dirigeants achètent sur le marché en 30 jours (score 100/100)"
+      },
+      "objection": "Malgré les achats d'initiés, la dette nette sur EBITDA atteint 7,7× et la couverture des intérêts est de 1,0× [F1, F2]. De plus, la croissance du chiffre d'affaires s'établit à -13,1 % et le bénéfice recule de -54,1 % [F4, F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Global Net Lease, Inc. : dette nette / EBITDA de 7,7×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "Global Net Lease, Inc. : couverture des intérêts de 1,0×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F3",
+          "texte": "Global Net Lease, Inc. : cours −30,1 % sur 3 mois, −29,5 % sur 6 mois, −14,0 % sur 12 mois",
+          "source": "agent entreprises (fiche)"
+        },
+        {
+          "id": "F4",
+          "texte": "Global Net Lease, Inc. : croissance du bénéfice −54,1 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F5",
+          "texte": "Global Net Lease, Inc. : croissance du CA −13,1 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2",
+        "F4",
+        "F5"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "inities|achats_groupes|ETN|2026-11-24",
+      "revu_le": "2026-11-24T07:31:26Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "ETN",
+        "date": "2026-11-24",
+        "importance": "moyenne",
+        "titre": "Eaton Corporation plc : 3 dirigeants achètent sur le marché en 30 jours (score 74/100)"
+      },
+      "objection": "Le PER de l'entreprise s'élève à 33,5, soit une surévaluation de +38,3 % par rapport à la médiane du secteur établie à 24,2 [F1]. En outre, le cours affiche une baisse de -17,4 % sur 3 mois et de -13,6 % sur 6 mois [F2].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Eaton Corporation plc : PER vs secteur +38,3 % (PER 33,5 ; médiane du secteur 24,2)",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "Eaton Corporation plc : cours −17,4 % sur 3 mois, −13,6 % sur 6 mois, +2,6 % sur 12 mois",
+          "source": "agent entreprises (fiche)"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "inities|achats_groupes|KYN|2026-11-24",
+      "revu_le": "2026-11-24T07:31:26Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "KYN",
+        "date": "2026-11-24",
+        "importance": "moyenne",
+        "titre": "Kayne Anderson Energy Infrastructure Fund, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 70/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|TROX|2026-11-24",
+      "revu_le": "2026-11-24T07:31:26Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "TROX",
+        "date": "2026-11-24",
+        "importance": "moyenne",
+        "titre": "Tronox Holdings plc : 3 dirigeants achètent sur le marché en 30 jours (score 76/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|PCT|2026-11-24",
+      "revu_le": "2026-11-24T07:31:26Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "PCT",
+        "date": "2026-11-24",
+        "importance": "moyenne",
+        "titre": "PureCycle Technologies, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 76/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|APC|2026-11-24",
+      "revu_le": "2026-11-24T07:31:26Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "APC",
+        "date": "2026-11-24",
+        "importance": "forte",
+        "titre": "ARKO Petroleum Corp. : 3 dirigeants achètent sur le marché en 30 jours (score 89/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|ENOV|2026-11-24",
+      "revu_le": "2026-11-24T07:31:26Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "ENOV",
+        "date": "2026-11-24",
+        "importance": "moyenne",
+        "titre": "Enovis Corporation : 3 dirigeants achètent sur le marché en 30 jours (score 66/100)"
+      },
+      "objection": "Ces achats interviennent alors que la société présente un EBITDA négatif ainsi qu'une couverture des intérêts de -0,5× [F1, F2]. Parallèlement, la croissance du bénéfice enregistre une contraction de -43,5 % [F3].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Enovis Corporation : dette nette / EBITDA de EBITDA négatif",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "Enovis Corporation : couverture des intérêts de −0,5×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F3",
+          "texte": "Enovis Corporation : croissance du bénéfice −43,5 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2",
+        "F3"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "inities|achats_groupes|CTVA|2026-11-24",
+      "revu_le": "2026-11-24T07:31:26Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "CTVA",
+        "date": "2026-11-24",
+        "importance": "forte",
+        "titre": "Corteva, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 97/100)"
+      },
+      "objection": "Cet engagement managérial coïncide avec une dépréciation marquée du cours, en recul de -34,7 % sur 3 mois, de -31,8 % sur 6 mois et de -16,9 % sur 12 mois [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Corteva, Inc. : cours −34,7 % sur 3 mois, −31,8 % sur 6 mois, −16,9 % sur 12 mois",
+          "source": "agent entreprises (fiche)"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "inities|achats_groupes|TMS|2026-11-24",
+      "revu_le": "2026-11-24T07:31:26Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "TMS",
+        "date": "2026-11-24",
+        "importance": "forte",
+        "titre": "Teamshares Inc : 3 dirigeants achètent sur le marché en 30 jours (score 82/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "entreprises|guidance_relevee|CRWD|2026-11-24",
+      "revu_le": "2026-11-24T07:31:26Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_relevee",
+        "cle": "CRWD",
+        "date": "2026-11-24",
+        "importance": "moyenne",
+        "titre": "CrowdStrike Holdings, Inc. : guidance relevée (23/11/2026)"
+      },
+      "objection": "Malgré la guidance, la croissance du bénéfice s'établit à −966,2 % [F3] et la couverture des intérêts est de −10,5× [F2], tandis que le PER atteint un niveau supérieur au secteur de +11932,0 % (PER 3660,1) [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "CrowdStrike Holdings, Inc. : PER vs secteur +11932,0 % (PER 3660,1 ; médiane du secteur 30,4)",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "CrowdStrike Holdings, Inc. : couverture des intérêts de −10,5×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F3",
+          "texte": "CrowdStrike Holdings, Inc. : croissance du bénéfice −966,2 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2",
+        "F3"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|guidance_relevee|HPE|2026-11-24",
+      "revu_le": "2026-11-24T07:31:26Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_relevee",
+        "cle": "HPE",
+        "date": "2026-11-24",
+        "importance": "moyenne",
+        "titre": "Hewlett Packard Enterprise Company : guidance relevée (23/11/2026)"
+      },
+      "objection": "Cette révision intervient alors que la croissance du bénéfice est de −97,8 % [F2] et que la dette nette sur EBITDA atteint 4,2× [F1], combinée à une hausse des créances de 51,9 % pour un CA en hausse de 13,8 % [F3].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Hewlett Packard Enterprise Company : dette nette / EBITDA de 4,2×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "Hewlett Packard Enterprise Company : croissance du bénéfice −97,8 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F3",
+          "texte": "Hewlett Packard Enterprise Company : alerte « Hausse anormale des créances » : créances en hausse de 51,9 % pour un CA en hausse de 13,8 %",
+          "source": "agent entreprises (fiche)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2",
+        "F3"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
     {
       "id": "geopolitique|hausse_score|AU|2026-11-24",
       "revu_le": "2026-11-24T04:17:39Z",
