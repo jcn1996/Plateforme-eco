@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genere_le": "2026-11-25T17:56:55Z",
+    "genere_le": "2026-11-25T18:51:51Z",
     "source": "agent-chef",
     "version_agent": "1.0",
     "description": "Entrées, recalcul, changements de verdict, alertes et briefing, à chaque exécution",
@@ -9,8 +9,8 @@
       "libelle": "Chef d'orchestre",
       "ordre": 10,
       "workflow": "agent-chef.yml",
-      "derniere_execution": "2026-11-25T18:11:54Z",
-      "prochaine_prevue": "2026-11-25T18:50:00Z",
+      "derniere_execution": "2026-11-25T18:51:51Z",
+      "prochaine_prevue": "2026-11-25T19:50:00Z",
       "intervalle_min": 60,
       "planning": {
         "crons": [
@@ -20,104 +20,80 @@
         ],
         "fuseau": "UTC"
       },
-      "sources_total": 15,
-      "sources_ok": 15,
+      "sources_total": 12,
+      "sources_ok": 12,
       "sources": [
-        {
-          "nom": "Yahoo Finance (cours des ETF sectoriels)",
-          "etat": "ok",
-          "detail": "33/33 ETF sectoriels",
-          "derniere_donnee_valide": "2026-11-25T17:56:55Z"
-        },
-        {
-          "nom": "Émetteurs et Yahoo Finance (flux des ETF sectoriels : SSGA, iShares)",
-          "etat": "ok",
-          "detail": "ssga : 11, ishares : 11, yahoo_parts : 15",
-          "derniere_donnee_valide": "2026-11-25T17:56:55Z"
-        },
         {
           "nom": "Agent pays (data/pays.json)",
           "etat": "ok",
-          "detail": "dégradé (1 h) ; agent dégradé : pèse moins",
+          "detail": "dégradé (2 h) ; agent dégradé : pèse moins",
           "derniere_donnee_valide": "2026-11-25T17:08:37Z"
         },
         {
           "nom": "Agent macro (data/macro.json)",
           "etat": "ok",
-          "detail": "à jour (0 h)",
+          "detail": "à jour (1 h)",
           "derniere_donnee_valide": "2026-11-25T17:35:29Z"
         },
         {
           "nom": "Agent marchés (data/marches.json)",
           "etat": "ok",
           "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-25T17:55:34Z"
+          "derniere_donnee_valide": "2026-11-25T18:46:11Z"
         },
         {
           "nom": "Agent risque (data/risque.json)",
           "etat": "ok",
           "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-25T17:31:33Z"
+          "derniere_donnee_valide": "2026-11-25T18:31:29Z"
         },
         {
           "nom": "Agent géopolitique (data/geopolitique.json)",
           "etat": "ok",
           "detail": "à jour (1 h)",
-          "derniere_donnee_valide": "2026-11-25T17:04:57Z"
+          "derniere_donnee_valide": "2026-11-25T18:16:44Z"
         },
         {
           "nom": "Agent matières premières (data/matieres_premieres.json)",
           "etat": "ok",
-          "detail": "à jour (13 h)",
+          "detail": "à jour (14 h)",
           "derniere_donnee_valide": "2026-11-25T04:54:58Z"
         },
         {
           "nom": "Agent entreprises (data/entreprises.json)",
           "etat": "ok",
-          "detail": "à jour (13 h)",
+          "detail": "à jour (14 h)",
           "derniere_donnee_valide": "2026-11-25T05:23:03Z"
         },
         {
           "nom": "Agent entreprises (pépites) (data/pepites.json)",
           "etat": "ok",
-          "detail": "à jour (13 h)",
+          "detail": "à jour (14 h)",
           "derniere_donnee_valide": "2026-11-25T05:23:03Z"
         },
         {
           "nom": "Agent initiés (data/inities.json)",
           "etat": "ok",
-          "detail": "à jour (0 h)",
+          "detail": "à jour (1 h)",
           "derniere_donnee_valide": "2026-11-25T17:35:33Z"
         },
         {
           "nom": "Analyses à la demande (data/analyses/index.json)",
           "etat": "ok",
-          "detail": "à jour (532 h)",
+          "detail": "à jour (533 h)",
           "derniere_donnee_valide": "2026-11-03T13:35:53Z"
         },
         {
           "nom": "Contradicteur (agent risque) (data/signaux/revues.json)",
           "etat": "ok",
           "detail": "à jour (0 h)",
-          "derniere_donnee_valide": "2026-11-25T17:31:45Z"
-        },
-        {
-          "nom": "Google Drive (dépôt du briefing, facultatif)",
-          "etat": "non configurée",
-          "detail": "secrets GOOGLE_SERVICE_ACCOUNT_JSON et DRIVE_FOLDER_ID absents : dépôt ignoré",
-          "derniere_donnee_valide": null
-        },
-        {
-          "nom": "Yahoo Finance (suivi de performance des verdicts)",
-          "etat": "ok",
-          "detail": "0 mesure(s) ; 0 verdict(s) arrivé(s) à échéance",
-          "derniere_donnee_valide": "2026-11-25T17:56:55Z"
+          "derniere_donnee_valide": "2026-11-25T18:31:45Z"
         },
         {
           "nom": "Gemini (rédaction du briefing)",
           "etat": "ok",
           "detail": "briefing rédigé par gemini-3.5-flash-lite",
-          "derniere_donnee_valide": "2026-11-25T18:11:54Z"
+          "derniere_donnee_valide": "2026-11-25T18:51:51Z"
         }
       ],
       "degrade": false,
@@ -127,70 +103,6 @@
     }
   },
   "donnees": [
-    {
-      "genere_le": "2026-11-12T10:01:31Z",
-      "mode": "leger",
-      "recalcul": false,
-      "declencheurs": [],
-      "palier": "Vigilance",
-      "opportunites": 168,
-      "changements": [],
-      "alertes": 4,
-      "alertes_ecartees": [
-        "entreprises · Centerspace : estimations de BPA +16,1 % sur 30 jours : fonds, véhicule de crédit, holding ou SPAC",
-        "inities · Drilling Tools International Corp : 3 dirigeants achètent sur le marché en 30 jours (score : société hors de l'univers analysé ou sans note",
-        "inities · TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD : 3 dirigeants achètent sur le marché en 30 jour : société hors de l'univers analysé ou sans note",
-        "inities · Liberty Global Ltd. : 3 dirigeants achètent sur le marché en 30 jours (score 82/100) : société hors de l'univers analysé ou sans note",
-        "inities · SelectQuote, Inc. : 5 dirigeants achètent sur le marché en 30 jours (score 95/100) : société hors de l'univers analysé ou sans note",
-        "inities · Scipher Medicine Corp déclare 10,4 % de Chemomab Therapeutics Ltd. (13D, intention d'influ : société hors de l'univers analysé ou sans note",
-        "inities · Hyperscale Data, Inc. déclare 21,7 % de Powell Max Ltd (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
-        "inities · Wandel John P. Jr. déclare 5,2 % de HUGOTON ROYALTY TRUST (13D, intention d'influencer) : fonds, véhicule de crédit, holding ou SPAC",
-        "inities · Orchestra BioMed Holdings, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 7 : société hors de l'univers analysé ou sans note",
-        "inities · Flowco Holdings Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 82/100) : société hors de l'univers analysé ou sans note",
-        "inities · Silynxcom Ltd. : 3 dirigeants achètent sur le marché en 30 jours (score 95/100) : société hors de l'univers analysé ou sans note",
-        "inities · STARZ ENTERTAINMENT CORP /CN/ : 3 dirigeants achètent sur le marché en 30 jours (score 83/ : société hors de l'univers analysé ou sans note",
-        "inities · Partners Group Growth, LLC : 4 dirigeants achètent sur le marché en 30 jours (score 56/100 : société hors de l'univers analysé ou sans note",
-        "inities · TPG RE Finance Trust, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 85/100 : fonds, véhicule de crédit, holding ou SPAC",
-        "inities · Lazar David E. déclare 16,7 % de HIGHWAY HOLDINGS LTD (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
-        "inities · REDWOOD CAPITAL MANAGEMENT, LLC déclare 0,0 % de Mercer International Inc. (13D, intention : société hors de l'univers analysé ou sans note",
-        "inities · Credenza, Inc. déclare 5,4 % de GameSquare Holdings, Inc. (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
-        "inities · ARCH Venture Fund X, L.P. déclare 12,9 % de ASPEN NEUROSCIENCE, INC. (13D, intention d'inf : fonds, véhicule de crédit, holding ou SPAC",
-        "inities · Lau Michael Kwok Yan déclare 98,9 % de Energys Group Ltd (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
-        "inities · Xie Feng déclare 31,5 % de Gamehaus Holdings Inc. (13D, intention d'influencer) : société hors de l'univers analysé ou sans note"
-      ],
-      "exclues": [],
-      "coherence_retrogradees": [],
-      "raison_briefing_regles": null,
-      "briefing": null,
-      "reprise_redaction": null,
-      "gemini": {
-        "appels": 0,
-        "reussites": 0,
-        "quota_atteint": false,
-        "rejets": [],
-        "erreurs": []
-      },
-      "suivi": {
-        "ajoutes": null,
-        "mesures": null,
-        "en_attente": null,
-        "total": 234,
-        "erreur": null
-      },
-      "entrees": {
-        "pays": "périmée",
-        "macro": "à jour",
-        "marches": "à jour",
-        "risque": "à jour",
-        "geopolitique": "à jour",
-        "matieres_premieres": "à jour",
-        "entreprises": "à jour",
-        "pepites": "à jour",
-        "inities": "à jour",
-        "analyses": "à jour",
-        "revues": "à jour"
-      }
-    },
     {
       "genere_le": "2026-11-12T11:01:40Z",
       "mode": "leger",
@@ -11984,10 +11896,74 @@
       "genere_le": "2026-11-25T18:11:54Z",
       "mode": "redaction",
       "reprise_redaction": "aucune rédaction en attente"
+    },
+    {
+      "genere_le": "2026-11-25T18:51:51Z",
+      "mode": "leger",
+      "recalcul": false,
+      "declencheurs": [],
+      "palier": "Vigilance",
+      "opportunites": 169,
+      "changements": [],
+      "alertes": 4,
+      "alertes_ecartees": [
+        "inities · PEDEVCO CORP : 4 dirigeants achètent sur le marché en 30 jours (score 66/100) : société hors de l'univers analysé ou sans note",
+        "inities · Cytosorbents Corp : 5 dirigeants achètent sur le marché en 30 jours (score 95/100) : société hors de l'univers analysé ou sans note",
+        "inities · Reliance Global Group, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 82/10 : société hors de l'univers analysé ou sans note",
+        "inities · Saba Capital Management, L.P. déclare 5,1 % de BNY Mellon High Yield Strategies Fund (13D, : fonds, véhicule de crédit, holding ou SPAC",
+        "inities · Saba Capital Management, L.P. déclare 5,2 % de Eaton Vance Senior Floating-Rate Trust (13D : fonds, véhicule de crédit, holding ou SPAC",
+        "inities · Polymeropoulos Mihael Hristos déclare 5,0 % de Vanda Pharmaceuticals Inc. (13D, intention  : société hors de l'univers analysé ou sans note",
+        "inities · Field Jacob Robert déclare 9,5 % de Zone Frontier Inc. (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
+        "inities · Koh Eng Chye déclare 39,5 % de iOThree Limited (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
+        "inities · TPAV, LLC déclare 32,8 % de Clywedog Therapeutics Holdings, Inc. (13D, intention d'influen : société hors de l'univers analysé ou sans note",
+        "inities · Crescent Capital BDC, Inc. : 4 dirigeants achètent sur le marché en 30 jours (score 82/100 : fonds, véhicule de crédit, holding ou SPAC",
+        "inities · Webull Corp : 3 dirigeants achètent sur le marché en 30 jours (score 78/100) : société hors de l'univers analysé ou sans note",
+        "inities · Kayne Anderson Energy Infrastructure Fund, Inc. : 3 dirigeants achètent sur le marché en 3 : fonds, véhicule de crédit, holding ou SPAC",
+        "inities · Tronox Holdings plc : 3 dirigeants achètent sur le marché en 30 jours (score 76/100) : société hors de l'univers analysé ou sans note",
+        "inities · PureCycle Technologies, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 76/1 : société hors de l'univers analysé ou sans note",
+        "inities · ARKO Petroleum Corp. : 3 dirigeants achètent sur le marché en 30 jours (score 89/100) : société hors de l'univers analysé ou sans note",
+        "inities · Teamshares Inc : 3 dirigeants achètent sur le marché en 30 jours (score 82/100) : société hors de l'univers analysé ou sans note",
+        "inities · BROOKFIELD Corp /ON/ déclare 26,4 % de Brookfield Infrastructure Partners Inc. (13D, inten : société hors de l'univers analysé ou sans note",
+        "inities · ORBIMED ADVISORS LLC déclare 12,2 % de WINDWARD BIO GROUP AG (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
+        "inities · OA3, LLC déclare 10,6 % de Momentus Inc. (13D, intention d'influencer) : société hors de l'univers analysé ou sans note",
+        "inities · VA Partners I, LLC déclare 7,0 % de Wix.com Ltd. (13D, intention d'influencer) : société hors de l'univers analysé ou sans note"
+      ],
+      "exclues": [],
+      "coherence_retrogradees": [],
+      "raison_briefing_regles": null,
+      "briefing": null,
+      "reprise_redaction": null,
+      "gemini": {
+        "appels": 0,
+        "reussites": 0,
+        "quota_atteint": false,
+        "rejets": [],
+        "erreurs": []
+      },
+      "suivi": {
+        "ajoutes": null,
+        "mesures": null,
+        "en_attente": null,
+        "total": 303,
+        "erreur": null
+      },
+      "entrees": {
+        "pays": "dégradé (dégradé)",
+        "macro": "à jour",
+        "marches": "à jour",
+        "risque": "à jour",
+        "geopolitique": "à jour",
+        "matieres_premieres": "à jour",
+        "entreprises": "à jour",
+        "pepites": "à jour",
+        "inities": "à jour",
+        "analyses": "à jour",
+        "revues": "à jour"
+      }
     }
   ],
-  "derniere_execution": "2026-11-25T18:11:54Z",
-  "prochaine_prevue": "2026-11-25T18:50:00Z",
+  "derniere_execution": "2026-11-25T18:51:51Z",
+  "prochaine_prevue": "2026-11-25T19:50:00Z",
   "intervalle_min": 60,
   "planning": {
     "crons": [
