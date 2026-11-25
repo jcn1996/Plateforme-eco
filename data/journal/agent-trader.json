@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genere_le": "2026-11-25T07:46:09Z",
+    "genere_le": "2026-11-25T08:16:21Z",
     "source": "agent-trader",
     "version_agent": "1.0",
     "description": "Ordres exécutés, ordres imposés, décisions et attentes de l'agent trader (démo), à chaque exécution",
@@ -9,9 +9,9 @@
       "libelle": "Agent trader (démo)",
       "ordre": 11,
       "workflow": "agent-trader.yml",
-      "derniere_execution": "2026-11-25T07:46:09Z",
-      "prochaine_prevue": "2026-11-25T08:05:00Z",
-      "intervalle_min": 32,
+      "derniere_execution": "2026-11-25T08:16:21Z",
+      "prochaine_prevue": "2026-11-25T09:05:00Z",
+      "intervalle_min": 60,
       "planning": {
         "crons": [
           "33 7 * * 1-5",
@@ -25,26 +25,26 @@
         {
           "nom": "Chef d'orchestre (data/chef.json)",
           "etat": "ok",
-          "detail": "0 h",
+          "detail": "1 h",
           "derniere_donnee_valide": "2026-11-25T07:31:30Z"
         },
         {
           "nom": "Agent risque (palier) (data/risque.json)",
           "etat": "ok",
-          "detail": "0 h",
+          "detail": "1 h",
           "derniere_donnee_valide": "2026-11-25T07:31:27Z"
         },
         {
           "nom": "Agent marchés (indice de référence, EUR/USD ; facultatif)",
           "etat": "ok",
           "detail": "à jour",
-          "derniere_donnee_valide": "2026-11-25T07:31:42Z"
+          "derniere_donnee_valide": "2026-11-25T08:01:33Z"
         },
         {
           "nom": "Yahoo Finance via yfinance (cours, change, exécution)",
           "etat": "ok",
           "detail": "11 position(s) valorisée(s)",
-          "derniere_donnee_valide": "2026-11-25T07:46:09Z"
+          "derniere_donnee_valide": "2026-11-25T08:16:21Z"
         }
       ],
       "degrade": false,
@@ -3462,11 +3462,27 @@
       "cours_manquants": [],
       "observation": null,
       "erreur_observation": null
+    },
+    {
+      "genere_le": "2026-11-25T08:16:21Z",
+      "mode": "horaire",
+      "valeur": 94913.87,
+      "liquidites_pct": 21.96,
+      "palier": "Vigilance",
+      "executees": [],
+      "annulees": [],
+      "ordres_imposes": [],
+      "decision": null,
+      "attente": null,
+      "ordres_en_attente": 0,
+      "cours_manquants": [],
+      "observation": null,
+      "erreur_observation": null
     }
   ],
-  "derniere_execution": "2026-11-25T07:46:09Z",
-  "prochaine_prevue": "2026-11-25T08:05:00Z",
-  "intervalle_min": 32,
+  "derniere_execution": "2026-11-25T08:16:21Z",
+  "prochaine_prevue": "2026-11-25T09:05:00Z",
+  "intervalle_min": 60,
   "planning": {
     "crons": [
       "33 7 * * 1-5",
