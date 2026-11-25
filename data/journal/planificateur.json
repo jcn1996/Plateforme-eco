@@ -1,56 +1,36 @@
 {
   "meta": {
-    "genere_le": "2026-11-25T15:30:54Z",
+    "genere_le": "2026-11-25T16:01:12Z",
     "source": "planificateur",
     "description": "Appels du réveil externe (cron-job.org) et lancements d'agents décidés par le planificateur",
-    "dernier_appel": "2026-11-25T15:30:54Z",
+    "dernier_appel": "2026-11-25T16:01:12Z",
     "sante": {
       "agent": "planificateur",
       "libelle": "Planificateur (réveil externe)",
       "ordre": 0,
       "workflow": "planificateur.yml",
-      "derniere_execution": "2026-11-25T15:30:54Z",
+      "derniere_execution": "2026-11-25T16:01:12Z",
       "appel_externe": true,
       "panne_minutes": 45,
       "prochaine_prevue": null,
       "intervalle_min": 15,
       "sources_total": 1,
-      "sources_ok": 1,
+      "sources_ok": 0,
       "sources": [
         {
           "nom": "gh workflow run (lancement des agents)",
-          "etat": "ok",
-          "detail": null
+          "etat": "échec",
+          "detail": "agent-chef.yml : could not create workflow dispatch event: HTTP 500 (https://api.github.com/repos/jcn1996/Plateforme-eco/actions/workflows/410694985/dispatches)"
         }
       ],
-      "degrade": false,
-      "raisons": [],
-      "dernier_lancement": "2026-11-25T15:30:54Z"
+      "degrade": true,
+      "raisons": [
+        "Lancement de agent-chef.yml en échec"
+      ],
+      "dernier_lancement": "2026-11-25T16:01:12Z"
     }
   },
   "donnees": [
-    {
-      "cle": "agent-marches.yml|7,22,37,52 7-21 * * 1-5",
-      "workflow": "agent-marches.yml",
-      "parametres": {},
-      "creneau": "2026-11-23T14:37:00Z",
-      "le": "2026-11-23T14:45:44Z",
-      "raison": "créneau dû, pas encore fait",
-      "statut": "lancé",
-      "detail": "https://github.com/jcn1996/Plateforme-eco/actions/runs/45197668933"
-    },
-    {
-      "cle": "agent-chef.yml|50 8-21 * * 1-5",
-      "workflow": "agent-chef.yml",
-      "parametres": {
-        "mode": "leger"
-      },
-      "creneau": "2026-11-23T14:50:00Z",
-      "le": "2026-11-23T15:01:22Z",
-      "raison": "créneau dû, pas encore fait",
-      "statut": "lancé",
-      "detail": "https://github.com/jcn1996/Plateforme-eco/actions/runs/45200532415"
-    },
     {
       "cle": "agent-marches.yml|7,22,37,52 7-21 * * 1-5",
       "workflow": "agent-marches.yml",
@@ -3332,7 +3312,29 @@
       "raison": "créneau dû, pas encore fait",
       "statut": "lancé",
       "detail": "https://github.com/jcn1996/Plateforme-eco/actions/runs/45646025278"
+    },
+    {
+      "cle": "agent-chef.yml|50 8-21 * * 1-5",
+      "workflow": "agent-chef.yml",
+      "parametres": {
+        "mode": "leger"
+      },
+      "creneau": "2026-11-25T15:50:00Z",
+      "le": "2026-11-25T16:01:12Z",
+      "raison": "créneau dû, pas encore fait",
+      "statut": "échec",
+      "detail": "could not create workflow dispatch event: HTTP 500 (https://api.github.com/repos/jcn1996/Plateforme-eco/actions/workflows/410694985/dispatches)"
+    },
+    {
+      "cle": "agent-marches.yml|7,22,37,52 7-21 * * 1-5",
+      "workflow": "agent-marches.yml",
+      "parametres": {},
+      "creneau": "2026-11-25T15:52:00Z",
+      "le": "2026-11-25T16:01:12Z",
+      "raison": "créneau dû, pas encore fait",
+      "statut": "lancé",
+      "detail": "https://github.com/jcn1996/Plateforme-eco/actions/runs/45650430690"
     }
   ],
-  "derniere_execution": "2026-11-25T15:30:54Z"
+  "derniere_execution": "2026-11-25T16:01:12Z"
 }
