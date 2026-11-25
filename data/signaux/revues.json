@@ -1,13 +1,63 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-25T03:02:28Z",
+    "genere_le": "2026-11-25T05:03:28Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "geopolitique|hausse_score|KR|2026-11-25",
+      "revu_le": "2026-11-25T05:02:43Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "KR",
+        "date": "2026-11-25",
+        "importance": "moyenne",
+        "titre": "Corée du Sud : score de risque géopolitique 23/100, +12 pts sur 7 jours"
+      },
+      "objection": "Objections spécifiques : Corée du Sud dispose d'amortisseurs (réserves de 6,5 mois d'importations, dette publique de 47 % du PIB) [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Corée du Sud : réserves de 6,5 mois, dette de 47 % du PIB",
+          "source": "FMI, Banque mondiale"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "règles",
+      "par_entite": {
+        "KR": {
+          "objection": "Objections spécifiques : Corée du Sud dispose d'amortisseurs (réserves de 6,5 mois d'importations, dette publique de 47 % du PIB) [F1].",
+          "ajustement": "maintenir"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|IT|2026-11-25",
+      "revu_le": "2026-11-25T05:02:43Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "IT",
+        "date": "2026-11-25",
+        "importance": "moyenne",
+        "titre": "Italie : score de risque géopolitique 37/100, +25 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
     {
       "id": "geopolitique|hausse_score|PL|2026-11-25",
       "revu_le": "2026-11-25T03:02:04Z",
@@ -809,25 +859,6 @@
         "date": "2026-11-22",
         "importance": "haute",
         "titre": "Événement de gravité 4 : Two Russian Missiles and a Drone Land in Poland as NATO Calls It a Violation"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|IT|2026-11-22",
-      "revu_le": "2026-11-22T02:40:53Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "IT",
-        "date": "2026-11-22",
-        "importance": "moyenne",
-        "titre": "Italie : score de risque géopolitique 23/100, +11 pts sur 7 jours"
       },
       "objection": "Pas d'objection spécifique.",
       "faits": [],
