@@ -1,13 +1,94 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-25T13:31:54Z",
+    "genere_le": "2026-11-25T14:31:57Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "geopolitique|evenement_grave|evt-64973fb0efa9|2026-11-25",
+      "revu_le": "2026-11-25T14:31:23Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "evenement_grave",
+        "cle": "evt-64973fb0efa9",
+        "date": "2026-11-25",
+        "importance": "haute",
+        "titre": "Événement de gravité 4 : Poursuite des frappes aériennes entre la Russie et l'Ukraine"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|BR|2026-11-25",
+      "revu_le": "2026-11-25T14:31:23Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "BR",
+        "date": "2026-11-25",
+        "importance": "moyenne",
+        "titre": "Brésil : score de risque géopolitique 29/100, +15 pts sur 7 jours"
+      },
+      "objection": "Objections spécifiques : le marché ne confirme pas pour Brésil (ETF EWZ à −0,1 % depuis la veille du signal) [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "ETF EWZ (Brésil) : −0,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWZ"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "règles",
+      "par_entite": {
+        "BR": {
+          "objection": "Objections spécifiques : le marché ne confirme pas pour Brésil (ETF EWZ à −0,1 % depuis la veille du signal) [F1].",
+          "ajustement": "abaisser"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|ES|2026-11-25",
+      "revu_le": "2026-11-25T14:31:23Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "ES",
+        "date": "2026-11-25",
+        "importance": "moyenne",
+        "titre": "Espagne : score de risque géopolitique 27/100, +10 pts sur 7 jours"
+      },
+      "objection": "Objections spécifiques : le marché ne confirme pas pour Espagne (ETF EWP à −1,4 % depuis la veille du signal) [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "ETF EWP (Espagne) : −1,4 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWP"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "règles",
+      "par_entite": {
+        "ES": {
+          "objection": "Objections spécifiques : le marché ne confirme pas pour Espagne (ETF EWP à −1,4 % depuis la veille du signal) [F1].",
+          "ajustement": "abaisser"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3
+    },
     {
       "id": "geopolitique|hausse_score|SA|2026-11-25",
       "revu_le": "2026-11-25T12:31:28Z",
@@ -1974,41 +2055,6 @@
       "ajustement": "maintenir",
       "specifique": true,
       "methode": "gemini",
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "geopolitique|hausse_score|JP|2026-11-20",
-      "revu_le": "2026-11-25T13:31:40Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "JP",
-        "date": "2026-11-20",
-        "importance": "moyenne",
-        "titre": "Japon : score de risque géopolitique 26/100, +10 pts sur 7 jours"
-      },
-      "objection": "Malgré la hausse du score de risque, l'ETF EWJ affiche une baisse limitée de −0,4 % depuis la veille du signal [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "ETF EWJ (Japon) : −0,4 % depuis la veille du signal",
-          "source": "Yahoo Finance via yfinance, EWJ"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "JP": {
-          "objection": "Objections spécifiques : le marché ne confirme pas pour Japon (ETF EWJ à −0,4 % depuis la veille du signal) [F1].",
-          "ajustement": "abaisser"
-        }
-      },
       "confiance": "faible",
       "version_regles": 3,
       "faits_cites": [
