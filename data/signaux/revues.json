@@ -1,13 +1,214 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-24T23:03:09Z",
+    "genere_le": "2026-11-25T03:02:28Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "geopolitique|hausse_score|PL|2026-11-25",
+      "revu_le": "2026-11-25T03:02:04Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "PL",
+        "date": "2026-11-25",
+        "importance": "moyenne",
+        "titre": "Pologne : score de risque géopolitique 39/100, +29 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|ID|2026-11-25",
+      "revu_le": "2026-11-25T03:02:04Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "ID",
+        "date": "2026-11-25",
+        "importance": "moyenne",
+        "titre": "Indonésie : score de risque géopolitique 41/100, +28 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|CO|2026-11-25",
+      "revu_le": "2026-11-25T03:02:04Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "CO",
+        "date": "2026-11-25",
+        "importance": "moyenne",
+        "titre": "Colombie : score de risque géopolitique 30/100, +11 pts sur 7 jours"
+      },
+      "objection": "Malgré des réserves de 7,3 mois, le pays supporte une dette de 60 % du PIB [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Colombie : réserves de 7,3 mois, dette de 60 % du PIB",
+          "source": "FMI, Banque mondiale"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "CO": {
+          "objection": "Objections spécifiques : Colombie dispose d'amortisseurs (réserves de 7,3 mois d'importations, dette publique de 60 % du PIB) [F1].",
+          "ajustement": "maintenir"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|guidance_relevee|WDAY|2026-11-24",
+      "revu_le": "2026-11-25T03:02:04Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_relevee",
+        "cle": "WDAY",
+        "date": "2026-11-24",
+        "importance": "moyenne",
+        "titre": "Workday, Inc. : guidance relevée (24/11/2026)"
+      },
+      "objection": "Cette révision intervient alors que le momentum sur 12 mois s'établit à −20,9 % [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Workday, Inc. : momentum 12 mois −20,9 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|EQT|2026-11-24",
+      "revu_le": "2026-11-25T03:02:04Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "EQT",
+        "date": "2026-11-24",
+        "importance": "moyenne",
+        "titre": "EQT Corporation entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Cette entrée se fait dans un contexte où la croissance du bénéfice atteint +784,4 % [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "EQT Corporation : croissance du bénéfice +784,4 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|guidance_relevee|SJM|2026-11-24",
+      "revu_le": "2026-11-25T03:02:04Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_relevee",
+        "cle": "SJM",
+        "date": "2026-11-24",
+        "importance": "moyenne",
+        "titre": "The J. M. Smucker Company : guidance relevée (24/11/2026)"
+      },
+      "objection": "La valorisation présente un PER vs secteur de +166,5 % (PER 60,9 ; médiane du secteur 22,9) [F1], combiné à une dette nette / EBITDA de 8,0× [F2] et une couverture des intérêts de 3,5× [F3].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "The J. M. Smucker Company : PER vs secteur +166,5 % (PER 60,9 ; médiane du secteur 22,9)",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "The J. M. Smucker Company : dette nette / EBITDA de 8,0×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F3",
+          "texte": "The J. M. Smucker Company : couverture des intérêts de 3,5×",
+          "source": "agent entreprises (data/entreprises.json)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2",
+        "F3"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|GFNORTEO.MX|2026-11-24",
+      "revu_le": "2026-11-25T03:02:04Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "GFNORTEO.MX",
+        "date": "2026-11-24",
+        "importance": "moyenne",
+        "titre": "Grupo Financiero Banorte, S.A.B. de C.V. entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Malgré des fondamentaux solides, le groupe reste exposé à une forte volatilité de la devise avec un MXN à 14,9 % et une baisse de −12,9 % contre le dollar sur trois mois [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Mexique : MXN : volatilité à 1 mois de 14,9 %, −12,9 % contre le dollar sur 3 mois",
+          "source": "Yahoo Finance via yfinance, MXN=X (devise suivie par l'agent pays)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
     {
       "id": "geopolitique|evenement_grave|evt-890f72f8219d|2026-11-24",
       "revu_le": "2026-11-24T21:31:31Z",
@@ -419,63 +620,6 @@
       "modele": "gemini-3.5-flash-lite"
     },
     {
-      "id": "geopolitique|hausse_score|AU|2026-11-24",
-      "revu_le": "2026-11-24T04:17:39Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "AU",
-        "date": "2026-11-24",
-        "importance": "moyenne",
-        "titre": "Australie : score de risque géopolitique 33/100, +11 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|PL|2026-11-24",
-      "revu_le": "2026-11-24T04:17:39Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "PL",
-        "date": "2026-11-24",
-        "importance": "moyenne",
-        "titre": "Pologne : score de risque géopolitique 41/100, +26 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|ID|2026-11-24",
-      "revu_le": "2026-11-24T04:17:39Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "ID",
-        "date": "2026-11-24",
-        "importance": "moyenne",
-        "titre": "Indonésie : score de risque géopolitique 46/100, +30 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
       "id": "geopolitique|hausse_score|SE|2026-11-23",
       "revu_le": "2026-11-24T13:31:44Z",
       "signal": {
@@ -653,37 +797,6 @@
       "specifique": false,
       "methode": "règles",
       "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|AE|2026-11-22",
-      "revu_le": "2026-11-24T13:31:44Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "AE",
-        "date": "2026-11-22",
-        "importance": "moyenne",
-        "titre": "Émirats arabes unis : score de risque géopolitique 26/100, +10 pts sur 7 jours"
-      },
-      "objection": "Objections spécifiques : le marché ne confirme pas pour Émirats arabes unis (ETF UAE à +2,5 % depuis la veille du signal) [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "ETF UAE (Émirats arabes unis) : +2,5 % depuis la veille du signal",
-          "source": "Yahoo Finance via yfinance, UAE"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "règles",
-      "par_entite": {
-        "AE": {
-          "objection": "Objections spécifiques : le marché ne confirme pas pour Émirats arabes unis (ETF UAE à +2,5 % depuis la veille du signal) [F1].",
-          "ajustement": "abaisser"
-        }
-      },
-      "confiance": "faible",
       "version_regles": 3
     },
     {
@@ -1270,23 +1383,39 @@
       "modele": "gemini-3.5-flash-lite"
     },
     {
-      "id": "entreprises|nouvelle_pepite|ACGL|2026-11-20",
-      "revu_le": "2026-11-21T03:30:12Z",
+      "id": "geopolitique|hausse_score|JP|2026-11-20",
+      "revu_le": "2026-11-25T03:02:04Z",
       "signal": {
-        "agent": "entreprises",
-        "type": "nouvelle_pepite",
-        "cle": "ACGL",
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "JP",
         "date": "2026-11-20",
         "importance": "moyenne",
-        "titre": "Arch Capital Group Ltd. entre dans la liste « Qualité à prix raisonnable »"
+        "titre": "Japon : score de risque géopolitique 26/100, +10 pts sur 7 jours"
       },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
+      "objection": "La hausse du score de risque géopolitique s'accompagne d'un repli immédiat de l'ETF EWJ de −0,4 % dès le lendemain du signal [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "ETF EWJ (Japon) : −0,4 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWJ"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "JP": {
+          "objection": "Objections spécifiques : le marché ne confirme pas pour Japon (ETF EWJ à −0,4 % depuis la veille du signal) [F1].",
+          "ajustement": "abaisser"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
     },
     {
       "id": "entreprises|guidance_relevee|BJ|2026-11-20",
@@ -1938,380 +2067,6 @@
         "F2"
       ],
       "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "geopolitique|hausse_score|SG|2026-11-18",
-      "revu_le": "2026-11-24T06:26:00Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "SG",
-        "date": "2026-11-18",
-        "importance": "moyenne",
-        "titre": "Singapour : score de risque géopolitique 15/100, +10 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|CO|2026-11-18",
-      "revu_le": "2026-11-24T04:17:39Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "CO",
-        "date": "2026-11-18",
-        "importance": "moyenne",
-        "titre": "Colombie : score de risque géopolitique 23/100, +10 pts sur 7 jours"
-      },
-      "objection": "Malgré des réserves de 7,3 mois et une dette publique de 60 % du PIB [F1], le score de risque géopolitique de la Colombie a progressé de 10 points sur 7 jours pour atteindre 23/100.",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Colombie : réserves de 7,3 mois, dette de 60 % du PIB",
-          "source": "FMI, Banque mondiale"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "CO": {
-          "objection": "Objections spécifiques : Colombie dispose d'amortisseurs (réserves de 7,3 mois d'importations, dette publique de 60 % du PIB) [F1].",
-          "ajustement": "maintenir"
-        }
-      },
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|guidance_relevee|PANW|2026-11-18",
-      "revu_le": "2026-11-18T23:23:14Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_relevee",
-        "cle": "PANW",
-        "date": "2026-11-18",
-        "importance": "moyenne",
-        "titre": "Palo Alto Networks, Inc. : guidance relevée (18/11/2026)"
-      },
-      "objection": "Malgré la guidance, la croissance du bénéfice s'établit à -72,9 % [F2], combinée à une dilution forte avec le nombre d'actions en hausse de 22,0 % sur un an [F3]. De plus, le PER atteint 906,2, soit un écart de +2819,5 % par rapport à la médiane du secteur [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Palo Alto Networks, Inc. : PER vs secteur +2819,5 % (PER 906,2 ; médiane du secteur 31,0)",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "Palo Alto Networks, Inc. : croissance du bénéfice −72,9 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F3",
-          "texte": "Palo Alto Networks, Inc. : alerte « Dilution forte » : nombre d'actions en hausse de 22,0 % sur un an",
-          "source": "agent entreprises (fiche)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1",
-        "F2",
-        "F3"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|guidance_relevee|LOW|2026-11-18",
-      "revu_le": "2026-11-18T23:23:14Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_relevee",
-        "cle": "LOW",
-        "date": "2026-11-18",
-        "importance": "moyenne",
-        "titre": "Lowe's Companies, Inc. : guidance relevée (18/11/2026)"
-      },
-      "objection": "Cette révision à la hausse intervient avec une dette nette sur EBITDA de 3,5× [F1]. S'ajoute une alerte de manipulation des résultats possible avec un M-score de Beneish suspect de 8,81 [F2].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Lowe's Companies, Inc. : dette nette / EBITDA de 3,5×",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "Lowe's Companies, Inc. : alerte « M-score de Beneish suspect » : M-score de 8,81, au-dessus du seuil de détection : manipulation des résultats possible, à vérifier dans le rapport annuel",
-          "source": "agent entreprises (fiche)"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1",
-        "F2"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|guidance_relevee|TGT|2026-11-18",
-      "revu_le": "2026-11-18T23:23:14Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_relevee",
-        "cle": "TGT",
-        "date": "2026-11-18",
-        "importance": "moyenne",
-        "titre": "Target Corporation : guidance relevée (18/11/2026)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|guidance_relevee|P|2026-11-18",
-      "revu_le": "2026-11-18T23:23:14Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_relevee",
-        "cle": "P",
-        "date": "2026-11-18",
-        "importance": "moyenne",
-        "titre": "Everpure, Inc. : guidance relevée (18/11/2026)"
-      },
-      "objection": "La valorisation présente un PER de 132,5, soit un écart de +327,0 % face à la médiane du secteur [F1]. L'activité montre également une hausse anormale des créances de 38,8 % pour un CA en hausse de 15,6 % [F2].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Everpure, Inc. : PER vs secteur +327,0 % (PER 132,5 ; médiane du secteur 31,0)",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "Everpure, Inc. : alerte « Hausse anormale des créances » : créances en hausse de 38,8 % pour un CA en hausse de 15,6 %",
-          "source": "agent entreprises (fiche)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1",
-        "F2"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "geopolitique|mesure_officielle|evt-e121370455ee|2026-11-18",
-      "revu_le": "2026-11-18T10:31:46Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "mesure_officielle",
-        "cle": "evt-e121370455ee",
-        "date": "2026-11-18",
-        "importance": "moyenne",
-        "titre": "Commerce et droits de douane (source officielle) : Appel à candidatures américain pour les panels binationaux de l'accord ACEUM"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|achats_groupes|DKNG|2026-11-18",
-      "revu_le": "2026-11-18T07:31:35Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "DKNG",
-        "date": "2026-11-18",
-        "importance": "forte",
-        "titre": "DraftKings Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 89/100)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|achats_groupes|LCTX|2026-11-18",
-      "revu_le": "2026-11-18T07:31:35Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "LCTX",
-        "date": "2026-11-18",
-        "importance": "forte",
-        "titre": "Lineage Cell Therapeutics, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 95/100)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|achats_groupes|NGS|2026-11-18",
-      "revu_le": "2026-11-18T07:31:35Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "NGS",
-        "date": "2026-11-18",
-        "importance": "forte",
-        "titre": "NATURAL GAS SERVICES GROUP INC : 3 dirigeants achètent sur le marché en 30 jours (score 82/100)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|achats_groupes|FISN|2026-11-18",
-      "revu_le": "2026-11-18T07:31:35Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "FISN",
-        "date": "2026-11-18",
-        "importance": "forte",
-        "titre": "DEEP FISSION, INC. : 4 dirigeants achètent sur le marché en 30 jours (score 95/100)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|achats_groupes|NSPR|2026-11-18",
-      "revu_le": "2026-11-18T07:31:35Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "NSPR",
-        "date": "2026-11-18",
-        "importance": "forte",
-        "titre": "InspireMD, Inc. : 5 dirigeants achètent sur le marché en 30 jours (score 82/100)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|achats_groupes|ITG|2026-11-18",
-      "revu_le": "2026-11-18T07:31:35Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "ITG",
-        "date": "2026-11-18",
-        "importance": "forte",
-        "titre": "ITG, Inc./DE/ : 5 dirigeants achètent sur le marché en 30 jours (score 95/100)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|achats_groupes|PAM|2026-11-18",
-      "revu_le": "2026-11-18T07:31:35Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "PAM",
-        "date": "2026-11-18",
-        "importance": "forte",
-        "titre": "Pampa Energy Inc. : 4 dirigeants achètent sur le marché en 30 jours (score 82/100)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|achats_groupes|TH|2026-11-18",
-      "revu_le": "2026-11-18T07:31:35Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "TH",
-        "date": "2026-11-18",
-        "importance": "moyenne",
-        "titre": "Target Hospitality Corp. : 3 dirigeants achètent sur le marché en 30 jours (score 70/100)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|achats_groupes|VISN|2026-11-18",
-      "revu_le": "2026-11-18T07:31:35Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "VISN",
-        "date": "2026-11-18",
-        "importance": "moyenne",
-        "titre": "Vistance Networks, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 64/100)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
     }
   ]
 }
