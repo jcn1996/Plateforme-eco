@@ -1,90 +1,34 @@
 {
   "meta": {
-    "genere_le": "2026-11-25T16:01:12Z",
+    "genere_le": "2026-11-25T16:31:01Z",
     "source": "planificateur",
     "description": "Appels du réveil externe (cron-job.org) et lancements d'agents décidés par le planificateur",
-    "dernier_appel": "2026-11-25T16:01:12Z",
+    "dernier_appel": "2026-11-25T16:31:01Z",
     "sante": {
       "agent": "planificateur",
       "libelle": "Planificateur (réveil externe)",
       "ordre": 0,
       "workflow": "planificateur.yml",
-      "derniere_execution": "2026-11-25T16:01:12Z",
+      "derniere_execution": "2026-11-25T16:31:01Z",
       "appel_externe": true,
       "panne_minutes": 45,
       "prochaine_prevue": null,
       "intervalle_min": 15,
       "sources_total": 1,
-      "sources_ok": 0,
+      "sources_ok": 1,
       "sources": [
         {
           "nom": "gh workflow run (lancement des agents)",
-          "etat": "échec",
-          "detail": "agent-chef.yml : could not create workflow dispatch event: HTTP 500 (https://api.github.com/repos/jcn1996/Plateforme-eco/actions/workflows/410694985/dispatches)"
+          "etat": "ok",
+          "detail": null
         }
       ],
-      "degrade": true,
-      "raisons": [
-        "Lancement de agent-chef.yml en échec"
-      ],
-      "dernier_lancement": "2026-11-25T16:01:12Z"
+      "degrade": false,
+      "raisons": [],
+      "dernier_lancement": "2026-11-25T16:31:01Z"
     }
   },
   "donnees": [
-    {
-      "cle": "agent-marches.yml|7,22,37,52 7-21 * * 1-5",
-      "workflow": "agent-marches.yml",
-      "parametres": {},
-      "creneau": "2026-11-23T14:52:00Z",
-      "le": "2026-11-23T15:01:22Z",
-      "raison": "créneau dû, pas encore fait",
-      "statut": "lancé",
-      "detail": "https://github.com/jcn1996/Plateforme-eco/actions/runs/45200540723"
-    },
-    {
-      "cle": "agent-geopolitique.yml|3 0-5,7-23 * * *",
-      "workflow": "agent-geopolitique.yml",
-      "parametres": {
-        "mode": "horaire"
-      },
-      "creneau": "2026-11-23T15:03:00Z",
-      "le": "2026-11-23T15:15:47Z",
-      "raison": "créneau dû, pas encore fait",
-      "statut": "lancé",
-      "detail": "https://github.com/jcn1996/Plateforme-eco/actions/runs/45203251716"
-    },
-    {
-      "cle": "agent-marches.yml|7,22,37,52 7-21 * * 1-5",
-      "workflow": "agent-marches.yml",
-      "parametres": {},
-      "creneau": "2026-11-23T15:07:00Z",
-      "le": "2026-11-23T15:15:47Z",
-      "raison": "créneau dû, pas encore fait",
-      "statut": "lancé",
-      "detail": "https://github.com/jcn1996/Plateforme-eco/actions/runs/45203260831"
-    },
-    {
-      "cle": "agent-trader.yml|5 8-21 * * 1-5",
-      "workflow": "agent-trader.yml",
-      "parametres": {
-        "mode": "horaire"
-      },
-      "creneau": "2026-11-23T15:05:00Z",
-      "le": "2026-11-23T15:15:47Z",
-      "raison": "créneau dû, pas encore fait",
-      "statut": "lancé",
-      "detail": "https://github.com/jcn1996/Plateforme-eco/actions/runs/45203269390"
-    },
-    {
-      "cle": "agent-marches.yml|7,22,37,52 7-21 * * 1-5",
-      "workflow": "agent-marches.yml",
-      "parametres": {},
-      "creneau": "2026-11-23T15:22:00Z",
-      "le": "2026-11-23T15:31:00Z",
-      "raison": "créneau dû, pas encore fait",
-      "statut": "lancé",
-      "detail": "https://github.com/jcn1996/Plateforme-eco/actions/runs/45206110413"
-    },
     {
       "cle": "agent-risque.yml|17 7-21 * * 1-5",
       "workflow": "agent-risque.yml",
@@ -3334,7 +3278,65 @@
       "raison": "créneau dû, pas encore fait",
       "statut": "lancé",
       "detail": "https://github.com/jcn1996/Plateforme-eco/actions/runs/45650430690"
+    },
+    {
+      "cle": "agent-chef.yml|50 8-21 * * 1-5",
+      "workflow": "agent-chef.yml",
+      "parametres": {
+        "mode": "leger"
+      },
+      "creneau": "2026-11-25T15:50:00Z",
+      "le": "2026-11-25T16:31:01Z",
+      "raison": "créneau dû, pas encore fait",
+      "statut": "lancé",
+      "detail": "https://github.com/jcn1996/Plateforme-eco/actions/runs/45654718072"
+    },
+    {
+      "cle": "agent-geopolitique.yml|3 0-5,7-23 * * *",
+      "workflow": "agent-geopolitique.yml",
+      "parametres": {
+        "mode": "horaire"
+      },
+      "creneau": "2026-11-25T16:03:00Z",
+      "le": "2026-11-25T16:31:01Z",
+      "raison": "créneau dû, pas encore fait",
+      "statut": "lancé",
+      "detail": "https://github.com/jcn1996/Plateforme-eco/actions/runs/45654725549"
+    },
+    {
+      "cle": "agent-marches.yml|7,22,37,52 7-21 * * 1-5",
+      "workflow": "agent-marches.yml",
+      "parametres": {},
+      "creneau": "2026-11-25T16:22:00Z",
+      "le": "2026-11-25T16:31:01Z",
+      "raison": "créneau dû, pas encore fait",
+      "statut": "lancé",
+      "detail": "https://github.com/jcn1996/Plateforme-eco/actions/runs/45654734898"
+    },
+    {
+      "cle": "agent-risque.yml|17 7-21 * * 1-5",
+      "workflow": "agent-risque.yml",
+      "parametres": {
+        "mode": "horaire"
+      },
+      "creneau": "2026-11-25T16:17:00Z",
+      "le": "2026-11-25T16:31:01Z",
+      "raison": "créneau dû, pas encore fait",
+      "statut": "lancé",
+      "detail": "https://github.com/jcn1996/Plateforme-eco/actions/runs/45654743584"
+    },
+    {
+      "cle": "agent-trader.yml|5 8-21 * * 1-5",
+      "workflow": "agent-trader.yml",
+      "parametres": {
+        "mode": "horaire"
+      },
+      "creneau": "2026-11-25T16:05:00Z",
+      "le": "2026-11-25T16:31:01Z",
+      "raison": "créneau dû, pas encore fait",
+      "statut": "lancé",
+      "detail": "https://github.com/jcn1996/Plateforme-eco/actions/runs/45654756023"
     }
   ],
-  "derniere_execution": "2026-11-25T16:01:12Z"
+  "derniere_execution": "2026-11-25T16:31:01Z"
 }
