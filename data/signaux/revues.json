@@ -1,13 +1,454 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-25T05:03:28Z",
+    "genere_le": "2026-11-25T07:31:44Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "inities|achats_groupes|KMT|2026-11-25",
+      "revu_le": "2026-11-25T07:31:27Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "KMT",
+        "date": "2026-11-25",
+        "importance": "moyenne",
+        "titre": "Kennametal Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 76/100)"
+      },
+      "objection": "Malgré la croissance du bénéfice de +267,7 % [F2], les flux d'exploitation sont égaux à −1 % du résultat net [F4], tandis que les créances progressent de 38,3 % pour un CA en hausse de 19,8 % [F5].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Kennametal Inc. : cours −21,8 % sur 3 mois, −37,7 % sur 6 mois, −14,2 % sur 12 mois",
+          "source": "agent entreprises (fiche)"
+        },
+        {
+          "id": "F2",
+          "texte": "Kennametal Inc. : croissance du bénéfice +267,7 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F3",
+          "texte": "Kennametal Inc. : conversion du bénéfice en cash de −23,6 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F4",
+          "texte": "Kennametal Inc. : alerte « Bénéfice peu converti en cash » : flux d'exploitation égal à −1 % du résultat net",
+          "source": "agent entreprises (fiche)"
+        },
+        {
+          "id": "F5",
+          "texte": "Kennametal Inc. : alerte « Hausse anormale des créances » : créances en hausse de 38,3 % pour un CA en hausse de 19,8 %",
+          "source": "agent entreprises (fiche)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F2",
+        "F4",
+        "F5"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "inities|achats_groupes|PED|2026-11-25",
+      "revu_le": "2026-11-25T07:31:27Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "PED",
+        "date": "2026-11-25",
+        "importance": "moyenne",
+        "titre": "PEDEVCO CORP : 4 dirigeants achètent sur le marché en 30 jours (score 66/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|COHR|2026-11-25",
+      "revu_le": "2026-11-25T07:31:27Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "COHR",
+        "date": "2026-11-25",
+        "importance": "forte",
+        "titre": "Coherent Corp. : 3 dirigeants achètent sur le marché en 30 jours (score 94/100)"
+      },
+      "objection": "Le PER de Coherent Corp. dépasse de 40,0 % la médiane du secteur [F1] et le nombre d'actions a progressé de 25,8 % sur un an [F6].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Coherent Corp. : PER vs secteur +40,0 % (PER 40,2 ; médiane du secteur 28,7)",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "Coherent Corp. : cours −31,9 % sur 3 mois, −48,5 % sur 6 mois, +29,3 % sur 12 mois",
+          "source": "agent entreprises (fiche)"
+        },
+        {
+          "id": "F3",
+          "texte": "Coherent Corp. : croissance du bénéfice +1099,2 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F4",
+          "texte": "Coherent Corp. : conversion du bénéfice en cash de −128,0 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F5",
+          "texte": "Coherent Corp. : alerte « Bénéfice peu converti en cash » : flux d'exploitation égal à 10 % du résultat net",
+          "source": "agent entreprises (fiche)"
+        },
+        {
+          "id": "F6",
+          "texte": "Coherent Corp. : alerte « Dilution forte » : nombre d'actions en hausse de 25,8 % sur un an",
+          "source": "agent entreprises (fiche)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F6"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "inities|achats_groupes|CTSO|2026-11-25",
+      "revu_le": "2026-11-25T07:31:27Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "CTSO",
+        "date": "2026-11-25",
+        "importance": "forte",
+        "titre": "Cytosorbents Corp : 5 dirigeants achètent sur le marché en 30 jours (score 95/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|XGPU|2026-11-25",
+      "revu_le": "2026-11-25T07:31:27Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "XGPU",
+        "date": "2026-11-25",
+        "importance": "forte",
+        "titre": "Reliance Global Group, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 82/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|CH|2026-11-25",
+      "revu_le": "2026-11-25T07:31:27Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "CH",
+        "date": "2026-11-25",
+        "importance": "moyenne",
+        "titre": "Suisse : score de risque géopolitique 38/100, +10 pts sur 7 jours"
+      },
+      "objection": "La Suisse dispose toutefois de réserves de 13,1 mois et d'une dette contenue à 38 % du PIB [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Suisse : réserves de 13,1 mois, dette de 38 % du PIB",
+          "source": "FMI, Banque mondiale"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "CH": {
+          "objection": "Objections spécifiques : Suisse dispose d'amortisseurs (réserves de 13,1 mois d'importations, dette publique de 38 % du PIB) [F1].",
+          "ajustement": "maintenir"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|guidance_relevee|DELL|2026-11-25",
+      "revu_le": "2026-11-25T07:31:27Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_relevee",
+        "cle": "DELL",
+        "date": "2026-11-25",
+        "importance": "moyenne",
+        "titre": "Dell Technologies Inc. : guidance relevée (24/11/2026)"
+      },
+      "objection": "Les créances augmentent anormalement de 70,8 % pour un CA en hausse de 18,8 % [F2], et les stocks progressent de 55,4 % [F3].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Dell Technologies Inc. : cours −34,5 % sur 3 mois, −2,9 % sur 6 mois, +134,5 % sur 12 mois",
+          "source": "agent entreprises (fiche)"
+        },
+        {
+          "id": "F2",
+          "texte": "Dell Technologies Inc. : alerte « Hausse anormale des créances » : créances en hausse de 70,8 % pour un CA en hausse de 18,8 %",
+          "source": "agent entreprises (fiche)"
+        },
+        {
+          "id": "F3",
+          "texte": "Dell Technologies Inc. : alerte « Hausse anormale des stocks » : stocks en hausse de 55,4 % pour un CA en hausse de 18,8 %",
+          "source": "agent entreprises (fiche)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F2",
+        "F3"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|guidance_relevee|DLTR|2026-11-25",
+      "revu_le": "2026-11-25T07:31:27Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_relevee",
+        "cle": "DLTR",
+        "date": "2026-11-25",
+        "importance": "moyenne",
+        "titre": "Dollar Tree, Inc. : guidance relevée (24/11/2026)"
+      },
+      "objection": "Malgré la croissance du bénéfice +142,3 % [F1], la guidance intègre un impact externe volatile.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Dollar Tree, Inc. : croissance du bénéfice +142,3 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|guidance_relevee|BBY|2026-11-25",
+      "revu_le": "2026-11-25T07:31:27Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_relevee",
+        "cle": "BBY",
+        "date": "2026-11-25",
+        "importance": "moyenne",
+        "titre": "Best Buy Co., Inc. : guidance relevée (24/11/2026)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "entreprises|guidance_relevee|DKS|2026-11-25",
+      "revu_le": "2026-11-25T07:31:27Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_relevee",
+        "cle": "DKS",
+        "date": "2026-11-25",
+        "importance": "moyenne",
+        "titre": "DICK'S Sporting Goods, Inc. : guidance relevée (24/11/2026)"
+      },
+      "objection": "La hausse des stocks de 46,5 % pour un CA en hausse de 28,1 % [F6] et la dette nette / EBITDA de 3,8× [F1] fragilisent la solidité de cette guidance.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "DICK'S Sporting Goods, Inc. : dette nette / EBITDA de 3,8×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "DICK'S Sporting Goods, Inc. : momentum 12 mois −23,7 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F3",
+          "texte": "DICK'S Sporting Goods, Inc. : croissance du bénéfice −27,1 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F4",
+          "texte": "DICK'S Sporting Goods, Inc. : conversion du bénéfice en cash de 47,1 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F5",
+          "texte": "DICK'S Sporting Goods, Inc. : alerte « Dilution forte » : nombre d'actions en hausse de 10,7 % sur un an",
+          "source": "agent entreprises (fiche)"
+        },
+        {
+          "id": "F6",
+          "texte": "DICK'S Sporting Goods, Inc. : alerte « Hausse anormale des stocks » : stocks en hausse de 46,5 % pour un CA en hausse de 28,1 %",
+          "source": "agent entreprises (fiche)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F6"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|guidance_relevee|ANF|2026-11-25",
+      "revu_le": "2026-11-25T07:31:27Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_relevee",
+        "cle": "ANF",
+        "date": "2026-11-25",
+        "importance": "moyenne",
+        "titre": "Abercrombie & Fitch Co. : guidance relevée (24/11/2026)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "entreprises|guidance_relevee|DY|2026-11-25",
+      "revu_le": "2026-11-25T07:31:27Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_relevee",
+        "cle": "DY",
+        "date": "2026-11-25",
+        "importance": "moyenne",
+        "titre": "Dycom Industries, Inc. : guidance relevée (24/11/2026)"
+      },
+      "objection": "L'alerte sur les créances en hausse de 42,9 % pour un CA en hausse de 17,9 % [F3] combinée à une dette nette / EBITDA de 3,2× [F1] indique un risque de conversion du carnet de commandes.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Dycom Industries, Inc. : dette nette / EBITDA de 3,2×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "Dycom Industries, Inc. : momentum 12 mois −47,5 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F3",
+          "texte": "Dycom Industries, Inc. : alerte « Hausse anormale des créances » : créances en hausse de 42,9 % pour un CA en hausse de 17,9 %",
+          "source": "agent entreprises (fiche)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F3"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|guidance_relevee|KSS|2026-11-25",
+      "revu_le": "2026-11-25T07:31:27Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_relevee",
+        "cle": "KSS",
+        "date": "2026-11-25",
+        "importance": "moyenne",
+        "titre": "Kohl's Corporation : guidance relevée (24/11/2026)"
+      },
+      "objection": "Malgré la croissance du bénéfice +149,5 % [F3], la couverture des intérêts de 1,8× [F2] et la dette nette / EBITDA de 4,5× [F1] limitent la portée de cette révision.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Kohl's Corporation : dette nette / EBITDA de 4,5×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "Kohl's Corporation : couverture des intérêts de 1,8×",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F3",
+          "texte": "Kohl's Corporation : croissance du bénéfice +149,5 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2",
+        "F3"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
     {
       "id": "geopolitique|hausse_score|KR|2026-11-25",
       "revu_le": "2026-11-25T05:02:43Z",
