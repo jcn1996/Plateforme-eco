@@ -1,11 +1,11 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-25T15:31:24Z",
+    "genere_le": "2026-11-25T16:31:44Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
-    "mise_a_jour_precedente": "2026-11-25T14:31:23Z",
+    "mise_a_jour_precedente": "2026-11-25T15:31:24Z",
     "etat_des_sources": {
       "FRED, CBOE Volatility Index (VIXCLS)": "ok",
       "FRED, ICE BofA US High Yield OAS (BAMLH0A0HYM2)": "ok",
@@ -37,10 +37,10 @@
       "changement_le": null,
       "changement_en_attente": null,
       "date_donnees": "2026-11-25",
-      "explication": "Score de stress financier mondial : 73/100 au 25/11/2026 (palier « Vigilance » depuis le 06/11/2026). Indicateurs qui pèsent le plus : Écart high yield américain à 3,63 pt (percentile 98 sur 3 ans) ; VIX (volatilité implicite du S&P 500) à 32,8 (percentile 96 sur 10 ans) ; Indice de stress financier de la Fed de Saint-Louis à −0,87 (percentile 2 sur 10 ans).",
+      "explication": "Score de stress financier mondial : 73/100 au 25/11/2026 (palier « Vigilance » depuis le 06/11/2026). Indicateurs qui pèsent le plus : VIX (volatilité implicite du S&P 500) à 33,7 (percentile 97 sur 10 ans) ; Écart high yield américain à 3,63 pt (percentile 98 sur 3 ans) ; Indice de stress financier de la Fed de Saint-Louis à −0,87 (percentile 2 sur 10 ans).",
       "faits": [
         "Score de stress financier mondial : 73/100 au 25/11/2026 (palier « Vigilance » depuis le 06/11/2026).",
-        "Indicateurs qui pèsent le plus : Écart high yield américain à 3,63 pt (percentile 98 sur 3 ans) ; VIX (volatilité implicite du S&P 500) à 32,8 (percentile 96 sur 10 ans) ; Indice de stress financier de la Fed de Saint-Louis à −0,87 (percentile 2 sur 10 ans)."
+        "Indicateurs qui pèsent le plus : VIX (volatilité implicite du S&P 500) à 33,7 (percentile 97 sur 10 ans) ; Écart high yield américain à 3,63 pt (percentile 98 sur 3 ans) ; Indice de stress financier de la Fed de Saint-Louis à −0,87 (percentile 2 sur 10 ans)."
       ],
       "interpretations": [
         "Le stress se concentre sur la famille « crédit » (percentile moyen 94), alors que la famille « écarts souverains » reste à un niveau bas (percentile moyen 29)."
@@ -57,18 +57,18 @@
       ],
       "principaux": [
         {
+          "cle": "vix",
+          "nom": "VIX (volatilité implicite du S&P 500)",
+          "famille": "volatilite",
+          "percentile": 97.2,
+          "contribution": 7.5
+        },
+        {
           "cle": "hy_us",
           "nom": "Écart high yield américain",
           "famille": "credit",
           "percentile": 97.5,
           "contribution": 7.5
-        },
-        {
-          "cle": "vix",
-          "nom": "VIX (volatilité implicite du S&P 500)",
-          "famille": "volatilite",
-          "percentile": 96.4,
-          "contribution": 7.3
         },
         {
           "cle": "stlfsi",
@@ -79,11 +79,11 @@
         }
       ],
       "familles": {
-        "volatilité": 85.4,
+        "volatilité": 85.2,
         "crédit": 93.6,
         "indices officiels de stress": 37.4,
         "écarts souverains": 29.0,
-        "devises": 92.7
+        "devises": 92.6
       }
     },
     "paliers": [
@@ -109,15 +109,15 @@
         "poids": 15,
         "unite": "pts",
         "decimales": 1,
-        "valeur": 32.76,
+        "valeur": 33.69,
         "date": "2026-11-25",
-        "percentile": 96.4,
-        "score": 96.4,
+        "percentile": 97.2,
+        "score": 97.2,
         "historique_annees": 10.0,
         "min_historique": 9.14,
         "max_historique": 82.69,
         "mediane_historique": 17.03,
-        "variation_1m": 14.37,
+        "variation_1m": 15.3,
         "tendance": "hausse",
         "source": "Yahoo Finance via yfinance, ^VIX",
         "secours": false,
@@ -129,7 +129,7 @@
           "date": "2026-11-23",
           "valeur_principale": 26.62
         },
-        "texte": "32,8",
+        "texte": "33,7",
         "palier": "Crise"
       },
       {
@@ -149,22 +149,22 @@
         "poids": 10,
         "unite": "pts",
         "decimales": 0,
-        "valeur": 102.1371,
+        "valeur": 100.8271,
         "date": "2026-11-25",
-        "percentile": 74.4,
-        "score": 74.4,
+        "percentile": 73.2,
+        "score": 73.2,
         "historique_annees": 10.0,
         "min_historique": 36.62,
         "max_historique": 182.64,
         "mediane_historique": 73.76,
-        "variation_1m": -0.053,
+        "variation_1m": -1.363,
         "tendance": "stable",
         "source": "Yahoo Finance via yfinance, ^MOVE",
         "secours": false,
         "verification": "source_unique",
         "ecart_sources": null,
         "controle": null,
-        "texte": "102",
+        "texte": "101",
         "palier": "Vigilance"
       },
       {
@@ -370,15 +370,15 @@
         "poids": 5,
         "unite": "%",
         "decimales": 1,
-        "valeur": 4.87,
+        "valeur": 4.815,
         "date": "2026-11-25",
-        "percentile": 92.7,
-        "score": 92.7,
+        "percentile": 92.6,
+        "score": 92.6,
         "historique_annees": 9.7,
         "min_historique": -10.123,
         "max_historique": 9.775,
         "mediane_historique": 0.234,
-        "variation_1m": 4.298,
+        "variation_1m": 4.243,
         "tendance": "hausse",
         "source": "Yahoo Finance via yfinance, DX-Y.NYB",
         "secours": false,
@@ -390,7 +390,7 @@
           "date": "2026-11-20",
           "valeur_principale": 4.859
         },
-        "texte": "+4,9 %",
+        "texte": "+4,8 %",
         "palier": "Crise"
       }
     ],
@@ -618,9 +618,9 @@
           "a": "actions",
           "b": "obligations",
           "nom": "actions mondiales (ACWI) / Trésor américain 20 ans et plus (TLT)",
-          "correlation_3m": -0.03,
+          "correlation_3m": -0.04,
           "correlation_12m": 0.24,
-          "ecart": -0.27
+          "ecart": -0.28
         },
         {
           "a": "actions",
@@ -670,27 +670,27 @@
         "nom": "États-Unis",
         "score": 31,
         "niveau": "faible",
-        "variation_7j": 4.0,
+        "variation_7j": 4.1,
         "composantes": {
           "marche": {
-            "score": 29.4,
-            "baisse_plus_haut_12m": -10.15,
-            "volatilite_3m": 20.25,
+            "score": 29.7,
+            "baisse_plus_haut_12m": -10.26,
+            "volatilite_3m": 20.31,
             "etf": "SPY",
             "date": "2026-11-25",
-            "texte": "ETF SPY à −10,2 % de son plus haut sur 12 mois, volatilité à 3 mois de 20,2 %",
+            "texte": "ETF SPY à −10,3 % de son plus haut sur 12 mois, volatilité à 3 mois de 20,3 %",
             "source": "Yahoo Finance via yfinance, ETF SPY"
           },
           "devise": {
             "score": 6.2,
             "volatilite_1m": 5.71,
-            "variation_3m": 4.87,
-            "variation_1m": 1.63,
+            "variation_3m": 4.82,
+            "variation_1m": 1.58,
             "libelle": "indice du dollar (DXY)",
             "date": "2026-11-25",
             "verification": "concordant",
             "controle_agent_pays": 4.91,
-            "texte": "indice du dollar (DXY) : volatilité à 1 mois de 5,7 %, +4,9 % contre le dollar sur 3 mois",
+            "texte": "indice du dollar (DXY) : volatilité à 1 mois de 5,7 %, +4,8 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, DX-Y.NYB (devise suivie par l'agent pays)"
           },
           "souverain": {
@@ -736,24 +736,24 @@
         "variation_7j": -0.3,
         "composantes": {
           "marche": {
-            "score": 27.8,
-            "baisse_plus_haut_12m": -11.08,
-            "volatilite_3m": 18.17,
+            "score": 27.7,
+            "baisse_plus_haut_12m": -11.01,
+            "volatilite_3m": 18.15,
             "etf": "EWC",
             "date": "2026-11-25",
-            "texte": "ETF EWC à −11,1 % de son plus haut sur 12 mois, volatilité à 3 mois de 18,2 %",
+            "texte": "ETF EWC à −11,0 % de son plus haut sur 12 mois, volatilité à 3 mois de 18,1 %",
             "source": "Yahoo Finance via yfinance, ETF EWC"
           },
           "devise": {
-            "score": 15.9,
-            "volatilite_1m": 5.31,
-            "variation_3m": -2.71,
-            "variation_1m": -1.58,
+            "score": 16.1,
+            "volatilite_1m": 5.37,
+            "variation_3m": -2.69,
+            "variation_1m": -1.56,
             "libelle": "CAD",
             "date": "2026-11-25",
             "verification": "concordant",
             "controle_agent_pays": -3.26,
-            "texte": "CAD : volatilité à 1 mois de 5,3 %, −2,7 % contre le dollar sur 3 mois",
+            "texte": "CAD : volatilité à 1 mois de 5,4 %, −2,7 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, CAD=X (devise suivie par l'agent pays)"
           },
           "souverain": {
@@ -796,27 +796,27 @@
         "nom": "Mexique",
         "score": 44,
         "niveau": "modéré",
-        "variation_7j": 4.6,
+        "variation_7j": 4.5,
         "composantes": {
           "marche": {
-            "score": 28.0,
-            "baisse_plus_haut_12m": -10.91,
-            "volatilite_3m": 18.51,
+            "score": 26.9,
+            "baisse_plus_haut_12m": -10.29,
+            "volatilite_3m": 18.46,
             "etf": "EWW",
             "date": "2026-11-25",
-            "texte": "ETF EWW à −10,9 % de son plus haut sur 12 mois, volatilité à 3 mois de 18,5 %",
+            "texte": "ETF EWW à −10,3 % de son plus haut sur 12 mois, volatilité à 3 mois de 18,5 %",
             "source": "Yahoo Finance via yfinance, ETF EWW"
           },
           "devise": {
-            "score": 67.2,
-            "volatilite_1m": 16.64,
-            "variation_3m": -13.92,
-            "variation_1m": -5.87,
+            "score": 67.8,
+            "volatilite_1m": 16.83,
+            "variation_3m": -14.01,
+            "variation_1m": -5.96,
             "libelle": "MXN",
             "date": "2026-11-25",
             "verification": "divergent",
             "controle_agent_pays": -12.05,
-            "texte": "MXN : volatilité à 1 mois de 16,6 %, −13,9 % contre le dollar sur 3 mois",
+            "texte": "MXN : volatilité à 1 mois de 16,8 %, −14,0 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, MXN=X (devise suivie par l'agent pays)"
           },
           "souverain": {
@@ -853,33 +853,33 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Mexique : score de risque de 44/100 (+5 pt sur 7 jours), porté surtout par la composante souverain (69/100 : taux à 10 ans de 9,25 % (10/2026), écart de +4,12 pt avec États-Unis). Composante la plus basse : géopolitique (22/100 : score de risque géopolitique de 22/100)."
+        "texte": "Mexique : score de risque de 44/100 (+4 pt sur 7 jours), porté surtout par la composante souverain (69/100 : taux à 10 ans de 9,25 % (10/2026), écart de +4,12 pt avec États-Unis). Composante la plus basse : géopolitique (22/100 : score de risque géopolitique de 22/100)."
       },
       "BR": {
         "nom": "Brésil",
-        "score": 59,
+        "score": 60,
         "niveau": "modéré",
-        "variation_7j": -3.8,
+        "variation_7j": -3.7,
         "composantes": {
           "marche": {
             "score": 100.0,
-            "baisse_plus_haut_12m": -32.29,
-            "volatilite_3m": 56.57,
+            "baisse_plus_haut_12m": -32.18,
+            "volatilite_3m": 56.58,
             "etf": "EWZ",
             "date": "2026-11-25",
-            "texte": "ETF EWZ à −32,3 % de son plus haut sur 12 mois, volatilité à 3 mois de 56,6 %",
+            "texte": "ETF EWZ à −32,2 % de son plus haut sur 12 mois, volatilité à 3 mois de 56,6 %",
             "source": "Yahoo Finance via yfinance, ETF EWZ"
           },
           "devise": {
-            "score": 53.3,
-            "volatilite_1m": 12.47,
-            "variation_3m": -12.0,
-            "variation_1m": -8.4,
+            "score": 53.7,
+            "volatilite_1m": 12.82,
+            "variation_3m": -11.81,
+            "variation_1m": -8.2,
             "libelle": "BRL",
             "date": "2026-11-25",
             "verification": "concordant",
             "controle_agent_pays": -12.12,
-            "texte": "BRL : volatilité à 1 mois de 12,5 %, −12,0 % contre le dollar sur 3 mois",
+            "texte": "BRL : volatilité à 1 mois de 12,8 %, −11,8 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, BRL=X (devise suivie par l'agent pays)"
           },
           "macro": {
@@ -908,33 +908,33 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Brésil : score de risque de 59/100 (−4 pt sur 7 jours), porté surtout par la composante marché (100/100 : ETF EWZ à −32,3 % de son plus haut sur 12 mois, volatilité à 3 mois de 56,6 %). Composante la plus basse : géopolitique (29/100 : score de risque géopolitique de 29/100) ; non disponible : souverain."
+        "texte": "Brésil : score de risque de 60/100 (−4 pt sur 7 jours), porté surtout par la composante marché (100/100 : ETF EWZ à −32,2 % de son plus haut sur 12 mois, volatilité à 3 mois de 56,6 %). Composante la plus basse : géopolitique (29/100 : score de risque géopolitique de 29/100) ; non disponible : souverain."
       },
       "AR": {
         "nom": "Argentine",
         "score": 48,
         "niveau": "modéré",
-        "variation_7j": 4.8,
+        "variation_7j": 5.0,
         "composantes": {
           "marche": {
-            "score": 78.1,
-            "baisse_plus_haut_12m": -37.26,
-            "volatilite_3m": 30.56,
+            "score": 78.0,
+            "baisse_plus_haut_12m": -37.0,
+            "volatilite_3m": 30.44,
             "etf": "ARGT",
             "date": "2026-11-25",
-            "texte": "ETF ARGT à −37,3 % de son plus haut sur 12 mois, volatilité à 3 mois de 30,6 %",
+            "texte": "ETF ARGT à −37,0 % de son plus haut sur 12 mois, volatilité à 3 mois de 30,4 %",
             "source": "Yahoo Finance via yfinance, ETF ARGT"
           },
           "devise": {
-            "score": 28.6,
-            "volatilite_1m": 7.5,
-            "variation_3m": -6.1,
-            "variation_1m": -4.33,
+            "score": 29.8,
+            "volatilite_1m": 7.86,
+            "variation_3m": -6.22,
+            "variation_1m": -4.45,
             "libelle": "ARS",
             "date": "2026-11-25",
             "verification": "concordant",
             "controle_agent_pays": -5.04,
-            "texte": "ARS : volatilité à 1 mois de 7,5 %, −6,1 % contre le dollar sur 3 mois",
+            "texte": "ARS : volatilité à 1 mois de 7,9 %, −6,2 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, ARS=X (devise suivie par l'agent pays)"
           },
           "macro": {
@@ -963,7 +963,7 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Argentine : score de risque de 48/100 (+5 pt sur 7 jours), porté surtout par la composante marché (78/100 : ETF ARGT à −37,3 % de son plus haut sur 12 mois, volatilité à 3 mois de 30,6 %). Composante la plus basse : géopolitique (14/100 : score de risque géopolitique de 14/100) ; non disponible : souverain."
+        "texte": "Argentine : score de risque de 48/100 (+5 pt sur 7 jours), porté surtout par la composante marché (78/100 : ETF ARGT à −37,0 % de son plus haut sur 12 mois, volatilité à 3 mois de 30,4 %). Composante la plus basse : géopolitique (14/100 : score de risque géopolitique de 14/100) ; non disponible : souverain."
       },
       "GB": {
         "nom": "Royaume-Uni",
@@ -972,8 +972,8 @@
         "variation_7j": 1.9,
         "composantes": {
           "marche": {
-            "score": 19.5,
-            "baisse_plus_haut_12m": -7.86,
+            "score": 19.6,
+            "baisse_plus_haut_12m": -7.88,
             "volatilite_3m": 16.21,
             "etf": "EWU",
             "date": "2026-11-25",
@@ -981,15 +981,15 @@
             "source": "Yahoo Finance via yfinance, ETF EWU"
           },
           "devise": {
-            "score": 20.1,
-            "volatilite_1m": 5.89,
-            "variation_3m": -3.95,
-            "variation_1m": -2.13,
+            "score": 20.0,
+            "volatilite_1m": 5.95,
+            "variation_3m": -3.86,
+            "variation_1m": -2.04,
             "libelle": "GBP",
             "date": "2026-11-25",
             "verification": "concordant",
             "controle_agent_pays": -3.92,
-            "texte": "GBP : volatilité à 1 mois de 5,9 %, −4,0 % contre le dollar sur 3 mois",
+            "texte": "GBP : volatilité à 1 mois de 6,0 %, −3,9 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, GBPUSD=X (devise suivie par l'agent pays)"
           },
           "souverain": {
@@ -1030,29 +1030,29 @@
       },
       "FR": {
         "nom": "France",
-        "score": 31,
+        "score": 32,
         "niveau": "faible",
-        "variation_7j": 1.3,
+        "variation_7j": 1.6,
         "composantes": {
           "marche": {
-            "score": 29.6,
-            "baisse_plus_haut_12m": -13.05,
-            "volatilite_3m": 17.18,
+            "score": 30.6,
+            "baisse_plus_haut_12m": -13.5,
+            "volatilite_3m": 17.3,
             "etf": "EWQ",
             "date": "2026-11-25",
-            "texte": "ETF EWQ à −13,1 % de son plus haut sur 12 mois, volatilité à 3 mois de 17,2 %",
+            "texte": "ETF EWQ à −13,5 % de son plus haut sur 12 mois, volatilité à 3 mois de 17,3 %",
             "source": "Yahoo Finance via yfinance, ETF EWQ"
           },
           "devise": {
             "score": 24.9,
-            "volatilite_1m": 5.83,
-            "variation_3m": -6.12,
-            "variation_1m": -2.06,
+            "volatilite_1m": 5.89,
+            "variation_3m": -6.06,
+            "variation_1m": -2.0,
             "libelle": "EUR",
             "date": "2026-11-25",
             "verification": "concordant",
             "controle_agent_pays": -5.99,
-            "texte": "EUR : volatilité à 1 mois de 5,8 %, −6,1 % contre le dollar sur 3 mois",
+            "texte": "EUR : volatilité à 1 mois de 5,9 %, −6,1 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, EURUSD=X (devise suivie par l'agent pays)"
           },
           "souverain": {
@@ -1089,33 +1089,33 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "France : score de risque de 31/100 (+1 pt sur 7 jours), porté surtout par la composante vulnérabilité macro (49/100 : dette publique de 118 % du PIB (2026), solde courant de −0,7 % du PIB, inflation à 3,1 % pour une cible de 2,0 %, réserves de change de 3,4 mois d'importations). Composante la plus basse : souverain (24/100 : taux à 10 ans de 4,89 % (10/2026), écart de +1,47 pt avec Allemagne)."
+        "texte": "France : score de risque de 32/100 (+2 pt sur 7 jours), porté surtout par la composante vulnérabilité macro (49/100 : dette publique de 118 % du PIB (2026), solde courant de −0,7 % du PIB, inflation à 3,1 % pour une cible de 2,0 %, réserves de change de 3,4 mois d'importations). Composante la plus basse : souverain (24/100 : taux à 10 ans de 4,89 % (10/2026), écart de +1,47 pt avec Allemagne)."
       },
       "DE": {
         "nom": "Allemagne",
         "score": 21,
         "niveau": "faible",
-        "variation_7j": -0.8,
+        "variation_7j": -0.7,
         "composantes": {
           "marche": {
-            "score": 30.8,
-            "baisse_plus_haut_12m": -11.58,
-            "volatilite_3m": 19.56,
+            "score": 31.3,
+            "baisse_plus_haut_12m": -11.82,
+            "volatilite_3m": 19.64,
             "etf": "EWG",
             "date": "2026-11-25",
-            "texte": "ETF EWG à −11,6 % de son plus haut sur 12 mois, volatilité à 3 mois de 19,6 %",
+            "texte": "ETF EWG à −11,8 % de son plus haut sur 12 mois, volatilité à 3 mois de 19,6 %",
             "source": "Yahoo Finance via yfinance, ETF EWG"
           },
           "devise": {
             "score": 24.9,
-            "volatilite_1m": 5.83,
-            "variation_3m": -6.12,
-            "variation_1m": -2.06,
+            "volatilite_1m": 5.89,
+            "variation_3m": -6.06,
+            "variation_1m": -2.0,
             "libelle": "EUR",
             "date": "2026-11-25",
             "verification": "concordant",
             "controle_agent_pays": -5.99,
-            "texte": "EUR : volatilité à 1 mois de 5,8 %, −6,1 % contre le dollar sur 3 mois",
+            "texte": "EUR : volatilité à 1 mois de 5,9 %, −6,1 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, EURUSD=X (devise suivie par l'agent pays)"
           },
           "souverain": {
@@ -1152,33 +1152,33 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Allemagne : score de risque de 21/100 (−1 pt sur 7 jours), porté surtout par la composante marché (31/100 : ETF EWG à −11,6 % de son plus haut sur 12 mois, volatilité à 3 mois de 19,6 %). Composante la plus basse : souverain (0/100 : taux à 10 ans de 3,42 % (10/2026))."
+        "texte": "Allemagne : score de risque de 21/100 (−1 pt sur 7 jours), porté surtout par la composante marché (31/100 : ETF EWG à −11,8 % de son plus haut sur 12 mois, volatilité à 3 mois de 19,6 %). Composante la plus basse : souverain (0/100 : taux à 10 ans de 3,42 % (10/2026))."
       },
       "CH": {
         "nom": "Suisse",
-        "score": 15,
+        "score": 16,
         "niveau": "faible",
-        "variation_7j": 2.5,
+        "variation_7j": 2.7,
         "composantes": {
           "marche": {
-            "score": 14.9,
-            "baisse_plus_haut_12m": -4.73,
-            "volatilite_3m": 16.59,
+            "score": 15.2,
+            "baisse_plus_haut_12m": -4.94,
+            "volatilite_3m": 16.61,
             "etf": "EWL",
             "date": "2026-11-25",
-            "texte": "ETF EWL à −4,7 % de son plus haut sur 12 mois, volatilité à 3 mois de 16,6 %",
+            "texte": "ETF EWL à −4,9 % de son plus haut sur 12 mois, volatilité à 3 mois de 16,6 %",
             "source": "Yahoo Finance via yfinance, ETF EWL"
           },
           "devise": {
-            "score": 22.4,
-            "volatilite_1m": 7.51,
-            "variation_3m": -3.37,
-            "variation_1m": -0.51,
+            "score": 22.6,
+            "volatilite_1m": 7.62,
+            "variation_3m": -3.32,
+            "variation_1m": -0.46,
             "libelle": "CHF",
             "date": "2026-11-25",
             "verification": "concordant",
             "controle_agent_pays": -4.17,
-            "texte": "CHF : volatilité à 1 mois de 7,5 %, −3,4 % contre le dollar sur 3 mois",
+            "texte": "CHF : volatilité à 1 mois de 7,6 %, −3,3 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, CHF=X (devise suivie par l'agent pays)"
           },
           "souverain": {
@@ -1215,7 +1215,7 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Suisse : score de risque de 15/100 (+2 pt sur 7 jours), porté surtout par la composante géopolitique (47/100 : score de risque géopolitique de 47/100). Composante la plus basse : souverain (0/100 : taux à 10 ans de 0,51 % (10/2026), écart de −4,62 pt avec États-Unis)."
+        "texte": "Suisse : score de risque de 16/100 (+3 pt sur 7 jours), porté surtout par la composante géopolitique (47/100 : score de risque géopolitique de 47/100). Composante la plus basse : souverain (0/100 : taux à 10 ans de 0,51 % (10/2026), écart de −4,62 pt avec États-Unis)."
       },
       "SA": {
         "nom": "Arabie saoudite",
@@ -1224,12 +1224,12 @@
         "variation_7j": 3.9,
         "composantes": {
           "marche": {
-            "score": 24.8,
-            "baisse_plus_haut_12m": -13.84,
-            "volatilite_3m": 13.17,
+            "score": 24.9,
+            "baisse_plus_haut_12m": -13.86,
+            "volatilite_3m": 13.18,
             "etf": "KSA",
             "date": "2026-11-25",
-            "texte": "ETF KSA à −13,8 % de son plus haut sur 12 mois, volatilité à 3 mois de 13,2 %",
+            "texte": "ETF KSA à −13,9 % de son plus haut sur 12 mois, volatilité à 3 mois de 13,2 %",
             "source": "Yahoo Finance via yfinance, ETF KSA"
           },
           "devise": {
@@ -1274,29 +1274,29 @@
       },
       "ZA": {
         "nom": "Afrique du Sud",
-        "score": 52,
+        "score": 51,
         "niveau": "modéré",
-        "variation_7j": 3.9,
+        "variation_7j": 3.7,
         "composantes": {
           "marche": {
-            "score": 75.7,
-            "baisse_plus_haut_12m": -28.5,
-            "volatilite_3m": 30.61,
+            "score": 75.4,
+            "baisse_plus_haut_12m": -28.39,
+            "volatilite_3m": 30.57,
             "etf": "EZA",
             "date": "2026-11-25",
-            "texte": "ETF EZA à −28,5 % de son plus haut sur 12 mois, volatilité à 3 mois de 30,6 %",
+            "texte": "ETF EZA à −28,4 % de son plus haut sur 12 mois, volatilité à 3 mois de 30,6 %",
             "source": "Yahoo Finance via yfinance, ETF EZA"
           },
           "devise": {
-            "score": 49.0,
-            "volatilite_1m": 12.95,
-            "variation_3m": -9.61,
-            "variation_1m": -5.99,
+            "score": 48.5,
+            "volatilite_1m": 12.83,
+            "variation_3m": -9.52,
+            "variation_1m": -5.9,
             "libelle": "ZAR",
             "date": "2026-11-25",
             "verification": "concordant",
             "controle_agent_pays": -8.87,
-            "texte": "ZAR : volatilité à 1 mois de 12,9 %, −9,6 % contre le dollar sur 3 mois",
+            "texte": "ZAR : volatilité à 1 mois de 12,8 %, −9,5 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, ZAR=X (devise suivie par l'agent pays)"
           },
           "souverain": {
@@ -1333,7 +1333,7 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Afrique du Sud : score de risque de 52/100 (+4 pt sur 7 jours), porté surtout par la composante marché (76/100 : ETF EZA à −28,5 % de son plus haut sur 12 mois, volatilité à 3 mois de 30,6 %). Composante la plus basse : géopolitique (26/100 : score de risque géopolitique de 26/100)."
+        "texte": "Afrique du Sud : score de risque de 51/100 (+4 pt sur 7 jours), porté surtout par la composante marché (75/100 : ETF EZA à −28,4 % de son plus haut sur 12 mois, volatilité à 3 mois de 30,6 %). Composante la plus basse : géopolitique (26/100 : score de risque géopolitique de 26/100)."
       },
       "IN": {
         "nom": "Inde",
@@ -1342,12 +1342,12 @@
         "variation_7j": 0.3,
         "composantes": {
           "marche": {
-            "score": 11.6,
-            "baisse_plus_haut_12m": -3.64,
+            "score": 11.4,
+            "baisse_plus_haut_12m": -3.51,
             "volatilite_3m": 15.7,
             "etf": "INDA",
             "date": "2026-11-25",
-            "texte": "ETF INDA à −3,6 % de son plus haut sur 12 mois, volatilité à 3 mois de 15,7 %",
+            "texte": "ETF INDA à −3,5 % de son plus haut sur 12 mois, volatilité à 3 mois de 15,7 %",
             "source": "Yahoo Finance via yfinance, ETF INDA"
           },
           "devise": {
@@ -1402,22 +1402,22 @@
         "nom": "Chine",
         "score": 34,
         "niveau": "faible",
-        "variation_7j": 2.5,
+        "variation_7j": 2.3,
         "composantes": {
           "marche": {
-            "score": 59.6,
-            "baisse_plus_haut_12m": -29.08,
-            "volatilite_3m": 19.32,
+            "score": 59.2,
+            "baisse_plus_haut_12m": -28.96,
+            "volatilite_3m": 19.23,
             "etf": "MCHI",
             "date": "2026-11-25",
-            "texte": "ETF MCHI à −29,1 % de son plus haut sur 12 mois, volatilité à 3 mois de 19,3 %",
+            "texte": "ETF MCHI à −29,0 % de son plus haut sur 12 mois, volatilité à 3 mois de 19,2 %",
             "source": "Yahoo Finance via yfinance, ETF MCHI"
           },
           "devise": {
-            "score": 2.5,
-            "volatilite_1m": 2.0,
-            "variation_3m": 0.93,
-            "variation_1m": 0.14,
+            "score": 2.4,
+            "volatilite_1m": 2.01,
+            "variation_3m": 0.95,
+            "variation_1m": 0.16,
             "libelle": "CNY",
             "date": "2026-11-25",
             "verification": "concordant",
@@ -1451,7 +1451,7 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Chine : score de risque de 34/100 (+2 pt sur 7 jours), porté surtout par la composante marché (60/100 : ETF MCHI à −29,1 % de son plus haut sur 12 mois, volatilité à 3 mois de 19,3 %). Composante la plus basse : devise (2/100 : CNY : volatilité à 1 mois de 2,0 %, +0,9 % contre le dollar sur 3 mois) ; non disponible : souverain."
+        "texte": "Chine : score de risque de 34/100 (+2 pt sur 7 jours), porté surtout par la composante marché (59/100 : ETF MCHI à −29,0 % de son plus haut sur 12 mois, volatilité à 3 mois de 19,2 %). Composante la plus basse : devise (2/100 : CNY : volatilité à 1 mois de 2,0 %, +0,9 % contre le dollar sur 3 mois) ; non disponible : souverain."
       },
       "KR": {
         "nom": "Corée du Sud",
@@ -1461,18 +1461,18 @@
         "composantes": {
           "marche": {
             "score": 100.0,
-            "baisse_plus_haut_12m": -43.74,
-            "volatilite_3m": 61.06,
+            "baisse_plus_haut_12m": -44.01,
+            "volatilite_3m": 61.24,
             "etf": "EWY",
             "date": "2026-11-25",
-            "texte": "ETF EWY à −43,7 % de son plus haut sur 12 mois, volatilité à 3 mois de 61,1 %",
+            "texte": "ETF EWY à −44,0 % de son plus haut sur 12 mois, volatilité à 3 mois de 61,2 %",
             "source": "Yahoo Finance via yfinance, ETF EWY"
           },
           "devise": {
             "score": 17.2,
-            "volatilite_1m": 10.58,
-            "variation_3m": 2.4,
-            "variation_1m": -1.73,
+            "volatilite_1m": 10.59,
+            "variation_3m": 2.37,
+            "variation_1m": -1.75,
             "libelle": "KRW",
             "date": "2026-11-25",
             "verification": "concordant",
@@ -1514,7 +1514,7 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Corée du Sud : score de risque de 35/100 (+2 pt sur 7 jours), porté surtout par la composante marché (100/100 : ETF EWY à −43,7 % de son plus haut sur 12 mois, volatilité à 3 mois de 61,1 %). Composante la plus basse : souverain (0/100 : taux à 10 ans de 4,21 % (10/2026), écart de −0,92 pt avec États-Unis)."
+        "texte": "Corée du Sud : score de risque de 35/100 (+2 pt sur 7 jours), porté surtout par la composante marché (100/100 : ETF EWY à −44,0 % de son plus haut sur 12 mois, volatilité à 3 mois de 61,2 %). Composante la plus basse : souverain (0/100 : taux à 10 ans de 4,21 % (10/2026), écart de −0,92 pt avec États-Unis)."
       },
       "JP": {
         "nom": "Japon",
@@ -1524,7 +1524,7 @@
         "composantes": {
           "marche": {
             "score": 41.8,
-            "baisse_plus_haut_12m": -13.94,
+            "baisse_plus_haut_12m": -13.95,
             "volatilite_3m": 24.22,
             "etf": "EWJ",
             "date": "2026-11-25",
@@ -1532,15 +1532,15 @@
             "source": "Yahoo Finance via yfinance, ETF EWJ"
           },
           "devise": {
-            "score": 8.2,
+            "score": 7.9,
             "volatilite_1m": 4.7,
-            "variation_3m": 0.1,
-            "variation_1m": -1.03,
+            "variation_3m": 0.2,
+            "variation_1m": -0.92,
             "libelle": "JPY",
             "date": "2026-11-25",
             "verification": "concordant",
             "controle_agent_pays": 0.1,
-            "texte": "JPY : volatilité à 1 mois de 4,7 %, +0,1 % contre le dollar sur 3 mois",
+            "texte": "JPY : volatilité à 1 mois de 4,7 %, +0,2 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, JPY=X (devise suivie par l'agent pays)"
           },
           "souverain": {
@@ -1583,27 +1583,27 @@
         "nom": "Australie",
         "score": 28,
         "niveau": "faible",
-        "variation_7j": 3.0,
+        "variation_7j": 2.9,
         "composantes": {
           "marche": {
-            "score": 27.6,
-            "baisse_plus_haut_12m": -11.63,
-            "volatilite_3m": 17.44,
+            "score": 27.7,
+            "baisse_plus_haut_12m": -11.66,
+            "volatilite_3m": 17.45,
             "etf": "EWA",
             "date": "2026-11-25",
-            "texte": "ETF EWA à −11,6 % de son plus haut sur 12 mois, volatilité à 3 mois de 17,4 %",
+            "texte": "ETF EWA à −11,7 % de son plus haut sur 12 mois, volatilité à 3 mois de 17,4 %",
             "source": "Yahoo Finance via yfinance, ETF EWA"
           },
           "devise": {
-            "score": 34.6,
-            "volatilite_1m": 7.64,
-            "variation_3m": -8.59,
-            "variation_1m": -6.3,
+            "score": 34.1,
+            "volatilite_1m": 7.54,
+            "variation_3m": -8.47,
+            "variation_1m": -6.18,
             "libelle": "AUD",
             "date": "2026-11-25",
             "verification": "concordant",
             "controle_agent_pays": -7.16,
-            "texte": "AUD : volatilité à 1 mois de 7,6 %, −8,6 % contre le dollar sur 3 mois",
+            "texte": "AUD : volatilité à 1 mois de 7,5 %, −8,5 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, AUDUSD=X (devise suivie par l'agent pays)"
           },
           "souverain": {
@@ -1646,27 +1646,27 @@
         "nom": "Italie",
         "score": 35,
         "niveau": "faible",
-        "variation_7j": 5.7,
+        "variation_7j": 5.9,
         "composantes": {
           "marche": {
-            "score": 41.3,
-            "baisse_plus_haut_12m": -15.23,
-            "volatilite_3m": 22.52,
+            "score": 42.0,
+            "baisse_plus_haut_12m": -15.52,
+            "volatilite_3m": 22.64,
             "etf": "EWI",
             "date": "2026-11-25",
-            "texte": "ETF EWI à −15,2 % de son plus haut sur 12 mois, volatilité à 3 mois de 22,5 %",
+            "texte": "ETF EWI à −15,5 % de son plus haut sur 12 mois, volatilité à 3 mois de 22,6 %",
             "source": "Yahoo Finance via yfinance, ETF EWI"
           },
           "devise": {
             "score": 24.9,
-            "volatilite_1m": 5.83,
-            "variation_3m": -6.12,
-            "variation_1m": -2.06,
+            "volatilite_1m": 5.89,
+            "variation_3m": -6.06,
+            "variation_1m": -2.0,
             "libelle": "EUR",
             "date": "2026-11-25",
             "verification": "concordant",
             "controle_agent_pays": -5.99,
-            "texte": "EUR : volatilité à 1 mois de 5,8 %, −6,1 % contre le dollar sur 3 mois",
+            "texte": "EUR : volatilité à 1 mois de 5,9 %, −6,1 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, EURUSD=X (devise suivie par l'agent pays)"
           },
           "souverain": {
@@ -1713,8 +1713,8 @@
         "composantes": {
           "marche": {
             "score": 33.6,
-            "baisse_plus_haut_12m": -12.57,
-            "volatilite_3m": 20.36,
+            "baisse_plus_haut_12m": -12.56,
+            "volatilite_3m": 20.35,
             "etf": "EWP",
             "date": "2026-11-25",
             "texte": "ETF EWP à −12,6 % de son plus haut sur 12 mois, volatilité à 3 mois de 20,4 %",
@@ -1722,14 +1722,14 @@
           },
           "devise": {
             "score": 24.9,
-            "volatilite_1m": 5.83,
-            "variation_3m": -6.12,
-            "variation_1m": -2.06,
+            "volatilite_1m": 5.89,
+            "variation_3m": -6.06,
+            "variation_1m": -2.0,
             "libelle": "EUR",
             "date": "2026-11-25",
             "verification": "concordant",
             "controle_agent_pays": -5.99,
-            "texte": "EUR : volatilité à 1 mois de 5,8 %, −6,1 % contre le dollar sur 3 mois",
+            "texte": "EUR : volatilité à 1 mois de 5,9 %, −6,1 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, EURUSD=X (devise suivie par l'agent pays)"
           },
           "souverain": {
@@ -1775,24 +1775,24 @@
         "variation_7j": 4.4,
         "composantes": {
           "marche": {
-            "score": 48.5,
-            "baisse_plus_haut_12m": -18.27,
-            "volatilite_3m": 23.94,
+            "score": 48.6,
+            "baisse_plus_haut_12m": -18.31,
+            "volatilite_3m": 23.97,
             "etf": "EWN",
             "date": "2026-11-25",
-            "texte": "ETF EWN à −18,3 % de son plus haut sur 12 mois, volatilité à 3 mois de 23,9 %",
+            "texte": "ETF EWN à −18,3 % de son plus haut sur 12 mois, volatilité à 3 mois de 24,0 %",
             "source": "Yahoo Finance via yfinance, ETF EWN"
           },
           "devise": {
             "score": 24.9,
-            "volatilite_1m": 5.83,
-            "variation_3m": -6.12,
-            "variation_1m": -2.06,
+            "volatilite_1m": 5.89,
+            "variation_3m": -6.06,
+            "variation_1m": -2.0,
             "libelle": "EUR",
             "date": "2026-11-25",
             "verification": "concordant",
             "controle_agent_pays": -5.99,
-            "texte": "EUR : volatilité à 1 mois de 5,8 %, −6,1 % contre le dollar sur 3 mois",
+            "texte": "EUR : volatilité à 1 mois de 5,9 %, −6,1 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, EURUSD=X (devise suivie par l'agent pays)"
           },
           "souverain": {
@@ -1829,28 +1829,28 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Pays-Bas : score de risque de 26/100 (+4 pt sur 7 jours), porté surtout par la composante marché (48/100 : ETF EWN à −18,3 % de son plus haut sur 12 mois, volatilité à 3 mois de 23,9 %). Composante la plus basse : souverain (2/100 : taux à 10 ans de 3,54 % (10/2026), écart de +0,12 pt avec Allemagne)."
+        "texte": "Pays-Bas : score de risque de 26/100 (+4 pt sur 7 jours), porté surtout par la composante marché (49/100 : ETF EWN à −18,3 % de son plus haut sur 12 mois, volatilité à 3 mois de 24,0 %). Composante la plus basse : souverain (2/100 : taux à 10 ans de 3,54 % (10/2026), écart de +0,12 pt avec Allemagne)."
       },
       "SE": {
         "nom": "Suède",
-        "score": 21,
+        "score": 22,
         "niveau": "faible",
-        "variation_7j": 2.8,
+        "variation_7j": 2.9,
         "composantes": {
           "marche": {
-            "score": 27.2,
-            "baisse_plus_haut_12m": -9.26,
-            "volatilite_3m": 19.79,
+            "score": 27.7,
+            "baisse_plus_haut_12m": -9.48,
+            "volatilite_3m": 19.85,
             "etf": "EWD",
             "date": "2026-11-25",
-            "texte": "ETF EWD à −9,3 % de son plus haut sur 12 mois, volatilité à 3 mois de 19,8 %",
+            "texte": "ETF EWD à −9,5 % de son plus haut sur 12 mois, volatilité à 3 mois de 19,9 %",
             "source": "Yahoo Finance via yfinance, ETF EWD"
           },
           "devise": {
-            "score": 33.5,
-            "volatilite_1m": 8.32,
-            "variation_3m": -7.41,
-            "variation_1m": -3.14,
+            "score": 33.4,
+            "volatilite_1m": 8.33,
+            "variation_3m": -7.38,
+            "variation_1m": -3.11,
             "libelle": "SEK",
             "date": "2026-11-25",
             "verification": "concordant",
@@ -1892,33 +1892,33 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Suède : score de risque de 21/100 (+3 pt sur 7 jours), porté surtout par la composante devise (34/100 : SEK : volatilité à 1 mois de 8,3 %, −7,4 % contre le dollar sur 3 mois). Composante la plus basse : souverain (0/100 : taux à 10 ans de 3,17 % (10/2026), écart de −1,96 pt avec États-Unis)."
+        "texte": "Suède : score de risque de 22/100 (+3 pt sur 7 jours), porté surtout par la composante devise (33/100 : SEK : volatilité à 1 mois de 8,3 %, −7,4 % contre le dollar sur 3 mois). Composante la plus basse : souverain (0/100 : taux à 10 ans de 3,17 % (10/2026), écart de −1,96 pt avec États-Unis)."
       },
       "PL": {
         "nom": "Pologne",
         "score": 35,
         "niveau": "faible",
-        "variation_7j": 9.2,
+        "variation_7j": 9.1,
         "composantes": {
           "marche": {
-            "score": 42.8,
-            "baisse_plus_haut_12m": -13.32,
-            "volatilite_3m": 25.55,
+            "score": 42.6,
+            "baisse_plus_haut_12m": -13.28,
+            "volatilite_3m": 25.53,
             "etf": "EPOL",
             "date": "2026-11-25",
-            "texte": "ETF EPOL à −13,3 % de son plus haut sur 12 mois, volatilité à 3 mois de 25,6 %",
+            "texte": "ETF EPOL à −13,3 % de son plus haut sur 12 mois, volatilité à 3 mois de 25,5 %",
             "source": "Yahoo Finance via yfinance, ETF EPOL"
           },
           "devise": {
-            "score": 36.7,
-            "volatilite_1m": 7.96,
-            "variation_3m": -9.2,
-            "variation_1m": -3.77,
+            "score": 36.6,
+            "volatilite_1m": 7.93,
+            "variation_3m": -9.17,
+            "variation_1m": -3.73,
             "libelle": "PLN",
             "date": "2026-11-25",
             "verification": "concordant",
             "controle_agent_pays": -9.25,
-            "texte": "PLN : volatilité à 1 mois de 8,0 %, −9,2 % contre le dollar sur 3 mois",
+            "texte": "PLN : volatilité à 1 mois de 7,9 %, −9,2 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, PLN=X (devise suivie par l'agent pays)"
           },
           "souverain": {
@@ -1955,33 +1955,33 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Pologne : score de risque de 35/100 (+9 pt sur 7 jours), porté surtout par la composante marché (43/100 : ETF EPOL à −13,3 % de son plus haut sur 12 mois, volatilité à 3 mois de 25,6 %). Composante la plus basse : souverain (20/100 : taux à 10 ans de 6,32 % (10/2026), écart de +1,19 pt avec États-Unis)."
+        "texte": "Pologne : score de risque de 35/100 (+9 pt sur 7 jours), porté surtout par la composante marché (43/100 : ETF EPOL à −13,3 % de son plus haut sur 12 mois, volatilité à 3 mois de 25,5 %). Composante la plus basse : souverain (20/100 : taux à 10 ans de 6,32 % (10/2026), écart de +1,19 pt avec États-Unis)."
       },
       "TW": {
         "nom": "Taïwan",
         "score": 41,
         "niveau": "modéré",
-        "variation_7j": 2.1,
+        "variation_7j": 2.0,
         "composantes": {
           "marche": {
             "score": 100.0,
-            "baisse_plus_haut_12m": -32.78,
-            "volatilite_3m": 62.24,
+            "baisse_plus_haut_12m": -33.15,
+            "volatilite_3m": 62.46,
             "etf": "EWT",
             "date": "2026-11-25",
-            "texte": "ETF EWT à −32,8 % de son plus haut sur 12 mois, volatilité à 3 mois de 62,2 %",
+            "texte": "ETF EWT à −33,1 % de son plus haut sur 12 mois, volatilité à 3 mois de 62,5 %",
             "source": "Yahoo Finance via yfinance, ETF EWT"
           },
           "devise": {
-            "score": 26.5,
-            "volatilite_1m": 7.8,
-            "variation_3m": -4.85,
-            "variation_1m": -2.23,
+            "score": 26.0,
+            "volatilite_1m": 7.66,
+            "variation_3m": -4.78,
+            "variation_1m": -2.16,
             "libelle": "TWD",
             "date": "2026-11-25",
             "verification": "concordant",
             "controle_agent_pays": -3.82,
-            "texte": "TWD : volatilité à 1 mois de 7,8 %, −4,8 % contre le dollar sur 3 mois",
+            "texte": "TWD : volatilité à 1 mois de 7,7 %, −4,8 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, TWD=X (devise suivie par l'agent pays)"
           },
           "macro": {
@@ -2010,7 +2010,7 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Taïwan : score de risque de 41/100 (+2 pt sur 7 jours), porté surtout par la composante marché (100/100 : ETF EWT à −32,8 % de son plus haut sur 12 mois, volatilité à 3 mois de 62,2 %). Composante la plus basse : vulnérabilité macro (0/100 : dette publique de 21 % du PIB (2026), solde courant de +22,0 % du PIB, inflation à 2,0 % pour une cible de 2,0 %) ; non disponible : souverain."
+        "texte": "Taïwan : score de risque de 41/100 (+2 pt sur 7 jours), porté surtout par la composante marché (100/100 : ETF EWT à −33,1 % de son plus haut sur 12 mois, volatilité à 3 mois de 62,5 %). Composante la plus basse : vulnérabilité macro (0/100 : dette publique de 21 % du PIB (2026), solde courant de +22,0 % du PIB, inflation à 2,0 % pour une cible de 2,0 %) ; non disponible : souverain."
       },
       "ID": {
         "nom": "Indonésie",
@@ -2020,8 +2020,8 @@
         "composantes": {
           "marche": {
             "score": 97.7,
-            "baisse_plus_haut_12m": -45.11,
-            "volatilite_3m": 43.48,
+            "baisse_plus_haut_12m": -45.14,
+            "volatilite_3m": 43.49,
             "etf": "EIDO",
             "date": "2026-11-25",
             "texte": "ETF EIDO à −45,1 % de son plus haut sur 12 mois, volatilité à 3 mois de 43,5 %",
@@ -2069,17 +2069,17 @@
       },
       "VN": {
         "nom": "Vietnam",
-        "score": 26,
+        "score": 25,
         "niveau": "faible",
-        "variation_7j": 1.3,
+        "variation_7j": 1.2,
         "composantes": {
           "marche": {
-            "score": 39.5,
-            "baisse_plus_haut_12m": -17.58,
-            "volatilite_3m": 18.7,
+            "score": 39.3,
+            "baisse_plus_haut_12m": -17.53,
+            "volatilite_3m": 18.67,
             "etf": "VNM",
             "date": "2026-11-25",
-            "texte": "ETF VNM à −17,6 % de son plus haut sur 12 mois, volatilité à 3 mois de 18,7 %",
+            "texte": "ETF VNM à −17,5 % de son plus haut sur 12 mois, volatilité à 3 mois de 18,7 %",
             "source": "Yahoo Finance via yfinance, ETF VNM"
           },
           "devise": {
@@ -2120,28 +2120,28 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Vietnam : score de risque de 26/100 (+1 pt sur 7 jours), porté surtout par la composante marché (40/100 : ETF VNM à −17,6 % de son plus haut sur 12 mois, volatilité à 3 mois de 18,7 %). Composante la plus basse : devise (2/100 : VND : volatilité à 1 mois de 3,1 %, +1,0 % contre le dollar sur 3 mois) ; non disponible : souverain."
+        "texte": "Vietnam : score de risque de 25/100 (+1 pt sur 7 jours), porté surtout par la composante marché (39/100 : ETF VNM à −17,5 % de son plus haut sur 12 mois, volatilité à 3 mois de 18,7 %). Composante la plus basse : devise (2/100 : VND : volatilité à 1 mois de 3,1 %, +1,0 % contre le dollar sur 3 mois) ; non disponible : souverain."
       },
       "SG": {
         "nom": "Singapour",
-        "score": 31,
+        "score": 30,
         "niveau": "faible",
-        "variation_7j": 4.5,
+        "variation_7j": 4.4,
         "composantes": {
           "marche": {
-            "score": 40.5,
-            "baisse_plus_haut_12m": -20.06,
-            "volatilite_3m": 16.66,
+            "score": 40.3,
+            "baisse_plus_haut_12m": -19.99,
+            "volatilite_3m": 16.63,
             "etf": "EWS",
             "date": "2026-11-25",
-            "texte": "ETF EWS à −20,1 % de son plus haut sur 12 mois, volatilité à 3 mois de 16,7 %",
+            "texte": "ETF EWS à −20,0 % de son plus haut sur 12 mois, volatilité à 3 mois de 16,6 %",
             "source": "Yahoo Finance via yfinance, ETF EWS"
           },
           "devise": {
-            "score": 8.3,
+            "score": 8.2,
             "volatilite_1m": 2.41,
-            "variation_3m": -1.65,
-            "variation_1m": -0.87,
+            "variation_3m": -1.61,
+            "variation_1m": -0.84,
             "libelle": "SGD",
             "date": "2026-11-25",
             "verification": "concordant",
@@ -2175,33 +2175,33 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Singapour : score de risque de 31/100 (+4 pt sur 7 jours), porté surtout par la composante vulnérabilité macro (45/100 : dette publique de 166 % du PIB (2026), solde courant de +16,7 % du PIB, inflation à 2,3 % pour une cible de 2,0 %, réserves de change de 4,4 mois d'importations). Composante la plus basse : devise (8/100 : SGD : volatilité à 1 mois de 2,4 %, −1,6 % contre le dollar sur 3 mois) ; non disponible : souverain."
+        "texte": "Singapour : score de risque de 30/100 (+4 pt sur 7 jours), porté surtout par la composante vulnérabilité macro (45/100 : dette publique de 166 % du PIB (2026), solde courant de +16,7 % du PIB, inflation à 2,3 % pour une cible de 2,0 %, réserves de change de 4,4 mois d'importations). Composante la plus basse : devise (8/100 : SGD : volatilité à 1 mois de 2,4 %, −1,6 % contre le dollar sur 3 mois) ; non disponible : souverain."
       },
       "TH": {
         "nom": "Thaïlande",
         "score": 27,
         "niveau": "faible",
-        "variation_7j": 5.6,
+        "variation_7j": 5.4,
         "composantes": {
           "marche": {
-            "score": 35.9,
-            "baisse_plus_haut_12m": -15.37,
-            "volatilite_3m": 18.75,
+            "score": 35.6,
+            "baisse_plus_haut_12m": -15.29,
+            "volatilite_3m": 18.7,
             "etf": "THD",
             "date": "2026-11-25",
-            "texte": "ETF THD à −15,4 % de son plus haut sur 12 mois, volatilité à 3 mois de 18,8 %",
+            "texte": "ETF THD à −15,3 % de son plus haut sur 12 mois, volatilité à 3 mois de 18,7 %",
             "source": "Yahoo Finance via yfinance, ETF THD"
           },
           "devise": {
-            "score": 17.2,
-            "volatilite_1m": 4.92,
-            "variation_3m": -3.66,
-            "variation_1m": -1.03,
+            "score": 17.0,
+            "volatilite_1m": 4.87,
+            "variation_3m": -3.61,
+            "variation_1m": -0.97,
             "libelle": "THB",
             "date": "2026-11-25",
             "verification": "concordant",
             "controle_agent_pays": -3.52,
-            "texte": "THB : volatilité à 1 mois de 4,9 %, −3,7 % contre le dollar sur 3 mois",
+            "texte": "THB : volatilité à 1 mois de 4,9 %, −3,6 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, THB=X (devise suivie par l'agent pays)"
           },
           "macro": {
@@ -2230,33 +2230,33 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Thaïlande : score de risque de 27/100 (+6 pt sur 7 jours), porté surtout par la composante marché (36/100 : ETF THD à −15,4 % de son plus haut sur 12 mois, volatilité à 3 mois de 18,8 %). Composante la plus basse : devise (17/100 : THB : volatilité à 1 mois de 4,9 %, −3,7 % contre le dollar sur 3 mois) ; non disponible : souverain."
+        "texte": "Thaïlande : score de risque de 27/100 (+5 pt sur 7 jours), porté surtout par la composante marché (36/100 : ETF THD à −15,3 % de son plus haut sur 12 mois, volatilité à 3 mois de 18,7 %). Composante la plus basse : devise (17/100 : THB : volatilité à 1 mois de 4,9 %, −3,6 % contre le dollar sur 3 mois) ; non disponible : souverain."
       },
       "CL": {
         "nom": "Chili",
-        "score": 43,
+        "score": 44,
         "niveau": "modéré",
-        "variation_7j": 3.3,
+        "variation_7j": 3.7,
         "composantes": {
           "marche": {
-            "score": 67.7,
-            "baisse_plus_haut_12m": -30.33,
-            "volatilite_3m": 23.66,
+            "score": 67.6,
+            "baisse_plus_haut_12m": -30.22,
+            "volatilite_3m": 23.6,
             "etf": "ECH",
             "date": "2026-11-25",
-            "texte": "ETF ECH à −30,3 % de son plus haut sur 12 mois, volatilité à 3 mois de 23,7 %",
+            "texte": "ETF ECH à −30,2 % de son plus haut sur 12 mois, volatilité à 3 mois de 23,6 %",
             "source": "Yahoo Finance via yfinance, ETF ECH"
           },
           "devise": {
-            "score": 79.9,
-            "volatilite_1m": 24.62,
-            "variation_3m": -11.53,
-            "variation_1m": -5.12,
+            "score": 81.7,
+            "volatilite_1m": 25.18,
+            "variation_3m": -11.92,
+            "variation_1m": -5.54,
             "libelle": "CLP",
             "date": "2026-11-25",
-            "verification": "concordant",
+            "verification": "divergent",
             "controle_agent_pays": -10.25,
-            "texte": "CLP : volatilité à 1 mois de 24,6 %, −11,5 % contre le dollar sur 3 mois",
+            "texte": "CLP : volatilité à 1 mois de 25,2 %, −11,9 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, CLP=X (devise suivie par l'agent pays)"
           },
           "souverain": {
@@ -2293,33 +2293,33 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Chili : score de risque de 43/100 (+3 pt sur 7 jours), porté surtout par la composante devise (80/100 : CLP : volatilité à 1 mois de 24,6 %, −11,5 % contre le dollar sur 3 mois). Composante la plus basse : géopolitique (12/100 : score de risque géopolitique de 12/100)."
+        "texte": "Chili : score de risque de 44/100 (+4 pt sur 7 jours), porté surtout par la composante devise (82/100 : CLP : volatilité à 1 mois de 25,2 %, −11,9 % contre le dollar sur 3 mois). Composante la plus basse : géopolitique (12/100 : score de risque géopolitique de 12/100)."
       },
       "CO": {
         "nom": "Colombie",
         "score": 53,
         "niveau": "modéré",
-        "variation_7j": 9.0,
+        "variation_7j": 8.7,
         "composantes": {
           "marche": {
-            "score": 55.8,
-            "baisse_plus_haut_12m": -22.91,
-            "volatilite_3m": 23.61,
+            "score": 55.4,
+            "baisse_plus_haut_12m": -22.7,
+            "volatilite_3m": 23.55,
             "etf": "COLO",
             "date": "2026-11-25",
-            "texte": "ETF COLO à −22,9 % de son plus haut sur 12 mois, volatilité à 3 mois de 23,6 %",
+            "texte": "ETF COLO à −22,7 % de son plus haut sur 12 mois, volatilité à 3 mois de 23,6 %",
             "source": "Yahoo Finance via yfinance, ETF COLO"
           },
           "devise": {
-            "score": 82.9,
-            "volatilite_1m": 42.9,
-            "variation_3m": -12.47,
-            "variation_1m": -12.83,
+            "score": 82.5,
+            "volatilite_1m": 42.81,
+            "variation_3m": -12.32,
+            "variation_1m": -12.68,
             "libelle": "COP",
             "date": "2026-11-25",
             "verification": "divergent",
             "controle_agent_pays": -14.22,
-            "texte": "COP : volatilité à 1 mois de 42,9 %, −12,5 % contre le dollar sur 3 mois",
+            "texte": "COP : volatilité à 1 mois de 42,8 %, −12,3 % contre le dollar sur 3 mois",
             "source": "Yahoo Finance via yfinance, COP=X (devise suivie par l'agent pays)"
           },
           "macro": {
@@ -2348,7 +2348,7 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Colombie : score de risque de 53/100 (+9 pt sur 7 jours), porté surtout par la composante devise (83/100 : COP : volatilité à 1 mois de 42,9 %, −12,5 % contre le dollar sur 3 mois). Composante la plus basse : géopolitique (31/100 : score de risque géopolitique de 31/100) ; non disponible : souverain."
+        "texte": "Colombie : score de risque de 53/100 (+9 pt sur 7 jours), porté surtout par la composante devise (82/100 : COP : volatilité à 1 mois de 42,8 %, −12,3 % contre le dollar sur 3 mois). Composante la plus basse : géopolitique (31/100 : score de risque géopolitique de 31/100) ; non disponible : souverain."
       },
       "AE": {
         "nom": "Émirats arabes unis",
@@ -2358,18 +2358,18 @@
         "composantes": {
           "marche": {
             "score": 11.8,
-            "baisse_plus_haut_12m": -0.05,
+            "baisse_plus_haut_12m": 0.0,
             "volatilite_3m": 19.77,
             "etf": "UAE",
             "date": "2026-11-25",
-            "texte": "ETF UAE à −0,1 % de son plus haut sur 12 mois, volatilité à 3 mois de 19,8 %",
+            "texte": "ETF UAE à 0,0 % de son plus haut sur 12 mois, volatilité à 3 mois de 19,8 %",
             "source": "Yahoo Finance via yfinance, ETF UAE"
           },
           "devise": {
-            "score": 4.6,
-            "volatilite_1m": 0.29,
-            "variation_3m": -0.03,
-            "variation_1m": -0.03,
+            "score": 4.7,
+            "volatilite_1m": 0.3,
+            "variation_3m": -0.04,
+            "variation_1m": -0.04,
             "libelle": "AED",
             "date": "2026-11-25",
             "verification": "concordant",
@@ -2409,15 +2409,15 @@
         "nom": "Turquie",
         "score": 49,
         "niveau": "modéré",
-        "variation_7j": -0.5,
+        "variation_7j": -0.6,
         "composantes": {
           "marche": {
-            "score": 80.2,
-            "baisse_plus_haut_12m": -33.81,
-            "volatilite_3m": 31.94,
+            "score": 80.0,
+            "baisse_plus_haut_12m": -33.49,
+            "volatilite_3m": 31.81,
             "etf": "TUR",
             "date": "2026-11-25",
-            "texte": "ETF TUR à −33,8 % de son plus haut sur 12 mois, volatilité à 3 mois de 31,9 %",
+            "texte": "ETF TUR à −33,5 % de son plus haut sur 12 mois, volatilité à 3 mois de 31,8 %",
             "source": "Yahoo Finance via yfinance, ETF TUR"
           },
           "devise": {
@@ -2458,7 +2458,7 @@
           "macro": 20,
           "geopolitique": 15
         },
-        "texte": "Turquie : score de risque de 49/100 (+0 pt sur 7 jours), porté surtout par la composante marché (80/100 : ETF TUR à −33,8 % de son plus haut sur 12 mois, volatilité à 3 mois de 31,9 %). Composante la plus basse : devise (17/100 : TRY : volatilité à 1 mois de 1,2 %, −5,3 % contre le dollar sur 3 mois) ; non disponible : souverain."
+        "texte": "Turquie : score de risque de 49/100 (−1 pt sur 7 jours), porté surtout par la composante marché (80/100 : ETF TUR à −33,5 % de son plus haut sur 12 mois, volatilité à 3 mois de 31,8 %). Composante la plus basse : devise (17/100 : TRY : volatilité à 1 mois de 1,2 %, −5,3 % contre le dollar sur 3 mois) ; non disponible : souverain."
       },
       "EG": {
         "nom": "Égypte",
@@ -2870,7 +2870,7 @@
         "abaisser": 10,
         "signal fragile": 11
       },
-      "mode": "gemini"
+      "mode": "règles"
     },
     "methode": "Score mondial /100 : moyenne pondérée des percentiles sur 10 ans de la volatilité (VIX, VSTOXX, MOVE), des écarts de crédit (high yield et investment grade américains, high yield européen), des indices officiels de stress (STLFSI4, NFCI, CISS), de l'écart Italie – Allemagne à 10 ans et de la variation du dollar sur 3 mois. Paliers : seuils aux percentiles 60, 85 et 97 du score sur 10 ans ; deux familles d'indicateurs concordantes au moins pour changer de palier. Score pays /100 : marché, devise, souverain, vulnérabilité macro, géopolitique."
   }
