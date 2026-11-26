@@ -1,17 +1,17 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-25T22:36:01Z",
+    "genere_le": "2026-11-26T04:12:06Z",
     "source": "agent-matieres-premieres",
     "fictif": false,
     "version_agent": "1.0",
-    "mise_a_jour_precedente": "2026-11-25T04:54:58Z",
+    "mise_a_jour_precedente": "2026-11-25T22:36:01Z",
     "etat_des_sources": {
       "Yahoo Finance via yfinance (contrat le plus proche, 10 ans)": "ok",
       "Yahoo Finance via yfinance (contrats des échéances suivantes)": "ok",
       "Yahoo Finance via yfinance (parts en circulation et VL des ETF)": "ok",
       "CFTC, Commitments of Traders (API publique Socrata)": "ok",
-      "EIA, stocks hebdomadaires (API v2, clé EIA_API_KEY)": "ok",
+      "EIA, stocks hebdomadaires (API v2, clé EIA_API_KEY)": "erreur : https://api.eia.gov/v2/seriesid/PET.WCESTUS1.W : ReadTimeout: HTTPSConnectionPool(host='api.eia.gov', port=443): Read timed out. (read timeout=45)",
       "USDA, base PSD (fichiers CSV publics)": "ok",
       "USDA, rapport WASDE (fichier texte mensuel)": "ok",
       "FRED, taux réel américain à 10 ans (DFII10)": "ok",
@@ -20,15 +20,15 @@
     }
   },
   "donnees": {
-    "date": "2026-11-25",
+    "date": "2026-11-26",
     "horizon": "3 à 12 mois",
     "familles": [
       {
         "cle": "metaux_precieux",
         "nom": "Métaux précieux",
-        "note": 46.4,
+        "note": 46.0,
         "verdict": "Neutre",
-        "texte": "Métaux précieux : note moyenne 46/100 sur 4 matières premières ; la plus favorable : Palladium (55), la moins favorable : Or (40).",
+        "texte": "Métaux précieux : note moyenne 46/100 sur 4 matières premières ; la plus favorable : Palladium (54), la moins favorable : Or (40).",
         "matieres": [
           "or",
           "argent",
@@ -46,9 +46,9 @@
       {
         "cle": "metaux_industriels",
         "nom": "Métaux industriels",
-        "note": 42.7,
+        "note": 40.9,
         "verdict": "Neutre",
-        "texte": "Métaux industriels : note moyenne 43/100 sur 3 matières premières ; la plus favorable : Aluminium (49), la moins favorable : Uranium (37).",
+        "texte": "Métaux industriels : note moyenne 41/100 sur 3 matières premières ; la plus favorable : Aluminium (46), la moins favorable : Uranium (35).",
         "matieres": [
           "cuivre",
           "aluminium",
@@ -65,9 +65,9 @@
       {
         "cle": "energie",
         "nom": "Énergie",
-        "note": 59.2,
+        "note": 61.2,
         "verdict": "Surpondérer",
-        "texte": "Énergie : note moyenne 59/100 sur 4 matières premières ; la plus favorable : Pétrole Brent (60), la moins favorable : Gaz européen (TTF) (57).",
+        "texte": "Énergie : note moyenne 61/100 sur 4 matières premières ; la plus favorable : Gaz naturel américain (65), la moins favorable : Gaz européen (TTF) (56).",
         "matieres": [
           "wti",
           "brent",
@@ -75,9 +75,9 @@
           "gaz_europe"
         ],
         "repartition": {
-          "Surpondérer": 2,
+          "Surpondérer": 3,
           "Neutre (biais positif)": 0,
-          "Neutre": 2,
+          "Neutre": 1,
           "Neutre (biais négatif)": 0,
           "Sous-pondérer": 0
         }
@@ -85,7 +85,7 @@
       {
         "cle": "agricoles",
         "nom": "Agricoles",
-        "note": 49.5,
+        "note": 49.6,
         "verdict": "Neutre",
         "texte": "Agricoles : note moyenne 50/100 sur 7 matières premières ; la plus favorable : Café (54), la moins favorable : Sucre (44).",
         "matieres": [
@@ -115,10 +115,10 @@
         "unite": "$/once",
         "indirect": false,
         "mention": null,
-        "cours": 3617.8,
+        "cours": 3603.1001,
         "date_cours": "2026-11-25",
-        "variation_1m": -10.42,
-        "variation_12m": -12.61,
+        "variation_1m": -10.78,
+        "variation_12m": -12.97,
         "serie": [
           [
             "2025-11-21",
@@ -334,10 +334,10 @@
           ],
           [
             "2026-11-25",
-            3617.8
+            3603.1001
           ]
         ],
-        "note": 39.8,
+        "note": 40.4,
         "verdict": "Sous-pondérer",
         "verdict_non_retenu": null,
         "horizon": "3 à 12 mois",
@@ -353,50 +353,50 @@
         "sous_notes": {
           "tendance": {
             "note": 23,
-            "texte": "Cours −22,3 % sur 3 mois, −12,6 % sur 12 mois, en dessous de sa moyenne 200 jours (4 423,38)",
+            "texte": "Cours −22,6 % sur 3 mois, −13,0 % sur 12 mois, en dessous de sa moyenne 200 jours (4 423,31)",
             "source": "Yahoo Finance (yfinance), contrat le plus proche",
             "date": "2026-11-25",
-            "variation_1m": -10.42,
-            "variation_3m": -22.25,
-            "variation_12m": -12.61,
-            "mm200": 4423.385
+            "variation_1m": -10.78,
+            "variation_3m": -22.57,
+            "variation_12m": -12.97,
+            "mm200": 4423.3115
           },
           "courbe": {
             "note": 38,
-            "texte": "Courbe en contango (prix futurs plus élevés : marché détendu) : rendement de roulement de −4,6 % par an entre 2026-12 et 2027-12",
+            "texte": "Courbe en contango (prix futurs plus élevés : marché détendu) : rendement de roulement de −5,0 % par an entre 2026-12 et 2027-12",
             "source": "Yahoo Finance (yfinance), contrats des échéances suivantes",
             "date": "2026-11-25",
             "structure": "contango",
-            "roulement_pct_an": -4.61,
+            "roulement_pct_an": -4.99,
             "points": [
               {
                 "echeance": "2026-12",
                 "symbole": "GCZ26.CMX",
-                "prix": 3588.3999,
+                "prix": 3574.1001,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-02",
                 "symbole": "GCG27.CMX",
-                "prix": 3617.8,
+                "prix": 3602.8,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-04",
                 "symbole": "GCJ27.CMX",
-                "prix": 3646.0,
+                "prix": 3633.8,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-06",
                 "symbole": "GCM27.CMX",
-                "prix": 3666.8999,
+                "prix": 3669.3999,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-08",
                 "symbole": "GCQ27.CMX",
-                "prix": 3672.0,
+                "prix": 3728.0,
                 "date": "2026-11-25"
               },
               {
@@ -651,25 +651,25 @@
             "variation_dollar_3m": 4.69
           },
           "geopolitique": {
-            "note": 71,
-            "texte": "4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes entre la Russie et l'Ukraine ») ; palier de risque mondial « Vigilance » (rôle de valeur refuge)",
+            "note": 76,
+            "texte": "4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Tensions militaires et frappes entre les États-Unis et l'Iran ») ; palier de risque mondial « Tension » (rôle de valeur refuge)",
             "source": "agent géopolitique (data/geopolitique.json), agent risque",
-            "date": "2026-11-25",
+            "date": "2026-11-26",
             "evenements": [
-              {
-                "titre": "Frappes aériennes entre la Russie et l'Ukraine",
-                "gravite": 4,
-                "pays": [
-                  "RU"
-                ],
-                "categorie": "Conflit armé",
-                "date": "2026-11-25"
-              },
               {
                 "titre": "Tensions militaires et frappes entre les États-Unis et l'Iran",
                 "gravite": 4,
                 "pays": [
                   "US"
+                ],
+                "categorie": "Conflit armé",
+                "date": "2026-11-26"
+              },
+              {
+                "titre": "Frappes aériennes entre la Russie et l'Ukraine",
+                "gravite": 4,
+                "pays": [
+                  "RU"
                 ],
                 "categorie": "Conflit armé",
                 "date": "2026-11-25"
@@ -681,7 +681,7 @@
                   "RU"
                 ],
                 "categorie": "Sanctions",
-                "date": "2026-11-25"
+                "date": "2026-11-26"
               },
               {
                 "titre": "Sanctions américaines contre Cuba et relations bilatérales",
@@ -773,19 +773,19 @@
           }
         },
         "arguments_pour": [
-          "Contexte géopolitique (71/100) : 4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes entre la Russie et l'Ukraine ») ; palier de risque mondial « Vigilance » (rôle de valeur refuge).",
+          "Contexte géopolitique (76/100) : 4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Tensions militaires et frappes entre les États-Unis et l'Iran ») ; palier de risque mondial « Tension » (rôle de valeur refuge).",
           "Positionnement des investisseurs (56/100) : Position nette des gérants (managed money) de +102 942 contrats (+25,2 % de l’intérêt ouvert), percentile 21 sur 3 ans : position dans sa plage habituelle.",
           "Niveau historique (44/100) : Cours corrigé de l’inflation américaine au percentile 60 de sa plage sur 10 ans (plus bas 1 131,90, plus haut 5 318,40 en valeur nominale)."
         ],
         "arguments_contre": [
           "Moteurs macro (22/100) : Taux réel américain à 10 ans à 2,79 % (+0,47 pt sur 3 mois) ; dollar +4,7 % sur 3 mois.",
-          "Tendance et momentum (23/100) : Cours −22,3 % sur 3 mois, −12,6 % sur 12 mois, en dessous de sa moyenne 200 jours (4 423,38).",
-          "Structure de la courbe (38/100) : Courbe en contango (prix futurs plus élevés : marché détendu) : rendement de roulement de −4,6 % par an entre 2026-12 et 2027-12."
+          "Tendance et momentum (23/100) : Cours −22,6 % sur 3 mois, −13,0 % sur 12 mois, en dessous de sa moyenne 200 jours (4 423,31).",
+          "Structure de la courbe (38/100) : Courbe en contango (prix futurs plus élevés : marché détendu) : rendement de roulement de −5,0 % par an entre 2026-12 et 2027-12."
         ],
-        "ce_qui_pourrait_me_donner_tort": "Le principal point fort : contexte géopolitique (71/100) : 4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes entre la Russie et l'Ukraine ») ; palier de risque mondial « Vigilance » (rôle de valeur refuge). Un choc d'offre ou une reprise de la demande contredirait cette lecture prudente.",
+        "ce_qui_pourrait_me_donner_tort": "Le principal point fort : contexte géopolitique (76/100) : 4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Tensions militaires et frappes entre les États-Unis et l'Iran ») ; palier de risque mondial « Tension » (rôle de valeur refuge). Un choc d'offre ou une reprise de la demande contredirait cette lecture prudente.",
         "invalidations": [
-          "une clôture au-dessus de la moyenne 200 jours (4 423,39 $/once)",
-          "un passage de la courbe en backwardation au-delà de 2 % par an (aujourd'hui −4,6 %)"
+          "une clôture au-dessus de la moyenne 200 jours (4 423,31 $/once)",
+          "un passage de la courbe en backwardation au-delà de 2 % par an (aujourd'hui −5,0 %)"
         ],
         "supports": [
           {
@@ -811,7 +811,7 @@
             "ticker": "AEM.TO",
             "nom": "Agnico Eagle Mines Limited",
             "pays": "CA",
-            "note": 73,
+            "note": 74,
             "recommandation": "Attendre",
             "fiche": "data/entreprises/fiches/AEM.TO.json",
             "deja_detenue": false
@@ -821,7 +821,7 @@
             "nom": "Barrick Mining Corporation",
             "pays": "CA",
             "note": 75,
-            "recommandation": "Attendre",
+            "recommandation": "Acheter sur repli",
             "fiche": "data/entreprises/fiches/ABX.TO.json",
             "deja_detenue": false
           },
@@ -875,7 +875,7 @@
             "nom": "Endeavour Mining plc",
             "pays": "GB",
             "note": 78,
-            "recommandation": "Attendre",
+            "recommandation": "Acheter sur repli",
             "fiche": "data/entreprises/fiches/EDV.L.json",
             "deja_detenue": false
           },
@@ -1004,7 +1004,7 @@
           {
             "sous_note": "Contexte géopolitique",
             "source": "agent géopolitique (data/geopolitique.json), agent risque",
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           },
           {
             "sous_note": "Flux des ETF",
@@ -1018,7 +1018,7 @@
           }
         ],
         "precedent": {
-          "note": 40.2,
+          "note": 39.8,
           "verdict": "Sous-pondérer"
         }
       },
@@ -1030,10 +1030,10 @@
         "unite": "$/once",
         "indirect": false,
         "mention": null,
-        "cours": 41.67,
+        "cours": 41.925,
         "date_cours": "2026-11-25",
-        "variation_1m": -22.99,
-        "variation_12m": -18.19,
+        "variation_1m": -22.52,
+        "variation_12m": -17.69,
         "serie": [
           [
             "2025-11-21",
@@ -1249,16 +1249,17 @@
           ],
           [
             "2026-11-25",
-            41.67
+            41.925
           ]
         ],
-        "note": 44.3,
+        "note": 44.7,
         "verdict": "Neutre",
         "verdict_non_retenu": null,
         "horizon": "3 à 12 mois",
         "confiance": "moyen",
         "signaux_favorables": [
-          "Positionnement des investisseurs"
+          "Positionnement des investisseurs",
+          "Contexte géopolitique"
         ],
         "signaux_defavorables": [
           "Tendance et momentum",
@@ -1268,63 +1269,63 @@
         "sous_notes": {
           "tendance": {
             "note": 9,
-            "texte": "Cours −38,7 % sur 3 mois, −18,2 % sur 12 mois, en dessous de sa moyenne 200 jours (66,94)",
+            "texte": "Cours −38,3 % sur 3 mois, −17,7 % sur 12 mois, en dessous de sa moyenne 200 jours (66,94)",
             "source": "Yahoo Finance (yfinance), contrat le plus proche",
             "date": "2026-11-25",
-            "variation_1m": -22.99,
-            "variation_3m": -38.71,
-            "variation_12m": -18.19,
-            "mm200": 66.9426
+            "variation_1m": -22.52,
+            "variation_3m": -38.34,
+            "variation_12m": -17.69,
+            "mm200": 66.9439
           },
           "courbe": {
-            "note": 39,
-            "texte": "Courbe en contango (prix futurs plus élevés : marché détendu) : rendement de roulement de −4,2 % par an entre 2026-12 et 2027-12",
+            "note": 35,
+            "texte": "Courbe en contango (prix futurs plus élevés : marché détendu) : rendement de roulement de −5,8 % par an entre 2026-12 et 2027-12",
             "source": "Yahoo Finance (yfinance), contrats des échéances suivantes",
             "date": "2026-11-25",
             "structure": "contango",
-            "roulement_pct_an": -4.22,
+            "roulement_pct_an": -5.84,
             "points": [
               {
                 "echeance": "2026-12",
                 "symbole": "SIZ26.CMX",
-                "prix": 41.15,
+                "prix": 41.415,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-03",
                 "symbole": "SIH27.CMX",
-                "prix": 41.67,
+                "prix": 41.905,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-05",
                 "symbole": "SIK27.CMX",
-                "prix": 41.89,
+                "prix": 42.34,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-07",
                 "symbole": "SIN27.CMX",
-                "prix": 42.1,
+                "prix": 42.74,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-09",
                 "symbole": "SIU27.CMX",
-                "prix": 42.43,
+                "prix": 42.655,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-12",
                 "symbole": "SIZ27.CMX",
-                "prix": 42.965,
+                "prix": 43.985,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2028-03",
                 "symbole": "SIH28.CMX",
-                "prix": 43.364,
-                "date": "2026-11-24"
+                "prix": 42.578,
+                "date": "2026-11-25"
               },
               {
                 "echeance": "2028-05",
@@ -1566,10 +1567,10 @@
             "variation_dollar_3m": 4.69
           },
           "geopolitique": {
-            "note": 56,
-            "texte": "1 événement de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Sanctions américaines contre Cuba et relations bilatérales ») ; palier de risque mondial « Vigilance » (rôle de valeur refuge)",
+            "note": 61,
+            "texte": "1 événement de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Sanctions américaines contre Cuba et relations bilatérales ») ; palier de risque mondial « Tension » (rôle de valeur refuge)",
             "source": "agent géopolitique (data/geopolitique.json), agent risque",
-            "date": "2026-11-25",
+            "date": "2026-11-26",
             "evenements": [
               {
                 "titre": "Sanctions américaines contre Cuba et relations bilatérales",
@@ -1584,37 +1585,37 @@
           },
           "flux": {
             "note": null,
-            "texte": "Flux des ETF (SLV) en cours de constitution (10 jours d'historique sur 30)",
+            "texte": "Flux des ETF (SLV) en cours de constitution (15 jours d'historique sur 30)",
             "source": "Yahoo Finance (parts en circulation × valeur liquidative)",
             "date": null,
             "etf": {
               "SLV": {
                 "nom": "iShares Silver Trust",
-                "encours": 13871648029.48864,
-                "date": "2026-11-20",
+                "encours": 13084803857.35936,
+                "date": "2026-11-25",
                 "periodes": {
                   "1m": {
                     "jours": 30,
                     "complet": false,
                     "debut": "2026-11-10",
-                    "jours_disponibles": 10,
+                    "jours_disponibles": 15,
                     "flux_musd": 0.0,
                     "pct_encours": 0.0,
                     "statut": "en cours de constitution",
-                    "fin": "2026-11-20"
+                    "fin": "2026-11-25"
                   },
                   "3m": {
                     "jours": 91,
                     "complet": false,
                     "debut": "2026-11-10",
-                    "jours_disponibles": 10,
+                    "jours_disponibles": 15,
                     "flux_musd": 0.0,
                     "pct_encours": 0.0,
                     "statut": "en cours de constitution",
-                    "fin": "2026-11-20"
+                    "fin": "2026-11-25"
                   }
                 },
-                "releves": 5
+                "releves": 6
               }
             },
             "statut": "en cours de constitution"
@@ -1633,13 +1634,13 @@
         },
         "arguments_pour": [
           "Positionnement des investisseurs (75/100) : Position nette des gérants (managed money) de +1 280 contrats (+1,0 % de l’intérêt ouvert), percentile 3 sur 3 ans : position très vendeuse : lecture à contre-courant favorable.",
-          "Contexte géopolitique (56/100) : 1 événement de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Sanctions américaines contre Cuba et relations bilatérales ») ; palier de risque mondial « Vigilance » (rôle de valeur refuge).",
+          "Contexte géopolitique (61/100) : 1 événement de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Sanctions américaines contre Cuba et relations bilatérales ») ; palier de risque mondial « Tension » (rôle de valeur refuge).",
           "Niveau historique (44/100) : Cours corrigé de l’inflation américaine au percentile 61 de sa plage sur 10 ans (plus bas 12,35, plus haut 115,08 en valeur nominale)."
         ],
         "arguments_contre": [
-          "Tendance et momentum (9/100) : Cours −38,7 % sur 3 mois, −18,2 % sur 12 mois, en dessous de sa moyenne 200 jours (66,94).",
+          "Tendance et momentum (9/100) : Cours −38,3 % sur 3 mois, −17,7 % sur 12 mois, en dessous de sa moyenne 200 jours (66,94).",
           "Moteurs macro (32/100) : Taux réel américain à 10 ans à 2,79 % (+0,47 pt sur 3 mois) ; dollar +4,7 % sur 3 mois ; indicateur avancé de l'OCDE (G20) à 100,1.",
-          "Structure de la courbe (39/100) : Courbe en contango (prix futurs plus élevés : marché détendu) : rendement de roulement de −4,2 % par an entre 2026-12 et 2027-12."
+          "Structure de la courbe (35/100) : Courbe en contango (prix futurs plus élevés : marché détendu) : rendement de roulement de −5,8 % par an entre 2026-12 et 2027-12."
         ],
         "ce_qui_pourrait_me_donner_tort": "Les signaux se compensent ; une rupture nette dans un sens (cours, stocks ou positionnement) suffirait à trancher. Risque propre : un ralentissement industriel (la moitié de la demande est industrielle) ou une remontée des taux réels.",
         "invalidations": [
@@ -1661,7 +1662,7 @@
             "ticker": "WPM.TO",
             "nom": "Wheaton Precious Metals Corp.",
             "pays": "CA",
-            "note": 65,
+            "note": 66,
             "recommandation": "Attendre",
             "fiche": "data/entreprises/fiches/WPM.TO.json",
             "deja_detenue": false
@@ -1670,7 +1671,7 @@
             "ticker": "PE&OLES.MX",
             "nom": "Industrias Peñoles, S.A.B. de C.V.",
             "pays": "MX",
-            "note": 75,
+            "note": 76,
             "recommandation": "Attendre",
             "fiche": "data/entreprises/fiches/PE_OLES.MX.json",
             "deja_detenue": false
@@ -1688,7 +1689,7 @@
             "ticker": "CDE",
             "nom": "Coeur Mining, Inc.",
             "pays": "US",
-            "note": 67,
+            "note": 66,
             "recommandation": "Éviter",
             "fiche": "data/entreprises/fiches/CDE.json",
             "deja_detenue": false
@@ -1706,7 +1707,7 @@
             "ticker": "KGH.WA",
             "nom": "KGHM Polska Miedz S.A.",
             "pays": "PL",
-            "note": 62,
+            "note": 61,
             "recommandation": "Attendre",
             "fiche": "data/entreprises/fiches/KGH.WA.json",
             "deja_detenue": false
@@ -1800,7 +1801,7 @@
           {
             "sous_note": "Contexte géopolitique",
             "source": "agent géopolitique (data/geopolitique.json), agent risque",
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           },
           {
             "sous_note": "Flux des ETF",
@@ -1826,10 +1827,10 @@
         "unite": "$/once",
         "indirect": false,
         "mention": null,
-        "cours": 1266.9,
+        "cours": 1283.3,
         "date_cours": "2026-11-25",
-        "variation_1m": -17.56,
-        "variation_12m": -18.63,
+        "variation_1m": -16.49,
+        "variation_12m": -17.57,
         "serie": [
           [
             "2025-11-21",
@@ -2045,10 +2046,10 @@
           ],
           [
             "2026-11-25",
-            1266.9
+            1283.3
           ]
         ],
-        "note": 46.8,
+        "note": 45.3,
         "verdict": "Neutre",
         "verdict_non_retenu": null,
         "horizon": "3 à 12 mois",
@@ -2062,39 +2063,39 @@
         ],
         "sous_notes": {
           "tendance": {
-            "note": 15,
-            "texte": "Cours −31,0 % sur 3 mois, −18,6 % sur 12 mois, en dessous de sa moyenne 200 jours (1 806,54)",
+            "note": 16,
+            "texte": "Cours −30,1 % sur 3 mois, −17,6 % sur 12 mois, en dessous de sa moyenne 200 jours (1 806,62)",
             "source": "Yahoo Finance (yfinance), contrat le plus proche",
             "date": "2026-11-25",
-            "variation_1m": -17.56,
-            "variation_3m": -30.99,
-            "variation_12m": -18.63,
-            "mm200": 1806.5415
+            "variation_1m": -16.49,
+            "variation_3m": -30.09,
+            "variation_12m": -17.57,
+            "mm200": 1806.6235
           },
           "courbe": {
-            "note": 44,
-            "texte": "Courbe en contango (prix futurs plus élevés : marché détendu) : rendement de roulement de −2,6 % par an entre 2027-01 et 2028-01",
+            "note": 50,
+            "texte": "Courbe en plate (prix futurs proches du comptant) : rendement de roulement de −0,1 % par an entre 2027-01 et 2028-01",
             "source": "Yahoo Finance (yfinance), contrats des échéances suivantes",
             "date": "2026-11-25",
-            "structure": "contango",
-            "roulement_pct_an": -2.6,
+            "structure": "plate",
+            "roulement_pct_an": -0.07,
             "points": [
               {
                 "echeance": "2027-01",
                 "symbole": "PLF27.NYM",
-                "prix": 1266.9,
+                "prix": 1283.3,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-04",
                 "symbole": "PLJ27.NYM",
-                "prix": 1280.2,
+                "prix": 1300.9,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-07",
                 "symbole": "PLN27.NYM",
-                "prix": 1256.4,
+                "prix": 1310.0,
                 "date": "2026-11-25"
               },
               {
@@ -2106,8 +2107,8 @@
               {
                 "echeance": "2028-01",
                 "symbole": "PLF28.NYM",
-                "prix": 1300.7,
-                "date": "2026-11-24"
+                "prix": 1284.2,
+                "date": "2026-11-25"
               },
               {
                 "echeance": "2028-04",
@@ -2118,14 +2119,14 @@
               {
                 "echeance": "2028-07",
                 "symbole": "PLN28.NYM",
-                "prix": 1317.4,
-                "date": "2026-11-24"
+                "prix": 1300.5,
+                "date": "2026-11-25"
               },
               {
                 "echeance": "2028-10",
                 "symbole": "PLV28.NYM",
-                "prix": 1326.5,
-                "date": "2026-11-24"
+                "prix": 1309.1,
+                "date": "2026-11-25"
               }
             ]
           },
@@ -2353,33 +2354,33 @@
             "marche": "PLATINUM - NEW YORK MERCANTILE EXCHANGE"
           },
           "macro": {
-            "note": 39,
-            "texte": "Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois",
-            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS)",
+            "note": 35,
+            "texte": "Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois ; palier de risque mondial « Tension »",
+            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS), agent risque",
             "date": "2026-08",
             "variation_taux_reel_3m": 0.47,
             "variation_dollar_3m": 4.69
           },
           "geopolitique": {
             "note": 68,
-            "texte": "4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes entre la Russie et l'Ukraine »)",
+            "texte": "4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Tensions militaires et frappes entre les États-Unis et l'Iran »)",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25",
+            "date": "2026-11-26",
             "evenements": [
-              {
-                "titre": "Frappes aériennes entre la Russie et l'Ukraine",
-                "gravite": 4,
-                "pays": [
-                  "RU"
-                ],
-                "categorie": "Conflit armé",
-                "date": "2026-11-25"
-              },
               {
                 "titre": "Tensions militaires et frappes entre les États-Unis et l'Iran",
                 "gravite": 4,
                 "pays": [
                   "US"
+                ],
+                "categorie": "Conflit armé",
+                "date": "2026-11-26"
+              },
+              {
+                "titre": "Frappes aériennes entre la Russie et l'Ukraine",
+                "gravite": 4,
+                "pays": [
+                  "RU"
                 ],
                 "categorie": "Conflit armé",
                 "date": "2026-11-25"
@@ -2391,7 +2392,7 @@
                   "RU"
                 ],
                 "categorie": "Sanctions",
-                "date": "2026-11-25"
+                "date": "2026-11-26"
               },
               {
                 "titre": "Sanctions américaines contre Cuba et relations bilatérales",
@@ -2406,11 +2407,11 @@
           },
           "flux": null,
           "niveau": {
-            "note": 53,
-            "texte": "Cours corrigé de l’inflation américaine au percentile 46 de sa plage sur 10 ans (plus bas 621,60, plus haut 2 852,40 en valeur nominale)",
+            "note": 51,
+            "texte": "Cours corrigé de l’inflation américaine au percentile 48 de sa plage sur 10 ans (plus bas 621,60, plus haut 2 852,40 en valeur nominale)",
             "source": "Yahoo Finance (yfinance), FRED (CPIAUCSL)",
             "date": "2026-11-25",
-            "percentile": 45.5,
+            "percentile": 47.8,
             "corrige_inflation": true,
             "annees": 10,
             "plus_bas": 621.6,
@@ -2418,14 +2419,14 @@
           }
         },
         "arguments_pour": [
-          "Contexte géopolitique (68/100) : 4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes entre la Russie et l'Ukraine »).",
+          "Contexte géopolitique (68/100) : 4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Tensions militaires et frappes entre les États-Unis et l'Iran »).",
           "Positionnement des investisseurs (57/100) : Position nette des gérants (managed money) de −1 085 contrats (−1,1 % de l’intérêt ouvert), percentile 16 sur 3 ans : position dans sa plage habituelle.",
-          "Niveau historique (53/100) : Cours corrigé de l’inflation américaine au percentile 46 de sa plage sur 10 ans (plus bas 621,60, plus haut 2 852,40 en valeur nominale)."
+          "Niveau historique (51/100) : Cours corrigé de l’inflation américaine au percentile 48 de sa plage sur 10 ans (plus bas 621,60, plus haut 2 852,40 en valeur nominale)."
         ],
         "arguments_contre": [
-          "Tendance et momentum (15/100) : Cours −31,0 % sur 3 mois, −18,6 % sur 12 mois, en dessous de sa moyenne 200 jours (1 806,54).",
-          "Moteurs macro (39/100) : Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois.",
-          "Structure de la courbe (44/100) : Courbe en contango (prix futurs plus élevés : marché détendu) : rendement de roulement de −2,6 % par an entre 2027-01 et 2028-01."
+          "Tendance et momentum (16/100) : Cours −30,1 % sur 3 mois, −17,6 % sur 12 mois, en dessous de sa moyenne 200 jours (1 806,62).",
+          "Moteurs macro (35/100) : Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois ; palier de risque mondial « Tension ».",
+          "Structure de la courbe (50/100) : Courbe en plate (prix futurs proches du comptant) : rendement de roulement de −0,1 % par an entre 2027-01 et 2028-01."
         ],
         "ce_qui_pourrait_me_donner_tort": "Les signaux se compensent ; une rupture nette dans un sens (cours, stocks ou positionnement) suffirait à trancher. Risque propre : une demande automobile plus faible (pots catalytiques) ou un retour d'offre sud-africaine.",
         "invalidations": [
@@ -2456,8 +2457,8 @@
             "ticker": "IMP.JO",
             "nom": "Impala Platinum Holdings Limited",
             "pays": "ZA",
-            "note": 72,
-            "recommandation": "Acheter sur repli",
+            "note": 71,
+            "recommandation": "Attendre",
             "fiche": "data/entreprises/fiches/IMP.JO.json",
             "deja_detenue": false
           }
@@ -2514,13 +2515,13 @@
           },
           {
             "sous_note": "Moteurs macro",
-            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS)",
+            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS), agent risque",
             "date": "2026-08"
           },
           {
             "sous_note": "Contexte géopolitique",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           },
           {
             "sous_note": "Niveau historique",
@@ -2529,7 +2530,7 @@
           }
         ],
         "precedent": {
-          "note": 46.6,
+          "note": 46.8,
           "verdict": "Neutre"
         }
       },
@@ -2541,10 +2542,10 @@
         "unite": "$/once",
         "indirect": false,
         "mention": null,
-        "cours": 861.0,
+        "cours": 878.5,
         "date_cours": "2026-11-25",
-        "variation_1m": -17.84,
-        "variation_12m": -38.6,
+        "variation_1m": -16.17,
+        "variation_12m": -37.35,
         "serie": [
           [
             "2025-11-21",
@@ -2760,10 +2761,10 @@
           ],
           [
             "2026-11-25",
-            861.0
+            878.5
           ]
         ],
-        "note": 54.6,
+        "note": 53.7,
         "verdict": "Neutre",
         "verdict_non_retenu": null,
         "horizon": "3 à 12 mois",
@@ -2775,44 +2776,43 @@
         ],
         "signaux_defavorables": [
           "Tendance et momentum",
-          "Structure de la courbe",
           "Moteurs macro"
         ],
         "sous_notes": {
           "tendance": {
-            "note": 5,
-            "texte": "Cours −35,0 % sur 3 mois, −38,6 % sur 12 mois, en dessous de sa moyenne 200 jours (1 334,99)",
+            "note": 7,
+            "texte": "Cours −33,7 % sur 3 mois, −37,3 % sur 12 mois, en dessous de sa moyenne 200 jours (1 335,08)",
             "source": "Yahoo Finance (yfinance), contrat le plus proche",
             "date": "2026-11-25",
-            "variation_1m": -17.84,
-            "variation_3m": -35.02,
-            "variation_12m": -38.6,
-            "mm200": 1334.9935
+            "variation_1m": -16.17,
+            "variation_3m": -33.7,
+            "variation_12m": -37.35,
+            "mm200": 1335.081
           },
           "courbe": {
-            "note": 39,
-            "texte": "Courbe en contango (prix futurs plus élevés : marché détendu) : rendement de roulement de −4,2 % par an entre 2026-12 et 2027-12",
+            "note": 50,
+            "texte": "Courbe en plate (prix futurs proches du comptant) : rendement de roulement de +0,1 % par an entre 2026-12 et 2027-12",
             "source": "Yahoo Finance (yfinance), contrats des échéances suivantes",
             "date": "2026-11-25",
-            "structure": "contango",
-            "roulement_pct_an": -4.2,
+            "structure": "plate",
+            "roulement_pct_an": 0.07,
             "points": [
               {
                 "echeance": "2026-12",
                 "symbole": "PAZ26.NYM",
-                "prix": 848.0,
+                "prix": 875.0,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-03",
                 "symbole": "PAH27.NYM",
-                "prix": 861.0,
+                "prix": 878.5,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-06",
                 "symbole": "PAM27.NYM",
-                "prix": 869.0,
+                "prix": 885.5,
                 "date": "2026-11-25"
               },
               {
@@ -2824,8 +2824,8 @@
               {
                 "echeance": "2027-12",
                 "symbole": "PAZ27.NYM",
-                "prix": 885.2,
-                "date": "2026-11-24"
+                "prix": 874.4,
+                "date": "2026-11-25"
               },
               {
                 "echeance": "2028-03",
@@ -2836,8 +2836,8 @@
               {
                 "echeance": "2028-06",
                 "symbole": "PAM28.NYM",
-                "prix": 915.1,
-                "date": "2026-11-24"
+                "prix": 904.4,
+                "date": "2026-11-25"
               }
             ]
           },
@@ -3065,33 +3065,33 @@
             "marche": "PALLADIUM - NEW YORK MERCANTILE EXCHANGE"
           },
           "macro": {
-            "note": 39,
-            "texte": "Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois",
-            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS)",
+            "note": 35,
+            "texte": "Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois ; palier de risque mondial « Tension »",
+            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS), agent risque",
             "date": "2026-08",
             "variation_taux_reel_3m": 0.47,
             "variation_dollar_3m": 4.69
           },
           "geopolitique": {
             "note": 68,
-            "texte": "4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes entre la Russie et l'Ukraine »)",
+            "texte": "4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Tensions militaires et frappes entre les États-Unis et l'Iran »)",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25",
+            "date": "2026-11-26",
             "evenements": [
-              {
-                "titre": "Frappes aériennes entre la Russie et l'Ukraine",
-                "gravite": 4,
-                "pays": [
-                  "RU"
-                ],
-                "categorie": "Conflit armé",
-                "date": "2026-11-25"
-              },
               {
                 "titre": "Tensions militaires et frappes entre les États-Unis et l'Iran",
                 "gravite": 4,
                 "pays": [
                   "US"
+                ],
+                "categorie": "Conflit armé",
+                "date": "2026-11-26"
+              },
+              {
+                "titre": "Frappes aériennes entre la Russie et l'Ukraine",
+                "gravite": 4,
+                "pays": [
+                  "RU"
                 ],
                 "categorie": "Conflit armé",
                 "date": "2026-11-25"
@@ -3103,7 +3103,7 @@
                   "RU"
                 ],
                 "categorie": "Sanctions",
-                "date": "2026-11-25"
+                "date": "2026-11-26"
               },
               {
                 "titre": "Sanctions américaines contre Cuba et relations bilatérales",
@@ -3132,12 +3132,12 @@
         "arguments_pour": [
           "Niveau historique (80/100) : Cours corrigé de l’inflation américaine au percentile 0 de sa plage sur 10 ans (plus bas 655,35, plus haut 2 979,90 en valeur nominale).",
           "Positionnement des investisseurs (75/100) : Position nette des gérants (managed money) de −14 761 contrats (−50,2 % de l’intérêt ouvert), percentile 6 sur 3 ans : position très vendeuse : lecture à contre-courant favorable.",
-          "Contexte géopolitique (68/100) : 4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes entre la Russie et l'Ukraine »)."
+          "Contexte géopolitique (68/100) : 4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Tensions militaires et frappes entre les États-Unis et l'Iran »)."
         ],
         "arguments_contre": [
-          "Tendance et momentum (5/100) : Cours −35,0 % sur 3 mois, −38,6 % sur 12 mois, en dessous de sa moyenne 200 jours (1 334,99).",
-          "Moteurs macro (39/100) : Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois.",
-          "Structure de la courbe (39/100) : Courbe en contango (prix futurs plus élevés : marché détendu) : rendement de roulement de −4,2 % par an entre 2026-12 et 2027-12."
+          "Tendance et momentum (7/100) : Cours −33,7 % sur 3 mois, −37,3 % sur 12 mois, en dessous de sa moyenne 200 jours (1 335,08).",
+          "Moteurs macro (35/100) : Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois ; palier de risque mondial « Tension ».",
+          "Structure de la courbe (50/100) : Courbe en plate (prix futurs proches du comptant) : rendement de roulement de +0,1 % par an entre 2026-12 et 2027-12."
         ],
         "ce_qui_pourrait_me_donner_tort": "Les signaux se compensent ; une rupture nette dans un sens (cours, stocks ou positionnement) suffirait à trancher. Risque propre : la baisse de la demande liée aux véhicules électriques ou une levée de sanctions sur l'offre russe.",
         "invalidations": [
@@ -3159,8 +3159,8 @@
             "ticker": "IMP.JO",
             "nom": "Impala Platinum Holdings Limited",
             "pays": "ZA",
-            "note": 72,
-            "recommandation": "Acheter sur repli",
+            "note": 71,
+            "recommandation": "Attendre",
             "fiche": "data/entreprises/fiches/IMP.JO.json",
             "deja_detenue": false
           },
@@ -3226,13 +3226,13 @@
           },
           {
             "sous_note": "Moteurs macro",
-            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS)",
+            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS), agent risque",
             "date": "2026-08"
           },
           {
             "sous_note": "Contexte géopolitique",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           },
           {
             "sous_note": "Niveau historique",
@@ -3241,7 +3241,7 @@
           }
         ],
         "precedent": {
-          "note": 54.5,
+          "note": 54.6,
           "verdict": "Neutre"
         }
       },
@@ -3253,10 +3253,10 @@
         "unite": "$/livre",
         "indirect": false,
         "mention": null,
-        "cours": 5.4815,
+        "cours": 5.49,
         "date_cours": "2026-11-25",
-        "variation_1m": -15.77,
-        "variation_12m": 9.64,
+        "variation_1m": -15.64,
+        "variation_12m": 9.81,
         "serie": [
           [
             "2025-11-21",
@@ -3472,10 +3472,10 @@
           ],
           [
             "2026-11-25",
-            5.4815
+            5.49
           ]
         ],
-        "note": 42.0,
+        "note": 41.2,
         "verdict": "Neutre",
         "verdict_non_retenu": null,
         "horizon": "3 à 12 mois",
@@ -3489,51 +3489,51 @@
         ],
         "sous_notes": {
           "tendance": {
-            "note": 34,
-            "texte": "Cours −16,9 % sur 3 mois, +9,6 % sur 12 mois, en dessous de sa moyenne 200 jours (6,22)",
+            "note": 35,
+            "texte": "Cours −16,7 % sur 3 mois, +9,8 % sur 12 mois, en dessous de sa moyenne 200 jours (6,22)",
             "source": "Yahoo Finance (yfinance), contrat le plus proche",
             "date": "2026-11-25",
-            "variation_1m": -15.77,
-            "variation_3m": -16.88,
-            "variation_12m": 9.64,
-            "mm200": 6.2176
+            "variation_1m": -15.64,
+            "variation_3m": -16.75,
+            "variation_12m": 9.81,
+            "mm200": 6.2177
           },
           "courbe": {
             "note": 36,
-            "texte": "Courbe en contango (prix futurs plus élevés : marché détendu) : rendement de roulement de −5,7 % par an entre 2026-12 et 2027-12",
+            "texte": "Courbe en contango (prix futurs plus élevés : marché détendu) : rendement de roulement de −5,5 % par an entre 2026-12 et 2027-12",
             "source": "Yahoo Finance (yfinance), contrats des échéances suivantes",
             "date": "2026-11-25",
             "structure": "contango",
-            "roulement_pct_an": -5.75,
+            "roulement_pct_an": -5.55,
             "points": [
               {
                 "echeance": "2026-12",
                 "symbole": "HGZ26.CMX",
-                "prix": 5.394,
+                "prix": 5.4055,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-03",
                 "symbole": "HGH27.CMX",
-                "prix": 5.4815,
+                "prix": 5.49,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-05",
                 "symbole": "HGK27.CMX",
-                "prix": 5.531,
+                "prix": 5.544,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-07",
                 "symbole": "HGN27.CMX",
-                "prix": 5.577,
+                "prix": 5.609,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-09",
                 "symbole": "HGU27.CMX",
-                "prix": 5.65,
+                "prix": 5.656,
                 "date": "2026-11-25"
               },
               {
@@ -3545,14 +3545,14 @@
               {
                 "echeance": "2028-03",
                 "symbole": "HGH28.CMX",
-                "prix": 5.7695,
-                "date": "2026-11-24"
+                "prix": 5.7475,
+                "date": "2026-11-25"
               },
               {
                 "echeance": "2028-05",
                 "symbole": "HGK28.CMX",
-                "prix": 5.8295,
-                "date": "2026-11-24"
+                "prix": 5.913,
+                "date": "2026-11-25"
               }
             ]
           },
@@ -3780,9 +3780,9 @@
             "marche": "COPPER- #1 - COMMODITY EXCHANGE INC."
           },
           "macro": {
-            "note": 39,
-            "texte": "Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois",
-            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS)",
+            "note": 35,
+            "texte": "Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois ; palier de risque mondial « Tension »",
+            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS), agent risque",
             "date": "2026-08",
             "variation_taux_reel_3m": 0.47,
             "variation_dollar_3m": 4.69
@@ -3791,7 +3791,7 @@
             "note": 53,
             "texte": "1 événement de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Sanctions américaines contre Cuba et relations bilatérales »)",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25",
+            "date": "2026-11-26",
             "evenements": [
               {
                 "titre": "Sanctions américaines contre Cuba et relations bilatérales",
@@ -3823,9 +3823,9 @@
           "Niveau historique (40/100) : Cours corrigé de l’inflation américaine au percentile 66 de sa plage sur 10 ans (plus bas 2,19, plus haut 6,80 en valeur nominale)."
         ],
         "arguments_contre": [
-          "Tendance et momentum (34/100) : Cours −16,9 % sur 3 mois, +9,6 % sur 12 mois, en dessous de sa moyenne 200 jours (6,22).",
-          "Structure de la courbe (36/100) : Courbe en contango (prix futurs plus élevés : marché détendu) : rendement de roulement de −5,7 % par an entre 2026-12 et 2027-12.",
-          "Moteurs macro (39/100) : Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois."
+          "Moteurs macro (35/100) : Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois ; palier de risque mondial « Tension ».",
+          "Tendance et momentum (35/100) : Cours −16,7 % sur 3 mois, +9,8 % sur 12 mois, en dessous de sa moyenne 200 jours (6,22).",
+          "Structure de la courbe (36/100) : Courbe en contango (prix futurs plus élevés : marché détendu) : rendement de roulement de −5,5 % par an entre 2026-12 et 2027-12."
         ],
         "ce_qui_pourrait_me_donner_tort": "Les signaux se compensent ; une rupture nette dans un sens (cours, stocks ou positionnement) suffirait à trancher. Risque propre : un ralentissement chinois (environ la moitié de la demande mondiale).",
         "invalidations": [
@@ -3836,12 +3836,12 @@
           {
             "type": "ETF de contrats à terme",
             "detail": "ex. United States Copper Index Fund (CPER) : supporte le coût du contango lors des roulements",
-            "cout_roulement": "courbe en contango : coût de roulement estimé à 5,8 % par an"
+            "cout_roulement": "courbe en contango : coût de roulement estimé à 5,5 % par an"
           },
           {
             "type": "ETC de contrats à terme",
             "detail": "ex. WisdomTree Copper : même coût de roulement",
-            "cout_roulement": "courbe en contango : coût de roulement estimé à 5,8 % par an"
+            "cout_roulement": "courbe en contango : coût de roulement estimé à 5,5 % par an"
           },
           {
             "type": "Actions de producteurs",
@@ -3889,7 +3889,7 @@
             "ticker": "RIO.L",
             "nom": "Rio Tinto Group",
             "pays": "GB",
-            "note": 64,
+            "note": 63,
             "recommandation": "Attendre",
             "fiche": "data/entreprises/fiches/RIO.L.json",
             "deja_detenue": false
@@ -3917,7 +3917,7 @@
             "nom": "Zijin Mining Group Company Limited",
             "pays": "CN",
             "note": 71,
-            "recommandation": "Éviter",
+            "recommandation": "Attendre",
             "fiche": "data/entreprises/fiches/601899.SS.json",
             "deja_detenue": false
           },
@@ -3925,7 +3925,7 @@
             "ticker": "KGH.WA",
             "nom": "KGHM Polska Miedz S.A.",
             "pays": "PL",
-            "note": 62,
+            "note": 61,
             "recommandation": "Attendre",
             "fiche": "data/entreprises/fiches/KGH.WA.json",
             "deja_detenue": false
@@ -3934,7 +3934,7 @@
             "ticker": "BOL.ST",
             "nom": "Boliden AB (publ)",
             "pays": "SE",
-            "note": 62,
+            "note": 61,
             "recommandation": "Acheter sur repli",
             "fiche": "data/entreprises/fiches/BOL.ST.json",
             "deja_detenue": false
@@ -4040,13 +4040,13 @@
           },
           {
             "sous_note": "Moteurs macro",
-            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS)",
+            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS), agent risque",
             "date": "2026-08"
           },
           {
             "sous_note": "Contexte géopolitique",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           },
           {
             "sous_note": "Niveau historique",
@@ -4289,14 +4289,12 @@
             2787.0
           ]
         ],
-        "note": 49.1,
+        "note": 46.2,
         "verdict": "Neutre",
         "verdict_non_retenu": null,
         "horizon": "3 à 12 mois",
         "confiance": "moyen",
-        "signaux_favorables": [
-          "Structure de la courbe"
-        ],
+        "signaux_favorables": [],
         "signaux_defavorables": [
           "Tendance et momentum",
           "Moteurs macro"
@@ -4313,18 +4311,18 @@
             "mm200": 3408.1238
           },
           "courbe": {
-            "note": 69,
-            "texte": "Courbe en backwardation (prix futurs plus bas : marché tendu) : rendement de roulement de +7,6 % par an entre 2026-12 et 2027-06",
+            "note": 54,
+            "texte": "Courbe en plate (prix futurs proches du comptant) : rendement de roulement de +1,5 % par an entre 2026-12 et 2027-06",
             "source": "Yahoo Finance (yfinance), contrats des échéances suivantes",
             "date": "2026-11-25",
-            "structure": "backwardation",
-            "roulement_pct_an": 7.56,
+            "structure": "plate",
+            "roulement_pct_an": 1.5,
             "points": [
               {
                 "echeance": "2026-12",
                 "symbole": "ALIZ26.CMX",
-                "prix": 2820.25,
-                "date": "2026-11-24"
+                "prix": 2762.5,
+                "date": "2026-11-25"
               },
               {
                 "echeance": "2027-01",
@@ -4347,20 +4345,20 @@
               {
                 "echeance": "2027-04",
                 "symbole": "ALIJ27.CMX",
-                "prix": 2740.75,
-                "date": "2026-11-24"
+                "prix": 2757.0,
+                "date": "2026-11-25"
               },
               {
                 "echeance": "2027-05",
                 "symbole": "ALIK27.CMX",
-                "prix": 2727.5,
-                "date": "2026-11-24"
+                "prix": 2752.0,
+                "date": "2026-11-25"
               },
               {
                 "echeance": "2027-06",
                 "symbole": "ALIM27.CMX",
-                "prix": 2717.5,
-                "date": "2026-11-24"
+                "prix": 2742.0,
+                "date": "2026-11-25"
               }
             ]
           },
@@ -4588,9 +4586,9 @@
             "marche": "ALUMINUM MWP - COMMODITY EXCHANGE INC."
           },
           "macro": {
-            "note": 39,
-            "texte": "Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois",
-            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS)",
+            "note": 35,
+            "texte": "Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois ; palier de risque mondial « Tension »",
+            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS), agent risque",
             "date": "2026-08",
             "variation_taux_reel_3m": 0.47,
             "variation_dollar_3m": 4.69
@@ -4599,7 +4597,7 @@
             "note": 56,
             "texte": "2 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Guerre d'agression de la Russie contre l'Ukraine : l'UE restreint le commerce avec 15 entités liées au complexe militaro-industriel de la Russie »)",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25",
+            "date": "2026-11-26",
             "evenements": [
               {
                 "titre": "Guerre d'agression de la Russie contre l'Ukraine : l'UE restreint le commerce avec 15 entités liées au complexe militaro-industriel de la Russie",
@@ -4608,7 +4606,7 @@
                   "RU"
                 ],
                 "categorie": "Sanctions",
-                "date": "2026-11-25"
+                "date": "2026-11-26"
               },
               {
                 "titre": "Sanctions américaines contre Cuba et relations bilatérales",
@@ -4635,13 +4633,13 @@
           }
         },
         "arguments_pour": [
-          "Structure de la courbe (69/100) : Courbe en backwardation (prix futurs plus bas : marché tendu) : rendement de roulement de +7,6 % par an entre 2026-12 et 2027-06.",
           "Niveau historique (57/100) : Cours corrigé de l’inflation américaine au percentile 38 de sa plage sur 10 ans (plus bas 1 460,25, plus haut 4 195,00 en valeur nominale).",
-          "Contexte géopolitique (56/100) : 2 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Guerre d'agression de la Russie contre l'Ukraine : l'UE restreint le commerce avec 15 entités liées au complexe militaro-industriel de la Russie »)."
+          "Contexte géopolitique (56/100) : 2 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Guerre d'agression de la Russie contre l'Ukraine : l'UE restreint le commerce avec 15 entités liées au complexe militaro-industriel de la Russie »).",
+          "Structure de la courbe (54/100) : Courbe en plate (prix futurs proches du comptant) : rendement de roulement de +1,5 % par an entre 2026-12 et 2027-06."
         ],
         "arguments_contre": [
           "Tendance et momentum (32/100) : Cours −16,6 % sur 3 mois, +2,3 % sur 12 mois, en dessous de sa moyenne 200 jours (3 408,12).",
-          "Moteurs macro (39/100) : Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois.",
+          "Moteurs macro (35/100) : Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois ; palier de risque mondial « Tension ».",
           "Positionnement des investisseurs (50/100) : Position nette des gérants (managed money) de −1 087 contrats (−3,5 % de l’intérêt ouvert), percentile 51 sur 3 ans : position dans sa plage habituelle."
         ],
         "ce_qui_pourrait_me_donner_tort": "Les signaux se compensent ; une rupture nette dans un sens (cours, stocks ou positionnement) suffirait à trancher. Risque propre : une hausse des exportations chinoises ou une baisse du coût de l'énergie qui relance l'offre.",
@@ -4653,7 +4651,7 @@
           {
             "type": "ETC de contrats à terme",
             "detail": "ex. WisdomTree Aluminium : supporte le coût du contango lors des roulements",
-            "cout_roulement": "courbe en backwardation : gain de roulement estimé à 7,6 % par an"
+            "cout_roulement": "courbe en backwardation : gain de roulement estimé à 1,5 % par an"
           },
           {
             "type": "Actions de producteurs",
@@ -4701,7 +4699,7 @@
             "ticker": "RIO.L",
             "nom": "Rio Tinto Group",
             "pays": "GB",
-            "note": 64,
+            "note": 63,
             "recommandation": "Attendre",
             "fiche": "data/entreprises/fiches/RIO.L.json",
             "deja_detenue": false
@@ -4789,13 +4787,13 @@
           },
           {
             "sous_note": "Moteurs macro",
-            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS)",
+            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS), agent risque",
             "date": "2026-08"
           },
           {
             "sous_note": "Contexte géopolitique",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           },
           {
             "sous_note": "Niveau historique",
@@ -4804,7 +4802,7 @@
           }
         ],
         "precedent": {
-          "note": 49.9,
+          "note": 49.1,
           "verdict": "Neutre"
         }
       },
@@ -5038,7 +5036,7 @@
             27.71
           ]
         ],
-        "note": 36.9,
+        "note": 35.4,
         "verdict": "Neutre (biais négatif)",
         "verdict_non_retenu": "« Sous-pondérer » non retenu : confiance « faible » (« moyen » ou « élevé » requis)",
         "horizon": "3 à 12 mois",
@@ -5063,9 +5061,9 @@
           "stocks": null,
           "positionnement": null,
           "macro": {
-            "note": 39,
-            "texte": "Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois",
-            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS)",
+            "note": 35,
+            "texte": "Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois ; palier de risque mondial « Tension »",
+            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS), agent risque",
             "date": "2026-08",
             "variation_taux_reel_3m": 0.47,
             "variation_dollar_3m": 4.69
@@ -5074,7 +5072,7 @@
             "note": 50,
             "texte": "Aucun événement de gravité 3 ou plus touchant les principaux producteurs en 14 jours",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25",
+            "date": "2026-11-26",
             "evenements": []
           },
           "flux": null,
@@ -5096,7 +5094,7 @@
         ],
         "arguments_contre": [
           "Tendance et momentum (5/100) : Cours −42,3 % sur 3 mois, −36,9 % sur 12 mois, en dessous de sa moyenne 200 jours (44,93).",
-          "Moteurs macro (39/100) : Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois."
+          "Moteurs macro (35/100) : Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois ; palier de risque mondial « Tension »."
         ],
         "ce_qui_pourrait_me_donner_tort": "La note est défavorable, mais la recommandation n'est pas retenue (confiance ou signaux concordants insuffisants) : la lecture reste fragile. Risque propre : un report de mises en service de réacteurs ou une offre kazakhe plus forte que prévu.",
         "invalidations": [
@@ -5118,7 +5116,7 @@
             "ticker": "CCO.TO",
             "nom": "Cameco Corporation",
             "pays": "CA",
-            "note": 56,
+            "note": 55,
             "recommandation": "Éviter",
             "fiche": "data/entreprises/fiches/CCO.TO.json",
             "deja_detenue": false
@@ -5184,13 +5182,13 @@
           },
           {
             "sous_note": "Moteurs macro",
-            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS)",
+            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS), agent risque",
             "date": "2026-08"
           },
           {
             "sous_note": "Contexte géopolitique",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           },
           {
             "sous_note": "Niveau historique",
@@ -5211,10 +5209,10 @@
         "unite": "$/baril",
         "indirect": false,
         "mention": null,
-        "cours": 84.15,
+        "cours": 84.32,
         "date_cours": "2026-11-25",
-        "variation_1m": -17.31,
-        "variation_12m": 45.21,
+        "variation_1m": -17.14,
+        "variation_12m": 45.5,
         "serie": [
           [
             "2025-11-21",
@@ -5430,14 +5428,14 @@
           ],
           [
             "2026-11-25",
-            84.15
+            84.32
           ]
         ],
-        "note": 59.4,
-        "verdict": "Neutre",
+        "note": 62.3,
+        "verdict": "Surpondérer",
         "verdict_non_retenu": null,
         "horizon": "3 à 12 mois",
-        "confiance": "moyen",
+        "confiance": "élevé",
         "signaux_favorables": [
           "Tendance et momentum",
           "Structure de la courbe",
@@ -5448,529 +5446,74 @@
         ],
         "sous_notes": {
           "tendance": {
-            "note": 60,
-            "texte": "Cours +2,3 % sur 3 mois, +45,2 % sur 12 mois, en dessous de sa moyenne 200 jours (88,57)",
+            "note": 61,
+            "texte": "Cours +2,5 % sur 3 mois, +45,5 % sur 12 mois, en dessous de sa moyenne 200 jours (88,57)",
             "source": "Yahoo Finance (yfinance), contrat le plus proche",
             "date": "2026-11-25",
-            "variation_1m": -17.31,
-            "variation_3m": 2.33,
-            "variation_12m": 45.21,
-            "mm200": 88.5657
+            "variation_1m": -17.14,
+            "variation_3m": 2.54,
+            "variation_12m": 45.5,
+            "mm200": 88.5666
           },
           "courbe": {
             "note": 90,
-            "texte": "Courbe en backwardation (prix futurs plus bas : marché tendu) : rendement de roulement de +20,2 % par an entre 2027-01 et 2027-07",
+            "texte": "Courbe en backwardation (prix futurs plus bas : marché tendu) : rendement de roulement de +16,5 % par an entre 2026-12 et 2027-07",
             "source": "Yahoo Finance (yfinance), contrats des échéances suivantes",
             "date": "2026-11-25",
             "structure": "backwardation",
-            "roulement_pct_an": 20.2,
+            "roulement_pct_an": 16.49,
             "points": [
+              {
+                "echeance": "2026-12",
+                "symbole": "CLZ26.NYM",
+                "prix": 83.98,
+                "date": "2026-11-20"
+              },
               {
                 "echeance": "2027-01",
                 "symbole": "CLF27.NYM",
-                "prix": 84.15,
+                "prix": 84.32,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-02",
                 "symbole": "CLG27.NYM",
-                "prix": 82.77,
+                "prix": 82.9,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-03",
                 "symbole": "CLH27.NYM",
-                "prix": 81.37,
+                "prix": 81.46,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-04",
                 "symbole": "CLJ27.NYM",
-                "prix": 80.0,
+                "prix": 80.11,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-05",
                 "symbole": "CLK27.NYM",
-                "prix": 78.69,
+                "prix": 78.89,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-06",
                 "symbole": "CLM27.NYM",
-                "prix": 77.53,
+                "prix": 77.73,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-07",
                 "symbole": "CLN27.NYM",
-                "prix": 76.43,
+                "prix": 76.61,
                 "date": "2026-11-25"
               }
             ]
           },
-          "stocks": {
-            "note": 50,
-            "texte": "Stocks commerciaux de brut américains (hors réserve stratégique) à 418 906,0 Mb, −3,4 % par rapport à la moyenne sur 5 ans ; écart moyen des 2 séries suivies : +0,0 %",
-            "source": "EIA (département américain de l'Énergie), API v2",
-            "date": "2026-11-20",
-            "series": [
-              {
-                "cle": "brut",
-                "libelle": "stocks commerciaux de brut américains (hors réserve stratégique)",
-                "unite": "Mb",
-                "date": "2026-11-20",
-                "valeur": 418906.0,
-                "moyenne_5_ans": 433823.2,
-                "ecart_pct": -3.44,
-                "variation_hebdo": 1109.0,
-                "z_hebdo": 0.22,
-                "choc": false,
-                "historique": [
-                  [
-                    "2025-11-21",
-                    426929.0
-                  ],
-                  [
-                    "2025-11-28",
-                    427503.0
-                  ],
-                  [
-                    "2025-12-05",
-                    425691.0
-                  ],
-                  [
-                    "2025-12-12",
-                    424417.0
-                  ],
-                  [
-                    "2025-12-19",
-                    424822.0
-                  ],
-                  [
-                    "2025-12-26",
-                    422888.0
-                  ],
-                  [
-                    "2026-01-02",
-                    419056.0
-                  ],
-                  [
-                    "2026-01-09",
-                    422447.0
-                  ],
-                  [
-                    "2026-01-16",
-                    426049.0
-                  ],
-                  [
-                    "2026-01-23",
-                    423754.0
-                  ],
-                  [
-                    "2026-01-30",
-                    420299.0
-                  ],
-                  [
-                    "2026-02-06",
-                    428829.0
-                  ],
-                  [
-                    "2026-02-13",
-                    419815.0
-                  ],
-                  [
-                    "2026-02-20",
-                    435804.0
-                  ],
-                  [
-                    "2026-02-27",
-                    439279.0
-                  ],
-                  [
-                    "2026-03-06",
-                    443103.0
-                  ],
-                  [
-                    "2026-03-13",
-                    449259.0
-                  ],
-                  [
-                    "2026-03-20",
-                    456185.0
-                  ],
-                  [
-                    "2026-03-27",
-                    461636.0
-                  ],
-                  [
-                    "2026-04-03",
-                    464717.0
-                  ],
-                  [
-                    "2026-04-10",
-                    463804.0
-                  ],
-                  [
-                    "2026-04-17",
-                    465729.0
-                  ],
-                  [
-                    "2026-04-24",
-                    459495.0
-                  ],
-                  [
-                    "2026-05-01",
-                    457182.0
-                  ],
-                  [
-                    "2026-05-08",
-                    452876.0
-                  ],
-                  [
-                    "2026-05-15",
-                    445013.0
-                  ],
-                  [
-                    "2026-05-22",
-                    441686.0
-                  ],
-                  [
-                    "2026-05-29",
-                    433712.0
-                  ],
-                  [
-                    "2026-06-05",
-                    426485.0
-                  ],
-                  [
-                    "2026-06-12",
-                    418222.0
-                  ],
-                  [
-                    "2026-06-19",
-                    412134.0
-                  ],
-                  [
-                    "2026-06-26",
-                    408359.0
-                  ],
-                  [
-                    "2026-07-03",
-                    411357.0
-                  ],
-                  [
-                    "2026-07-10",
-                    409665.0
-                  ],
-                  [
-                    "2026-07-17",
-                    411675.0
-                  ],
-                  [
-                    "2026-07-24",
-                    404508.0
-                  ],
-                  [
-                    "2026-07-31",
-                    406987.0
-                  ],
-                  [
-                    "2026-08-07",
-                    424410.0
-                  ],
-                  [
-                    "2026-08-14",
-                    428815.0
-                  ],
-                  [
-                    "2026-08-21",
-                    428910.0
-                  ],
-                  [
-                    "2026-08-28",
-                    424460.0
-                  ],
-                  [
-                    "2026-09-04",
-                    424069.0
-                  ],
-                  [
-                    "2026-09-11",
-                    423429.0
-                  ],
-                  [
-                    "2026-09-18",
-                    426398.0
-                  ],
-                  [
-                    "2026-09-25",
-                    427320.0
-                  ],
-                  [
-                    "2026-10-02",
-                    424134.0
-                  ],
-                  [
-                    "2026-10-09",
-                    415577.0
-                  ],
-                  [
-                    "2026-10-16",
-                    412517.0
-                  ],
-                  [
-                    "2026-10-23",
-                    410625.0
-                  ],
-                  [
-                    "2026-10-30",
-                    409760.0
-                  ],
-                  [
-                    "2026-11-06",
-                    414417.0
-                  ],
-                  [
-                    "2026-11-13",
-                    417797.0
-                  ],
-                  [
-                    "2026-11-20",
-                    418906.0
-                  ]
-                ]
-              },
-              {
-                "cle": "cushing",
-                "libelle": "stocks de brut à Cushing (Oklahoma)",
-                "unite": "Mb",
-                "date": "2026-11-20",
-                "valeur": 25613.0,
-                "moyenne_5_ans": 24775.6,
-                "ecart_pct": 3.38,
-                "variation_hebdo": -534.0,
-                "z_hebdo": -0.43,
-                "choc": false,
-                "historique": [
-                  [
-                    "2025-11-21",
-                    21753.0
-                  ],
-                  [
-                    "2025-11-28",
-                    21296.0
-                  ],
-                  [
-                    "2025-12-05",
-                    21604.0
-                  ],
-                  [
-                    "2025-12-12",
-                    20862.0
-                  ],
-                  [
-                    "2025-12-19",
-                    21569.0
-                  ],
-                  [
-                    "2025-12-26",
-                    22112.0
-                  ],
-                  [
-                    "2026-01-02",
-                    22840.0
-                  ],
-                  [
-                    "2026-01-09",
-                    23585.0
-                  ],
-                  [
-                    "2026-01-16",
-                    25063.0
-                  ],
-                  [
-                    "2026-01-23",
-                    24785.0
-                  ],
-                  [
-                    "2026-01-30",
-                    24042.0
-                  ],
-                  [
-                    "2026-02-06",
-                    25113.0
-                  ],
-                  [
-                    "2026-02-13",
-                    24018.0
-                  ],
-                  [
-                    "2026-02-20",
-                    24899.0
-                  ],
-                  [
-                    "2026-02-27",
-                    26463.0
-                  ],
-                  [
-                    "2026-03-06",
-                    26580.0
-                  ],
-                  [
-                    "2026-03-13",
-                    27524.0
-                  ],
-                  [
-                    "2026-03-20",
-                    30945.0
-                  ],
-                  [
-                    "2026-03-27",
-                    31465.0
-                  ],
-                  [
-                    "2026-04-03",
-                    31489.0
-                  ],
-                  [
-                    "2026-04-10",
-                    29762.0
-                  ],
-                  [
-                    "2026-04-17",
-                    30568.0
-                  ],
-                  [
-                    "2026-04-24",
-                    29772.0
-                  ],
-                  [
-                    "2026-05-01",
-                    29124.0
-                  ],
-                  [
-                    "2026-05-08",
-                    27422.0
-                  ],
-                  [
-                    "2026-05-15",
-                    25818.0
-                  ],
-                  [
-                    "2026-05-22",
-                    23024.0
-                  ],
-                  [
-                    "2026-05-29",
-                    22441.0
-                  ],
-                  [
-                    "2026-06-05",
-                    21640.0
-                  ],
-                  [
-                    "2026-06-12",
-                    20034.0
-                  ],
-                  [
-                    "2026-06-19",
-                    18957.0
-                  ],
-                  [
-                    "2026-06-26",
-                    19666.0
-                  ],
-                  [
-                    "2026-07-03",
-                    19614.0
-                  ],
-                  [
-                    "2026-07-10",
-                    20044.0
-                  ],
-                  [
-                    "2026-07-17",
-                    19370.0
-                  ],
-                  [
-                    "2026-07-24",
-                    18599.0
-                  ],
-                  [
-                    "2026-07-31",
-                    20955.0
-                  ],
-                  [
-                    "2026-08-07",
-                    22566.0
-                  ],
-                  [
-                    "2026-08-14",
-                    21252.0
-                  ],
-                  [
-                    "2026-08-21",
-                    22428.0
-                  ],
-                  [
-                    "2026-08-28",
-                    22508.0
-                  ],
-                  [
-                    "2026-09-04",
-                    21824.0
-                  ],
-                  [
-                    "2026-09-11",
-                    21482.0
-                  ],
-                  [
-                    "2026-09-18",
-                    23748.0
-                  ],
-                  [
-                    "2026-09-25",
-                    24301.0
-                  ],
-                  [
-                    "2026-10-02",
-                    24745.0
-                  ],
-                  [
-                    "2026-10-09",
-                    26607.0
-                  ],
-                  [
-                    "2026-10-16",
-                    27594.0
-                  ],
-                  [
-                    "2026-10-23",
-                    26970.0
-                  ],
-                  [
-                    "2026-10-30",
-                    27250.0
-                  ],
-                  [
-                    "2026-11-06",
-                    27356.0
-                  ],
-                  [
-                    "2026-11-13",
-                    26147.0
-                  ],
-                  [
-                    "2026-11-20",
-                    25613.0
-                  ]
-                ]
-              }
-            ],
-            "ecart_moyen_pct": -0.03,
-            "type": "eia"
-          },
+          "stocks": null,
           "positionnement": {
             "note": 58,
             "texte": "Position nette des gérants (managed money) de +15 814 contrats (+0,8 % de l’intérêt ouvert), percentile 10 sur 3 ans : position dans sa plage habituelle",
@@ -6194,19 +5737,30 @@
             "marche": "WTI-PHYSICAL - NEW YORK MERCANTILE EXCHANGE"
           },
           "macro": {
-            "note": 39,
-            "texte": "Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois",
-            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS)",
+            "note": 35,
+            "texte": "Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois ; palier de risque mondial « Tension »",
+            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS), agent risque",
             "date": "2026-08",
             "variation_taux_reel_3m": 0.47,
             "variation_dollar_3m": 4.69
           },
           "geopolitique": {
             "note": 74,
-            "texte": "5 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Offensive des Houthis et frappes en Arabie saoudite et au Yémen »)",
+            "texte": "5 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Tensions militaires et frappes entre les États-Unis et l'Iran »)",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25",
+            "date": "2026-11-26",
             "evenements": [
+              {
+                "titre": "Tensions militaires et frappes entre les États-Unis et l'Iran",
+                "gravite": 4,
+                "pays": [
+                  "IR",
+                  "SA",
+                  "US"
+                ],
+                "categorie": "Conflit armé",
+                "date": "2026-11-26"
+              },
               {
                 "titre": "Offensive des Houthis et frappes en Arabie saoudite et au Yémen",
                 "gravite": 4,
@@ -6215,7 +5769,7 @@
                   "YE"
                 ],
                 "categorie": "Conflit armé",
-                "date": "2026-11-25"
+                "date": "2026-11-26"
               },
               {
                 "titre": "Frappes aériennes entre la Russie et l'Ukraine",
@@ -6227,24 +5781,13 @@
                 "date": "2026-11-25"
               },
               {
-                "titre": "Tensions militaires et frappes entre les États-Unis et l'Iran",
-                "gravite": 4,
-                "pays": [
-                  "IR",
-                  "SA",
-                  "US"
-                ],
-                "categorie": "Conflit armé",
-                "date": "2026-11-25"
-              },
-              {
                 "titre": "Guerre d'agression de la Russie contre l'Ukraine : l'UE restreint le commerce avec 15 entités liées au complexe militaro-industriel de la Russie",
                 "gravite": 3,
                 "pays": [
                   "RU"
                 ],
                 "categorie": "Sanctions",
-                "date": "2026-11-25"
+                "date": "2026-11-26"
               },
               {
                 "titre": "Sanctions américaines contre Cuba et relations bilatérales",
@@ -6259,47 +5802,47 @@
           },
           "flux": {
             "note": null,
-            "texte": "Flux des ETF (USO) en cours de constitution (10 jours d'historique sur 30)",
+            "texte": "Flux des ETF (USO) en cours de constitution (15 jours d'historique sur 30)",
             "source": "Yahoo Finance (parts en circulation × valeur liquidative)",
             "date": null,
             "etf": {
               "USO": {
                 "nom": "United States Oil Fund",
-                "encours": 16321344899.999998,
-                "date": "2026-11-20",
+                "encours": 16251552300.0,
+                "date": "2026-11-25",
                 "periodes": {
                   "1m": {
                     "jours": 30,
                     "complet": false,
                     "debut": "2026-11-10",
-                    "jours_disponibles": 10,
+                    "jours_disponibles": 15,
                     "flux_musd": 0.0,
                     "pct_encours": 0.0,
                     "statut": "en cours de constitution",
-                    "fin": "2026-11-20"
+                    "fin": "2026-11-25"
                   },
                   "3m": {
                     "jours": 91,
                     "complet": false,
                     "debut": "2026-11-10",
-                    "jours_disponibles": 10,
+                    "jours_disponibles": 15,
                     "flux_musd": 0.0,
                     "pct_encours": 0.0,
                     "statut": "en cours de constitution",
-                    "fin": "2026-11-20"
+                    "fin": "2026-11-25"
                   }
                 },
-                "releves": 5
+                "releves": 6
               }
             },
             "statut": "en cours de constitution"
           },
           "niveau": {
             "note": 44,
-            "texte": "Cours corrigé de l’inflation américaine au percentile 59 de sa plage sur 10 ans (plus bas 16,94, plus haut 120,67 en valeur nominale)",
+            "texte": "Cours corrigé de l’inflation américaine au percentile 60 de sa plage sur 10 ans (plus bas 16,94, plus haut 120,67 en valeur nominale)",
             "source": "Yahoo Finance (yfinance), FRED (CPIAUCSL)",
             "date": "2026-11-25",
-            "percentile": 59.2,
+            "percentile": 59.8,
             "corrige_inflation": true,
             "annees": 10,
             "plus_bas": 16.94,
@@ -6307,30 +5850,30 @@
           }
         },
         "arguments_pour": [
-          "Structure de la courbe (90/100) : Courbe en backwardation (prix futurs plus bas : marché tendu) : rendement de roulement de +20,2 % par an entre 2027-01 et 2027-07.",
-          "Contexte géopolitique (74/100) : 5 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Offensive des Houthis et frappes en Arabie saoudite et au Yémen »).",
-          "Tendance et momentum (60/100) : Cours +2,3 % sur 3 mois, +45,2 % sur 12 mois, en dessous de sa moyenne 200 jours (88,57)."
+          "Structure de la courbe (90/100) : Courbe en backwardation (prix futurs plus bas : marché tendu) : rendement de roulement de +16,5 % par an entre 2026-12 et 2027-07.",
+          "Contexte géopolitique (74/100) : 5 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Tensions militaires et frappes entre les États-Unis et l'Iran »).",
+          "Tendance et momentum (61/100) : Cours +2,5 % sur 3 mois, +45,5 % sur 12 mois, en dessous de sa moyenne 200 jours (88,57)."
         ],
         "arguments_contre": [
-          "Moteurs macro (39/100) : Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois.",
-          "Niveau historique (44/100) : Cours corrigé de l’inflation américaine au percentile 59 de sa plage sur 10 ans (plus bas 16,94, plus haut 120,67 en valeur nominale).",
-          "Stocks par rapport à la normale (50/100) : Stocks commerciaux de brut américains (hors réserve stratégique) à 418 906,0 Mb, −3,4 % par rapport à la moyenne sur 5 ans ; écart moyen des 2 séries suivies : +0,0 %."
+          "Moteurs macro (35/100) : Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois ; palier de risque mondial « Tension ».",
+          "Niveau historique (44/100) : Cours corrigé de l’inflation américaine au percentile 60 de sa plage sur 10 ans (plus bas 16,94, plus haut 120,67 en valeur nominale).",
+          "Positionnement des investisseurs (58/100) : Position nette des gérants (managed money) de +15 814 contrats (+0,8 % de l’intérêt ouvert), percentile 10 sur 3 ans : position dans sa plage habituelle."
         ],
-        "ce_qui_pourrait_me_donner_tort": "Les signaux se compensent ; une rupture nette dans un sens (cours, stocks ou positionnement) suffirait à trancher. Risque propre : une hausse de production de l'OPEP+ ou un ralentissement de la demande mondiale.",
+        "ce_qui_pourrait_me_donner_tort": "Le principal point faible : moteurs macro (35/100) : Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois ; palier de risque mondial « Tension ». Le scénario serait contredit par une hausse de production de l'OPEP+ ou un ralentissement de la demande mondiale.",
         "invalidations": [
-          "une clôture au-dessus du plus haut de 3 mois (105,83 $/baril) avec au moins deux sous-notes favorables",
-          "une clôture sous le plus bas de 3 mois (80,17 $/baril) avec au moins deux sous-notes défavorables"
+          "une clôture sous la moyenne 200 jours (88,57 $/baril)",
+          "un passage de la courbe en contango au-delà de 2 % par an (aujourd'hui +16,5 %)"
         ],
         "supports": [
           {
             "type": "ETF de contrats à terme",
             "detail": "ex. United States Oil Fund (USO) : supporte le coût du contango lors des roulements",
-            "cout_roulement": "courbe en backwardation : gain de roulement estimé à 20,2 % par an"
+            "cout_roulement": "courbe en backwardation : gain de roulement estimé à 16,5 % par an"
           },
           {
             "type": "ETC de contrats à terme",
             "detail": "ex. WisdomTree WTI Crude Oil : même coût de roulement",
-            "cout_roulement": "courbe en backwardation : gain de roulement estimé à 20,2 % par an"
+            "cout_roulement": "courbe en backwardation : gain de roulement estimé à 16,5 % par an"
           },
           {
             "type": "Actions de producteurs",
@@ -6361,7 +5904,7 @@
             "nom": "ConocoPhillips",
             "pays": "US",
             "note": 62,
-            "recommandation": "Attendre",
+            "recommandation": "Acheter",
             "fiche": "data/entreprises/fiches/COP.json",
             "deja_detenue": false
           },
@@ -6547,24 +6090,19 @@
             "date": "2026-11-25"
           },
           {
-            "sous_note": "Stocks par rapport à la normale",
-            "source": "EIA (département américain de l'Énergie), API v2",
-            "date": "2026-11-20"
-          },
-          {
             "sous_note": "Positionnement des investisseurs",
             "source": "CFTC, Commitments of Traders (disaggregated, contrats à terme), API Socrata",
             "date": "2026-11-17"
           },
           {
             "sous_note": "Moteurs macro",
-            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS)",
+            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS), agent risque",
             "date": "2026-08"
           },
           {
             "sous_note": "Contexte géopolitique",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           },
           {
             "sous_note": "Flux des ETF",
@@ -6578,7 +6116,7 @@
           }
         ],
         "precedent": {
-          "note": 58.5,
+          "note": 59.4,
           "verdict": "Neutre"
         }
       },
@@ -6590,10 +6128,10 @@
         "unite": "$/baril",
         "indirect": false,
         "mention": null,
-        "cours": 90.82,
+        "cours": 91.09,
         "date_cours": "2026-11-25",
-        "variation_1m": -21.58,
-        "variation_12m": 45.36,
+        "variation_1m": -21.35,
+        "variation_12m": 45.79,
         "serie": [
           [
             "2025-11-21",
@@ -6809,10 +6347,10 @@
           ],
           [
             "2026-11-25",
-            90.82
+            91.09
           ]
         ],
-        "note": 60.5,
+        "note": 61.6,
         "verdict": "Surpondérer",
         "verdict_non_retenu": null,
         "horizon": "3 à 12 mois",
@@ -6827,755 +6365,68 @@
         ],
         "sous_notes": {
           "tendance": {
-            "note": 61,
-            "texte": "Cours +3,4 % sur 3 mois, +45,4 % sur 12 mois, en dessous de sa moyenne 200 jours (94,93)",
+            "note": 62,
+            "texte": "Cours +3,7 % sur 3 mois, +45,8 % sur 12 mois, en dessous de sa moyenne 200 jours (94,93)",
             "source": "Yahoo Finance (yfinance), contrat le plus proche",
             "date": "2026-11-25",
-            "variation_1m": -21.58,
-            "variation_3m": 3.39,
-            "variation_12m": 45.36,
-            "mm200": 94.927
+            "variation_1m": -21.35,
+            "variation_3m": 3.7,
+            "variation_12m": 45.79,
+            "mm200": 94.9283
           },
           "courbe": {
             "note": 90,
-            "texte": "Courbe en backwardation (prix futurs plus bas : marché tendu) : rendement de roulement de +33,7 % par an entre 2027-01 et 2027-07",
+            "texte": "Courbe en backwardation (prix futurs plus bas : marché tendu) : rendement de roulement de +32,5 % par an entre 2027-01 et 2027-07",
             "source": "Yahoo Finance (yfinance), contrats des échéances suivantes",
             "date": "2026-11-25",
             "structure": "backwardation",
-            "roulement_pct_an": 33.74,
+            "roulement_pct_an": 32.49,
             "points": [
               {
                 "echeance": "2027-01",
                 "symbole": "BZF27.NYM",
-                "prix": 94.69,
+                "prix": 95.18,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-02",
                 "symbole": "BZG27.NYM",
-                "prix": 90.82,
+                "prix": 91.09,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-03",
                 "symbole": "BZH27.NYM",
-                "prix": 88.18,
+                "prix": 88.44,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-04",
                 "symbole": "BZJ27.NYM",
-                "prix": 85.04,
+                "prix": 86.28,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-05",
                 "symbole": "BZK27.NYM",
-                "prix": 84.35,
+                "prix": 84.75,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-06",
                 "symbole": "BZM27.NYM",
-                "prix": 82.99,
+                "prix": 83.08,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-07",
                 "symbole": "BZN27.NYM",
-                "prix": 81.02,
-                "date": "2026-11-24"
+                "prix": 81.88,
+                "date": "2026-11-25"
               }
             ]
           },
-          "stocks": {
-            "note": 56,
-            "texte": "Stocks commerciaux de brut américains (hors réserve stratégique) à 418 906,0 Mb, −3,4 % par rapport à la moyenne sur 5 ans ; écart moyen des 3 séries suivies : −2,4 %",
-            "source": "EIA (département américain de l'Énergie), API v2",
-            "date": "2026-11-20",
-            "series": [
-              {
-                "cle": "brut",
-                "libelle": "stocks commerciaux de brut américains (hors réserve stratégique)",
-                "unite": "Mb",
-                "date": "2026-11-20",
-                "valeur": 418906.0,
-                "moyenne_5_ans": 433823.2,
-                "ecart_pct": -3.44,
-                "variation_hebdo": 1109.0,
-                "z_hebdo": 0.22,
-                "choc": false,
-                "historique": [
-                  [
-                    "2025-11-21",
-                    426929.0
-                  ],
-                  [
-                    "2025-11-28",
-                    427503.0
-                  ],
-                  [
-                    "2025-12-05",
-                    425691.0
-                  ],
-                  [
-                    "2025-12-12",
-                    424417.0
-                  ],
-                  [
-                    "2025-12-19",
-                    424822.0
-                  ],
-                  [
-                    "2025-12-26",
-                    422888.0
-                  ],
-                  [
-                    "2026-01-02",
-                    419056.0
-                  ],
-                  [
-                    "2026-01-09",
-                    422447.0
-                  ],
-                  [
-                    "2026-01-16",
-                    426049.0
-                  ],
-                  [
-                    "2026-01-23",
-                    423754.0
-                  ],
-                  [
-                    "2026-01-30",
-                    420299.0
-                  ],
-                  [
-                    "2026-02-06",
-                    428829.0
-                  ],
-                  [
-                    "2026-02-13",
-                    419815.0
-                  ],
-                  [
-                    "2026-02-20",
-                    435804.0
-                  ],
-                  [
-                    "2026-02-27",
-                    439279.0
-                  ],
-                  [
-                    "2026-03-06",
-                    443103.0
-                  ],
-                  [
-                    "2026-03-13",
-                    449259.0
-                  ],
-                  [
-                    "2026-03-20",
-                    456185.0
-                  ],
-                  [
-                    "2026-03-27",
-                    461636.0
-                  ],
-                  [
-                    "2026-04-03",
-                    464717.0
-                  ],
-                  [
-                    "2026-04-10",
-                    463804.0
-                  ],
-                  [
-                    "2026-04-17",
-                    465729.0
-                  ],
-                  [
-                    "2026-04-24",
-                    459495.0
-                  ],
-                  [
-                    "2026-05-01",
-                    457182.0
-                  ],
-                  [
-                    "2026-05-08",
-                    452876.0
-                  ],
-                  [
-                    "2026-05-15",
-                    445013.0
-                  ],
-                  [
-                    "2026-05-22",
-                    441686.0
-                  ],
-                  [
-                    "2026-05-29",
-                    433712.0
-                  ],
-                  [
-                    "2026-06-05",
-                    426485.0
-                  ],
-                  [
-                    "2026-06-12",
-                    418222.0
-                  ],
-                  [
-                    "2026-06-19",
-                    412134.0
-                  ],
-                  [
-                    "2026-06-26",
-                    408359.0
-                  ],
-                  [
-                    "2026-07-03",
-                    411357.0
-                  ],
-                  [
-                    "2026-07-10",
-                    409665.0
-                  ],
-                  [
-                    "2026-07-17",
-                    411675.0
-                  ],
-                  [
-                    "2026-07-24",
-                    404508.0
-                  ],
-                  [
-                    "2026-07-31",
-                    406987.0
-                  ],
-                  [
-                    "2026-08-07",
-                    424410.0
-                  ],
-                  [
-                    "2026-08-14",
-                    428815.0
-                  ],
-                  [
-                    "2026-08-21",
-                    428910.0
-                  ],
-                  [
-                    "2026-08-28",
-                    424460.0
-                  ],
-                  [
-                    "2026-09-04",
-                    424069.0
-                  ],
-                  [
-                    "2026-09-11",
-                    423429.0
-                  ],
-                  [
-                    "2026-09-18",
-                    426398.0
-                  ],
-                  [
-                    "2026-09-25",
-                    427320.0
-                  ],
-                  [
-                    "2026-10-02",
-                    424134.0
-                  ],
-                  [
-                    "2026-10-09",
-                    415577.0
-                  ],
-                  [
-                    "2026-10-16",
-                    412517.0
-                  ],
-                  [
-                    "2026-10-23",
-                    410625.0
-                  ],
-                  [
-                    "2026-10-30",
-                    409760.0
-                  ],
-                  [
-                    "2026-11-06",
-                    414417.0
-                  ],
-                  [
-                    "2026-11-13",
-                    417797.0
-                  ],
-                  [
-                    "2026-11-20",
-                    418906.0
-                  ]
-                ]
-              },
-              {
-                "cle": "essence",
-                "libelle": "stocks d'essence américains",
-                "unite": "Mb",
-                "date": "2026-11-20",
-                "valeur": 217682.0,
-                "moyenne_5_ans": 212191.2,
-                "ecart_pct": 2.59,
-                "variation_hebdo": 1733.0,
-                "z_hebdo": 0.54,
-                "choc": false,
-                "historique": [
-                  [
-                    "2025-11-21",
-                    209904.0
-                  ],
-                  [
-                    "2025-11-28",
-                    214422.0
-                  ],
-                  [
-                    "2025-12-05",
-                    220819.0
-                  ],
-                  [
-                    "2025-12-12",
-                    225627.0
-                  ],
-                  [
-                    "2025-12-19",
-                    228489.0
-                  ],
-                  [
-                    "2025-12-26",
-                    234334.0
-                  ],
-                  [
-                    "2026-01-02",
-                    242036.0
-                  ],
-                  [
-                    "2026-01-09",
-                    251013.0
-                  ],
-                  [
-                    "2026-01-16",
-                    256990.0
-                  ],
-                  [
-                    "2026-01-23",
-                    257213.0
-                  ],
-                  [
-                    "2026-01-30",
-                    257898.0
-                  ],
-                  [
-                    "2026-02-06",
-                    259058.0
-                  ],
-                  [
-                    "2026-02-13",
-                    255845.0
-                  ],
-                  [
-                    "2026-02-20",
-                    254834.0
-                  ],
-                  [
-                    "2026-02-27",
-                    253130.0
-                  ],
-                  [
-                    "2026-03-06",
-                    249476.0
-                  ],
-                  [
-                    "2026-03-13",
-                    244040.0
-                  ],
-                  [
-                    "2026-03-20",
-                    241447.0
-                  ],
-                  [
-                    "2026-03-27",
-                    240861.0
-                  ],
-                  [
-                    "2026-04-03",
-                    239272.0
-                  ],
-                  [
-                    "2026-04-10",
-                    232944.0
-                  ],
-                  [
-                    "2026-04-17",
-                    228374.0
-                  ],
-                  [
-                    "2026-04-24",
-                    222299.0
-                  ],
-                  [
-                    "2026-05-01",
-                    219795.0
-                  ],
-                  [
-                    "2026-05-08",
-                    215711.0
-                  ],
-                  [
-                    "2026-05-15",
-                    214163.0
-                  ],
-                  [
-                    "2026-05-22",
-                    211591.0
-                  ],
-                  [
-                    "2026-05-29",
-                    214955.0
-                  ],
-                  [
-                    "2026-06-05",
-                    215141.0
-                  ],
-                  [
-                    "2026-06-12",
-                    214235.0
-                  ],
-                  [
-                    "2026-06-19",
-                    216299.0
-                  ],
-                  [
-                    "2026-06-26",
-                    213966.0
-                  ],
-                  [
-                    "2026-07-03",
-                    212062.0
-                  ],
-                  [
-                    "2026-07-10",
-                    210529.0
-                  ],
-                  [
-                    "2026-07-17",
-                    211294.0
-                  ],
-                  [
-                    "2026-07-24",
-                    211301.0
-                  ],
-                  [
-                    "2026-07-31",
-                    209658.0
-                  ],
-                  [
-                    "2026-08-07",
-                    208690.0
-                  ],
-                  [
-                    "2026-08-14",
-                    209378.0
-                  ],
-                  [
-                    "2026-08-21",
-                    206842.0
-                  ],
-                  [
-                    "2026-08-28",
-                    205669.0
-                  ],
-                  [
-                    "2026-09-04",
-                    206938.0
-                  ],
-                  [
-                    "2026-09-11",
-                    207732.0
-                  ],
-                  [
-                    "2026-09-18",
-                    206046.0
-                  ],
-                  [
-                    "2026-09-25",
-                    204362.0
-                  ],
-                  [
-                    "2026-10-02",
-                    204744.0
-                  ],
-                  [
-                    "2026-10-09",
-                    208262.0
-                  ],
-                  [
-                    "2026-10-16",
-                    205310.0
-                  ],
-                  [
-                    "2026-10-23",
-                    209180.0
-                  ],
-                  [
-                    "2026-10-30",
-                    208958.0
-                  ],
-                  [
-                    "2026-11-06",
-                    210757.0
-                  ],
-                  [
-                    "2026-11-13",
-                    215949.0
-                  ],
-                  [
-                    "2026-11-20",
-                    217682.0
-                  ]
-                ]
-              },
-              {
-                "cle": "distillats",
-                "libelle": "stocks de distillats américains",
-                "unite": "Mb",
-                "date": "2026-11-20",
-                "valeur": 105616.0,
-                "moyenne_5_ans": 112664.6,
-                "ecart_pct": -6.26,
-                "variation_hebdo": 715.0,
-                "z_hebdo": 0.31,
-                "choc": false,
-                "historique": [
-                  [
-                    "2025-11-21",
-                    112227.0
-                  ],
-                  [
-                    "2025-11-28",
-                    114286.0
-                  ],
-                  [
-                    "2025-12-05",
-                    116788.0
-                  ],
-                  [
-                    "2025-12-12",
-                    118500.0
-                  ],
-                  [
-                    "2025-12-19",
-                    118702.0
-                  ],
-                  [
-                    "2025-12-26",
-                    123679.0
-                  ],
-                  [
-                    "2026-01-02",
-                    129273.0
-                  ],
-                  [
-                    "2026-01-09",
-                    129244.0
-                  ],
-                  [
-                    "2026-01-16",
-                    132592.0
-                  ],
-                  [
-                    "2026-01-23",
-                    132921.0
-                  ],
-                  [
-                    "2026-01-30",
-                    127368.0
-                  ],
-                  [
-                    "2026-02-06",
-                    124665.0
-                  ],
-                  [
-                    "2026-02-13",
-                    120099.0
-                  ],
-                  [
-                    "2026-02-20",
-                    120351.0
-                  ],
-                  [
-                    "2026-02-27",
-                    120780.0
-                  ],
-                  [
-                    "2026-03-06",
-                    119431.0
-                  ],
-                  [
-                    "2026-03-13",
-                    116904.0
-                  ],
-                  [
-                    "2026-03-20",
-                    119936.0
-                  ],
-                  [
-                    "2026-03-27",
-                    117825.0
-                  ],
-                  [
-                    "2026-04-03",
-                    114681.0
-                  ],
-                  [
-                    "2026-04-10",
-                    111559.0
-                  ],
-                  [
-                    "2026-04-17",
-                    108132.0
-                  ],
-                  [
-                    "2026-04-24",
-                    103638.0
-                  ],
-                  [
-                    "2026-05-01",
-                    102344.0
-                  ],
-                  [
-                    "2026-05-08",
-                    102534.0
-                  ],
-                  [
-                    "2026-05-15",
-                    102906.0
-                  ],
-                  [
-                    "2026-05-22",
-                    100799.0
-                  ],
-                  [
-                    "2026-05-29",
-                    102301.0
-                  ],
-                  [
-                    "2026-06-05",
-                    102101.0
-                  ],
-                  [
-                    "2026-06-12",
-                    103052.0
-                  ],
-                  [
-                    "2026-06-19",
-                    106116.0
-                  ],
-                  [
-                    "2026-06-26",
-                    108599.0
-                  ],
-                  [
-                    "2026-07-03",
-                    103619.0
-                  ],
-                  [
-                    "2026-07-10",
-                    108175.0
-                  ],
-                  [
-                    "2026-07-17",
-                    109570.0
-                  ],
-                  [
-                    "2026-07-24",
-                    110632.0
-                  ],
-                  [
-                    "2026-07-31",
-                    107159.0
-                  ],
-                  [
-                    "2026-08-07",
-                    107149.0
-                  ],
-                  [
-                    "2026-08-14",
-                    105619.0
-                  ],
-                  [
-                    "2026-08-21",
-                    103391.0
-                  ],
-                  [
-                    "2026-08-28",
-                    104187.0
-                  ],
-                  [
-                    "2026-09-04",
-                    106274.0
-                  ],
-                  [
-                    "2026-09-11",
-                    107859.0
-                  ],
-                  [
-                    "2026-09-18",
-                    107431.0
-                  ],
-                  [
-                    "2026-09-25",
-                    105180.0
-                  ],
-                  [
-                    "2026-10-02",
-                    105138.0
-                  ],
-                  [
-                    "2026-10-09",
-                    102611.0
-                  ],
-                  [
-                    "2026-10-16",
-                    104286.0
-                  ],
-                  [
-                    "2026-10-23",
-                    102824.0
-                  ],
-                  [
-                    "2026-10-30",
-                    99259.0
-                  ],
-                  [
-                    "2026-11-06",
-                    103330.0
-                  ],
-                  [
-                    "2026-11-13",
-                    104901.0
-                  ],
-                  [
-                    "2026-11-20",
-                    105616.0
-                  ]
-                ]
-              }
-            ],
-            "ecart_moyen_pct": -2.37,
-            "type": "eia"
-          },
+          "stocks": null,
           "positionnement": {
             "note": 55,
             "texte": "Position nette des gérants (managed money) de +4 499 contrats (+2,0 % de l’intérêt ouvert), percentile 27 sur 3 ans : position dans sa plage habituelle",
@@ -7799,19 +6650,30 @@
             "marche": "BRENT LAST DAY - NEW YORK MERCANTILE EXCHANGE"
           },
           "macro": {
-            "note": 39,
-            "texte": "Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois",
-            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS)",
+            "note": 35,
+            "texte": "Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois ; palier de risque mondial « Tension »",
+            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS), agent risque",
             "date": "2026-08",
             "variation_taux_reel_3m": 0.47,
             "variation_dollar_3m": 4.69
           },
           "geopolitique": {
             "note": 74,
-            "texte": "5 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Offensive des Houthis et frappes en Arabie saoudite et au Yémen »)",
+            "texte": "5 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Tensions militaires et frappes entre les États-Unis et l'Iran »)",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25",
+            "date": "2026-11-26",
             "evenements": [
+              {
+                "titre": "Tensions militaires et frappes entre les États-Unis et l'Iran",
+                "gravite": 4,
+                "pays": [
+                  "IR",
+                  "SA",
+                  "US"
+                ],
+                "categorie": "Conflit armé",
+                "date": "2026-11-26"
+              },
               {
                 "titre": "Offensive des Houthis et frappes en Arabie saoudite et au Yémen",
                 "gravite": 4,
@@ -7820,7 +6682,7 @@
                   "YE"
                 ],
                 "categorie": "Conflit armé",
-                "date": "2026-11-25"
+                "date": "2026-11-26"
               },
               {
                 "titre": "Frappes aériennes entre la Russie et l'Ukraine",
@@ -7832,24 +6694,13 @@
                 "date": "2026-11-25"
               },
               {
-                "titre": "Tensions militaires et frappes entre les États-Unis et l'Iran",
-                "gravite": 4,
-                "pays": [
-                  "IR",
-                  "SA",
-                  "US"
-                ],
-                "categorie": "Conflit armé",
-                "date": "2026-11-25"
-              },
-              {
                 "titre": "Guerre d'agression de la Russie contre l'Ukraine : l'UE restreint le commerce avec 15 entités liées au complexe militaro-industriel de la Russie",
                 "gravite": 3,
                 "pays": [
                   "RU"
                 ],
                 "categorie": "Sanctions",
-                "date": "2026-11-25"
+                "date": "2026-11-26"
               },
               {
                 "titre": "Sanctions américaines contre Cuba et relations bilatérales",
@@ -7864,37 +6715,37 @@
           },
           "flux": {
             "note": null,
-            "texte": "Flux des ETF (USO) en cours de constitution (10 jours d'historique sur 30)",
+            "texte": "Flux des ETF (USO) en cours de constitution (15 jours d'historique sur 30)",
             "source": "Yahoo Finance (parts en circulation × valeur liquidative)",
             "date": null,
             "etf": {
               "USO": {
                 "nom": "United States Oil Fund",
-                "encours": 16321344899.999998,
-                "date": "2026-11-20",
+                "encours": 16251552300.0,
+                "date": "2026-11-25",
                 "periodes": {
                   "1m": {
                     "jours": 30,
                     "complet": false,
                     "debut": "2026-11-10",
-                    "jours_disponibles": 10,
+                    "jours_disponibles": 15,
                     "flux_musd": 0.0,
                     "pct_encours": 0.0,
                     "statut": "en cours de constitution",
-                    "fin": "2026-11-20"
+                    "fin": "2026-11-25"
                   },
                   "3m": {
                     "jours": 91,
                     "complet": false,
                     "debut": "2026-11-10",
-                    "jours_disponibles": 10,
+                    "jours_disponibles": 15,
                     "flux_musd": 0.0,
                     "pct_encours": 0.0,
                     "statut": "en cours de constitution",
-                    "fin": "2026-11-20"
+                    "fin": "2026-11-25"
                   }
                 },
-                "releves": 5
+                "releves": 6
               }
             },
             "statut": "en cours de constitution"
@@ -7904,7 +6755,7 @@
             "texte": "Cours corrigé de l’inflation américaine au percentile 62 de sa plage sur 10 ans (plus bas 21,44, plus haut 122,01 en valeur nominale)",
             "source": "Yahoo Finance (yfinance), FRED (CPIAUCSL)",
             "date": "2026-11-25",
-            "percentile": 61.5,
+            "percentile": 61.9,
             "corrige_inflation": true,
             "annees": 10,
             "plus_bas": 21.44,
@@ -7912,25 +6763,25 @@
           }
         },
         "arguments_pour": [
-          "Structure de la courbe (90/100) : Courbe en backwardation (prix futurs plus bas : marché tendu) : rendement de roulement de +33,7 % par an entre 2027-01 et 2027-07.",
-          "Contexte géopolitique (74/100) : 5 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Offensive des Houthis et frappes en Arabie saoudite et au Yémen »).",
-          "Tendance et momentum (61/100) : Cours +3,4 % sur 3 mois, +45,4 % sur 12 mois, en dessous de sa moyenne 200 jours (94,93)."
+          "Structure de la courbe (90/100) : Courbe en backwardation (prix futurs plus bas : marché tendu) : rendement de roulement de +32,5 % par an entre 2027-01 et 2027-07.",
+          "Contexte géopolitique (74/100) : 5 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Tensions militaires et frappes entre les États-Unis et l'Iran »).",
+          "Tendance et momentum (62/100) : Cours +3,7 % sur 3 mois, +45,8 % sur 12 mois, en dessous de sa moyenne 200 jours (94,93)."
         ],
         "arguments_contre": [
-          "Moteurs macro (39/100) : Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois.",
+          "Moteurs macro (35/100) : Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois ; palier de risque mondial « Tension ».",
           "Niveau historique (43/100) : Cours corrigé de l’inflation américaine au percentile 62 de sa plage sur 10 ans (plus bas 21,44, plus haut 122,01 en valeur nominale).",
           "Positionnement des investisseurs (55/100) : Position nette des gérants (managed money) de +4 499 contrats (+2,0 % de l’intérêt ouvert), percentile 27 sur 3 ans : position dans sa plage habituelle."
         ],
-        "ce_qui_pourrait_me_donner_tort": "Le principal point faible : moteurs macro (39/100) : Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois. Le scénario serait contredit par une hausse de production de l'OPEP+ ou une détente au Moyen-Orient.",
+        "ce_qui_pourrait_me_donner_tort": "Le principal point faible : moteurs macro (35/100) : Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois ; palier de risque mondial « Tension ». Le scénario serait contredit par une hausse de production de l'OPEP+ ou une détente au Moyen-Orient.",
         "invalidations": [
           "une clôture sous la moyenne 200 jours (94,93 $/baril)",
-          "un passage de la courbe en contango au-delà de 2 % par an (aujourd'hui +33,7 %)"
+          "un passage de la courbe en contango au-delà de 2 % par an (aujourd'hui +32,5 %)"
         ],
         "supports": [
           {
             "type": "ETC de contrats à terme",
             "detail": "ex. WisdomTree Brent Crude Oil : supporte le coût du contango lors des roulements",
-            "cout_roulement": "courbe en backwardation : gain de roulement estimé à 33,7 % par an"
+            "cout_roulement": "courbe en backwardation : gain de roulement estimé à 32,5 % par an"
           },
           {
             "type": "Actions de producteurs",
@@ -8102,24 +6953,19 @@
             "date": "2026-11-25"
           },
           {
-            "sous_note": "Stocks par rapport à la normale",
-            "source": "EIA (département américain de l'Énergie), API v2",
-            "date": "2026-11-20"
-          },
-          {
             "sous_note": "Positionnement des investisseurs",
             "source": "CFTC, Commitments of Traders (disaggregated, contrats à terme), API Socrata",
             "date": "2026-11-17"
           },
           {
             "sous_note": "Moteurs macro",
-            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS)",
+            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS), agent risque",
             "date": "2026-08"
           },
           {
             "sous_note": "Contexte géopolitique",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           },
           {
             "sous_note": "Flux des ETF",
@@ -8133,7 +6979,7 @@
           }
         ],
         "precedent": {
-          "note": 60.4,
+          "note": 60.5,
           "verdict": "Surpondérer"
         }
       },
@@ -8145,10 +6991,10 @@
         "unite": "$/MMBtu",
         "indirect": false,
         "mention": null,
-        "cours": 3.675,
+        "cours": 3.682,
         "date_cours": "2026-11-25",
-        "variation_1m": 41.24,
-        "variation_12m": -16.93,
+        "variation_1m": 41.51,
+        "variation_12m": -16.77,
         "serie": [
           [
             "2025-11-21",
@@ -8364,14 +7210,14 @@
           ],
           [
             "2026-11-25",
-            3.675
+            3.682
           ]
         ],
-        "note": 60.0,
+        "note": 64.9,
         "verdict": "Surpondérer",
         "verdict_non_retenu": null,
         "horizon": "3 à 12 mois",
-        "confiance": "moyen",
+        "confiance": "élevé",
         "signaux_favorables": [
           "Tendance et momentum",
           "Structure de la courbe",
@@ -8382,22 +7228,22 @@
         ],
         "sous_notes": {
           "tendance": {
-            "note": 73,
-            "texte": "Cours +29,3 % sur 3 mois, −16,9 % sur 12 mois, au-dessus de sa moyenne 200 jours (2,97)",
+            "note": 74,
+            "texte": "Cours +29,6 % sur 3 mois, −16,8 % sur 12 mois, au-dessus de sa moyenne 200 jours (2,97)",
             "source": "Yahoo Finance (yfinance), contrat le plus proche",
             "date": "2026-11-25",
-            "variation_1m": 41.24,
-            "variation_3m": 29.31,
-            "variation_12m": -16.93,
-            "mm200": 2.9687
+            "variation_1m": 41.51,
+            "variation_3m": 29.56,
+            "variation_12m": -16.77,
+            "mm200": 2.9688
           },
           "courbe": {
             "note": 90,
-            "texte": "Courbe en backwardation (prix futurs plus bas : marché tendu) : rendement de roulement de +23,3 % par an entre 2026-12 et 2027-07",
+            "texte": "Courbe en backwardation (prix futurs plus bas : marché tendu) : rendement de roulement de +22,6 % par an entre 2026-12 et 2027-07",
             "source": "Yahoo Finance (yfinance), contrats des échéances suivantes",
             "date": "2026-11-25",
             "structure": "backwardation",
-            "roulement_pct_an": 23.31,
+            "roulement_pct_an": 22.64,
             "points": [
               {
                 "echeance": "2026-12",
@@ -8408,283 +7254,48 @@
               {
                 "echeance": "2027-01",
                 "symbole": "NGF27.NYM",
-                "prix": 3.675,
+                "prix": 3.682,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-02",
                 "symbole": "NGG27.NYM",
-                "prix": 3.217,
+                "prix": 3.222,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-03",
                 "symbole": "NGH27.NYM",
-                "prix": 2.443,
+                "prix": 2.453,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-04",
                 "symbole": "NGJ27.NYM",
-                "prix": 2.41,
+                "prix": 2.418,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-05",
                 "symbole": "NGK27.NYM",
-                "prix": 2.47,
+                "prix": 2.475,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-06",
                 "symbole": "NGM27.NYM",
-                "prix": 2.638,
+                "prix": 2.64,
                 "date": "2026-11-25"
               },
               {
                 "echeance": "2027-07",
                 "symbole": "NGN27.NYM",
-                "prix": 2.883,
+                "prix": 2.893,
                 "date": "2026-11-25"
               }
             ]
           },
-          "stocks": {
-            "note": 45,
-            "texte": "Stocks de gaz naturel américains (48 États) à 3 858,0 Gpi³, +2,0 % par rapport à la moyenne sur 5 ans",
-            "source": "EIA (département américain de l'Énergie), API v2",
-            "date": "2026-11-20",
-            "series": [
-              {
-                "cle": "gaz",
-                "libelle": "stocks de gaz naturel américains (48 États)",
-                "unite": "Gpi³",
-                "date": "2026-11-20",
-                "valeur": 3858.0,
-                "moyenne_5_ans": 3780.8,
-                "ecart_pct": 2.04,
-                "variation_hebdo": -24.0,
-                "z_hebdo": -0.25,
-                "choc": false,
-                "historique": [
-                  [
-                    "2025-11-21",
-                    3924.0
-                  ],
-                  [
-                    "2025-11-28",
-                    3913.0
-                  ],
-                  [
-                    "2025-12-05",
-                    3735.0
-                  ],
-                  [
-                    "2025-12-12",
-                    3569.0
-                  ],
-                  [
-                    "2025-12-19",
-                    3401.0
-                  ],
-                  [
-                    "2025-12-26",
-                    3364.0
-                  ],
-                  [
-                    "2026-01-02",
-                    3244.0
-                  ],
-                  [
-                    "2026-01-09",
-                    3174.0
-                  ],
-                  [
-                    "2026-01-16",
-                    3054.0
-                  ],
-                  [
-                    "2026-01-23",
-                    2813.0
-                  ],
-                  [
-                    "2026-01-30",
-                    2454.0
-                  ],
-                  [
-                    "2026-02-06",
-                    2202.0
-                  ],
-                  [
-                    "2026-02-13",
-                    2059.0
-                  ],
-                  [
-                    "2026-02-20",
-                    2007.0
-                  ],
-                  [
-                    "2026-02-27",
-                    1876.0
-                  ],
-                  [
-                    "2026-03-06",
-                    1838.0
-                  ],
-                  [
-                    "2026-03-13",
-                    1872.0
-                  ],
-                  [
-                    "2026-03-20",
-                    1818.0
-                  ],
-                  [
-                    "2026-03-27",
-                    1851.0
-                  ],
-                  [
-                    "2026-04-03",
-                    1900.0
-                  ],
-                  [
-                    "2026-04-10",
-                    1960.0
-                  ],
-                  [
-                    "2026-04-17",
-                    2063.0
-                  ],
-                  [
-                    "2026-04-24",
-                    2142.0
-                  ],
-                  [
-                    "2026-05-01",
-                    2205.0
-                  ],
-                  [
-                    "2026-05-08",
-                    2290.0
-                  ],
-                  [
-                    "2026-05-15",
-                    2391.0
-                  ],
-                  [
-                    "2026-05-22",
-                    2483.0
-                  ],
-                  [
-                    "2026-05-29",
-                    2578.0
-                  ],
-                  [
-                    "2026-06-05",
-                    2686.0
-                  ],
-                  [
-                    "2026-06-12",
-                    2759.0
-                  ],
-                  [
-                    "2026-06-19",
-                    2835.0
-                  ],
-                  [
-                    "2026-06-26",
-                    2922.0
-                  ],
-                  [
-                    "2026-07-03",
-                    2983.0
-                  ],
-                  [
-                    "2026-07-10",
-                    3024.0
-                  ],
-                  [
-                    "2026-07-17",
-                    3056.0
-                  ],
-                  [
-                    "2026-07-24",
-                    3084.0
-                  ],
-                  [
-                    "2026-07-31",
-                    3117.0
-                  ],
-                  [
-                    "2026-08-07",
-                    3153.0
-                  ],
-                  [
-                    "2026-08-14",
-                    3169.0
-                  ],
-                  [
-                    "2026-08-21",
-                    3184.0
-                  ],
-                  [
-                    "2026-08-28",
-                    3214.0
-                  ],
-                  [
-                    "2026-09-04",
-                    3254.0
-                  ],
-                  [
-                    "2026-09-11",
-                    3298.0
-                  ],
-                  [
-                    "2026-09-18",
-                    3351.0
-                  ],
-                  [
-                    "2026-09-25",
-                    3415.0
-                  ],
-                  [
-                    "2026-10-02",
-                    3500.0
-                  ],
-                  [
-                    "2026-10-09",
-                    3567.0
-                  ],
-                  [
-                    "2026-10-16",
-                    3644.0
-                  ],
-                  [
-                    "2026-10-23",
-                    3724.0
-                  ],
-                  [
-                    "2026-10-30",
-                    3801.0
-                  ],
-                  [
-                    "2026-11-06",
-                    3862.0
-                  ],
-                  [
-                    "2026-11-13",
-                    3882.0
-                  ],
-                  [
-                    "2026-11-20",
-                    3858.0
-                  ]
-                ]
-              }
-            ],
-            "ecart_moyen_pct": 2.04,
-            "type": "eia"
-          },
+          "stocks": null,
           "positionnement": {
             "note": 75,
             "texte": "Position nette des gérants (managed money) de −211 545 contrats (−13,0 % de l’intérêt ouvert), percentile 2 sur 3 ans : position très vendeuse : lecture à contre-courant favorable",
@@ -8908,9 +7519,9 @@
             "marche": "NAT GAS NYME - NEW YORK MERCANTILE EXCHANGE"
           },
           "macro": {
-            "note": 39,
-            "texte": "Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois",
-            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS)",
+            "note": 35,
+            "texte": "Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois ; palier de risque mondial « Tension »",
+            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS), agent risque",
             "date": "2026-08",
             "variation_taux_reel_3m": 0.47,
             "variation_dollar_3m": 4.69
@@ -8919,7 +7530,7 @@
             "note": 56,
             "texte": "2 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Guerre d'agression de la Russie contre l'Ukraine : l'UE restreint le commerce avec 15 entités liées au complexe militaro-industriel de la Russie »)",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25",
+            "date": "2026-11-26",
             "evenements": [
               {
                 "titre": "Guerre d'agression de la Russie contre l'Ukraine : l'UE restreint le commerce avec 15 entités liées au complexe militaro-industriel de la Russie",
@@ -8928,7 +7539,7 @@
                   "RU"
                 ],
                 "categorie": "Sanctions",
-                "date": "2026-11-25"
+                "date": "2026-11-26"
               },
               {
                 "titre": "Sanctions américaines contre Cuba et relations bilatérales",
@@ -8948,7 +7559,7 @@
             "texte": "Cours corrigé de l’inflation américaine au percentile 64 de sa plage sur 10 ans (plus bas 1,50, plus haut 9,34 en valeur nominale)",
             "source": "Yahoo Finance (yfinance), FRED (CPIAUCSL)",
             "date": "2026-11-25",
-            "percentile": 63.5,
+            "percentile": 63.6,
             "corrige_inflation": true,
             "annees": 10,
             "plus_bas": 1.495,
@@ -8956,25 +7567,25 @@
           }
         },
         "arguments_pour": [
-          "Structure de la courbe (90/100) : Courbe en backwardation (prix futurs plus bas : marché tendu) : rendement de roulement de +23,3 % par an entre 2026-12 et 2027-07.",
+          "Structure de la courbe (90/100) : Courbe en backwardation (prix futurs plus bas : marché tendu) : rendement de roulement de +22,6 % par an entre 2026-12 et 2027-07.",
           "Positionnement des investisseurs (75/100) : Position nette des gérants (managed money) de −211 545 contrats (−13,0 % de l’intérêt ouvert), percentile 2 sur 3 ans : position très vendeuse : lecture à contre-courant favorable.",
-          "Tendance et momentum (73/100) : Cours +29,3 % sur 3 mois, −16,9 % sur 12 mois, au-dessus de sa moyenne 200 jours (2,97)."
+          "Tendance et momentum (74/100) : Cours +29,6 % sur 3 mois, −16,8 % sur 12 mois, au-dessus de sa moyenne 200 jours (2,97)."
         ],
         "arguments_contre": [
-          "Moteurs macro (39/100) : Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois.",
+          "Moteurs macro (35/100) : Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois ; palier de risque mondial « Tension ».",
           "Niveau historique (42/100) : Cours corrigé de l’inflation américaine au percentile 64 de sa plage sur 10 ans (plus bas 1,50, plus haut 9,34 en valeur nominale).",
-          "Stocks par rapport à la normale (45/100) : Stocks de gaz naturel américains (48 États) à 3 858,0 Gpi³, +2,0 % par rapport à la moyenne sur 5 ans."
+          "Contexte géopolitique (56/100) : 2 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Guerre d'agression de la Russie contre l'Ukraine : l'UE restreint le commerce avec 15 entités liées au complexe militaro-industriel de la Russie »)."
         ],
-        "ce_qui_pourrait_me_donner_tort": "Le principal point faible : moteurs macro (39/100) : Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois. Le scénario serait contredit par un hiver doux ou une production record qui gonfle les stocks.",
+        "ce_qui_pourrait_me_donner_tort": "Le principal point faible : moteurs macro (35/100) : Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois ; palier de risque mondial « Tension ». Le scénario serait contredit par un hiver doux ou une production record qui gonfle les stocks.",
         "invalidations": [
           "une clôture sous la moyenne 200 jours (2,97 $/MMBtu)",
-          "un passage de la courbe en contango au-delà de 2 % par an (aujourd'hui +23,3 %)"
+          "un passage de la courbe en contango au-delà de 2 % par an (aujourd'hui +22,6 %)"
         ],
         "supports": [
           {
             "type": "ETF de contrats à terme",
             "detail": "ex. United States Natural Gas Fund (UNG) : contango souvent marqué, coût de roulement élevé",
-            "cout_roulement": "courbe en backwardation : gain de roulement estimé à 23,3 % par an"
+            "cout_roulement": "courbe en backwardation : gain de roulement estimé à 22,6 % par an"
           },
           {
             "type": "Actions de producteurs",
@@ -8987,7 +7598,7 @@
             "nom": "EQT Corporation",
             "pays": "US",
             "note": 65,
-            "recommandation": "Attendre",
+            "recommandation": "Acheter",
             "fiche": "data/entreprises/fiches/EQT.json",
             "deja_detenue": false
           },
@@ -9004,7 +7615,7 @@
             "ticker": "AR",
             "nom": "Antero Resources Corporation",
             "pays": "US",
-            "note": 62,
+            "note": 63,
             "recommandation": "Attendre",
             "fiche": "data/entreprises/fiches/AR.json",
             "deja_detenue": false
@@ -9098,24 +7709,19 @@
             "date": "2026-11-25"
           },
           {
-            "sous_note": "Stocks par rapport à la normale",
-            "source": "EIA (département américain de l'Énergie), API v2",
-            "date": "2026-11-20"
-          },
-          {
             "sous_note": "Positionnement des investisseurs",
             "source": "CFTC, Commitments of Traders (disaggregated, contrats à terme), API Socrata",
             "date": "2026-11-17"
           },
           {
             "sous_note": "Moteurs macro",
-            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS)",
+            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS), agent risque",
             "date": "2026-08"
           },
           {
             "sous_note": "Contexte géopolitique",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           },
           {
             "sous_note": "Niveau historique",
@@ -9124,7 +7730,7 @@
           }
         ],
         "precedent": {
-          "note": 60.3,
+          "note": 60.0,
           "verdict": "Surpondérer"
         }
       },
@@ -9358,7 +7964,7 @@
             88.1
           ]
         ],
-        "note": 57.0,
+        "note": 56.0,
         "verdict": "Neutre",
         "verdict_non_retenu": null,
         "horizon": "3 à 12 mois",
@@ -9386,19 +7992,28 @@
           "stocks": null,
           "positionnement": null,
           "macro": {
-            "note": 39,
-            "texte": "Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois",
-            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS)",
+            "note": 35,
+            "texte": "Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois ; palier de risque mondial « Tension »",
+            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS), agent risque",
             "date": "2026-08",
             "variation_taux_reel_3m": 0.47,
             "variation_dollar_3m": 4.69
           },
           "geopolitique": {
             "note": 68,
-            "texte": "4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes entre la Russie et l'Ukraine »)",
+            "texte": "4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Tensions militaires et frappes entre les États-Unis et l'Iran »)",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25",
+            "date": "2026-11-26",
             "evenements": [
+              {
+                "titre": "Tensions militaires et frappes entre les États-Unis et l'Iran",
+                "gravite": 4,
+                "pays": [
+                  "US"
+                ],
+                "categorie": "Conflit armé",
+                "date": "2026-11-26"
+              },
               {
                 "titre": "Frappes aériennes entre la Russie et l'Ukraine",
                 "gravite": 4,
@@ -9410,22 +8025,13 @@
                 "date": "2026-11-25"
               },
               {
-                "titre": "Tensions militaires et frappes entre les États-Unis et l'Iran",
-                "gravite": 4,
-                "pays": [
-                  "US"
-                ],
-                "categorie": "Conflit armé",
-                "date": "2026-11-25"
-              },
-              {
                 "titre": "Guerre d'agression de la Russie contre l'Ukraine : l'UE restreint le commerce avec 15 entités liées au complexe militaro-industriel de la Russie",
                 "gravite": 3,
                 "pays": [
                   "RU"
                 ],
                 "categorie": "Sanctions",
-                "date": "2026-11-25"
+                "date": "2026-11-26"
               },
               {
                 "titre": "Sanctions américaines contre Cuba et relations bilatérales",
@@ -9453,11 +8059,11 @@
         },
         "arguments_pour": [
           "Tendance et momentum (95/100) : Cours +34,2 % sur 3 mois, +199,8 % sur 12 mois, au-dessus de sa moyenne 200 jours (59,80).",
-          "Contexte géopolitique (68/100) : 4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes entre la Russie et l'Ukraine »)."
+          "Contexte géopolitique (68/100) : 4 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Tensions militaires et frappes entre les États-Unis et l'Iran »)."
         ],
         "arguments_contre": [
           "Niveau historique (26/100) : Cours corrigé de l’inflation américaine au percentile 89 de sa plage sur 9 ans (plus bas 3,89, plus haut 339,20 en valeur nominale).",
-          "Moteurs macro (39/100) : Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois."
+          "Moteurs macro (35/100) : Indicateur avancé de l'OCDE (G20) à 100,1 (−0,17 pt sur 3 mois), phase « Expansion sans inflation » ; dollar +4,7 % sur 3 mois ; palier de risque mondial « Tension »."
         ],
         "ce_qui_pourrait_me_donner_tort": "Les signaux se compensent ; une rupture nette dans un sens (cours, stocks ou positionnement) suffirait à trancher. Risque propre : des stocks européens élevés ou un hiver doux.",
         "invalidations": [
@@ -9480,7 +8086,7 @@
             "nom": "EQT Corporation",
             "pays": "US",
             "note": 65,
-            "recommandation": "Attendre",
+            "recommandation": "Acheter",
             "fiche": "data/entreprises/fiches/EQT.json",
             "deja_detenue": false
           },
@@ -9566,13 +8172,13 @@
           },
           {
             "sous_note": "Moteurs macro",
-            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS)",
+            "source": "agent macro (OCDE, phase du cycle), FRED (DTWEXBGS), agent risque",
             "date": "2026-08"
           },
           {
             "sous_note": "Contexte géopolitique",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           },
           {
             "sous_note": "Niveau historique",
@@ -10206,10 +8812,19 @@
           },
           "geopolitique": {
             "note": 65,
-            "texte": "3 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes entre la Russie et l'Ukraine »)",
+            "texte": "3 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Tensions militaires et frappes entre les États-Unis et l'Iran »)",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25",
+            "date": "2026-11-26",
             "evenements": [
+              {
+                "titre": "Tensions militaires et frappes entre les États-Unis et l'Iran",
+                "gravite": 4,
+                "pays": [
+                  "US"
+                ],
+                "categorie": "Conflit armé",
+                "date": "2026-11-26"
+              },
               {
                 "titre": "Frappes aériennes entre la Russie et l'Ukraine",
                 "gravite": 4,
@@ -10221,22 +8836,13 @@
                 "date": "2026-11-25"
               },
               {
-                "titre": "Tensions militaires et frappes entre les États-Unis et l'Iran",
-                "gravite": 4,
-                "pays": [
-                  "US"
-                ],
-                "categorie": "Conflit armé",
-                "date": "2026-11-25"
-              },
-              {
-                "titre": "Évolution et contestation des droits de douane américains",
+                "titre": "Politique des droits de douane et tarifs américains",
                 "gravite": 3,
                 "pays": [
                   "US"
                 ],
                 "categorie": "Commerce et droits de douane",
-                "date": "2026-11-25"
+                "date": "2026-11-26"
               }
             ]
           },
@@ -10290,7 +8896,7 @@
           }
         },
         "arguments_pour": [
-          "Contexte géopolitique (65/100) : 3 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes entre la Russie et l'Ukraine »).",
+          "Contexte géopolitique (65/100) : 3 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Tensions militaires et frappes entre les États-Unis et l'Iran »).",
           "Niveau historique (64/100) : Cours corrigé de l’inflation américaine au percentile 26 de sa plage sur 10 ans (plus bas 387,50, plus haut 1 348,00 en valeur nominale).",
           "Positionnement des investisseurs (55/100) : Position nette des gérants (managed money) de −84 836 contrats (−15,2 % de l’intérêt ouvert), percentile 27 sur 3 ans : position dans sa plage habituelle."
         ],
@@ -10421,7 +9027,7 @@
           {
             "sous_note": "Contexte géopolitique",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           },
           {
             "sous_note": "Flux des ETF",
@@ -10435,7 +9041,7 @@
           }
         ],
         "precedent": {
-          "note": 50.6,
+          "note": 49.8,
           "verdict": "Neutre"
         }
       },
@@ -11061,10 +9667,19 @@
           },
           "geopolitique": {
             "note": 65,
-            "texte": "3 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes entre la Russie et l'Ukraine »)",
+            "texte": "3 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Tensions militaires et frappes entre les États-Unis et l'Iran »)",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25",
+            "date": "2026-11-26",
             "evenements": [
+              {
+                "titre": "Tensions militaires et frappes entre les États-Unis et l'Iran",
+                "gravite": 4,
+                "pays": [
+                  "US"
+                ],
+                "categorie": "Conflit armé",
+                "date": "2026-11-26"
+              },
               {
                 "titre": "Frappes aériennes entre la Russie et l'Ukraine",
                 "gravite": 4,
@@ -11075,22 +9690,13 @@
                 "date": "2026-11-25"
               },
               {
-                "titre": "Tensions militaires et frappes entre les États-Unis et l'Iran",
-                "gravite": 4,
-                "pays": [
-                  "US"
-                ],
-                "categorie": "Conflit armé",
-                "date": "2026-11-25"
-              },
-              {
-                "titre": "Évolution et contestation des droits de douane américains",
+                "titre": "Politique des droits de douane et tarifs américains",
                 "gravite": 3,
                 "pays": [
                   "US"
                 ],
                 "categorie": "Commerce et droits de douane",
-                "date": "2026-11-25"
+                "date": "2026-11-26"
               }
             ]
           },
@@ -11144,7 +9750,7 @@
           }
         },
         "arguments_pour": [
-          "Contexte géopolitique (65/100) : 3 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Frappes aériennes entre la Russie et l'Ukraine »).",
+          "Contexte géopolitique (65/100) : 3 événements de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Tensions militaires et frappes entre les États-Unis et l'Iran »).",
           "Stocks par rapport à la normale (60/100) : Stocks mondiaux de fin de campagne 2026/27 à 21,4 % de la consommation (percentile 36 depuis 1995) ; révision du mois : +0,5 % sur les stocks.",
           "Niveau historique (60/100) : Cours corrigé de l’inflation américaine au percentile 33 de sa plage sur 10 ans (plus bas 307,75, plus haut 818,25 en valeur nominale)."
         ],
@@ -11251,7 +9857,7 @@
           {
             "sous_note": "Contexte géopolitique",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           },
           {
             "sous_note": "Flux des ETF",
@@ -11265,7 +9871,7 @@
           }
         ],
         "precedent": {
-          "note": 52.5,
+          "note": 51.6,
           "verdict": "Neutre"
         }
       },
@@ -11888,18 +10494,18 @@
           },
           "geopolitique": {
             "note": 53,
-            "texte": "1 événement de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Évolution et contestation des droits de douane américains »)",
+            "texte": "1 événement de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Politique des droits de douane et tarifs américains »)",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25",
+            "date": "2026-11-26",
             "evenements": [
               {
-                "titre": "Évolution et contestation des droits de douane américains",
+                "titre": "Politique des droits de douane et tarifs américains",
                 "gravite": 3,
                 "pays": [
                   "US"
                 ],
                 "categorie": "Commerce et droits de douane",
-                "date": "2026-11-25"
+                "date": "2026-11-26"
               }
             ]
           },
@@ -11955,7 +10561,7 @@
         "arguments_pour": [
           "Structure de la courbe (60/100) : Courbe en backwardation (prix futurs plus bas : marché tendu) : rendement de roulement de +4,1 % par an entre 2027-01 et 2028-01.",
           "Tendance et momentum (57/100) : Cours −0,9 % sur 3 mois, +10,5 % sur 12 mois, au-dessus de sa moyenne 200 jours (1 200,54).",
-          "Contexte géopolitique (53/100) : 1 événement de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Évolution et contestation des droits de douane américains »)."
+          "Contexte géopolitique (53/100) : 1 événement de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Politique des droits de douane et tarifs américains »)."
         ],
         "arguments_contre": [
           "Stocks par rapport à la normale (33/100) : Stocks mondiaux de fin de campagne 2026/27 à 27,9 % de la consommation (percentile 74 depuis 1995) ; révision du mois : −0,6 % sur les stocks.",
@@ -12048,7 +10654,7 @@
           {
             "sous_note": "Contexte géopolitique",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           },
           {
             "sous_note": "Flux des ETF",
@@ -12062,7 +10668,7 @@
           }
         ],
         "precedent": {
-          "note": 45.3,
+          "note": 45.0,
           "verdict": "Neutre"
         }
       },
@@ -12607,7 +11213,7 @@
             "note": 50,
             "texte": "Aucun événement de gravité 3 ou plus touchant les principaux producteurs en 14 jours",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25",
+            "date": "2026-11-26",
             "evenements": []
           },
           "flux": {
@@ -12750,7 +11356,7 @@
           {
             "sous_note": "Contexte géopolitique",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           },
           {
             "sous_note": "Flux des ETF",
@@ -12764,7 +11370,7 @@
           }
         ],
         "precedent": {
-          "note": 55.6,
+          "note": 54.4,
           "verdict": "Neutre"
         }
       },
@@ -13312,18 +11918,18 @@
           },
           "geopolitique": {
             "note": 53,
-            "texte": "1 événement de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Évolution et contestation des droits de douane américains »)",
+            "texte": "1 événement de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Politique des droits de douane et tarifs américains »)",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25",
+            "date": "2026-11-26",
             "evenements": [
               {
-                "titre": "Évolution et contestation des droits de douane américains",
+                "titre": "Politique des droits de douane et tarifs américains",
                 "gravite": 3,
                 "pays": [
                   "US"
                 ],
                 "categorie": "Commerce et droits de douane",
-                "date": "2026-11-25"
+                "date": "2026-11-26"
               }
             ]
           },
@@ -13379,7 +11985,7 @@
         "arguments_pour": [
           "Tendance et momentum (66/100) : Cours +4,7 % sur 3 mois, +23,5 % sur 12 mois, au-dessus de sa moyenne 200 jours (16,02).",
           "Structure de la courbe (58/100) : Courbe en backwardation (prix futurs plus bas : marché tendu) : rendement de roulement de +3,2 % par an entre 2027-03 et 2028-03.",
-          "Contexte géopolitique (53/100) : 1 événement de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Évolution et contestation des droits de douane américains »)."
+          "Contexte géopolitique (53/100) : 1 événement de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Politique des droits de douane et tarifs américains »)."
         ],
         "arguments_contre": [
           "Positionnement des investisseurs (25/100) : Position nette des gérants (managed money) de +187 043 contrats (+16,3 % de l’intérêt ouvert), percentile 92 sur 3 ans : position très encombrée à l'achat : risque de retournement.",
@@ -13467,7 +12073,7 @@
           {
             "sous_note": "Contexte géopolitique",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           },
           {
             "sous_note": "Flux des ETF",
@@ -13481,7 +12087,7 @@
           }
         ],
         "precedent": {
-          "note": 44.9,
+          "note": 44.5,
           "verdict": "Neutre"
         }
       },
@@ -13715,7 +12321,7 @@
             5421.0
           ]
         ],
-        "note": 52.0,
+        "note": 52.2,
         "verdict": "Neutre",
         "verdict_non_retenu": null,
         "horizon": "3 à 12 mois",
@@ -13724,7 +12330,6 @@
           "Positionnement des investisseurs"
         ],
         "signaux_defavorables": [
-          "Structure de la courbe",
           "Moteurs macro",
           "Niveau historique"
         ],
@@ -13740,18 +12345,18 @@
             "mm200": 4653.195
           },
           "courbe": {
-            "note": 40,
-            "texte": "Courbe en contango (prix futurs plus élevés : marché détendu) : rendement de roulement de −3,9 % par an entre 2026-12 et 2027-12",
+            "note": 41,
+            "texte": "Courbe en contango (prix futurs plus élevés : marché détendu) : rendement de roulement de −3,5 % par an entre 2026-12 et 2027-12",
             "source": "Yahoo Finance (yfinance), contrats des échéances suivantes",
             "date": "2026-11-25",
             "structure": "contango",
-            "roulement_pct_an": -3.86,
+            "roulement_pct_an": -3.48,
             "points": [
               {
                 "echeance": "2026-12",
                 "symbole": "CCZ26.NYB",
-                "prix": 5281.0,
-                "date": "2026-11-24"
+                "prix": 5302.0,
+                "date": "2026-11-25"
               },
               {
                 "echeance": "2027-03",
@@ -14032,7 +12637,7 @@
             "note": 50,
             "texte": "Aucun événement de gravité 3 ou plus touchant les principaux producteurs en 14 jours",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25",
+            "date": "2026-11-26",
             "evenements": []
           },
           "flux": {
@@ -14092,7 +12697,7 @@
         "arguments_contre": [
           "Moteurs macro (36/100) : Dollar +4,7 % sur 3 mois (un dollar plus faible soutient les prix en dollars).",
           "Niveau historique (38/100) : Cours corrigé de l’inflation américaine au percentile 69 de sa plage sur 10 ans (plus bas 1 809,00, plus haut 11 954,00 en valeur nominale).",
-          "Structure de la courbe (40/100) : Courbe en contango (prix futurs plus élevés : marché détendu) : rendement de roulement de −3,9 % par an entre 2026-12 et 2027-12."
+          "Structure de la courbe (41/100) : Courbe en contango (prix futurs plus élevés : marché détendu) : rendement de roulement de −3,5 % par an entre 2026-12 et 2027-12."
         ],
         "ce_qui_pourrait_me_donner_tort": "Les signaux se compensent ; une rupture nette dans un sens (cours, stocks ou positionnement) suffirait à trancher. Risque propre : une récolte ouest-africaine meilleure que prévu ou une destruction de demande.",
         "invalidations": [
@@ -14103,7 +12708,7 @@
           {
             "type": "ETC de contrats à terme",
             "detail": "ex. WisdomTree Cocoa : coût de roulement, marché très volatil",
-            "cout_roulement": "courbe en contango : coût de roulement estimé à 3,9 % par an"
+            "cout_roulement": "courbe en contango : coût de roulement estimé à 3,5 % par an"
           },
           {
             "type": "Panier agricole",
@@ -14181,7 +12786,7 @@
           {
             "sous_note": "Contexte géopolitique",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           },
           {
             "sous_note": "Flux des ETF",
@@ -14195,7 +12800,7 @@
           }
         ],
         "precedent": {
-          "note": 52.1,
+          "note": 52.0,
           "verdict": "Neutre"
         }
       },
@@ -14484,8 +13089,8 @@
               {
                 "echeance": "2027-10",
                 "symbole": "CTV27.NYB",
-                "prix": 78.56,
-                "date": "2026-11-24"
+                "prix": 79.12,
+                "date": "2026-11-25"
               },
               {
                 "echeance": "2027-12",
@@ -14502,8 +13107,8 @@
               {
                 "echeance": "2028-05",
                 "symbole": "CTK28.NYB",
-                "prix": 78.7,
-                "date": "2026-11-24"
+                "prix": 79.11,
+                "date": "2026-11-25"
               }
             ]
           },
@@ -14740,18 +13345,18 @@
           },
           "geopolitique": {
             "note": 53,
-            "texte": "1 événement de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Évolution et contestation des droits de douane américains »)",
+            "texte": "1 événement de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Politique des droits de douane et tarifs américains »)",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25",
+            "date": "2026-11-26",
             "evenements": [
               {
-                "titre": "Évolution et contestation des droits de douane américains",
+                "titre": "Politique des droits de douane et tarifs américains",
                 "gravite": 3,
                 "pays": [
                   "US"
                 ],
                 "categorie": "Commerce et droits de douane",
-                "date": "2026-11-25"
+                "date": "2026-11-26"
               }
             ]
           },
@@ -14807,7 +13412,7 @@
         "arguments_pour": [
           "Tendance et momentum (59/100) : Cours −6,6 % sur 3 mois, +31,3 % sur 12 mois, au-dessus de sa moyenne 200 jours (76,56).",
           "Structure de la courbe (53/100) : Courbe en plate (prix futurs proches du comptant) : rendement de roulement de +1,3 % par an entre 2026-12 et 2027-12.",
-          "Contexte géopolitique (53/100) : 1 événement de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Évolution et contestation des droits de douane américains »)."
+          "Contexte géopolitique (53/100) : 1 événement de gravité 3 ou plus en 14 jours touchant les principaux producteurs ou l'approvisionnement (ex. « Politique des droits de douane et tarifs américains »)."
         ],
         "arguments_contre": [
           "Moteurs macro (36/100) : Dollar +4,7 % sur 3 mois (un dollar plus faible soutient les prix en dollars).",
@@ -14901,7 +13506,7 @@
           {
             "sous_note": "Contexte géopolitique",
             "source": "agent géopolitique (data/geopolitique.json)",
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           },
           {
             "sous_note": "Flux des ETF",
@@ -14915,7 +13520,7 @@
           }
         ],
         "precedent": {
-          "note": 50.4,
+          "note": 49.4,
           "verdict": "Neutre"
         }
       }
@@ -14925,13 +13530,13 @@
         "source": "EIA, stocks pétroliers hebdomadaires",
         "rythme": "chaque mercredi (jeudi si jour férié), 10 h 30 à New York",
         "derniere_donnee": "2026-11-20",
-        "nouvelle": true
+        "nouvelle": false
       },
       {
         "source": "EIA, stocks de gaz naturel",
         "rythme": "chaque jeudi, 10 h 30 à New York",
         "derniere_donnee": "2026-11-20",
-        "nouvelle": true
+        "nouvelle": false
       },
       {
         "source": "CFTC, Commitments of Traders",
@@ -15005,59 +13610,59 @@
       },
       "SLV": {
         "nom": "iShares Silver Trust",
-        "encours": 13871648029.48864,
-        "date": "2026-11-20",
+        "encours": 13084803857.35936,
+        "date": "2026-11-25",
         "periodes": {
           "1m": {
             "jours": 30,
             "complet": false,
             "debut": "2026-11-10",
-            "jours_disponibles": 10,
+            "jours_disponibles": 15,
             "flux_musd": 0.0,
             "pct_encours": 0.0,
             "statut": "en cours de constitution",
-            "fin": "2026-11-20"
+            "fin": "2026-11-25"
           },
           "3m": {
             "jours": 91,
             "complet": false,
             "debut": "2026-11-10",
-            "jours_disponibles": 10,
+            "jours_disponibles": 15,
             "flux_musd": 0.0,
             "pct_encours": 0.0,
             "statut": "en cours de constitution",
-            "fin": "2026-11-20"
+            "fin": "2026-11-25"
           }
         },
-        "releves": 5
+        "releves": 6
       },
       "USO": {
         "nom": "United States Oil Fund",
-        "encours": 16321344899.999998,
-        "date": "2026-11-20",
+        "encours": 16251552300.0,
+        "date": "2026-11-25",
         "periodes": {
           "1m": {
             "jours": 30,
             "complet": false,
             "debut": "2026-11-10",
-            "jours_disponibles": 10,
+            "jours_disponibles": 15,
             "flux_musd": 0.0,
             "pct_encours": 0.0,
             "statut": "en cours de constitution",
-            "fin": "2026-11-20"
+            "fin": "2026-11-25"
           },
           "3m": {
             "jours": 91,
             "complet": false,
             "debut": "2026-11-10",
-            "jours_disponibles": 10,
+            "jours_disponibles": 15,
             "flux_musd": 0.0,
             "pct_encours": 0.0,
             "statut": "en cours de constitution",
-            "fin": "2026-11-20"
+            "fin": "2026-11-25"
           }
         },
-        "releves": 5
+        "releves": 6
       },
       "DBA": {
         "nom": "Invesco DB Agriculture Fund",
@@ -15095,7 +13700,7 @@
         "phase": "Expansion sans inflation",
         "date": "2026-08"
       },
-      "palier_risque": "Vigilance"
+      "palier_risque": "Tension"
     },
     "avertissement": "Analyse factuelle à titre informatif, sans conseil d'investissement ; les supports cités sont des exemples de types de produits.",
     "methode": "8 sous-notes /100 (au-dessus de 50 : favorable à une exposition) ; note globale pondérée par famille ; « Surpondérer » à partir de 60 et « Sous-pondérer » jusqu'à 40, avec au moins 2 sous-notes concordantes et une confiance « moyen » ou « élevé » ; seuil atteint sans ces deux conditions : « Neutre (biais positif) » ou « Neutre (biais négatif) » ; sinon « Neutre »."

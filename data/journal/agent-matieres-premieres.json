@@ -1,6 +1,6 @@
 {
   "meta": {
-    "genere_le": "2026-11-25T22:36:01Z",
+    "genere_le": "2026-11-26T04:12:06Z",
     "source": "agent-matieres-premieres",
     "version_agent": "1.0",
     "description": "État des sources et signaux, à chaque exécution",
@@ -9,7 +9,7 @@
       "libelle": "Agent matières premières",
       "ordre": 8,
       "workflow": "agent-matieres-premieres.yml",
-      "derniere_execution": "2026-11-25T22:36:01Z",
+      "derniere_execution": "2026-11-26T04:12:06Z",
       "prochaine_prevue": "2026-11-26T22:15:00Z",
       "intervalle_min": 1440,
       "planning": {
@@ -19,67 +19,67 @@
         "fuseau": "UTC"
       },
       "sources_total": 10,
-      "sources_ok": 10,
+      "sources_ok": 9,
       "sources": [
         {
           "nom": "Yahoo Finance via yfinance (contrat le plus proche, 10 ans)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-25T22:36:01Z"
+          "derniere_donnee_valide": "2026-11-26T04:12:06Z"
         },
         {
           "nom": "Yahoo Finance via yfinance (contrats des échéances suivantes)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-25T22:36:01Z"
+          "derniere_donnee_valide": "2026-11-26T04:12:06Z"
         },
         {
           "nom": "Yahoo Finance via yfinance (parts en circulation et VL des ETF)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-25T22:36:01Z"
+          "derniere_donnee_valide": "2026-11-26T04:12:06Z"
         },
         {
           "nom": "CFTC, Commitments of Traders (API publique Socrata)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-25T22:36:01Z"
+          "derniere_donnee_valide": "2026-11-26T04:12:06Z"
         },
         {
           "nom": "EIA, stocks hebdomadaires (API v2, clé EIA_API_KEY)",
-          "etat": "ok",
-          "detail": null,
+          "etat": "échec",
+          "detail": "https://api.eia.gov/v2/seriesid/PET.WCESTUS1.W : ReadTimeout: HTTPSConnectionPool(host='api.eia.gov', port=443): Read timed out. (read timeout=45)",
           "derniere_donnee_valide": "2026-11-25T22:36:01Z"
         },
         {
           "nom": "USDA, base PSD (fichiers CSV publics)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-25T22:36:01Z"
+          "derniere_donnee_valide": "2026-11-26T04:12:06Z"
         },
         {
           "nom": "USDA, rapport WASDE (fichier texte mensuel)",
           "etat": "ok",
           "detail": null,
-          "derniere_donnee_valide": "2026-11-25T22:36:01Z"
+          "derniere_donnee_valide": "2026-11-26T04:12:06Z"
         },
         {
           "nom": "FRED, taux réel américain à 10 ans (DFII10)",
           "etat": "ok",
           "detail": "API",
-          "derniere_donnee_valide": "2026-11-25T22:36:01Z"
+          "derniere_donnee_valide": "2026-11-26T04:12:06Z"
         },
         {
           "nom": "FRED, indice dollar large (DTWEXBGS)",
           "etat": "ok",
           "detail": "API",
-          "derniere_donnee_valide": "2026-11-25T22:36:01Z"
+          "derniere_donnee_valide": "2026-11-26T04:12:06Z"
         },
         {
           "nom": "FRED, prix à la consommation américains (CPIAUCSL)",
           "etat": "ok",
           "detail": "API",
-          "derniere_donnee_valide": "2026-11-25T22:36:01Z"
+          "derniere_donnee_valide": "2026-11-26T04:12:06Z"
         }
       ],
       "degrade": false,
@@ -152,9 +152,6 @@
         "Positionnement · Pétrole WTI": [
           "CFTC"
         ],
-        "Stocks · Pétrole WTI": [
-          "EIA"
-        ],
         "Cours · Pétrole Brent": [
           "Yahoo"
         ],
@@ -164,9 +161,6 @@
         "Positionnement · Pétrole Brent": [
           "CFTC"
         ],
-        "Stocks · Pétrole Brent": [
-          "EIA"
-        ],
         "Cours · Gaz naturel américain": [
           "Yahoo"
         ],
@@ -175,9 +169,6 @@
         ],
         "Positionnement · Gaz naturel américain": [
           "CFTC"
-        ],
-        "Stocks · Gaz naturel américain": [
-          "EIA"
         ],
         "Cours · Gaz européen (TTF)": [
           "Yahoo"
@@ -738,9 +729,27 @@
         "fred_CPIAUCSL": "ok"
       },
       "signaux": []
+    },
+    {
+      "genere_le": "2026-11-26T04:12:06Z",
+      "etat_des_sources": {
+        "yahoo_cours": "ok",
+        "yahoo_courbes": "ok",
+        "yahoo_etf": "ok",
+        "cftc": "ok",
+        "eia": "erreur : https://api.eia.gov/v2/seriesid/PET.WCESTUS1.W : ReadTimeout: HTTPSConnectionPool(host='api.eia.gov', port=443): Read timed out. (read timeout=45)",
+        "usda_psd": "ok",
+        "usda_wasde": "ok",
+        "fred_DFII10": "ok",
+        "fred_DTWEXBGS": "ok",
+        "fred_CPIAUCSL": "ok"
+      },
+      "signaux": [
+        "Pétrole WTI : passage de « Neutre » à « Surpondérer »"
+      ]
     }
   ],
-  "derniere_execution": "2026-11-25T22:36:01Z",
+  "derniere_execution": "2026-11-26T04:12:06Z",
   "prochaine_prevue": "2026-11-26T22:15:00Z",
   "intervalle_min": 1440,
   "planning": {
