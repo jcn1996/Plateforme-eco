@@ -1,13 +1,70 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-26T04:26:40Z",
+    "genere_le": "2026-11-26T07:31:52Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "inities|achats_groupes|GLXY|2026-11-26",
+      "revu_le": "2026-11-26T07:31:37Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "GLXY",
+        "date": "2026-11-26",
+        "importance": "forte",
+        "titre": "Galaxy Digital Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 82/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "inities|achats_groupes|PRE|2026-11-26",
+      "revu_le": "2026-11-26T07:31:37Z",
+      "signal": {
+        "agent": "inities",
+        "type": "achats_groupes",
+        "cle": "PRE",
+        "date": "2026-11-26",
+        "importance": "forte",
+        "titre": "Prenetics Global Ltd : 3 dirigeants achètent sur le marché en 30 jours (score 82/100)"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|JP|2026-11-26",
+      "revu_le": "2026-11-26T07:31:37Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "JP",
+        "date": "2026-11-26",
+        "importance": "moyenne",
+        "titre": "Japon : score de risque géopolitique 38/100, +14 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
     {
       "id": "matieres_premieres|changement_verdict|wti|2026-11-26",
       "revu_le": "2026-11-26T04:24:37Z",
@@ -2111,41 +2168,6 @@
       "ajustement": "maintenir",
       "specifique": true,
       "methode": "gemini",
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "geopolitique|hausse_score|JP|2026-11-20",
-      "revu_le": "2026-11-26T01:46:54Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "JP",
-        "date": "2026-11-20",
-        "importance": "moyenne",
-        "titre": "Japon : score de risque géopolitique 26/100, +10 pts sur 7 jours"
-      },
-      "objection": "En dépit de la progression du score de risque, l'ETF EWJ (Japon) n'enregistre qu'une variation limitée de −0,4 % depuis la veille du signal [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "ETF EWJ (Japon) : −0,4 % depuis la veille du signal",
-          "source": "Yahoo Finance via yfinance, EWJ"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "JP": {
-          "objection": "Objections spécifiques : le marché ne confirme pas pour Japon (ETF EWJ à −0,4 % depuis la veille du signal) [F1].",
-          "ajustement": "abaisser"
-        }
-      },
       "confiance": "faible",
       "version_regles": 3,
       "faits_cites": [
