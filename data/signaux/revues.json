@@ -1,13 +1,312 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-25T23:02:35Z",
+    "genere_le": "2026-11-26T01:47:21Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "geopolitique|hausse_score|BR|2026-11-26",
+      "revu_le": "2026-11-26T01:46:54Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "BR",
+        "date": "2026-11-26",
+        "importance": "moyenne",
+        "titre": "Brésil : score de risque géopolitique 33/100, +19 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|CH|2026-11-26",
+      "revu_le": "2026-11-26T01:46:54Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "CH",
+        "date": "2026-11-26",
+        "importance": "moyenne",
+        "titre": "Suisse : score de risque géopolitique 49/100, +25 pts sur 7 jours"
+      },
+      "objection": "Malgré la hausse du score, la Suisse dispose de réserves de 13,1 mois et d'une dette limitée à 38 % du PIB [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Suisse : réserves de 13,1 mois, dette de 38 % du PIB",
+          "source": "FMI, Banque mondiale"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "CH": {
+          "objection": "Objections spécifiques : Suisse dispose d'amortisseurs (réserves de 13,1 mois d'importations, dette publique de 38 % du PIB) [F1].",
+          "ajustement": "maintenir"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "geopolitique|hausse_score|SA|2026-11-26",
+      "revu_le": "2026-11-26T01:46:54Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "SA",
+        "date": "2026-11-26",
+        "importance": "moyenne",
+        "titre": "Arabie saoudite : score de risque géopolitique 73/100, +13 pts sur 7 jours"
+      },
+      "objection": "En dépit de la tension géopolitique, l'Arabie saoudite maintient des réserves de 15,6 mois et une dette de 35 % du PIB [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Arabie saoudite : réserves de 15,6 mois, dette de 35 % du PIB",
+          "source": "FMI, Banque mondiale"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "SA": {
+          "objection": "Objections spécifiques : Arabie saoudite dispose d'amortisseurs (réserves de 15,6 mois d'importations, dette publique de 35 % du PIB) [F1].",
+          "ajustement": "maintenir"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "geopolitique|hausse_score|IT|2026-11-26",
+      "revu_le": "2026-11-26T01:46:54Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "IT",
+        "date": "2026-11-26",
+        "importance": "moyenne",
+        "titre": "Italie : score de risque géopolitique 36/100, +18 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|ES|2026-11-26",
+      "revu_le": "2026-11-26T01:46:54Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "ES",
+        "date": "2026-11-26",
+        "importance": "moyenne",
+        "titre": "Espagne : score de risque géopolitique 26/100, +14 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|PL|2026-11-26",
+      "revu_le": "2026-11-26T01:46:54Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "PL",
+        "date": "2026-11-26",
+        "importance": "moyenne",
+        "titre": "Pologne : score de risque géopolitique 38/100, +33 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|ID|2026-11-26",
+      "revu_le": "2026-11-26T01:46:54Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "ID",
+        "date": "2026-11-26",
+        "importance": "moyenne",
+        "titre": "Indonésie : score de risque géopolitique 27/100, +14 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|TH|2026-11-26",
+      "revu_le": "2026-11-26T01:46:54Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "TH",
+        "date": "2026-11-26",
+        "importance": "moyenne",
+        "titre": "Thaïlande : score de risque géopolitique 27/100, +15 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|CO|2026-11-26",
+      "revu_le": "2026-11-26T01:46:54Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "CO",
+        "date": "2026-11-26",
+        "importance": "moyenne",
+        "titre": "Colombie : score de risque géopolitique 28/100, +12 pts sur 7 jours"
+      },
+      "objection": "Malgré la progression du score, la Colombie affiche des réserves de 7,3 mois pour une dette s'établissant à 60 % du PIB [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Colombie : réserves de 7,3 mois, dette de 60 % du PIB",
+          "source": "FMI, Banque mondiale"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "CO": {
+          "objection": "Objections spécifiques : Colombie dispose d'amortisseurs (réserves de 7,3 mois d'importations, dette publique de 60 % du PIB) [F1].",
+          "ajustement": "maintenir"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "geopolitique|hausse_score|EG|2026-11-26",
+      "revu_le": "2026-11-26T01:46:54Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "EG",
+        "date": "2026-11-26",
+        "importance": "moyenne",
+        "titre": "Égypte : score de risque géopolitique 24/100, +11 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "entreprises|guidance_relevee|ADSK|2026-11-25",
+      "revu_le": "2026-11-26T01:46:54Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "guidance_relevee",
+        "cle": "ADSK",
+        "date": "2026-11-25",
+        "importance": "moyenne",
+        "titre": "Autodesk, Inc. : guidance relevée (24/11/2026)"
+      },
+      "objection": "La hausse de la guidance s'accompagne d'une alerte sur les créances en hausse de 42,8 % pour un CA en hausse de 17,5 %, combinée à une VE/EBITDA supérieure de 36,5 % au secteur [F1, F2]. Le palier de risque mondial « Tension » (score 81/100) renforce cette fragilité [F3].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Autodesk, Inc. : VE/EBITDA vs secteur +36,5 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "Autodesk, Inc. : alerte « Hausse anormale des créances » : créances en hausse de 42,8 % pour un CA en hausse de 17,5 %",
+          "source": "agent entreprises (fiche)"
+        },
+        {
+          "id": "F3",
+          "texte": "Palier de risque mondial « Tension » (score de stress 81/100)",
+          "source": "agent risque (data/risque.json)",
+          "contexte": true
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2",
+        "F3"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|ACGL|2026-11-25",
+      "revu_le": "2026-11-26T01:46:54Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "ACGL",
+        "date": "2026-11-25",
+        "importance": "moyenne",
+        "titre": "Arch Capital Group Ltd. entre dans la liste « Qualité à prix raisonnable »"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
     {
       "id": "geopolitique|hausse_score|SG|2026-11-25",
       "revu_le": "2026-11-25T15:31:24Z",
@@ -63,103 +362,6 @@
       "version_regles": 3
     },
     {
-      "id": "geopolitique|hausse_score|BR|2026-11-25",
-      "revu_le": "2026-11-25T14:31:23Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "BR",
-        "date": "2026-11-25",
-        "importance": "moyenne",
-        "titre": "Brésil : score de risque géopolitique 29/100, +15 pts sur 7 jours"
-      },
-      "objection": "Objections spécifiques : le marché ne confirme pas pour Brésil (ETF EWZ à −0,1 % depuis la veille du signal) [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "ETF EWZ (Brésil) : −0,1 % depuis la veille du signal",
-          "source": "Yahoo Finance via yfinance, EWZ"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "règles",
-      "par_entite": {
-        "BR": {
-          "objection": "Objections spécifiques : le marché ne confirme pas pour Brésil (ETF EWZ à −0,1 % depuis la veille du signal) [F1].",
-          "ajustement": "abaisser"
-        }
-      },
-      "confiance": "faible",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|ES|2026-11-25",
-      "revu_le": "2026-11-25T14:31:23Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "ES",
-        "date": "2026-11-25",
-        "importance": "moyenne",
-        "titre": "Espagne : score de risque géopolitique 27/100, +10 pts sur 7 jours"
-      },
-      "objection": "Objections spécifiques : le marché ne confirme pas pour Espagne (ETF EWP à −1,4 % depuis la veille du signal) [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "ETF EWP (Espagne) : −1,4 % depuis la veille du signal",
-          "source": "Yahoo Finance via yfinance, EWP"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "règles",
-      "par_entite": {
-        "ES": {
-          "objection": "Objections spécifiques : le marché ne confirme pas pour Espagne (ETF EWP à −1,4 % depuis la veille du signal) [F1].",
-          "ajustement": "abaisser"
-        }
-      },
-      "confiance": "faible",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|SA|2026-11-25",
-      "revu_le": "2026-11-25T12:31:28Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "SA",
-        "date": "2026-11-25",
-        "importance": "moyenne",
-        "titre": "Arabie saoudite : score de risque géopolitique 72/100, +12 pts sur 7 jours"
-      },
-      "objection": "Malgré la hausse du score géopolitique, l'État dispose de réserves de 15,6 mois et d'une dette contenue à 35 % du PIB [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Arabie saoudite : réserves de 15,6 mois, dette de 35 % du PIB",
-          "source": "FMI, Banque mondiale"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "SA": {
-          "objection": "Objections spécifiques : Arabie saoudite dispose d'amortisseurs (réserves de 15,6 mois d'importations, dette publique de 35 % du PIB) [F1].",
-          "ajustement": "maintenir"
-        }
-      },
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
       "id": "geopolitique|mesure_officielle|evt-324822135c09|2026-11-25",
       "revu_le": "2026-11-25T10:31:27Z",
       "signal": {
@@ -169,25 +371,6 @@
         "date": "2026-11-25",
         "importance": "moyenne",
         "titre": "Sanctions (source officielle) : Les États-Unis ajoutent de nouvelles entités sur leur liste de sanctions"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|TH|2026-11-25",
-      "revu_le": "2026-11-25T10:31:27Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "TH",
-        "date": "2026-11-25",
-        "importance": "moyenne",
-        "titre": "Thaïlande : score de risque géopolitique 24/100, +13 pts sur 7 jours"
       },
       "objection": "Pas d'objection spécifique.",
       "faits": [],
@@ -359,41 +542,6 @@
       "methode": "règles",
       "confiance": "moyen",
       "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|CH|2026-11-25",
-      "revu_le": "2026-11-25T07:31:27Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "CH",
-        "date": "2026-11-25",
-        "importance": "moyenne",
-        "titre": "Suisse : score de risque géopolitique 38/100, +10 pts sur 7 jours"
-      },
-      "objection": "La Suisse dispose toutefois de réserves de 13,1 mois et d'une dette contenue à 38 % du PIB [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Suisse : réserves de 13,1 mois, dette de 38 % du PIB",
-          "source": "FMI, Banque mondiale"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "CH": {
-          "objection": "Objections spécifiques : Suisse dispose d'amortisseurs (réserves de 13,1 mois d'importations, dette publique de 38 % du PIB) [F1].",
-          "ajustement": "maintenir"
-        }
-      },
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
     },
     {
       "id": "entreprises|guidance_relevee|DELL|2026-11-25",
@@ -670,88 +818,31 @@
       "version_regles": 3
     },
     {
-      "id": "geopolitique|hausse_score|IT|2026-11-25",
-      "revu_le": "2026-11-25T05:02:43Z",
+      "id": "geopolitique|hausse_score|AU|2026-11-24",
+      "revu_le": "2026-11-26T01:46:54Z",
       "signal": {
         "agent": "geopolitique",
         "type": "hausse_score",
-        "cle": "IT",
-        "date": "2026-11-25",
+        "cle": "AU",
+        "date": "2026-11-24",
         "importance": "moyenne",
-        "titre": "Italie : score de risque géopolitique 37/100, +25 pts sur 7 jours"
+        "titre": "Australie : score de risque géopolitique 33/100, +11 pts sur 7 jours"
       },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|PL|2026-11-25",
-      "revu_le": "2026-11-25T03:02:04Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "PL",
-        "date": "2026-11-25",
-        "importance": "moyenne",
-        "titre": "Pologne : score de risque géopolitique 39/100, +29 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|ID|2026-11-25",
-      "revu_le": "2026-11-25T03:02:04Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "ID",
-        "date": "2026-11-25",
-        "importance": "moyenne",
-        "titre": "Indonésie : score de risque géopolitique 41/100, +28 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|CO|2026-11-25",
-      "revu_le": "2026-11-25T03:02:04Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "CO",
-        "date": "2026-11-25",
-        "importance": "moyenne",
-        "titre": "Colombie : score de risque géopolitique 30/100, +11 pts sur 7 jours"
-      },
-      "objection": "Malgré des réserves de 7,3 mois, le pays supporte une dette de 60 % du PIB [F1].",
+      "objection": "Malgré la hausse du score géopolitique, l'ETF EWA (Australie) progresse de +0,3 % depuis la veille du signal [F1].",
       "faits": [
         {
           "id": "F1",
-          "texte": "Colombie : réserves de 7,3 mois, dette de 60 % du PIB",
-          "source": "FMI, Banque mondiale"
+          "texte": "ETF EWA (Australie) : +0,3 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWA"
         }
       ],
-      "ajustement": "maintenir",
+      "ajustement": "abaisser",
       "specifique": true,
       "methode": "gemini",
       "par_entite": {
-        "CO": {
-          "objection": "Objections spécifiques : Colombie dispose d'amortisseurs (réserves de 7,3 mois d'importations, dette publique de 60 % du PIB) [F1].",
-          "ajustement": "maintenir"
+        "AU": {
+          "objection": "Objections spécifiques : le marché ne confirme pas pour Australie (ETF EWA à +0,3 % depuis la veille du signal) [F1].",
+          "ajustement": "abaisser"
         }
       },
       "confiance": "faible",
@@ -781,35 +872,6 @@
         }
       ],
       "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|nouvelle_pepite|EQT|2026-11-24",
-      "revu_le": "2026-11-25T03:02:04Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "nouvelle_pepite",
-        "cle": "EQT",
-        "date": "2026-11-24",
-        "importance": "moyenne",
-        "titre": "EQT Corporation entre dans la liste « Qualité à prix raisonnable »"
-      },
-      "objection": "Cette entrée se fait dans un contexte où la croissance du bénéfice atteint +784,4 % [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "EQT Corporation : croissance du bénéfice +784,4 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        }
-      ],
-      "ajustement": "maintenir",
       "specifique": true,
       "methode": "gemini",
       "confiance": "faible",
@@ -857,35 +919,6 @@
         "F1",
         "F2",
         "F3"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|nouvelle_pepite|GFNORTEO.MX|2026-11-24",
-      "revu_le": "2026-11-25T03:02:04Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "nouvelle_pepite",
-        "cle": "GFNORTEO.MX",
-        "date": "2026-11-24",
-        "importance": "moyenne",
-        "titre": "Grupo Financiero Banorte, S.A.B. de C.V. entre dans la liste « Qualité à prix raisonnable »"
-      },
-      "objection": "Malgré des fondamentaux solides, le groupe reste exposé à une forte volatilité de la devise avec un MXN à 14,9 % et une baisse de −12,9 % contre le dollar sur trois mois [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Mexique : MXN : volatilité à 1 mois de 14,9 %, −12,9 % contre le dollar sur 3 mois",
-          "source": "Yahoo Finance via yfinance, MXN=X (devise suivie par l'agent pays)"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
       ],
       "modele": "gemini-3.5-flash-lite"
     },
@@ -2044,6 +2077,41 @@
       "modele": "gemini-3.5-flash-lite"
     },
     {
+      "id": "geopolitique|hausse_score|JP|2026-11-20",
+      "revu_le": "2026-11-26T01:46:54Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "JP",
+        "date": "2026-11-20",
+        "importance": "moyenne",
+        "titre": "Japon : score de risque géopolitique 26/100, +10 pts sur 7 jours"
+      },
+      "objection": "En dépit de la progression du score de risque, l'ETF EWJ (Japon) n'enregistre qu'une variation limitée de −0,4 % depuis la veille du signal [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "ETF EWJ (Japon) : −0,4 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWJ"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "JP": {
+          "objection": "Objections spécifiques : le marché ne confirme pas pour Japon (ETF EWJ à −0,4 % depuis la veille du signal) [F1].",
+          "ajustement": "abaisser"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
       "id": "entreprises|guidance_relevee|BJ|2026-11-20",
       "revu_le": "2026-11-21T03:30:12Z",
       "signal": {
@@ -2181,499 +2249,6 @@
       "methode": "règles",
       "confiance": "moyen",
       "version_regles": 3
-    },
-    {
-      "id": "pays|sorties_inhabituelles|VN|2026-11-19",
-      "revu_le": "2026-11-20T03:44:34Z",
-      "signal": {
-        "agent": "pays",
-        "type": "sorties_inhabituelles",
-        "cle": "VN",
-        "date": "2026-11-19",
-        "importance": "moyenne",
-        "titre": "Vietnam : sorties inhabituelles sur l'ETF VNM"
-      },
-      "objection": "Les réserves nationales limitées à 2,1 mois d'importations [F1] exposent le pays aux tensions que traduisent ces retraits sur l'ETF VNM, déjà en baisse de 17,3 % par rapport à son sommet annuel [F2].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Vietnam : réserves de 2,1 mois d'importations",
-          "source": "Banque mondiale (FI.RES.TOTL.MO)"
-        },
-        {
-          "id": "F2",
-          "texte": "Vietnam : ETF VNM à −17,3 % de son plus haut sur 12 mois, volatilité à 3 mois de 17,2 %",
-          "source": "Yahoo Finance via yfinance, ETF VNM"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "VN": {
-          "objection": "Objections spécifiques : réserves de change de 2,1 mois d'importations seulement [F1] ; ETF VNM à −17,3 % de son plus haut sur 12 mois [F2].",
-          "ajustement": "abaisser"
-        }
-      },
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1",
-        "F2"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|guidance_relevee|WMT|2026-11-19",
-      "revu_le": "2026-11-19T23:34:20Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_relevee",
-        "cle": "WMT",
-        "date": "2026-11-19",
-        "importance": "moyenne",
-        "titre": "Walmart Inc. : guidance relevée (19/11/2026)"
-      },
-      "objection": "Le PER de Walmart Inc. s'établit à 45,4, soit +89,8 % par rapport à la médiane du secteur à 23,9, pour une conversion du bénéfice en cash de 68,2 % [F1, F2].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Walmart Inc. : PER vs secteur +89,8 % (PER 45,4 ; médiane du secteur 23,9)",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "Walmart Inc. : conversion du bénéfice en cash de 68,2 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1",
-        "F2"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|guidance_relevee|INTU|2026-11-19",
-      "revu_le": "2026-11-19T23:34:20Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_relevee",
-        "cle": "INTU",
-        "date": "2026-11-19",
-        "importance": "moyenne",
-        "titre": "Intuit Inc. : guidance relevée (19/11/2026)"
-      },
-      "objection": "Cette révision à la hausse intervient malgré un momentum sur 12 mois négatif de −51,7 % pour Intuit Inc. [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Intuit Inc. : momentum 12 mois −51,7 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|guidance_relevee|ROST|2026-11-19",
-      "revu_le": "2026-11-19T23:34:20Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_relevee",
-        "cle": "ROST",
-        "date": "2026-11-19",
-        "importance": "moyenne",
-        "titre": "Ross Stores, Inc. : guidance relevée (19/11/2026)"
-      },
-      "objection": "Ross Stores, Inc. présente un PER de 26,5, soit une surévaluation de +56,6 % par rapport à la médiane du secteur établie à 16,9 [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Ross Stores, Inc. : PER vs secteur +56,6 % (PER 26,5 ; médiane du secteur 16,9)",
-          "source": "agent entreprises (data/entreprises.json)"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|guidance_abaissee|GAP|2026-11-19",
-      "revu_le": "2026-11-19T23:34:20Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_abaissee",
-        "cle": "GAP",
-        "date": "2026-11-19",
-        "importance": "moyenne",
-        "titre": "The Gap, Inc. : guidance abaissée (19/11/2026)"
-      },
-      "objection": "La baisse continue du cours de l'action de −17,5 % sur 6 mois et −17,6 % sur 12 mois fragilise la position boursière de l'entreprise face à la révision de sa guidance [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "The Gap, Inc. : cours −3,7 % sur 3 mois, −17,5 % sur 6 mois, −17,6 % sur 12 mois",
-          "source": "agent entreprises (fiche)"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|guidance_relevee|BBWI|2026-11-19",
-      "revu_le": "2026-11-19T23:34:20Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "guidance_relevee",
-        "cle": "BBWI",
-        "date": "2026-11-19",
-        "importance": "moyenne",
-        "titre": "Bath & Body Works, Inc. : guidance relevée (19/11/2026)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "matieres_premieres|changement_verdict|or|2026-11-19",
-      "revu_le": "2026-11-19T23:01:48Z",
-      "signal": {
-        "agent": "matieres_premieres",
-        "type": "changement_verdict",
-        "cle": "or",
-        "date": "2026-11-19",
-        "importance": "forte",
-        "titre": "Or : passage de « Neutre » à « Sous-pondérer »"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|achats_groupes|NPCE|2026-11-19",
-      "revu_le": "2026-11-19T07:31:40Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "NPCE",
-        "date": "2026-11-19",
-        "importance": "forte",
-        "titre": "NeuroPace Inc : 3 dirigeants achètent sur le marché en 30 jours (score 82/100)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|achats_groupes|UMH|2026-11-19",
-      "revu_le": "2026-11-19T07:31:40Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "UMH",
-        "date": "2026-11-19",
-        "importance": "moyenne",
-        "titre": "UMH PROPERTIES, INC. : 3 dirigeants achètent sur le marché en 30 jours (score 72/100)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|achats_groupes|RMIX|2026-11-19",
-      "revu_le": "2026-11-19T07:31:40Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "RMIX",
-        "date": "2026-11-19",
-        "importance": "moyenne",
-        "titre": "Suncrete, Inc. : 5 dirigeants achètent sur le marché en 30 jours (score 76/100)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|achats_groupes|BA|2026-11-19",
-      "revu_le": "2026-11-19T07:31:40Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "BA",
-        "date": "2026-11-19",
-        "importance": "forte",
-        "titre": "The Boeing Company : 3 dirigeants achètent sur le marché en 30 jours (score 82/100)"
-      },
-      "objection": "Malgré ces achats, le cours accuse un recul de 26,7 % sur 3 mois [F4] et la conversion du bénéfice en cash s'établit à -84,4 % [F6].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "The Boeing Company : PER vs secteur +143,5 % (PER 59,9 ; médiane du secteur 24,6)",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "The Boeing Company : dette nette / EBITDA de 3,4×",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F3",
-          "texte": "The Boeing Company : couverture des intérêts de −2,0×",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F4",
-          "texte": "The Boeing Company : cours −26,7 % sur 3 mois, −26,7 % sur 6 mois, −14,1 % sur 12 mois",
-          "source": "agent entreprises (fiche)"
-        },
-        {
-          "id": "F5",
-          "texte": "The Boeing Company : croissance du bénéfice +118,8 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F6",
-          "texte": "The Boeing Company : conversion du bénéfice en cash de −84,4 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F7",
-          "texte": "The Boeing Company : alerte « Bénéfice peu converti en cash » : flux d'exploitation égal à 48 % du résultat net",
-          "source": "agent entreprises (fiche)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F4",
-        "F6"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "inities|achats_groupes|STXS|2026-11-19",
-      "revu_le": "2026-11-19T07:31:40Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "STXS",
-        "date": "2026-11-19",
-        "importance": "moyenne",
-        "titre": "Stereotaxis, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 60/100)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|achats_groupes|OFRM|2026-11-19",
-      "revu_le": "2026-11-19T07:31:40Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "OFRM",
-        "date": "2026-11-19",
-        "importance": "moyenne",
-        "titre": "Once Upon a Farm, PBC : 4 dirigeants achètent sur le marché en 30 jours (score 76/100)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|achats_groupes|EQPT|2026-11-19",
-      "revu_le": "2026-11-19T07:31:40Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "EQPT",
-        "date": "2026-11-19",
-        "importance": "forte",
-        "titre": "EquipmentShare.com Inc : 3 dirigeants achètent sur le marché en 30 jours (score 95/100)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|achats_groupes|STWD|2026-11-19",
-      "revu_le": "2026-11-19T07:31:40Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "STWD",
-        "date": "2026-11-19",
-        "importance": "forte",
-        "titre": "Starwood Property Trust, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 84/100)"
-      },
-      "objection": "Ce signal intervient dans un contexte de momentum à 12 mois de -28,2 % [F1], combiné à une alerte de dilution forte avec une hausse des actions de 9,8 % sur un an [F3].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Starwood Property Trust, Inc. : momentum 12 mois −28,2 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "Starwood Property Trust, Inc. : croissance du CA +91,7 % (tendance sur 3 ans : +8,4 % par an)",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F3",
-          "texte": "Starwood Property Trust, Inc. : alerte « Dilution forte » : nombre d'actions en hausse de 9,8 % sur un an",
-          "source": "agent entreprises (fiche)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1",
-        "F3"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "inities|achats_groupes|WWB|2026-11-19",
-      "revu_le": "2026-11-19T07:31:40Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "WWB",
-        "date": "2026-11-19",
-        "importance": "moyenne",
-        "titre": "WINDWARD BIO GROUP AG : 3 dirigeants achètent sur le marché en 30 jours (score 72/100)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|achats_groupes|OPAL|2026-11-19",
-      "revu_le": "2026-11-19T07:31:40Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "OPAL",
-        "date": "2026-11-19",
-        "importance": "forte",
-        "titre": "OPAL Fuels Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 82/100)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|nouveau_13d|TRIP|2026-11-19",
-      "revu_le": "2026-11-19T07:31:40Z",
-      "signal": {
-        "agent": "inities",
-        "type": "nouveau_13d",
-        "cle": "TRIP",
-        "date": "2026-11-19",
-        "importance": "moyenne",
-        "titre": "Pale Fire Capital SE déclare 7,4 % de TripAdvisor, Inc. (13D, intention d'influencer)"
-      },
-      "objection": "Cette déclaration d'intention intervient alors que le momentum sur 12 mois s'effondre à -50,1 % [F2], avec une couverture des intérêts limitée à 1,9× [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Tripadvisor, Inc. : couverture des intérêts de 1,9×",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "Tripadvisor, Inc. : momentum 12 mois −50,1 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F3",
-          "texte": "Tripadvisor, Inc. : croissance du bénéfice +700,0 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1",
-        "F2"
-      ],
-      "modele": "gemini-3.5-flash-lite"
     }
   ]
 }
