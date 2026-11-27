@@ -1,10 +1,10 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-26T16:48:48Z",
+    "genere_le": "2026-11-27T06:20:28Z",
     "source": "agent-pays",
     "fictif": false,
-    "mise_a_jour_precedente": "2026-11-26T06:18:35Z",
+    "mise_a_jour_precedente": "2026-11-26T16:48:48Z",
     "version_agent": "1.2",
     "sources": {
       "source nationale officielle": [
@@ -52,6 +52,11 @@
       "bce_change": "ok",
       "yahoo_cours": "ok",
       "yahoo_per": "ok",
+      "flux_globalx": "erreur : ARGT : requêtes automatiques bloquées par la protection anti-robots du site (page « Security Checkpoint », HTTP 429) ; pas de contournement : parts en circulati",
+      "flux_ishares": "ok",
+      "flux_ssga": "ok",
+      "flux_vaneck": "ok",
+      "flux_yahoo_parts": "partiel (11/30)",
       "bm_croissance": "ok",
       "bm_inflation": "ok",
       "bm_solde_courant": "ok",
@@ -66,12 +71,7 @@
       "national_dbnomics_INSEE_IPC-2025_M.IPC.SO.00.00.GLISSEMENT_ANNUEL.ENSEMBLE.FE.POURCENT.BRUT.2025.FALSE": "ok",
       "national_dbnomics_DESTATIS_61111BM001_DG.PREIS1": "ok",
       "national_dbnomics_STATJP_CPIm_001": "ok",
-      "textes": "règles (pas de clé GEMINI_API_KEY ou rédaction refusée)",
-      "flux_globalx": "erreur : ARGT : requêtes automatiques bloquées par la protection anti-robots du site (page « Security Checkpoint », HTTP 429) ; pas de contournement : parts en circulati",
-      "flux_ishares": "ok",
-      "flux_ssga": "ok",
-      "flux_vaneck": "ok",
-      "flux_yahoo_parts": "partiel (21/30)"
+      "textes": "règles (pas de clé GEMINI_API_KEY ou rédaction refusée)"
     },
     "ponderations": {
       "croissance_pib": 0.2,
@@ -83,7 +83,7 @@
       "activite_reelle": 0.1
     },
     "alertes_qualite": [],
-    "flux_etf_mis_a_jour_le": "2026-11-27T02:17:28Z"
+    "flux_etf_mis_a_jour_le": "2026-11-27T06:20:28Z"
   },
   "donnees": [
     {
@@ -127,8 +127,8 @@
       ],
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 2,3 % en 2026 selon le FMI ; indicateur avancé de l'OCDE au-dessus de 100 (101,0 et en hausse) ; activité réelle « stable » selon 4 indicateurs alternatifs (score 54/100) ; inflation à 3,7 % pour une cible de 2,0 %.",
-        "politique_monetaire_et_risques": "Taux réel de +0,3 pt (banque centrale qui relève ses taux) ; devise à +4,6 % contre le dollar sur 3 mois ; solde courant de −3,8 % du PIB.",
-        "marches": "S&P 500 à +6,2 % sur 12 mois en monnaie locale (+11,6 % en euros) ; PER supérieur de 61 % à la médiane des pays suivis ; entrées nettes sur l'ETF SPY de 0,8 % de l'encours sur un mois (ETF cotés aux États-Unis)."
+        "politique_monetaire_et_risques": "Taux réel de +0,3 pt (banque centrale qui relève ses taux) ; devise à +4,0 % contre le dollar sur 3 mois ; solde courant de −3,8 % du PIB.",
+        "marches": "S&P 500 à +6,2 % sur 12 mois en monnaie locale (+11,6 % en euros) ; PER supérieur de 61 % à la médiane des pays suivis ; entrées nettes sur l'ETF SPY de 0,6 % de l'encours sur un mois (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
       "indicateurs": {
@@ -323,7 +323,7 @@
           "libelle": "Valorisation relative",
           "valeur": 61.33,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF SPY ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -334,7 +334,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF SPY",
               "niveau": "marche",
               "valeur": 22.8,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -349,9 +349,9 @@
           "raison_a_verifier": "valeur inhabituelle (hors de l'intervalle -45 à 60) : à vérifier avant d'en tirer une conclusion",
           "confiance": "faible",
           "precedent": {
-            "valeur": 61.09,
+            "valeur": 61.33,
             "note": 0,
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           }
         },
         "momentum": {
@@ -394,7 +394,7 @@
           "libelle": "Activité réelle",
           "valeur": 54,
           "unite": "/100",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "agent données alternatives (expéditions de ciment, mises en chantier de logements, offres d'emploi en ligne, passagers contrôlés dans les aéroports)",
           "source_courte": "les données alternatives",
           "niveau_source": "alternative",
@@ -410,8 +410,8 @@
           "note": 54,
           "confiance": "élevé",
           "precedent": {
-            "valeur": 53,
-            "note": 53,
+            "valeur": 54,
+            "note": 54,
             "date": "2026-11-26"
           }
         }
@@ -419,9 +419,9 @@
       "detail": {
         "devise_3m": {
           "libelle": "Devise sur 3 mois",
-          "valeur": 4.64,
+          "valeur": 4.02,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, cours DX-Y.NYB",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -431,18 +431,18 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours DX-Y.NYB",
               "niveau": "marche",
-              "valeur": 4.64,
-              "date": "2026-11-26",
+              "valeur": 4.02,
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
           "verification": "source_unique",
           "ecart_max": null,
           "devise": "indice du dollar (DXY)",
-          "note": 74,
+          "note": 71,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 4.69,
+            "valeur": 4.64,
             "note": 74,
             "date": "2026-11-26"
           }
@@ -491,7 +491,7 @@
           "avertissement": "Flux des ETF pays cotés aux États-Unis uniquement : ils ne couvrent ni les ETF cotés ailleurs, ni les fonds non cotés, ni les achats directs d'actions par les étrangers.",
           "symbole": "SPY",
           "emetteur": "SSGA",
-          "date": "2026-11-24",
+          "date": "2026-11-25",
           "source": "SSGA, fichier des VL quotidiennes du fonds SPY (parts en circulation et VL) ; relevés jour par jour accumulés par l'agent",
           "source_courte": "SSGA",
           "niveau_source": "marche",
@@ -500,8 +500,8 @@
             {
               "source": "ssga",
               "nom": "SSGA, fichier des VL quotidiennes du fonds SPY (parts en circulation et VL)",
-              "valeur": 1071.2821,
-              "date": "2026-11-24",
+              "valeur": 1064.5821,
+              "date": "2026-11-25",
               "statut": "retenue"
             },
             {
@@ -520,316 +520,316 @@
               "libelle": "1 semaine",
               "jours": 7,
               "complet": true,
-              "debut": "2026-11-17",
-              "jours_disponibles": 118,
-              "flux_musd": 643.37,
-              "pct_encours": 0.082,
+              "debut": "2026-11-18",
+              "jours_disponibles": 119,
+              "flux_musd": -5510.04,
+              "pct_encours": -0.703,
               "statut": "complet"
             },
             "1m": {
               "libelle": "1 mois",
               "jours": 30,
               "complet": true,
-              "debut": "2026-10-23",
-              "jours_disponibles": 118,
-              "flux_musd": 6079.34,
-              "pct_encours": 0.752,
+              "debut": "2026-10-26",
+              "jours_disponibles": 119,
+              "flux_musd": 4873.67,
+              "pct_encours": 0.602,
               "statut": "complet"
             },
             "3m": {
               "libelle": "3 mois",
               "jours": 91,
               "complet": true,
-              "debut": "2026-08-25",
-              "jours_disponibles": 118,
-              "flux_musd": 13306.91,
-              "pct_encours": 1.648,
+              "debut": "2026-08-26",
+              "jours_disponibles": 119,
+              "flux_musd": 7318.04,
+              "pct_encours": 0.905,
               "statut": "complet"
             }
           },
-          "releves": 84,
+          "releves": 85,
           "premier_releve": "2026-07-29",
-          "encours_musd": 769730.7,
-          "parts": 1071282116.0,
-          "vl": 718.5135,
+          "encours_musd": 762991.4,
+          "parts": 1064582116.0,
+          "vl": 716.705,
           "serie_consecutive": {
-            "sens": "entrées",
-            "jours": 2,
-            "depuis": "2026-11-23"
+            "sens": "sorties",
+            "jours": 1,
+            "depuis": "2026-11-25"
           },
           "cumul": [
             [
-              "2026-08-25",
+              "2026-08-26",
               0.0
             ],
             [
-              "2026-08-26",
-              1186.94
-            ],
-            [
               "2026-08-27",
-              3038.0
+              1851.06
             ],
             [
               "2026-08-28",
-              3307.28
+              2120.34
             ],
             [
               "2026-08-31",
-              3498.99
+              2312.05
             ],
             [
               "2026-09-01",
-              1937.96
+              751.02
             ],
             [
               "2026-09-02",
-              1555.46
+              368.52
             ],
             [
               "2026-09-03",
-              2289.93
+              1102.99
             ],
             [
               "2026-09-04",
-              -59.58
+              -1246.52
             ],
             [
               "2026-09-08",
-              -1246.67
+              -2433.61
             ],
             [
               "2026-09-09",
-              10.94
+              -1176.0
             ],
             [
               "2026-09-10",
-              465.63
+              -721.31
             ],
             [
               "2026-09-11",
-              4478.47
+              3291.53
             ],
             [
               "2026-09-14",
-              1017.32
+              -169.62
             ],
             [
               "2026-09-15",
-              -1330.64
+              -2517.58
             ],
             [
               "2026-09-16",
-              -11849.67
+              -13036.61
             ],
             [
               "2026-09-17",
-              -16883.04
+              -18069.98
             ],
             [
               "2026-09-18",
-              -18140.36
+              -19327.3
             ],
             [
               "2026-09-21",
-              -11643.41
+              -12830.35
             ],
             [
               "2026-09-22",
-              -8781.67
+              -9968.61
             ],
             [
               "2026-09-23",
-              -4943.62
+              -6130.56
             ],
             [
               "2026-09-24",
-              9983.02
+              8796.08
             ],
             [
               "2026-09-25",
-              4275.0
+              3088.06
             ],
             [
               "2026-09-28",
-              7834.14
+              6647.2
             ],
             [
               "2026-09-29",
-              5962.03
+              4775.09
             ],
             [
               "2026-09-30",
-              5962.03
+              4775.09
             ],
             [
               "2026-10-01",
-              12721.44
+              11534.5
             ],
             [
               "2026-10-02",
-              4411.47
+              3224.53
             ],
             [
               "2026-10-05",
-              2126.54
+              939.6
             ],
             [
               "2026-10-06",
-              -2080.53
+              -3267.47
             ],
             [
               "2026-10-07",
-              2195.14
+              1008.2
             ],
             [
               "2026-10-08",
-              1692.19
+              505.25
             ],
             [
               "2026-10-09",
-              1225.12
+              38.18
             ],
             [
               "2026-10-12",
-              1108.41
+              -78.53
             ],
             [
               "2026-10-13",
-              3403.09
+              2216.15
             ],
             [
               "2026-10-14",
-              2018.44
+              831.5
             ],
             [
               "2026-10-15",
-              9697.86
+              8510.92
             ],
             [
               "2026-10-16",
-              5346.63
+              4159.69
             ],
             [
               "2026-10-19",
-              8834.15
+              7647.21
             ],
             [
               "2026-10-20",
-              8334.52
+              7147.58
             ],
             [
               "2026-10-21",
-              5899.2
+              4712.26
             ],
             [
               "2026-10-22",
-              5631.87
+              4444.93
             ],
             [
               "2026-10-23",
-              7227.57
+              6040.63
             ],
             [
               "2026-10-26",
-              3631.32
+              2444.38
             ],
             [
               "2026-10-27",
-              3631.32
+              2444.38
             ],
             [
               "2026-10-28",
-              1277.16
+              90.22
             ],
             [
               "2026-10-29",
-              2623.79
+              1436.85
             ],
             [
               "2026-10-30",
-              621.49
+              -565.45
             ],
             [
               "2026-11-02",
-              5733.54
+              4546.6
             ],
             [
               "2026-11-03",
-              9657.03
+              8470.09
             ],
             [
               "2026-11-04",
-              10691.72
+              9504.78
             ],
             [
               "2026-11-05",
-              5523.5
+              4336.56
             ],
             [
               "2026-11-06",
-              3206.87
+              2019.93
             ],
             [
               "2026-11-09",
-              -1083.38
+              -2270.32
             ],
             [
               "2026-11-10",
-              3228.31
+              2041.37
             ],
             [
               "2026-11-11",
-              5317.39
+              4130.45
             ],
             [
               "2026-11-12",
-              9556.79
+              8369.85
             ],
             [
               "2026-11-13",
-              3448.88
+              2261.94
             ],
             [
               "2026-11-16",
-              6000.92
+              4813.98
             ],
             [
               "2026-11-17",
-              12663.53
+              11476.59
             ],
             [
               "2026-11-18",
-              14015.02
+              12828.08
             ],
             [
               "2026-11-19",
-              2596.3
+              1409.36
             ],
             [
               "2026-11-20",
-              1113.86
+              -73.08
             ],
             [
               "2026-11-23",
-              11330.99
+              10144.05
             ],
             [
               "2026-11-24",
-              13306.91
+              12119.97
+            ],
+            [
+              "2026-11-25",
+              7318.04
             ]
           ],
-          "flux_dernier_jour_musd": 1975.91,
-          "valeur": 0.752,
+          "flux_dernier_jour_musd": -4801.92,
+          "valeur": 0.602,
           "periode_valeur": "1m",
-          "flux_musd": 6079.34,
+          "flux_musd": 4873.67,
           "tendance_flux": "entrées nettes",
-          "note": 55,
+          "note": 54,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 0.508,
-            "note": 53,
-            "date": "2026-11-23"
+            "valeur": 0.752,
+            "note": 55,
+            "date": "2026-11-24"
           }
         }
       },
@@ -880,7 +880,7 @@
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 1,1 % en 2026 selon le FMI ; indicateur avancé de l'OCDE au-dessus de 100 (101,8 et en hausse) ; inflation à 3,1 % pour une cible de 2,0 %.",
         "politique_monetaire_et_risques": "Taux réel de −0,6 pt (banque centrale qui relève ses taux) ; devise à −2,5 % contre le dollar sur 3 mois ; solde courant de −0,9 % du PIB.",
-        "marches": "S&P/TSX à +10,3 % sur 12 mois en monnaie locale (+15,1 % en euros) ; PER supérieur de 26 % à la médiane des pays suivis ; entrées nettes sur l'ETF EWC de 2,2 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
+        "marches": "S&P/TSX à +10,4 % sur 12 mois en monnaie locale (+15,5 % en euros) ; PER supérieur de 26 % à la médiane des pays suivis ; entrées nettes sur l'ETF EWC de 2,2 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
       "indicateurs": {
@@ -1066,7 +1066,7 @@
           "libelle": "Valorisation relative",
           "valeur": 25.61,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWC ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -1077,7 +1077,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWC",
               "niveau": "marche",
               "valeur": 17.75,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -1090,14 +1090,14 @@
           "note": 34,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 25.82,
+            "valeur": 25.61,
             "note": 34,
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           }
         },
         "momentum": {
           "libelle": "Momentum boursier 12 mois",
-          "valeur": 10.26,
+          "valeur": 10.41,
           "unite": "%",
           "date": "2026-11-26",
           "source": "Yahoo Finance via yfinance, clôtures de l'indice S&P/TSX (^GSPTSE), en monnaie locale (CAD)",
@@ -1109,7 +1109,7 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, clôtures de l'indice S&P/TSX (^GSPTSE), en monnaie locale (CAD)",
               "niveau": "marche",
-              "valeur": 10.26,
+              "valeur": 10.41,
               "date": "2026-11-26",
               "statut": "retenue"
             }
@@ -1120,15 +1120,15 @@
           "base": "indice",
           "indice": "S&P/TSX",
           "monnaie": "CAD",
-          "performance_eur": 15.08,
-          "effet_change": 4.82,
+          "performance_eur": 15.48,
+          "effet_change": 5.07,
           "source_change": "Yahoo Finance via yfinance, cours EURCAD=X (conversion en euros)",
           "note": 62,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 10.61,
-            "note": 63,
-            "date": "2026-11-25"
+            "valeur": 10.26,
+            "note": 62,
+            "date": "2026-11-26"
           }
         }
       },
@@ -1155,14 +1155,14 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours CAD=X",
               "niveau": "marche",
-              "valeur": -2.61,
-              "date": "2026-11-26",
+              "valeur": -2.7,
+              "date": "2026-11-27",
               "statut": "concorde",
-              "ecart": 0.08
+              "ecart": 0.17
             }
           ],
           "verification": "concordant",
-          "ecart_max": 0.08,
+          "ecart_max": 0.17,
           "devise": "CAD",
           "note": 45,
           "confiance": "élevé",
@@ -1232,10 +1232,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWC",
-              "valeur": 94.8,
-              "date": "2026-11-25",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWC"
             }
           ],
           "verification": "source_unique",
@@ -1362,7 +1360,7 @@
       },
       "note": 68,
       "niveau": "attractif",
-      "note_brute": 68.2,
+      "note_brute": 68.0,
       "note_ramenee_en_zone_neutre": false,
       "verdict": "Mexique : taux réel de +2,7 pt (banque centrale qui baisse ses taux) et inflation à 3,8 % pour une cible de 3,0 % soutiennent la note ; point de vigilance : croissance du PIB de 1,5 % en 2026 selon le FMI.",
       "confiance": {
@@ -1387,7 +1385,7 @@
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 1,5 % en 2026 selon le FMI ; indicateur avancé de l'OCDE au-dessus de 100 (102,1 et en baisse) ; inflation à 3,8 % pour une cible de 3,0 %.",
         "politique_monetaire_et_risques": "Taux réel de +2,7 pt (banque centrale qui baisse ses taux) ; devise à −13,7 % contre le dollar sur 3 mois ; solde courant de −0,5 % du PIB.",
-        "marches": "IPC (S&P/BMV) à +11,6 % sur 12 mois en monnaie locale (+9,6 % en euros) ; PER inférieur de 15 % à la médiane des pays suivis ; sorties nettes sur l'ETF EWW de 2,8 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
+        "marches": "IPC (S&P/BMV) à +11,2 % sur 12 mois en monnaie locale (+10,0 % en euros) ; PER inférieur de 15 % à la médiane des pays suivis ; sorties nettes sur l'ETF EWW de 2,8 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
       "indicateurs": {
@@ -1546,7 +1544,7 @@
           "libelle": "Valorisation relative",
           "valeur": -14.73,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWW ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -1557,7 +1555,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWW",
               "niveau": "marche",
               "valeur": 12.05,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -1570,14 +1568,14 @@
           "note": 75,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -14.78,
+            "valeur": -14.73,
             "note": 75,
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           }
         },
         "momentum": {
           "libelle": "Momentum boursier 12 mois",
-          "valeur": 11.55,
+          "valeur": 11.24,
           "unite": "%",
           "date": "2026-11-26",
           "source": "Yahoo Finance via yfinance, clôtures de l'indice IPC (S&P/BMV) (^MXX), en monnaie locale (MXN)",
@@ -1589,7 +1587,7 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, clôtures de l'indice IPC (S&P/BMV) (^MXX), en monnaie locale (MXN)",
               "niveau": "marche",
-              "valeur": 11.55,
+              "valeur": 11.24,
               "date": "2026-11-26",
               "statut": "retenue"
             }
@@ -1600,15 +1598,15 @@
           "base": "indice",
           "indice": "IPC (S&P/BMV)",
           "monnaie": "MXN",
-          "performance_eur": 9.61,
-          "effet_change": -1.94,
+          "performance_eur": 10.03,
+          "effet_change": -1.22,
           "source_change": "Yahoo Finance via yfinance, cours EURMXN=X (conversion en euros)",
-          "note": 64,
+          "note": 63,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 12.9,
-            "note": 65,
-            "date": "2026-11-25"
+            "valeur": 11.55,
+            "note": 64,
+            "date": "2026-11-26"
           }
         }
       },
@@ -1635,14 +1633,14 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours MXN=X",
               "niveau": "marche",
-              "valeur": -14.1,
-              "date": "2026-11-26",
+              "valeur": -13.46,
+              "date": "2026-11-27",
               "statut": "concorde",
-              "ecart": 0.38
+              "ecart": 0.26
             }
           ],
           "verification": "concordant",
-          "ecart_max": 0.38,
+          "ecart_max": 0.26,
           "devise": "MXN",
           "note": 0,
           "confirmee": "valeur inhabituelle mais confirmée par une seconde source (Yahoo Finance via yfinance)",
@@ -1843,7 +1841,7 @@
       },
       "note": 64,
       "niveau": "neutre",
-      "note_brute": 63.6,
+      "note_brute": 64.0,
       "note_ramenee_en_zone_neutre": false,
       "verdict": "Brésil : signaux partagés, avec d'un côté PER inférieur de 32 % à la médiane des pays suivis, de l'autre taux réel de +9,1 pt (banque centrale qui baisse ses taux).",
       "confiance": {
@@ -1869,7 +1867,7 @@
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 2,2 % en 2026 selon le FMI ; indicateur avancé de l'OCDE au-dessus de 100 (102,4 et stable) ; inflation à 4,6 % pour une cible de 3,0 %.",
         "politique_monetaire_et_risques": "Taux réel de +9,1 pt (banque centrale qui baisse ses taux) ; devise à −10,8 % contre le dollar sur 3 mois ; solde courant de −2,9 % du PIB.",
-        "marches": "Ibovespa à +9,2 % sur 12 mois en monnaie locale (+7,8 % en euros) ; PER inférieur de 32 % à la médiane des pays suivis ; sorties nettes sur l'ETF EWZ de 0,0 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
+        "marches": "Ibovespa à +11,5 % sur 12 mois en monnaie locale (+8,6 % en euros) ; PER inférieur de 32 % à la médiane des pays suivis ; sorties nettes sur l'ETF EWZ de 0,0 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
       "indicateurs": {
@@ -2055,7 +2053,7 @@
           "libelle": "Valorisation relative",
           "valeur": -31.77,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWZ ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -2066,7 +2064,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWZ",
               "niveau": "marche",
               "valeur": 9.64,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -2079,14 +2077,14 @@
           "note": 92,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -31.09,
-            "note": 91,
-            "date": "2026-11-25"
+            "valeur": -31.77,
+            "note": 92,
+            "date": "2026-11-26"
           }
         },
         "momentum": {
           "libelle": "Momentum boursier 12 mois",
-          "valeur": 9.16,
+          "valeur": 11.51,
           "unite": "%",
           "date": "2026-11-26",
           "source": "Yahoo Finance via yfinance, clôtures de l'indice Ibovespa (^BVSP), en monnaie locale (BRL)",
@@ -2098,7 +2096,7 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, clôtures de l'indice Ibovespa (^BVSP), en monnaie locale (BRL)",
               "niveau": "marche",
-              "valeur": 9.16,
+              "valeur": 11.51,
               "date": "2026-11-26",
               "statut": "retenue"
             }
@@ -2109,15 +2107,15 @@
           "base": "indice",
           "indice": "Ibovespa",
           "monnaie": "BRL",
-          "performance_eur": 7.79,
-          "effet_change": -1.37,
+          "performance_eur": 8.6,
+          "effet_change": -2.91,
           "source_change": "Yahoo Finance via yfinance, cours EURBRL=X (conversion en euros)",
-          "note": 61,
+          "note": 64,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 6.91,
-            "note": 58,
-            "date": "2026-11-25"
+            "valeur": 9.16,
+            "note": 61,
+            "date": "2026-11-26"
           }
         }
       },
@@ -2144,17 +2142,17 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours BRL=X",
               "niveau": "marche",
-              "valeur": -10.31,
-              "date": "2026-11-26",
-              "statut": "concorde",
-              "ecart": 0.49
+              "valeur": -8.67,
+              "date": "2026-11-27",
+              "statut": "diverge",
+              "ecart": 2.13
             }
           ],
-          "verification": "concordant",
-          "ecart_max": 0.49,
+          "verification": "divergent",
+          "ecart_max": 2.13,
           "devise": "BRL",
           "note": 12,
-          "confiance": "élevé",
+          "confiance": "faible",
           "precedent": {
             "valeur": -12.79,
             "note": 4,
@@ -2381,7 +2379,7 @@
       ],
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 2,1 % en 2026 selon le FMI ; inflation à 33,1 %.",
-        "politique_monetaire_et_risques": "Devise à −5,3 % contre le dollar sur 3 mois ; solde courant de −1,1 % du PIB.",
+        "politique_monetaire_et_risques": "Devise à −5,5 % contre le dollar sur 3 mois ; solde courant de −1,1 % du PIB.",
         "marches": "Marché à −22,6 % sur 12 mois (ETF en dollars) ; PER inférieur de 16 % à la médiane des pays suivis."
       },
       "textes": "règles",
@@ -2516,7 +2514,7 @@
           "libelle": "Valorisation relative",
           "valeur": -16.27,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF ARGT ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -2527,7 +2525,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF ARGT",
               "niveau": "marche",
               "valeur": 11.83,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -2540,9 +2538,9 @@
           "note": 76,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -17.7,
-            "note": 78,
-            "date": "2026-11-25"
+            "valeur": -16.27,
+            "note": 76,
+            "date": "2026-11-26"
           }
         },
         "momentum": {
@@ -2587,9 +2585,9 @@
       "detail": {
         "devise_3m": {
           "libelle": "Devise sur 3 mois",
-          "valeur": -5.27,
+          "valeur": -5.55,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, cours ARS=X",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -2599,19 +2597,19 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours ARS=X",
               "niveau": "marche",
-              "valeur": -5.27,
-              "date": "2026-11-26",
+              "valeur": -5.55,
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
           "verification": "source_unique",
           "ecart_max": null,
           "devise": "ARS",
-          "note": 34,
+          "note": 33,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -5.48,
-            "note": 33,
+            "valeur": -5.27,
+            "note": 34,
             "date": "2026-11-26"
           }
         },
@@ -2902,7 +2900,7 @@
           "libelle": "Valorisation relative",
           "valeur": 13.72,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWU ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -2913,7 +2911,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWU",
               "niveau": "marche",
               "valeur": 16.07,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -2926,14 +2924,14 @@
           "note": 46,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 14.48,
+            "valeur": 13.72,
             "note": 46,
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           }
         },
         "momentum": {
           "libelle": "Momentum boursier 12 mois",
-          "valeur": 9.49,
+          "valeur": 9.47,
           "unite": "%",
           "date": "2026-11-26",
           "source": "Yahoo Finance via yfinance, clôtures de l'indice FTSE 100 (^FTSE), en monnaie locale (GBP)",
@@ -2945,7 +2943,7 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, clôtures de l'indice FTSE 100 (^FTSE), en monnaie locale (GBP)",
               "niveau": "marche",
-              "valeur": 9.49,
+              "valeur": 9.47,
               "date": "2026-11-26",
               "statut": "retenue"
             }
@@ -2956,15 +2954,15 @@
           "base": "indice",
           "indice": "FTSE 100",
           "monnaie": "GBP",
-          "performance_eur": 14.97,
-          "effet_change": 5.47,
+          "performance_eur": 14.99,
+          "effet_change": 5.52,
           "source_change": "Yahoo Finance via yfinance, cours EURGBP=X (conversion en euros)",
           "note": 61,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 8.51,
-            "note": 60,
-            "date": "2026-11-25"
+            "valeur": 9.49,
+            "note": 61,
+            "date": "2026-11-26"
           }
         }
       },
@@ -2991,14 +2989,14 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours GBPUSD=X",
               "niveau": "marche",
-              "valeur": -3.62,
-              "date": "2026-11-26",
+              "valeur": -3.46,
+              "date": "2026-11-27",
               "statut": "concorde",
-              "ecart": 0.1
+              "ecart": 0.06
             }
           ],
           "verification": "concordant",
-          "ecart_max": 0.1,
+          "ecart_max": 0.06,
           "devise": "GBP",
           "note": 41,
           "confiance": "élevé",
@@ -3068,10 +3066,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWU",
-              "valeur": 67.8,
-              "date": "2026-11-25",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWU"
             }
           ],
           "verification": "source_unique",
@@ -3224,7 +3220,7 @@
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 0,4 % en 2026 selon le FMI ; indicateur avancé de l'OCDE au-dessus de 100 (100,7 et en hausse) ; inflation à 3,1 % pour une cible de 2,0 %.",
         "politique_monetaire_et_risques": "Taux réel de −0,6 pt (banque centrale qui relève ses taux) ; devise à −5,8 % contre le dollar sur 3 mois ; solde courant de −0,4 % du PIB.",
-        "marches": "CAC 40 à +0,3 % sur 12 mois en monnaie locale ; PER supérieur de 20 % à la médiane des pays suivis ; sorties nettes sur l'ETF EWQ de 0,0 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
+        "marches": "CAC 40 à +0,1 % sur 12 mois en monnaie locale ; PER supérieur de 20 % à la médiane des pays suivis ; sorties nettes sur l'ETF EWQ de 0,0 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
       "indicateurs": {
@@ -3419,7 +3415,7 @@
           "libelle": "Valorisation relative",
           "valeur": 20.05,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWQ ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -3430,7 +3426,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWQ",
               "niveau": "marche",
               "valeur": 16.97,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -3443,14 +3439,14 @@
           "note": 40,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 20.58,
-            "note": 39,
-            "date": "2026-11-25"
+            "valeur": 20.05,
+            "note": 40,
+            "date": "2026-11-26"
           }
         },
         "momentum": {
           "libelle": "Momentum boursier 12 mois",
-          "valeur": 0.26,
+          "valeur": 0.15,
           "unite": "%",
           "date": "2026-11-26",
           "source": "Yahoo Finance via yfinance, clôtures de l'indice CAC 40 (^FCHI), en monnaie locale (EUR)",
@@ -3462,7 +3458,7 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, clôtures de l'indice CAC 40 (^FCHI), en monnaie locale (EUR)",
               "niveau": "marche",
-              "valeur": 0.26,
+              "valeur": 0.15,
               "date": "2026-11-26",
               "statut": "retenue"
             }
@@ -3473,14 +3469,14 @@
           "base": "indice",
           "indice": "CAC 40",
           "monnaie": "EUR",
-          "performance_eur": 0.26,
+          "performance_eur": 0.15,
           "effet_change": 0.0,
           "note": 50,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -0.56,
-            "note": 49,
-            "date": "2026-11-25"
+            "valeur": 0.26,
+            "note": 50,
+            "date": "2026-11-26"
           }
         }
       },
@@ -3507,14 +3503,14 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours EURUSD=X",
               "niveau": "marche",
-              "valeur": -5.86,
-              "date": "2026-11-26",
+              "valeur": -5.79,
+              "date": "2026-11-27",
               "statut": "concorde",
-              "ecart": 0.1
+              "ecart": 0.03
             }
           ],
           "verification": "concordant",
-          "ecart_max": 0.1,
+          "ecart_max": 0.03,
           "devise": "EUR",
           "note": 32,
           "confiance": "élevé",
@@ -3584,10 +3580,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWQ",
-              "valeur": 28.8,
-              "date": "2026-11-25",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWQ"
             }
           ],
           "verification": "source_unique",
@@ -3935,7 +3929,7 @@
           "libelle": "Valorisation relative",
           "valeur": 18.54,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWG ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -3946,7 +3940,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWG",
               "niveau": "marche",
               "valeur": 16.75,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -3959,14 +3953,14 @@
           "note": 41,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 18.89,
+            "valeur": 18.54,
             "note": 41,
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           }
         },
         "momentum": {
           "libelle": "Momentum boursier 12 mois",
-          "valeur": 6.34,
+          "valeur": 6.28,
           "unite": "%",
           "date": "2026-11-26",
           "source": "Yahoo Finance via yfinance, clôtures de l'indice DAX 40 (^GDAXI), en monnaie locale (EUR)",
@@ -3978,7 +3972,7 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, clôtures de l'indice DAX 40 (^GDAXI), en monnaie locale (EUR)",
               "niveau": "marche",
-              "valeur": 6.34,
+              "valeur": 6.28,
               "date": "2026-11-26",
               "statut": "retenue"
             }
@@ -3989,21 +3983,21 @@
           "base": "indice",
           "indice": "DAX 40",
           "monnaie": "EUR",
-          "performance_eur": 6.34,
+          "performance_eur": 6.28,
           "effet_change": 0.0,
           "note": 58,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 5.27,
-            "note": 56,
-            "date": "2026-11-25"
+            "valeur": 6.34,
+            "note": 58,
+            "date": "2026-11-26"
           }
         },
         "activite_reelle": {
           "libelle": "Activité réelle",
           "valeur": 54,
           "unite": "/100",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "agent données alternatives (kilomètres parcourus par les poids lourds sur autoroute, offres d'emploi en ligne)",
           "source_courte": "les données alternatives",
           "niveau_source": "alternative",
@@ -4019,8 +4013,8 @@
           "note": 54,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 56,
-            "note": 56,
+            "valeur": 54,
+            "note": 54,
             "date": "2026-11-26"
           }
         }
@@ -4048,14 +4042,14 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours EURUSD=X",
               "niveau": "marche",
-              "valeur": -5.86,
-              "date": "2026-11-26",
+              "valeur": -5.79,
+              "date": "2026-11-27",
               "statut": "concorde",
-              "ecart": 0.1
+              "ecart": 0.03
             }
           ],
           "verification": "concordant",
-          "ecart_max": 0.1,
+          "ecart_max": 0.03,
           "devise": "EUR",
           "note": 32,
           "confiance": "élevé",
@@ -4283,7 +4277,7 @@
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 1,9 % en 2026 selon le FMI ; inflation à 1,5 % pour une cible de 1,0 %.",
         "politique_monetaire_et_risques": "Taux réel de −1,5 pt (banque centrale aux taux stables) ; devise à −3,5 % contre le dollar sur 3 mois ; solde courant de +5,6 % du PIB.",
-        "marches": "SMI à +15,6 % sur 12 mois en monnaie locale (+18,0 % en euros) ; PER supérieur de 69 % à la médiane des pays suivis ; entrées nettes sur l'ETF EWL de 0,5 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
+        "marches": "SMI à +15,6 % sur 12 mois en monnaie locale (+18,4 % en euros) ; PER supérieur de 69 % à la médiane des pays suivis ; entrées nettes sur l'ETF EWL de 0,5 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
       "indicateurs": {
@@ -4439,7 +4433,7 @@
           "libelle": "Valorisation relative",
           "valeur": 68.53,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWL ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -4450,7 +4444,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWL",
               "niveau": "marche",
               "valeur": 23.82,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -4465,9 +4459,9 @@
           "raison_a_verifier": "valeur inhabituelle (hors de l'intervalle -45 à 60) : à vérifier avant d'en tirer une conclusion",
           "confiance": "faible",
           "precedent": {
-            "valeur": 69.88,
+            "valeur": 68.53,
             "note": 0,
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           }
         },
         "momentum": {
@@ -4495,8 +4489,8 @@
           "base": "indice",
           "indice": "SMI",
           "monnaie": "CHF",
-          "performance_eur": 17.99,
-          "effet_change": 2.43,
+          "performance_eur": 18.42,
+          "effet_change": 2.86,
           "source_change": "Yahoo Finance via yfinance, cours EURCHF=X (conversion en euros)",
           "note": 69,
           "confiance": "moyen",
@@ -4530,14 +4524,14 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours CHF=X",
               "niveau": "marche",
-              "valeur": -3.51,
-              "date": "2026-11-26",
+              "valeur": -3.62,
+              "date": "2026-11-27",
               "statut": "concorde",
-              "ecart": 0.05
+              "ecart": 0.16
             }
           ],
           "verification": "concordant",
-          "ecart_max": 0.05,
+          "ecart_max": 0.16,
           "devise": "CHF",
           "note": 41,
           "confiance": "élevé",
@@ -4765,7 +4759,7 @@
       ],
       "lecture": {
         "activite_et_prix": "Contraction du PIB de 3,3 % en 2026 selon le FMI ; inflation à 1,9 % pour une cible de 2,0 %.",
-        "politique_monetaire_et_risques": "Taux réel de +2,6 pt (banque centrale qui relève ses taux) ; devise à −2,7 % contre le dollar sur 3 mois ; solde courant de −2,6 % du PIB.",
+        "politique_monetaire_et_risques": "Taux réel de +2,6 pt (banque centrale qui relève ses taux) ; devise à −2,9 % contre le dollar sur 3 mois ; solde courant de −2,6 % du PIB.",
         "marches": "Marché à −4,5 % sur 12 mois (ETF en dollars) ; PER supérieur de 2 % à la médiane des pays suivis ; sorties nettes sur l'ETF KSA de 0,0 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
@@ -4897,7 +4891,7 @@
           "libelle": "Valorisation relative",
           "valeur": 2.07,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF KSA ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -4908,7 +4902,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF KSA",
               "niveau": "marche",
               "valeur": 14.43,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -4921,9 +4915,9 @@
           "note": 58,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 2.69,
-            "note": 57,
-            "date": "2026-11-25"
+            "valeur": 2.07,
+            "note": 58,
+            "date": "2026-11-26"
           }
         },
         "momentum": {
@@ -4968,9 +4962,9 @@
       "detail": {
         "devise_3m": {
           "libelle": "Devise sur 3 mois",
-          "valeur": -2.7,
+          "valeur": -2.91,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, cours SAR=X",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -4980,20 +4974,20 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours SAR=X",
               "niveau": "marche",
-              "valeur": -2.7,
-              "date": "2026-11-26",
+              "valeur": -2.91,
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
           "verification": "source_unique",
           "ecart_max": null,
           "devise": "SAR",
-          "note": 44,
+          "note": 43,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -2.92,
-            "note": 43,
-            "date": "2026-11-25"
+            "valeur": -2.7,
+            "note": 44,
+            "date": "2026-11-26"
           }
         },
         "solde_courant": {
@@ -5366,7 +5360,7 @@
           "libelle": "Valorisation relative",
           "valeur": -28.04,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EZA ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -5377,7 +5371,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EZA",
               "niveau": "marche",
               "valeur": 10.17,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -5390,9 +5384,9 @@
           "note": 88,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -28.37,
+            "valeur": -28.04,
             "note": 88,
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           }
         },
         "momentum": {
@@ -5420,8 +5414,8 @@
           "base": "indice",
           "indice": "JSE Top 40",
           "monnaie": "ZAR",
-          "performance_eur": -2.14,
-          "effet_change": 3.29,
+          "performance_eur": -2.12,
+          "effet_change": 3.3,
           "source_change": "Yahoo Finance via yfinance, cours EURZAR=X (conversion en euros)",
           "note": 43,
           "confiance": "moyen",
@@ -5455,14 +5449,14 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours ZAR=X",
               "niveau": "marche",
-              "valeur": -9.05,
-              "date": "2026-11-26",
+              "valeur": -7.96,
+              "date": "2026-11-27",
               "statut": "concorde",
-              "ecart": 0.12
+              "ecart": 0.97
             }
           ],
           "verification": "concordant",
-          "ecart_max": 0.12,
+          "ecart_max": 0.97,
           "devise": "ZAR",
           "note": 19,
           "confiance": "élevé",
@@ -5662,7 +5656,7 @@
       },
       "note": 59,
       "niveau": "neutre",
-      "note_brute": 59.5,
+      "note_brute": 59.3,
       "note_ramenee_en_zone_neutre": false,
       "verdict": "Inde : signaux partagés, avec d'un côté croissance du PIB de 7,0 % en 2026 selon le FMI, de l'autre PER supérieur de 69 % à la médiane des pays suivis.",
       "confiance": {
@@ -5689,7 +5683,7 @@
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 7,0 % en 2026 selon le FMI ; indicateur avancé de l'OCDE au-dessus de 100 (101,5 et en hausse) ; inflation à 5,6 % pour une cible de 4,0 %.",
         "politique_monetaire_et_risques": "Taux réel de −0,3 pt (banque centrale aux taux stables) ; devise à +3,3 % contre le dollar sur 3 mois ; solde courant de −0,7 % du PIB.",
-        "marches": "Nifty 50 à −1,2 % sur 12 mois en monnaie locale (+0,2 % en euros) ; PER supérieur de 69 % à la médiane des pays suivis ; entrées nettes sur l'ETF INDA de 4,5 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
+        "marches": "Nifty 50 à −2,0 % sur 12 mois en monnaie locale (−0,8 % en euros) ; PER supérieur de 69 % à la médiane des pays suivis ; entrées nettes sur l'ETF INDA de 4,5 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
       "indicateurs": {
@@ -5847,7 +5841,7 @@
           "libelle": "Valorisation relative",
           "valeur": 68.65,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF INDA ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -5858,7 +5852,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF INDA",
               "niveau": "marche",
               "valeur": 23.84,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -5873,16 +5867,16 @@
           "raison_a_verifier": "valeur inhabituelle (hors de l'intervalle -45 à 60) : à vérifier avant d'en tirer une conclusion",
           "confiance": "faible",
           "precedent": {
-            "valeur": 70.44,
+            "valeur": 68.65,
             "note": 0,
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           }
         },
         "momentum": {
           "libelle": "Momentum boursier 12 mois",
-          "valeur": -1.22,
+          "valeur": -2.0,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, clôtures de l'indice Nifty 50 (^NSEI), en monnaie locale (INR)",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -5892,8 +5886,8 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, clôtures de l'indice Nifty 50 (^NSEI), en monnaie locale (INR)",
               "niveau": "marche",
-              "valeur": -1.22,
-              "date": "2026-11-26",
+              "valeur": -2.0,
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -5903,13 +5897,13 @@
           "base": "indice",
           "indice": "Nifty 50",
           "monnaie": "INR",
-          "performance_eur": 0.25,
-          "effet_change": 1.48,
+          "performance_eur": -0.75,
+          "effet_change": 1.25,
           "source_change": "Yahoo Finance via yfinance, cours EURINR=X (conversion en euros)",
-          "note": 49,
+          "note": 48,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -1.24,
+            "valeur": -1.22,
             "note": 49,
             "date": "2026-11-26"
           }
@@ -5938,14 +5932,14 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours INR=X",
               "niveau": "marche",
-              "valeur": 3.24,
-              "date": "2026-11-26",
+              "valeur": 2.73,
+              "date": "2026-11-27",
               "statut": "concorde",
-              "ecart": 0.1
+              "ecart": 0.61
             }
           ],
           "verification": "concordant",
-          "ecart_max": 0.1,
+          "ecart_max": 0.61,
           "devise": "INR",
           "note": 68,
           "confiance": "élevé",
@@ -6141,9 +6135,9 @@
         "monnaie": "CNY",
         "historique": true
       },
-      "note": 57,
+      "note": 58,
       "niveau": "neutre",
-      "note_brute": 57.4,
+      "note_brute": 57.8,
       "note_ramenee_en_zone_neutre": false,
       "verdict": "Chine : signaux partagés, avec d'un côté PER inférieur de 26 % à la médiane des pays suivis, de l'autre indicateur avancé de l'OCDE en dessous de 100 (97,1 et en baisse).",
       "confiance": {
@@ -6170,7 +6164,7 @@
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 4,5 % en 2026 selon le FMI ; indicateur avancé de l'OCDE en dessous de 100 (97,1 et en baisse) ; inflation à 0,7 % pour une cible de 3,0 %.",
         "politique_monetaire_et_risques": "Taux réel de +2,3 pt (banque centrale aux taux stables) ; devise à +0,9 % contre le dollar sur 3 mois ; solde courant de +3,7 % du PIB.",
-        "marches": "Shanghai Composite à −10,2 % sur 12 mois en monnaie locale (+0,6 % en euros) ; PER inférieur de 26 % à la médiane des pays suivis ; entrées nettes sur l'ETF MCHI de 0,2 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
+        "marches": "Shanghai Composite à −7,1 % sur 12 mois en monnaie locale (+4,7 % en euros) ; PER inférieur de 26 % à la médiane des pays suivis ; entrées nettes sur l'ETF MCHI de 0,2 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
       "indicateurs": {
@@ -6338,7 +6332,7 @@
           "libelle": "Valorisation relative",
           "valeur": -25.79,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF MCHI ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -6349,7 +6343,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF MCHI",
               "niveau": "marche",
               "valeur": 10.49,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -6362,16 +6356,16 @@
           "note": 86,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -25.95,
+            "valeur": -25.79,
             "note": 86,
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           }
         },
         "momentum": {
           "libelle": "Momentum boursier 12 mois",
-          "valeur": -10.17,
+          "valeur": -7.11,
           "unite": "%",
-          "date": "2026-11-25",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, clôtures de l'indice Shanghai Composite (000001.SS), en monnaie locale (CNY)",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -6381,8 +6375,8 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, clôtures de l'indice Shanghai Composite (000001.SS), en monnaie locale (CNY)",
               "niveau": "marche",
-              "valeur": -10.17,
-              "date": "2026-11-25",
+              "valeur": -7.11,
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -6392,15 +6386,15 @@
           "base": "indice",
           "indice": "Shanghai Composite",
           "monnaie": "CNY",
-          "performance_eur": 0.6,
-          "effet_change": 10.77,
+          "performance_eur": 4.7,
+          "effet_change": 11.81,
           "source_change": "Yahoo Finance via yfinance, cours EURCNY=X (conversion en euros)",
-          "note": 38,
+          "note": 41,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -10.22,
+            "valeur": -10.17,
             "note": 38,
-            "date": "2026-11-26"
+            "date": "2026-11-25"
           }
         }
       },
@@ -6427,14 +6421,14 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours CNY=X",
               "niveau": "marche",
-              "valeur": 1.09,
-              "date": "2026-11-26",
+              "valeur": 1.02,
+              "date": "2026-11-27",
               "statut": "concorde",
-              "ecart": 0.19
+              "ecart": 0.11
             }
           ],
           "verification": "concordant",
-          "ecart_max": 0.19,
+          "ecart_max": 0.11,
           "devise": "CNY",
           "note": 59,
           "confiance": "élevé",
@@ -6613,8 +6607,8 @@
         }
       },
       "precedent": {
-        "note": 58,
-        "date": "2026-11-25"
+        "note": 57,
+        "date": "2026-11-26"
       }
     },
     {
@@ -6632,7 +6626,7 @@
       },
       "note": 74,
       "niveau": "attractif",
-      "note_brute": 74.0,
+      "note_brute": 74.3,
       "note_ramenee_en_zone_neutre": false,
       "verdict": "Corée du Sud : PER inférieur de 38 % à la médiane des pays suivis et inflation à 2,8 % pour une cible de 2,0 % soutiennent la note ; point de vigilance : aucun indicateur défavorable à ce stade.",
       "confiance": {
@@ -6659,7 +6653,7 @@
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 3,3 % en 2026 selon le FMI ; indicateur avancé de l'OCDE au-dessus de 100 (102,0 et en baisse) ; inflation à 2,8 % pour une cible de 2,0 %.",
         "politique_monetaire_et_risques": "Taux réel de +0,2 pt (banque centrale qui relève ses taux) ; devise à +2,7 % contre le dollar sur 3 mois ; solde courant de +6,5 % du PIB.",
-        "marches": "KOSPI à +21,8 % sur 12 mois en monnaie locale (+40,7 % en euros) ; PER inférieur de 38 % à la médiane des pays suivis ; entrées nettes sur l'ETF EWY de 0,7 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
+        "marches": "KOSPI à +23,0 % sur 12 mois en monnaie locale (+42,7 % en euros) ; PER inférieur de 38 % à la médiane des pays suivis ; entrées nettes sur l'ETF EWY de 0,7 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
       "indicateurs": {
@@ -6827,7 +6821,7 @@
           "libelle": "Valorisation relative",
           "valeur": -37.78,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWY ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -6838,7 +6832,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWY",
               "niveau": "marche",
               "valeur": 8.79,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -6851,16 +6845,16 @@
           "note": 98,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -39.01,
-            "note": 99,
-            "date": "2026-11-25"
+            "valeur": -37.78,
+            "note": 98,
+            "date": "2026-11-26"
           }
         },
         "momentum": {
           "libelle": "Momentum boursier 12 mois",
-          "valeur": 21.77,
+          "valeur": 23.04,
           "unite": "%",
-          "date": "2026-11-25",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, clôtures de l'indice KOSPI (^KS11), en monnaie locale (KRW)",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -6870,8 +6864,8 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, clôtures de l'indice KOSPI (^KS11), en monnaie locale (KRW)",
               "niveau": "marche",
-              "valeur": 21.77,
-              "date": "2026-11-25",
+              "valeur": 23.04,
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -6881,15 +6875,15 @@
           "base": "indice",
           "indice": "KOSPI",
           "monnaie": "KRW",
-          "performance_eur": 40.67,
-          "effet_change": 18.9,
+          "performance_eur": 42.74,
+          "effet_change": 19.7,
           "source_change": "Yahoo Finance via yfinance, cours EURKRW=X (conversion en euros)",
-          "note": 76,
+          "note": 78,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 19.78,
-            "note": 74,
-            "date": "2026-11-26"
+            "valeur": 21.77,
+            "note": 76,
+            "date": "2026-11-25"
           }
         }
       },
@@ -6916,14 +6910,14 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours KRW=X",
               "niveau": "marche",
-              "valeur": 2.95,
-              "date": "2026-11-26",
+              "valeur": 3.05,
+              "date": "2026-11-27",
               "statut": "concorde",
-              "ecart": 0.29
+              "ecart": 0.39
             }
           ],
           "verification": "concordant",
-          "ecart_max": 0.29,
+          "ecart_max": 0.39,
           "devise": "KRW",
           "note": 66,
           "confiance": "élevé",
@@ -6993,10 +6987,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWY",
-              "valeur": 75.6,
-              "date": "2026-11-25",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWY"
             }
           ],
           "verification": "source_unique",
@@ -7123,7 +7115,7 @@
       },
       "note": 60,
       "niveau": "neutre",
-      "note_brute": 60.4,
+      "note_brute": 60.2,
       "note_ramenee_en_zone_neutre": false,
       "verdict": "Japon : signaux partagés, avec d'un côté inflation à 2,5 % pour une cible de 2,0 %, de l'autre croissance du PIB de 0,7 % en 2026 selon le FMI.",
       "confiance": {
@@ -7149,7 +7141,7 @@
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 0,7 % en 2026 selon le FMI ; indicateur avancé de l'OCDE au-dessus de 100 (100,2 et stable) ; inflation à 2,5 % pour une cible de 2,0 %.",
         "politique_monetaire_et_risques": "Taux réel de −1,2 pt (banque centrale qui relève ses taux) ; devise à +0,1 % contre le dollar sur 3 mois ; solde courant de +4,9 % du PIB.",
-        "marches": "Nikkei 225 à +17,2 % sur 12 mois en monnaie locale (+21,3 % en euros) ; PER supérieur de 1 % à la médiane des pays suivis ; entrées nettes sur l'ETF EWJ de 0,0 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
+        "marches": "Nikkei 225 à +16,9 % sur 12 mois en monnaie locale (+21,2 % en euros) ; PER supérieur de 1 % à la médiane des pays suivis ; entrées nettes sur l'ETF EWJ de 0,0 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
       "indicateurs": {
@@ -7317,7 +7309,7 @@
           "libelle": "Valorisation relative",
           "valeur": 0.59,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWJ ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -7328,7 +7320,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWJ",
               "niveau": "marche",
               "valeur": 14.22,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -7341,16 +7333,16 @@
           "note": 59,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 0.8,
+            "valeur": 0.59,
             "note": 59,
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           }
         },
         "momentum": {
           "libelle": "Momentum boursier 12 mois",
-          "valeur": 17.16,
+          "valeur": 16.91,
           "unite": "%",
-          "date": "2026-11-25",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, clôtures de l'indice Nikkei 225 (^N225), en monnaie locale (JPY)",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -7360,8 +7352,8 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, clôtures de l'indice Nikkei 225 (^N225), en monnaie locale (JPY)",
               "niveau": "marche",
-              "valeur": 17.16,
-              "date": "2026-11-25",
+              "valeur": 16.91,
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -7371,15 +7363,15 @@
           "base": "indice",
           "indice": "Nikkei 225",
           "monnaie": "JPY",
-          "performance_eur": 21.33,
-          "effet_change": 4.16,
+          "performance_eur": 21.16,
+          "effet_change": 4.25,
           "source_change": "Yahoo Finance via yfinance, cours EURJPY=X (conversion en euros)",
-          "note": 71,
+          "note": 70,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 16.34,
-            "note": 70,
-            "date": "2026-11-26"
+            "valeur": 17.16,
+            "note": 71,
+            "date": "2026-11-25"
           }
         }
       },
@@ -7406,14 +7398,14 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours JPY=X",
               "niveau": "marche",
-              "valeur": -0.02,
-              "date": "2026-11-26",
+              "valeur": 0.0,
+              "date": "2026-11-27",
               "statut": "concorde",
-              "ecart": 0.1
+              "ecart": 0.08
             }
           ],
           "verification": "concordant",
-          "ecart_max": 0.1,
+          "ecart_max": 0.08,
           "devise": "JPY",
           "note": 55,
           "confiance": "élevé",
@@ -7483,10 +7475,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWJ",
-              "valeur": 227.85,
-              "date": "2026-11-25",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWJ"
             }
           ],
           "verification": "source_unique",
@@ -7611,9 +7601,9 @@
         "monnaie": "AUD",
         "historique": true
       },
-      "note": 52,
+      "note": 53,
       "niveau": "neutre",
-      "note_brute": 52.4,
+      "note_brute": 52.5,
       "note_ramenee_en_zone_neutre": false,
       "verdict": "Australie : signaux partagés, avec d'un côté taux réel de +0,3 pt (banque centrale qui relève ses taux), de l'autre PER supérieur de 34 % à la médiane des pays suivis.",
       "confiance": {
@@ -7640,7 +7630,7 @@
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 1,9 % en 2026 selon le FMI ; indicateur avancé de l'OCDE en dessous de 100 (100,0 et en baisse) ; inflation à 4,3 % pour une cible de 2,5 %.",
         "politique_monetaire_et_risques": "Taux réel de +0,3 pt (banque centrale qui relève ses taux) ; devise à −7,7 % contre le dollar sur 3 mois ; solde courant de −2,6 % du PIB.",
-        "marches": "S&P/ASX 200 à +1,8 % sur 12 mois en monnaie locale (+10,0 % en euros) ; PER supérieur de 34 % à la médiane des pays suivis ; sorties nettes sur l'ETF EWA de 1,8 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
+        "marches": "S&P/ASX 200 à +2,5 % sur 12 mois en monnaie locale (+10,8 % en euros) ; PER supérieur de 34 % à la médiane des pays suivis ; sorties nettes sur l'ETF EWA de 1,8 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
       "indicateurs": {
@@ -7808,7 +7798,7 @@
           "libelle": "Valorisation relative",
           "valeur": 33.88,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWA ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -7819,7 +7809,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWA",
               "niveau": "marche",
               "valeur": 18.92,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -7832,16 +7822,16 @@
           "note": 26,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 34.27,
+            "valeur": 33.88,
             "note": 26,
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           }
         },
         "momentum": {
           "libelle": "Momentum boursier 12 mois",
-          "valeur": 1.83,
+          "valeur": 2.49,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, clôtures de l'indice S&P/ASX 200 (^AXJO), en monnaie locale (AUD)",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -7851,8 +7841,8 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, clôtures de l'indice S&P/ASX 200 (^AXJO), en monnaie locale (AUD)",
               "niveau": "marche",
-              "valeur": 1.83,
-              "date": "2026-11-26",
+              "valeur": 2.49,
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -7862,15 +7852,15 @@
           "base": "indice",
           "indice": "S&P/ASX 200",
           "monnaie": "AUD",
-          "performance_eur": 10.01,
-          "effet_change": 8.19,
+          "performance_eur": 10.75,
+          "effet_change": 8.27,
           "source_change": "Yahoo Finance via yfinance, cours EURAUD=X (conversion en euros)",
-          "note": 52,
+          "note": 53,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 1.82,
+            "valeur": 1.83,
             "note": 52,
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           }
         }
       },
@@ -7897,14 +7887,14 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours AUDUSD=X",
               "niveau": "marche",
-              "valeur": -7.64,
-              "date": "2026-11-26",
+              "valeur": -7.25,
+              "date": "2026-11-27",
               "statut": "concorde",
-              "ecart": 0.07
+              "ecart": 0.47
             }
           ],
           "verification": "concordant",
-          "ecart_max": 0.07,
+          "ecart_max": 0.47,
           "devise": "AUD",
           "note": 24,
           "confiance": "élevé",
@@ -7974,10 +7964,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWA",
-              "valeur": 63.6,
-              "date": "2026-11-25",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWA"
             }
           ],
           "verification": "source_unique",
@@ -8085,7 +8073,7 @@
         }
       },
       "precedent": {
-        "note": 50,
+        "note": 52,
         "date": "2026-11-26"
       }
     },
@@ -8106,7 +8094,7 @@
       "niveau": "defavorable",
       "note_brute": 46.8,
       "note_ramenee_en_zone_neutre": false,
-      "verdict": "Italie : taux réel de −3,0 pt (banque centrale qui relève ses taux) et inflation à 5,5 % pour une cible de 2,0 % pèsent sur la note ; appui : FTSE MIB à +12,2 % sur 12 mois en monnaie locale.",
+      "verdict": "Italie : taux réel de −3,0 pt (banque centrale qui relève ses taux) et inflation à 5,5 % pour une cible de 2,0 % pèsent sur la note ; appui : FTSE MIB à +12,1 % sur 12 mois en monnaie locale.",
       "confiance": {
         "niveau": "élevé",
         "score": 1.0,
@@ -8129,7 +8117,7 @@
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 0,8 % en 2026 selon le FMI ; indicateur avancé de l'OCDE au-dessus de 100 (100,0 et stable) ; inflation à 5,5 % pour une cible de 2,0 %.",
         "politique_monetaire_et_risques": "Taux réel de −3,0 pt (banque centrale qui relève ses taux) ; devise à −5,8 % contre le dollar sur 3 mois ; solde courant de +1,1 % du PIB.",
-        "marches": "FTSE MIB à +12,2 % sur 12 mois en monnaie locale ; PER supérieur de 1 % à la médiane des pays suivis ; sorties nettes sur l'ETF EWI de 2,3 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
+        "marches": "FTSE MIB à +12,1 % sur 12 mois en monnaie locale ; PER supérieur de 1 % à la médiane des pays suivis ; sorties nettes sur l'ETF EWI de 2,3 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
       "indicateurs": {
@@ -8315,7 +8303,7 @@
           "libelle": "Valorisation relative",
           "valeur": 0.69,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWI ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -8326,7 +8314,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWI",
               "niveau": "marche",
               "valeur": 14.23,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -8339,14 +8327,14 @@
           "note": 59,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 0.97,
+            "valeur": 0.69,
             "note": 59,
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           }
         },
         "momentum": {
           "libelle": "Momentum boursier 12 mois",
-          "valeur": 12.19,
+          "valeur": 12.13,
           "unite": "%",
           "date": "2026-11-26",
           "source": "Yahoo Finance via yfinance, clôtures de l'indice FTSE MIB (FTSEMIB.MI), en monnaie locale (EUR)",
@@ -8358,7 +8346,7 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, clôtures de l'indice FTSE MIB (FTSEMIB.MI), en monnaie locale (EUR)",
               "niveau": "marche",
-              "valeur": 12.19,
+              "valeur": 12.13,
               "date": "2026-11-26",
               "statut": "retenue"
             }
@@ -8369,14 +8357,14 @@
           "base": "indice",
           "indice": "FTSE MIB",
           "monnaie": "EUR",
-          "performance_eur": 12.19,
+          "performance_eur": 12.13,
           "effet_change": 0.0,
           "note": 65,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 10.66,
-            "note": 63,
-            "date": "2026-11-25"
+            "valeur": 12.19,
+            "note": 65,
+            "date": "2026-11-26"
           }
         }
       },
@@ -8403,14 +8391,14 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours EURUSD=X",
               "niveau": "marche",
-              "valeur": -5.86,
-              "date": "2026-11-26",
+              "valeur": -5.79,
+              "date": "2026-11-27",
               "statut": "concorde",
-              "ecart": 0.1
+              "ecart": 0.03
             }
           ],
           "verification": "concordant",
-          "ecart_max": 0.1,
+          "ecart_max": 0.03,
           "devise": "EUR",
           "note": 32,
           "confiance": "élevé",
@@ -8480,10 +8468,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWI",
-              "valeur": 8.55,
-              "date": "2026-11-25",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWI"
             }
           ],
           "verification": "source_unique",
@@ -8612,7 +8598,7 @@
       "niveau": "neutre",
       "note_brute": 49.8,
       "note_ramenee_en_zone_neutre": false,
-      "verdict": "Espagne : signaux partagés, avec d'un côté IBEX 35 à +16,6 % sur 12 mois en monnaie locale, de l'autre indicateur avancé de l'OCDE en dessous de 100 (99,3 et en baisse).",
+      "verdict": "Espagne : signaux partagés, avec d'un côté IBEX 35 à +16,5 % sur 12 mois en monnaie locale, de l'autre indicateur avancé de l'OCDE en dessous de 100 (99,3 et en baisse).",
       "confiance": {
         "niveau": "élevé",
         "score": 1.0,
@@ -8636,7 +8622,7 @@
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 2,5 % en 2026 selon le FMI ; indicateur avancé de l'OCDE en dessous de 100 (99,3 et en baisse) ; inflation à 4,9 % pour une cible de 2,0 %.",
         "politique_monetaire_et_risques": "Taux réel de −2,4 pt (banque centrale qui relève ses taux) ; devise à −5,8 % contre le dollar sur 3 mois ; solde courant de +3,2 % du PIB.",
-        "marches": "IBEX 35 à +16,6 % sur 12 mois en monnaie locale ; PER supérieur de 15 % à la médiane des pays suivis ; entrées nettes sur l'ETF EWP de 0,4 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
+        "marches": "IBEX 35 à +16,5 % sur 12 mois en monnaie locale ; PER supérieur de 15 % à la médiane des pays suivis ; entrées nettes sur l'ETF EWP de 0,4 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
       "indicateurs": {
@@ -8822,7 +8808,7 @@
           "libelle": "Valorisation relative",
           "valeur": 14.85,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWP ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -8833,7 +8819,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWP",
               "niveau": "marche",
               "valeur": 16.23,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -8846,14 +8832,14 @@
           "note": 45,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 15.55,
-            "note": 44,
-            "date": "2026-11-25"
+            "valeur": 14.85,
+            "note": 45,
+            "date": "2026-11-26"
           }
         },
         "momentum": {
           "libelle": "Momentum boursier 12 mois",
-          "valeur": 16.58,
+          "valeur": 16.48,
           "unite": "%",
           "date": "2026-11-26",
           "source": "Yahoo Finance via yfinance, clôtures de l'indice IBEX 35 (^IBEX), en monnaie locale (EUR)",
@@ -8865,7 +8851,7 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, clôtures de l'indice IBEX 35 (^IBEX), en monnaie locale (EUR)",
               "niveau": "marche",
-              "valeur": 16.58,
+              "valeur": 16.48,
               "date": "2026-11-26",
               "statut": "retenue"
             }
@@ -8876,14 +8862,14 @@
           "base": "indice",
           "indice": "IBEX 35",
           "monnaie": "EUR",
-          "performance_eur": 16.58,
+          "performance_eur": 16.48,
           "effet_change": 0.0,
           "note": 70,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 15.46,
-            "note": 69,
-            "date": "2026-11-25"
+            "valeur": 16.58,
+            "note": 70,
+            "date": "2026-11-26"
           }
         }
       },
@@ -8910,14 +8896,14 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours EURUSD=X",
               "niveau": "marche",
-              "valeur": -5.86,
-              "date": "2026-11-26",
+              "valeur": -5.79,
+              "date": "2026-11-27",
               "statut": "concorde",
-              "ecart": 0.1
+              "ecart": 0.03
             }
           ],
           "verification": "concordant",
-          "ecart_max": 0.1,
+          "ecart_max": 0.03,
           "devise": "EUR",
           "note": 32,
           "confiance": "élevé",
@@ -9119,7 +9105,7 @@
       "niveau": "neutre",
       "note_brute": 54.7,
       "note_ramenee_en_zone_neutre": false,
-      "verdict": "Pays-Bas : signaux partagés, avec d'un côté AEX à +14,9 % sur 12 mois en monnaie locale, de l'autre PER supérieur de 21 % à la médiane des pays suivis.",
+      "verdict": "Pays-Bas : signaux partagés, avec d'un côté AEX à +14,8 % sur 12 mois en monnaie locale, de l'autre PER supérieur de 21 % à la médiane des pays suivis.",
       "confiance": {
         "niveau": "élevé",
         "score": 0.85,
@@ -9143,7 +9129,7 @@
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 1,5 % en 2026 selon le FMI ; inflation à 3,7 % pour une cible de 2,0 %.",
         "politique_monetaire_et_risques": "Taux réel de −1,2 pt (banque centrale qui relève ses taux) ; devise à −5,8 % contre le dollar sur 3 mois ; solde courant de +7,6 % du PIB.",
-        "marches": "AEX à +14,9 % sur 12 mois en monnaie locale ; PER supérieur de 21 % à la médiane des pays suivis ; entrées nettes sur l'ETF EWN de 0,8 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
+        "marches": "AEX à +14,8 % sur 12 mois en monnaie locale ; PER supérieur de 21 % à la médiane des pays suivis ; entrées nettes sur l'ETF EWN de 0,8 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
       "indicateurs": {
@@ -9308,7 +9294,7 @@
           "libelle": "Valorisation relative",
           "valeur": 21.11,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWN ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -9319,7 +9305,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWN",
               "niveau": "marche",
               "valeur": 17.12,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -9332,14 +9318,14 @@
           "note": 39,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 20.77,
+            "valeur": 21.11,
             "note": 39,
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           }
         },
         "momentum": {
           "libelle": "Momentum boursier 12 mois",
-          "valeur": 14.95,
+          "valeur": 14.79,
           "unite": "%",
           "date": "2026-11-26",
           "source": "Yahoo Finance via yfinance, clôtures de l'indice AEX (^AEX), en monnaie locale (EUR)",
@@ -9351,7 +9337,7 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, clôtures de l'indice AEX (^AEX), en monnaie locale (EUR)",
               "niveau": "marche",
-              "valeur": 14.95,
+              "valeur": 14.79,
               "date": "2026-11-26",
               "statut": "retenue"
             }
@@ -9362,14 +9348,14 @@
           "base": "indice",
           "indice": "AEX",
           "monnaie": "EUR",
-          "performance_eur": 14.95,
+          "performance_eur": 14.79,
           "effet_change": 0.0,
           "note": 68,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 14.01,
-            "note": 67,
-            "date": "2026-11-25"
+            "valeur": 14.95,
+            "note": 68,
+            "date": "2026-11-26"
           }
         }
       },
@@ -9396,14 +9382,14 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours EURUSD=X",
               "niveau": "marche",
-              "valeur": -5.86,
-              "date": "2026-11-26",
+              "valeur": -5.79,
+              "date": "2026-11-27",
               "statut": "concorde",
-              "ecart": 0.1
+              "ecart": 0.03
             }
           ],
           "verification": "concordant",
-          "ecart_max": 0.1,
+          "ecart_max": 0.03,
           "devise": "EUR",
           "note": 32,
           "confiance": "élevé",
@@ -9630,7 +9616,7 @@
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 2,5 % en 2026 selon le FMI ; inflation à 0,9 % pour une cible de 2,0 %.",
         "politique_monetaire_et_risques": "Taux réel de +0,8 pt (banque centrale aux taux stables) ; devise à −6,8 % contre le dollar sur 3 mois ; solde courant de +6,7 % du PIB.",
-        "marches": "OMX Stockholm 30 à +17,0 % sur 12 mois en monnaie locale (+15,0 % en euros) ; PER inférieur de 1 % à la médiane des pays suivis ; entrées nettes sur l'ETF EWD de 0,5 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
+        "marches": "OMX Stockholm 30 à +17,0 % sur 12 mois en monnaie locale (+14,8 % en euros) ; PER inférieur de 1 % à la médiane des pays suivis ; entrées nettes sur l'ETF EWD de 0,5 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
       "indicateurs": {
@@ -9786,7 +9772,7 @@
           "libelle": "Valorisation relative",
           "valeur": -0.59,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWD ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -9797,7 +9783,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWD",
               "niveau": "marche",
               "valeur": 14.05,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -9810,9 +9796,9 @@
           "note": 61,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -0.8,
+            "valeur": -0.59,
             "note": 61,
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           }
         },
         "momentum": {
@@ -9840,8 +9826,8 @@
           "base": "indice",
           "indice": "OMX Stockholm 30",
           "monnaie": "SEK",
-          "performance_eur": 14.97,
-          "effet_change": -2.01,
+          "performance_eur": 14.84,
+          "effet_change": -2.14,
           "source_change": "Yahoo Finance via yfinance, cours EURSEK=X (conversion en euros)",
           "note": 70,
           "confiance": "moyen",
@@ -9875,14 +9861,14 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours SEK=X",
               "niveau": "marche",
-              "valeur": -6.83,
-              "date": "2026-11-26",
+              "valeur": -6.6,
+              "date": "2026-11-27",
               "statut": "concorde",
-              "ecart": 0.08
+              "ecart": 0.16
             }
           ],
           "verification": "concordant",
-          "ecart_max": 0.08,
+          "ecart_max": 0.16,
           "devise": "SEK",
           "note": 28,
           "confiance": "élevé",
@@ -9952,10 +9938,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWD",
-              "valeur": 7.65,
-              "date": "2026-11-25",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWD"
             }
           ],
           "verification": "source_unique",
@@ -10266,7 +10250,7 @@
           "libelle": "Valorisation relative",
           "valeur": -11.52,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EPOL ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -10277,7 +10261,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EPOL",
               "niveau": "marche",
               "valeur": 12.51,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -10290,9 +10274,9 @@
           "note": 72,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -11.41,
-            "note": 71,
-            "date": "2026-11-25"
+            "valeur": -11.52,
+            "note": 72,
+            "date": "2026-11-26"
           }
         },
         "momentum": {
@@ -10357,14 +10341,14 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours PLN=X",
               "niveau": "marche",
-              "valeur": -9.49,
-              "date": "2026-11-26",
+              "valeur": -8.75,
+              "date": "2026-11-27",
               "statut": "concorde",
-              "ecart": 0.43
+              "ecart": 0.3
             }
           ],
           "verification": "concordant",
-          "ecart_max": 0.43,
+          "ecart_max": 0.3,
           "devise": "PLN",
           "note": 19,
           "confiance": "élevé",
@@ -10564,7 +10548,7 @@
       "niveau": "attractif",
       "note_brute": 76.1,
       "note_ramenee_en_zone_neutre": false,
-      "verdict": "Taïwan : croissance du PIB de 10,7 % en 2026 selon le FMI et TAIEX à +41,9 % sur 12 mois en monnaie locale (+42,4 % en euros) soutiennent la note ; point de vigilance : PER supérieur de 58 % à la médiane des pays suivis.",
+      "verdict": "Taïwan : croissance du PIB de 10,7 % en 2026 selon le FMI et TAIEX à +42,7 % sur 12 mois en monnaie locale (+42,9 % en euros) soutiennent la note ; point de vigilance : PER supérieur de 58 % à la médiane des pays suivis.",
       "confiance": {
         "niveau": "faible",
         "score": 0.45,
@@ -10591,8 +10575,8 @@
       ],
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 10,7 % en 2026 selon le FMI ; inflation à 2,0 % pour une cible de 2,0 %.",
-        "politique_monetaire_et_risques": "Devise à −3,5 % contre le dollar sur 3 mois ; solde courant de +20,0 % du PIB.",
-        "marches": "TAIEX à +41,9 % sur 12 mois en monnaie locale (+42,4 % en euros) ; PER supérieur de 58 % à la médiane des pays suivis ; entrées nettes sur l'ETF EWT de 0,3 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
+        "politique_monetaire_et_risques": "Devise à −3,9 % contre le dollar sur 3 mois ; solde courant de +20,0 % du PIB.",
+        "marches": "TAIEX à +42,7 % sur 12 mois en monnaie locale (+42,9 % en euros) ; PER supérieur de 58 % à la médiane des pays suivis ; entrées nettes sur l'ETF EWT de 0,3 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
       "indicateurs": {
@@ -10681,7 +10665,7 @@
           "libelle": "Valorisation relative",
           "valeur": 58.4,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWT ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -10692,7 +10676,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWT",
               "niveau": "marche",
               "valeur": 22.39,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -10705,16 +10689,16 @@
           "note": 2,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 54.1,
-            "note": 6,
-            "date": "2026-11-25"
+            "valeur": 58.4,
+            "note": 2,
+            "date": "2026-11-26"
           }
         },
         "momentum": {
           "libelle": "Momentum boursier 12 mois",
-          "valeur": 41.93,
+          "valeur": 42.66,
           "unite": "%",
-          "date": "2026-11-25",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, clôtures de l'indice TAIEX (^TWII), en monnaie locale (TWD)",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -10724,8 +10708,8 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, clôtures de l'indice TAIEX (^TWII), en monnaie locale (TWD)",
               "niveau": "marche",
-              "valeur": 41.93,
-              "date": "2026-11-25",
+              "valeur": 42.66,
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -10735,24 +10719,24 @@
           "base": "indice",
           "indice": "TAIEX",
           "monnaie": "TWD",
-          "performance_eur": 42.37,
-          "effet_change": 0.44,
+          "performance_eur": 42.88,
+          "effet_change": 0.22,
           "source_change": "Yahoo Finance via yfinance, cours EURTWD=X (conversion en euros)",
           "note": 100,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 42.84,
+            "valeur": 41.93,
             "note": 100,
-            "date": "2026-11-26"
+            "date": "2026-11-25"
           }
         }
       },
       "detail": {
         "devise_3m": {
           "libelle": "Devise sur 3 mois",
-          "valeur": -3.46,
+          "valeur": -3.89,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, cours TWD=X",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -10762,19 +10746,19 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours TWD=X",
               "niveau": "marche",
-              "valeur": -3.46,
-              "date": "2026-11-26",
+              "valeur": -3.89,
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
           "verification": "source_unique",
           "ecart_max": null,
           "devise": "TWD",
-          "note": 41,
+          "note": 39,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -3.65,
-            "note": 40,
+            "valeur": -3.46,
+            "note": 41,
             "date": "2026-11-26"
           }
         },
@@ -10831,10 +10815,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWT",
-              "valeur": 85.0,
-              "date": "2026-11-25",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWT"
             }
           ],
           "verification": "source_unique",
@@ -10959,11 +10941,11 @@
         "monnaie": "IDR",
         "historique": true
       },
-      "note": 61,
+      "note": 62,
       "niveau": "neutre",
-      "note_brute": 61.5,
+      "note_brute": 61.6,
       "note_ramenee_en_zone_neutre": false,
-      "verdict": "Indonésie : signaux partagés, avec d'un côté PER inférieur de 38 % à la médiane des pays suivis, de l'autre IDX Composite à −39,1 % sur 12 mois en monnaie locale (−42,5 % en euros).",
+      "verdict": "Indonésie : signaux partagés, avec d'un côté PER inférieur de 38 % à la médiane des pays suivis, de l'autre IDX Composite à −38,2 % sur 12 mois en monnaie locale (−41,7 % en euros).",
       "confiance": {
         "niveau": "moyen",
         "score": 0.85,
@@ -10988,7 +10970,7 @@
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 5,1 % en 2026 selon le FMI ; indicateur avancé de l'OCDE en dessous de 100 (98,5 et en baisse) ; inflation à 3,2 % pour une cible de 2,5 %.",
         "politique_monetaire_et_risques": "Taux réel de +2,5 pt (banque centrale qui relève ses taux) ; devise à −3,6 % contre le dollar sur 3 mois ; solde courant de −0,1 % du PIB.",
-        "marches": "IDX Composite à −39,1 % sur 12 mois en monnaie locale (−42,5 % en euros) ; PER inférieur de 38 % à la médiane des pays suivis ; entrées nettes sur l'ETF EIDO de 2,1 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
+        "marches": "IDX Composite à −38,2 % sur 12 mois en monnaie locale (−41,7 % en euros) ; PER inférieur de 38 % à la médiane des pays suivis ; entrées nettes sur l'ETF EIDO de 2,1 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
       "indicateurs": {
@@ -11156,7 +11138,7 @@
           "libelle": "Valorisation relative",
           "valeur": -37.53,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EIDO ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -11167,7 +11149,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EIDO",
               "niveau": "marche",
               "valeur": 8.83,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -11180,16 +11162,16 @@
           "note": 98,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -37.3,
-            "note": 97,
-            "date": "2026-11-25"
+            "valeur": -37.53,
+            "note": 98,
+            "date": "2026-11-26"
           }
         },
         "momentum": {
           "libelle": "Momentum boursier 12 mois",
-          "valeur": -39.06,
+          "valeur": -38.25,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, clôtures de l'indice IDX Composite (^JKSE), en monnaie locale (IDR)",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -11199,8 +11181,8 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, clôtures de l'indice IDX Composite (^JKSE), en monnaie locale (IDR)",
               "niveau": "marche",
-              "valeur": -39.06,
-              "date": "2026-11-26",
+              "valeur": -38.25,
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -11210,13 +11192,13 @@
           "base": "indice",
           "indice": "IDX Composite",
           "monnaie": "IDR",
-          "performance_eur": -42.55,
-          "effet_change": -3.49,
+          "performance_eur": -41.7,
+          "effet_change": -3.44,
           "source_change": "Yahoo Finance via yfinance, cours EURIDR=X (conversion en euros)",
-          "note": 3,
+          "note": 4,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -39.16,
+            "valeur": -39.06,
             "note": 3,
             "date": "2026-11-26"
           }
@@ -11245,14 +11227,14 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours IDR=X",
               "niveau": "marche",
-              "valeur": -2.87,
-              "date": "2026-11-26",
+              "valeur": -3.38,
+              "date": "2026-11-27",
               "statut": "concorde",
-              "ecart": 0.7
+              "ecart": 0.19
             }
           ],
           "verification": "concordant",
-          "ecart_max": 0.7,
+          "ecart_max": 0.19,
           "devise": "IDR",
           "note": 41,
           "confiance": "élevé",
@@ -11431,8 +11413,8 @@
         }
       },
       "precedent": {
-        "note": 62,
-        "date": "2026-11-23"
+        "note": 61,
+        "date": "2026-11-26"
       }
     },
     {
@@ -11478,7 +11460,7 @@
       ],
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 8,4 % en 2026 selon le FMI ; inflation à 4,7 % pour une cible de 4,5 %.",
-        "politique_monetaire_et_risques": "Devise à +1,1 % contre le dollar sur 3 mois ; solde courant de +6,7 % du PIB.",
+        "politique_monetaire_et_risques": "Devise à +1,0 % contre le dollar sur 3 mois ; solde courant de +6,7 % du PIB.",
         "marches": "Marché à −6,4 % sur 12 mois (ETF en dollars) ; PER inférieur de 20 % à la médiane des pays suivis ; sorties nettes sur l'ETF VNM de 7,4 % de l'encours sur un mois (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
@@ -11595,7 +11577,7 @@
           "libelle": "Valorisation relative",
           "valeur": -20.14,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF VNM ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -11606,7 +11588,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF VNM",
               "niveau": "marche",
               "valeur": 11.29,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -11619,9 +11601,9 @@
           "note": 80,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -19.84,
+            "valeur": -20.14,
             "note": 80,
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           }
         },
         "momentum": {
@@ -11666,9 +11648,9 @@
       "detail": {
         "devise_3m": {
           "libelle": "Devise sur 3 mois",
-          "valeur": 1.07,
+          "valeur": 0.97,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, cours VND=X",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -11678,8 +11660,8 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours VND=X",
               "niveau": "marche",
-              "valeur": 1.07,
-              "date": "2026-11-26",
+              "valeur": 0.97,
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -11689,9 +11671,9 @@
           "note": 59,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 1.1,
+            "valeur": 1.07,
             "note": 59,
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           }
         },
         "solde_courant": {
@@ -12126,7 +12108,7 @@
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 5,0 % en 2026 selon le FMI ; inflation à 2,3 % pour une cible de 2,0 %.",
         "politique_monetaire_et_risques": "Devise à −1,5 % contre le dollar sur 3 mois ; solde courant de +16,7 % du PIB.",
-        "marches": "STI à +9,9 % sur 12 mois en monnaie locale (+16,9 % en euros) ; PER supérieur de 22 % à la médiane des pays suivis ; sorties nettes sur l'ETF EWS de 2,4 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
+        "marches": "STI à +10,3 % sur 12 mois en monnaie locale (+17,3 % en euros) ; PER supérieur de 22 % à la médiane des pays suivis ; sorties nettes sur l'ETF EWS de 2,4 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
       "indicateurs": {
@@ -12241,7 +12223,7 @@
           "libelle": "Valorisation relative",
           "valeur": 21.75,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWS ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -12252,7 +12234,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF EWS",
               "niveau": "marche",
               "valeur": 17.21,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -12265,16 +12247,16 @@
           "note": 38,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 22.41,
+            "valeur": 21.75,
             "note": 38,
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           }
         },
         "momentum": {
           "libelle": "Momentum boursier 12 mois",
-          "valeur": 9.93,
+          "valeur": 10.33,
           "unite": "%",
-          "date": "2026-11-25",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, clôtures de l'indice STI (^STI), en monnaie locale (SGD)",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -12284,8 +12266,8 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, clôtures de l'indice STI (^STI), en monnaie locale (SGD)",
               "niveau": "marche",
-              "valeur": 9.93,
-              "date": "2026-11-25",
+              "valeur": 10.33,
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -12295,15 +12277,15 @@
           "base": "indice",
           "indice": "STI",
           "monnaie": "SGD",
-          "performance_eur": 16.91,
-          "effet_change": 6.99,
+          "performance_eur": 17.29,
+          "effet_change": 6.96,
           "source_change": "Yahoo Finance via yfinance, cours EURSGD=X (conversion en euros)",
           "note": 62,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 10.64,
-            "note": 63,
-            "date": "2026-11-26"
+            "valeur": 9.93,
+            "note": 62,
+            "date": "2026-11-25"
           }
         }
       },
@@ -12330,14 +12312,14 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours SGD=X",
               "niveau": "marche",
-              "valeur": -1.49,
-              "date": "2026-11-26",
+              "valeur": -1.39,
+              "date": "2026-11-27",
               "statut": "concorde",
-              "ecart": 0.0
+              "ecart": 0.1
             }
           ],
           "verification": "concordant",
-          "ecart_max": 0.0,
+          "ecart_max": 0.1,
           "devise": "SGD",
           "note": 49,
           "confiance": "élevé",
@@ -12408,10 +12390,8 @@
             {
               "source": "yahoo_parts",
               "nom": "Yahoo Finance via yfinance, parts en circulation et VL de EWS",
-              "valeur": 24.7,
-              "date": "2026-11-25",
-              "statut": "rejetée",
-              "raison": "incohérent : parts × VL éloigné de l'actif net publié"
+              "statut": "échec",
+              "raison": "aucune donnée pour EWS"
             }
           ],
           "verification": "source_unique",
@@ -12695,7 +12675,7 @@
           "libelle": "Valorisation relative",
           "valeur": -6.28,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF THD ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -12706,7 +12686,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF THD",
               "niveau": "marche",
               "valeur": 13.25,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -12719,9 +12699,9 @@
           "note": 66,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -5.68,
+            "valeur": -6.28,
             "note": 66,
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           }
         },
         "momentum": {
@@ -12786,14 +12766,14 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours THB=X",
               "niveau": "marche",
-              "valeur": -3.64,
-              "date": "2026-11-26",
+              "valeur": -3.07,
+              "date": "2026-11-27",
               "statut": "concorde",
-              "ecart": 0.09
+              "ecart": 0.48
             }
           ],
           "verification": "concordant",
-          "ecart_max": 0.09,
+          "ecart_max": 0.48,
           "devise": "THB",
           "note": 41,
           "confiance": "élevé",
@@ -13020,7 +13000,7 @@
       ],
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 0,6 % en 2026 selon le FMI ; inflation à 3,7 % pour une cible de 3,0 %.",
-        "politique_monetaire_et_risques": "Taux réel de +0,8 pt (banque centrale aux taux stables) ; devise à −11,2 % contre le dollar sur 3 mois ; solde courant de −1,2 % du PIB.",
+        "politique_monetaire_et_risques": "Taux réel de +0,8 pt (banque centrale aux taux stables) ; devise à −11,4 % contre le dollar sur 3 mois ; solde courant de −1,2 % du PIB.",
         "marches": "Marché à −8,9 % sur 12 mois (ETF en dollars) ; PER inférieur de 16 % à la médiane des pays suivis ; sorties nettes sur l'ETF ECH de 0,5 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
@@ -13159,7 +13139,7 @@
           "libelle": "Valorisation relative",
           "valeur": -15.95,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF ECH ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -13170,7 +13150,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF ECH",
               "niveau": "marche",
               "valeur": 11.88,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -13183,9 +13163,9 @@
           "note": 76,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -16.01,
+            "valeur": -15.95,
             "note": 76,
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           }
         },
         "momentum": {
@@ -13230,7 +13210,7 @@
       "detail": {
         "devise_3m": {
           "libelle": "Devise sur 3 mois",
-          "valeur": -11.23,
+          "valeur": -11.36,
           "unite": "%",
           "date": "2026-11-26",
           "source": "Yahoo Finance via yfinance, cours CLP=X",
@@ -13242,7 +13222,7 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours CLP=X",
               "niveau": "marche",
-              "valeur": -11.23,
+              "valeur": -11.36,
               "date": "2026-11-26",
               "statut": "retenue"
             }
@@ -13253,9 +13233,9 @@
           "note": 10,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -11.6,
-            "note": 9,
-            "date": "2026-11-25"
+            "valeur": -11.23,
+            "note": 10,
+            "date": "2026-11-26"
           }
         },
         "solde_courant": {
@@ -13475,7 +13455,7 @@
       ],
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 2,2 % en 2026 selon le FMI ; inflation à 6,3 % pour une cible de 3,0 %.",
-        "politique_monetaire_et_risques": "Taux réel de +6,0 pt (banque centrale qui relève ses taux) ; devise à −11,0 % contre le dollar sur 3 mois ; solde courant de −2,4 % du PIB.",
+        "politique_monetaire_et_risques": "Taux réel de +6,0 pt (banque centrale qui relève ses taux) ; devise à −10,9 % contre le dollar sur 3 mois ; solde courant de −2,4 % du PIB.",
         "marches": "Marché à +20,2 % sur 12 mois (ETF en dollars) ; PER inférieur de 38 % à la médiane des pays suivis."
       },
       "textes": "règles",
@@ -13623,7 +13603,7 @@
           "libelle": "Valorisation relative",
           "valeur": -37.97,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF COLO ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -13634,7 +13614,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF COLO",
               "niveau": "marche",
               "valeur": 8.77,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -13647,9 +13627,9 @@
           "note": 98,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -38.87,
-            "note": 99,
-            "date": "2026-11-25"
+            "valeur": -37.97,
+            "note": 98,
+            "date": "2026-11-26"
           }
         },
         "momentum": {
@@ -13694,9 +13674,9 @@
       "detail": {
         "devise_3m": {
           "libelle": "Devise sur 3 mois",
-          "valeur": -11.0,
+          "valeur": -10.86,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, cours COP=X",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -13706,19 +13686,19 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours COP=X",
               "niveau": "marche",
-              "valeur": -11.0,
-              "date": "2026-11-26",
+              "valeur": -10.86,
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
           "verification": "source_unique",
           "ecart_max": null,
           "devise": "COP",
-          "note": 11,
+          "note": 12,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -11.99,
-            "note": 7,
+            "valeur": -11.0,
+            "note": 11,
             "date": "2026-11-26"
           }
         },
@@ -13949,7 +13929,7 @@
           "libelle": "Valorisation relative",
           "valeur": -24.98,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF UAE ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -13960,7 +13940,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF UAE",
               "niveau": "marche",
               "valeur": 10.6,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -13973,9 +13953,9 @@
           "note": 85,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -25.23,
+            "valeur": -24.98,
             "note": 85,
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           }
         },
         "momentum": {
@@ -14020,9 +14000,9 @@
       "detail": {
         "devise_3m": {
           "libelle": "Devise sur 3 mois",
-          "valeur": -0.03,
+          "valeur": -0.04,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, cours AED=X",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -14032,8 +14012,8 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours AED=X",
               "niveau": "marche",
-              "valeur": -0.03,
-              "date": "2026-11-26",
+              "valeur": -0.04,
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -14043,7 +14023,7 @@
           "note": 55,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -0.04,
+            "valeur": -0.03,
             "note": 55,
             "date": "2026-11-26"
           }
@@ -14238,7 +14218,7 @@
       "niveau": "defavorable",
       "note_brute": 49.3,
       "note_ramenee_en_zone_neutre": false,
-      "verdict": "Turquie : inflation à 29,7 % pour une cible de 5,0 % et BIST 100 à −1,6 % sur 12 mois en monnaie locale (−13,3 % en euros) pèsent sur la note ; appui : PER inférieur de 19 % à la médiane des pays suivis.",
+      "verdict": "Turquie : inflation à 29,7 % pour une cible de 5,0 % et BIST 100 à −1,6 % sur 12 mois en monnaie locale (−13,4 % en euros) pèsent sur la note ; appui : PER inférieur de 19 % à la médiane des pays suivis.",
       "confiance": {
         "niveau": "moyen",
         "score": 0.75,
@@ -14263,7 +14243,7 @@
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 2,7 % en 2026 selon le FMI ; indicateur avancé de l'OCDE au-dessus de 100 (100,9 et en hausse) ; inflation à 29,7 % pour une cible de 5,0 %.",
         "politique_monetaire_et_risques": "Taux réel de +6,3 pt (banque centrale qui baisse ses taux) ; devise à −5,0 % contre le dollar sur 3 mois ; solde courant de −1,9 % du PIB.",
-        "marches": "BIST 100 à −1,6 % sur 12 mois en monnaie locale (−13,3 % en euros) ; PER inférieur de 19 % à la médiane des pays suivis ; sorties nettes sur l'ETF TUR de 2,5 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
+        "marches": "BIST 100 à −1,6 % sur 12 mois en monnaie locale (−13,4 % en euros) ; PER inférieur de 19 % à la médiane des pays suivis ; sorties nettes sur l'ETF TUR de 2,5 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
       "indicateurs": {
@@ -14441,7 +14421,7 @@
           "libelle": "Valorisation relative",
           "valeur": -19.15,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, PER (trailing) de l'ETF TUR ; médiane des pays suivis",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -14452,7 +14432,7 @@
               "nom": "Yahoo Finance via yfinance, PER (trailing) de l'ETF TUR",
               "niveau": "marche",
               "valeur": 11.43,
-              "date": "2026-11-26",
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -14465,9 +14445,9 @@
           "note": 79,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -18.84,
+            "valeur": -19.15,
             "note": 79,
-            "date": "2026-11-25"
+            "date": "2026-11-26"
           }
         },
         "momentum": {
@@ -14495,8 +14475,8 @@
           "base": "indice",
           "indice": "BIST 100",
           "monnaie": "TRY",
-          "performance_eur": -13.31,
-          "effet_change": -11.74,
+          "performance_eur": -13.37,
+          "effet_change": -11.8,
           "source_change": "Yahoo Finance via yfinance, cours EURTRY=X (conversion en euros)",
           "note": 48,
           "confiance": "moyen",
@@ -14530,14 +14510,14 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours TRY=X",
               "niveau": "marche",
-              "valeur": -5.02,
-              "date": "2026-11-26",
+              "valeur": -5.49,
+              "date": "2026-11-27",
               "statut": "concorde",
-              "ecart": 0.01
+              "ecart": 0.47
             }
           ],
           "verification": "concordant",
-          "ecart_max": 0.01,
+          "ecart_max": 0.47,
           "devise": "TRY",
           "note": 35,
           "confiance": "élevé",
@@ -14901,9 +14881,9 @@
       "detail": {
         "devise_3m": {
           "libelle": "Devise sur 3 mois",
-          "valeur": -8.31,
+          "valeur": -8.33,
           "unite": "%",
-          "date": "2026-11-26",
+          "date": "2026-11-27",
           "source": "Yahoo Finance via yfinance, cours EGP=X",
           "source_courte": "le marché",
           "niveau_source": "marche",
@@ -14913,8 +14893,8 @@
               "source": "yahoo_cours",
               "nom": "Yahoo Finance via yfinance, cours EGP=X",
               "niveau": "marche",
-              "valeur": -8.31,
-              "date": "2026-11-26",
+              "valeur": -8.33,
+              "date": "2026-11-27",
               "statut": "retenue"
             }
           ],
@@ -14924,8 +14904,8 @@
           "note": 22,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -8.07,
-            "note": 23,
+            "valeur": -8.31,
+            "note": 22,
             "date": "2026-11-26"
           }
         },
