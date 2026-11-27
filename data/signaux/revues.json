@@ -1,13 +1,48 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-27T04:34:13Z",
+    "genere_le": "2026-11-27T07:31:40Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "geopolitique|hausse_score|CO|2026-11-27",
+      "revu_le": "2026-11-27T07:31:24Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "CO",
+        "date": "2026-11-27",
+        "importance": "moyenne",
+        "titre": "Colombie : score de risque géopolitique 27/100, +10 pts sur 7 jours"
+      },
+      "objection": "Malgré la hausse du score géopolitique, la Colombie affiche une dette de 60 % du PIB et des réserves de 7,3 mois [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Colombie : réserves de 7,3 mois, dette de 60 % du PIB",
+          "source": "FMI, Banque mondiale"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "CO": {
+          "objection": "Objections spécifiques : Colombie dispose d'amortisseurs (réserves de 7,3 mois d'importations, dette publique de 60 % du PIB) [F1].",
+          "ajustement": "maintenir"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
     {
       "id": "geopolitique|hausse_score|CL|2026-11-27",
       "revu_le": "2026-11-27T04:33:45Z",
@@ -361,41 +396,6 @@
       "version_regles": 3
     },
     {
-      "id": "geopolitique|hausse_score|CO|2026-11-26",
-      "revu_le": "2026-11-26T01:46:54Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "CO",
-        "date": "2026-11-26",
-        "importance": "moyenne",
-        "titre": "Colombie : score de risque géopolitique 28/100, +12 pts sur 7 jours"
-      },
-      "objection": "Malgré la progression du score, la Colombie affiche des réserves de 7,3 mois pour une dette s'établissant à 60 % du PIB [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Colombie : réserves de 7,3 mois, dette de 60 % du PIB",
-          "source": "FMI, Banque mondiale"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "CO": {
-          "objection": "Objections spécifiques : Colombie dispose d'amortisseurs (réserves de 7,3 mois d'importations, dette publique de 60 % du PIB) [F1].",
-          "ajustement": "maintenir"
-        }
-      },
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
       "id": "geopolitique|hausse_score|EG|2026-11-26",
       "revu_le": "2026-11-26T01:46:54Z",
       "signal": {
@@ -413,6 +413,60 @@
       "methode": "règles",
       "confiance": "moyen",
       "version_regles": 3
+    },
+    {
+      "id": "pays|inversion_flux|US|2026-11-25",
+      "revu_le": "2026-11-27T07:31:24Z",
+      "signal": {
+        "agent": "pays",
+        "type": "inversion_flux",
+        "cle": "US",
+        "date": "2026-11-25",
+        "importance": "moyenne",
+        "titre": "États-Unis : les flux de l'ETF SPY passent des entrées aux sorties"
+      },
+      "objection": "L'inversion des flux de l'ETF SPY intervient dans un contexte de palier de risque mondial à 81/100 [F4], alors que les États-Unis affichent une dette publique de 127 % du PIB [F1], un solde courant de −3,9 % du PIB [F2] et des réserves de 2,8 mois d'importations [F3].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "États-Unis : dette publique de 127 % du PIB",
+          "source": "FMI (GGXWDG_NGDP)"
+        },
+        {
+          "id": "F2",
+          "texte": "États-Unis : solde courant de −3,9 % du PIB",
+          "source": "FMI (BCA_NGDPD)"
+        },
+        {
+          "id": "F3",
+          "texte": "États-Unis : réserves de 2,8 mois d'importations",
+          "source": "Banque mondiale (FI.RES.TOTL.MO)"
+        },
+        {
+          "id": "F4",
+          "texte": "Palier de risque mondial « Tension » (score de stress 81/100)",
+          "source": "agent risque (data/risque.json)",
+          "contexte": true
+        }
+      ],
+      "ajustement": "signal fragile",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "US": {
+          "objection": "Objections spécifiques : États-Unis : dette publique de 127 % du PIB [F1] ; déficit courant de 3,9 % du PIB [F2] ; réserves de change de 2,8 mois d'importations seulement [F3].",
+          "ajustement": "signal fragile"
+        }
+      },
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2",
+        "F3",
+        "F4"
+      ],
+      "modele": "gemini-3.5-flash-lite"
     },
     {
       "id": "geopolitique|hausse_score|IN|2026-11-25",
@@ -951,6 +1005,41 @@
         "F1",
         "F2",
         "F3"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "geopolitique|hausse_score|AU|2026-11-24",
+      "revu_le": "2026-11-27T07:31:24Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "AU",
+        "date": "2026-11-24",
+        "importance": "moyenne",
+        "titre": "Australie : score de risque géopolitique 33/100, +11 pts sur 7 jours"
+      },
+      "objection": "La hausse du score de risque géopolitique en Australie est tempérée par l'ETF EWA qui enregistre +0,6 % depuis la veille du signal [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "ETF EWA (Australie) : +0,6 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWA"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "AU": {
+          "objection": "Objections spécifiques : le marché ne confirme pas pour Australie (ETF EWA à +0,6 % depuis la veille du signal) [F1].",
+          "ajustement": "abaisser"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
       ],
       "modele": "gemini-3.5-flash-lite"
     },
