@@ -1,13 +1,158 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-28T01:26:32Z",
+    "genere_le": "2026-11-28T04:16:38Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "matieres_premieres|retournement_courbe|platine|2026-11-28",
+      "revu_le": "2026-11-28T04:16:08Z",
+      "signal": {
+        "agent": "matieres_premieres",
+        "type": "retournement_courbe",
+        "cle": "platine",
+        "date": "2026-11-28",
+        "importance": "moyenne",
+        "titre": "Platine : la courbe passe de backwardation à contango"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|LPG|2026-11-28",
+      "revu_le": "2026-11-28T04:16:08Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "LPG",
+        "date": "2026-11-28",
+        "importance": "moyenne",
+        "titre": "Dorian LPG Ltd. entre dans la liste « Pépites »"
+      },
+      "objection": "Malgré une croissance du bénéfice de +114,8% [F1], la conversion du bénéfice en cash se limite à 60,1% [F2], dans un contexte mondial marqué par un score de stress de 80/100 [F3].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Dorian LPG Ltd. : croissance du bénéfice +114,8 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "Dorian LPG Ltd. : conversion du bénéfice en cash de 60,1 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F3",
+          "texte": "Palier de risque mondial « Tension » (score de stress 80/100)",
+          "source": "agent risque (data/risque.json)",
+          "contexte": true
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "moyen",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2",
+        "F3"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|alerte_comptable|CBT|2026-11-28",
+      "revu_le": "2026-11-28T04:16:08Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "alerte_comptable",
+        "cle": "CBT",
+        "date": "2026-11-28",
+        "importance": "moyenne",
+        "titre": "Cabot Corporation : hausse anormale des créances"
+      },
+      "objection": "La conversion du bénéfice en cash atteint 100,5% [F1], mais cela n'efface pas la hausse des créances pour un chiffre d'affaires quasi stagnant.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Cabot Corporation : conversion du bénéfice en cash de 100,5 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "entreprises|alerte_comptable|IESC|2026-11-28",
+      "revu_le": "2026-11-28T04:16:08Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "alerte_comptable",
+        "cle": "IESC",
+        "date": "2026-11-28",
+        "importance": "moyenne",
+        "titre": "IES Holdings, Inc. : dilution forte"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "entreprises|nouvelle_pepite|1951.T|2026-11-28",
+      "revu_le": "2026-11-28T04:16:08Z",
+      "signal": {
+        "agent": "entreprises",
+        "type": "nouvelle_pepite",
+        "cle": "1951.T",
+        "date": "2026-11-28",
+        "importance": "moyenne",
+        "titre": "EXEO Group, Inc. entre dans la liste « Pépites »"
+      },
+      "objection": "La conversion du bénéfice en cash s'établit à 65,9% [F1], ce qui tempère la solidité apparente du dossier face à un score de stress mondial de 80/100 [F2].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "EXEO Group, Inc. : conversion du bénéfice en cash de 65,9 %",
+          "source": "agent entreprises (data/entreprises.json)"
+        },
+        {
+          "id": "F2",
+          "texte": "Palier de risque mondial « Tension » (score de stress 80/100)",
+          "source": "agent risque (data/risque.json)",
+          "contexte": true
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1",
+        "F2"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
     {
       "id": "geopolitique|hausse_score|MX|2026-11-28",
       "revu_le": "2026-11-28T01:26:20Z",
