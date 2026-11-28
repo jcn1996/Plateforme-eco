@@ -1,15 +1,15 @@
 {
   "meta": {
-    "genere_le": "2026-11-28T08:45:46Z",
+    "genere_le": "2026-11-28T09:15:46Z",
     "source": "planificateur",
     "description": "Appels du réveil externe (cron-job.org) et lancements d'agents décidés par le planificateur",
-    "dernier_appel": "2026-11-28T08:45:46Z",
+    "dernier_appel": "2026-11-28T09:15:46Z",
     "sante": {
       "agent": "planificateur",
       "libelle": "Planificateur (réveil externe)",
       "ordre": 0,
       "workflow": "planificateur.yml",
-      "derniere_execution": "2026-11-28T08:45:46Z",
+      "derniere_execution": "2026-11-28T09:15:46Z",
       "appel_externe": true,
       "panne_minutes": 45,
       "prochaine_prevue": null,
@@ -25,32 +25,10 @@
       ],
       "degrade": false,
       "raisons": [],
-      "dernier_lancement": "2026-11-28T08:15:47Z"
+      "dernier_lancement": "2026-11-28T09:15:46Z"
     }
   },
   "donnees": [
-    {
-      "cle": "agent-donnees-alternatives.yml|40 5 * * *",
-      "workflow": "agent-donnees-alternatives.yml",
-      "parametres": {},
-      "creneau": "2026-11-26T05:40:00Z",
-      "le": "2026-11-26T05:45:52Z",
-      "raison": "créneau dû, pas encore fait",
-      "statut": "lancé",
-      "detail": "https://github.com/jcn1996/Plateforme-eco/actions/runs/45763713620"
-    },
-    {
-      "cle": "agent-geopolitique.yml|3 6 * * *",
-      "workflow": "agent-geopolitique.yml",
-      "parametres": {
-        "mode": "quotidien"
-      },
-      "creneau": "2026-11-26T06:03:00Z",
-      "le": "2026-11-26T06:15:45Z",
-      "raison": "créneau dû, pas encore fait",
-      "statut": "lancé",
-      "detail": "https://github.com/jcn1996/Plateforme-eco/actions/runs/45766979554"
-    },
     {
       "cle": "agent-marches.yml|7 0-6,23 * * 1-5",
       "workflow": "agent-marches.yml",
@@ -3336,7 +3314,29 @@
       "raison": "créneau dû, pas encore fait",
       "statut": "lancé",
       "detail": "https://github.com/jcn1996/Plateforme-eco/actions/runs/46124989921"
+    },
+    {
+      "cle": "agent-geopolitique.yml|3 0-5,7-23 * * *",
+      "workflow": "agent-geopolitique.yml",
+      "parametres": {
+        "mode": "horaire"
+      },
+      "creneau": "2026-11-28T09:03:00Z",
+      "le": "2026-11-28T09:15:46Z",
+      "raison": "créneau dû, pas encore fait",
+      "statut": "lancé",
+      "detail": "https://github.com/jcn1996/Plateforme-eco/actions/runs/46129639075"
+    },
+    {
+      "cle": "agent-marches.yml|7 * * * 0,6",
+      "workflow": "agent-marches.yml",
+      "parametres": {},
+      "creneau": "2026-11-28T09:07:00Z",
+      "le": "2026-11-28T09:15:46Z",
+      "raison": "créneau dû, pas encore fait",
+      "statut": "lancé",
+      "detail": "https://github.com/jcn1996/Plateforme-eco/actions/runs/46129641428"
     }
   ],
-  "derniere_execution": "2026-11-28T08:45:46Z"
+  "derniere_execution": "2026-11-28T09:15:46Z"
 }
