@@ -52,11 +52,6 @@
       "bce_change": "ok",
       "yahoo_cours": "ok",
       "yahoo_per": "ok",
-      "flux_globalx": "erreur : ARGT : requêtes automatiques bloquées par la protection anti-robots du site (page « Security Checkpoint », HTTP 429) ; pas de contournement : parts en circulati",
-      "flux_ishares": "ok",
-      "flux_ssga": "ok",
-      "flux_vaneck": "ok",
-      "flux_yahoo_parts": "partiel (21/30)",
       "bm_croissance": "ok",
       "bm_inflation": "ok",
       "bm_solde_courant": "ok",
@@ -71,7 +66,12 @@
       "national_dbnomics_INSEE_IPC-2025_M.IPC.SO.00.00.GLISSEMENT_ANNUEL.ENSEMBLE.FE.POURCENT.BRUT.2025.FALSE": "ok",
       "national_dbnomics_DESTATIS_61111BM001_DG.PREIS1": "ok",
       "national_dbnomics_STATJP_CPIm_001": "ok",
-      "textes": "règles (pas de clé GEMINI_API_KEY ou rédaction refusée)"
+      "textes": "règles (pas de clé GEMINI_API_KEY ou rédaction refusée)",
+      "flux_globalx": "erreur : ARGT : requêtes automatiques bloquées par la protection anti-robots du site (page « Security Checkpoint », HTTP 429) ; pas de contournement : parts en circulati",
+      "flux_ishares": "ok",
+      "flux_ssga": "ok",
+      "flux_vaneck": "ok",
+      "flux_yahoo_parts": "partiel (21/30)"
     },
     "ponderations": {
       "croissance_pib": 0.2,
@@ -83,7 +83,7 @@
       "activite_reelle": 0.1
     },
     "alertes_qualite": [],
-    "flux_etf_mis_a_jour_le": "2026-11-27T16:35:17Z"
+    "flux_etf_mis_a_jour_le": "2026-11-28T02:17:26Z"
   },
   "donnees": [
     {
@@ -880,7 +880,7 @@
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 1,1 % en 2026 selon le FMI ; indicateur avancé de l'OCDE au-dessus de 100 (101,8 et en hausse) ; inflation à 3,1 % pour une cible de 2,0 %.",
         "politique_monetaire_et_risques": "Taux réel de −0,6 pt (banque centrale qui relève ses taux) ; devise à −2,7 % contre le dollar sur 3 mois ; solde courant de −0,9 % du PIB.",
-        "marches": "S&P/TSX à +11,3 % sur 12 mois en monnaie locale (+16,3 % en euros) ; PER supérieur de 26 % à la médiane des pays suivis ; entrées nettes sur l'ETF EWC de 2,2 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
+        "marches": "S&P/TSX à +11,3 % sur 12 mois en monnaie locale (+16,3 % en euros) ; PER supérieur de 26 % à la médiane des pays suivis ; entrées nettes sur l'ETF EWC de 1,1 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
       "indicateurs": {
@@ -1216,7 +1216,7 @@
           "avertissement": "Flux des ETF pays cotés aux États-Unis uniquement : ils ne couvrent ni les ETF cotés ailleurs, ni les fonds non cotés, ni les achats directs d'actions par les étrangers.",
           "symbole": "EWC",
           "emetteur": "iShares",
-          "date": "2026-11-25",
+          "date": "2026-11-27",
           "source": "iShares, page du fonds EWC (parts en circulation et VL du jour) ; relevés jour par jour accumulés par l'agent",
           "source_courte": "iShares",
           "niveau_source": "marche",
@@ -1226,7 +1226,7 @@
               "source": "ishares",
               "nom": "iShares, page du fonds EWC (parts en circulation et VL du jour)",
               "valeur": 131.4,
-              "date": "2026-11-25",
+              "date": "2026-11-27",
               "statut": "retenue"
             },
             {
@@ -1245,10 +1245,10 @@
               "libelle": "1 semaine",
               "jours": 7,
               "complet": true,
-              "debut": "2026-11-18",
-              "jours_disponibles": 20,
-              "flux_musd": 162.27,
-              "pct_encours": 2.206,
+              "debut": "2026-11-20",
+              "jours_disponibles": 22,
+              "flux_musd": 79.02,
+              "pct_encours": 1.108,
               "statut": "complet"
             },
             "1m": {
@@ -1256,7 +1256,7 @@
               "jours": 30,
               "complet": false,
               "debut": "2026-11-05",
-              "jours_disponibles": 20,
+              "jours_disponibles": 22,
               "flux_musd": 353.26,
               "pct_encours": 4.687,
               "statut": "en cours de constitution"
@@ -1266,17 +1266,17 @@
               "jours": 91,
               "complet": false,
               "debut": "2026-11-05",
-              "jours_disponibles": 20,
+              "jours_disponibles": 22,
               "flux_musd": 353.26,
               "pct_encours": 4.687,
               "statut": "en cours de constitution"
             }
           },
-          "releves": 11,
+          "releves": 12,
           "premier_releve": "2026-11-05",
-          "encours_musd": 7477.2,
+          "encours_musd": 7593.0,
           "parts": 131400000.0,
-          "vl": 56.9043,
+          "vl": 57.785,
           "serie_consecutive": {
             "sens": "entrées",
             "jours": 6,
@@ -1326,19 +1326,23 @@
             [
               "2026-11-25",
               353.26
+            ],
+            [
+              "2026-11-27",
+              353.26
             ]
           ],
-          "flux_dernier_jour_musd": 28.45,
-          "valeur": 2.206,
+          "flux_dernier_jour_musd": 0.0,
+          "valeur": 1.108,
           "periode_valeur": "1s",
-          "flux_musd": 162.27,
+          "flux_musd": 79.02,
           "tendance_flux": "entrées nettes",
-          "note": 76,
+          "note": 63,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 2.085,
-            "note": 75,
-            "date": "2026-11-24"
+            "valeur": 2.206,
+            "note": 76,
+            "date": "2026-11-25"
           }
         }
       },
@@ -1387,7 +1391,7 @@
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 1,5 % en 2026 selon le FMI ; indicateur avancé de l'OCDE au-dessus de 100 (102,1 et en baisse) ; inflation à 3,8 % pour une cible de 3,0 %.",
         "politique_monetaire_et_risques": "Taux réel de +2,7 pt (banque centrale qui baisse ses taux) ; devise à −13,1 % contre le dollar sur 3 mois ; solde courant de −0,5 % du PIB.",
-        "marches": "IPC (S&P/BMV) à +14,2 % sur 12 mois en monnaie locale (+13,0 % en euros) ; PER inférieur de 16 % à la médiane des pays suivis ; sorties nettes sur l'ETF EWW de 2,8 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
+        "marches": "IPC (S&P/BMV) à +14,2 % sur 12 mois en monnaie locale (+13,0 % en euros) ; PER inférieur de 16 % à la médiane des pays suivis ; sorties nettes sur l'ETF EWW de 2,4 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
       "indicateurs": {
@@ -1697,7 +1701,7 @@
           "avertissement": "Flux des ETF pays cotés aux États-Unis uniquement : ils ne couvrent ni les ETF cotés ailleurs, ni les fonds non cotés, ni les achats directs d'actions par les étrangers.",
           "symbole": "EWW",
           "emetteur": "iShares",
-          "date": "2026-11-25",
+          "date": "2026-11-27",
           "source": "iShares, page du fonds EWW (parts en circulation et VL du jour) ; relevés jour par jour accumulés par l'agent",
           "source_courte": "iShares",
           "niveau_source": "marche",
@@ -1707,7 +1711,7 @@
               "source": "ishares",
               "nom": "iShares, page du fonds EWW (parts en circulation et VL du jour)",
               "valeur": 20.6,
-              "date": "2026-11-25",
+              "date": "2026-11-27",
               "statut": "retenue"
             },
             {
@@ -1726,10 +1730,10 @@
               "libelle": "1 semaine",
               "jours": 7,
               "complet": true,
-              "debut": "2026-11-18",
-              "jours_disponibles": 20,
-              "flux_musd": -43.63,
-              "pct_encours": -2.795,
+              "debut": "2026-11-20",
+              "jours_disponibles": 22,
+              "flux_musd": -36.41,
+              "pct_encours": -2.392,
               "statut": "complet"
             },
             "1m": {
@@ -1737,7 +1741,7 @@
               "jours": 30,
               "complet": false,
               "debut": "2026-11-05",
-              "jours_disponibles": 20,
+              "jours_disponibles": 22,
               "flux_musd": -81.42,
               "pct_encours": -4.94,
               "statut": "en cours de constitution"
@@ -1747,17 +1751,17 @@
               "jours": 91,
               "complet": false,
               "debut": "2026-11-05",
-              "jours_disponibles": 20,
+              "jours_disponibles": 22,
               "flux_musd": -81.42,
               "pct_encours": -4.94,
               "statut": "en cours de constitution"
             }
           },
-          "releves": 11,
+          "releves": 12,
           "premier_releve": "2026-11-05",
-          "encours_musd": 1511.6,
+          "encours_musd": 1519.9,
           "parts": 20600000.0,
-          "vl": 73.3803,
+          "vl": 73.7801,
           "serie_consecutive": {
             "sens": "sorties",
             "jours": 4,
@@ -1807,19 +1811,23 @@
             [
               "2026-11-25",
               -81.42
+            ],
+            [
+              "2026-11-27",
+              -81.42
             ]
           ],
           "flux_dernier_jour_musd": 0.0,
-          "valeur": -2.795,
+          "valeur": -2.392,
           "periode_valeur": "1s",
-          "flux_musd": -43.63,
+          "flux_musd": -36.41,
           "tendance_flux": "sorties nettes",
-          "note": 16,
+          "note": 21,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -3.548,
-            "note": 7,
-            "date": "2026-11-24"
+            "valeur": -2.795,
+            "note": 16,
+            "date": "2026-11-25"
           }
         }
       },
@@ -2205,7 +2213,7 @@
           "avertissement": "Flux des ETF pays cotés aux États-Unis uniquement : ils ne couvrent ni les ETF cotés ailleurs, ni les fonds non cotés, ni les achats directs d'actions par les étrangers.",
           "symbole": "EWZ",
           "emetteur": "iShares",
-          "date": "2026-11-25",
+          "date": "2026-11-27",
           "source": "iShares, page du fonds EWZ (parts en circulation et VL du jour) ; relevés jour par jour accumulés par l'agent",
           "source_courte": "iShares",
           "niveau_source": "marche",
@@ -2215,7 +2223,7 @@
               "source": "ishares",
               "nom": "iShares, page du fonds EWZ (parts en circulation et VL du jour)",
               "valeur": 274.35,
-              "date": "2026-11-25",
+              "date": "2026-11-27",
               "statut": "retenue"
             },
             {
@@ -2234,8 +2242,8 @@
               "libelle": "1 semaine",
               "jours": 7,
               "complet": true,
-              "debut": "2026-11-18",
-              "jours_disponibles": 20,
+              "debut": "2026-11-20",
+              "jours_disponibles": 22,
               "flux_musd": 0.0,
               "pct_encours": 0.0,
               "statut": "complet"
@@ -2245,7 +2253,7 @@
               "jours": 30,
               "complet": false,
               "debut": "2026-11-05",
-              "jours_disponibles": 20,
+              "jours_disponibles": 22,
               "flux_musd": -476.54,
               "pct_encours": -5.189,
               "statut": "en cours de constitution"
@@ -2255,17 +2263,17 @@
               "jours": 91,
               "complet": false,
               "debut": "2026-11-05",
-              "jours_disponibles": 20,
+              "jours_disponibles": 22,
               "flux_musd": -476.54,
               "pct_encours": -5.189,
               "statut": "en cours de constitution"
             }
           },
-          "releves": 11,
+          "releves": 12,
           "premier_releve": "2026-11-05",
-          "encours_musd": 8277.1,
+          "encours_musd": 9089.0,
           "parts": 274350000.0,
-          "vl": 30.17,
+          "vl": 33.1293,
           "serie_consecutive": {
             "sens": "sorties",
             "jours": 2,
@@ -2315,6 +2323,10 @@
             [
               "2026-11-25",
               -476.54
+            ],
+            [
+              "2026-11-27",
+              -476.54
             ]
           ],
           "flux_dernier_jour_musd": 0.0,
@@ -2327,7 +2339,7 @@
           "precedent": {
             "valeur": 0.0,
             "note": 50,
-            "date": "2026-11-24"
+            "date": "2026-11-25"
           }
         }
       },
@@ -3052,7 +3064,7 @@
           "avertissement": "Flux des ETF pays cotés aux États-Unis uniquement : ils ne couvrent ni les ETF cotés ailleurs, ni les fonds non cotés, ni les achats directs d'actions par les étrangers.",
           "symbole": "EWU",
           "emetteur": "iShares",
-          "date": "2026-11-25",
+          "date": "2026-11-27",
           "source": "iShares, page du fonds EWU (parts en circulation et VL du jour) ; relevés jour par jour accumulés par l'agent",
           "source_courte": "iShares",
           "niveau_source": "marche",
@@ -3062,7 +3074,7 @@
               "source": "ishares",
               "nom": "iShares, page du fonds EWU (parts en circulation et VL du jour)",
               "valeur": 77.4,
-              "date": "2026-11-25",
+              "date": "2026-11-27",
               "statut": "retenue"
             },
             {
@@ -3081,10 +3093,10 @@
               "libelle": "1 semaine",
               "jours": 7,
               "complet": true,
-              "debut": "2026-11-18",
-              "jours_disponibles": 20,
+              "debut": "2026-11-20",
+              "jours_disponibles": 22,
               "flux_musd": 18.41,
-              "pct_encours": 0.519,
+              "pct_encours": 0.536,
               "statut": "complet"
             },
             "1m": {
@@ -3092,7 +3104,7 @@
               "jours": 30,
               "complet": false,
               "debut": "2026-11-05",
-              "jours_disponibles": 20,
+              "jours_disponibles": 22,
               "flux_musd": -39.21,
               "pct_encours": -1.05,
               "statut": "en cours de constitution"
@@ -3102,17 +3114,17 @@
               "jours": 91,
               "complet": false,
               "debut": "2026-11-05",
-              "jours_disponibles": 20,
+              "jours_disponibles": 22,
               "flux_musd": -39.21,
               "pct_encours": -1.05,
               "statut": "en cours de constitution"
             }
           },
-          "releves": 11,
+          "releves": 12,
           "premier_releve": "2026-11-05",
-          "encours_musd": 3561.6,
+          "encours_musd": 3618.2,
           "parts": 77400000.0,
-          "vl": 46.0152,
+          "vl": 46.7466,
           "serie_consecutive": {
             "sens": "entrées",
             "jours": 1,
@@ -3162,19 +3174,23 @@
             [
               "2026-11-25",
               -39.21
+            ],
+            [
+              "2026-11-27",
+              -39.21
             ]
           ],
-          "flux_dernier_jour_musd": 18.41,
-          "valeur": 0.519,
+          "flux_dernier_jour_musd": 0.0,
+          "valeur": 0.536,
           "periode_valeur": "1s",
           "flux_musd": 18.41,
           "tendance_flux": "entrées nettes",
           "note": 56,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 0.0,
-            "note": 50,
-            "date": "2026-11-24"
+            "valeur": 0.519,
+            "note": 56,
+            "date": "2026-11-25"
           }
         }
       },
@@ -3568,7 +3584,7 @@
           "avertissement": "Flux des ETF pays cotés aux États-Unis uniquement : ils ne couvrent ni les ETF cotés ailleurs, ni les fonds non cotés, ni les achats directs d'actions par les étrangers.",
           "symbole": "EWQ",
           "emetteur": "iShares",
-          "date": "2026-11-25",
+          "date": "2026-11-27",
           "source": "iShares, page du fonds EWQ (parts en circulation et VL du jour) ; relevés jour par jour accumulés par l'agent",
           "source_courte": "iShares",
           "niveau_source": "marche",
@@ -3578,7 +3594,7 @@
               "source": "ishares",
               "nom": "iShares, page du fonds EWQ (parts en circulation et VL du jour)",
               "valeur": 8.0,
-              "date": "2026-11-25",
+              "date": "2026-11-27",
               "statut": "retenue"
             },
             {
@@ -3597,8 +3613,8 @@
               "libelle": "1 semaine",
               "jours": 7,
               "complet": true,
-              "debut": "2026-11-18",
-              "jours_disponibles": 20,
+              "debut": "2026-11-20",
+              "jours_disponibles": 22,
               "flux_musd": 0.0,
               "pct_encours": 0.0,
               "statut": "complet"
@@ -3608,7 +3624,7 @@
               "jours": 30,
               "complet": false,
               "debut": "2026-11-05",
-              "jours_disponibles": 20,
+              "jours_disponibles": 22,
               "flux_musd": -8.76,
               "pct_encours": -2.466,
               "statut": "en cours de constitution"
@@ -3618,17 +3634,17 @@
               "jours": 91,
               "complet": false,
               "debut": "2026-11-05",
-              "jours_disponibles": 20,
+              "jours_disponibles": 22,
               "flux_musd": -8.76,
               "pct_encours": -2.466,
               "statut": "en cours de constitution"
             }
           },
-          "releves": 11,
+          "releves": 12,
           "premier_releve": "2026-11-05",
-          "encours_musd": 336.3,
+          "encours_musd": 339.1,
           "parts": 8000000.0,
-          "vl": 42.0392,
+          "vl": 42.3856,
           "serie_consecutive": {
             "sens": "sorties",
             "jours": 1,
@@ -3678,6 +3694,10 @@
             [
               "2026-11-25",
               -8.76
+            ],
+            [
+              "2026-11-27",
+              -8.76
             ]
           ],
           "flux_dernier_jour_musd": 0.0,
@@ -3690,7 +3710,7 @@
           "precedent": {
             "valeur": 0.0,
             "note": 50,
-            "date": "2026-11-24"
+            "date": "2026-11-25"
           }
         }
       },
@@ -4109,7 +4129,7 @@
           "avertissement": "Flux des ETF pays cotés aux États-Unis uniquement : ils ne couvrent ni les ETF cotés ailleurs, ni les fonds non cotés, ni les achats directs d'actions par les étrangers.",
           "symbole": "EWG",
           "emetteur": "iShares",
-          "date": "2026-11-25",
+          "date": "2026-11-27",
           "source": "iShares, page du fonds EWG (parts en circulation et VL du jour) ; relevés jour par jour accumulés par l'agent",
           "source_courte": "iShares",
           "niveau_source": "marche",
@@ -4119,7 +4139,7 @@
               "source": "ishares",
               "nom": "iShares, page du fonds EWG (parts en circulation et VL du jour)",
               "valeur": 52.2,
-              "date": "2026-11-25",
+              "date": "2026-11-27",
               "statut": "retenue"
             },
             {
@@ -4138,10 +4158,10 @@
               "libelle": "1 semaine",
               "jours": 7,
               "complet": true,
-              "debut": "2026-11-18",
-              "jours_disponibles": 20,
+              "debut": "2026-11-20",
+              "jours_disponibles": 22,
               "flux_musd": 12.03,
-              "pct_encours": 0.566,
+              "pct_encours": 0.593,
               "statut": "complet"
             },
             "1m": {
@@ -4149,7 +4169,7 @@
               "jours": 30,
               "complet": false,
               "debut": "2026-11-05",
-              "jours_disponibles": 20,
+              "jours_disponibles": 22,
               "flux_musd": 612.81,
               "pct_encours": 37.926,
               "statut": "en cours de constitution"
@@ -4159,17 +4179,17 @@
               "jours": 91,
               "complet": false,
               "debut": "2026-11-05",
-              "jours_disponibles": 20,
+              "jours_disponibles": 22,
               "flux_musd": 612.81,
               "pct_encours": 37.926,
               "statut": "en cours de constitution"
             }
           },
-          "releves": 11,
+          "releves": 12,
           "premier_releve": "2026-11-05",
-          "encours_musd": 2084.2,
+          "encours_musd": 2114.8,
           "parts": 52200000.0,
-          "vl": 39.927,
+          "vl": 40.5125,
           "serie_consecutive": {
             "sens": "entrées",
             "jours": 4,
@@ -4219,19 +4239,23 @@
             [
               "2026-11-25",
               612.81
+            ],
+            [
+              "2026-11-27",
+              612.81
             ]
           ],
           "flux_dernier_jour_musd": 0.0,
-          "valeur": 0.566,
+          "valeur": 0.593,
           "periode_valeur": "1s",
           "flux_musd": 12.03,
           "tendance_flux": "entrées nettes",
           "note": 57,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 0.557,
+            "valeur": 0.566,
             "note": 57,
-            "date": "2026-11-24"
+            "date": "2026-11-25"
           }
         }
       },
@@ -4283,7 +4307,7 @@
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 1,9 % en 2026 selon le FMI ; inflation à 1,5 % pour une cible de 1,0 %.",
         "politique_monetaire_et_risques": "Taux réel de −1,5 pt (banque centrale aux taux stables) ; devise à −3,8 % contre le dollar sur 3 mois ; solde courant de +5,6 % du PIB.",
-        "marches": "SMI à +16,2 % sur 12 mois en monnaie locale (+18,4 % en euros) ; PER supérieur de 66 % à la médiane des pays suivis ; entrées nettes sur l'ETF EWL de 0,5 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
+        "marches": "SMI à +16,2 % sur 12 mois en monnaie locale (+18,4 % en euros) ; PER supérieur de 66 % à la médiane des pays suivis ; sorties nettes sur l'ETF EWL de 0,0 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
       "indicateurs": {
@@ -4591,7 +4615,7 @@
           "avertissement": "Flux des ETF pays cotés aux États-Unis uniquement : ils ne couvrent ni les ETF cotés ailleurs, ni les fonds non cotés, ni les achats directs d'actions par les étrangers.",
           "symbole": "EWL",
           "emetteur": "iShares",
-          "date": "2026-11-25",
+          "date": "2026-11-27",
           "source": "iShares, page du fonds EWL (parts en circulation et VL du jour) ; relevés jour par jour accumulés par l'agent",
           "source_courte": "iShares",
           "niveau_source": "marche",
@@ -4601,7 +4625,7 @@
               "source": "ishares",
               "nom": "iShares, page du fonds EWL (parts en circulation et VL du jour)",
               "valeur": 49.25,
-              "date": "2026-11-25",
+              "date": "2026-11-27",
               "statut": "retenue"
             },
             {
@@ -4620,10 +4644,10 @@
               "libelle": "1 semaine",
               "jours": 7,
               "complet": true,
-              "debut": "2026-11-18",
-              "jours_disponibles": 20,
-              "flux_musd": 15.44,
-              "pct_encours": 0.498,
+              "debut": "2026-11-20",
+              "jours_disponibles": 22,
+              "flux_musd": 0.0,
+              "pct_encours": 0.0,
               "statut": "complet"
             },
             "1m": {
@@ -4631,7 +4655,7 @@
               "jours": 30,
               "complet": false,
               "debut": "2026-11-05",
-              "jours_disponibles": 20,
+              "jours_disponibles": 22,
               "flux_musd": 112.37,
               "pct_encours": 3.618,
               "statut": "en cours de constitution"
@@ -4641,17 +4665,17 @@
               "jours": 91,
               "complet": false,
               "debut": "2026-11-05",
-              "jours_disponibles": 20,
+              "jours_disponibles": 22,
               "flux_musd": 112.37,
               "pct_encours": 3.618,
               "statut": "en cours de constitution"
             }
           },
-          "releves": 11,
+          "releves": 12,
           "premier_releve": "2026-11-05",
-          "encours_musd": 3144.9,
+          "encours_musd": 3147.9,
           "parts": 49250000.0,
-          "vl": 63.8552,
+          "vl": 63.9172,
           "serie_consecutive": {
             "sens": "entrées",
             "jours": 3,
@@ -4701,19 +4725,23 @@
             [
               "2026-11-25",
               112.37
+            ],
+            [
+              "2026-11-27",
+              112.37
             ]
           ],
           "flux_dernier_jour_musd": 0.0,
-          "valeur": 0.498,
+          "valeur": 0.0,
           "periode_valeur": "1s",
-          "flux_musd": 15.44,
-          "tendance_flux": "entrées nettes",
-          "note": 56,
+          "flux_musd": 0.0,
+          "tendance_flux": "stable",
+          "note": 50,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 0.493,
+            "valeur": 0.498,
             "note": 56,
-            "date": "2026-11-24"
+            "date": "2026-11-25"
           }
         }
       },
@@ -5040,7 +5068,7 @@
           "avertissement": "Flux des ETF pays cotés aux États-Unis uniquement : ils ne couvrent ni les ETF cotés ailleurs, ni les fonds non cotés, ni les achats directs d'actions par les étrangers.",
           "symbole": "KSA",
           "emetteur": "iShares",
-          "date": "2026-11-25",
+          "date": "2026-11-27",
           "source": "iShares, page du fonds KSA (parts en circulation et VL du jour) ; relevés jour par jour accumulés par l'agent",
           "source_courte": "iShares",
           "niveau_source": "marche",
@@ -5050,7 +5078,7 @@
               "source": "ishares",
               "nom": "iShares, page du fonds KSA (parts en circulation et VL du jour)",
               "valeur": 15.75,
-              "date": "2026-11-25",
+              "date": "2026-11-27",
               "statut": "retenue"
             },
             {
@@ -5067,8 +5095,8 @@
               "libelle": "1 semaine",
               "jours": 7,
               "complet": true,
-              "debut": "2026-11-18",
-              "jours_disponibles": 20,
+              "debut": "2026-11-20",
+              "jours_disponibles": 22,
               "flux_musd": 0.0,
               "pct_encours": 0.0,
               "statut": "complet"
@@ -5078,7 +5106,7 @@
               "jours": 30,
               "complet": false,
               "debut": "2026-11-05",
-              "jours_disponibles": 20,
+              "jours_disponibles": 22,
               "flux_musd": 0.0,
               "pct_encours": 0.0,
               "statut": "en cours de constitution"
@@ -5088,17 +5116,17 @@
               "jours": 91,
               "complet": false,
               "debut": "2026-11-05",
-              "jours_disponibles": 20,
+              "jours_disponibles": 22,
               "flux_musd": 0.0,
               "pct_encours": 0.0,
               "statut": "en cours de constitution"
             }
           },
-          "releves": 11,
+          "releves": 12,
           "premier_releve": "2026-11-05",
-          "encours_musd": 549.3,
+          "encours_musd": 547.9,
           "parts": 15750000.0,
-          "vl": 34.8753,
+          "vl": 34.7872,
           "serie_consecutive": null,
           "cumul": [
             [
@@ -5144,6 +5172,10 @@
             [
               "2026-11-25",
               0.0
+            ],
+            [
+              "2026-11-27",
+              0.0
             ]
           ],
           "flux_dernier_jour_musd": 0.0,
@@ -5156,7 +5188,7 @@
           "precedent": {
             "valeur": 0.0,
             "note": 50,
-            "date": "2026-11-24"
+            "date": "2026-11-25"
           }
         }
       },
@@ -6488,7 +6520,7 @@
           "avertissement": "Flux des ETF pays cotés aux États-Unis uniquement : ils ne couvrent ni les ETF cotés ailleurs, ni les fonds non cotés, ni les achats directs d'actions par les étrangers.",
           "symbole": "MCHI",
           "emetteur": "iShares",
-          "date": "2026-11-25",
+          "date": "2026-11-27",
           "source": "iShares, page du fonds MCHI (parts en circulation et VL du jour) ; relevés jour par jour accumulés par l'agent",
           "source_courte": "iShares",
           "niveau_source": "marche",
@@ -6498,7 +6530,7 @@
               "source": "ishares",
               "nom": "iShares, page du fonds MCHI (parts en circulation et VL du jour)",
               "valeur": 113.0,
-              "date": "2026-11-25",
+              "date": "2026-11-27",
               "statut": "retenue"
             },
             {
@@ -6515,10 +6547,10 @@
               "libelle": "1 semaine",
               "jours": 7,
               "complet": true,
-              "debut": "2026-11-18",
-              "jours_disponibles": 20,
+              "debut": "2026-11-20",
+              "jours_disponibles": 22,
               "flux_musd": 9.41,
-              "pct_encours": 0.174,
+              "pct_encours": 0.182,
               "statut": "complet"
             },
             "1m": {
@@ -6526,7 +6558,7 @@
               "jours": 30,
               "complet": false,
               "debut": "2026-11-05",
-              "jours_disponibles": 20,
+              "jours_disponibles": 22,
               "flux_musd": 39.07,
               "pct_encours": 0.675,
               "statut": "en cours de constitution"
@@ -6536,17 +6568,17 @@
               "jours": 91,
               "complet": false,
               "debut": "2026-11-05",
-              "jours_disponibles": 20,
+              "jours_disponibles": 22,
               "flux_musd": 39.07,
               "pct_encours": 0.675,
               "statut": "en cours de constitution"
             }
           },
-          "releves": 11,
+          "releves": 12,
           "premier_releve": "2026-11-05",
-          "encours_musd": 5229.4,
+          "encours_musd": 5408.0,
           "parts": 113000000.0,
-          "vl": 46.2774,
+          "vl": 47.8587,
           "serie_consecutive": {
             "sens": "entrées",
             "jours": 2,
@@ -6596,19 +6628,23 @@
             [
               "2026-11-25",
               39.07
+            ],
+            [
+              "2026-11-27",
+              39.07
             ]
           ],
           "flux_dernier_jour_musd": 0.0,
-          "valeur": 0.174,
+          "valeur": 0.182,
           "periode_valeur": "1s",
           "flux_musd": 9.41,
           "tendance_flux": "stable",
           "note": 52,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 0.173,
+            "valeur": 0.174,
             "note": 52,
-            "date": "2026-11-24"
+            "date": "2026-11-25"
           }
         }
       },
@@ -6659,7 +6695,7 @@
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 3,3 % en 2026 selon le FMI ; indicateur avancé de l'OCDE au-dessus de 100 (102,0 et en baisse) ; inflation à 2,8 % pour une cible de 2,0 %.",
         "politique_monetaire_et_risques": "Taux réel de +0,2 pt (banque centrale qui relève ses taux) ; devise à +3,0 % contre le dollar sur 3 mois ; solde courant de +6,5 % du PIB.",
-        "marches": "KOSPI à +18,9 % sur 12 mois en monnaie locale (+36,8 % en euros) ; PER inférieur de 36 % à la médiane des pays suivis ; entrées nettes sur l'ETF EWY de 0,7 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
+        "marches": "KOSPI à +18,9 % sur 12 mois en monnaie locale (+36,8 % en euros) ; PER inférieur de 36 % à la médiane des pays suivis ; entrées nettes sur l'ETF EWY de 0,8 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
       "indicateurs": {
@@ -6977,7 +7013,7 @@
           "avertissement": "Flux des ETF pays cotés aux États-Unis uniquement : ils ne couvrent ni les ETF cotés ailleurs, ni les fonds non cotés, ni les achats directs d'actions par les étrangers.",
           "symbole": "EWY",
           "emetteur": "iShares",
-          "date": "2026-11-25",
+          "date": "2026-11-27",
           "source": "iShares, page du fonds EWY (parts en circulation et VL du jour) ; relevés jour par jour accumulés par l'agent",
           "source_courte": "iShares",
           "niveau_source": "marche",
@@ -6986,8 +7022,8 @@
             {
               "source": "ishares",
               "nom": "iShares, page du fonds EWY (parts en circulation et VL du jour)",
-              "valeur": 145.95,
-              "date": "2026-11-25",
+              "valeur": 145.9,
+              "date": "2026-11-27",
               "statut": "retenue"
             },
             {
@@ -7006,10 +7042,10 @@
               "libelle": "1 semaine",
               "jours": 7,
               "complet": true,
-              "debut": "2026-11-18",
-              "jours_disponibles": 20,
-              "flux_musd": 143.24,
-              "pct_encours": 0.722,
+              "debut": "2026-11-20",
+              "jours_disponibles": 22,
+              "flux_musd": 136.44,
+              "pct_encours": 0.76,
               "statut": "complet"
             },
             "1m": {
@@ -7017,9 +7053,9 @@
               "jours": 30,
               "complet": false,
               "debut": "2026-11-05",
-              "jours_disponibles": 20,
-              "flux_musd": -97.57,
-              "pct_encours": -0.498,
+              "jours_disponibles": 22,
+              "flux_musd": -104.37,
+              "pct_encours": -0.533,
               "statut": "en cours de constitution"
             },
             "3m": {
@@ -7027,21 +7063,21 @@
               "jours": 91,
               "complet": false,
               "debut": "2026-11-05",
-              "jours_disponibles": 20,
-              "flux_musd": -97.57,
-              "pct_encours": -0.498,
+              "jours_disponibles": 22,
+              "flux_musd": -104.37,
+              "pct_encours": -0.533,
               "statut": "en cours de constitution"
             }
           },
-          "releves": 11,
+          "releves": 12,
           "premier_releve": "2026-11-05",
-          "encours_musd": 18941.6,
-          "parts": 145950000.0,
-          "vl": 129.7815,
+          "encours_musd": 19843.1,
+          "parts": 145900000.0,
+          "vl": 136.005,
           "serie_consecutive": {
-            "sens": "entrées",
-            "jours": 2,
-            "depuis": "2026-11-23"
+            "sens": "sorties",
+            "jours": 1,
+            "depuis": "2026-11-27"
           },
           "cumul": [
             [
@@ -7087,19 +7123,23 @@
             [
               "2026-11-25",
               -97.57
+            ],
+            [
+              "2026-11-27",
+              -104.37
             ]
           ],
-          "flux_dernier_jour_musd": 129.78,
-          "valeur": 0.722,
+          "flux_dernier_jour_musd": -6.8,
+          "valeur": 0.76,
           "periode_valeur": "1s",
-          "flux_musd": 143.24,
+          "flux_musd": 136.44,
           "tendance_flux": "entrées nettes",
           "note": 59,
           "confiance": "moyen",
           "precedent": {
-            "valeur": 0.069,
-            "note": 51,
-            "date": "2026-11-24"
+            "valeur": 0.722,
+            "note": 59,
+            "date": "2026-11-25"
           }
         }
       },
@@ -7149,7 +7189,7 @@
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 0,7 % en 2026 selon le FMI ; indicateur avancé de l'OCDE au-dessus de 100 (100,2 et stable) ; inflation à 2,5 % pour une cible de 2,0 %.",
         "politique_monetaire_et_risques": "Taux réel de −1,2 pt (banque centrale qui relève ses taux) ; devise à +0,1 % contre le dollar sur 3 mois ; solde courant de +4,9 % du PIB.",
-        "marches": "Nikkei 225 à +16,0 % sur 12 mois en monnaie locale (+20,0 % en euros) ; PER supérieur de 1 % à la médiane des pays suivis ; entrées nettes sur l'ETF EWJ de 0,0 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
+        "marches": "Nikkei 225 à +16,0 % sur 12 mois en monnaie locale (+20,0 % en euros) ; PER supérieur de 1 % à la médiane des pays suivis ; sorties nettes sur l'ETF EWJ de 0,0 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
       "indicateurs": {
@@ -7467,7 +7507,7 @@
           "avertissement": "Flux des ETF pays cotés aux États-Unis uniquement : ils ne couvrent ni les ETF cotés ailleurs, ni les fonds non cotés, ni les achats directs d'actions par les étrangers.",
           "symbole": "EWJ",
           "emetteur": "iShares",
-          "date": "2026-11-25",
+          "date": "2026-11-27",
           "source": "iShares, page du fonds EWJ (parts en circulation et VL du jour) ; relevés jour par jour accumulés par l'agent",
           "source_courte": "iShares",
           "niveau_source": "marche",
@@ -7477,7 +7517,7 @@
               "source": "ishares",
               "nom": "iShares, page du fonds EWJ (parts en circulation et VL du jour)",
               "valeur": 258.9,
-              "date": "2026-11-25",
+              "date": "2026-11-27",
               "statut": "retenue"
             },
             {
@@ -7496,10 +7536,10 @@
               "libelle": "1 semaine",
               "jours": 7,
               "complet": true,
-              "debut": "2026-11-18",
-              "jours_disponibles": 20,
-              "flux_musd": 4.55,
-              "pct_encours": 0.02,
+              "debut": "2026-11-20",
+              "jours_disponibles": 22,
+              "flux_musd": 0.0,
+              "pct_encours": 0.0,
               "statut": "complet"
             },
             "1m": {
@@ -7507,7 +7547,7 @@
               "jours": 30,
               "complet": false,
               "debut": "2026-11-05",
-              "jours_disponibles": 20,
+              "jours_disponibles": 22,
               "flux_musd": 418.57,
               "pct_encours": 1.862,
               "statut": "en cours de constitution"
@@ -7517,17 +7557,17 @@
               "jours": 91,
               "complet": false,
               "debut": "2026-11-05",
-              "jours_disponibles": 20,
+              "jours_disponibles": 22,
               "flux_musd": 418.57,
               "pct_encours": 1.862,
               "statut": "en cours de constitution"
             }
           },
-          "releves": 11,
+          "releves": 12,
           "premier_releve": "2026-11-05",
-          "encours_musd": 22677.6,
+          "encours_musd": 23020.9,
           "parts": 258900000.0,
-          "vl": 87.5922,
+          "vl": 88.9182,
           "serie_consecutive": {
             "sens": "sorties",
             "jours": 1,
@@ -7577,19 +7617,23 @@
             [
               "2026-11-25",
               418.57
+            ],
+            [
+              "2026-11-27",
+              418.57
             ]
           ],
           "flux_dernier_jour_musd": 0.0,
-          "valeur": 0.02,
+          "valeur": 0.0,
           "periode_valeur": "1s",
-          "flux_musd": 4.55,
+          "flux_musd": 0.0,
           "tendance_flux": "stable",
           "note": 50,
           "confiance": "moyen",
           "precedent": {
             "valeur": 0.02,
             "note": 50,
-            "date": "2026-11-24"
+            "date": "2026-11-25"
           }
         }
       },
@@ -7640,7 +7684,7 @@
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 1,9 % en 2026 selon le FMI ; indicateur avancé de l'OCDE en dessous de 100 (100,0 et en baisse) ; inflation à 4,9 % pour une cible de 2,5 %.",
         "politique_monetaire_et_risques": "Taux réel de −0,3 pt (banque centrale qui relève ses taux) ; devise à −7,3 % contre le dollar sur 3 mois ; solde courant de −2,6 % du PIB.",
-        "marches": "S&P/ASX 200 à +2,5 % sur 12 mois en monnaie locale (+10,7 % en euros) ; PER supérieur de 34 % à la médiane des pays suivis ; sorties nettes sur l'ETF EWA de 1,8 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
+        "marches": "S&P/ASX 200 à +2,5 % sur 12 mois en monnaie locale (+10,7 % en euros) ; PER supérieur de 34 % à la médiane des pays suivis ; sorties nettes sur l'ETF EWA de 0,0 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
       "indicateurs": {
@@ -7958,7 +8002,7 @@
           "avertissement": "Flux des ETF pays cotés aux États-Unis uniquement : ils ne couvrent ni les ETF cotés ailleurs, ni les fonds non cotés, ni les achats directs d'actions par les étrangers.",
           "symbole": "EWA",
           "emetteur": "iShares",
-          "date": "2026-11-25",
+          "date": "2026-11-27",
           "source": "iShares, page du fonds EWA (parts en circulation et VL du jour) ; relevés jour par jour accumulés par l'agent",
           "source_courte": "iShares",
           "niveau_source": "marche",
@@ -7968,7 +8012,7 @@
               "source": "ishares",
               "nom": "iShares, page du fonds EWA (parts en circulation et VL du jour)",
               "valeur": 43.8,
-              "date": "2026-11-25",
+              "date": "2026-11-27",
               "statut": "retenue"
             },
             {
@@ -7987,10 +8031,10 @@
               "libelle": "1 semaine",
               "jours": 7,
               "complet": true,
-              "debut": "2026-11-18",
-              "jours_disponibles": 20,
-              "flux_musd": -21.77,
-              "pct_encours": -1.759,
+              "debut": "2026-11-20",
+              "jours_disponibles": 22,
+              "flux_musd": 0.0,
+              "pct_encours": 0.0,
               "statut": "complet"
             },
             "1m": {
@@ -7998,7 +8042,7 @@
               "jours": 30,
               "complet": false,
               "debut": "2026-11-05",
-              "jours_disponibles": 20,
+              "jours_disponibles": 22,
               "flux_musd": 42.23,
               "pct_encours": 3.409,
               "statut": "en cours de constitution"
@@ -8008,17 +8052,17 @@
               "jours": 91,
               "complet": false,
               "debut": "2026-11-05",
-              "jours_disponibles": 20,
+              "jours_disponibles": 22,
               "flux_musd": 42.23,
               "pct_encours": 3.409,
               "statut": "en cours de constitution"
             }
           },
-          "releves": 11,
+          "releves": 12,
           "premier_releve": "2026-11-05",
-          "encours_musd": 1202.4,
+          "encours_musd": 1221.6,
           "parts": 43800000.0,
-          "vl": 27.4528,
+          "vl": 27.891,
           "serie_consecutive": {
             "sens": "sorties",
             "jours": 1,
@@ -8068,19 +8112,23 @@
             [
               "2026-11-25",
               42.23
+            ],
+            [
+              "2026-11-27",
+              42.23
             ]
           ],
           "flux_dernier_jour_musd": 0.0,
-          "valeur": -1.759,
+          "valeur": 0.0,
           "periode_valeur": "1s",
-          "flux_musd": -21.77,
-          "tendance_flux": "sorties nettes",
-          "note": 29,
+          "flux_musd": 0.0,
+          "tendance_flux": "stable",
+          "note": 50,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -1.733,
+            "valeur": -1.759,
             "note": 29,
-            "date": "2026-11-24"
+            "date": "2026-11-25"
           }
         }
       },
@@ -10594,7 +10642,7 @@
       "lecture": {
         "activite_et_prix": "Croissance du PIB de 10,7 % en 2026 selon le FMI ; inflation à 2,0 % pour une cible de 2,0 %.",
         "politique_monetaire_et_risques": "Devise à −4,0 % contre le dollar sur 3 mois ; solde courant de +20,0 % du PIB.",
-        "marches": "TAIEX à +42,8 % sur 12 mois en monnaie locale (+42,5 % en euros) ; PER supérieur de 62 % à la médiane des pays suivis ; entrées nettes sur l'ETF EWT de 0,3 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
+        "marches": "TAIEX à +42,8 % sur 12 mois en monnaie locale (+42,5 % en euros) ; PER supérieur de 62 % à la médiane des pays suivis ; sorties nettes sur l'ETF EWT de 2,6 % de l'encours sur une semaine (ETF cotés aux États-Unis)."
       },
       "textes": "règles",
       "indicateurs": {
@@ -10819,7 +10867,7 @@
           "avertissement": "Flux des ETF pays cotés aux États-Unis uniquement : ils ne couvrent ni les ETF cotés ailleurs, ni les fonds non cotés, ni les achats directs d'actions par les étrangers.",
           "symbole": "EWT",
           "emetteur": "iShares",
-          "date": "2026-11-25",
+          "date": "2026-11-27",
           "source": "iShares, page du fonds EWT (parts en circulation et VL du jour) ; relevés jour par jour accumulés par l'agent",
           "source_courte": "iShares",
           "niveau_source": "marche",
@@ -10828,8 +10876,8 @@
             {
               "source": "ishares",
               "nom": "iShares, page du fonds EWT (parts en circulation et VL du jour)",
-              "valeur": 97.2,
-              "date": "2026-11-25",
+              "valeur": 94.7,
+              "date": "2026-11-27",
               "statut": "retenue"
             },
             {
@@ -10848,10 +10896,10 @@
               "libelle": "1 semaine",
               "jours": 7,
               "complet": true,
-              "debut": "2026-11-18",
-              "jours_disponibles": 20,
-              "flux_musd": 25.43,
-              "pct_encours": 0.295,
+              "debut": "2026-11-20",
+              "jours_disponibles": 22,
+              "flux_musd": -192.48,
+              "pct_encours": -2.62,
               "statut": "complet"
             },
             "1m": {
@@ -10859,9 +10907,9 @@
               "jours": 30,
               "complet": false,
               "debut": "2026-11-05",
-              "jours_disponibles": 20,
-              "flux_musd": -771.77,
-              "pct_encours": -8.434,
+              "jours_disponibles": 22,
+              "flux_musd": -989.68,
+              "pct_encours": -10.815,
               "statut": "en cours de constitution"
             },
             "3m": {
@@ -10869,21 +10917,21 @@
               "jours": 91,
               "complet": false,
               "debut": "2026-11-05",
-              "jours_disponibles": 20,
-              "flux_musd": -771.77,
-              "pct_encours": -8.434,
+              "jours_disponibles": 22,
+              "flux_musd": -989.68,
+              "pct_encours": -10.815,
               "statut": "en cours de constitution"
             }
           },
-          "releves": 11,
+          "releves": 12,
           "premier_releve": "2026-11-05",
-          "encours_musd": 8108.2,
-          "parts": 97200000.0,
-          "vl": 83.4172,
+          "encours_musd": 8254.4,
+          "parts": 94700000.0,
+          "vl": 87.1633,
           "serie_consecutive": {
-            "sens": "entrées",
+            "sens": "sorties",
             "jours": 1,
-            "depuis": "2026-11-24"
+            "depuis": "2026-11-27"
           },
           "cumul": [
             [
@@ -10929,19 +10977,23 @@
             [
               "2026-11-25",
               -771.77
+            ],
+            [
+              "2026-11-27",
+              -989.68
             ]
           ],
-          "flux_dernier_jour_musd": 0.0,
-          "valeur": 0.295,
+          "flux_dernier_jour_musd": -217.91,
+          "valeur": -2.62,
           "periode_valeur": "1s",
-          "flux_musd": 25.43,
-          "tendance_flux": "entrées nettes",
-          "note": 54,
+          "flux_musd": -192.48,
+          "tendance_flux": "sorties nettes",
+          "note": 19,
           "confiance": "moyen",
           "precedent": {
             "valeur": 0.295,
             "note": 54,
-            "date": "2026-11-24"
+            "date": "2026-11-25"
           }
         }
       },
@@ -11743,7 +11795,7 @@
           "avertissement": "Flux des ETF pays cotés aux États-Unis uniquement : ils ne couvrent ni les ETF cotés ailleurs, ni les fonds non cotés, ni les achats directs d'actions par les étrangers.",
           "symbole": "VNM",
           "emetteur": "VanEck",
-          "date": "2026-11-25",
+          "date": "2026-11-27",
           "source": "VanEck, fichier des VL quotidiennes du fonds VNM (VL et actif net ; parts = actif net / VL) ; relevés jour par jour accumulés par l'agent",
           "source_courte": "VanEck",
           "niveau_source": "marche",
@@ -11753,7 +11805,7 @@
               "source": "vaneck",
               "nom": "VanEck, fichier des VL quotidiennes du fonds VNM (VL et actif net ; parts = actif net / VL)",
               "valeur": 25.85,
-              "date": "2026-11-25",
+              "date": "2026-11-27",
               "statut": "retenue"
             },
             {
@@ -11770,52 +11822,44 @@
               "libelle": "1 semaine",
               "jours": 7,
               "complet": true,
-              "debut": "2026-11-18",
-              "jours_disponibles": 119,
-              "flux_musd": -8.3,
-              "pct_encours": -1.883,
+              "debut": "2026-11-20",
+              "jours_disponibles": 121,
+              "flux_musd": -1.69,
+              "pct_encours": -0.394,
               "statut": "complet"
             },
             "1m": {
               "libelle": "1 mois",
               "jours": 30,
               "complet": true,
-              "debut": "2026-10-26",
-              "jours_disponibles": 119,
+              "debut": "2026-10-28",
+              "jours_disponibles": 121,
               "flux_musd": -35.63,
-              "pct_encours": -7.435,
+              "pct_encours": -7.434,
               "statut": "complet"
             },
             "3m": {
               "libelle": "3 mois",
               "jours": 91,
               "complet": true,
-              "debut": "2026-08-26",
-              "jours_disponibles": 119,
+              "debut": "2026-08-28",
+              "jours_disponibles": 121,
               "flux_musd": -51.85,
-              "pct_encours": -9.95,
+              "pct_encours": -9.943,
               "statut": "complet"
             }
           },
-          "releves": 85,
+          "releves": 86,
           "premier_releve": "2026-07-29",
-          "encours_musd": 428.6,
+          "encours_musd": 420.8,
           "parts": 25850000,
-          "vl": 16.582,
+          "vl": 16.2776,
           "serie_consecutive": {
             "sens": "sorties",
             "jours": 10,
             "depuis": "2026-09-29"
           },
           "cumul": [
-            [
-              "2026-08-26",
-              0.0
-            ],
-            [
-              "2026-08-27",
-              0.0
-            ],
             [
               "2026-08-28",
               0.0
@@ -12067,19 +12111,23 @@
             [
               "2026-11-25",
               -51.85
+            ],
+            [
+              "2026-11-27",
+              -51.85
             ]
           ],
           "flux_dernier_jour_musd": 0.0,
-          "valeur": -7.435,
+          "valeur": -7.434,
           "periode_valeur": "1m",
           "flux_musd": -35.63,
           "tendance_flux": "sorties nettes",
           "note": 5,
           "confiance": "moyen",
           "precedent": {
-            "valeur": -7.376,
-            "note": 6,
-            "date": "2026-11-24"
+            "valeur": -7.435,
+            "note": 5,
+            "date": "2026-11-25"
           }
         }
       },
