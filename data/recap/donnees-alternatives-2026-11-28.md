@@ -15,7 +15,7 @@ Indicateurs avancés de l'activité réelle. Aucune conclusion n'est tirée d'un
 - Corée du Sud : pas de score (1 indicateur à jour : au moins 2 sont nécessaires pour conclure)
 - Pays-Bas : pas de score (1 indicateur à jour : au moins 2 sont nécessaires pour conclure)
 - Taïwan : pas de score (1 indicateur à jour : au moins 2 sont nécessaires pour conclure)
-- **États-Unis** : « stable », score 51/100, confiance élevé
+- **États-Unis** : « stable », score 50/100, confiance élevé
 
 ## Indicateurs mondiaux
 
@@ -27,13 +27,13 @@ Indicateurs avancés de l'activité réelle. Aucune conclusion n'est tirée d'un
 - Fret conteneurs (Drewry WCI) : +118,2 % sur 12 mois, −8,1 % sur 1 mois. (donnée du 26/11/2026)
 - Fret vrac sec (Baltic Dry, approximation) : +47,8 % sur 12 mois, −1,7 % sur 1 mois, écart à la tendance +14,9 %, percentile 62 de l'historique. (donnée du 27/11/2026)
 - Tonnage du transport routier : −1,6 % sur 12 mois, −0,3 % sur 1 mois, écart à la tendance −0,6 %, percentile 18 de l'historique. Dernière donnée disponible : août 2026 (119 jours) ; trop ancienne, exclue du score. (donnée du 01/08/2026)
-- Passagers contrôlés dans les aéroports : +0,2 % sur 12 mois, −6,9 % sur 1 mois, écart à la tendance −2,0 %, percentile 40 de l'historique. (donnée du 26/11/2026)
+- Passagers contrôlés dans les aéroports : +0,1 % sur 12 mois, −6,4 % sur 1 mois, écart à la tendance −2,1 %, percentile 37 de l'historique. (donnée du 27/11/2026)
 - Mises en chantier de logements : +2,8 % sur 12 mois, +9,9 % sur 1 mois, écart à la tendance −6,3 %, percentile 55 de l'historique. (donnée du 01/10/2026)
 - Expéditions de ciment : +2,9 % sur 12 mois, −2,0 % sur 1 mois. (donnée du 01/08/2026)
 
 ## Signaux détectés aujourd'hui
 
-- [faible] Pan African Resources PLC : attention du public en forte hausse (+195 %)
+- aucun
 
 ## Sources de secours utilisées
 
@@ -42,6 +42,6 @@ Indicateurs avancés de l'activité réelle. Aucune conclusion n'est tirée d'un
 
 ## Sources en échec
 
-- fret_conteneurs : erreur : https://www.drewry.co.uk/supply-chain-advisors/supply-chain-expertise/world-container-index-assessed-by-drewry : HTTP 429
+- aucune
 
 Sources ignorées (clé ou adresse absente) : commandes_export_tw, electricite_ch, electricite_de, electricite_es, electricite_fr, electricite_it, electricite_nl, electricite_pl, electricite_se, exportations_kr_20j.
