@@ -1,13 +1,197 @@
 {
   "meta": {
     "version": 1,
-    "genere_le": "2026-11-27T23:02:19Z",
+    "genere_le": "2026-11-28T01:26:32Z",
     "source": "agent-risque",
     "fictif": false,
     "version_agent": "1.0",
     "description": "Objections de l'agent risque (contradicteur) aux signaux des autres agents, avec ajustement de confiance proposé"
   },
   "donnees": [
+    {
+      "id": "geopolitique|hausse_score|MX|2026-11-28",
+      "revu_le": "2026-11-28T01:26:20Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "MX",
+        "date": "2026-11-28",
+        "importance": "moyenne",
+        "titre": "Mexique : score de risque géopolitique 40/100, +19 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|BR|2026-11-28",
+      "revu_le": "2026-11-28T01:26:20Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "BR",
+        "date": "2026-11-28",
+        "importance": "moyenne",
+        "titre": "Brésil : score de risque géopolitique 42/100, +28 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|CH|2026-11-28",
+      "revu_le": "2026-11-28T01:26:20Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "CH",
+        "date": "2026-11-28",
+        "importance": "moyenne",
+        "titre": "Suisse : score de risque géopolitique 46/100, +15 pts sur 7 jours"
+      },
+      "objection": "Malgré la hausse du score, la Suisse affiche des réserves de 13,1 mois et une dette de 38 % du PIB [F1]. Ces fondamentaux macroéconomiques tempèrent la vulnérabilité immédiate du pays.",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Suisse : réserves de 13,1 mois, dette de 38 % du PIB",
+          "source": "FMI, Banque mondiale"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "CH": {
+          "objection": "Objections spécifiques : Suisse dispose d'amortisseurs (réserves de 13,1 mois d'importations, dette publique de 38 % du PIB) [F1].",
+          "ajustement": "maintenir"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "geopolitique|hausse_score|KR|2026-11-28",
+      "revu_le": "2026-11-28T01:26:20Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "KR",
+        "date": "2026-11-28",
+        "importance": "moyenne",
+        "titre": "Corée du Sud : score de risque géopolitique 28/100, +14 pts sur 7 jours"
+      },
+      "objection": "L'augmentation du risque géopolitique doit être nuancée par les indicateurs souverains, avec des réserves de 6,5 mois et une dette de 47 % du PIB [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "Corée du Sud : réserves de 6,5 mois, dette de 47 % du PIB",
+          "source": "FMI, Banque mondiale"
+        }
+      ],
+      "ajustement": "maintenir",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "KR": {
+          "objection": "Objections spécifiques : Corée du Sud dispose d'amortisseurs (réserves de 6,5 mois d'importations, dette publique de 47 % du PIB) [F1].",
+          "ajustement": "maintenir"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "geopolitique|hausse_score|JP|2026-11-28",
+      "revu_le": "2026-11-28T01:26:20Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "JP",
+        "date": "2026-11-28",
+        "importance": "moyenne",
+        "titre": "Japon : score de risque géopolitique 44/100, +22 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|IT|2026-11-28",
+      "revu_le": "2026-11-28T01:26:20Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "IT",
+        "date": "2026-11-28",
+        "importance": "moyenne",
+        "titre": "Italie : score de risque géopolitique 41/100, +21 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|ES|2026-11-28",
+      "revu_le": "2026-11-28T01:26:20Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "ES",
+        "date": "2026-11-28",
+        "importance": "moyenne",
+        "titre": "Espagne : score de risque géopolitique 26/100, +11 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|CL|2026-11-28",
+      "revu_le": "2026-11-28T01:26:20Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "CL",
+        "date": "2026-11-28",
+        "importance": "moyenne",
+        "titre": "Chili : score de risque géopolitique 18/100, +11 pts sur 7 jours"
+      },
+      "objection": "Pas d'objection spécifique.",
+      "faits": [],
+      "ajustement": "maintenir",
+      "specifique": false,
+      "methode": "règles",
+      "confiance": "moyen",
+      "version_regles": 3
+    },
     {
       "id": "geopolitique|evenement_grave|evt-f3979931ce5f|2026-11-27",
       "revu_le": "2026-11-27T16:31:29Z",
@@ -37,260 +221,6 @@
         "date": "2026-11-27",
         "importance": "haute",
         "titre": "Événement de gravité 4 : Offensive militaire israélienne dans la bande de Gaza"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|CO|2026-11-27",
-      "revu_le": "2026-11-27T07:31:24Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "CO",
-        "date": "2026-11-27",
-        "importance": "moyenne",
-        "titre": "Colombie : score de risque géopolitique 27/100, +10 pts sur 7 jours"
-      },
-      "objection": "Malgré la hausse du score géopolitique, la Colombie affiche une dette de 60 % du PIB et des réserves de 7,3 mois [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Colombie : réserves de 7,3 mois, dette de 60 % du PIB",
-          "source": "FMI, Banque mondiale"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "CO": {
-          "objection": "Objections spécifiques : Colombie dispose d'amortisseurs (réserves de 7,3 mois d'importations, dette publique de 60 % du PIB) [F1].",
-          "ajustement": "maintenir"
-        }
-      },
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "geopolitique|hausse_score|CL|2026-11-27",
-      "revu_le": "2026-11-27T04:33:45Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "CL",
-        "date": "2026-11-27",
-        "importance": "moyenne",
-        "titre": "Chili : score de risque géopolitique 18/100, +10 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|MX|2026-11-27",
-      "revu_le": "2026-11-27T01:42:21Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "MX",
-        "date": "2026-11-27",
-        "importance": "moyenne",
-        "titre": "Mexique : score de risque géopolitique 36/100, +20 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|BR|2026-11-27",
-      "revu_le": "2026-11-27T01:42:21Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "BR",
-        "date": "2026-11-27",
-        "importance": "moyenne",
-        "titre": "Brésil : score de risque géopolitique 46/100, +33 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|CH|2026-11-27",
-      "revu_le": "2026-11-27T01:42:21Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "CH",
-        "date": "2026-11-27",
-        "importance": "moyenne",
-        "titre": "Suisse : score de risque géopolitique 46/100, +20 pts sur 7 jours"
-      },
-      "objection": "Malgré la hausse du score, la Suisse dispose de réserves de 13,1 mois et d'une dette de 38 % du PIB [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Suisse : réserves de 13,1 mois, dette de 38 % du PIB",
-          "source": "FMI, Banque mondiale"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "CH": {
-          "objection": "Objections spécifiques : Suisse dispose d'amortisseurs (réserves de 13,1 mois d'importations, dette publique de 38 % du PIB) [F1].",
-          "ajustement": "maintenir"
-        }
-      },
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "geopolitique|hausse_score|SA|2026-11-27",
-      "revu_le": "2026-11-27T01:42:21Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "SA",
-        "date": "2026-11-27",
-        "importance": "moyenne",
-        "titre": "Arabie saoudite : score de risque géopolitique 71/100, +10 pts sur 7 jours"
-      },
-      "objection": "En dépit de la tension géopolitique, l'Arabie saoudite affiche des réserves de 15,6 mois et une dette de 35 % du PIB [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Arabie saoudite : réserves de 15,6 mois, dette de 35 % du PIB",
-          "source": "FMI, Banque mondiale"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "SA": {
-          "objection": "Objections spécifiques : Arabie saoudite dispose d'amortisseurs (réserves de 15,6 mois d'importations, dette publique de 35 % du PIB) [F1].",
-          "ajustement": "maintenir"
-        }
-      },
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "geopolitique|hausse_score|KR|2026-11-27",
-      "revu_le": "2026-11-27T01:42:21Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "KR",
-        "date": "2026-11-27",
-        "importance": "moyenne",
-        "titre": "Corée du Sud : score de risque géopolitique 31/100, +18 pts sur 7 jours"
-      },
-      "objection": "Face à cette progression du risque, la Corée du Sud présente des réserves limitées à 6,5 mois pour une dette de 47 % du PIB [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Corée du Sud : réserves de 6,5 mois, dette de 47 % du PIB",
-          "source": "FMI, Banque mondiale"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "gemini",
-      "par_entite": {
-        "KR": {
-          "objection": "Objections spécifiques : Corée du Sud dispose d'amortisseurs (réserves de 6,5 mois d'importations, dette publique de 47 % du PIB) [F1].",
-          "ajustement": "maintenir"
-        }
-      },
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "geopolitique|hausse_score|JP|2026-11-27",
-      "revu_le": "2026-11-27T01:42:21Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "JP",
-        "date": "2026-11-27",
-        "importance": "moyenne",
-        "titre": "Japon : score de risque géopolitique 43/100, +19 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|IT|2026-11-27",
-      "revu_le": "2026-11-27T01:42:21Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "IT",
-        "date": "2026-11-27",
-        "importance": "moyenne",
-        "titre": "Italie : score de risque géopolitique 42/100, +23 pts sur 7 jours"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "geopolitique|hausse_score|ES|2026-11-27",
-      "revu_le": "2026-11-27T01:42:21Z",
-      "signal": {
-        "agent": "geopolitique",
-        "type": "hausse_score",
-        "cle": "ES",
-        "date": "2026-11-27",
-        "importance": "moyenne",
-        "titre": "Espagne : score de risque géopolitique 23/100, +10 pts sur 7 jours"
       },
       "objection": "Pas d'objection spécifique.",
       "faits": [],
@@ -432,6 +362,76 @@
       "methode": "règles",
       "confiance": "moyen",
       "version_regles": 3
+    },
+    {
+      "id": "geopolitique|hausse_score|IN|2026-11-25",
+      "revu_le": "2026-11-28T01:26:20Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "IN",
+        "date": "2026-11-25",
+        "importance": "moyenne",
+        "titre": "Inde : score de risque géopolitique 48/100, +10 pts sur 7 jours"
+      },
+      "objection": "La hausse du score de risque n'est pas confirmée par les marchés financiers, l'ETF INDA affichant une progression de +0,9 % depuis la veille du signal [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "ETF INDA (Inde) : +0,9 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, INDA"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "IN": {
+          "objection": "Objections spécifiques : le marché ne confirme pas pour Inde (ETF INDA à +0,9 % depuis la veille du signal) [F1].",
+          "ajustement": "abaisser"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
+    },
+    {
+      "id": "geopolitique|hausse_score|SG|2026-11-25",
+      "revu_le": "2026-11-28T01:26:20Z",
+      "signal": {
+        "agent": "geopolitique",
+        "type": "hausse_score",
+        "cle": "SG",
+        "date": "2026-11-25",
+        "importance": "moyenne",
+        "titre": "Singapour : score de risque géopolitique 25/100, +10 pts sur 7 jours"
+      },
+      "objection": "La réaction des marchés reste extrêmement limitée, l'ETF EWS enregistrant une variation quasi nulle de −0,1 % depuis la veille du signal [F1].",
+      "faits": [
+        {
+          "id": "F1",
+          "texte": "ETF EWS (Singapour) : −0,1 % depuis la veille du signal",
+          "source": "Yahoo Finance via yfinance, EWS"
+        }
+      ],
+      "ajustement": "abaisser",
+      "specifique": true,
+      "methode": "gemini",
+      "par_entite": {
+        "SG": {
+          "objection": "Objections spécifiques : le marché ne confirme pas pour Singapour (ETF EWS à −0,1 % depuis la veille du signal) [F1].",
+          "ajustement": "abaisser"
+        }
+      },
+      "confiance": "faible",
+      "version_regles": 3,
+      "faits_cites": [
+        "F1"
+      ],
+      "modele": "gemini-3.5-flash-lite"
     },
     {
       "id": "pays|inversion_flux|US|2026-11-25",
@@ -1624,532 +1624,6 @@
       "methode": "règles",
       "confiance": "moyen",
       "version_regles": 3
-    },
-    {
-      "id": "inities|achats_groupes|ARR|2026-11-21",
-      "revu_le": "2026-11-21T23:01:45Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "ARR",
-        "date": "2026-11-21",
-        "importance": "forte",
-        "titre": "ARMOUR Residential REIT, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 88/100)"
-      },
-      "objection": "Malgré la croissance du bénéfice de +1323,4 % [F2], le flux d'exploitation n'atteint que 38 % du résultat net [F3] et le nombre d'actions a connu une hausse de 79,3 % sur un an [F4].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "ARMOUR Residential REIT, Inc. : momentum 12 mois −20,8 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "ARMOUR Residential REIT, Inc. : croissance du bénéfice +1323,4 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F3",
-          "texte": "ARMOUR Residential REIT, Inc. : alerte « Bénéfice peu converti en cash » : flux d'exploitation égal à 38 % du résultat net",
-          "source": "agent entreprises (fiche)"
-        },
-        {
-          "id": "F4",
-          "texte": "ARMOUR Residential REIT, Inc. : alerte « Dilution forte » : nombre d'actions en hausse de 79,3 % sur un an",
-          "source": "agent entreprises (fiche)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F2",
-        "F3",
-        "F4"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "inities|achats_groupes|SEI|2026-11-21",
-      "revu_le": "2026-11-21T23:01:45Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "SEI",
-        "date": "2026-11-21",
-        "importance": "moyenne",
-        "titre": "Solaris Energy Infrastructure, Inc. : 4 dirigeants achètent sur le marché en 30 jours (score 68/100)"
-      },
-      "objection": "La valorisation présente un PER supérieur au secteur de +299,9 % [F1] et une dette nette sur EBITDA de 3,9× [F2], combinés à une conversion du bénéfice en cash de −1450,7 % [F5].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Solaris Energy Infrastructure, Inc. : PER vs secteur +299,9 % (PER 52,3 ; médiane du secteur 13,1)",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "Solaris Energy Infrastructure, Inc. : dette nette / EBITDA de 3,9×",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F3",
-          "texte": "Solaris Energy Infrastructure, Inc. : cours +2,8 % sur 3 mois, −26,1 % sur 6 mois, +33,7 % sur 12 mois",
-          "source": "agent entreprises (fiche)"
-        },
-        {
-          "id": "F4",
-          "texte": "Solaris Energy Infrastructure, Inc. : croissance du bénéfice +104,3 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F5",
-          "texte": "Solaris Energy Infrastructure, Inc. : conversion du bénéfice en cash de −1450,7 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F6",
-          "texte": "Solaris Energy Infrastructure, Inc. : alerte « Dilution forte » : nombre d'actions en hausse de 39,6 % sur un an",
-          "source": "agent entreprises (fiche)"
-        }
-      ],
-      "ajustement": "signal fragile",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1",
-        "F2",
-        "F5"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "inities|achats_groupes|AEON|2026-11-21",
-      "revu_le": "2026-11-21T23:01:45Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "AEON",
-        "date": "2026-11-21",
-        "importance": "forte",
-        "titre": "AEON Biopharma, Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 83/100)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|achats_groupes|CRMD|2026-11-21",
-      "revu_le": "2026-11-21T23:01:45Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "CRMD",
-        "date": "2026-11-21",
-        "importance": "forte",
-        "titre": "CorMedix Inc. : 4 dirigeants achètent sur le marché en 30 jours (score 83/100)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|achats_groupes|CTGO|2026-11-21",
-      "revu_le": "2026-11-21T23:01:45Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "CTGO",
-        "date": "2026-11-21",
-        "importance": "forte",
-        "titre": "Contango Silver & Gold Inc. : 3 dirigeants achètent sur le marché en 30 jours (score 89/100)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|achats_groupes|PICS|2026-11-21",
-      "revu_le": "2026-11-21T23:01:45Z",
-      "signal": {
-        "agent": "inities",
-        "type": "achats_groupes",
-        "cle": "PICS",
-        "date": "2026-11-21",
-        "importance": "moyenne",
-        "titre": "PicS N.V. : 3 dirigeants achètent sur le marché en 30 jours (score 72/100)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "inities|nouveau_13d|GPN|2026-11-21",
-      "revu_le": "2026-11-21T23:01:45Z",
-      "signal": {
-        "agent": "inities",
-        "type": "nouveau_13d",
-        "cle": "GPN",
-        "date": "2026-11-21",
-        "importance": "moyenne",
-        "titre": "GTCR W Aggregator LP déclare 16,4 % de GLOBAL PAYMENTS INC. (13D, intention d'influencer)"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|alerte_comptable|ATO|2026-11-21",
-      "revu_le": "2026-11-21T23:01:45Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "alerte_comptable",
-        "cle": "ATO",
-        "date": "2026-11-21",
-        "importance": "moyenne",
-        "titre": "Atmos Energy Corporation : dilution forte"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|alerte_comptable|FFIV|2026-11-21",
-      "revu_le": "2026-11-21T23:01:45Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "alerte_comptable",
-        "cle": "FFIV",
-        "date": "2026-11-21",
-        "importance": "moyenne",
-        "titre": "F5, Inc. : hausse anormale des stocks"
-      },
-      "objection": "Malgré un F-score de 7/9 [F2] et une conversion du bénéfice en cash de 120,3 % [F1], les stocks affichent une hausse anormale de 239,1 % pour une progression du chiffre d'affaires limitée à 10,6 %.",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "F5, Inc. : conversion du bénéfice en cash de 120,3 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "F5, Inc. : F-score de 7/9",
-          "source": "agent entreprises (data/entreprises.json)"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1",
-        "F2"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|alerte_comptable|GEF|2026-11-21",
-      "revu_le": "2026-11-21T23:01:45Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "alerte_comptable",
-        "cle": "GEF",
-        "date": "2026-11-21",
-        "importance": "moyenne",
-        "titre": "Greif, Inc. : hausse anormale des stocks"
-      },
-      "objection": "Malgré un F-score élevé de 8/9 [F1], les stocks progressent de 16,9 % alors que le chiffre d'affaires n'augmente que de 0,5 %.",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Greif, Inc. : F-score de 8/9",
-          "source": "agent entreprises (data/entreprises.json)"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|alerte_comptable|KLIC|2026-11-21",
-      "revu_le": "2026-11-21T23:01:45Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "alerte_comptable",
-        "cle": "KLIC",
-        "date": "2026-11-21",
-        "importance": "moyenne",
-        "titre": "Kulicke and Soffa Industries, Inc. : bénéfice peu converti en cash"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|alerte_comptable|POWL|2026-11-21",
-      "revu_le": "2026-11-21T23:01:45Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "alerte_comptable",
-        "cle": "POWL",
-        "date": "2026-11-21",
-        "importance": "moyenne",
-        "titre": "Powell Industries, Inc. : hausse anormale des créances"
-      },
-      "objection": "La conversion du bénéfice en cash atteint 187,9 % [F1], ce qui tempère le risque lié aux créances.",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Powell Industries, Inc. : conversion du bénéfice en cash de 187,9 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|alerte_comptable|WAFD|2026-11-21",
-      "revu_le": "2026-11-21T23:01:45Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "alerte_comptable",
-        "cle": "WAFD",
-        "date": "2026-11-21",
-        "importance": "moyenne",
-        "titre": "WaFd, Inc. : hausse anormale des créances"
-      },
-      "objection": "Il s'agit d'une entreprise financière de type banque [F1], ce qui rend l'indicateur des créances non comparable.",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "WaFd, Inc. : entreprise financière (banque)",
-          "source": "agent entreprises (data/entreprises.json)"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|alerte_comptable|SONO|2026-11-21",
-      "revu_le": "2026-11-21T23:01:45Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "alerte_comptable",
-        "cle": "SONO",
-        "date": "2026-11-21",
-        "importance": "moyenne",
-        "titre": "Sonos, Inc. : hausse anormale des créances"
-      },
-      "objection": "L'entreprise affiche un F-score de 8/9 [F2] ainsi qu'une conversion du bénéfice en cash de 137,2 % [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "Sonos, Inc. : conversion du bénéfice en cash de 137,2 %",
-          "source": "agent entreprises (data/entreprises.json)"
-        },
-        {
-          "id": "F2",
-          "texte": "Sonos, Inc. : F-score de 8/9",
-          "source": "agent entreprises (data/entreprises.json)"
-        }
-      ],
-      "ajustement": "abaisser",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "moyen",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1",
-        "F2"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|alerte_comptable|NJR|2026-11-21",
-      "revu_le": "2026-11-21T23:01:45Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "alerte_comptable",
-        "cle": "NJR",
-        "date": "2026-11-21",
-        "importance": "moyenne",
-        "titre": "New Jersey Resources Corporation : hausse anormale des créances"
-      },
-      "objection": "La structure présente un F-score de 7/9 [F1], ce qui indique une assise financière globale solide malgré la divergence des créances.",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "New Jersey Resources Corporation : F-score de 7/9",
-          "source": "agent entreprises (data/entreprises.json)"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
-    },
-    {
-      "id": "entreprises|alerte_comptable|PLXS|2026-11-21",
-      "revu_le": "2026-11-21T23:01:45Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "alerte_comptable",
-        "cle": "PLXS",
-        "date": "2026-11-21",
-        "importance": "moyenne",
-        "titre": "Plexus Corp. : bénéfice peu converti en cash"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|alerte_comptable|MMS|2026-11-21",
-      "revu_le": "2026-11-21T23:01:45Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "alerte_comptable",
-        "cle": "MMS",
-        "date": "2026-11-21",
-        "importance": "moyenne",
-        "titre": "Maximus, Inc. : bénéfice peu converti en cash"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|nouvelle_pepite|FAN.L|2026-11-21",
-      "revu_le": "2026-11-21T23:01:45Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "nouvelle_pepite",
-        "cle": "FAN.L",
-        "date": "2026-11-21",
-        "importance": "moyenne",
-        "titre": "Volution Group plc entre dans la liste « Pépites »"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|nouvelle_pepite|GD|2026-11-21",
-      "revu_le": "2026-11-21T23:01:45Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "nouvelle_pepite",
-        "cle": "GD",
-        "date": "2026-11-21",
-        "importance": "moyenne",
-        "titre": "General Dynamics Corporation entre dans la liste « Qualité à prix raisonnable »"
-      },
-      "objection": "Pas d'objection spécifique.",
-      "faits": [],
-      "ajustement": "maintenir",
-      "specifique": false,
-      "methode": "règles",
-      "confiance": "moyen",
-      "version_regles": 3
-    },
-    {
-      "id": "entreprises|nouvelle_pepite|HCLTECH.NS|2026-11-21",
-      "revu_le": "2026-11-21T23:01:45Z",
-      "signal": {
-        "agent": "entreprises",
-        "type": "nouvelle_pepite",
-        "cle": "HCLTECH.NS",
-        "date": "2026-11-21",
-        "importance": "moyenne",
-        "titre": "HCL Technologies Limited entre dans la liste « Qualité à prix raisonnable »"
-      },
-      "objection": "Un tel dossier présente un risque de piège de valeur en raison d'une décote marquée associée à un cours ou à un bénéfice en recul [F1].",
-      "faits": [
-        {
-          "id": "F1",
-          "texte": "HCL Technologies Limited : piège de valeur possible : décote marquée associée à un cours ou à un bénéfice en recul (revue critique)",
-          "source": "agent entreprises (data/pepites.json)"
-        }
-      ],
-      "ajustement": "maintenir",
-      "specifique": true,
-      "methode": "gemini",
-      "confiance": "faible",
-      "version_regles": 3,
-      "faits_cites": [
-        "F1"
-      ],
-      "modele": "gemini-3.5-flash-lite"
     }
   ]
 }
